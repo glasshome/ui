@@ -29,8 +29,10 @@ const SelectTrigger: ParentComponent<
   );
 };
 
-const SelectContent: ParentComponent<ComponentProps<typeof SelectPrimitive.Content>> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "children"]);
+const SelectContent: ParentComponent<
+  ComponentProps<typeof SelectPrimitive.Content> & { listboxClass?: string }
+> = (props) => {
+  const [local, rest] = splitProps(props, ["class", "children", "listboxClass"]);
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
@@ -41,7 +43,7 @@ const SelectContent: ParentComponent<ComponentProps<typeof SelectPrimitive.Conte
         )}
         {...rest}
       >
-        <SelectPrimitive.Listbox class="p-1" />
+        <SelectPrimitive.Listbox class={cn("p-1", local.listboxClass)} />
       </SelectPrimitive.Content>
     </SelectPrimitive.Portal>
   );

@@ -9,6 +9,7 @@ export {
 } from "./accordion";
 // Wave 1: Pure HTML+CSS Components
 export { Alert, AlertDescription, AlertTitle, alertVariants } from "./alert";
+export { AreaPicker } from "./area-picker";
 export {
   AlertDialog,
   AlertDialogAction,
@@ -128,6 +129,7 @@ export {
   DropdownMenuSub,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
+export { EntitySelector } from "./entity-selector";
 export {
   Empty,
   EmptyContent,
@@ -255,6 +257,7 @@ export {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "./responsive-dialog";
+export { SchemaForm } from "./schema-form";
 export { ScrollArea, ScrollBar } from "./scroll-area";
 // Wave 3: Complex Kobalte Components
 export {

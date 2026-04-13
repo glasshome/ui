@@ -409,3 +409,11 @@
     animation: none !important;
   }
 }
+
+/* Performance: disable all backdrop-filter when reduce-blur is active */
+.reduce-blur,
+.reduce-blur * {
+  --tw-backdrop-blur: initial !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
