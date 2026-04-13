@@ -219,25 +219,15 @@ const ResponsiveDialogContent: ParentComponent<ComponentProps<"div">> = (props) 
             }
           >
             {/* Mobile: Bottom Sheet */}
-            <div class="fixed inset-0 flex flex-col justify-end" onClick={handleClose}>
-              <div
-                ref={contentRef}
-                role="dialog"
-                aria-modal="true"
-                tabIndex={-1}
-                class={cn(
-                  "relative max-h-[85vh] w-full overflow-y-auto rounded-t-xl border-border border-x border-t bg-background p-6 shadow-lg outline-none transition-transform duration-300 ease-out",
-                  isClosing() || isOpening() ? "translate-y-full" : "translate-y-0",
-                  local.class,
-                )}
-                onClick={(e: MouseEvent) => e.stopPropagation()}
-                {...rest}
-              >
-                {/* Sheet handle indicator */}
-                <div class="absolute top-2 left-1/2 h-1.5 w-12 -translate-x-1/2 rounded-full bg-muted-foreground/30" />
-                <div class="pt-4">{local.children}</div>
-              </div>
-            </div>
+            <MobileSheet
+              ref={(el) => (contentRef = el)}
+              class={local.class}
+              isClosing={isClosing()}
+              isOpening={isOpening()}
+              onDismiss={handleClose}
+            >
+              {local.children}
+            </MobileSheet>
           </Show>
         </div>
       </Portal>
@@ -302,6 +292,87 @@ const ResponsiveDialogClose: ParentComponent<ComponentProps<"button">> = (props)
     <Button variant="outline" onClick={() => close()} class={local.class} {...rest}>
       {local.children ?? "Close"}
     </Button>
+  );
+};
+
+// Swipe-to-close bottom sheet for mobile
+const CLOSE_THRESHOLD = 80;
+
+const MobileSheet: ParentComponent<{
+  class?: string;
+  isClosing: boolean;
+  isOpening: boolean;
+  onDismiss: () => void;
+  ref?: (el: HTMLDivElement) => void;
+}> = (props) => {
+
+  const [dragY, setDragY] = createSignal(0);
+  const [isDragging, setIsDragging] = createSignal(false);
+  let startY = 0;
+  let sheetRef: HTMLDivElement | undefined;
+
+  function onPointerDown(e: PointerEvent) {
+    const target = e.target as HTMLElement;
+    // Only start drag from the handle area (top 32px of sheet)
+    const rect = sheetRef?.getBoundingClientRect();
+    if (!rect || e.clientY > rect.top + 40) return;
+    // Don't drag if touching an interactive element
+    if (target.closest("button, input, select, textarea, a, [role=button]")) return;
+
+    startY = e.clientY;
+    setIsDragging(true);
+    setDragY(0);
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }
+
+  function onPointerMove(e: PointerEvent) {
+    if (!isDragging()) return;
+    const dy = Math.max(0, e.clientY - startY);
+    setDragY(dy);
+  }
+
+  function onPointerUp() {
+    if (!isDragging()) return;
+    setIsDragging(false);
+    if (dragY() > CLOSE_THRESHOLD) {
+      props.onDismiss();
+    }
+    setDragY(0);
+  }
+
+  return (
+    <div class="fixed inset-0 flex flex-col justify-end" onClick={props.onDismiss}>
+      <div
+        ref={(el) => {
+          sheetRef = el;
+          props.ref?.(el);
+        }}
+        role="dialog"
+        aria-modal="true"
+        tabIndex={-1}
+        class={cn(
+          "relative max-h-[85vh] w-full overflow-y-auto rounded-t-xl border-border border-x border-t bg-background p-6 shadow-lg outline-none",
+          !isDragging() && "transition-transform duration-300 ease-out",
+          props.isClosing || props.isOpening ? "translate-y-full" : "translate-y-0",
+          props.class,
+        )}
+        style={{
+          transform:
+            isDragging() || dragY() > 0 ? `translateY(${dragY()}px)` : undefined,
+        }}
+        onClick={(e: MouseEvent) => e.stopPropagation()}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={() => onPointerUp()}
+      >
+        {/* Drag handle */}
+        <div class="absolute top-0 left-0 flex h-8 w-full cursor-grab items-center justify-center active:cursor-grabbing">
+          <div class="h-1.5 w-12 rounded-full bg-muted-foreground/30" />
+        </div>
+        <div class="pt-4">{props.children}</div>
+      </div>
+    </div>
   );
 };
 
