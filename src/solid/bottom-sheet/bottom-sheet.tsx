@@ -255,9 +255,15 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     let attached = false;
     let pendingClick: ((e: MouseEvent) => void) | null = null;
 
+    const PORTAL_LAYER_SELECTOR =
+      '[data-kb-top-layer], [role="dialog"], [role="menu"], [role="listbox"], [role="combobox"], [role="tooltip"]';
     const isOutside = (target: EventTarget | null): boolean => {
       if (!(target instanceof Element) || !el) return false;
-      return !el.contains(target);
+      if (el.contains(target)) return false;
+      // Targets inside a portaled popover/select/menu/dialog are logically
+      // inside the sheet's interaction surface even when portaled to body.
+      if (target.closest(PORTAL_LAYER_SELECTOR)) return false;
+      return true;
     };
 
     const onPointerDown = (e: PointerEvent) => {
