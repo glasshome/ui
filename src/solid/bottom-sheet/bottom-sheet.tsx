@@ -16,6 +16,7 @@ import { cn } from "../../lib/utils";
 import { Z_BASE } from "./constants";
 import { attachDrag } from "./drag-controller";
 import { type InitialFocus, trapFocus } from "./focus-trap";
+import { watchKeyboard } from "./keyboard";
 import { acquireScrollLock, releaseScrollLock } from "./scroll-lock";
 import { assertTransition, type SheetState } from "./state-machine";
 
@@ -210,6 +211,16 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
       setState: ctx.setState,
       requestClose: () => ctx.setOpen(false),
     });
+    onCleanup(() => handle.destroy());
+  });
+
+  // Keyboard avoidance: track visualViewport while open, push sheet above
+  // keyboard via --bs-keyboard-offset CSS var.
+  createEffect(() => {
+    const node = ctx.contentRef();
+    if (!node) return;
+    if (ctx.state() === "closed") return;
+    const handle = watchKeyboard(node);
     onCleanup(() => handle.destroy());
   });
 

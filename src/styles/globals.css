@@ -429,6 +429,10 @@
 }
 .bs-content {
   transform: translate3d(0, 100%, 0);
+  bottom: var(--bs-keyboard-offset, 0);
+}
+.bs-content[data-keyboard-open] {
+  max-height: calc(85dvh - var(--bs-keyboard-offset, 0px));
 }
 .bs-content[data-state="opening"] {
   animation: bs-slide-up 500ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
