@@ -1,6 +1,6 @@
 {
   "name": "@glasshome/ui",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "SolidJS component library for GlassHome, built on Kobalte",
   "type": "module",
   "main": "./dist/index.js",
@@ -53,7 +53,6 @@
     "solid-js": "^1.9.9"
   },
   "dependencies": {
-    "@corvu/drawer": "^0.2.4",
     "@iconify-icon/solid": "^3.0.3",
     "@kobalte/core": "^0.13.11",
     "clsx": "^2.1.1",
