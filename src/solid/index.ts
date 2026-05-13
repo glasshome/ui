@@ -25,6 +25,20 @@ export { AspectRatio } from "./aspect-ratio";
 export { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 export { Badge, badgeVariants } from "./badge";
 export {
+  BottomSheet,
+  BottomSheetBody,
+  BottomSheetClose,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetFooter,
+  BottomSheetHandle,
+  BottomSheetHeader,
+  BottomSheetOverlay,
+  BottomSheetPortal,
+  BottomSheetTitle,
+  BottomSheetTrigger,
+} from "./bottom-sheet";
+export {
   Breadcrumb,
   BreadcrumbEllipsis,
   BreadcrumbItem,

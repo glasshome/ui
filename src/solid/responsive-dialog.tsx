@@ -1,4 +1,10 @@
-import Drawer from "@corvu/drawer";
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetHandle,
+  BottomSheetOverlay,
+  BottomSheetPortal,
+} from "./bottom-sheet";
 import {
   type Component,
   type ComponentProps,
@@ -213,36 +219,24 @@ const DesktopContent: ParentComponent<ComponentProps<"div">> = (props) => {
   );
 };
 
-// Mobile: corvu Drawer (handles drag-to-dismiss, velocity, scroll coordination)
+// Mobile: in-house BottomSheet (drag-to-dismiss + velocity + scroll handoff)
 const MobileContent: ParentComponent<ComponentProps<"div">> = (props) => {
   const [local, rest] = splitProps(props, ["children", "class"]);
   const ctx = useDialogContext();
   ctx.close = () => ctx.setOpen(false);
 
   return (
-    <Drawer open={ctx.open()} onOpenChange={ctx.setOpen} side="bottom">
-      <Drawer.Portal>
-        <Drawer.Overlay class="fixed inset-0 z-50 bg-black/80 data-[opening]:animate-in data-[opening]:fade-in-0 data-[closing]:animate-out data-[closing]:fade-out-0 data-[transitioning]:duration-300" />
-        <Drawer.Content
-          class={cn(
-            "fixed inset-x-0 bottom-0 z-50 flex max-h-[85vh] flex-col rounded-t-xl border-border border-x border-t bg-background shadow-lg outline-none after:absolute after:inset-x-0 after:top-full after:h-1/2 after:bg-inherit",
-            "data-[transitioning]:transition-transform data-[transitioning]:duration-300 data-[transitioning]:ease-[cubic-bezier(0.32,0.72,0,1)]",
-            local.class,
-          )}
-          {...rest}
-        >
-          <div
-            class="flex h-8 w-full shrink-0 cursor-grab touch-none items-center justify-center active:cursor-grabbing"
-            aria-hidden="true"
-          >
-            <div class="h-1.5 w-12 rounded-full bg-muted-foreground/30" />
-          </div>
+    <BottomSheet open={ctx.open()} onOpenChange={ctx.setOpen}>
+      <BottomSheetPortal>
+        <BottomSheetOverlay />
+        <BottomSheetContent class={local.class} {...rest}>
+          <BottomSheetHandle />
           <div class="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-2 pb-6">
             {local.children}
           </div>
-        </Drawer.Content>
-      </Drawer.Portal>
-    </Drawer>
+        </BottomSheetContent>
+      </BottomSheetPortal>
+    </BottomSheet>
   );
 };
 
