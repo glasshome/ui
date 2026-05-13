@@ -14,6 +14,7 @@ import {
 import { Portal } from "solid-js/web";
 import { cn } from "../../lib/utils";
 import { Z_BASE } from "./constants";
+import { attachDrag } from "./drag-controller";
 import { type InitialFocus, trapFocus } from "./focus-trap";
 import { acquireScrollLock, releaseScrollLock } from "./scroll-lock";
 import { assertTransition, type SheetState } from "./state-machine";
@@ -74,7 +75,10 @@ const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
     const s = state();
     if (isOpen && s === "closed") {
       setState("opening");
-    } else if (!isOpen && (s === "open" || s === "opening" || s === "pressing")) {
+    } else if (
+      !isOpen &&
+      (s === "open" || s === "opening" || s === "pressing" || s === "dragging" || s === "snapping")
+    ) {
       setState("closing");
     }
   });
@@ -157,6 +161,13 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     if (ctx.state() === "opening") acquireScrollLock();
   });
 
+  const clearAnimInline = () => {
+    if (!el) return;
+    el.style.transition = "";
+    el.style.animation = "";
+    el.style.transform = "";
+  };
+
   const onAnimationEnd = (e: AnimationEvent) => {
     if (e.target !== el) return;
     const s = ctx.state();
@@ -166,6 +177,35 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
       releaseScrollLock();
     }
   };
+
+  const onTransitionEnd = (e: TransitionEvent) => {
+    if (e.target !== el) return;
+    if (e.propertyName !== "transform") return;
+    const s = ctx.state();
+    if (s === "snapping") {
+      ctx.setState("open");
+      clearAnimInline();
+    } else if (s === "closing") {
+      ctx.setState("closed");
+      clearAnimInline();
+      releaseScrollLock();
+    }
+  };
+
+  // Wire drag controller once the ref is set; internal state guards handle
+  // when drag is allowed. Effect tracks only contentRef to avoid re-attaching
+  // on every state change.
+  createEffect(() => {
+    const node = ctx.contentRef();
+    if (!node) return;
+    const handle = attachDrag({
+      el: node,
+      getState: ctx.state,
+      setState: ctx.setState,
+      requestClose: () => ctx.setOpen(false),
+    });
+    onCleanup(() => handle.destroy());
+  });
 
   createEffect(() => {
     const s = ctx.state();
@@ -257,6 +297,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
       data-state={ctx.state()}
       data-reduced-motion={prefersReducedMotion() ? "" : undefined}
       onAnimationEnd={onAnimationEnd}
+      onTransitionEnd={onTransitionEnd}
       style={{
         "z-index": Z_BASE + 1,
         "will-change": "transform",
