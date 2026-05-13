@@ -8,6 +8,5 @@ export const CLOSE_VELOCITY_PX_PER_MS = 0.5;
 export const VELOCITY_WINDOW_MS = 100;
 export const VELOCITY_PROJECTION_MS = 200;
 
-// Lower than popover/dropdown defaults (z-50) so dropdowns opened from
-// inside the sheet stack on top naturally.
+// Under z-50 popovers so dropdowns opened in-sheet stack naturally.
 export const Z_BASE = 40;

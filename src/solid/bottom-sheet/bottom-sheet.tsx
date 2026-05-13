@@ -48,9 +48,7 @@ interface BottomSheetRootProps {
 
 const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
   const [uncontrolled, setUncontrolled] = createSignal(props.defaultOpen ?? false);
-  const [state, setStateRaw] = createSignal<SheetState>(
-    props.open ?? props.defaultOpen ? "open" : "closed",
-  );
+  const [state, setStateRaw] = createSignal<SheetState>("closed");
   const [contentRef, setContentRef] = createSignal<HTMLDivElement | undefined>(undefined);
 
   const isControlled = () => props.open !== undefined;
@@ -69,8 +67,6 @@ const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
 
   const dismissible = () => props.dismissible !== false;
 
-  // Drive open/close state transitions at Root so Portal can mount before
-  // Content's effect runs.
   createEffect(() => {
     const isOpen = open();
     const s = state();
@@ -86,7 +82,15 @@ const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
 
   return (
     <BottomSheetContext.Provider
-      value={{ state, setState, open, setOpen, dismissible, contentRef, setContentRef }}
+      value={{
+        state,
+        setState,
+        open,
+        setOpen,
+        dismissible,
+        contentRef,
+        setContentRef,
+      }}
     >
       {props.children}
     </BottomSheetContext.Provider>
@@ -133,7 +137,6 @@ const BottomSheetOverlay: Component<ComponentProps<"div">> = (props) => {
     const s = ctx.state();
     if (s === "closing") return "closing";
     if (s === "opening" || s === "closed") return s;
-    // open, pressing, dragging, snapping — overlay stays visible.
     return "open";
   };
 
@@ -163,7 +166,6 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
   const ctx = useBottomSheetContext();
   let el: HTMLDivElement | undefined;
 
-  // Scroll-lock tied to opening; release tied to closed.
   createEffect(() => {
     if (ctx.state() === "opening") acquireScrollLock();
   });
@@ -199,9 +201,6 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     }
   };
 
-  // Wire drag controller once the ref is set; internal state guards handle
-  // when drag is allowed. Effect tracks only contentRef to avoid re-attaching
-  // on every state change.
   createEffect(() => {
     const node = ctx.contentRef();
     if (!node) return;
@@ -214,8 +213,6 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     onCleanup(() => handle.destroy());
   });
 
-  // Keyboard avoidance: track visualViewport while open, push sheet above
-  // keyboard via --bs-keyboard-offset CSS var.
   createEffect(() => {
     const node = ctx.contentRef();
     if (!node) return;
@@ -244,10 +241,9 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     onCleanup(() => document.removeEventListener("keydown", onKey));
   });
 
-  // Outside-pointer dismiss — kobalte pattern.
-  // setTimeout(0) defers listener attachment so the triggering click finishes
-  // bubbling before listener exists. Walks event.target ancestors to check
-  // containment in content ref. For touch, defer to click event.
+  // setTimeout(0) lets the click that opened the sheet finish bubbling
+  // before the dismiss listener is attached. Touch defers to `click` so
+  // drag/scroll intent can be detected first.
   createEffect(() => {
     if (ctx.state() === "closed") return;
     if (!ctx.dismissible()) return;
@@ -260,8 +256,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     const isOutside = (target: EventTarget | null): boolean => {
       if (!(target instanceof Element) || !el) return false;
       if (el.contains(target)) return false;
-      // Targets inside a portaled popover/select/menu/dialog are logically
-      // inside the sheet's interaction surface even when portaled to body.
+      if (target.closest("[data-sheet-content]")) return false;
       if (target.closest(PORTAL_LAYER_SELECTOR)) return false;
       return true;
     };
@@ -272,7 +267,6 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
         if (ctx.state() === "open") ctx.setOpen(false);
       };
       if (e.pointerType === "touch") {
-        // wait for click — gives time to detect drag/scroll intent
         if (pendingClick) document.removeEventListener("click", pendingClick);
         pendingClick = () => {
           dismiss();
@@ -322,7 +316,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
       onAnimationEnd={onAnimationEnd}
       onTransitionEnd={onTransitionEnd}
       style={{
-        "z-index": Z_BASE + 1,
+        "z-index": Z_BASE,
         "will-change": "transform",
         "touch-action": "pan-y",
         "-webkit-tap-highlight-color": "transparent",

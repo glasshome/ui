@@ -1,10 +1,3 @@
-/**
- * Tracks the on-screen keyboard via visualViewport and applies an inline
- * `bottom` offset to the sheet content so it stays above the keyboard.
- *
- * No-op when visualViewport is unavailable (older browsers).
- */
-
 const KEYBOARD_THRESHOLD_PX = 100;
 
 export interface KeyboardWatchHandle {

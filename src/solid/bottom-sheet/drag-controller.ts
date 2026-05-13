@@ -23,9 +23,7 @@ interface DragOptions {
   requestClose: () => void;
 }
 
-/**
- * Logarithmic dampening for drag past the top edge. Vaul recipe.
- */
+// Rubber-band dampening past the top snap. Vaul recipe.
 function dampen(v: number): number {
   return 8 * (Math.log(v + 1) - 2);
 }
@@ -72,6 +70,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
 
     const target = e.target instanceof Element ? e.target : null;
     if (hasNoDragAncestor(target, el)) return;
+    if (target && target.closest("[data-sheet-content]") !== el) return;
 
     pointerId = e.pointerId;
     startY = e.clientY;
@@ -110,10 +109,8 @@ export function attachDrag(opts: DragOptions): DragHandle {
 
     if (!movedPastDeadZone) {
       if (Math.abs(totalDy) + Math.abs(totalDx) < DEAD_ZONE_PX) return;
-      // Decide once: drag or yield to scroll. Latch on commit.
       if (!shouldDrag(pointerTarget, el, totalDy, totalDx)) {
         dragAborted = true;
-        // Return state to open so press style doesn't linger.
         if (getState() === "pressing") setState("open");
         return;
       }
@@ -174,7 +171,6 @@ export function attachDrag(opts: DragOptions): DragHandle {
     safeReleaseCapture();
 
     if (!wasDragging) {
-      // tap — never moved past dead zone
       cleanupDrag();
       setState("open");
       return;
@@ -201,8 +197,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
     else setState("open");
   };
 
-  // Passive: false so we can preventDefault on touchmove once drag commits.
-  // Stops the browser from converting the gesture into scroll while we own it.
+  // preventDefault while drag committed — stops browser converting to scroll.
   const onTouchMove = (e: TouchEvent) => {
     if (movedPastDeadZone) e.preventDefault();
   };
