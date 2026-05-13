@@ -1,3 +1,4 @@
+import { hasNoDragAncestor, shouldDrag } from "./arbitration";
 import {
   CLOSE_DISTANCE_RATIO,
   CLOSE_VELOCITY_PX_PER_MS,
@@ -35,10 +36,13 @@ export function attachDrag(opts: DragOptions): DragHandle {
 
   let pointerId: number | null = null;
   let startY = 0;
+  let startX = 0;
+  let pointerTarget: Element | null = null;
   let dy = 0;
   let raf = 0;
   let pendingDy: number | null = null;
   let movedPastDeadZone = false;
+  let dragAborted = false;
   let height = 0;
   let lastTotalDy = 0;
 
@@ -66,11 +70,17 @@ export function attachDrag(opts: DragOptions): DragHandle {
     if (!isDraggableState()) return;
     if (pointerId !== null) return; // ignore secondary pointers
 
+    const target = e.target instanceof Element ? e.target : null;
+    if (hasNoDragAncestor(target, el)) return;
+
     pointerId = e.pointerId;
     startY = e.clientY;
+    startX = e.clientX;
+    pointerTarget = target;
     dy = 0;
     lastTotalDy = 0;
     movedPastDeadZone = false;
+    dragAborted = false;
     tracker.reset();
     tracker.add(0, e.timeStamp);
     height = el.offsetHeight || el.getBoundingClientRect().height;
@@ -93,14 +103,23 @@ export function attachDrag(opts: DragOptions): DragHandle {
 
   const onPointerMove = (e: PointerEvent) => {
     if (e.pointerId !== pointerId) return;
+    if (dragAborted) return;
     const totalDy = e.clientY - startY;
+    const totalDx = e.clientX - startX;
     lastTotalDy = totalDy;
-    tracker.add(totalDy, e.timeStamp);
 
     if (!movedPastDeadZone) {
-      if (Math.abs(totalDy) < DEAD_ZONE_PX) return;
+      if (Math.abs(totalDy) + Math.abs(totalDx) < DEAD_ZONE_PX) return;
+      // Decide once: drag or yield to scroll. Latch on commit.
+      if (!shouldDrag(pointerTarget, el, totalDy, totalDx)) {
+        dragAborted = true;
+        // Return state to open so press style doesn't linger.
+        if (getState() === "pressing") setState("open");
+        return;
+      }
       commitDrag();
     }
+    tracker.add(totalDy, e.timeStamp);
     dy = totalDy;
     schedule(dy);
   };
@@ -112,6 +131,8 @@ export function attachDrag(opts: DragOptions): DragHandle {
     }
     pendingDy = null;
     pointerId = null;
+    pointerTarget = null;
+    dragAborted = false;
   };
 
   const settleClose = () => {
@@ -180,10 +201,17 @@ export function attachDrag(opts: DragOptions): DragHandle {
     else setState("open");
   };
 
+  // Passive: false so we can preventDefault on touchmove once drag commits.
+  // Stops the browser from converting the gesture into scroll while we own it.
+  const onTouchMove = (e: TouchEvent) => {
+    if (movedPastDeadZone) e.preventDefault();
+  };
+
   el.addEventListener("pointerdown", onPointerDown);
   el.addEventListener("pointermove", onPointerMove);
   el.addEventListener("pointerup", onPointerUp);
   el.addEventListener("pointercancel", onPointerCancel);
+  el.addEventListener("touchmove", onTouchMove, { passive: false });
 
   return {
     destroy() {
@@ -191,6 +219,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
       el.removeEventListener("pointermove", onPointerMove);
       el.removeEventListener("pointerup", onPointerUp);
       el.removeEventListener("pointercancel", onPointerCancel);
+      el.removeEventListener("touchmove", onTouchMove);
       cleanupDrag();
     },
   };

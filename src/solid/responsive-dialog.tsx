@@ -1,5 +1,6 @@
 import {
   BottomSheet,
+  BottomSheetBody,
   BottomSheetContent,
   BottomSheetHandle,
   BottomSheetOverlay,
@@ -231,9 +232,7 @@ const MobileContent: ParentComponent<ComponentProps<"div">> = (props) => {
         <BottomSheetOverlay />
         <BottomSheetContent class={local.class} {...rest}>
           <BottomSheetHandle />
-          <div class="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-2 pb-6">
-            {local.children}
-          </div>
+          <BottomSheetBody class="pt-2">{local.children}</BottomSheetBody>
         </BottomSheetContent>
       </BottomSheetPortal>
     </BottomSheet>

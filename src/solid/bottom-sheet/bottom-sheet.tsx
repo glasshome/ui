@@ -128,7 +128,13 @@ const BottomSheetOverlay: Component<ComponentProps<"div">> = (props) => {
   const [local, rest] = splitProps(props, ["class"]);
   const ctx = useBottomSheetContext();
 
-  const dataState = () => (ctx.state() === "open" ? "open" : "closing");
+  const dataState = () => {
+    const s = ctx.state();
+    if (s === "closing") return "closing";
+    if (s === "opening" || s === "closed") return s;
+    // open, pressing, dragging, snapping — overlay stays visible.
+    return "open";
+  };
 
   return (
     <div
@@ -358,7 +364,10 @@ const BottomSheetBody: Component<ComponentProps<"div">> = (props) => {
   return (
     <div
       data-sheet-scroll=""
-      class={cn("flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pb-6", local.class)}
+      class={cn(
+        "flex min-h-0 flex-1 flex-col overflow-y-auto touch-pan-y overscroll-contain px-6 pb-6",
+        local.class,
+      )}
       {...rest}
     />
   );
