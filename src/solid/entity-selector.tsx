@@ -1,5 +1,5 @@
 import { getEntityView } from "@glasshome/sync-layer";
-import { byDomain } from "@glasshome/sync-layer/solid";
+import { byDomain, useEntities } from "@glasshome/sync-layer/solid";
 import { Icon } from "@iconify-icon/solid";
 import { createMemo, createSignal, For, Show } from "solid-js";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover";
@@ -61,10 +61,18 @@ export function EntitySelector(props: EntitySelectorProps) {
 		return domains[props.domain] ?? [];
 	});
 
+	const entityViews = useEntities(domainEntities);
+
 	const filtered = createMemo(() => {
-		const q = search().toLowerCase();
+		const q = search().trim().toLowerCase();
 		if (!q) return domainEntities();
-		return domainEntities().filter((id) => id.toLowerCase().includes(q));
+		const viewById = new Map(entityViews().map((v) => [v.id, v]));
+		return domainEntities().filter((id) => {
+			if (id.toLowerCase().includes(q)) return true;
+			const v = viewById.get(id);
+			if (!v) return false;
+			return v.friendlyName.toLowerCase().includes(q) || v.name.toLowerCase().includes(q);
+		});
 	});
 
 	const toggleEntity = (entityId: string) => {

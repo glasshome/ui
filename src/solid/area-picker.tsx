@@ -1,15 +1,8 @@
-import { areas as queryAreas } from "@glasshome/sync-layer";
+import { useAreas } from "@glasshome/sync-layer/solid";
 import { Icon } from "@iconify-icon/solid";
 import { createMemo, createSignal, For, Show } from "solid-js";
 import { Input } from "./input";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover";
-
-interface AreaSnapshot {
-	id: string;
-	name: string;
-	icon: string | null;
-	entityCount: number;
-}
 
 interface AreaPickerProps {
 	value: string;
@@ -22,25 +15,22 @@ interface AreaPickerProps {
 export function AreaPicker(props: AreaPickerProps) {
 	const [open, setOpen] = createSignal(false);
 	const [search, setSearch] = createSignal("");
-	const [snapshot, setSnapshot] = createSignal<AreaSnapshot[]>([]);
 
-	const handleOpen = () => {
-		const areaList = queryAreas().get();
-		setSnapshot(
-			areaList.map((a) => ({
-				id: a.id,
-				name: a.name,
-				icon: a.icon,
-				entityCount: a.entities.length,
-			})),
-		);
-		setOpen(true);
-	};
+	const areas = useAreas();
+
+	const areaList = createMemo(() =>
+		areas().map((a) => ({
+			id: a.id,
+			name: a.name,
+			icon: a.icon,
+			entityCount: a.entities.length,
+		})),
+	);
 
 	const filtered = createMemo(() => {
-		const q = search().toLowerCase();
-		if (!q) return snapshot();
-		return snapshot().filter(
+		const q = search().trim().toLowerCase();
+		if (!q) return areaList();
+		return areaList().filter(
 			(a) => a.name.toLowerCase().includes(q) || a.id.toLowerCase().includes(q),
 		);
 	});
@@ -48,12 +38,7 @@ export function AreaPicker(props: AreaPickerProps) {
 	const selectedLabel = createMemo(() => {
 		const v = props.value;
 		if (!v) return undefined;
-		const fromSnapshot = snapshot().find((a) => a.id === v);
-		if (fromSnapshot) return fromSnapshot;
-		const areaList = queryAreas().get();
-		const found = areaList.find((a) => a.id === v);
-		if (!found) return undefined;
-		return { id: found.id, name: found.name, icon: found.icon, entityCount: found.entities.length };
+		return areaList().find((a) => a.id === v);
 	});
 
 	const selectArea = (areaId: string) => {
@@ -83,7 +68,7 @@ export function AreaPicker(props: AreaPickerProps) {
 				<button
 					type="button"
 					class="flex h-9 w-full items-center gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
-					onClick={() => (open() ? setOpen(false) : handleOpen())}
+					onClick={() => setOpen(!open())}
 				>
 					<Show
 						when={selectedLabel()}

@@ -12,7 +12,13 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: ["solid-js", "solid-js/web", "solid-js/store"],
+      external: [
+        "solid-js",
+        "solid-js/web",
+        "solid-js/store",
+        "@glasshome/sync-layer",
+        "@glasshome/sync-layer/solid",
+      ],
       output: {
         entryFileNames: "[name].js",
       },
