@@ -174,7 +174,6 @@ export {
   FormMessage,
   useFormField,
 } from "./form";
-export { ElegantShape, GeometricBackground } from "./geometric-background";
 export { GlassEffect, GlassFilter } from "./glass-effect";
 export {
   HoverCard,
