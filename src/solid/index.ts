@@ -1,5 +1,8 @@
 // Original components
 
+// Color helpers for ColorWheel/ColorSlider consumers, re-exported so they
+// don't need a direct @kobalte/core dependency.
+export { type Color, parseColor } from "@kobalte/core/colors";
 // Wave 2: Simple Kobalte Components
 export {
 	Accordion,
@@ -80,6 +83,8 @@ export {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "./collapsible";
+export { ColorSlider } from "./color-slider";
+export { ColorWheel } from "./color-wheel";
 export {
 	Command,
 	CommandDialog,
