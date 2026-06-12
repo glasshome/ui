@@ -10,6 +10,7 @@ import { Switch } from "./switch";
 interface ExtendedJSONSchema extends JSONSchema7 {
 	domain?: string;
 	singleSelect?: boolean;
+	deviceClass?: string;
 }
 
 interface SchemaFormProps {
@@ -56,6 +57,7 @@ export function SchemaForm(props: SchemaFormProps) {
 								entityIds={(formData()[key] as string[]) ?? (prop.default as string[]) ?? []}
 								onEntityIdsChange={(ids) => updateField(key, ids)}
 								domain={(prop as ExtendedJSONSchema).domain!}
+								deviceClass={(prop as ExtendedJSONSchema).deviceClass}
 								multiple={(prop as ExtendedJSONSchema).singleSelect !== true}
 							/>
 						) : /* Area picker */
