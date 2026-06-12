@@ -3,36 +3,36 @@ import { type Component, type ComponentProps, splitProps } from "solid-js";
 import { cn } from "../lib/utils";
 
 const Collapsible: Component<ComponentProps<typeof CollapsiblePrimitive>> = (props) => {
-  return <CollapsiblePrimitive data-slot="collapsible" {...props} />;
+	return <CollapsiblePrimitive data-slot="collapsible" {...props} />;
 };
 
 const CollapsibleTrigger: Component<ComponentProps<typeof CollapsiblePrimitive.Trigger>> = (
-  props,
+	props,
 ) => {
-  const [local, rest] = splitProps(props, ["class"]);
-  return (
-    <CollapsiblePrimitive.Trigger
-      data-slot="collapsible-trigger"
-      class={cn("cursor-pointer py-3", local.class)}
-      {...rest}
-    />
-  );
+	const [local, rest] = splitProps(props, ["class"]);
+	return (
+		<CollapsiblePrimitive.Trigger
+			data-slot="collapsible-trigger"
+			class={cn("cursor-pointer py-3", local.class)}
+			{...rest}
+		/>
+	);
 };
 
 const CollapsibleContent: Component<ComponentProps<typeof CollapsiblePrimitive.Content>> = (
-  props,
+	props,
 ) => {
-  const [local, rest] = splitProps(props, ["class"]);
-  return (
-    <CollapsiblePrimitive.Content
-      data-slot="collapsible-content"
-      class={cn(
-        "overflow-hidden data-closed:animate-collapsible-up data-expanded:animate-collapsible-down",
-        local.class,
-      )}
-      {...rest}
-    />
-  );
+	const [local, rest] = splitProps(props, ["class"]);
+	return (
+		<CollapsiblePrimitive.Content
+			data-slot="collapsible-content"
+			class={cn(
+				"overflow-hidden data-closed:animate-collapsible-up data-expanded:animate-collapsible-down",
+				local.class,
+			)}
+			{...rest}
+		/>
+	);
 };
 
 export { Collapsible, CollapsibleContent, CollapsibleTrigger };

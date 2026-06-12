@@ -133,7 +133,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 			if (v.name.toLowerCase().includes(q)) return true;
 			if (v.aliases.some((a) => a.toLowerCase().includes(q))) return true;
 			const areaName = v.areaId ? names.get(v.areaId) : undefined;
-			return areaName != null && areaName.toLowerCase().includes(q);
+			return areaName?.toLowerCase().includes(q) ?? false;
 		});
 	});
 
@@ -235,7 +235,9 @@ export function EntitySelector(props: EntitySelectorProps) {
 
 	const rowIndexByKey = createMemo(() => {
 		const map = new Map<string, number>();
-		rows().forEach((row, i) => map.set(row.key, i));
+		rows().forEach((row, i) => {
+			map.set(row.key, i);
+		});
 		return map;
 	});
 
@@ -259,11 +261,15 @@ export function EntitySelector(props: EntitySelectorProps) {
 	};
 
 	createEffect(
-		on(search, () => {
-			setActiveIndex(0);
-			scrollRef?.scrollTo({ top: 0 });
-			setScrollTop(0);
-		}),
+		on(
+			search,
+			() => {
+				setActiveIndex(0);
+				scrollRef?.scrollTo({ top: 0 });
+				setScrollTop(0);
+			},
+			{ defer: true },
+		),
 	);
 
 	createEffect(() => {
@@ -356,54 +362,56 @@ export function EntitySelector(props: EntitySelectorProps) {
 	const isSingle = () => props.multiple === false;
 	const showTriggerClear = () => isSingle() && props.entityIds.length > 0;
 
-	const clearSelection = (e: MouseEvent) => {
-		e.stopPropagation();
+	const clearSelection = () => {
 		props.onEntityIdsChange([]);
 	};
 
 	const TriggerButton = (p: { onClick: () => void }) => (
-		<button
-			type="button"
-			role="combobox"
-			aria-expanded={open()}
-			aria-controls={listboxId}
-			aria-haspopup="listbox"
-			class="flex h-9 w-full items-center gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
-			onClick={p.onClick}
-		>
-			<Show when={triggerIcon()}>
-				{(icon) => (
-					<Icon icon={icon()} width={16} height={16} class="shrink-0 text-muted-foreground" />
-				)}
-			</Show>
-			<Show
-				when={triggerLabel()}
-				fallback={
-					<span class="flex-1 truncate text-left text-muted-foreground">
-						Select {props.domain} {isSingle() ? "entity" : "entities"}...
-					</span>
-				}
+		<div class="relative">
+			<button
+				type="button"
+				role="combobox"
+				aria-expanded={open()}
+				aria-controls={listboxId}
+				aria-haspopup="listbox"
+				class={`flex h-9 w-full items-center gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30 ${
+					showTriggerClear() ? "pr-14" : ""
+				}`}
+				onClick={p.onClick}
 			>
-				{(label) => <span class="flex-1 truncate text-left">{label()}</span>}
-			</Show>
+				<Show when={triggerIcon()}>
+					{(icon) => (
+						<Icon icon={icon()} width={16} height={16} class="shrink-0 text-muted-foreground" />
+					)}
+				</Show>
+				<Show
+					when={triggerLabel()}
+					fallback={
+						<span class="flex-1 truncate text-left text-muted-foreground">
+							Select {props.domain} {isSingle() ? "entity" : "entities"}...
+						</span>
+					}
+				>
+					{(label) => <span class="flex-1 truncate text-left">{label()}</span>}
+				</Show>
+				<Icon
+					icon="mdi:chevron-down"
+					width={16}
+					height={16}
+					class={`shrink-0 text-muted-foreground transition-transform ${open() ? "rotate-180" : ""}`}
+				/>
+			</button>
 			<Show when={showTriggerClear()}>
-				<span
-					role="button"
-					tabIndex={-1}
+				<button
+					type="button"
 					aria-label="Clear selection"
-					class="-m-1 flex shrink-0 cursor-pointer items-center rounded-sm p-1 text-muted-foreground transition-colors hover:text-foreground"
+					class="absolute top-1/2 right-8 flex -translate-y-1/2 items-center rounded-sm p-1 text-muted-foreground transition-colors hover:text-foreground"
 					onClick={clearSelection}
 				>
 					<Icon icon="mdi:close-circle" width={16} height={16} />
-				</span>
+				</button>
 			</Show>
-			<Icon
-				icon="mdi:chevron-down"
-				width={16}
-				height={16}
-				class={`shrink-0 text-muted-foreground transition-transform ${open() ? "rotate-180" : ""}`}
-			/>
-		</button>
+		</div>
 	);
 
 	const EntityRowButton = (p: { id: string; entityIndex: number; top: number }) => {
@@ -413,12 +421,16 @@ export function EntitySelector(props: EntitySelectorProps) {
 			const v = view();
 			return v == null || isUnavailable(v);
 		};
+		const state = () => {
+			const v = view();
+			return v ? stateLabel(v) : "";
+		};
 		return (
 			<button
 				type="button"
 				role="option"
 				aria-selected={selected()}
-				data-active={activeIndex() === p.entityIndex || undefined}
+				data-active={(!isMobile() && activeIndex() === p.entityIndex) || undefined}
 				class="absolute inset-x-1 flex cursor-pointer items-center gap-3 rounded-lg px-2 text-left transition-colors data-active:bg-muted"
 				style={{ top: `${p.top}px`, height: `${ROW_HEIGHT}px` }}
 				onMouseMove={() => setActiveIndex(p.entityIndex)}
@@ -440,10 +452,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 						unavailable() ? "text-muted-foreground italic" : "text-muted-foreground"
 					}`}
 				>
-					{(() => {
-						const v = view();
-						return v ? stateLabel(v) : "";
-					})()}
+					{state()}
 				</span>
 				<Show
 					when={isSingle()}
@@ -480,8 +489,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 	};
 
 	const PickerContent = () => (
-		// onKeyDown bubbles up from the search input; the div itself is not focusable
-		<div class="flex min-h-0 flex-1 flex-col" onKeyDown={handleKeyDown}>
+		<div class="flex min-h-0 flex-1 flex-col">
 			<div class="flex shrink-0 items-center gap-2 border-b px-3">
 				<Icon
 					icon="mdi:magnify"
@@ -492,13 +500,13 @@ export function EntitySelector(props: EntitySelectorProps) {
 				/>
 				<input
 					ref={inputRef}
-					type="text"
-					role="searchbox"
+					type="search"
 					aria-label={`Search ${props.domain} entities`}
 					placeholder="Search by name, room, or ID..."
 					value={search()}
 					onInput={(e) => setSearch(e.currentTarget.value)}
-					class="h-11 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+					onKeyDown={handleKeyDown}
+					class="h-11 w-full appearance-none bg-transparent text-sm outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden"
 				/>
 				<Show when={search()}>
 					<button
@@ -588,9 +596,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 			<Show when={diagnosticCount() > 0 || props.deviceClass}>
 				<div class="flex shrink-0 items-center justify-between gap-2 border-t px-3 py-2">
 					<span class="truncate text-muted-foreground text-xs">
-						<Show when={props.deviceClass} fallback={<span />}>
-							Showing {props.deviceClass} entities only
-						</Show>
+						{props.deviceClass ? `Showing ${props.deviceClass} entities only` : ""}
 					</span>
 					<Show when={diagnosticCount() > 0}>
 						<button
@@ -598,9 +604,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 							class="shrink-0 text-muted-foreground text-xs transition-colors hover:text-foreground"
 							onClick={() => setShowDiagnostics(!showDiagnostics())}
 						>
-							{showDiagnostics()
-								? "Hide diagnostic"
-								: `Show diagnostic (${diagnosticCount()})`}
+							{showDiagnostics() ? "Hide diagnostic" : `Show diagnostic (${diagnosticCount()})`}
 						</button>
 					</Show>
 				</div>

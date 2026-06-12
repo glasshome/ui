@@ -68,9 +68,9 @@ This provides the GlassHome design tokens (colors, radii, animations) as a Tailw
 
 ## Peer Dependencies
 
-| Package    | Required | Notes                                    |
+| Package | Required | Notes |
 | ---------- | -------- | ---------------------------------------- |
-| `solid-js` | Yes      | SolidJS reactive primitives and JSX runtime |
+| `solid-js` | Yes | SolidJS reactive primitives and JSX runtime |
 
 ## License
 

@@ -56,7 +56,7 @@ export function SchemaForm(props: SchemaFormProps) {
 							<EntitySelector
 								entityIds={(formData()[key] as string[]) ?? (prop.default as string[]) ?? []}
 								onEntityIdsChange={(ids) => updateField(key, ids)}
-								domain={(prop as ExtendedJSONSchema).domain!}
+								domain={(prop as ExtendedJSONSchema).domain ?? ""}
 								deviceClass={(prop as ExtendedJSONSchema).deviceClass}
 								multiple={(prop as ExtendedJSONSchema).singleSelect !== true}
 							/>
@@ -122,9 +122,7 @@ export function SchemaForm(props: SchemaFormProps) {
 										};
 										return (
 											<div class="flex flex-col gap-1.5">
-												<Label for={`${key}.${subKey}`}>
-													{subProp.title || subKey}
-												</Label>
+												<Label for={`${key}.${subKey}`}>{subProp.title || subKey}</Label>
 												{subProp.enum ? (
 													<Select
 														value={String(objVal()[subKey] ?? subProp.default ?? "")}
@@ -139,9 +137,7 @@ export function SchemaForm(props: SchemaFormProps) {
 														)}
 													>
 														<SelectTrigger class="w-full">
-															<SelectValue<string>>
-																{(state) => state.selectedOption()}
-															</SelectValue>
+															<SelectValue<string>>{(state) => state.selectedOption()}</SelectValue>
 														</SelectTrigger>
 														<SelectContent />
 													</Select>
@@ -223,6 +219,7 @@ function StringListField(props: { value: string[]; onChange: (value: string[]) =
 								{item}
 								<button
 									type="button"
+									aria-label={`Remove ${item}`}
 									onClick={() => props.onChange(props.value.filter((v) => v !== item))}
 									class="ml-0.5 rounded-sm hover:text-destructive"
 								>
@@ -232,6 +229,7 @@ function StringListField(props: { value: string[]; onChange: (value: string[]) =
 										fill="none"
 										stroke="currentColor"
 										stroke-width="2"
+										aria-hidden="true"
 									>
 										<path d="M18 6L6 18M6 6l12 12" />
 									</svg>
