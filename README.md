@@ -2,7 +2,7 @@
 
 SolidJS component library for GlassHome, built on [Kobalte](https://kobalte.dev).
 
-56 accessible, theme-aware components plus utility functions and a Tailwind v4 CSS preset — everything you need to build smart-home dashboards.
+56 accessible, theme-aware components plus utility functions and a Tailwind v4 CSS preset — everything you need to build smart-home dashboards. Powers [GlassHome](https://glasshome.app), the local-first dashboard for Home Assistant.
 
 ## Install
 
