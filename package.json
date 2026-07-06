@@ -37,6 +37,11 @@
 			"types": "./dist/solid/index.d.ts",
 			"import": "./dist/solid/index.js"
 		},
+		"./tokens": {
+			"@glasshome/source": "./src/tokens/index.ts",
+			"types": "./dist/tokens/index.d.ts",
+			"import": "./dist/tokens/index.js"
+		},
 		"./styles": "./src/styles/globals.css",
 		"./package.json": "./package.json",
 		"./styles/theme": "./src/styles/theme.css"
@@ -47,6 +52,7 @@
 	],
 	"scripts": {
 		"build": "vite build && tsc",
+		"check:tokens": "bun scripts/check-tokens.ts",
 		"dev": "vite build --watch",
 		"lint": "biome check ."
 	},

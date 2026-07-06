@@ -8,6 +8,7 @@ export default defineConfig({
 			entry: {
 				index: "src/index.ts",
 				"solid/index": "src/solid/index.ts",
+				"tokens/index": "src/tokens/index.ts",
 			},
 			formats: ["es"],
 		},
