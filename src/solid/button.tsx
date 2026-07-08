@@ -4,7 +4,8 @@ import { type ComponentProps, splitProps } from "solid-js";
 import { cn } from "../lib/utils";
 
 const buttonVariants = cva({
-	base: "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+	// Buttons are pills. rounded-full is the shape, everywhere, no per-button opt-in.
+	base: "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 	variants: {
 		variant: {
 			default: "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
@@ -26,36 +27,28 @@ const buttonVariants = cva({
 		},
 		size: {
 			default: "h-9 px-4 py-2 has-[>svg]:px-3",
-			sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
-			lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+			sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5",
+			lg: "h-10 px-6 has-[>svg]:px-4",
 			icon: "size-9 p-2",
-		},
-		// Shape is orthogonal to variant: app buttons are rounded-md, marketing CTAs
-		// are pills. Declared after size so twMerge lets pill win over the size
-		// recipes' own rounded-md.
-		shape: {
-			rounded: "rounded-md",
-			pill: "rounded-full",
+			// sizeless: color + shape only, caller supplies h-*/px-* (marketing CTAs
+			// that vary sizing per surface). Backs the hub PILL_* class tokens.
+			none: "",
 		},
 	},
 	defaultVariants: {
 		variant: "default",
 		size: "default",
-		shape: "rounded",
 	},
 });
 
 type ButtonProps = ComponentProps<typeof KobalteButton> & VariantProps<typeof buttonVariants>;
 
 function Button(props: ButtonProps) {
-	const [local, others] = splitProps(props, ["class", "variant", "size", "shape"] as const);
+	const [local, others] = splitProps(props, ["class", "variant", "size"] as const);
 	return (
 		<KobalteButton
 			data-slot="button"
-			class={cn(
-				buttonVariants({ variant: local.variant, size: local.size, shape: local.shape }),
-				local.class,
-			)}
+			class={cn(buttonVariants({ variant: local.variant, size: local.size }), local.class)}
 			{...others}
 		/>
 	);
