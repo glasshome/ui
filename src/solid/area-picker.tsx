@@ -118,7 +118,7 @@ export function AreaPicker(props: AreaPickerProps) {
 							<Show when={props.allowClear !== false && props.value}>
 								<button
 									type="button"
-									class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent"
+									class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors hover:bg-muted"
 									onClick={clear}
 								>
 									<div class="flex size-[18px] shrink-0 items-center justify-center">
@@ -136,7 +136,7 @@ export function AreaPicker(props: AreaPickerProps) {
 								{(area) => (
 									<button
 										type="button"
-										class="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent"
+										class="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors hover:bg-muted"
 										classList={{
 											"bg-primary/10 text-primary": props.value === area.id,
 										}}
@@ -149,7 +149,7 @@ export function AreaPicker(props: AreaPickerProps) {
 											<span class="truncate font-medium">{area.name}</span>
 										</div>
 										<span
-											class="shrink-0 text-muted-foreground text-xs group-hover:text-accent-foreground/60"
+											class="shrink-0 text-muted-foreground text-xs group-hover:text-foreground/60"
 											classList={{
 												"!text-primary/60": props.value === area.id,
 											}}

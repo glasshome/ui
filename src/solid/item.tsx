@@ -28,7 +28,7 @@ const ItemSeparator: Component<ComponentProps<typeof Separator>> = (props) => {
 };
 
 const itemVariants = cva({
-	base: "group/item flex flex-wrap items-center rounded-md border border-transparent text-sm outline-none transition-colors duration-100 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-accent/50",
+	base: "group/item flex flex-wrap items-center rounded-md border border-transparent text-sm outline-none transition-colors duration-100 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-muted/50",
 	variants: {
 		variant: {
 			default: "bg-transparent",

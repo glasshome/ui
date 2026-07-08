@@ -11,7 +11,7 @@ export {
 	AccordionTrigger,
 } from "./accordion";
 // Wave 1: Pure HTML+CSS Components
-export { Alert, AlertDescription, AlertTitle, alertVariants } from "./alert";
+export { Alert, type AlertTone, AlertDescription, AlertTitle } from "./alert";
 export {
 	AlertDialog,
 	AlertDialogAction,
@@ -26,7 +26,7 @@ export {
 export { AreaPicker } from "./area-picker";
 export { AspectRatio } from "./aspect-ratio";
 export { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-export { Badge, badgeVariants } from "./badge";
+export { Badge, badgeVariants, TierBadge } from "./badge";
 export {
 	BottomSheet,
 	BottomSheetBody,

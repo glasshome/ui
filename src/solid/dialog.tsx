@@ -10,11 +10,12 @@ const DialogContent: ParentComponent<ComponentProps<typeof DialogPrimitive.Conte
 	const [local, others] = splitProps(props, ["class", "children"]);
 	return (
 		<DialogPrimitive.Portal>
-			<DialogPrimitive.Overlay class="data-[closed]:fade-out-0 data-[expanded]:fade-in-0 fixed inset-0 z-50 bg-black/80 backdrop-blur-sm data-[closed]:animate-out data-[expanded]:animate-in" />
+			<DialogPrimitive.Overlay class="data-[closed]:fade-out-0 data-[expanded]:fade-in-0 fixed inset-0 z-50 bg-background/70 backdrop-blur-sm data-[closed]:animate-out data-[expanded]:animate-in" />
 			<DialogPrimitive.Content
 				data-slot="dialog-content"
 				class={cn(
-					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border bg-background p-6 shadow-lg duration-200 data-[closed]:animate-out data-[expanded]:animate-in sm:rounded-lg",
+					// glass panel (D1/GL1): translucent surface/85 + blur, radius from --radius.
+					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border border-border/50 bg-background/85 p-6 shadow-lg backdrop-blur-md duration-200 data-[closed]:animate-out data-[expanded]:animate-in sm:rounded-lg",
 					local.class,
 				)}
 				{...others}

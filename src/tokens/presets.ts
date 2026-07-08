@@ -68,7 +68,7 @@ export const THEME_PRESETS: ThemePreset[] = [
 				muted: "oklch(0.9702 0 0)",
 				mutedForeground: "oklch(0.4386 0 0)",
 				input: "oklch(0.9401 0 0)",
-				ring: "oklch(0.6132 0.2294 291.7437)",
+				ring: "oklch(0.6 0.2 195)",
 				destructive: "oklch(0.629 0.1902 23.0704)",
 			},
 			dark: {
@@ -82,7 +82,7 @@ export const THEME_PRESETS: ThemePreset[] = [
 				muted: "oklch(0.22 0.006 0)",
 				mutedForeground: "oklch(0.7058 0 0)",
 				input: "oklch(0.25 0.005 0)",
-				ring: "oklch(0.6132 0.2294 291.7437)",
+				ring: "oklch(0.6 0.2 195)",
 				destructive: "oklch(0.7106 0.1661 22.2162)",
 			},
 		},

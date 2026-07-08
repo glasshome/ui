@@ -10,10 +10,11 @@ const TabsList: Component<ComponentProps<typeof TabsPrimitive.List>> = (props) =
 		<TabsPrimitive.List
 			data-slot="tabs-list"
 			class={cn(
-				"inline-flex h-9 w-full items-center justify-start gap-1 rounded-xl p-1 text-muted-foreground",
+				// admin pill spec: neutral card track (not primary-tinted), radius from
+				// --radius, active state carries the fill (see TabsTrigger).
+				"inline-flex h-9 w-full items-center justify-start gap-1 rounded-lg border border-border/50 bg-card/40 p-1 text-muted-foreground backdrop-blur-sm",
 				local.class,
 			)}
-			style={{ background: "color-mix(in oklch, var(--primary) 30%, transparent)" }}
 			{...others}
 		/>
 	);
@@ -25,7 +26,7 @@ const TabsTrigger: Component<ComponentProps<typeof TabsPrimitive.Trigger>> = (pr
 		<TabsPrimitive.Trigger
 			data-slot="tabs-trigger"
 			class={cn(
-				"inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-1 font-medium text-sm outline-none transition-all hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-[selected]:bg-background data-[selected]:text-foreground data-[selected]:shadow-sm",
+				"inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-2 py-1 font-medium text-sm outline-none transition-all hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-[selected]:bg-foreground/10 data-[selected]:text-foreground data-[selected]:shadow-sm",
 				local.class,
 			)}
 			{...others}

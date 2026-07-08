@@ -220,9 +220,9 @@ const Calendar: Component<CalendarProps> = (props) => {
 													<td
 														class={cn(
 															"group/day relative aspect-square flex-1 select-none p-0 text-center",
-															rangeStart() && "rounded-l-md bg-accent",
-															rangeEnd() && "rounded-r-md bg-accent",
-															rangeMiddle() && "bg-accent",
+															rangeStart() && "rounded-l-md bg-muted",
+															rangeEnd() && "rounded-r-md bg-muted",
+															rangeMiddle() && "bg-muted",
 														)}
 														data-selected={selected()}
 													>
@@ -236,12 +236,10 @@ const Calendar: Component<CalendarProps> = (props) => {
 																selected() &&
 																	!rangeMiddle() &&
 																	"bg-primary text-primary-foreground",
-																rangeMiddle() && "rounded-none bg-accent text-accent-foreground",
+																rangeMiddle() && "rounded-none bg-muted text-foreground",
 																rangeStart() && "rounded-l-md bg-primary text-primary-foreground",
 																rangeEnd() && "rounded-r-md bg-primary text-primary-foreground",
-																cellIsToday &&
-																	!selected() &&
-																	"rounded-md bg-accent text-accent-foreground",
+																cellIsToday && !selected() && "rounded-md bg-muted text-foreground",
 																cell.isOutside && "text-muted-foreground",
 																cellDisabled() && "text-muted-foreground opacity-50",
 															)}

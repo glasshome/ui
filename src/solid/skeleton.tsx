@@ -6,7 +6,7 @@ const Skeleton: Component<ComponentProps<"div">> = (props) => {
 	return (
 		<div
 			data-slot="skeleton"
-			class={cn("animate-pulse rounded-md bg-accent", local.class)}
+			class={cn("animate-pulse rounded-md bg-muted", local.class)}
 			{...others}
 		/>
 	);

@@ -28,7 +28,7 @@ const MenubarTrigger: Component<ComponentProps<typeof MenubarPrimitive.Trigger>>
 		<MenubarPrimitive.Trigger
 			data-slot="menubar-trigger"
 			class={cn(
-				"flex select-none items-center rounded-sm px-2 py-1 font-medium text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-[expanded]:bg-accent data-[expanded]:text-accent-foreground",
+				"flex select-none items-center rounded-sm px-2 py-1 font-medium text-sm outline-hidden focus:bg-muted focus:text-foreground data-[expanded]:bg-muted data-[expanded]:text-foreground",
 				local.class,
 			)}
 			{...rest}
@@ -66,7 +66,7 @@ const MenubarItem: Component<
 			data-inset={local.inset}
 			data-variant={variant()}
 			class={cn(
-				"data-[variant=destructive]:*:[svg]:!text-destructive relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[inset]:pl-8 data-[variant=destructive]:text-destructive data-[disabled]:opacity-50 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"data-[variant=destructive]:*:[svg]:!text-destructive relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden focus:bg-muted focus:text-foreground data-[disabled]:pointer-events-none data-[inset]:pl-8 data-[variant=destructive]:text-destructive data-[disabled]:opacity-50 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				local.class,
 			)}
 			{...rest}
@@ -82,7 +82,7 @@ const MenubarCheckboxItem: ParentComponent<ComponentProps<typeof MenubarPrimitiv
 		<MenubarPrimitive.CheckboxItem
 			data-slot="menubar-checkbox-item"
 			class={cn(
-				"relative flex cursor-default select-none items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"relative flex cursor-default select-none items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden focus:bg-muted focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				local.class,
 			)}
 			{...rest}
@@ -105,7 +105,7 @@ const MenubarRadioItem: ParentComponent<ComponentProps<typeof MenubarPrimitive.R
 		<MenubarPrimitive.RadioItem
 			data-slot="menubar-radio-item"
 			class={cn(
-				"relative flex cursor-default select-none items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"relative flex cursor-default select-none items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden focus:bg-muted focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				local.class,
 			)}
 			{...rest}
@@ -165,7 +165,7 @@ const MenubarSubTrigger: ParentComponent<
 			data-slot="menubar-sub-trigger"
 			data-inset={local.inset}
 			class={cn(
-				"flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[expanded]:bg-accent data-[inset]:pl-8 data-[expanded]:text-accent-foreground",
+				"flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-muted focus:text-foreground data-[expanded]:bg-muted data-[inset]:pl-8 data-[expanded]:text-foreground",
 				local.class,
 			)}
 			{...rest}

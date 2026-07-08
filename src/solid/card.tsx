@@ -7,9 +7,12 @@ const Card: Component<ComponentProps<"div">> = (props) => {
 		<div
 			data-slot="card"
 			class={cn(
-				"flex flex-col rounded-lg border border-border/50 bg-card py-3 text-card-foreground shadow-sm backdrop-blur-sm transition-all hover:border-border md:py-4",
+				// hub token card (C2): translucent card/60 + blur, radius from --radius
+				// (rounded-lg === --radius-lg === var(--radius)), top inset highlight.
+				"relative flex flex-col rounded-lg border border-border/50 bg-card/60 py-3 text-card-foreground shadow-sm backdrop-blur-sm transition-colors hover:border-border md:py-4",
 				local.class,
 			)}
+			style={{ "box-shadow": "inset 0 1px 0 oklch(1 0 0 / 0.06)" }}
 			{...others}
 		/>
 	);
