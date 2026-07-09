@@ -23,7 +23,7 @@ export function AreaPicker(props: AreaPickerProps) {
 			id: a.id,
 			name: a.name,
 			icon: a.icon,
-			entityCount: a.entities.length,
+			entityCount: a.entityIds.length,
 		})),
 	);
 
