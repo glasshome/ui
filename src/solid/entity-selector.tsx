@@ -98,7 +98,8 @@ export function EntitySelector(props: EntitySelectorProps) {
 	const [viewportHeight, setViewportHeight] = createSignal(320);
 
 	const domainEntityIds = createMemo(() => byDomain()[props.domain] ?? []);
-	const allViews = useEntities(domainEntityIds);
+	const subscribedIds = createMemo(() => (open() ? domainEntityIds() : props.entityIds));
+	const allViews = useEntities(subscribedIds);
 	const areas = useAreas();
 	const areaNameById = createMemo(() => new Map(areas().map((a) => [a.id, a.name])));
 	const selectedSet = createMemo(() => new Set(props.entityIds));
