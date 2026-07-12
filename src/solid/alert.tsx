@@ -21,7 +21,11 @@ export type AlertTone = "info" | "warning" | "success" | "destructive";
 type ToneStyle = { color: string; icon: ValidComponent; text: string };
 
 const ALERT_TONES: Record<AlertTone, ToneStyle> = {
-	info: { color: "var(--primary)", icon: Info, text: "var(--primary-tint-foreground)" },
+	info: {
+		color: "var(--primary)",
+		icon: Info,
+		text: "color-mix(in oklab, var(--primary) 55%, var(--foreground))",
+	},
 	warning: {
 		color: "var(--warning)",
 		icon: TriangleAlert,
@@ -39,9 +43,9 @@ const ALERT_TONES: Record<AlertTone, ToneStyle> = {
 	},
 };
 
-const border = (c: string) => `color-mix(in oklch, ${c} 28%, transparent)`;
-const fill = (c: string) => `color-mix(in oklch, ${c} 9%, transparent)`;
-const iconFill = (c: string) => `color-mix(in oklch, ${c} 16%, transparent)`;
+const border = (c: string) => `color-mix(in srgb, ${c} 28%, transparent)`;
+const fill = (c: string) => `color-mix(in srgb, ${c} 9%, transparent)`;
+const iconFill = (c: string) => `color-mix(in srgb, ${c} 16%, transparent)`;
 
 type AlertProps = ComponentProps<"div"> & {
 	tone?: AlertTone;
