@@ -39,7 +39,10 @@ const SelectContent: ParentComponent<
 			<SelectPrimitive.Content
 				data-slot="select-content"
 				class={cn(
-					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 min-w-[7rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[closed]:animate-out data-[expanded]:animate-in",
+					"relative z-50 min-w-[7rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
+					// Native "expand out of the trigger": clip-path reveal, direction per popper side.
+					"data-[side=bottom]:data-[expanded]:animate-select-in-down data-[side=bottom]:data-[closed]:animate-select-out-down",
+					"data-[side=top]:data-[expanded]:animate-select-in-up data-[side=top]:data-[closed]:animate-select-out-up",
 					local.class,
 				)}
 				{...rest}
