@@ -4,12 +4,19 @@ import { type Component, type ComponentProps, type ParentComponent, splitProps }
 import { cn } from "../lib/utils";
 import { SlidingIndicator } from "./sliding-indicator";
 
-// Open the listbox ON TOP of the trigger (overlap, no gutter) instead of below
-// it, so the panel covers the input and the options reveal downward, the input
-// appears to expand rather than a separate box dropping in. sameWidth is already
-// Kobalte's default. Consumers can still override any of these per instance.
+// Open the listbox ON TOP of the trigger instead of below it. Anchoring to the
+// trigger's TOP edge (a zero-height rect) with gutter 0 puts the content's top at
+// the input's top, so it covers the input at the same width (sameWidth is
+// Kobalte's default) and the options grow downward: the input appears to expand
+// rather than a separate box dropping in. Consumers can override per instance.
+const anchorToTriggerTop = (anchor?: HTMLElement) => {
+	const r = anchor?.getBoundingClientRect();
+	return r
+		? { x: r.left, y: r.top, width: r.width, height: 0 }
+		: { x: 0, y: 0, width: 0, height: 0 };
+};
 const Select = ((props: ComponentProps<typeof SelectPrimitive>) => (
-	<SelectPrimitive overlap gutter={0} {...props} />
+	<SelectPrimitive gutter={0} getAnchorRect={anchorToTriggerTop} {...props} />
 )) as typeof SelectPrimitive;
 const SelectValue = SelectPrimitive.Value;
 
