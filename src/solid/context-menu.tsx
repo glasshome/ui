@@ -2,6 +2,7 @@ import { ContextMenu as ContextMenuPrimitive } from "@kobalte/core/context-menu"
 import { Check, ChevronRight, Circle } from "lucide-solid";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
 import { cn } from "../lib/utils";
+import { SlidingIndicator } from "./sliding-indicator";
 
 const ContextMenu = ContextMenuPrimitive;
 const ContextMenuTrigger = ContextMenuPrimitive.Trigger;
@@ -18,7 +19,7 @@ const ContextMenuSubTrigger: ParentComponent<
 			data-slot="context-menu-sub-trigger"
 			data-inset={local.inset}
 			class={cn(
-				"flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-hidden focus:bg-muted focus:text-foreground data-[expanded]:bg-muted data-[inset]:pl-8 data-[expanded]:text-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-hidden focus:text-foreground data-[expanded]:bg-muted data-[inset]:pl-8 data-[expanded]:text-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				local.class,
 			)}
 			{...rest}
@@ -48,7 +49,7 @@ const ContextMenuSubContent: Component<ComponentProps<typeof ContextMenuPrimitiv
 const ContextMenuContent: Component<ComponentProps<typeof ContextMenuPrimitive.Content>> = (
 	props,
 ) => {
-	const [local, rest] = splitProps(props, ["class"]);
+	const [local, rest] = splitProps(props, ["class", "children"]);
 	return (
 		<ContextMenuPrimitive.Portal>
 			<ContextMenuPrimitive.Content
@@ -58,7 +59,15 @@ const ContextMenuContent: Component<ComponentProps<typeof ContextMenuPrimitive.C
 					local.class,
 				)}
 				{...rest}
-			/>
+			>
+				<SlidingIndicator
+					activeSelector=":focus"
+					orientation="vertical"
+					pillClass="rounded-sm bg-muted duration-150"
+				>
+					{local.children}
+				</SlidingIndicator>
+			</ContextMenuPrimitive.Content>
 		</ContextMenuPrimitive.Portal>
 	);
 };
@@ -77,7 +86,7 @@ const ContextMenuItem: Component<
 			data-inset={local.inset}
 			data-variant={variant()}
 			class={cn(
-				"data-[variant=destructive]:*:[svg]:!text-destructive relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden focus:bg-muted focus:text-foreground data-[disabled]:pointer-events-none data-[inset]:pl-8 data-[variant=destructive]:text-destructive data-[disabled]:opacity-50 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"data-[variant=destructive]:*:[svg]:!text-destructive relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden focus:text-foreground data-[disabled]:pointer-events-none data-[inset]:pl-8 data-[variant=destructive]:text-destructive data-[disabled]:opacity-50 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				local.class,
 			)}
 			{...rest}
@@ -93,7 +102,7 @@ const ContextMenuCheckboxItem: ParentComponent<
 		<ContextMenuPrimitive.CheckboxItem
 			data-slot="context-menu-checkbox-item"
 			class={cn(
-				"relative flex cursor-default select-none items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden focus:bg-muted focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"relative flex cursor-default select-none items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				local.class,
 			)}
 			{...rest}
@@ -116,7 +125,7 @@ const ContextMenuRadioItem: ParentComponent<
 		<ContextMenuPrimitive.RadioItem
 			data-slot="context-menu-radio-item"
 			class={cn(
-				"relative flex cursor-default select-none items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden focus:bg-muted focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"relative flex cursor-default select-none items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				local.class,
 			)}
 			{...rest}
