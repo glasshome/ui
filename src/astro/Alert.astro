@@ -1,0 +1,75 @@
+---
+/**
+ * Static tone alert/callout for Astro / SSR pages — the same `ALERT_TONES` table
+ * and surface recipe the Solid <Alert> and hub's docs Callout use, rendered as
+ * plain HTML with zero JS and the lucide glyph inlined as SVG (no icon runtime).
+ * Drop this into `.astro` markup instead of hand-writing a
+ * `rounded-lg border border-primary/40 bg-primary/10` note box.
+ */
+import {
+	ALERT_CLASS,
+	ALERT_DESCRIPTION_CLASS,
+	ALERT_ICON_CLASS,
+	ALERT_TITLE_CLASS,
+	type AlertTone,
+	ALERT_TONES,
+	alertIconFill,
+	cn,
+	glassSurface,
+	glassToneText,
+} from "@glasshome/ui";
+
+interface Props {
+	tone?: AlertTone;
+	/** Bold heading line. Optional. */
+	title?: string;
+	class?: string;
+}
+
+const { tone = "info", title, class: className, ...rest } = Astro.props;
+const t = ALERT_TONES[tone];
+
+// Same iconic glass surface as <Badge>; body text stays --foreground for
+// readability, the tinted icon chip carries the tone.
+const surfaceStyle = Object.entries({ ...glassSurface(t.color), color: "var(--foreground)" })
+	.map(([k, v]) => `${k}:${v}`)
+	.join(";");
+
+// Inlined lucide paths, one per tone — same glyphs the Solid <Alert> resolves
+// from lucide-solid (info / triangle-alert / circle-check-big / octagon-alert).
+const ICON_PATHS: Record<AlertTone, string> = {
+	info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+	warning:
+		'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+	success: '<path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/>',
+	destructive:
+		'<path d="M12 16h.01"/><path d="M12 8v4"/><path d="M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688A2 2 0 0 1 15.312 22H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z"/>',
+};
+---
+
+<div
+	data-slot="alert"
+	role={tone === "destructive" ? "alert" : "status"}
+	class={cn(ALERT_CLASS, className)}
+	style={surfaceStyle}
+	{...rest}
+>
+	<span class={ALERT_ICON_CLASS} style={`background-color:${alertIconFill(t.color)};color:${t.color}`}>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="18"
+			height="18"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			set:html={ICON_PATHS[tone]}
+		/>
+	</span>
+	<div class="min-w-0 flex-1">
+		{title && <p data-slot="alert-title" class={ALERT_TITLE_CLASS} style={`color:${glassToneText(t.color)}`}>{title}</p>}
+		<div data-slot="alert-description" class={ALERT_DESCRIPTION_CLASS}><slot /></div>
+	</div>
+</div>

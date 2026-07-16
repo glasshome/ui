@@ -2,6 +2,7 @@ import { Select as SelectPrimitive } from "@kobalte/core/select";
 import { Check, ChevronDown } from "lucide-solid";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
 import { cn } from "../lib/utils";
+import { SlidingIndicator } from "./sliding-indicator";
 
 const Select = SelectPrimitive;
 const SelectValue = SelectPrimitive.Value;
@@ -43,7 +44,14 @@ const SelectContent: ParentComponent<
 				)}
 				{...rest}
 			>
-				<SelectPrimitive.Listbox class={cn("p-1", local.listboxClass)} />
+				<SlidingIndicator
+					activeSelector="[data-highlighted]"
+					orientation="vertical"
+					class="w-full"
+					pillClass="rounded-sm bg-muted duration-150"
+				>
+					<SelectPrimitive.Listbox class={cn("p-1", local.listboxClass)} />
+				</SlidingIndicator>
 			</SelectPrimitive.Content>
 		</SelectPrimitive.Portal>
 	);
@@ -66,7 +74,7 @@ const SelectItem: ParentComponent<ComponentProps<typeof SelectPrimitive.Item>> =
 		<SelectPrimitive.Item
 			data-slot="select-item"
 			class={cn(
-				"relative flex w-full cursor-default select-none items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden focus:bg-muted focus:text-foreground data-[disabled]:pointer-events-none data-[highlighted]:bg-muted data-[highlighted]:text-foreground data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+				"relative flex w-full cursor-default select-none items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden transition-colors focus:text-foreground data-[disabled]:pointer-events-none data-[highlighted]:text-foreground data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
 				local.class,
 			)}
 			{...rest}

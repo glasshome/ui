@@ -3,14 +3,16 @@ import {
 	type ComponentProps,
 	createEffect,
 	createSignal,
-	For,
 	type JSX,
+	Index,
 	onCleanup,
 	onMount,
+	Show,
 	splitProps,
 } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { cn } from "../lib/utils";
+import { SlidingIndicator } from "./sliding-indicator";
 
 interface DockItem {
 	id: string;
@@ -18,6 +20,8 @@ interface DockItem {
 	label: string;
 	onClick?: () => void;
 	isActive?: boolean;
+	/** Optional count badge on the item (e.g. pending updates). */
+	badge?: number;
 }
 
 interface DockProps extends ComponentProps<"div"> {
@@ -29,33 +33,28 @@ interface DockIconButtonProps extends ComponentProps<"button"> {
 	icon: Component<{ class?: string }> | JSX.Element;
 	label: string;
 	isActive?: boolean;
+	badge?: number;
 }
 
 const DockIconButton: Component<DockIconButtonProps> = (props) => {
-	const [local, rest] = splitProps(props, ["icon", "label", "class", "isActive"]);
+	const [local, rest] = splitProps(props, ["icon", "label", "class", "isActive", "badge"]);
 	const isElement = () => typeof local.icon !== "function";
 
 	return (
 		<button
 			type="button"
 			class={cn(
-				"group relative rounded-lg p-2 transition-all duration-300 sm:p-3",
-				"hover:-translate-y-0.5 hover:scale-110 hover:bg-accent/20 active:scale-95 active:bg-accent/30",
-				"touch-manipulation",
-				"min-h-[44px] min-w-[44px]",
+				"group relative flex size-11 touch-manipulation items-center justify-center rounded-lg sm:size-12",
 				local.class,
 			)}
-			style={{
-				"transform-origin": "center center",
-				"transition-timing-function": "cubic-bezier(0.175, 0.885, 0.32, 2.2)",
-			}}
 			aria-label={local.label}
+			aria-current={local.isActive ? "page" : undefined}
 			{...rest}
 		>
 			<div
 				class={cn(
-					"flex items-center justify-center text-foreground transition-colors duration-300",
-					local.isActive ? "text-primary" : "hover:text-primary/80",
+					"flex items-center justify-center transition-colors duration-300",
+					local.isActive ? "text-primary" : "text-foreground group-hover:text-primary/80",
 				)}
 			>
 				{isElement() ? (
@@ -67,6 +66,15 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
 					/>
 				)}
 			</div>
+			<Show when={typeof local.badge === "number" && local.badge > 0}>
+				<span
+					role="status"
+					class="-translate-y-1/2 absolute top-0 right-0 inline-flex h-5 min-w-[20px] translate-x-1/2 items-center justify-center rounded-full bg-primary/15 px-1 font-semibold text-[10px] text-primary"
+					aria-label={`${local.badge} pending`}
+				>
+					{local.badge != null && local.badge > 9 ? "9+" : local.badge}
+				</span>
+			</Show>
 			<span
 				class={cn(
 					"absolute -top-8 left-1/2 -translate-x-1/2",
@@ -89,6 +97,12 @@ const Dock: Component<DockProps> = (props) => {
 	const dockMode = () => local.dockMode ?? "floating";
 	let containerRef!: HTMLDivElement;
 	const [needsScroll, setNeedsScroll] = createSignal(false);
+
+	// The moving background: the shared SlidingIndicator tracks the active item.
+	const activeIndex = () => {
+		const i = local.items.findIndex((it) => it.isActive);
+		return i < 0 ? null : i;
+	};
 
 	const checkOverflow = () => {
 		if (containerRef) {
@@ -133,8 +147,8 @@ const Dock: Component<DockProps> = (props) => {
 						"border border-border bg-card/80 shadow-lg backdrop-blur-md",
 						"transition-shadow duration-300 hover:shadow-xl",
 						dockMode() === "floating"
-							? "rounded-xl sm:rounded-2xl"
-							: "rounded-t-xl border-x border-t border-b-0 sm:rounded-t-2xl",
+							? "rounded-xl"
+							: "rounded-t-xl border-x border-t border-b-0",
 						needsScroll() ? "scrollbar-hide overflow-x-auto" : "overflow-visible",
 						!needsScroll() && "justify-center",
 					)}
@@ -144,23 +158,23 @@ const Dock: Component<DockProps> = (props) => {
 						"min-width": needsScroll() ? "auto" : "fit-content",
 					}}
 				>
-					<div
-						class={cn(
-							"flex items-center gap-0.5 sm:gap-1",
-							dockMode() === "floating" && "animate-float",
-						)}
+					<SlidingIndicator
+						active={activeIndex()}
+						class="flex items-center gap-0.5 sm:gap-1"
+						pillClass="rounded-lg bg-primary/15"
 					>
-						<For each={local.items}>
+						<Index each={local.items}>
 							{(item) => (
 								<DockIconButton
-									icon={item.icon}
-									label={item.label}
-									onClick={item.onClick}
-									isActive={item.isActive}
+									icon={item().icon}
+									label={item().label}
+									onClick={item().onClick}
+									isActive={item().isActive}
+									badge={item().badge}
 								/>
 							)}
-						</For>
-					</div>
+						</Index>
+					</SlidingIndicator>
 				</div>
 			</div>
 		</div>

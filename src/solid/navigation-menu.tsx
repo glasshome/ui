@@ -41,6 +41,26 @@ const NavigationMenuItem: Component<ComponentProps<"li">> = (props) => {
 	return <li data-slot="navigation-menu-item" class={cn("relative", local.class)} {...rest} />;
 };
 
+/**
+ * Per-dropdown wrapper (Kobalte's `Menu`). A `NavigationMenuTrigger` +
+ * `NavigationMenuContent` only wire together when nested inside this — the bare
+ * `NavigationMenuItem` (<li>) is for simple links, not dropdowns. Optional
+ * `value` gives the menu a stable id.
+ */
+const NavigationMenuMenu: ParentComponent<ComponentProps<typeof NavMenuPrimitive.Menu>> = (
+	props,
+) => {
+	return <NavMenuPrimitive.Menu data-slot="navigation-menu-menu" {...props} />;
+};
+
+/** Portals dropdown content out of the flow. Wrap `NavigationMenuContent` in
+ *  this when `viewport={false}` needs the content teleported. */
+const NavigationMenuPortal: ParentComponent<ComponentProps<typeof NavMenuPrimitive.Portal>> = (
+	props,
+) => {
+	return <NavMenuPrimitive.Portal {...props} />;
+};
+
 const navigationMenuTriggerStyle = cva({
 	base: "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 font-medium text-sm outline-none transition-[color,box-shadow] hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground focus-visible:outline-1 focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-[expanded]:bg-muted/50 data-[expanded]:text-foreground data-[expanded]:focus:bg-muted data-[expanded]:hover:bg-muted",
 });
@@ -135,6 +155,8 @@ export {
 	NavigationMenuItem,
 	NavigationMenuLink,
 	NavigationMenuList,
+	NavigationMenuMenu,
+	NavigationMenuPortal,
 	NavigationMenuTrigger,
 	NavigationMenuViewport,
 	navigationMenuTriggerStyle,

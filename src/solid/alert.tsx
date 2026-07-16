@@ -8,44 +8,33 @@ import {
 	type ValidComponent,
 } from "solid-js";
 import { Dynamic } from "solid-js/web";
+import {
+	ALERT_CLASS,
+	ALERT_DESCRIPTION_CLASS,
+	ALERT_ICON_CLASS,
+	ALERT_TITLE_CLASS,
+	alertIconFill as iconFill,
+	ALERT_TONES,
+	type AlertTone,
+} from "../lib/alert-tones";
+import { glassSurface, glassToneText } from "../lib/glass-tone";
 import { cn } from "../lib/utils";
 
 /**
  * Tone-driven alert (the design formerly known as hub's SectionAlert). One
- * component, four tones, both themes, all color from theme vars via color-mix.
- * Text mixes in oklab (not oklch) so a hued tone desaturates toward neutral
- * with its hue intact instead of swinging toward yellow.
+ * component, four tones, both themes. Tone table + surface recipe are the pure,
+ * single-source `../lib/alert-tones` (shared with hub's docs Callout and the
+ * `@glasshome/ui/astro` <Alert>), so all three faces render identically. This
+ * file only maps each tone to its lucide-solid glyph.
  */
-export type AlertTone = "info" | "warning" | "success" | "destructive";
+export type { AlertTone };
 
-type ToneStyle = { color: string; icon: ValidComponent; text: string };
-
-const ALERT_TONES: Record<AlertTone, ToneStyle> = {
-	info: {
-		color: "var(--primary)",
-		icon: Info,
-		text: "color-mix(in oklab, var(--primary) 55%, var(--foreground))",
-	},
-	warning: {
-		color: "var(--warning)",
-		icon: TriangleAlert,
-		text: "color-mix(in oklab, var(--warning) 55%, var(--foreground))",
-	},
-	success: {
-		color: "var(--success)",
-		icon: CircleCheck,
-		text: "color-mix(in oklab, var(--success) 60%, var(--foreground))",
-	},
-	destructive: {
-		color: "var(--destructive)",
-		icon: OctagonAlert,
-		text: "color-mix(in oklab, var(--destructive) 65%, var(--foreground))",
-	},
+const TONE_ICON: Record<AlertTone, ValidComponent> = {
+	info: Info,
+	warning: TriangleAlert,
+	success: CircleCheck,
+	destructive: OctagonAlert,
 };
-
-const border = (c: string) => `color-mix(in srgb, ${c} 28%, transparent)`;
-const fill = (c: string) => `color-mix(in srgb, ${c} 9%, transparent)`;
-const iconFill = (c: string) => `color-mix(in srgb, ${c} 16%, transparent)`;
 
 type AlertProps = ComponentProps<"div"> & {
 	tone?: AlertTone;
@@ -59,38 +48,39 @@ type AlertProps = ComponentProps<"div"> & {
 
 const Alert: Component<AlertProps> = (props) => {
 	const [local, rest] = splitProps(props, ["class", "tone", "icon", "title", "action", "children"]);
-	const tone = () => ALERT_TONES[local.tone ?? "info"];
+	const toneKey = () => local.tone ?? "info";
+	const tone = () => ALERT_TONES[toneKey()];
 	return (
 		<div
 			data-slot="alert"
 			role={local.tone === "destructive" ? "alert" : "status"}
-			class={cn("flex items-start gap-3 rounded-lg border p-3 backdrop-blur-sm", local.class)}
+			class={cn(ALERT_CLASS, local.class)}
 			style={{
-				"border-color": border(tone().color),
-				"background-color": fill(tone().color),
-				color: tone().text,
+				...glassSurface(tone().color),
+				color: "var(--foreground)",
 			}}
 			{...rest}
 		>
 			<span
-				class="flex size-8 shrink-0 items-center justify-center rounded-md [&>svg]:size-[18px]"
+				class={ALERT_ICON_CLASS}
 				style={{ "background-color": iconFill(tone().color), color: tone().color }}
 			>
-				<Show when={local.icon} fallback={<Dynamic component={tone().icon} size={18} />}>
+				<Show when={local.icon} fallback={<Dynamic component={TONE_ICON[toneKey()]} size={18} />}>
 					{local.icon}
 				</Show>
 			</span>
 			<div class="min-w-0 flex-1">
 				<Show when={local.title}>
-					<p data-slot="alert-title" class="font-semibold text-sm leading-snug">
+					<p
+						data-slot="alert-title"
+						class={ALERT_TITLE_CLASS}
+						style={{ color: glassToneText(tone().color) }}
+					>
 						{local.title}
 					</p>
 				</Show>
 				<Show when={local.children}>
-					<div
-						data-slot="alert-description"
-						class="text-sm leading-snug [&:not(:first-child)]:mt-0.5"
-					>
+					<div data-slot="alert-description" class={ALERT_DESCRIPTION_CLASS}>
 						{local.children}
 					</div>
 				</Show>
@@ -105,23 +95,13 @@ const Alert: Component<AlertProps> = (props) => {
 /** Back-compat sub-parts for the older compound usage (Alert > AlertTitle/Description). */
 const AlertTitle: Component<ComponentProps<"div">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);
-	return (
-		<div
-			data-slot="alert-title"
-			class={cn("font-semibold text-sm leading-snug", local.class)}
-			{...rest}
-		/>
-	);
+	return <div data-slot="alert-title" class={cn(ALERT_TITLE_CLASS, local.class)} {...rest} />;
 };
 
 const AlertDescription: Component<ComponentProps<"div">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);
 	return (
-		<div
-			data-slot="alert-description"
-			class={cn("text-sm leading-snug [&:not(:first-child)]:mt-0.5", local.class)}
-			{...rest}
-		/>
+		<div data-slot="alert-description" class={cn(ALERT_DESCRIPTION_CLASS, local.class)} {...rest} />
 	);
 };
 

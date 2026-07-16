@@ -26,7 +26,7 @@ export {
 export { AreaPicker } from "./area-picker";
 export { AspectRatio } from "./aspect-ratio";
 export { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-export { Badge, badgeVariants, TierBadge } from "./badge";
+export { Badge, TierBadge } from "./badge";
 export {
 	BottomSheet,
 	BottomSheetBody,
@@ -238,6 +238,8 @@ export {
 	NavigationMenuItem,
 	NavigationMenuLink,
 	NavigationMenuList,
+	NavigationMenuMenu,
+	NavigationMenuPortal,
 	NavigationMenuTrigger,
 	NavigationMenuViewport,
 	navigationMenuTriggerStyle,
@@ -288,7 +290,93 @@ export {
 	SelectTrigger,
 	SelectValue,
 } from "./select";
+export {
+	type SortDirection,
+	TABLE_BLEED,
+	TABLE_CELL_X,
+	TABLE_HEAD_CELL_CLASS,
+	TABLE_HEAD_CLASS,
+	TABLE_NUM_CELL_CLASS,
+	TABLE_ROW_CLASS,
+	TABLE_SCROLL_CLASS,
+	TableBulkBar,
+	TableEmpty,
+	TableError,
+	TableFilterSelect,
+	TableSearchInput,
+	TableSkeleton,
+	TableSortHeader,
+} from "./data-table";
+export { CountPill } from "./count-pill";
+export { PageHeader } from "./page-header";
+export { ScopeIndicator } from "./scope-indicator";
+export { SlidingIndicator } from "./sliding-indicator";
+export {
+	LabeledField,
+	LabeledInput,
+	RowActions,
+	SectionAddButton,
+	SectionEmpty,
+	SwitchRow,
+} from "./settings-row";
 export { Separator } from "./separator";
+export {
+	formatWidgetCount,
+	type WidgetSummary,
+	WidgetIdentity,
+	WidgetMeta,
+	widgetHref,
+} from "./widget-identity";
+export { WidgetTrustBadge } from "./widget-trust-badge";
+export {
+	type GlassSurface,
+	SectionCard,
+	SectionIcon,
+	SectionLabel,
+	SectionMeta,
+	SectionRow,
+	SectionRowSkeleton,
+	SectionRowSkeletons,
+	SectionSubtitle,
+	SectionTitle,
+} from "./section-card";
+// Section tokens re-exported from the Solid entry for convenience.
+export {
+	SECTION_CARD_CHROME,
+	SECTION_CARD_CLASS,
+	SECTION_CARD_FILL,
+	SECTION_CARD_INSET_STYLE,
+	SECTION_INNER_RADIUS,
+	SECTION_OUTER_RADIUS,
+	SECTION_PADDING,
+	SECTION_ROW_CLASS,
+} from "../lib/section-tokens";
+export {
+	Sidebar,
+	SidebarContent,
+	SidebarFooter,
+	SidebarGroup,
+	SidebarGroupAction,
+	SidebarGroupContent,
+	SidebarGroupLabel,
+	SidebarHeader,
+	SidebarInput,
+	SidebarInset,
+	SidebarMenu,
+	SidebarMenuAction,
+	SidebarMenuBadge,
+	SidebarMenuButton,
+	SidebarMenuItem,
+	SidebarMenuSkeleton,
+	SidebarMenuSub,
+	SidebarMenuSubButton,
+	SidebarMenuSubItem,
+	SidebarProvider,
+	SidebarRail,
+	SidebarSeparator,
+	SidebarTrigger,
+	useSidebar,
+} from "./sidebar";
 export {
 	Sheet,
 	SheetClose,

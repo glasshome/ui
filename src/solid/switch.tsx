@@ -41,7 +41,7 @@ const Switch: Component<SwitchProps> = (props) => {
 				height: `${TRACK_HEIGHT}px`,
 				background: local.checked
 					? "var(--primary)"
-					: "color-mix(in oklch, var(--primary) 30%, transparent)",
+					: "color-mix(in srgb, var(--primary) 30%, transparent)",
 			}}
 			onClick={() => local.onChange?.(!local.checked)}
 		>

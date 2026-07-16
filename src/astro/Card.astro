@@ -1,0 +1,29 @@
+---
+/**
+ * Static card surface for Astro / SSR pages — the same `CARD_CLASS` + inset
+ * highlight the Solid <Card> uses, rendered as a plain element with zero JS.
+ * Drop this into `.astro` markup instead of hand-writing a
+ * `rounded-lg border border-border/50 bg-card/60 backdrop-blur-sm` box.
+ *
+ * This is the surface only (like hub's SECTION_CARD_CLASS): supply your own
+ * inner layout/padding via the slot. Pass `as="article"`/`"section"` for
+ * semantics; add `hover:border-border` yourself if the card is a link.
+ */
+import { CARD_INSET_SHADOW, CARD_SURFACE, cn } from "@glasshome/ui";
+
+interface Props {
+	as?: keyof HTMLElementTagNameMap;
+	class?: string;
+}
+
+const { as: Tag = "div", class: className, ...rest } = Astro.props;
+---
+
+<Tag
+	data-slot="card"
+	class={cn("rounded-lg", CARD_SURFACE, className)}
+	style={`box-shadow:${CARD_INSET_SHADOW}`}
+	{...rest}
+>
+	<slot />
+</Tag>

@@ -1,6 +1,7 @@
 import { DropdownMenu as DropdownMenuPrimitive } from "@kobalte/core/dropdown-menu";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
 import { cn } from "../lib/utils";
+import { SlidingIndicator } from "./sliding-indicator";
 
 const DropdownMenu = DropdownMenuPrimitive;
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
@@ -11,7 +12,7 @@ const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
 const DropdownMenuContent: Component<ComponentProps<typeof DropdownMenuPrimitive.Content>> = (
 	props,
 ) => {
-	const [local, others] = splitProps(props, ["class"]);
+	const [local, others] = splitProps(props, ["class", "children"]);
 	return (
 		<DropdownMenuPrimitive.Portal>
 			<DropdownMenuPrimitive.Content
@@ -21,7 +22,15 @@ const DropdownMenuContent: Component<ComponentProps<typeof DropdownMenuPrimitive
 					local.class,
 				)}
 				{...others}
-			/>
+			>
+				<SlidingIndicator
+					activeSelector=":focus"
+					orientation="vertical"
+					pillClass="rounded-sm bg-muted duration-150"
+				>
+					{local.children}
+				</SlidingIndicator>
+			</DropdownMenuPrimitive.Content>
 		</DropdownMenuPrimitive.Portal>
 	);
 };
@@ -32,7 +41,7 @@ const DropdownMenuItem: Component<ComponentProps<typeof DropdownMenuPrimitive.It
 		<DropdownMenuPrimitive.Item
 			data-slot="dropdown-menu-item"
 			class={cn(
-				"relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden focus:bg-muted focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden transition-colors focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				local.class,
 			)}
 			{...others}
