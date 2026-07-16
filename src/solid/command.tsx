@@ -14,6 +14,7 @@ import {
 } from "solid-js";
 import { cn } from "../lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./dialog";
+import { SlidingIndicator } from "./sliding-indicator";
 
 interface CommandContextValue {
 	search: () => string;
@@ -158,13 +159,21 @@ const CommandInput: Component<ComponentProps<"input">> = (props) => {
 };
 
 const CommandList: ParentComponent<ComponentProps<"div">> = (props) => {
-	const [local, rest] = splitProps(props, ["class"]);
+	const [local, rest] = splitProps(props, ["class", "children"]);
 	return (
 		<div
 			data-slot="command-list"
 			class={cn("max-h-[300px] scroll-py-1 overflow-y-auto overflow-x-hidden", local.class)}
 			{...rest}
-		/>
+		>
+			<SlidingIndicator
+				activeSelector="[data-selected='true']"
+				orientation="vertical"
+				pillClass="rounded-sm bg-muted duration-150"
+			>
+				{local.children}
+			</SlidingIndicator>
+		</div>
 	);
 };
 
@@ -247,7 +256,7 @@ const CommandItem: ParentComponent<
 				data-disabled={local.disabled}
 				data-value={id()}
 				class={cn(
-					"relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden data-[disabled=true]:pointer-events-none data-[selected=true]:bg-muted data-[selected=true]:text-foreground data-[disabled=true]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
+					"relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden data-[disabled=true]:pointer-events-none data-[selected=true]:text-foreground data-[disabled=true]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
 					local.class,
 				)}
 				onClick={() => !local.disabled && local.onSelect?.()}
