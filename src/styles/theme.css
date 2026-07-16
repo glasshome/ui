@@ -50,13 +50,12 @@
 	--animate-collapsible-down: collapsible-down 0.2s ease-out;
 	--animate-collapsible-up: collapsible-up 0.2s ease-out;
 
-	/* Select/popover "native expand": the panel unrolls out of the trigger edge
-	 * via a clip-path reveal (no scale, so item text never squishes) instead of a
-	 * finished box sliding/zooming in beneath. Direction follows the popper side. */
-	--animate-select-in-down: select-in-down 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
-	--animate-select-out-down: select-out-down 0.12s ease-in both;
-	--animate-select-in-up: select-in-up 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
-	--animate-select-out-up: select-out-up 0.12s ease-in both;
+	/* Select "native expand": the panel unfolds out of the trigger edge. Kobalte
+	 * exposes no data-side, only --kb-select-content-transform-origin (set to the
+	 * trigger edge per placement), so a scaleY from that origin grows the panel
+	 * down when it opens below and up when above, no direction class needed. */
+	--animate-select-in: select-in 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+	--animate-select-out: select-out 0.12s ease-in both;
 }
 
 @keyframes collapsible-down {
@@ -77,48 +76,29 @@
 	}
 }
 
-/* clip-path insets: inset(top right bottom left). Collapsed to the trigger edge
- * (100% clipped from the opposite side), then revealed to fully visible. The box's
- * own shadow/border are clipped with it, so it reads as the panel growing out of
- * the trigger rather than a separate surface appearing. */
-@keyframes select-in-down {
+/* scaleY from the trigger-edge origin (set on the element via
+ * --kb-select-content-transform-origin): the panel unfolds out of the input.
+ * Starts near-flat against the trigger and grows to full height; the brief mild
+ * squish reads as "unfolding", and shadow/border grow with it so it feels like
+ * the input expanding rather than a separate box appearing beneath it. */
+@keyframes select-in {
 	from {
 		opacity: 0;
-		clip-path: inset(0 0 100% 0);
+		transform: scaleY(0.55);
 	}
 	to {
 		opacity: 1;
-		clip-path: inset(0 0 0 0);
+		transform: scaleY(1);
 	}
 }
-@keyframes select-out-down {
+@keyframes select-out {
 	from {
 		opacity: 1;
-		clip-path: inset(0 0 0 0);
+		transform: scaleY(1);
 	}
 	to {
 		opacity: 0;
-		clip-path: inset(0 0 100% 0);
-	}
-}
-@keyframes select-in-up {
-	from {
-		opacity: 0;
-		clip-path: inset(100% 0 0 0);
-	}
-	to {
-		opacity: 1;
-		clip-path: inset(0 0 0 0);
-	}
-}
-@keyframes select-out-up {
-	from {
-		opacity: 1;
-		clip-path: inset(0 0 0 0);
-	}
-	to {
-		opacity: 0;
-		clip-path: inset(100% 0 0 0);
+		transform: scaleY(0.55);
 	}
 }
 

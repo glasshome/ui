@@ -33,16 +33,23 @@ const SelectTrigger: ParentComponent<
 const SelectContent: ParentComponent<
 	ComponentProps<typeof SelectPrimitive.Content> & { listboxClass?: string }
 > = (props) => {
-	const [local, rest] = splitProps(props, ["class", "children", "listboxClass"]);
+	const [local, rest] = splitProps(props, ["class", "children", "listboxClass", "gutter"]);
 	return (
 		<SelectPrimitive.Portal>
 			<SelectPrimitive.Content
 				data-slot="select-content"
+				// Hug the trigger (small gutter) so the panel grows out of the input,
+				// not a box floating below it. Consumer can still override via gutter.
+				gutter={local.gutter ?? 4}
 				class={cn(
-					"relative z-50 min-w-[7rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
-					// Native "expand out of the trigger": clip-path reveal, direction per popper side.
-					"data-[side=bottom]:data-[expanded]:animate-select-in-down data-[side=bottom]:data-[closed]:animate-select-out-down",
-					"data-[side=top]:data-[expanded]:animate-select-in-up data-[side=top]:data-[closed]:animate-select-out-up",
+					// Match the trigger's width and left edge (anchor width) so the open
+					// panel reads as the input itself expanding, not a separate surface.
+					"relative z-50 min-w-[var(--kb-popper-anchor-width)] overflow-y-auto overflow-x-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
+					// Anchor the scale to the trigger edge so the panel unfolds out of the
+					// input. Kobalte sets this origin per placement, so one scaleY grows it
+					// down when it opens below and up when above, no data-side needed.
+					"[transform-origin:var(--kb-select-content-transform-origin)]",
+					"data-[expanded]:animate-select-in data-[closed]:animate-select-out",
 					local.class,
 				)}
 				{...rest}
