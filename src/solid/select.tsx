@@ -4,7 +4,13 @@ import { type Component, type ComponentProps, type ParentComponent, splitProps }
 import { cn } from "../lib/utils";
 import { SlidingIndicator } from "./sliding-indicator";
 
-const Select = SelectPrimitive;
+// Open the listbox ON TOP of the trigger (overlap, no gutter) instead of below
+// it, so the panel covers the input and the options reveal downward, the input
+// appears to expand rather than a separate box dropping in. sameWidth is already
+// Kobalte's default. Consumers can still override any of these per instance.
+const Select = ((props: ComponentProps<typeof SelectPrimitive>) => (
+	<SelectPrimitive overlap gutter={0} {...props} />
+)) as typeof SelectPrimitive;
 const SelectValue = SelectPrimitive.Value;
 
 const SelectTrigger: ParentComponent<
@@ -39,13 +45,10 @@ const SelectContent: ParentComponent<
 			<SelectPrimitive.Content
 				data-slot="select-content"
 				class={cn(
-					// Match the trigger's width and left edge (anchor width) so the open
-					// panel reads as the input itself expanding, not a separate surface.
-					"relative z-50 min-w-[var(--kb-popper-anchor-width)] overflow-y-auto overflow-x-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
-					// Anchor the scale to the trigger edge so the panel unfolds out of the
-					// input. Kobalte sets this origin per placement, so one scaleY grows it
-					// down when it opens below and up when above, no data-side needed.
-					"[transform-origin:var(--kb-select-content-transform-origin)]",
+					// Width comes from Kobalte sameWidth (= trigger width). It overlaps the
+					// trigger, so it reads as the input itself, not a separate surface.
+					"relative z-50 overflow-y-auto overflow-x-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
+					// clip-path reveal, top row covers the input, options grow downward.
 					"data-[expanded]:animate-select-in data-[closed]:animate-select-out",
 					local.class,
 				)}

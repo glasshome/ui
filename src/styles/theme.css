@@ -76,29 +76,29 @@
 	}
 }
 
-/* scaleY from the trigger-edge origin (set on the element via
- * --kb-select-content-transform-origin): the panel unfolds out of the input.
- * Starts near-flat against the trigger and grows to full height; the brief mild
- * squish reads as "unfolding", and shadow/border grow with it so it feels like
- * the input expanding rather than a separate box appearing beneath it. */
+/* The listbox opens overlapping the trigger (overlap + gutter 0), so its top row
+ * covers the input. clip-path reveals it top-down: the covering row shows first,
+ * then the rest of the options are revealed downward, so the input appears to
+ * expand to the bottom rather than a separate box dropping in. No scale, so the
+ * option text never squishes; opacity fades in slightly so it isn't a hard wipe. */
 @keyframes select-in {
 	from {
 		opacity: 0;
-		transform: scaleY(0.55);
+		clip-path: inset(0 0 100% 0);
 	}
 	to {
 		opacity: 1;
-		transform: scaleY(1);
+		clip-path: inset(0 0 0 0);
 	}
 }
 @keyframes select-out {
 	from {
 		opacity: 1;
-		transform: scaleY(1);
+		clip-path: inset(0 0 0 0);
 	}
 	to {
 		opacity: 0;
-		transform: scaleY(0.55);
+		clip-path: inset(0 0 100% 0);
 	}
 }
 
