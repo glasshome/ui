@@ -59,8 +59,32 @@ export const alertBorder = (c: string) => `color-mix(in srgb, ${c} 28%, transpar
 export const alertFill = (c: string) => `color-mix(in srgb, ${c} 9%, transparent)`;
 export const alertIconFill = (c: string) => `color-mix(in srgb, ${c} 16%, transparent)`;
 
-export const ALERT_CLASS = "flex items-start gap-3 rounded-lg border p-3 backdrop-blur-sm";
+// `relative overflow-hidden` makes the card a clipping context for the oversized
+// corner watermark icon below.
+export const ALERT_CLASS =
+	"relative overflow-hidden flex items-start gap-3 rounded-lg border p-3 backdrop-blur-sm";
+// Small leading icon chip. Still used for the toast loading spinner; tone alerts
+// now use the corner watermark instead.
 export const ALERT_ICON_CLASS =
 	"flex size-8 shrink-0 items-center justify-center rounded-md [&>svg]:size-[18px]";
+// The decorative type icon, blown up and bled off the bottom-right corner, then
+// radial-masked so it's brightest in the corner and fades toward the text — a
+// layered glass watermark. Sits behind the copy (which carries `relative z-10`).
+export const ALERT_ICON_BG_CLASS =
+	"pointer-events-none absolute -right-3 -bottom-4 [&>svg]:size-28 [&>svg]:[stroke-width:2.5px]";
+export function alertIconBgStyle(color: string): Record<string, string> {
+	// Soft, large fade so the glyph is mostly solid and dissolves gently toward
+	// the text — a tight radius here reads as a hard diagonal slash on line icons.
+	return {
+		color,
+		opacity: "0.32",
+		"-webkit-mask-image": "radial-gradient(140% 140% at 100% 100%, #000 45%, transparent 95%)",
+		"mask-image": "radial-gradient(140% 140% at 100% 100%, #000 45%, transparent 95%)",
+	};
+}
+export const ALERT_CONTENT_CLASS = "relative z-10 min-w-0 flex-1";
 export const ALERT_TITLE_CLASS = "font-semibold text-sm leading-snug";
-export const ALERT_DESCRIPTION_CLASS = "text-sm leading-snug [&:not(:first-child)]:mt-0.5";
+// Body sits at a slight fade below the full-strength title — foreground dimmed
+// just a touch for hierarchy, not the washed-out muted-foreground.
+export const ALERT_DESCRIPTION_CLASS =
+	"text-foreground/80 text-sm leading-snug [&:not(:first-child)]:mt-0.5";

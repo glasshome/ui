@@ -10,11 +10,15 @@ export { buttonVariants } from "./lib/button-variants";
 export { glassSurface, glassToneText, toneTextMix } from "./lib/glass-tone";
 // Badge tone tokens (shape + default + tinted-label composition over glassSurface).
 export { BADGE_DEFAULT_TONE, BADGE_TONE_CLASS, badgeToneStyle } from "./lib/badge-tone";
+// Input field recipe (pure), shared by the Solid <Input> and .astro consumers.
+export { INPUT_CLASS } from "./lib/input-classes";
 // Alert tone system (tones table + surface recipe), pure — shared by the Solid
 // <Alert>, the Astro <Alert>, and hub's docs Callout so all render identically.
 export {
 	ALERT_CLASS,
+	ALERT_CONTENT_CLASS,
 	ALERT_DESCRIPTION_CLASS,
+	ALERT_ICON_BG_CLASS,
 	ALERT_ICON_CLASS,
 	ALERT_TITLE_CLASS,
 	ALERT_TONES,
@@ -22,6 +26,7 @@ export {
 	type AlertToneStyle,
 	alertBorder,
 	alertFill,
+	alertIconBgStyle,
 	alertIconFill,
 } from "./lib/alert-tones";
 // Card surface + sub-part classes, pure — shared by the Solid <Card>, the Astro

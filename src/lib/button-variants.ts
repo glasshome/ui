@@ -9,25 +9,69 @@ import { cva } from "cva";
  * Buttons are pills: `rounded-full` is the base shape everywhere. `size: none`
  * is sizeless (color + shape only) for callers that supply their own height and
  * padding.
+ *
+ * Glass, but OPAQUE — the one place buttons must diverge from <Badge>. A badge
+ * sits on a known light surface, so it can be translucent + frosted. A button
+ * lands anywhere (the header glass bar over a dark hero, a dark section); a
+ * translucent fill shows that through and renders muddy/dark, worst in light
+ * mode. So the tone is mixed over an OPAQUE var(--card) (a touch lighter than
+ * --background in dark, so it's less muddy), and the glass life comes from the
+ * shadow instead of a frost: the `glass-rim-*` @utilities carry the tone-lit rim
+ * + the top-left edge light — the same shadow glassSurface() gives a badge —
+ * which render over an opaque fill just fine. Label mixes toward the theme-aware
+ * --foreground (glassToneText); all color mixes are *srgb* (Tailwind's `/30`
+ * opacity mixes in oklab and goes muddy). Ships as a raw class string the
+ * components can't reach with inline style, so every variant is fully LITERAL
+ * (no helper) for Tailwind's scanner, and the exact shadow lives in an @utility
+ * (arbitrary box-shadow classes won't emit). Hover brightens the fill.
  */
 export const buttonVariants = cva({
 	base: "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 	variants: {
 		variant: {
-			default: "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
-			// marketing primary: the brand gradient. This is the variant the hub's
-			// PILL_PRIMARY_CLASS hand-rolled before the matrix existed.
-			gradient:
-				"bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-xs hover:opacity-90",
-			destructive:
-				"bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40 dark:hover:bg-destructive/80",
+			// Primary glass: opaque tone over --card + tone-lit rim + top-left edge
+			// light + tinted label. (glassToneText primary = 70%)
+			default: [
+				"border-[color-mix(in_srgb,var(--primary)_45%,transparent)]",
+				"bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--primary)_30%,var(--card)),color-mix(in_srgb,var(--primary)_12%,var(--card)))]",
+				"text-[color-mix(in_oklab,var(--primary)_70%,var(--foreground))]",
+				"glass-rim-primary",
+				"hover:border-[color-mix(in_srgb,var(--primary)_60%,transparent)]",
+				"hover:bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--primary)_40%,var(--card)),color-mix(in_srgb,var(--primary)_18%,var(--card)))]",
+			].join(" "),
+			// Brand glass: primary→accent sweep (two-tone). The hub's PILL_PRIMARY_CLASS
+			// hand-rolled the flat version before the matrix existed.
+			gradient: [
+				"border-[color-mix(in_srgb,var(--accent)_45%,transparent)]",
+				"bg-[linear-gradient(to_right,color-mix(in_srgb,var(--primary)_32%,var(--card)),color-mix(in_srgb,var(--accent)_30%,var(--card)))]",
+				"text-[color-mix(in_oklab,var(--accent)_65%,var(--foreground))]",
+				"glass-rim-accent",
+				"hover:border-[color-mix(in_srgb,var(--accent)_60%,transparent)]",
+				"hover:bg-[linear-gradient(to_right,color-mix(in_srgb,var(--primary)_42%,var(--card)),color-mix(in_srgb,var(--accent)_40%,var(--card)))]",
+			].join(" "),
+			// Destructive glass: opaque red tint. (glassToneText destructive = 61%)
+			destructive: [
+				"border-[color-mix(in_srgb,var(--destructive)_45%,transparent)]",
+				"bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--destructive)_30%,var(--card)),color-mix(in_srgb,var(--destructive)_12%,var(--card)))]",
+				"text-[color-mix(in_oklab,var(--destructive)_61%,var(--foreground))]",
+				"glass-rim-destructive",
+				"hover:border-[color-mix(in_srgb,var(--destructive)_60%,transparent)]",
+				"hover:bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--destructive)_40%,var(--card)),color-mix(in_srgb,var(--destructive)_18%,var(--card)))]",
+				"focus-visible:ring-destructive/30",
+			].join(" "),
+			// Neutral glass: opaque theme card + rim, no tone.
 			outline:
-				"border bg-background shadow-xs hover:bg-muted dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
-			// low-emphasis branded action: soft accent glass (the "Notify me" look).
-			// Not the old neutral-grey secondary, which was redundant with ghost/outline
-			// and rendered white-on-white in light mode (audit BTN2/B6).
-			secondary:
-				"border border-accent/25 bg-accent/15 text-accent-tint-foreground backdrop-blur-sm hover:border-accent/40 hover:bg-accent/25",
+				"glass-rim-neutral border border-border bg-card hover:bg-muted/60 dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+			// Low-emphasis branded action: soft accent glass (the "Notify me" look).
+			// (glassToneText accent = 65%)
+			secondary: [
+				"border-[color-mix(in_srgb,var(--accent)_45%,transparent)]",
+				"bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--accent)_30%,var(--card)),color-mix(in_srgb,var(--accent)_12%,var(--card)))]",
+				"text-[color-mix(in_oklab,var(--accent)_65%,var(--foreground))]",
+				"glass-rim-accent",
+				"hover:border-[color-mix(in_srgb,var(--accent)_60%,transparent)]",
+				"hover:bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--accent)_40%,var(--card)),color-mix(in_srgb,var(--accent)_18%,var(--card)))]",
+			].join(" "),
 			ghost: "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",
 			link: "text-primary underline-offset-4 hover:underline",
 		},

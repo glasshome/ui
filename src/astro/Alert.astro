@@ -8,12 +8,13 @@
  */
 import {
 	ALERT_CLASS,
+	ALERT_CONTENT_CLASS,
 	ALERT_DESCRIPTION_CLASS,
-	ALERT_ICON_CLASS,
+	ALERT_ICON_BG_CLASS,
 	ALERT_TITLE_CLASS,
 	type AlertTone,
 	ALERT_TONES,
-	alertIconFill,
+	alertIconBgStyle,
 	cn,
 	glassSurface,
 	glassToneText,
@@ -30,8 +31,12 @@ const { tone = "info", title, class: className, ...rest } = Astro.props;
 const t = ALERT_TONES[tone];
 
 // Same iconic glass surface as <Badge>; body text stays --foreground for
-// readability, the tinted icon chip carries the tone.
+// readability, the corner watermark icon carries the tone.
 const surfaceStyle = Object.entries({ ...glassSurface(t.color), color: "var(--foreground)" })
+	.map(([k, v]) => `${k}:${v}`)
+	.join(";");
+
+const iconBgStyle = Object.entries(alertIconBgStyle(t.color))
 	.map(([k, v]) => `${k}:${v}`)
 	.join(";");
 
@@ -54,11 +59,9 @@ const ICON_PATHS: Record<AlertTone, string> = {
 	style={surfaceStyle}
 	{...rest}
 >
-	<span class={ALERT_ICON_CLASS} style={`background-color:${alertIconFill(t.color)};color:${t.color}`}>
+	<span class={ALERT_ICON_BG_CLASS} style={iconBgStyle} aria-hidden="true">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			width="18"
-			height="18"
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"
@@ -68,7 +71,7 @@ const ICON_PATHS: Record<AlertTone, string> = {
 			set:html={ICON_PATHS[tone]}
 		/>
 	</span>
-	<div class="min-w-0 flex-1">
+	<div class={ALERT_CONTENT_CLASS}>
 		{title && <p data-slot="alert-title" class={ALERT_TITLE_CLASS} style={`color:${glassToneText(t.color)}`}>{title}</p>}
 		<div data-slot="alert-description" class={ALERT_DESCRIPTION_CLASS}><slot /></div>
 	</div>

@@ -5,3 +5,42 @@
 @source "../";
 
 @custom-variant dark (&:is(.dark *));
+
+/**
+ * Glass rim — the exact box-shadow glassSurface() gives the <Badge>/<Alert>: a
+ * white top-edge shine (light hitting the top) plus a tone-colored under-glow
+ * and tone drop, so the border reads as *lit*. Buttons carry it as authored
+ * @utilities (one per tone) because a Tailwind arbitrary box-shadow either drops
+ * the color (shadow-[…] routes it through --tw-shadow-color) or won't emit
+ * ([box-shadow:…]); an @utility is the reliable way to hand a class-string
+ * recipe an exact, tone-colored shadow.
+ */
+/* The `inset 2px 2px 4px -2px white` layer is the top-left edge light — a soft
+ * highlight offset into the upper-left inner edge, as if lit from the top-left. */
+@utility glass-rim-primary {
+	box-shadow:
+		inset 0 1px 0 oklch(1 0 0 / 0.14),
+		inset 2px 2px 4px -2px oklch(1 0 0 / 0.5),
+		inset 0 -2px 4px color-mix(in srgb, var(--primary) 14%, transparent),
+		0 1px 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+@utility glass-rim-accent {
+	box-shadow:
+		inset 0 1px 0 oklch(1 0 0 / 0.14),
+		inset 2px 2px 4px -2px oklch(1 0 0 / 0.5),
+		inset 0 -2px 4px color-mix(in srgb, var(--accent) 14%, transparent),
+		0 1px 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+@utility glass-rim-destructive {
+	box-shadow:
+		inset 0 1px 0 oklch(1 0 0 / 0.14),
+		inset 2px 2px 4px -2px oklch(1 0 0 / 0.5),
+		inset 0 -2px 4px color-mix(in srgb, var(--destructive) 14%, transparent),
+		0 1px 3px color-mix(in srgb, var(--destructive) 20%, transparent);
+}
+@utility glass-rim-neutral {
+	box-shadow:
+		inset 0 1px 0 oklch(1 0 0 / 0.12),
+		inset 2px 2px 4px -2px oklch(1 0 0 / 0.4),
+		0 1px 3px oklch(0 0 0 / 0.15);
+}

@@ -44,7 +44,7 @@ export function glassSurface(color: string): Record<string, string> {
 		background: `linear-gradient(155deg, color-mix(in srgb, ${color} 26%, transparent), color-mix(in srgb, ${color} 7%, transparent))`,
 		"backdrop-filter": "blur(8px) saturate(180%)",
 		"-webkit-backdrop-filter": "blur(8px) saturate(180%)",
-		"box-shadow": `inset 0 1px 0 oklch(1 0 0 / 0.22), inset 0 -2px 4px color-mix(in srgb, ${color} 14%, transparent), 0 1px 3px color-mix(in srgb, ${color} 20%, transparent)`,
+		"box-shadow": `inset 0 1px 0 oklch(1 0 0 / 0.14), inset 2px 2px 4px -2px oklch(1 0 0 / 0.5), inset 0 -2px 4px color-mix(in srgb, ${color} 14%, transparent), 0 1px 3px color-mix(in srgb, ${color} 20%, transparent)`,
 	};
 }
 

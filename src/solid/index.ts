@@ -390,7 +390,7 @@ export {
 export { Skeleton } from "./skeleton";
 export { Slider } from "./slider";
 // Wave 4: React-Library Alternatives - Simpler
-export { Toaster, toast } from "./sonner";
+export { GlassToast, Toaster, toast } from "./sonner";
 export { Spinner } from "./spinner";
 export { Switch } from "./switch";
 export {

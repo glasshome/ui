@@ -10,10 +10,11 @@ import {
 import { Dynamic } from "solid-js/web";
 import {
 	ALERT_CLASS,
+	ALERT_CONTENT_CLASS,
 	ALERT_DESCRIPTION_CLASS,
-	ALERT_ICON_CLASS,
+	ALERT_ICON_BG_CLASS,
 	ALERT_TITLE_CLASS,
-	alertIconFill as iconFill,
+	alertIconBgStyle,
 	ALERT_TONES,
 	type AlertTone,
 } from "../lib/alert-tones";
@@ -61,15 +62,12 @@ const Alert: Component<AlertProps> = (props) => {
 			}}
 			{...rest}
 		>
-			<span
-				class={ALERT_ICON_CLASS}
-				style={{ "background-color": iconFill(tone().color), color: tone().color }}
-			>
-				<Show when={local.icon} fallback={<Dynamic component={TONE_ICON[toneKey()]} size={18} />}>
+			<span class={ALERT_ICON_BG_CLASS} style={alertIconBgStyle(tone().color)} aria-hidden="true">
+				<Show when={local.icon} fallback={<Dynamic component={TONE_ICON[toneKey()]} />}>
 					{local.icon}
 				</Show>
 			</span>
-			<div class="min-w-0 flex-1">
+			<div class={ALERT_CONTENT_CLASS}>
 				<Show when={local.title}>
 					<p
 						data-slot="alert-title"
