@@ -55,13 +55,25 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 			setPos(null);
 			return;
 		}
+		// Not laid out yet: a hidden/collapsing popover, a display:none tab panel, or
+		// a portal measured before Kobalte positions it all report a zero-size rect.
+		// Measuring then would fling the pill to a bogus offset (a stray tinted blob
+		// that a screenshot catches mid-open), so hide until there is real geometry.
+		const er = el.getBoundingClientRect();
+		if (er.width === 0 && er.height === 0) {
+			setPos(null);
+			return;
+		}
+		if (containerRef.clientWidth === 0 && containerRef.clientHeight === 0) {
+			setPos(null);
+			return;
+		}
 		// Measure relative to the container via bounding rects (not offsetLeft),
 		// so the active item can be a deep descendant (Kobalte menu/listbox items),
 		// not just a direct child. Add the container's own scroll so the pill,
 		// which scrolls with the content, lands at the content offset; subtract the
 		// border so it aligns to the padding box (where the absolute pill anchors).
 		const cr = containerRef.getBoundingClientRect();
-		const er = el.getBoundingClientRect();
 		setPos(
 			horizontal()
 				? {
