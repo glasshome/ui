@@ -52,7 +52,7 @@ const MenubarContent: ParentComponent<ComponentProps<typeof MenubarPrimitive.Con
 				<SlidingIndicator
 					activeSelector=":focus"
 					orientation="vertical"
-					pillClass="rounded-sm bg-primary/15 duration-150"
+					pillClass="rounded-sm bg-muted duration-150"
 				>
 					{local.children}
 				</SlidingIndicator>

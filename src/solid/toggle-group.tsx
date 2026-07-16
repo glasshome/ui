@@ -51,7 +51,7 @@ const ToggleGroup: ParentComponent<
 					<SlidingIndicator
 						activeSelector="[data-pressed]"
 						class="flex w-fit items-center"
-						pillClass="rounded-md bg-primary/15"
+						pillClass="rounded-md bg-muted"
 					>
 						{local.children}
 					</SlidingIndicator>
