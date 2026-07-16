@@ -48,7 +48,7 @@ const SelectContent: ParentComponent<
 					activeSelector="[data-highlighted]"
 					orientation="vertical"
 					class="w-full"
-					pillClass="rounded-sm bg-muted duration-150"
+					pillClass="rounded-sm bg-primary/15 duration-150"
 				>
 					<SelectPrimitive.Listbox class={cn("p-1", local.listboxClass)} />
 				</SlidingIndicator>
