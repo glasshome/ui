@@ -33,14 +33,11 @@ const SelectTrigger: ParentComponent<
 const SelectContent: ParentComponent<
 	ComponentProps<typeof SelectPrimitive.Content> & { listboxClass?: string }
 > = (props) => {
-	const [local, rest] = splitProps(props, ["class", "children", "listboxClass", "gutter"]);
+	const [local, rest] = splitProps(props, ["class", "children", "listboxClass"]);
 	return (
 		<SelectPrimitive.Portal>
 			<SelectPrimitive.Content
 				data-slot="select-content"
-				// Hug the trigger (small gutter) so the panel grows out of the input,
-				// not a box floating below it. Consumer can still override via gutter.
-				gutter={local.gutter ?? 4}
 				class={cn(
 					// Match the trigger's width and left edge (anchor width) so the open
 					// panel reads as the input itself expanding, not a separate surface.
