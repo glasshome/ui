@@ -82,13 +82,22 @@
  * expand to the bottom rather than a separate box dropping in. No scale, so the
  * option text never squishes; opacity fades in slightly so it isn't a hard wipe. */
 @keyframes select-in {
+	/* The trigger opens on pointerdown and the panel appears under the cursor, so
+	 * the same click's pointerup would land on an option (press-drag-select) and
+	 * instantly pick/close. Ignore pointer events for the open animation so that
+	 * release passes through and the panel stays open; a fresh click then selects. */
 	from {
 		opacity: 0;
 		clip-path: inset(0 0 100% 0);
+		pointer-events: none;
+	}
+	90% {
+		pointer-events: none;
 	}
 	to {
 		opacity: 1;
 		clip-path: inset(0 0 0 0);
+		pointer-events: auto;
 	}
 }
 @keyframes select-out {
