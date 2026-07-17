@@ -4,6 +4,7 @@ import { AreaPicker } from "./area-picker";
 import { EntitySelector } from "./entity-selector";
 import { Input } from "./input";
 import { Label } from "./label";
+import { NumberField } from "./number-field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 import { Switch } from "./switch";
 
@@ -96,9 +97,8 @@ export function SchemaForm(props: SchemaFormProps) {
 							</div>
 						) : /* Number / Integer → Input type=number */
 						prop.type === "number" || prop.type === "integer" ? (
-							<Input
+							<NumberField
 								id={key}
-								type="number"
 								value={Number(formData()[key] ?? prop.default ?? 0)}
 								min={prop.minimum}
 								max={prop.maximum}
@@ -151,22 +151,19 @@ export function SchemaForm(props: SchemaFormProps) {
 															{(objVal()[subKey] ?? subProp.default) ? "Enabled" : "Disabled"}
 														</span>
 													</div>
+												) : subProp.type === "number" || subProp.type === "integer" ? (
+													<NumberField
+														id={`${key}.${subKey}`}
+														value={Number(objVal()[subKey] ?? subProp.default ?? 0)}
+														step={subProp.type === "integer" ? 1 : "any"}
+														onInput={(e) => updateSubField(Number(e.currentTarget.value))}
+													/>
 												) : (
 													<Input
 														id={`${key}.${subKey}`}
-														type={
-															subProp.type === "number" || subProp.type === "integer"
-																? "number"
-																: "text"
-														}
+														type="text"
 														value={String(objVal()[subKey] ?? subProp.default ?? "")}
-														onInput={(e) =>
-															updateSubField(
-																subProp.type === "number" || subProp.type === "integer"
-																	? Number(e.currentTarget.value)
-																	: e.currentTarget.value,
-															)
-														}
+														onInput={(e) => updateSubField(e.currentTarget.value)}
 													/>
 												)}
 											</div>

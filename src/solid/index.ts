@@ -186,6 +186,7 @@ export {
 	HoverCardTrigger,
 } from "./hover-card";
 export { Input } from "./input";
+export { NumberField } from "./number-field";
 export {
 	InputGroup,
 	InputGroupAddon,
