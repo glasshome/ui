@@ -7,40 +7,62 @@
 @custom-variant dark (&:is(.dark *));
 
 /**
- * Glass rim — the exact box-shadow glassSurface() gives the <Badge>/<Alert>: a
- * white top-edge shine (light hitting the top) plus a tone-colored under-glow
- * and tone drop, so the border reads as *lit*. Buttons carry it as authored
- * @utilities (one per tone) because a Tailwind arbitrary box-shadow either drops
- * the color (shadow-[…] routes it through --tw-shadow-color) or won't emit
- * ([box-shadow:…]); an @utility is the reliable way to hand a class-string
- * recipe an exact, tone-colored shadow.
+ * Single source for the glass "base effect": the tone-agnostic white rim +
+ * top-left edge light. Referenced by glassSurface() and the toast surface (JS
+ * inline) AND the @utility below (buttons), so the lit-glass look can't diverge
+ * between them — change it here and every glass element moves together. The
+ * tone-colored under-glow/drop stay per-consumer (they need the runtime tone).
  */
-/* The `inset 2px 2px 4px -2px white` layer is the top-left edge light — a soft
- * highlight offset into the upper-left inner edge, as if lit from the top-left. */
-@utility glass-rim-primary {
-	box-shadow:
+:root {
+	--glass-rim-shine:
 		inset 0 1px 0 oklch(1 0 0 / 0.14),
-		inset 2px 2px 4px -2px oklch(1 0 0 / 0.5),
-		inset 0 -2px 4px color-mix(in srgb, var(--primary) 14%, transparent),
-		0 1px 3px color-mix(in srgb, var(--primary) 20%, transparent);
+		inset 2px 2px 4px -2px oklch(1 0 0 / 0.5);
+	--glass-tone: transparent;
 }
-@utility glass-rim-accent {
+
+/* Class form of glassSurface's shadow for class-string recipes (buttons): the
+ * shared shine + a tone glow. `--glass-tone` is the already-mixed glow color
+ * (default transparent → neutral) — a bare var here, so lightningcss can't fold
+ * away a color-mix and diverge from the inline glassSurface. */
+@utility glass-rim {
 	box-shadow:
-		inset 0 1px 0 oklch(1 0 0 / 0.14),
-		inset 2px 2px 4px -2px oklch(1 0 0 / 0.5),
-		inset 0 -2px 4px color-mix(in srgb, var(--accent) 14%, transparent),
-		0 1px 3px color-mix(in srgb, var(--accent) 20%, transparent);
+		var(--glass-rim-shine, 0 0 #0000),
+		inset 0 -2px 4px var(--glass-tone),
+		0 1px 3px var(--glass-tone);
 }
-@utility glass-rim-destructive {
+
+/**
+ * The whole glass surface as one class. Set `--glass-tone` (any CSS color) on the
+ * element; everything else derives. `.glass` = translucent frost (known light
+ * surfaces); `.glass-opaque` = tone over --glass-base/--card, no frost (buttons,
+ * toasts, anything on an arbitrary/animated surface). `--glass-text` (default
+ * 65%) tunes the tinted label; override `color` for a plain body.
+ */
+@utility glass {
+	border: 1px solid oklch(from var(--glass-tone) l c h / 0.4);
+	background: linear-gradient(
+		155deg,
+		oklch(from var(--glass-tone) l c h / 0.26),
+		oklch(from var(--glass-tone) l c h / 0.07)
+	);
+	color: color-mix(in oklab, var(--glass-tone) var(--glass-text, 65%), var(--foreground));
+	backdrop-filter: blur(8px) saturate(180%);
+	-webkit-backdrop-filter: blur(8px) saturate(180%);
 	box-shadow:
-		inset 0 1px 0 oklch(1 0 0 / 0.14),
-		inset 2px 2px 4px -2px oklch(1 0 0 / 0.5),
-		inset 0 -2px 4px color-mix(in srgb, var(--destructive) 14%, transparent),
-		0 1px 3px color-mix(in srgb, var(--destructive) 20%, transparent);
+		var(--glass-rim-shine, 0 0 #0000),
+		inset 0 -2px 4px oklch(from var(--glass-tone) l c h / 0.14),
+		0 1px 3px oklch(from var(--glass-tone) l c h / 0.2);
 }
-@utility glass-rim-neutral {
+@utility glass-opaque {
+	border: 1px solid oklch(from var(--glass-tone) l c h / 0.45);
+	background: linear-gradient(
+		to bottom,
+		color-mix(in srgb, var(--glass-tone) 30%, var(--glass-base, var(--card))),
+		color-mix(in srgb, var(--glass-tone) 12%, var(--glass-base, var(--card)))
+	);
+	color: color-mix(in oklab, var(--glass-tone) var(--glass-text, 65%), var(--foreground));
 	box-shadow:
-		inset 0 1px 0 oklch(1 0 0 / 0.12),
-		inset 2px 2px 4px -2px oklch(1 0 0 / 0.4),
-		0 1px 3px oklch(0 0 0 / 0.15);
+		var(--glass-rim-shine, 0 0 #0000),
+		inset 0 -2px 4px oklch(from var(--glass-tone) l c h / 0.16),
+		0 1px 3px oklch(from var(--glass-tone) l c h / 0.2);
 }

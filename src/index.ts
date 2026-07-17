@@ -7,7 +7,12 @@
 export { buttonVariants } from "./lib/button-variants";
 // The iconic glass tone surface (frosted tinted look, first shipped on <Badge>),
 // shape-free and shared by every tinted component: <Badge>, <Alert>, chips, etc.
-export { glassSurface, glassToneText, toneTextMix } from "./lib/glass-tone";
+export {
+	glassSurface,
+	type GlassSurfaceOptions,
+	glassToneText,
+	toneTextMix,
+} from "./lib/glass-tone";
 // Badge tone tokens (shape + default + tinted-label composition over glassSurface).
 export { BADGE_DEFAULT_TONE, BADGE_TONE_CLASS, badgeToneStyle } from "./lib/badge-tone";
 // Input field recipe (pure), shared by the Solid <Input> and .astro consumers.

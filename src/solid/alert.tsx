@@ -18,7 +18,7 @@ import {
 	ALERT_TONES,
 	type AlertTone,
 } from "../lib/alert-tones";
-import { glassSurface, glassToneText } from "../lib/glass-tone";
+import { glassToneText } from "../lib/glass-tone";
 import { cn } from "../lib/utils";
 
 /**
@@ -55,11 +55,8 @@ const Alert: Component<AlertProps> = (props) => {
 		<div
 			data-slot="alert"
 			role={local.tone === "destructive" ? "alert" : "status"}
-			class={cn(ALERT_CLASS, local.class)}
-			style={{
-				...glassSurface(tone().color),
-				color: "var(--foreground)",
-			}}
+			class={cn(ALERT_CLASS, "glass", local.class)}
+			style={{ "--glass-tone": tone().color, color: "var(--foreground)" }}
 			{...rest}
 		>
 			<span class={ALERT_ICON_BG_CLASS} style={alertIconBgStyle(tone().color)} aria-hidden="true">

@@ -1,6 +1,6 @@
 import { type Component, type ComponentProps, splitProps, type ValidComponent } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { BADGE_DEFAULT_TONE, BADGE_TONE_CLASS, badgeToneStyle } from "../lib/badge-tone";
+import { BADGE_DEFAULT_TONE, BADGE_TONE_CLASS } from "../lib/badge-tone";
 import { cn } from "../lib/utils";
 
 type BadgeProps = ComponentProps<"span"> & {
@@ -15,15 +15,15 @@ type BadgeProps = ComponentProps<"span"> & {
 };
 
 const Badge: Component<BadgeProps> = (props) => {
-	const [local, others] = splitProps(props, ["class", "component", "tone", "children"]);
+	const [local, others] = splitProps(props, ["class", "component", "tone", "children", "style"]);
 	const Comp = () => local.component || "span";
 	const c = () => local.tone ?? BADGE_DEFAULT_TONE;
 	return (
 		<Dynamic
 			component={Comp()}
 			data-slot="badge"
-			class={cn(BADGE_TONE_CLASS, local.class)}
-			style={badgeToneStyle(c())}
+			class={cn(BADGE_TONE_CLASS, "glass", local.class)}
+			style={{ "--glass-tone": c(), ...(local.style as Record<string, string>) }}
 			{...others}
 		>
 			{local.children}

@@ -16,7 +16,6 @@ import {
 	ALERT_TONES,
 	alertIconBgStyle,
 	cn,
-	glassSurface,
 	glassToneText,
 } from "@glasshome/ui";
 
@@ -30,11 +29,7 @@ interface Props {
 const { tone = "info", title, class: className, ...rest } = Astro.props;
 const t = ALERT_TONES[tone];
 
-// Same iconic glass surface as <Badge>; body text stays --foreground for
-// readability, the corner watermark icon carries the tone.
-const surfaceStyle = Object.entries({ ...glassSurface(t.color), color: "var(--foreground)" })
-	.map(([k, v]) => `${k}:${v}`)
-	.join(";");
+const surfaceStyle = `--glass-tone:${t.color};color:var(--foreground)`;
 
 const iconBgStyle = Object.entries(alertIconBgStyle(t.color))
 	.map(([k, v]) => `${k}:${v}`)
@@ -55,7 +50,7 @@ const ICON_PATHS: Record<AlertTone, string> = {
 <div
 	data-slot="alert"
 	role={tone === "destructive" ? "alert" : "status"}
-	class={cn(ALERT_CLASS, className)}
+	class={cn(ALERT_CLASS, "glass", className)}
 	style={surfaceStyle}
 	{...rest}
 >

@@ -7,7 +7,7 @@
  * like var(--success) or an arbitrary categorical hue); there are no solid
  * variants.
  */
-import { glassSurface, glassToneText, toneTextMix } from "./glass-tone";
+import { glassSurface, toneTextMix } from "./glass-tone";
 
 // Re-exported so existing importers (index barrel, callers) keep resolving it.
 export { toneTextMix };
@@ -22,8 +22,5 @@ export const BADGE_TONE_CLASS =
  *  label. Keys are CSS property names (works as a Solid `style` object and,
  *  joined, as an Astro `style` string). */
 export function badgeToneStyle(color: string): Record<string, string> {
-	return {
-		...glassSurface(color),
-		color: glassToneText(color),
-	};
+	return glassSurface(color);
 }

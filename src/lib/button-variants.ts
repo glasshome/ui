@@ -16,9 +16,9 @@ import { cva } from "cva";
  * translucent fill shows that through and renders muddy/dark, worst in light
  * mode. So the tone is mixed over an OPAQUE var(--card) (a touch lighter than
  * --background in dark, so it's less muddy), and the glass life comes from the
- * shadow instead of a frost: the `glass-rim-*` @utilities carry the tone-lit rim
- * + the top-left edge light — the same shadow glassSurface() gives a badge —
- * which render over an opaque fill just fine. Label mixes toward the theme-aware
+ * shadow instead of a frost: the `glass-rim` @utility carries the shared shine
+ * (var(--glass-rim-shine)) + a tone glow set per variant via --glass-tone — the
+ * same shadow glassSurface() gives a badge — which renders over opaque just fine. Label mixes toward the theme-aware
  * --foreground (glassToneText); all color mixes are *srgb* (Tailwind's `/30`
  * opacity mixes in oklab and goes muddy). Ships as a raw class string the
  * components can't reach with inline style, so every variant is fully LITERAL
@@ -35,7 +35,7 @@ export const buttonVariants = cva({
 				"border-[color-mix(in_srgb,var(--primary)_45%,transparent)]",
 				"bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--primary)_30%,var(--card)),color-mix(in_srgb,var(--primary)_12%,var(--card)))]",
 				"text-[color-mix(in_oklab,var(--primary)_70%,var(--foreground))]",
-				"glass-rim-primary",
+				"glass-rim [--glass-tone:color-mix(in_srgb,var(--primary)_16%,transparent)]",
 				"hover:border-[color-mix(in_srgb,var(--primary)_60%,transparent)]",
 				"hover:bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--primary)_40%,var(--card)),color-mix(in_srgb,var(--primary)_18%,var(--card)))]",
 			].join(" "),
@@ -45,7 +45,7 @@ export const buttonVariants = cva({
 				"border-[color-mix(in_srgb,var(--accent)_45%,transparent)]",
 				"bg-[linear-gradient(to_right,color-mix(in_srgb,var(--primary)_32%,var(--card)),color-mix(in_srgb,var(--accent)_30%,var(--card)))]",
 				"text-[color-mix(in_oklab,var(--accent)_65%,var(--foreground))]",
-				"glass-rim-accent",
+				"glass-rim [--glass-tone:color-mix(in_srgb,var(--accent)_16%,transparent)]",
 				"hover:border-[color-mix(in_srgb,var(--accent)_60%,transparent)]",
 				"hover:bg-[linear-gradient(to_right,color-mix(in_srgb,var(--primary)_42%,var(--card)),color-mix(in_srgb,var(--accent)_40%,var(--card)))]",
 			].join(" "),
@@ -54,21 +54,21 @@ export const buttonVariants = cva({
 				"border-[color-mix(in_srgb,var(--destructive)_45%,transparent)]",
 				"bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--destructive)_30%,var(--card)),color-mix(in_srgb,var(--destructive)_12%,var(--card)))]",
 				"text-[color-mix(in_oklab,var(--destructive)_61%,var(--foreground))]",
-				"glass-rim-destructive",
+				"glass-rim [--glass-tone:color-mix(in_srgb,var(--destructive)_16%,transparent)]",
 				"hover:border-[color-mix(in_srgb,var(--destructive)_60%,transparent)]",
 				"hover:bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--destructive)_40%,var(--card)),color-mix(in_srgb,var(--destructive)_18%,var(--card)))]",
 				"focus-visible:ring-destructive/30",
 			].join(" "),
 			// Neutral glass: opaque theme card + rim, no tone.
 			outline:
-				"glass-rim-neutral border border-border bg-card hover:bg-muted/60 dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+				"glass-rim border border-border bg-card hover:bg-muted/60 dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
 			// Low-emphasis branded action: soft accent glass (the "Notify me" look).
 			// (glassToneText accent = 65%)
 			secondary: [
 				"border-[color-mix(in_srgb,var(--accent)_45%,transparent)]",
 				"bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--accent)_30%,var(--card)),color-mix(in_srgb,var(--accent)_12%,var(--card)))]",
 				"text-[color-mix(in_oklab,var(--accent)_65%,var(--foreground))]",
-				"glass-rim-accent",
+				"glass-rim [--glass-tone:color-mix(in_srgb,var(--accent)_16%,transparent)]",
 				"hover:border-[color-mix(in_srgb,var(--accent)_60%,transparent)]",
 				"hover:bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--accent)_40%,var(--card)),color-mix(in_srgb,var(--accent)_18%,var(--card)))]",
 			].join(" "),

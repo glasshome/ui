@@ -20,7 +20,7 @@ import {
 	ALERT_TITLE_CLASS,
 	alertIconBgStyle,
 } from "../lib/alert-tones";
-import { glassToneText } from "../lib/glass-tone";
+import { glassSurface, glassToneText } from "../lib/glass-tone";
 import { cn } from "../lib/utils";
 import { Spinner } from "./spinner";
 
@@ -64,10 +64,9 @@ const KIND_ICON: Record<ToastKind, Component<{ size?: number }> | null> = {
 // --card base — glassy look, but nothing to blur, so it animates cleanly.
 function toneCardStyle(color: string): JSX.CSSProperties {
 	return {
-		"border-color": `color-mix(in srgb, ${color} 45%, transparent)`,
-		background: `linear-gradient(155deg, color-mix(in srgb, ${color} 24%, var(--card)), color-mix(in srgb, ${color} 8%, var(--card)))`,
-		"box-shadow": `inset 0 1px 0 oklch(1 0 0 / 0.18), inset 3px 3px 6px -3px oklch(1 0 0 / 0.5), inset 0 -3px 8px color-mix(in srgb, ${color} 16%, transparent), 0 12px 32px -8px oklch(0 0 0 / 0.5)`,
+		...glassSurface(color, { opaque: true }),
 		color: "var(--foreground)",
+		"box-shadow": `var(--glass-rim-shine, 0 0 #0000), inset 0 -3px 8px color-mix(in srgb, ${color} 16%, transparent), 0 12px 32px -8px oklch(0 0 0 / 0.5)`,
 	};
 }
 
@@ -75,7 +74,7 @@ const NEUTRAL_CARD_STYLE: JSX.CSSProperties = {
 	"border-color": "color-mix(in srgb, var(--foreground) 16%, transparent)",
 	background:
 		"linear-gradient(155deg, color-mix(in srgb, var(--foreground) 6%, var(--card)), var(--card))",
-	"box-shadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 3px 3px 6px -3px oklch(1 0 0 / 0.45), 0 12px 32px -8px oklch(0 0 0 / 0.5)",
+	"box-shadow": "var(--glass-rim-shine, 0 0 #0000), 0 12px 32px -8px oklch(0 0 0 / 0.5)",
 	color: "var(--foreground)",
 };
 
