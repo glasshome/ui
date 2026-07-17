@@ -1,22 +1,5 @@
 // Framework-agnostic utilities
 
-// Pure cva class recipes (no Solid) — Astro/SSR-safe, used to build class
-// strings without hydrating a component. The Solid components and the
-// `@glasshome/ui/astro` static components share these one-and-only recipes, so
-// a package badge/button and a marketing-page badge/button render identically.
-export { buttonVariants } from "./lib/button-variants";
-// The iconic glass tone surface (frosted tinted look, first shipped on <Badge>),
-// shape-free and shared by every tinted component: <Badge>, <Alert>, chips, etc.
-export {
-	glassSurface,
-	type GlassSurfaceOptions,
-	glassToneText,
-	toneTextMix,
-} from "./lib/glass-tone";
-// Badge tone tokens (shape + default + tinted-label composition over glassSurface).
-export { BADGE_DEFAULT_TONE, BADGE_TONE_CLASS, badgeToneStyle } from "./lib/badge-tone";
-// Input field recipe (pure), shared by the Solid <Input> and .astro consumers.
-export { INPUT_CLASS } from "./lib/input-classes";
 // Alert tone system (tones table + surface recipe), pure — shared by the Solid
 // <Alert>, the Astro <Alert>, and hub's docs Callout so all render identically.
 export {
@@ -34,6 +17,16 @@ export {
 	alertIconBgStyle,
 	alertIconFill,
 } from "./lib/alert-tones";
+// Badge tone tokens (shape + default + tinted-label composition over glassSurface).
+export { BADGE_DEFAULT_TONE, BADGE_TONE_CLASS, badgeToneStyle } from "./lib/badge-tone";
+// Tier chip tokens (metallic PRO/EARLY BIRD/CREATOR sweep) — shared by the Solid
+// <TierBadge> and the Astro <TierBadge.astro> face.
+export { TIER_BADGE_CLASS, tierBadgeStyle } from "./lib/tier-badge";
+// Pure cva class recipes (no Solid) — Astro/SSR-safe, used to build class
+// strings without hydrating a component. The Solid components and the
+// `@glasshome/ui/astro` static components share these one-and-only recipes, so
+// a package badge/button and a marketing-page badge/button render identically.
+export { buttonVariants } from "./lib/button-variants";
 // Card surface + sub-part classes, pure — shared by the Solid <Card>, the Astro
 // <Card>, and hub's `.astro` card surfaces.
 export {
@@ -47,6 +40,16 @@ export {
 	CARD_SURFACE,
 	CARD_TITLE_CLASS,
 } from "./lib/card-classes";
+// The iconic glass tone surface (frosted tinted look, first shipped on <Badge>),
+// shape-free and shared by every tinted component: <Badge>, <Alert>, chips, etc.
+export {
+	type GlassSurfaceOptions,
+	glassSurface,
+	glassToneText,
+	toneTextMix,
+} from "./lib/glass-tone";
+// Input field recipe (pure), shared by the Solid <Input> and .astro consumers.
+export { INPUT_CLASS } from "./lib/input-classes";
 // Section card surface tokens (pure) — shared by the Solid <SectionCard> kit and
 // static consumers (hub .astro/.ts).
 export {

@@ -3,6 +3,17 @@
 // Color helpers for ColorWheel/ColorSlider consumers, re-exported so they
 // don't need a direct @kobalte/core dependency.
 export { type Color, parseColor } from "@kobalte/core/colors";
+// Section tokens re-exported from the Solid entry for convenience.
+export {
+	SECTION_CARD_CHROME,
+	SECTION_CARD_CLASS,
+	SECTION_CARD_FILL,
+	SECTION_CARD_INSET_STYLE,
+	SECTION_INNER_RADIUS,
+	SECTION_OUTER_RADIUS,
+	SECTION_PADDING,
+	SECTION_ROW_CLASS,
+} from "../lib/section-tokens";
 // Wave 2: Simple Kobalte Components
 export {
 	Accordion,
@@ -11,7 +22,7 @@ export {
 	AccordionTrigger,
 } from "./accordion";
 // Wave 1: Pure HTML+CSS Components
-export { Alert, type AlertTone, AlertDescription, AlertTitle } from "./alert";
+export { Alert, AlertDescription, AlertTitle, type AlertTone } from "./alert";
 export {
 	AlertDialog,
 	AlertDialogAction,
@@ -113,6 +124,24 @@ export {
 	ContextMenuTrigger,
 } from "./context-menu";
 export { CopyButton } from "./copy-button";
+export { CountPill } from "./count-pill";
+export {
+	type SortDirection,
+	TABLE_BLEED,
+	TABLE_CELL_X,
+	TABLE_HEAD_CELL_CLASS,
+	TABLE_HEAD_CLASS,
+	TABLE_NUM_CELL_CLASS,
+	TABLE_ROW_CLASS,
+	TABLE_SCROLL_CLASS,
+	TableBulkBar,
+	TableEmpty,
+	TableError,
+	TableFilterSelect,
+	TableSearchInput,
+	TableSkeleton,
+	TableSortHeader,
+} from "./data-table";
 export {
 	Dialog,
 	DialogClose,
@@ -186,7 +215,6 @@ export {
 	HoverCardTrigger,
 } from "./hover-card";
 export { Input } from "./input";
-export { NumberField } from "./number-field";
 export {
 	InputGroup,
 	InputGroupAddon,
@@ -245,6 +273,8 @@ export {
 	NavigationMenuViewport,
 	navigationMenuTriggerStyle,
 } from "./navigation-menu";
+export { NumberField } from "./number-field";
+export { PageHeader } from "./page-header";
 export {
 	Pagination,
 	PaginationContent,
@@ -279,56 +309,8 @@ export {
 	ResponsiveDialogTrigger,
 } from "./responsive-dialog";
 export { SchemaForm } from "./schema-form";
-export { ScrollArea, ScrollBar } from "./scroll-area";
-// Wave 3: Complex Kobalte Components
-export {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectSeparator,
-	SelectTrigger,
-	SelectValue,
-} from "./select";
-export {
-	type SortDirection,
-	TABLE_BLEED,
-	TABLE_CELL_X,
-	TABLE_HEAD_CELL_CLASS,
-	TABLE_HEAD_CLASS,
-	TABLE_NUM_CELL_CLASS,
-	TABLE_ROW_CLASS,
-	TABLE_SCROLL_CLASS,
-	TableBulkBar,
-	TableEmpty,
-	TableError,
-	TableFilterSelect,
-	TableSearchInput,
-	TableSkeleton,
-	TableSortHeader,
-} from "./data-table";
-export { CountPill } from "./count-pill";
-export { PageHeader } from "./page-header";
 export { ScopeIndicator } from "./scope-indicator";
-export { SlidingIndicator } from "./sliding-indicator";
-export {
-	LabeledField,
-	LabeledInput,
-	RowActions,
-	SectionAddButton,
-	SectionEmpty,
-	SwitchRow,
-} from "./settings-row";
-export { Separator } from "./separator";
-export {
-	formatWidgetCount,
-	type WidgetSummary,
-	WidgetIdentity,
-	WidgetMeta,
-	widgetHref,
-} from "./widget-identity";
-export { WidgetTrustBadge } from "./widget-trust-badge";
+export { ScrollArea, ScrollBar } from "./scroll-area";
 export {
 	type GlassSurface,
 	SectionCard,
@@ -341,17 +323,36 @@ export {
 	SectionSubtitle,
 	SectionTitle,
 } from "./section-card";
-// Section tokens re-exported from the Solid entry for convenience.
+// Wave 3: Complex Kobalte Components
 export {
-	SECTION_CARD_CHROME,
-	SECTION_CARD_CLASS,
-	SECTION_CARD_FILL,
-	SECTION_CARD_INSET_STYLE,
-	SECTION_INNER_RADIUS,
-	SECTION_OUTER_RADIUS,
-	SECTION_PADDING,
-	SECTION_ROW_CLASS,
-} from "../lib/section-tokens";
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectSeparator,
+	SelectTrigger,
+	SelectValue,
+} from "./select";
+export { Separator } from "./separator";
+export {
+	LabeledField,
+	LabeledInput,
+	RowActions,
+	SectionAddButton,
+	SectionEmpty,
+	SwitchRow,
+} from "./settings-row";
+export {
+	Sheet,
+	SheetClose,
+	SheetContent,
+	SheetDescription,
+	SheetFooter,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger,
+} from "./sheet";
 export {
 	Sidebar,
 	SidebarContent,
@@ -378,18 +379,9 @@ export {
 	SidebarTrigger,
 	useSidebar,
 } from "./sidebar";
-export {
-	Sheet,
-	SheetClose,
-	SheetContent,
-	SheetDescription,
-	SheetFooter,
-	SheetHeader,
-	SheetTitle,
-	SheetTrigger,
-} from "./sheet";
 export { Skeleton } from "./skeleton";
 export { Slider } from "./slider";
+export { SlidingIndicator } from "./sliding-indicator";
 // Wave 4: React-Library Alternatives - Simpler
 export { GlassToast, Toaster, toast } from "./sonner";
 export { Spinner } from "./spinner";
@@ -409,3 +401,11 @@ export { Textarea } from "./textarea";
 export { Toggle, toggleVariants } from "./toggle";
 export { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 export { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+export {
+	formatWidgetCount,
+	WidgetIdentity,
+	WidgetMeta,
+	type WidgetSummary,
+	widgetHref,
+} from "./widget-identity";
+export { WidgetTrustBadge } from "./widget-trust-badge";
