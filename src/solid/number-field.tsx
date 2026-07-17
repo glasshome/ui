@@ -33,7 +33,7 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
 				)}
 				{...others}
 			/>
-			<div class="absolute inset-y-1 right-1 flex w-6 flex-col divide-y divide-border overflow-hidden rounded-sm border border-border">
+			<div class="absolute inset-y-0 right-0 flex w-7 flex-col divide-y divide-border overflow-hidden rounded-r-md border-l border-border">
 				<button
 					type="button"
 					tabindex={-1}
