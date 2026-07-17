@@ -28,12 +28,12 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
 				max={local.max}
 				class={cn(
 					INPUT_CLASS,
-					"pr-8 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+					"pr-11 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
 					local.class,
 				)}
 				{...others}
 			/>
-			<div class="absolute inset-y-0 right-0 flex w-7 flex-col divide-y divide-border overflow-hidden rounded-r-md border-l border-border">
+			<div class="absolute inset-y-0 right-0 flex w-10 flex-col divide-y divide-border overflow-hidden rounded-r-md border-l border-border">
 				<button
 					type="button"
 					tabindex={-1}
@@ -41,7 +41,7 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
 					onClick={() => nudge(1)}
 					class="flex flex-1 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:bg-muted"
 				>
-					<ChevronUp class="size-3" />
+					<ChevronUp class="size-4" />
 				</button>
 				<button
 					type="button"
@@ -50,7 +50,7 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
 					onClick={() => nudge(-1)}
 					class="flex flex-1 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:bg-muted"
 				>
-					<ChevronDown class="size-3" />
+					<ChevronDown class="size-4" />
 				</button>
 			</div>
 		</div>
