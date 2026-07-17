@@ -27,13 +27,13 @@ const CopyButton: Component<CopyButtonProps> = (props) => {
 			type="button"
 			onClick={handleCopy}
 			class={cn(
-				"absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-black/20 backdrop-blur-sm transition-all hover:scale-105 hover:bg-black/30 active:scale-95",
+				"absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/10 backdrop-blur-sm transition-all hover:scale-105 hover:bg-foreground/20 active:scale-95",
 				props.class,
 			)}
 			aria-label={copied() ? "Copied!" : "Copy to clipboard"}
 		>
-			<Show when={copied()} fallback={<Copy class="h-4 w-4 text-white/60" />}>
-				<Check class="h-4 w-4 text-green-400" />
+			<Show when={copied()} fallback={<Copy class="h-4 w-4 text-muted-foreground" />}>
+				<Check class="h-4 w-4 text-success" />
 			</Show>
 		</button>
 	);

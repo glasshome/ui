@@ -463,7 +463,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 							class={`flex size-4 shrink-0 items-center justify-center rounded-[4px] border shadow-xs transition-colors ${
 								selected()
 									? "border-primary bg-primary text-primary-foreground"
-									: "border-input dark:bg-input/30"
+									: "border-input bg-input/60 dark:bg-input/30"
 							}`}
 							aria-hidden="true"
 						>
@@ -475,7 +475,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 				>
 					{/* Single-select: round radio, mirrors radio-group.tsx */}
 					<div
-						class="flex aspect-square size-4 shrink-0 items-center justify-center rounded-full border border-input shadow-xs dark:bg-input/30"
+						class="flex aspect-square size-4 shrink-0 items-center justify-center rounded-full border border-input bg-input/60 shadow-xs dark:bg-input/30"
 						aria-hidden="true"
 					>
 						<Show when={selected()}>
