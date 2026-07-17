@@ -83,7 +83,7 @@ export function alertIconBgStyle(color: string): Record<string, string> {
 	};
 }
 export const ALERT_CONTENT_CLASS = "relative z-10 min-w-0 flex-1";
-export const ALERT_TITLE_CLASS = "font-semibold text-sm leading-snug";
+export const ALERT_TITLE_CLASS = "font-semibold text-base leading-snug";
 // Body sits at a slight fade below the full-strength title — foreground dimmed
 // just a touch for hierarchy, not the washed-out muted-foreground.
 export const ALERT_DESCRIPTION_CLASS =
