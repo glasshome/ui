@@ -42,7 +42,7 @@ const ButtonGroupText: Component<ComponentProps<"div"> & { component?: ValidComp
 		<Dynamic
 			component={Comp()}
 			class={cn(
-				"flex items-center gap-2 rounded-md border bg-muted px-4 font-medium text-sm shadow-xs [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none",
+				"glass-rim flex items-center gap-2 rounded-md border border-border bg-card px-4 font-medium text-muted-foreground text-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none",
 				local.class,
 			)}
 			{...rest}

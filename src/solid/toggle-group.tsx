@@ -39,7 +39,8 @@ const ToggleGroup: ParentComponent<
 			data-variant={local.variant}
 			data-size={local.size}
 			class={cn(
-				"group/toggle-group flex w-fit items-center rounded-md data-[variant=outline]:shadow-xs",
+				// A track frame (like the Tabs list) so the segments read as one group.
+				"group/toggle-group flex w-fit items-center rounded-lg border border-border/50 bg-card/40 p-1 backdrop-blur-sm data-[variant=outline]:shadow-xs",
 				local.class,
 			)}
 			{...rest}
@@ -81,10 +82,15 @@ const ToggleGroupItem: Component<
 				// `*-of-type` (not `first:`/`last:`): the sliding indicator is a <div> sibling,
 				// so `:first-child`/`:last-child` would land on the indicator and drop the end
 				// segments' rounded corners. Items are <button>, so `-of-type` skips the indicator.
-				"min-w-0 flex-1 shrink-0 rounded-none shadow-none first-of-type:rounded-l-md last-of-type:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first-of-type:border-l",
-				// In single-select the indicator paints the active segment; the item stays
-				// transparent so the two don't stack into a darker tint.
-				context.sliding && "data-[pressed]:bg-transparent",
+				"min-w-0 flex-1 shrink-0 rounded-none px-4 shadow-none first-of-type:rounded-l-md last-of-type:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first-of-type:border-l",
+				// Single-select: the sliding indicator paints the active segment, so the
+				// item needs no pressed fill of its own, and hover only tints the text
+				// (a square bg-muted hover would clash with the rounded glass indicator).
+				// Multi-select has no single indicator, so each pressed segment carries
+				// its own neutral fill.
+				context.sliding
+					? "hover:!bg-transparent hover:!text-primary"
+					: "data-[pressed]:bg-muted data-[pressed]:text-foreground",
 				local.class,
 			)}
 			{...rest}
