@@ -50,7 +50,7 @@ const Slider: Component<SliderProps> = (props) => {
 			onChange={local.onChange}
 			onChangeEnd={local.onChangeEnd}
 			class={cn(
-				"relative flex w-full touch-none select-none items-center rounded-xl bg-primary/30",
+				"relative flex w-full touch-none select-none items-center rounded-xl border border-input bg-input/30",
 				local.disabled && "cursor-not-allowed opacity-50",
 				local.class,
 			)}
@@ -67,6 +67,7 @@ const Slider: Component<SliderProps> = (props) => {
 				}}
 			>
 				<KSlider.Fill
+					class="glass [--glass-tone:var(--primary)]"
 					style={{
 						position: "absolute",
 						top: "0",
@@ -74,14 +75,13 @@ const Slider: Component<SliderProps> = (props) => {
 						"margin-left": `${-HALF_THUMB}px`,
 						"margin-right": `${-HALF_THUMB}px`,
 						"border-radius": "var(--radius-xl)",
-						background: "var(--primary)",
 					}}
 				/>
 				<Index each={local.value ?? local.defaultValue ?? [0]}>
 					{() => (
 						<KSlider.Thumb
 							class={cn(
-								"absolute top-0 block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+								"absolute top-0 block rounded-xl transition-transform duration-200 ease-out hover:scale-125 active:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
 								local.disabled && "cursor-not-allowed",
 								local.thumbClass,
 							)}
@@ -90,10 +90,9 @@ const Slider: Component<SliderProps> = (props) => {
 							style={{
 								width: `${THUMB_SIZE}px`,
 								height: `${THUMB_SIZE}px`,
-								"border-radius": "var(--radius-xl)",
-								background: "var(--background)",
-								border: "2px solid var(--primary)",
-								"box-shadow": "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+								background: "var(--primary)",
+								"box-shadow":
+									"0 2px 5px oklch(0 0 0 / 0.35), inset 0 1px 0 oklch(1 0 0 / 0.35), inset 0 -2px 3px oklch(0 0 0 / 0.2)",
 							}}
 						>
 							<KSlider.Input />

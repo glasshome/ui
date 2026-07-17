@@ -7,7 +7,7 @@ const Avatar: Component<ComponentProps<typeof ImagePrimitive>> = (props) => {
 	return (
 		<ImagePrimitive
 			data-slot="avatar"
-			class={cn("relative flex size-8 shrink-0 overflow-hidden rounded-full", local.class)}
+			class={cn("relative flex size-10 shrink-0 overflow-hidden rounded-full", local.class)}
 			{...rest}
 		/>
 	);
@@ -29,7 +29,10 @@ const AvatarFallback: Component<ComponentProps<typeof ImagePrimitive.Fallback>> 
 	return (
 		<ImagePrimitive.Fallback
 			data-slot="avatar-fallback"
-			class={cn("flex size-full items-center justify-center rounded-full bg-muted", local.class)}
+			class={cn(
+				"glass [--glass-tone:var(--primary)] flex size-full items-center justify-center rounded-full font-semibold",
+				local.class,
+			)}
 			{...rest}
 		/>
 	);

@@ -33,27 +33,27 @@ const Switch: Component<SwitchProps> = (props) => {
 			data-slot="switch"
 			disabled={local.disabled}
 			class={cn(
-				"peer relative inline-flex shrink-0 cursor-pointer items-center rounded-xl outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
+				"peer relative inline-flex shrink-0 cursor-pointer items-center rounded-xl border border-input outline-none transition-all duration-200 ease-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
+				// checked track wears the shared glass surface (frosted primary); off
+				// stays a neutral input-colored track.
+				local.checked ? "glass [--glass-tone:var(--primary)]" : "bg-input/30",
 				local.class,
 			)}
 			style={{
 				width: `${TRACK_WIDTH}px`,
 				height: `${TRACK_HEIGHT}px`,
-				background: local.checked
-					? "var(--primary)"
-					: "color-mix(in srgb, var(--primary) 30%, transparent)",
 			}}
 			onClick={() => local.onChange?.(!local.checked)}
 		>
 			<span
 				data-slot="switch-thumb"
-				class="pointer-events-none block rounded-xl shadow-lg transition-transform"
+				class="pointer-events-none block rounded-xl transition-transform duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]"
 				style={{
 					width: `${THUMB_SIZE}px`,
 					height: `${THUMB_SIZE}px`,
-					background: "var(--background)",
-					border: "2px solid var(--primary)",
-					"box-shadow": "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+					background: "var(--primary)",
+					"box-shadow":
+						"0 2px 5px oklch(0 0 0 / 0.35), inset 0 1px 0 oklch(1 0 0 / 0.35), inset 0 -2px 3px oklch(0 0 0 / 0.2)",
 					transform: `translateX(${local.checked ? THUMB_TRAVEL : 0}px)`,
 				}}
 			/>
