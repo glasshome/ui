@@ -9,7 +9,7 @@ const Checkbox: Component<ComponentProps<typeof CheckboxPrimitive>> = (props) =>
 		<CheckboxPrimitive
 			data-slot="checkbox"
 			class={cn(
-				"peer size-4 shrink-0 rounded-[4px] border border-input bg-input/60 shadow-xs outline-none transition-shadow focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[checked]:border-primary data-[checked]:bg-primary data-[checked]:text-primary-foreground dark:bg-input/30 dark:data-[checked]:bg-primary dark:aria-invalid:ring-destructive/40",
+				"peer size-4 shrink-0 rounded-[4px] border border-input bg-input/30 shadow-xs outline-none transition-shadow focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[checked]:border-primary data-[checked]:bg-primary data-[checked]:text-primary-foreground dark:bg-input/30 dark:data-[checked]:bg-primary dark:aria-invalid:ring-destructive/40",
 				local.class,
 			)}
 			{...others}

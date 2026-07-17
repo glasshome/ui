@@ -375,7 +375,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 				aria-expanded={open()}
 				aria-controls={listboxId}
 				aria-haspopup="listbox"
-				class={`flex h-9 w-full items-center gap-2 rounded-md border border-input bg-input/60 px-3 py-2 text-sm transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30 ${
+				class={`flex h-9 w-full items-center gap-2 rounded-md border border-input bg-input/30 px-3 py-2 text-sm transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30 ${
 					showTriggerClear() ? "pr-14" : ""
 				}`}
 				onClick={p.onClick}
@@ -463,7 +463,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 							class={`flex size-4 shrink-0 items-center justify-center rounded-[4px] border shadow-xs transition-colors ${
 								selected()
 									? "border-primary bg-primary text-primary-foreground"
-									: "border-input bg-input/60 dark:bg-input/30"
+									: "border-input bg-input/30 dark:bg-input/30"
 							}`}
 							aria-hidden="true"
 						>
@@ -475,7 +475,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 				>
 					{/* Single-select: round radio, mirrors radio-group.tsx */}
 					<div
-						class="flex aspect-square size-4 shrink-0 items-center justify-center rounded-full border border-input bg-input/60 shadow-xs dark:bg-input/30"
+						class="flex aspect-square size-4 shrink-0 items-center justify-center rounded-full border border-input bg-input/30 shadow-xs dark:bg-input/30"
 						aria-hidden="true"
 					>
 						<Show when={selected()}>
