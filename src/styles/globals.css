@@ -14,9 +14,13 @@
  * tone-colored under-glow/drop stay per-consumer (they need the runtime tone).
  */
 :root {
+	/* Lit from the top-left: a white highlight (reads on dark surfaces) plus a
+	 * bottom-right dark shade (reads on light surfaces), so the glass has depth in
+	 * both themes — a white-only rim goes flat on a white surface. */
 	--glass-rim-shine:
-		inset 0 1px 0 oklch(1 0 0 / 0.14),
-		inset 2px 2px 4px -2px oklch(1 0 0 / 0.5);
+		inset 0 1px 0 oklch(1 0 0 / 0.22),
+		inset 2px 2px 5px -3px oklch(1 0 0 / 0.5),
+		inset -2px -2px 4px -2px oklch(0 0 0 / 0.12);
 	--glass-tone: transparent;
 }
 
@@ -28,38 +32,27 @@
 	box-shadow:
 		var(--glass-rim-shine, 0 0 #0000),
 		inset 0 -2px 4px var(--glass-tone),
+		0 1px 2px oklch(0 0 0 / 0.08),
 		0 1px 3px var(--glass-tone);
 }
 
 /**
  * The whole glass surface as one class. Set `--glass-tone` (any CSS color) on the
- * element; everything else derives. `.glass` = translucent frost (known light
- * surfaces); `.glass-opaque` = tone over --glass-base/--card, no frost (buttons,
- * toasts, anything on an arbitrary/animated surface). `--glass-text` (default
- * 65%) tunes the tinted label; override `color` for a plain body.
+ * element; everything else derives. Opaque over `--glass-base` (default --card)
+ * so it reads the same on any surface — a translucent fill showed the darker
+ * layers through a translucent card/row and went muddy in light mode.
+ * `--glass-text` (default 65%) tunes the tinted label; override `color` for a
+ * plain body.
  */
 @utility glass {
-	border: 1px solid oklch(from var(--glass-tone) l c h / 0.4);
-	background: linear-gradient(
-		155deg,
-		oklch(from var(--glass-tone) l c h / 0.26),
-		oklch(from var(--glass-tone) l c h / 0.07)
-	);
-	color: color-mix(in oklab, var(--glass-tone) var(--glass-text, 65%), var(--foreground));
-	backdrop-filter: blur(8px) saturate(180%);
-	-webkit-backdrop-filter: blur(8px) saturate(180%);
-	box-shadow:
-		var(--glass-rim-shine, 0 0 #0000),
-		inset 0 -2px 4px oklch(from var(--glass-tone) l c h / 0.14),
-		0 1px 3px oklch(from var(--glass-tone) l c h / 0.2);
-}
-@utility glass-opaque {
 	border: 1px solid oklch(from var(--glass-tone) l c h / 0.45);
-	background: linear-gradient(
-		to bottom,
-		color-mix(in srgb, var(--glass-tone) 30%, var(--glass-base, var(--card))),
-		color-mix(in srgb, var(--glass-tone) 12%, var(--glass-base, var(--card)))
-	);
+	background:
+		radial-gradient(120% 120% at 22% 8%, oklch(1 0 0 / 0.16), transparent 58%),
+		linear-gradient(
+			135deg,
+			color-mix(in srgb, var(--glass-tone) 28%, var(--glass-base, var(--card))),
+			color-mix(in srgb, var(--glass-tone) 10%, var(--glass-base, var(--card)))
+		);
 	color: color-mix(in oklab, var(--glass-tone) var(--glass-text, 65%), var(--foreground));
 	box-shadow:
 		var(--glass-rim-shine, 0 0 #0000),
