@@ -67,9 +67,7 @@ const SelectContent: ParentComponent<
 					class="w-full"
 					pillClass="rounded-sm bg-muted duration-150"
 				>
-					{/* No vertical padding: the first row sits flush at the content top so it
-				    lands exactly on the trigger it overlays; last row flush at the bottom. */}
-				<SelectPrimitive.Listbox class={cn("px-1", local.listboxClass)} />
+					<SelectPrimitive.Listbox class={cn("px-1", local.listboxClass)} />
 				</SlidingIndicator>
 			</SelectPrimitive.Content>
 		</SelectPrimitive.Portal>
