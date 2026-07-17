@@ -10,14 +10,20 @@ const Progress: Component<ComponentProps<typeof ProgressPrimitive> & { value?: n
 		<ProgressPrimitive
 			data-slot="progress"
 			value={local.value}
-			class={cn("relative h-2 w-full overflow-hidden rounded-full bg-primary/20", local.class)}
+			// Recessed glass channel: a faint tint + an inset shadow so the track
+			// reads as a groove the glass fill sits in.
+			class={cn("relative h-2 w-full overflow-hidden rounded-full bg-primary/15", local.class)}
+			style={{ "box-shadow": "inset 0 1px 2px oklch(0 0 0 / 0.18)" }}
 			{...rest}
 		>
 			<ProgressPrimitive.Track class="h-full w-full">
 				<ProgressPrimitive.Fill
 					data-slot="progress-indicator"
-					class="h-full w-full flex-1 bg-primary transition-all"
-					style={{ transform: `translateX(-${100 - (local.value || 0)}%)` }}
+					class="glass h-full w-full flex-1 transition-all"
+					style={{
+						"--glass-tone": "var(--primary)",
+						transform: `translateX(-${100 - (local.value || 0)}%)`,
+					}}
 				/>
 			</ProgressPrimitive.Track>
 		</ProgressPrimitive>
