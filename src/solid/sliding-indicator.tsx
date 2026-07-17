@@ -31,6 +31,10 @@ interface SlidingIndicatorProps extends ComponentProps<"div"> {
 
 type Pos = { offset: number; size: number };
 
+// One duration for both the slide (transform transition) and the scale dip, so
+// they always overlap exactly. Shorter = snappier.
+const SLIDE_MS = 220;
+
 export function SlidingIndicator(props: SlidingIndicatorProps) {
 	const [local, rest] = splitProps(props, [
 		"active",
@@ -46,27 +50,27 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 	let containerRef: HTMLDivElement | undefined;
 	const [pos, setPos] = createSignal<Pos | null>(null);
 
-	// Squash while sliding: the indicator dips slightly smaller in flight and springs
-	// back on arrival, for a sense of speed/force. Skips the initial appearance.
-	const [moving, setMoving] = createSignal(false);
-	let squashTimer: ReturnType<typeof setTimeout> | undefined;
+	// On a real move, play a symmetric scale dip (1 → 0.9 → 1) over the SAME
+	// duration as the slide, so the shrink and the travel fully overlap: smallest
+	// at mid-flight, full size at both ends (a bell curve — accelerate in, settle
+	// out). WAAPI on `scale` composes with the translate transition; it releases
+	// back to the base (1) on its own, so nothing can get stuck small.
+	let indicatorEl: HTMLDivElement | undefined;
 	createEffect(
 		on(
 			pos,
 			(p, prev) => {
-				// pos is a fresh object on every re-measure (ResizeObserver / the
-				// Select's attribute MutationObserver fire often), so only squash when
-				// the indicator actually travels — else `moving` sticks true and the indicator
-				// stays scaled down, reading as a phantom left/right margin.
-				if (!p || !prev || Math.abs(p.offset - prev.offset) < 1) return;
-				setMoving(true);
-				clearTimeout(squashTimer);
-				squashTimer = setTimeout(() => setMoving(false), 260);
+				// pos is a fresh object on every re-measure (the Select's MutationObserver
+				// fires often), so only animate on an actual travel.
+				if (!p || !prev || Math.abs(p.offset - prev.offset) < 1 || !indicatorEl) return;
+				indicatorEl.animate([{ scale: "1" }, { scale: "0.9" }, { scale: "1" }], {
+					duration: SLIDE_MS,
+					easing: "ease-in-out",
+				});
 			},
 			{ defer: true },
 		),
 	);
-	onCleanup(() => clearTimeout(squashTimer));
 
 	const measure = () => {
 		if (!containerRef) return;
@@ -149,24 +153,20 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 			<Show when={pos()}>
 				{(p) => (
 					<div
+						ref={indicatorEl}
 						data-sliding-indicator
 						aria-hidden="true"
 						class={cn(
-							"-z-10 pointer-events-none absolute transition-[transform,width,height] duration-300 ease-out",
+							"-z-10 pointer-events-none absolute ease-out",
 							horizontal() ? "inset-y-0 left-0" : "inset-x-0 top-0",
 							local.indicatorClass ?? "rounded-lg bg-primary/15",
 						)}
 						style={{
+							transition: `transform ${SLIDE_MS}ms ease-in-out, width ${SLIDE_MS}ms ease-in-out, height ${SLIDE_MS}ms ease-in-out`,
 							...(local.indicatorTone ? { "--glass-tone": local.indicatorTone } : {}),
 							...(horizontal()
-								? {
-										transform: `translateX(${p().offset}px) scale(${moving() ? 0.92 : 1})`,
-										width: `${p().size}px`,
-									}
-								: {
-										transform: `translateY(${p().offset}px) scale(${moving() ? 0.92 : 1})`,
-										height: `${p().size}px`,
-									}),
+								? { transform: `translateX(${p().offset}px)`, width: `${p().size}px` }
+								: { transform: `translateY(${p().offset}px)`, height: `${p().size}px` }),
 						}}
 					/>
 				)}
