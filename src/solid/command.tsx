@@ -169,7 +169,7 @@ const CommandList: ParentComponent<ComponentProps<"div">> = (props) => {
 			<SlidingIndicator
 				activeSelector="[data-selected='true']"
 				orientation="vertical"
-				pillClass="rounded-sm bg-muted duration-150"
+				pillClass="rounded-sm glass duration-150" pillTone="var(--primary)"
 			>
 				{local.children}
 			</SlidingIndicator>

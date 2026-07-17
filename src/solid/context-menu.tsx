@@ -63,7 +63,7 @@ const ContextMenuContent: Component<ComponentProps<typeof ContextMenuPrimitive.C
 				<SlidingIndicator
 					activeSelector=":focus"
 					orientation="vertical"
-					pillClass="rounded-sm bg-muted duration-150"
+					pillClass="rounded-sm glass duration-150" pillTone="var(--primary)"
 				>
 					{local.children}
 				</SlidingIndicator>

@@ -1,4 +1,4 @@
-import { type ComponentProps, createEffect, type JSX, onCleanup, onMount, Show, createSignal, splitProps } from "solid-js";
+import { type ComponentProps, createEffect, createSignal, type JSX, on, onCleanup, onMount, Show, splitProps } from "solid-js";
 import { cn } from "../lib/utils";
 
 /**
@@ -21,6 +21,9 @@ interface SlidingIndicatorProps extends ComponentProps<"div"> {
 	orientation?: "horizontal" | "vertical";
 	/** Class for the sliding pill (background + radius). */
 	pillClass?: string;
+	/** Glass tone for the pill: set `--glass-tone` so a `.glass` pillClass tints
+	 *  to this color (e.g. var(--primary)). Omit for a plain (non-glass) pill. */
+	pillTone?: string;
 	/** Selector for the measurable items. Default: direct children (minus the pill). */
 	itemSelector?: string;
 	children: JSX.Element;
@@ -34,6 +37,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 		"activeSelector",
 		"orientation",
 		"pillClass",
+		"pillTone",
 		"itemSelector",
 		"class",
 		"children",
@@ -41,6 +45,28 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 	const horizontal = () => (local.orientation ?? "horizontal") === "horizontal";
 	let containerRef: HTMLDivElement | undefined;
 	const [pos, setPos] = createSignal<Pos | null>(null);
+
+	// Squash while sliding: the pill dips slightly smaller in flight and springs
+	// back on arrival, for a sense of speed/force. Skips the initial appearance.
+	const [moving, setMoving] = createSignal(false);
+	let squashTimer: ReturnType<typeof setTimeout> | undefined;
+	createEffect(
+		on(
+			pos,
+			(p, prev) => {
+				// pos is a fresh object on every re-measure (ResizeObserver / the
+				// Select's attribute MutationObserver fire often), so only squash when
+				// the pill actually travels — else `moving` sticks true and the pill
+				// stays scaled down, reading as a phantom left/right margin.
+				if (!p || !prev || Math.abs(p.offset - prev.offset) < 1) return;
+				setMoving(true);
+				clearTimeout(squashTimer);
+				squashTimer = setTimeout(() => setMoving(false), 260);
+			},
+			{ defer: true },
+		),
+	);
+	onCleanup(() => clearTimeout(squashTimer));
 
 	const measure = () => {
 		if (!containerRef) return;
@@ -127,14 +153,21 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 						aria-hidden="true"
 						class={cn(
 							"-z-10 pointer-events-none absolute transition-[transform,width,height] duration-300 ease-out",
-							horizontal() ? "top-0 bottom-0 left-0 h-full" : "top-0 right-0 left-0 w-full",
+							horizontal() ? "inset-y-0 left-0" : "inset-x-0 top-0",
 							local.pillClass ?? "rounded-lg bg-primary/15",
 						)}
-						style={
-							horizontal()
-								? { transform: `translateX(${p().offset}px)`, width: `${p().size}px` }
-								: { transform: `translateY(${p().offset}px)`, height: `${p().size}px` }
-						}
+						style={{
+							...(local.pillTone ? { "--glass-tone": local.pillTone } : {}),
+							...(horizontal()
+								? {
+										transform: `translateX(${p().offset}px) scale(${moving() ? 0.92 : 1})`,
+										width: `${p().size}px`,
+									}
+								: {
+										transform: `translateY(${p().offset}px) scale(${moving() ? 0.92 : 1})`,
+										height: `${p().size}px`,
+									}),
+						}}
 					/>
 				)}
 			</Show>
