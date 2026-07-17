@@ -243,6 +243,7 @@ export {
 } from "./item";
 export { Kbd, KbdGroup } from "./kbd";
 export { Label } from "./label";
+export { Logo } from "./logo";
 export {
 	Menubar,
 	MenubarCheckboxItem,

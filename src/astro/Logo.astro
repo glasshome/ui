@@ -1,0 +1,69 @@
+---
+/**
+ * The GlassHome lockup for Astro / SSR pages — the same spec the Solid <Logo>
+ * renders, as plain HTML with zero JS. Use this instead of hand-building a
+ * mark + "GlassHome" + sub-line stack; that is how the lockup ended up in six
+ * shapes across the repos.
+ *
+ * `href` renders the whole lockup as a link. The `sub` slot replaces the
+ * sub-brand line for surfaces that animate over it (e.g. hub's launch
+ * countdown cross-fade); it inherits nothing, so pass LOGO_SUB_CLASS yourself.
+ */
+import {
+	LOGO_DEFAULT_SIZE,
+	LOGO_DEFAULT_SRC,
+	LOGO_DEFAULT_SUB,
+	LOGO_MARK_CLASS,
+	LOGO_MARK_PX,
+	LOGO_NAME_CLASS,
+	LOGO_ROOT_CLASS,
+	LOGO_SIZES,
+	LOGO_STACK_CLASS,
+	LOGO_SUB_CLASS,
+	type LogoSize,
+	cn,
+} from "@glasshome/ui";
+
+interface Props {
+	/** Sub-brand line. Defaults to "Dash". */
+	sub?: string;
+	size?: LogoSize;
+	/** Renders the lockup as a link when set. */
+	href?: string;
+	/** Override the mark asset. Both apps serve the default path. */
+	src?: string;
+	class?: string;
+	/** Extra classes for the mark, e.g. a hover transform. */
+	markClass?: string;
+}
+
+const {
+	sub = LOGO_DEFAULT_SUB,
+	size = LOGO_DEFAULT_SIZE,
+	href,
+	src = LOGO_DEFAULT_SRC,
+	class: className,
+	markClass,
+	...rest
+} = Astro.props;
+
+const s = LOGO_SIZES[size];
+const px = LOGO_MARK_PX[size];
+const Tag = href ? "a" : "div";
+---
+
+<Tag data-slot="logo" class={cn(LOGO_ROOT_CLASS, s.gap, className)} href={href} {...rest}>
+	<img
+		src={src}
+		alt=""
+		width={px}
+		height={px}
+		class={cn(LOGO_MARK_CLASS, s.mark, markClass)}
+	/>
+	<span class={LOGO_STACK_CLASS}>
+		<span data-slot="logo-name" class={cn(s.name, LOGO_NAME_CLASS)}>GlassHome</span>
+		<slot name="sub">
+			<span data-slot="logo-sub" class={cn(s.sub, LOGO_SUB_CLASS)}>{sub}</span>
+		</slot>
+	</span>
+</Tag>

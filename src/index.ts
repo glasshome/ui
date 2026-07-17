@@ -50,6 +50,21 @@ export {
 } from "./lib/glass-tone";
 // Input field recipe (pure), shared by the Solid <Input> and .astro consumers.
 export { INPUT_CLASS } from "./lib/input-classes";
+// The GlassHome lockup spec (mark + wordmark + sub-brand line), pure — shared
+// by the Solid <Logo>, the Astro <Logo>, and any .astro consumer.
+export {
+	LOGO_DEFAULT_SIZE,
+	LOGO_DEFAULT_SRC,
+	LOGO_DEFAULT_SUB,
+	LOGO_MARK_CLASS,
+	LOGO_MARK_PX,
+	LOGO_NAME_CLASS,
+	LOGO_ROOT_CLASS,
+	LOGO_SIZES,
+	LOGO_STACK_CLASS,
+	LOGO_SUB_CLASS,
+	type LogoSize,
+} from "./lib/logo-lockup";
 // Section card surface tokens (pure) — shared by the Solid <SectionCard> kit and
 // static consumers (hub .astro/.ts).
 export {
