@@ -1,6 +1,7 @@
 import { type Component, type ComponentProps, splitProps, type ValidComponent } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { BADGE_DEFAULT_TONE, BADGE_TONE_CLASS } from "../lib/badge-tone";
+import { TIER_BADGE_CLASS, tierBadgeStyle } from "../lib/tier-badge";
 import { cn } from "../lib/utils";
 
 type BadgeProps = ComponentProps<"span"> & {
@@ -32,12 +33,17 @@ const Badge: Component<BadgeProps> = (props) => {
 };
 
 type TierBadgeProps = ComponentProps<"span"> & {
-	/** Gradient high stop (both ends of the diagonal sweep). */
+	/** Gradient high stop (the near end of the diagonal sweep, and by default
+	 *  the far end too). */
 	hi: string;
-	/** Gradient low stop (the mid dip). */
+	/** Gradient low stop (the dip). */
 	lo: string;
 	/** Dark label color. */
 	text: string;
+	/** Far end of the sweep. Default: `hi` (symmetric brushed look). */
+	end?: string;
+	/** Where `lo` sits, in percent. Default: 50. */
+	stop?: number;
 };
 
 /**
@@ -46,19 +52,12 @@ type TierBadgeProps = ComponentProps<"span"> & {
  * One family; only the hi/lo/text triplet changes per tier.
  */
 const TierBadge: Component<TierBadgeProps> = (props) => {
-	const [local, others] = splitProps(props, ["class", "hi", "lo", "text", "children"]);
+	const [local, others] = splitProps(props, ["class", "hi", "lo", "text", "end", "stop", "children"]);
 	return (
 		<span
 			data-slot="tier-badge"
-			class={cn(
-				"inline-flex items-center rounded-full px-2 py-0.5 font-black text-[10px] uppercase tracking-wider",
-				local.class,
-			)}
-			style={{
-				background: `linear-gradient(135deg, ${local.hi}, ${local.lo} 50%, ${local.hi})`,
-				color: local.text,
-				"box-shadow": "inset 0 1px 0 oklch(1 0 0 / 0.45), 0 1px 2px oklch(0 0 0 / 0.25)",
-			}}
+			class={cn(TIER_BADGE_CLASS, local.class)}
+			style={tierBadgeStyle(local.hi, local.lo, local.text, { end: local.end, stop: local.stop })}
 			{...others}
 		>
 			{local.children}

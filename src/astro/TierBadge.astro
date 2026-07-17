@@ -1,0 +1,32 @@
+---
+/**
+ * Static metallic tier chip for Astro / SSR pages (PRO / EARLY BIRD / CREATOR /
+ * FOUNDER) — the same tier tokens the Solid <TierBadge> uses, rendered as plain
+ * HTML with zero JS. One family; only the hi/lo/text triplet changes per tier.
+ */
+import { TIER_BADGE_CLASS, tierBadgeStyle, cn } from "@glasshome/ui";
+
+interface Props {
+	/** Gradient high stop (the near end of the diagonal sweep, and by default
+	 *  the far end too). */
+	hi: string;
+	/** Gradient low stop (the dip). */
+	lo: string;
+	/** Dark label color. */
+	text: string;
+	/** Far end of the sweep. Default: `hi` (symmetric brushed look). */
+	end?: string;
+	/** Where `lo` sits, in percent. Default: 50. */
+	stop?: number;
+	class?: string;
+}
+
+const { hi, lo, text, end, stop, class: className, ...rest } = Astro.props;
+const style = Object.entries(tierBadgeStyle(hi, lo, text, { end, stop }))
+	.map(([k, v]) => `${k}:${v}`)
+	.join(";");
+---
+
+<span data-slot="tier-badge" class={cn(TIER_BADGE_CLASS, className)} style={style} {...rest}>
+	<slot />
+</span>
