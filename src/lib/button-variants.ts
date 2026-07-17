@@ -39,16 +39,6 @@ export const buttonVariants = cva({
 				"hover:border-[color-mix(in_srgb,var(--primary)_60%,transparent)]",
 				"hover:bg-[radial-gradient(120%_120%_at_22%_8%,oklch(100%_0_0/0.16),transparent_58%),linear-gradient(135deg,color-mix(in_srgb,var(--primary)_40%,var(--card)),color-mix(in_srgb,var(--primary)_18%,var(--card)))]",
 			].join(" "),
-			// Brand glass: primary→accent sweep (two-tone). The hub's PILL_PRIMARY_CLASS
-			// hand-rolled the flat version before the matrix existed.
-			gradient: [
-				"border-[color-mix(in_srgb,var(--accent)_45%,transparent)]",
-				"bg-[radial-gradient(120%_120%_at_22%_8%,oklch(100%_0_0/0.16),transparent_58%),linear-gradient(135deg,color-mix(in_srgb,var(--primary)_60%,var(--card)),color-mix(in_srgb,var(--accent)_44%,var(--card)))]",
-				"text-[color-mix(in_oklab,var(--accent)_65%,var(--foreground))]",
-				"glass-rim [--glass-tone:color-mix(in_srgb,var(--accent)_16%,transparent)]",
-				"hover:border-[color-mix(in_srgb,var(--accent)_60%,transparent)]",
-				"hover:bg-[radial-gradient(120%_120%_at_22%_8%,oklch(100%_0_0/0.16),transparent_58%),linear-gradient(135deg,color-mix(in_srgb,var(--primary)_70%,var(--card)),color-mix(in_srgb,var(--accent)_54%,var(--card)))]",
-			].join(" "),
 			// Destructive glass: opaque red tint. (glassToneText destructive = 61%)
 			destructive: [
 				"border-[color-mix(in_srgb,var(--destructive)_45%,transparent)]",
