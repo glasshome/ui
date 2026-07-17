@@ -1,6 +1,6 @@
 import { Slider as KSlider } from "@kobalte/core/slider";
 import type { Component } from "solid-js";
-import { splitProps } from "solid-js";
+import { Index, splitProps } from "solid-js";
 import { cn } from "../lib/utils";
 
 const THUMB_SIZE = 28;
@@ -77,25 +77,29 @@ const Slider: Component<SliderProps> = (props) => {
 						background: "var(--primary)",
 					}}
 				/>
-				<KSlider.Thumb
-					class={cn(
-						"absolute top-0 block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-						local.disabled && "cursor-not-allowed",
-						local.thumbClass,
+				<Index each={local.value ?? local.defaultValue ?? [0]}>
+					{() => (
+						<KSlider.Thumb
+							class={cn(
+								"absolute top-0 block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+								local.disabled && "cursor-not-allowed",
+								local.thumbClass,
+							)}
+							aria-label={local["aria-label"]}
+							aria-labelledby={local["aria-labelledby"]}
+							style={{
+								width: `${THUMB_SIZE}px`,
+								height: `${THUMB_SIZE}px`,
+								"border-radius": "var(--radius-xl)",
+								background: "var(--background)",
+								border: "2px solid var(--primary)",
+								"box-shadow": "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+							}}
+						>
+							<KSlider.Input />
+						</KSlider.Thumb>
 					)}
-					aria-label={local["aria-label"]}
-					aria-labelledby={local["aria-labelledby"]}
-					style={{
-						width: `${THUMB_SIZE}px`,
-						height: `${THUMB_SIZE}px`,
-						"border-radius": "var(--radius-xl)",
-						background: "var(--background)",
-						border: "2px solid var(--primary)",
-						"box-shadow": "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-					}}
-				>
-					<KSlider.Input />
-				</KSlider.Thumb>
+				</Index>
 			</KSlider.Track>
 		</KSlider>
 	);
