@@ -2,13 +2,13 @@ import { type ComponentProps, createEffect, createSignal, type JSX, on, onCleanu
 import { cn } from "../lib/utils";
 
 /**
- * The sliding "moving background": a tinted pill that measures the active item
+ * The sliding "moving background": a tinted indicator that measures the active item
  * among its children and animates its position/size behind it. Reusable across
  * any component with a selected item among siblings (Dock, Tabs, ToggleGroup,
  * segmented controls…). Presentational + controlled — pass the active index.
  *
  * Wrap the items directly; by default it measures each direct child (excluding
- * its own pill). Give it `pillClass` for the look and `orientation` for the axis.
+ * its own indicator). Give it `indicatorClass` for the look and `orientation` for the axis.
  */
 interface SlidingIndicatorProps extends ComponentProps<"div"> {
 	/** Index-based active item among the measured children, or null to hide.
@@ -19,12 +19,12 @@ interface SlidingIndicatorProps extends ComponentProps<"div"> {
 	 *  in the DOM (Kobalte Tabs/ToggleGroup); a MutationObserver re-slides on change. */
 	activeSelector?: string;
 	orientation?: "horizontal" | "vertical";
-	/** Class for the sliding pill (background + radius). */
-	pillClass?: string;
-	/** Glass tone for the pill: set `--glass-tone` so a `.glass` pillClass tints
-	 *  to this color (e.g. var(--primary)). Omit for a plain (non-glass) pill. */
-	pillTone?: string;
-	/** Selector for the measurable items. Default: direct children (minus the pill). */
+	/** Class for the sliding indicator (background + radius). */
+	indicatorClass?: string;
+	/** Glass tone for the indicator: set `--glass-tone` so a `.glass` indicatorClass tints
+	 *  to this color (e.g. var(--primary)). Omit for a plain (non-glass) indicator. */
+	indicatorTone?: string;
+	/** Selector for the measurable items. Default: direct children (minus the indicator). */
 	itemSelector?: string;
 	children: JSX.Element;
 }
@@ -36,8 +36,8 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 		"active",
 		"activeSelector",
 		"orientation",
-		"pillClass",
-		"pillTone",
+		"indicatorClass",
+		"indicatorTone",
 		"itemSelector",
 		"class",
 		"children",
@@ -46,7 +46,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 	let containerRef: HTMLDivElement | undefined;
 	const [pos, setPos] = createSignal<Pos | null>(null);
 
-	// Squash while sliding: the pill dips slightly smaller in flight and springs
+	// Squash while sliding: the indicator dips slightly smaller in flight and springs
 	// back on arrival, for a sense of speed/force. Skips the initial appearance.
 	const [moving, setMoving] = createSignal(false);
 	let squashTimer: ReturnType<typeof setTimeout> | undefined;
@@ -56,7 +56,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 			(p, prev) => {
 				// pos is a fresh object on every re-measure (ResizeObserver / the
 				// Select's attribute MutationObserver fire often), so only squash when
-				// the pill actually travels — else `moving` sticks true and the pill
+				// the indicator actually travels — else `moving` sticks true and the indicator
 				// stays scaled down, reading as a phantom left/right margin.
 				if (!p || !prev || Math.abs(p.offset - prev.offset) < 1) return;
 				setMoving(true);
@@ -74,7 +74,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 		if (local.activeSelector) {
 			el = containerRef.querySelector<HTMLElement>(local.activeSelector);
 		} else if (local.active != null && local.active >= 0) {
-			const sel = local.itemSelector ?? ":scope > :not([data-sliding-pill])";
+			const sel = local.itemSelector ?? ":scope > :not([data-sliding-indicator])";
 			el = containerRef.querySelectorAll<HTMLElement>(sel)[local.active];
 		}
 		if (!el) {
@@ -83,7 +83,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 		}
 		// Not laid out yet: a hidden/collapsing popover, a display:none tab panel, or
 		// a portal measured before Kobalte positions it all report a zero-size rect.
-		// Measuring then would fling the pill to a bogus offset (a stray tinted blob
+		// Measuring then would fling the indicator to a bogus offset (a stray tinted blob
 		// that a screenshot catches mid-open), so hide until there is real geometry.
 		const er = el.getBoundingClientRect();
 		if (er.width === 0 && er.height === 0) {
@@ -96,9 +96,9 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 		}
 		// Measure relative to the container via bounding rects (not offsetLeft),
 		// so the active item can be a deep descendant (Kobalte menu/listbox items),
-		// not just a direct child. Add the container's own scroll so the pill,
+		// not just a direct child. Add the container's own scroll so the indicator,
 		// which scrolls with the content, lands at the content offset; subtract the
-		// border so it aligns to the padding box (where the absolute pill anchors).
+		// border so it aligns to the padding box (where the absolute indicator anchors).
 		const cr = containerRef.getBoundingClientRect();
 		setPos(
 			horizontal()
@@ -149,15 +149,15 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 			<Show when={pos()}>
 				{(p) => (
 					<div
-						data-sliding-pill
+						data-sliding-indicator
 						aria-hidden="true"
 						class={cn(
 							"-z-10 pointer-events-none absolute transition-[transform,width,height] duration-300 ease-out",
 							horizontal() ? "inset-y-0 left-0" : "inset-x-0 top-0",
-							local.pillClass ?? "rounded-lg bg-primary/15",
+							local.indicatorClass ?? "rounded-lg bg-primary/15",
 						)}
 						style={{
-							...(local.pillTone ? { "--glass-tone": local.pillTone } : {}),
+							...(local.indicatorTone ? { "--glass-tone": local.indicatorTone } : {}),
 							...(horizontal()
 								? {
 										transform: `translateX(${p().offset}px) scale(${moving() ? 0.92 : 1})`,

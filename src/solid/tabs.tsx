@@ -11,8 +11,8 @@ const TabsList: Component<ComponentProps<typeof TabsPrimitive.List>> = (props) =
 		<TabsPrimitive.List
 			data-slot="tabs-list"
 			class={cn(
-				// admin pill spec: neutral card track (not primary-tinted), radius from
-				// --radius. The active state is a sliding pill (SlidingIndicator), not a
+				// admin indicator spec: neutral card track (not primary-tinted), radius from
+				// --radius. The active state is a sliding indicator (SlidingIndicator), not a
 				// per-trigger fill, so selection glides between tabs.
 				"inline-flex h-9 w-full items-center rounded-lg border border-border/50 bg-card/40 p-1 text-muted-foreground backdrop-blur-sm",
 				local.class,
@@ -22,8 +22,8 @@ const TabsList: Component<ComponentProps<typeof TabsPrimitive.List>> = (props) =
 			<SlidingIndicator
 				activeSelector="[data-selected]"
 				class="flex h-full w-full items-center gap-1"
-				pillClass="rounded-md glass"
-				pillTone="var(--primary)"
+				indicatorClass="rounded-md glass"
+				indicatorTone="var(--primary)"
 			>
 				{local.children}
 			</SlidingIndicator>

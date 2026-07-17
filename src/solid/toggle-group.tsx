@@ -13,10 +13,10 @@ import { cn } from "../lib/utils";
 import { SlidingIndicator } from "./sliding-indicator";
 import { toggleVariants } from "./toggle";
 
-// The group also tells its items whether a single sliding pill is in play: in
-// single-select mode the pill paints the selected segment, so items go
+// The group also tells its items whether a single sliding indicator is in play: in
+// single-select mode the indicator paints the selected segment, so items go
 // transparent when pressed (else they double-paint). Multi-select has no single
-// active item, so items keep their own pressed background and no pill renders.
+// active item, so items keep their own pressed background and no indicator renders.
 type ToggleGroupContextValue = VariantProps<typeof toggleVariants> & { sliding: boolean };
 
 const ToggleGroupContext = createContext<ToggleGroupContextValue>({
@@ -51,8 +51,8 @@ const ToggleGroup: ParentComponent<
 					<SlidingIndicator
 						activeSelector="[data-pressed]"
 						class="flex w-fit items-center"
-						pillClass="rounded-md glass"
-						pillTone="var(--primary)"
+						indicatorClass="rounded-md glass"
+						indicatorTone="var(--primary)"
 					>
 						{local.children}
 					</SlidingIndicator>
@@ -78,11 +78,11 @@ const ToggleGroupItem: Component<
 					variant: context.variant || local.variant,
 					size: context.size || local.size,
 				}),
-				// `*-of-type` (not `first:`/`last:`): the sliding pill is a <div> sibling,
-				// so `:first-child`/`:last-child` would land on the pill and drop the end
-				// segments' rounded corners. Items are <button>, so `-of-type` skips the pill.
+				// `*-of-type` (not `first:`/`last:`): the sliding indicator is a <div> sibling,
+				// so `:first-child`/`:last-child` would land on the indicator and drop the end
+				// segments' rounded corners. Items are <button>, so `-of-type` skips the indicator.
 				"min-w-0 flex-1 shrink-0 rounded-none shadow-none first-of-type:rounded-l-md last-of-type:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first-of-type:border-l",
-				// In single-select the pill paints the active segment; the item stays
+				// In single-select the indicator paints the active segment; the item stays
 				// transparent so the two don't stack into a darker tint.
 				context.sliding && "data-[pressed]:bg-transparent",
 				local.class,

@@ -161,8 +161,8 @@ const Dock: Component<DockProps> = (props) => {
 					<SlidingIndicator
 						active={activeIndex()}
 						class="flex items-center gap-0.5 sm:gap-1"
-						pillClass="rounded-lg glass"
-						pillTone="var(--primary)"
+						indicatorClass="rounded-lg glass"
+						indicatorTone="var(--primary)"
 					>
 						<Index each={local.items}>
 							{(item) => (
