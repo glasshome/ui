@@ -13,7 +13,7 @@ const InputGroup: Component<ComponentProps<"div">> = (props) => {
 			data-slot="input-group"
 			role="group"
 			class={cn(
-				"group/input-group relative flex w-full items-center rounded-md border border-input bg-input/60 shadow-xs outline-none transition-[color,box-shadow] dark:bg-input/30",
+				"group/input-group relative flex w-full items-center rounded-md border border-input bg-input/60 outline-none transition-[color,box-shadow] dark:bg-input/30",
 				"h-9 min-w-0 has-[>textarea]:h-auto",
 				"has-[>[data-align=inline-start]]:[&>input]:pl-2",
 				"has-[>[data-align=inline-end]]:[&>input]:pr-2",

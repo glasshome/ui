@@ -67,7 +67,7 @@ export function AreaPicker(props: AreaPickerProps) {
 			<PopoverAnchor as="div" class={props.class}>
 				<button
 					type="button"
-					class="flex h-9 w-full items-center gap-2 rounded-md border border-input bg-input/60 px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+					class="flex h-9 w-full items-center gap-2 rounded-md border border-input bg-input/60 px-3 py-2 text-sm transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
 					onClick={() => setOpen(!open())}
 				>
 					<Show
