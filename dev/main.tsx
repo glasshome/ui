@@ -4,7 +4,7 @@
 import { createSignal, Show } from "solid-js";
 import { render } from "solid-js/web";
 import { Button, Toaster } from "../src/solid";
-import { PackageCatalog } from "./PackageCatalog";
+import PackageCatalog from "./PackageCatalog";
 import "./styles.css";
 
 function Gallery() {
