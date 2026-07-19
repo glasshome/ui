@@ -88,7 +88,7 @@ const Command: ParentComponent<ComponentProps<"div">> = (props) => {
 			<div
 				data-slot="command"
 				class={cn(
-					"flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground",
+					"flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground [--glass-base:var(--popover)]",
 					local.class,
 				)}
 				onKeyDown={handleKeyDown}
@@ -169,7 +169,7 @@ const CommandList: ParentComponent<ComponentProps<"div">> = (props) => {
 			<SlidingIndicator
 				activeSelector="[data-selected='true']"
 				orientation="vertical"
-				indicatorClass="rounded-sm glass" indicatorTone="var(--primary)"
+				indicatorClass="rounded-sm"
 			>
 				{local.children}
 			</SlidingIndicator>

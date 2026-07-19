@@ -13,6 +13,7 @@ import {
 	onMount,
 	Show,
 } from "solid-js";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes";
 import {
 	BottomSheet,
 	BottomSheetContent,
@@ -20,7 +21,7 @@ import {
 	BottomSheetOverlay,
 	BottomSheetPortal,
 } from "./bottom-sheet";
-import { Popover, PopoverAnchor, PopoverContent } from "./popover";
+import { anchorToTriggerTop, Popover, PopoverAnchor } from "./popover";
 
 interface EntitySelectorProps {
 	entityIds: string[];
@@ -375,7 +376,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 				aria-expanded={open()}
 				aria-controls={listboxId}
 				aria-haspopup="listbox"
-				class={`flex h-9 w-full items-center gap-2 rounded-md border border-input bg-input/30 px-3 py-2 text-sm transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30 ${
+				class={`flex h-9 w-full items-center gap-2 rounded-md border border-input bg-input/30 px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30 dark:hover:bg-input/50 ${
 					showTriggerClear() ? "pr-14" : ""
 				}`}
 				onClick={p.onClick}
@@ -432,14 +433,16 @@ export function EntitySelector(props: EntitySelectorProps) {
 				role="option"
 				aria-selected={selected()}
 				data-active={(!isMobile() && activeIndex() === p.entityIndex) || undefined}
-				class="absolute inset-x-1 flex cursor-pointer items-center gap-3 rounded-lg px-2 text-left transition-colors data-active:bg-muted"
+				class="data-active:glass absolute inset-x-1 flex cursor-pointer items-center gap-3 rounded-lg px-2 text-left transition-colors data-active:[--glass-tone:var(--primary)]"
 				style={{ top: `${p.top}px`, height: `${ROW_HEIGHT}px` }}
 				onMouseMove={() => setActiveIndex(p.entityIndex)}
 				onClick={() => toggleEntity(p.id)}
 			>
 				<div
 					class={`flex size-8 shrink-0 items-center justify-center rounded-lg ${
-						selected() ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+						selected()
+							? "glass text-foreground [--glass-tone:var(--primary)]"
+							: "bg-muted text-muted-foreground"
 					} ${unavailable() ? "opacity-50" : ""}`}
 				>
 					<Icon icon={view()?.icon ?? FALLBACK_ICON} width={18} height={18} />
@@ -460,28 +463,31 @@ export function EntitySelector(props: EntitySelectorProps) {
 					fallback={
 						/* Multi-select: square checkbox, mirrors checkbox.tsx */
 						<div
-							class={`flex size-4 shrink-0 items-center justify-center rounded-[4px] border shadow-xs transition-colors ${
+							class={`flex size-4 shrink-0 items-center justify-center overflow-hidden rounded-[5px] border shadow-xs transition-all duration-200 ease-out ${
 								selected()
-									? "border-primary bg-primary text-primary-foreground"
+									? "glass border-transparent text-foreground [--glass-tone:var(--primary)]"
 									: "border-input bg-input/30 dark:bg-input/30"
 							}`}
 							aria-hidden="true"
 						>
-							<Show when={selected()}>
-								<CheckIcon class="size-3.5" />
-							</Show>
+							<CheckIcon
+								class={`size-3.5 transition-all duration-200 ease-out ${
+									selected() ? "scale-100 opacity-100" : "scale-0 opacity-0"
+								}`}
+								stroke-width={3}
+							/>
 						</div>
 					}
 				>
 					{/* Single-select: round radio, mirrors radio-group.tsx */}
 					<div
-						class="flex aspect-square size-4 shrink-0 items-center justify-center rounded-full border border-input bg-input/30 shadow-xs dark:bg-input/30"
+						class={`relative flex aspect-square size-4 shrink-0 items-center justify-center overflow-hidden rounded-full border bg-input/30 shadow-xs transition-colors dark:bg-input/30 ${
+							selected() ? "border-transparent" : "border-input"
+						}`}
 						aria-hidden="true"
 					>
 						<Show when={selected()}>
-							<svg class="size-2 fill-primary" viewBox="0 0 24 24" aria-hidden="true">
-								<circle cx="12" cy="12" r="12" />
-							</svg>
+							<div class="glass zoom-in-50 fade-in absolute inset-0 animate-in rounded-full duration-200 [--glass-tone:var(--primary)]" />
 						</Show>
 					</div>
 				</Show>
@@ -687,22 +693,27 @@ export function EntitySelector(props: EntitySelectorProps) {
 						if (!isOpen) closePicker();
 					}}
 					modal
+					gutter={0}
+					getAnchorRect={anchorToTriggerTop}
 				>
 					<PopoverAnchor as="div">
 						<TriggerButton onClick={() => (open() ? closePicker() : setOpen(true))} />
 					</PopoverAnchor>
-					<PopoverContent
-						class="flex w-[var(--kb-popper-anchor-width)] min-w-72 flex-col p-0"
-						onOpenAutoFocus={(e) => {
-							e.preventDefault();
-							inputRef?.focus();
-						}}
-						onInteractOutside={() => closePicker()}
-					>
-						<div class="flex max-h-[min(70vh,400px)] flex-col">
-							<PickerContent />
-						</div>
-					</PopoverContent>
+					<Popover.Portal>
+						<Popover.Content
+							data-slot="popover-content"
+							class={`${OVERLAY_SURFACE} relative z-50 flex w-[var(--kb-popper-anchor-width)] min-w-72 flex-col overflow-hidden rounded-md text-popover-foreground outline-hidden data-[closed]:animate-select-out data-[expanded]:animate-select-in`}
+							onOpenAutoFocus={(e) => {
+								e.preventDefault();
+								inputRef?.focus();
+							}}
+							onInteractOutside={() => closePicker()}
+						>
+							<div class="flex max-h-[min(70vh,400px)] flex-col">
+								<PickerContent />
+							</div>
+						</Popover.Content>
+					</Popover.Portal>
 				</Popover>
 			</Show>
 			<SelectedChips />

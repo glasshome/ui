@@ -1,5 +1,6 @@
 import { Popover as PopoverPrimitive } from "@kobalte/core/popover";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes";
 import { cn } from "../lib/utils";
 
 const Popover = PopoverPrimitive;
@@ -15,7 +16,8 @@ const PopoverContent: Component<ComponentProps<typeof PopoverPrimitive.Content>>
 			<PopoverPrimitive.Content
 				data-slot="popover-content"
 				class={cn(
-					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden data-[closed]:animate-out data-[expanded]:animate-in",
+					OVERLAY_SURFACE,
+					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-72 rounded-md p-4 text-popover-foreground outline-hidden data-[closed]:animate-out data-[expanded]:animate-in",
 					local.class,
 				)}
 				{...rest}
@@ -28,4 +30,18 @@ const PopoverAnchor: Component<ComponentProps<typeof PopoverPrimitive.Anchor>> =
 	return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />;
 };
 
-export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger };
+// Anchor popover content to the trigger's TOP edge (a zero-height rect). With
+// `gutter={0}` the content's top lands on the trigger's top and — since the
+// picker sets its content width to --kb-popper-anchor-width (= trigger width) —
+// it covers the trigger and the options grow downward. Paired with the
+// `animate-select-in` clip-path reveal, the trigger appears to expand into the
+// panel instead of a separate box dropping in. Mirrors the Select's native
+// expand so every select-like control opens the same way.
+const anchorToTriggerTop = (anchor?: HTMLElement) => {
+	const r = anchor?.getBoundingClientRect();
+	return r
+		? { x: r.left, y: r.top, width: r.width, height: 0 }
+		: { x: 0, y: 0, width: 0, height: 0 };
+};
+
+export { anchorToTriggerTop, Popover, PopoverAnchor, PopoverContent, PopoverTrigger };

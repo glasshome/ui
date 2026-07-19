@@ -3,8 +3,8 @@ import {
 	type ComponentProps,
 	createEffect,
 	createSignal,
-	type JSX,
 	Index,
+	type JSX,
 	onCleanup,
 	onMount,
 	Show,
@@ -69,7 +69,7 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
 			<Show when={typeof local.badge === "number" && local.badge > 0}>
 				<span
 					role="status"
-					class="-translate-y-1/2 absolute top-0 right-0 inline-flex h-5 min-w-[20px] translate-x-1/2 items-center justify-center rounded-full bg-primary/15 px-1 font-semibold text-[10px] text-primary"
+					class="absolute top-0 right-0 inline-flex h-5 min-w-[20px] translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary/15 px-1 font-semibold text-[10px] text-primary"
 					aria-label={`${local.badge} pending`}
 				>
 					{local.badge != null && local.badge > 9 ? "9+" : local.badge}
@@ -79,7 +79,7 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
 				class={cn(
 					"absolute -top-8 left-1/2 -translate-x-1/2",
 					"rounded px-2 py-1 text-xs",
-					"border border-border bg-popover/90 text-popover-foreground backdrop-blur-sm",
+					"border border-border bg-popover/90 text-popover-foreground backdrop-blur-sm [--glass-base:var(--popover)]",
 					"opacity-0 group-hover:opacity-100",
 					"pointer-events-none whitespace-nowrap transition-opacity",
 					"z-10",
@@ -146,9 +146,7 @@ const Dock: Component<DockProps> = (props) => {
 						"flex items-center gap-0.5 p-1.5 sm:gap-1 sm:p-2",
 						"border border-border bg-card/80 shadow-lg backdrop-blur-md",
 						"transition-shadow duration-300 hover:shadow-xl",
-						dockMode() === "floating"
-							? "rounded-xl"
-							: "rounded-t-xl border-x border-t border-b-0",
+						dockMode() === "floating" ? "rounded-xl" : "rounded-t-xl border-x border-t border-b-0",
 						needsScroll() ? "scrollbar-hide overflow-x-auto" : "overflow-visible",
 						!needsScroll() && "justify-center",
 					)}
@@ -161,9 +159,7 @@ const Dock: Component<DockProps> = (props) => {
 					<SlidingIndicator
 						active={activeIndex()}
 						class="flex items-center gap-0.5 sm:gap-1"
-						indicatorClass="rounded-lg glass"
-						indicatorTone="var(--primary)"
-					>
+								>
 						<Index each={local.items}>
 							{(item) => (
 								<DockIconButton

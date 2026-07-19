@@ -22,8 +22,6 @@ const TabsList: Component<ComponentProps<typeof TabsPrimitive.List>> = (props) =
 			<SlidingIndicator
 				activeSelector="[data-selected]"
 				class="flex h-full w-full items-center gap-1"
-				indicatorClass="rounded-md glass"
-				indicatorTone="var(--primary)"
 			>
 				{local.children}
 			</SlidingIndicator>

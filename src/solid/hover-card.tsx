@@ -1,5 +1,6 @@
 import { HoverCard as HoverCardPrimitive } from "@kobalte/core/hover-card";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes";
 import { cn } from "../lib/utils";
 
 const HoverCard = HoverCardPrimitive;
@@ -15,7 +16,8 @@ const HoverCardContent: Component<ComponentProps<typeof HoverCardPrimitive.Conte
 			<HoverCardPrimitive.Content
 				data-slot="hover-card-content"
 				class={cn(
-					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden data-[closed]:animate-out data-[expanded]:animate-in",
+					OVERLAY_SURFACE,
+						"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-64 rounded-md p-4 text-popover-foreground outline-hidden data-[closed]:animate-out data-[expanded]:animate-in",
 					local.class,
 				)}
 				{...rest}

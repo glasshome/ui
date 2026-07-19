@@ -1,6 +1,7 @@
 import { Slider as KSlider } from "@kobalte/core/slider";
 import type { Component } from "solid-js";
 import { Index, splitProps } from "solid-js";
+import { INPUT_SURFACE } from "../lib/input-classes";
 import { cn } from "../lib/utils";
 
 const THUMB_SIZE = 28;
@@ -50,7 +51,10 @@ const Slider: Component<SliderProps> = (props) => {
 			onChange={local.onChange}
 			onChangeEnd={local.onChangeEnd}
 			class={cn(
-				"relative flex w-full touch-none select-none items-center rounded-xl border border-input bg-input/30",
+				// The rail wears the shared recessed input surface, so the track reads
+				// as the same dug-out glass as every Input/Select field.
+				"relative flex w-full touch-none select-none items-center rounded-xl",
+				INPUT_SURFACE,
 				local.disabled && "cursor-not-allowed opacity-50",
 				local.class,
 			)}
@@ -67,7 +71,10 @@ const Slider: Component<SliderProps> = (props) => {
 				}}
 			>
 				<KSlider.Fill
-					class="glass [--glass-tone:var(--primary)]"
+						// Bare `.glass` resets to the tinted defaults (see @layer base in
+						// globals.css), so the parent rail's INPUT_SURFACE knobs no longer
+						// flatten it; only the primary tone needs setting.
+						class="glass [--glass-tone:var(--primary)]"
 					style={{
 						position: "absolute",
 						top: "0",

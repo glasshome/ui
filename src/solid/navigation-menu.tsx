@@ -2,6 +2,7 @@ import { NavigationMenu as NavMenuPrimitive } from "@kobalte/core/navigation-men
 import { cva } from "cva";
 import { ChevronDown } from "lucide-solid";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes";
 import { cn } from "../lib/utils";
 
 const NavigationMenu: ParentComponent<
@@ -93,7 +94,7 @@ const NavigationMenuContent: Component<ComponentProps<typeof NavMenuPrimitive.Co
 			data-slot="navigation-menu-content"
 			class={cn(
 				"data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 top-0 left-0 w-full p-2 pr-2.5 data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out md:absolute md:w-auto",
-				"group-data-[viewport=false]/navigation-menu:data-[closed]:zoom-out-95 group-data-[viewport=false]/navigation-menu:data-[expanded]:zoom-in-95 group-data-[viewport=false]/navigation-menu:data-[expanded]:fade-in-0 group-data-[viewport=false]/navigation-menu:data-[closed]:fade-out-0 **:data-[slot=navigation-menu-link]:focus:outline-none **:data-[slot=navigation-menu-link]:focus:ring-0 group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-1.5 group-data-[viewport=false]/navigation-menu:overflow-hidden group-data-[viewport=false]/navigation-menu:rounded-md group-data-[viewport=false]/navigation-menu:border group-data-[viewport=false]/navigation-menu:bg-popover group-data-[viewport=false]/navigation-menu:text-popover-foreground group-data-[viewport=false]/navigation-menu:shadow group-data-[viewport=false]/navigation-menu:duration-200 group-data-[viewport=false]/navigation-menu:data-[closed]:animate-out group-data-[viewport=false]/navigation-menu:data-[expanded]:animate-in",
+				"group-data-[viewport=false]/navigation-menu:data-[closed]:zoom-out-95 group-data-[viewport=false]/navigation-menu:data-[expanded]:zoom-in-95 group-data-[viewport=false]/navigation-menu:data-[expanded]:fade-in-0 group-data-[viewport=false]/navigation-menu:data-[closed]:fade-out-0 [--glass-base:var(--popover)] **:data-[slot=navigation-menu-link]:focus:outline-none **:data-[slot=navigation-menu-link]:focus:ring-0 group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-1.5 group-data-[viewport=false]/navigation-menu:overflow-hidden group-data-[viewport=false]/navigation-menu:rounded-md group-data-[viewport=false]/navigation-menu:border group-data-[viewport=false]/navigation-menu:bg-popover group-data-[viewport=false]/navigation-menu:text-popover-foreground group-data-[viewport=false]/navigation-menu:shadow group-data-[viewport=false]/navigation-menu:duration-200 group-data-[viewport=false]/navigation-menu:data-[closed]:animate-out group-data-[viewport=false]/navigation-menu:data-[expanded]:animate-in",
 				local.class,
 			)}
 			{...rest}
@@ -110,7 +111,8 @@ const NavigationMenuViewport: Component<ComponentProps<typeof NavMenuPrimitive.V
 			<NavMenuPrimitive.Viewport
 				data-slot="navigation-menu-viewport"
 				class={cn(
-					"data-[closed]:zoom-out-95 data-[expanded]:zoom-in-90 relative mt-1.5 origin-top-center overflow-hidden rounded-md border bg-popover text-popover-foreground shadow data-[closed]:animate-out data-[expanded]:animate-in",
+					OVERLAY_SURFACE,
+					"data-[closed]:zoom-out-95 data-[expanded]:zoom-in-90 relative mt-1.5 origin-top-center overflow-hidden rounded-md text-popover-foreground data-[closed]:animate-out data-[expanded]:animate-in",
 					local.class,
 				)}
 				{...rest}

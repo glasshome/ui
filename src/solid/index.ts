@@ -1,14 +1,16 @@
 // Original components
 
+// Demo-data seeding for the smart-home pickers (AreaPicker, EntitySelector),
+// re-exported so dev catalogs can populate the shared sync-layer store the
+// pickers read through the ui package alone, without a direct
+// @glasshome/sync-layer dependency (which would risk a second, disconnected
+// store instance).
+export { isDemoMode, loadDemoData, unloadDemoData } from "@glasshome/sync-layer";
 // Color helpers for ColorWheel/ColorSlider consumers, re-exported so they
 // don't need a direct @kobalte/core dependency.
 export { type Color, parseColor } from "@kobalte/core/colors";
 // Section tokens re-exported from the Solid entry for convenience.
 export {
-	SECTION_CARD_CHROME,
-	SECTION_CARD_CLASS,
-	SECTION_CARD_FILL,
-	SECTION_CARD_INSET_STYLE,
 	SECTION_INNER_RADIUS,
 	SECTION_OUTER_RADIUS,
 	SECTION_PADDING,
@@ -274,6 +276,9 @@ export {
 	PaginationNext,
 	PaginationPrevious,
 } from "./pagination";
+// Floating glass panel + its shared surface token.
+export { OVERLAY_SURFACE } from "../lib/overlay-classes";
+export { Overlay } from "./overlay";
 export {
 	Popover,
 	PopoverAnchor,

@@ -1,6 +1,7 @@
 import { ContextMenu as ContextMenuPrimitive } from "@kobalte/core/context-menu";
 import { Check, ChevronRight, Circle } from "lucide-solid";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes";
 import { cn } from "../lib/utils";
 import { SlidingIndicator } from "./sliding-indicator";
 
@@ -38,7 +39,8 @@ const ContextMenuSubContent: Component<ComponentProps<typeof ContextMenuPrimitiv
 		<ContextMenuPrimitive.SubContent
 			data-slot="context-menu-sub-content"
 			class={cn(
-				"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg data-[closed]:animate-out data-[expanded]:animate-in",
+				OVERLAY_SURFACE,
+				"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] overflow-hidden rounded-md p-1 text-popover-foreground data-[closed]:animate-out data-[expanded]:animate-in",
 				local.class,
 			)}
 			{...rest}
@@ -55,7 +57,8 @@ const ContextMenuContent: Component<ComponentProps<typeof ContextMenuPrimitive.C
 			<ContextMenuPrimitive.Content
 				data-slot="context-menu-content"
 				class={cn(
-					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[closed]:animate-out data-[expanded]:animate-in",
+					OVERLAY_SURFACE,
+					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md p-1 text-popover-foreground data-[closed]:animate-out data-[expanded]:animate-in",
 					local.class,
 				)}
 				{...rest}
@@ -63,7 +66,7 @@ const ContextMenuContent: Component<ComponentProps<typeof ContextMenuPrimitive.C
 				<SlidingIndicator
 					activeSelector=":focus"
 					orientation="vertical"
-					indicatorClass="rounded-sm glass" indicatorTone="var(--primary)"
+					indicatorClass="rounded-sm"
 				>
 					{local.children}
 				</SlidingIndicator>

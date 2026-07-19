@@ -1,6 +1,7 @@
 import { Select as SelectPrimitive } from "@kobalte/core/select";
 import { Check, ChevronDown } from "lucide-solid";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import { INPUT_SURFACE } from "../lib/input-classes";
 import { cn } from "../lib/utils";
 import { SlidingIndicator } from "./sliding-indicator";
 
@@ -30,7 +31,7 @@ const SelectTrigger: ParentComponent<
 			data-slot="select-trigger"
 			data-size={size()}
 			class={cn(
-				"flex w-fit items-center justify-between gap-2 whitespace-nowrap rounded-md border border-input bg-input/30 px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[size=default]:h-9 data-[size=sm]:h-8 data-[placeholder]:text-muted-foreground *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 dark:bg-input/30 dark:aria-invalid:ring-destructive/40 dark:hover:bg-input/50 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				`flex w-fit items-center justify-between gap-2 whitespace-nowrap rounded-md ${INPUT_SURFACE} hover:[--glass-light:0.09] px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[size=default]:h-9 data-[size=sm]:h-8 data-[placeholder]:text-muted-foreground *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0`,
 				local.class,
 			)}
 			{...rest}
@@ -53,10 +54,12 @@ const SelectContent: ParentComponent<
 				data-slot="select-content"
 				class={cn(
 					// Width comes from Kobalte sameWidth (= trigger width). It overlaps the
-					// trigger, so it reads as the input itself, not a separate surface.
-					"relative z-50 overflow-y-auto overflow-x-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
+					// trigger and wears the SAME concave input surface as SelectTrigger, so
+					// opening reads as the input expanding, not a separate floating panel.
+					INPUT_SURFACE,
+						"relative z-50 overflow-y-auto overflow-x-hidden rounded-md p-1 text-popover-foreground",
 					// clip-path reveal, top row covers the input, options grow downward.
-					"data-[expanded]:animate-select-in data-[closed]:animate-select-out",
+					"data-[closed]:animate-select-out data-[expanded]:animate-select-in",
 					local.class,
 				)}
 				{...rest}
@@ -65,7 +68,12 @@ const SelectContent: ParentComponent<
 					activeSelector="[data-highlighted]"
 					orientation="vertical"
 					class="w-full"
-					indicatorClass="rounded-sm glass" indicatorTone="var(--primary)"
+					// The listbox surface is INPUT_SURFACE, which zeros the glass wash and
+					// dims the light; those cascade into this `.glass` pill and would flatten
+					// it to a grey block. Re-declare the highlight knobs so the primary tint
+					// matches every other menu indicator (which inherit the overlay surface).
+					indicatorClass="rounded-sm [--glass-base:var(--popover)] [--glass-fill:100%] [--glass-wash-a:28%] [--glass-wash-b:10%] [--glass-light:0.16]"
+					indicatorTone="var(--primary)"
 				>
 					<SelectPrimitive.Listbox class={cn(local.listboxClass)} />
 				</SlidingIndicator>

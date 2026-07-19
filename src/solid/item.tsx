@@ -31,9 +31,10 @@ const itemVariants = cva({
 	base: "group/item flex flex-wrap items-center rounded-md border border-transparent text-sm outline-none transition-colors duration-100 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-muted/50",
 	variants: {
 		variant: {
+			// Item is structure, not a surface (that is <Card>). Plain treatments only.
 			default: "bg-transparent",
 			outline: "border-border",
-			muted: "bg-muted/50",
+			muted: "bg-muted/40",
 		},
 		size: {
 			default: "gap-4 p-4",
@@ -47,7 +48,8 @@ const itemVariants = cva({
 });
 
 const Item: Component<
-	ComponentProps<"div"> & VariantProps<typeof itemVariants> & { component?: ValidComponent }
+	ComponentProps<"div"> &
+		VariantProps<typeof itemVariants> & { component?: ValidComponent; href?: string }
 > = (props) => {
 	const [local, rest] = splitProps(props, ["class", "variant", "size", "component"] as const);
 	const variant = () => local.variant ?? "default";
@@ -70,7 +72,7 @@ const itemMediaVariants = cva({
 	variants: {
 		variant: {
 			default: "bg-transparent",
-			icon: "size-8 rounded-sm border bg-muted [&_svg:not([class*='size-'])]:size-4",
+			icon: "size-8 rounded-md bg-foreground/10 text-foreground/80 shadow-[inset_0_1px_0_oklch(1_0_0_/_0.08)] [&_svg:not([class*='size-'])]:size-4",
 			image: "size-10 overflow-hidden rounded-sm [&_img]:size-full [&_img]:object-cover",
 		},
 	},

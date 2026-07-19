@@ -52,8 +52,6 @@ const ToggleGroup: ParentComponent<
 					<SlidingIndicator
 						activeSelector="[data-pressed]"
 						class="flex w-fit items-center"
-						indicatorClass="rounded-md glass"
-						indicatorTone="var(--primary)"
 					>
 						{local.children}
 					</SlidingIndicator>

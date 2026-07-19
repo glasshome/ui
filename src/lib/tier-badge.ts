@@ -8,7 +8,7 @@
  */
 
 export const TIER_BADGE_CLASS =
-	"inline-flex items-center rounded-full px-2 py-0.5 font-black text-[10px] uppercase tracking-wider";
+	"inline-flex cursor-default select-none items-center rounded-full px-2 py-0.5 font-black text-[10px] uppercase tracking-wider";
 
 /** Optional sweep shaping. Default is the symmetric brushed look (both ends
  *  `hi`, dipping to `lo` at the midpoint). The collectible/license golds are a

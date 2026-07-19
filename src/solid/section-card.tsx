@@ -1,14 +1,8 @@
 import { Icon } from "@iconify-icon/solid";
 import { type ComponentProps, type JSX, Show, splitProps } from "solid-js";
+import { CARD_BLUR, CARD_SURFACE_BASE } from "../lib/card-classes";
 import { CountPill } from "./count-pill";
-import {
-	SECTION_CARD_CHROME,
-	SECTION_CARD_FILL,
-	SECTION_CARD_INSET_STYLE,
-	SECTION_INNER_RADIUS,
-	SECTION_PADDING,
-	SECTION_ROW_CLASS,
-} from "../lib/section-tokens";
+import { SECTION_INNER_RADIUS, SECTION_PADDING, SECTION_ROW_CLASS } from "../lib/section-tokens";
 
 /**
  * Section card kit — the settings/list surface shared by dash and hub. Use these
@@ -71,9 +65,9 @@ export function SectionCard(props: SectionCardProps) {
 	return (
 		<section
 			ref={glass().ref}
-			class={`${SECTION_CARD_CHROME} hover:border-border`}
-			classList={{ [SECTION_CARD_FILL]: !active() }}
-			style={{ ...SECTION_CARD_INSET_STYLE, ...(glass().style?.() ?? {}) }}
+			class={`${CARD_SURFACE_BASE} relative overflow-hidden rounded-[var(--radius)] transition-colors [contain:layout_style_paint] hover:border-border`}
+			classList={{ [CARD_BLUR]: !active() }}
+			style={glass().style?.() ?? {}}
 		>
 			<Show when={hasHeader()}>
 				<header

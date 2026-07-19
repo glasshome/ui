@@ -17,9 +17,14 @@ const Separator: Component<SeparatorProps> = (props) => {
 			// biome-ignore lint/a11y/useAriaPropsForRole: non-focusable separators need no aria-valuenow
 			role="separator"
 			aria-orientation={orientation()}
+			// A luminous glass hairline: the border tone fades to transparent at both
+			// ends (a lit line, not a hard rule) with a faint highlight offset one
+			// pixel toward the light — the same lit-glass edge cards and chips carry.
 			class={cn(
-				"shrink-0 bg-border",
-				orientation() === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
+				"shrink-0 border-0 bg-transparent",
+				orientation() === "horizontal"
+					? "h-px w-full bg-gradient-to-r from-transparent via-border to-transparent shadow-[0_1px_0_oklch(1_0_0_/_0.04)]"
+					: "h-full w-px bg-gradient-to-b from-transparent via-border to-transparent shadow-[1px_0_0_oklch(1_0_0_/_0.04)]",
 				local.class,
 			)}
 			{...others}

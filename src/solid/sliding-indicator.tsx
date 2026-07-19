@@ -19,10 +19,12 @@ interface SlidingIndicatorProps extends ComponentProps<"div"> {
 	 *  in the DOM (Kobalte Tabs/ToggleGroup); a MutationObserver re-slides on change. */
 	activeSelector?: string;
 	orientation?: "horizontal" | "vertical";
-	/** Class for the sliding indicator (background + radius). */
+	/** Extra classes for the sliding indicator — radius and any per-surface `--glass-*`
+	 *  knob overrides. The trusted `.glass` material is ALWAYS applied underneath, so
+	 *  this can't flatten the indicator; it only tunes it. Default radius: `rounded-lg`. */
 	indicatorClass?: string;
-	/** Glass tone for the indicator: set `--glass-tone` so a `.glass` indicatorClass tints
-	 *  to this color (e.g. var(--primary)). Omit for a plain (non-glass) indicator. */
+	/** Glass tone that drives the `.glass` material (`--glass-tone`). Defaults to
+	 *  `var(--primary)` — the one trusted look. Pass another CSS color to re-tint. */
 	indicatorTone?: string;
 	/** Selector for the measurable items. Default: direct children (minus the indicator). */
 	itemSelector?: string;
@@ -177,11 +179,15 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 						class={cn(
 							"-z-10 pointer-events-none absolute ease-out",
 							horizontal() ? "inset-y-0 left-0" : "inset-x-0 top-0",
-							local.indicatorClass ?? "rounded-lg bg-primary/15",
+							// The ONE trusted look: the glass material, always. It tints to
+							// `--glass-tone` (primary by default), so every consumer's indicator
+							// reads as the same lit-glass pill. indicatorClass only tunes radius.
+							"glass",
+							local.indicatorClass ?? "rounded-lg",
 						)}
 						style={{
 							transition: `transform ${SLIDE_MS}ms ease-in-out, width ${SLIDE_MS}ms ease-in-out, height ${SLIDE_MS}ms ease-in-out`,
-							...(local.indicatorTone ? { "--glass-tone": local.indicatorTone } : {}),
+							"--glass-tone": local.indicatorTone ?? "var(--primary)",
 							...(horizontal()
 								? { transform: `translateX(${p().offset}px)`, width: `${p().size}px` }
 								: { transform: `translateY(${p().offset}px)`, height: `${p().size}px` }),

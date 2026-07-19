@@ -184,7 +184,10 @@
 	--destructive: oklch(0.7106 0.1661 22.2162);
 	--destructive-foreground: oklch(1 0 0);
 	--border: oklch(0.26 0.012 250);
-	--input: oklch(0.25 0.005 0);
+	/* Recessed fields read DARKER than the card they're dug out of (card is 0.17),
+	 * so a field surface sits below it, matching the slider track. A hair of the
+	 * card's cool tint (chroma 0.01) keeps it from going flat gray. */
+	--input: oklch(0.19 0.01 250);
 	--ring: oklch(0.6 0.2 195);
 	--chart-1: oklch(0.8003 0.1821 151.711);
 	--chart-2: oklch(0.48 0.2 215.221);
@@ -217,6 +220,17 @@
 	}
 	body {
 		@apply bg-background text-foreground min-w-[320px] min-h-screen relative m-0;
+	}
+	/* Tailwind v4 Preflight drops the old cursor:pointer default on buttons, so
+	 * native interactive elements (raw <button>, role=button, <summary>, control
+	 * labels, <select>) show the arrow. Restore the pointer affordance for every
+	 * clickable, minus disabled ones. Component primitives set their own cursor. */
+	button:not(:disabled),
+	[role="button"]:not([aria-disabled="true"]),
+	summary,
+	select:not(:disabled),
+	label:has(> input:is([type="checkbox"], [type="radio"]):not(:disabled)) {
+		cursor: pointer;
 	}
 }
 

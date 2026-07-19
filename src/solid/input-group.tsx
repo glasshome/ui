@@ -2,8 +2,6 @@ import { cva, type VariantProps } from "cva";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
 import { cn } from "../lib/utils";
 import { Button } from "./button";
-import { Input } from "./input";
-import { Textarea } from "./textarea";
 
 const InputGroup: Component<ComponentProps<"div">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);
@@ -116,13 +114,20 @@ const InputGroupText: Component<ComponentProps<"span">> = (props) => {
 	);
 };
 
+// The control inside a group is SURFACELESS — the <InputGroup> owns the border,
+// background, and height. So these are bare <input>/<textarea>, not the glass
+// <Input>/<Textarea>: routing through those paints the `.glass` gradient inside
+// the group (a `bg-transparent` can't clear the `background` shorthand's image
+// layers) and stacks a second concave surface. Only placeholder/text/disabled
+// styling remains; the group's `[&>input]` / `has-[>textarea]` selectors need a
+// real child input/textarea to drive layout.
 const InputGroupInput: Component<ComponentProps<"input">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);
 	return (
-		<Input
+		<input
 			data-slot="input-group-control"
 			class={cn(
-				"flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 dark:bg-transparent",
+				"h-9 w-full flex-1 rounded-none border-0 bg-transparent px-3 py-1 text-base shadow-none outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
 				local.class,
 			)}
 			{...rest}
@@ -133,10 +138,10 @@ const InputGroupInput: Component<ComponentProps<"input">> = (props) => {
 const InputGroupTextarea: Component<ComponentProps<"textarea">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);
 	return (
-		<Textarea
+		<textarea
 			data-slot="input-group-control"
 			class={cn(
-				"flex-1 resize-none rounded-none border-0 bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent",
+				"field-sizing-content min-h-16 w-full flex-1 resize-none rounded-none border-0 bg-transparent px-3 py-3 text-base shadow-none outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
 				local.class,
 			)}
 			{...rest}

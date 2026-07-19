@@ -1,5 +1,6 @@
 import { DropdownMenu as DropdownMenuPrimitive } from "@kobalte/core/dropdown-menu";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes";
 import { cn } from "../lib/utils";
 import { SlidingIndicator } from "./sliding-indicator";
 
@@ -18,7 +19,8 @@ const DropdownMenuContent: Component<ComponentProps<typeof DropdownMenuPrimitive
 			<DropdownMenuPrimitive.Content
 				data-slot="dropdown-menu-content"
 				class={cn(
-					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[closed]:animate-out data-[expanded]:animate-in",
+					OVERLAY_SURFACE,
+					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 z-50 min-w-[8rem] overflow-hidden rounded-md p-1 text-popover-foreground data-[closed]:animate-out data-[expanded]:animate-in",
 					local.class,
 				)}
 				{...others}
@@ -26,7 +28,7 @@ const DropdownMenuContent: Component<ComponentProps<typeof DropdownMenuPrimitive
 				<SlidingIndicator
 					activeSelector=":focus"
 					orientation="vertical"
-					indicatorClass="rounded-sm glass" indicatorTone="var(--primary)"
+					indicatorClass="rounded-sm"
 				>
 					{local.children}
 				</SlidingIndicator>
