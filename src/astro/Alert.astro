@@ -11,9 +11,10 @@ import {
 	ALERT_CONTENT_CLASS,
 	ALERT_DESCRIPTION_CLASS,
 	ALERT_ICON_BG_CLASS,
+	ALERT_ICON_PATHS,
 	ALERT_TITLE_CLASS,
-	type AlertTone,
 	ALERT_TONES,
+	type AlertTone,
 	alertIconBgStyle,
 	cn,
 	glassToneText,
@@ -34,17 +35,6 @@ const surfaceStyle = `--glass-tone:${t.color};color:var(--foreground)`;
 const iconBgStyle = Object.entries(alertIconBgStyle(t.color))
 	.map(([k, v]) => `${k}:${v}`)
 	.join(";");
-
-// Inlined lucide paths, one per tone — same glyphs the Solid <Alert> resolves
-// from lucide-solid (info / triangle-alert / circle-check-big / octagon-alert).
-const ICON_PATHS: Record<AlertTone, string> = {
-	info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
-	warning:
-		'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
-	success: '<path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/>',
-	destructive:
-		'<path d="M12 16h.01"/><path d="M12 8v4"/><path d="M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688A2 2 0 0 1 15.312 22H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z"/>',
-};
 ---
 
 <div
@@ -63,7 +53,7 @@ const ICON_PATHS: Record<AlertTone, string> = {
 			stroke-width="2"
 			stroke-linecap="round"
 			stroke-linejoin="round"
-			set:html={ICON_PATHS[tone]}
+			set:html={ALERT_ICON_PATHS[tone]}
 		/>
 	</span>
 	<div class={ALERT_CONTENT_CLASS}>

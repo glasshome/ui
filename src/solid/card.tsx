@@ -1,27 +1,49 @@
-import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { type Component, type ComponentProps, splitProps, type ValidComponent } from "solid-js";
+import { Dynamic } from "solid-js/web";
 import {
 	CARD_ACTION_CLASS,
-	CARD_CLASS,
 	CARD_CONTENT_CLASS,
 	CARD_DESCRIPTION_CLASS,
 	CARD_FOOTER_CLASS,
 	CARD_HEADER_CLASS,
-	CARD_INSET_SHADOW,
+	CARD_INTERACTIVE,
+	CARD_PADDING,
+	CARD_SURFACE,
+	CARD_SURFACE_OPAQUE,
 	CARD_TITLE_CLASS,
+	type CardPadding,
 } from "../lib/card-classes";
 import { cn } from "../lib/utils";
 
-// Card surface + sub-part classes are the pure, single-source `../lib/card-classes`
-// (shared with hub's `.astro` card surfaces and the `@glasshome/ui/astro` <Card>),
-// so a package card and a marketing-page card are byte-identical.
+type CardProps = ComponentProps<"div"> & {
+	/** Clickable surface: adds the hover/focus affordance. */
+	interactive?: boolean;
+	/** Opaque solid surface (no backdrop blur). Use over busy/dark backgrounds or
+	 *  in animated contexts where blur can't run (marquees, transformed grids). */
+	opaque?: boolean;
+	/** Padding preset. Default `none`: a bare surface you pad yourself (matches
+	 *  the Astro <Card>). Pass `slots` for the CardHeader/Content/Footer vertical
+	 *  rhythm, or `md`/`sm` for a uniform tile. */
+	padding?: CardPadding;
+	/** Render as another element, e.g. "a" (with href) or "section". */
+	as?: ValidComponent;
+	/** Convenience for `as="a"` cards (not part of the base div props). */
+	href?: string;
+};
 
-const Card: Component<ComponentProps<"div">> = (props) => {
-	const [local, others] = splitProps(props, ["class"]);
+const Card: Component<CardProps> = (props) => {
+	const [local, others] = splitProps(props, ["class", "interactive", "opaque", "padding", "as"]);
 	return (
-		<div
+		<Dynamic
+			component={local.as ?? "div"}
 			data-slot="card"
-			class={cn(CARD_CLASS, local.class)}
-			style={{ "box-shadow": CARD_INSET_SHADOW }}
+			class={cn(
+				local.opaque ? CARD_SURFACE_OPAQUE : CARD_SURFACE,
+				"rounded-[var(--radius)]",
+				CARD_PADDING[local.padding ?? "none"],
+				local.interactive && CARD_INTERACTIVE,
+				local.class,
+			)}
 			{...others}
 		/>
 	);

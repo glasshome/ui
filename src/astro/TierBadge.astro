@@ -4,7 +4,8 @@
  * FOUNDER) — the same tier tokens the Solid <TierBadge> uses, rendered as plain
  * HTML with zero JS. One family; only the hi/lo/text triplet changes per tier.
  */
-import { TIER_BADGE_CLASS, tierBadgeStyle, cn } from "@glasshome/ui";
+import { TIER_BADGE_CLASS, tierBadgeStyle } from "../lib/tier-badge";
+import { cn } from "../lib/utils";
 
 interface Props {
 	/** Gradient high stop (the near end of the diagonal sweep, and by default

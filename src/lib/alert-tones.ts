@@ -51,6 +51,21 @@ export const ALERT_TONES: Record<AlertTone, AlertToneStyle> = {
 	},
 };
 
+// Single source for the tone glyph: the inner SVG path markup (lucide info /
+// triangle-alert / circle-check-big / octagon-alert), viewBox 0 0 24 24. BOTH
+// the Solid <Alert> (via innerHTML) and the Astro <Alert> (via set:html) render
+// this exact string inside the shared 24x24 <svg>, so the glyph can't drift
+// between the two faces. The `icon` field above stays the iconify NAME for
+// name-based consumers (hub's docs Callout); this is the drawn form.
+export const ALERT_ICON_PATHS: Record<AlertTone, string> = {
+	info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+	warning:
+		'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+	success: '<path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/>',
+	destructive:
+		'<path d="M12 16h.01"/><path d="M12 8v4"/><path d="M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688A2 2 0 0 1 15.312 22H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z"/>',
+};
+
 // Mix in srgb, not oklch: mixing a tone toward `transparent` (transparent-black)
 // in oklch drags the tone's lightness toward 0, so the tint composites muddy and
 // dark on a light surface (invisible on dash's dark bg, ugly on a light page).

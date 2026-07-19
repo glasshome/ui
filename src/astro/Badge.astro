@@ -5,7 +5,8 @@
  * pass any tone color (a semantic token like var(--success) or an arbitrary
  * categorical hue); defaults to var(--primary). There are no solid variants.
  */
-import { BADGE_DEFAULT_TONE, BADGE_TONE_CLASS, cn } from "@glasshome/ui";
+import { BADGE_DEFAULT_TONE, BADGE_TONE_CLASS } from "../lib/badge-tone";
+import { cn } from "../lib/utils";
 
 interface Props {
 	/** Tone color. Defaults to var(--primary). */

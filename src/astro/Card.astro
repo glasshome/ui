@@ -1,29 +1,46 @@
 ---
 /**
- * Static card surface for Astro / SSR pages — the same `CARD_CLASS` + inset
- * highlight the Solid <Card> uses, rendered as a plain element with zero JS.
- * Drop this into `.astro` markup instead of hand-writing a
- * `rounded-lg border border-border/50 bg-card/60 backdrop-blur-sm` box.
- *
- * This is the surface only (like hub's SECTION_CARD_CLASS): supply your own
- * inner layout/padding via the slot. Pass `as="article"`/`"section"` for
- * semantics; add `hover:border-border` yourself if the card is a link.
+ * Zero-JS card surface for Astro pages — the same CARD_SURFACE the Solid <Card>
+ * wears. Surface-only by default (`padding="none"`); `slots` for the
+ * CardHeader/Content/Footer rhythm, `md`/`sm` for a bare tile.
  */
-import { CARD_INSET_SHADOW, CARD_SURFACE, cn } from "@glasshome/ui";
+import {
+	CARD_INTERACTIVE,
+	CARD_PADDING,
+	type CardPadding,
+	CARD_SURFACE,
+	CARD_SURFACE_OPAQUE,
+} from "../lib/card-classes";
+import { cn } from "../lib/utils";
 
 interface Props {
 	as?: keyof HTMLElementTagNameMap;
+	interactive?: boolean;
+	/** Opaque solid surface (no backdrop blur). Use over busy/dark backgrounds or
+	 *  in animated contexts where blur can't run. */
+	opaque?: boolean;
+	padding?: CardPadding;
 	class?: string;
 }
 
-const { as: Tag = "div", class: className, ...rest } = Astro.props;
+const {
+	as: Tag = "div",
+	interactive = false,
+	opaque = false,
+	padding = "none",
+	class: className,
+	...rest
+} = Astro.props;
+
+const classes = cn(
+	opaque ? CARD_SURFACE_OPAQUE : CARD_SURFACE,
+	"rounded-[var(--radius)]",
+	CARD_PADDING[padding],
+	interactive && CARD_INTERACTIVE,
+	className,
+);
 ---
 
-<Tag
-	data-slot="card"
-	class={cn("rounded-lg", CARD_SURFACE, className)}
-	style={`box-shadow:${CARD_INSET_SHADOW}`}
-	{...rest}
->
+<Tag data-slot="card" class={classes} {...rest}>
 	<slot />
 </Tag>

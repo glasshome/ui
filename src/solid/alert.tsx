@@ -1,22 +1,14 @@
-import { CircleCheck, Info, OctagonAlert, TriangleAlert } from "lucide-solid";
-import {
-	type Component,
-	type ComponentProps,
-	type JSX,
-	Show,
-	splitProps,
-	type ValidComponent,
-} from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { type Component, type ComponentProps, type JSX, Show, splitProps } from "solid-js";
 import {
 	ALERT_CLASS,
 	ALERT_CONTENT_CLASS,
 	ALERT_DESCRIPTION_CLASS,
 	ALERT_ICON_BG_CLASS,
+	ALERT_ICON_PATHS,
 	ALERT_TITLE_CLASS,
-	alertIconBgStyle,
 	ALERT_TONES,
 	type AlertTone,
+	alertIconBgStyle,
 } from "../lib/alert-tones";
 import { glassToneText } from "../lib/glass-tone";
 import { cn } from "../lib/utils";
@@ -25,17 +17,10 @@ import { cn } from "../lib/utils";
  * Tone-driven alert (the design formerly known as hub's SectionAlert). One
  * component, four tones, both themes. Tone table + surface recipe are the pure,
  * single-source `../lib/alert-tones` (shared with hub's docs Callout and the
- * `@glasshome/ui/astro` <Alert>), so all three faces render identically. This
- * file only maps each tone to its lucide-solid glyph.
+ * `@glasshome/ui/astro` <Alert>), so all three faces render identically —
+ * including the glyph, drawn from the shared ALERT_ICON_PATHS.
  */
 export type { AlertTone };
-
-const TONE_ICON: Record<AlertTone, ValidComponent> = {
-	info: Info,
-	warning: TriangleAlert,
-	success: CircleCheck,
-	destructive: OctagonAlert,
-};
 
 type AlertProps = ComponentProps<"div"> & {
 	tone?: AlertTone;
@@ -60,7 +45,21 @@ const Alert: Component<AlertProps> = (props) => {
 			{...rest}
 		>
 			<span class={ALERT_ICON_BG_CLASS} style={alertIconBgStyle(tone().color)} aria-hidden="true">
-				<Show when={local.icon} fallback={<Dynamic component={TONE_ICON[toneKey()]} />}>
+				<Show
+					when={local.icon}
+					fallback={
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							innerHTML={ALERT_ICON_PATHS[toneKey()]}
+						/>
+					}
+				>
 					{local.icon}
 				</Show>
 			</span>
