@@ -79,9 +79,8 @@ export function WidgetIdentity(_props: WidgetIdentityProps) {
 							v{props.widget.latestVersion}
 						</span>
 					</Show>
-					<Show when={props.widget.isOfficial}>
-						<WidgetTrustBadge isOfficial />
-					</Show>
+					<WidgetTrustBadge isOfficial={!!props.widget.isOfficial} />
+
 					<Show when={props.widget.isUnlisted}>
 						<UnlistedMark />
 					</Show>

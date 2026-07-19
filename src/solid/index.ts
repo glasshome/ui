@@ -398,4 +398,5 @@ export {
 	type WidgetSummary,
 	widgetHref,
 } from "./widget-identity";
+export { WidgetCard } from "./widget-card";
 export { WidgetTrustBadge } from "./widget-trust-badge";
