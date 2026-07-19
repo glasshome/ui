@@ -54,7 +54,7 @@ function DeviceCard() {
 
 Available components include:
 
-`Accordion` · `Alert` · `AlertDialog` · `AspectRatio` · `Avatar` · `Badge` · `Breadcrumb` · `Button` · `ButtonGroup` · `Calendar` · `Card` · `Carousel` · `Checkbox` · `Collapsible` · `Command` · `ContextMenu` · `CopyButton` · `Dialog` · `Dock` · `Drawer` · `DropdownMenu` · `Empty` · `Field` · `Form` · `GeometricBackground` · `GlassEffect` · `HoverCard` · `Input` · `InputGroup` · `InputOTP` · `Item` · `Kbd` · `Label` · `Menubar` · `NavigationMenu` · `Pagination` · `Popover` · `Progress` · `RadioGroup` · `ResizablePanel` · `ResponsiveDialog` · `ScrollArea` · `Select` · `Separator` · `Sheet` · `Skeleton` · `Slider` · `Sonner (toast)` · `Spinner` · `Switch` · `Table` · `Tabs` · `Textarea` · `Toggle` · `ToggleGroup` · `Tooltip`
+`Accordion` · `Alert` · `AlertDialog` · `AspectRatio` · `Avatar` · `Badge` · `Breadcrumb` · `Button` · `ButtonGroup` · `Calendar` · `Card` · `Carousel` · `Checkbox` · `Collapsible` · `Command` · `ContextMenu` · `CopyButton` · `Dialog` · `Dock` · `DropdownMenu` · `Empty` · `Field` · `Form` · `GeometricBackground` · `GlassEffect` · `HoverCard` · `Input` · `InputGroup` · `InputOTP` · `Item` · `Kbd` · `Label` · `Menubar` · `NavigationMenu` · `Pagination` · `Popover` · `Progress` · `RadioGroup` · `ResizablePanel` · `ResponsiveDialog` · `ScrollArea` · `Select` · `Separator` · `Sheet` · `Skeleton` · `Slider` · `Sonner (toast)` · `Spinner` · `Switch` · `Table` · `Tabs` · `Textarea` · `Toggle` · `ToggleGroup` · `Tooltip`
 
 ### `@glasshome/ui/styles` — Tailwind v4 CSS
 

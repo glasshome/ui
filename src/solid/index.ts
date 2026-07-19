@@ -155,17 +155,6 @@ export {
 export type { DockIconButtonProps, DockItem, DockProps } from "./dock";
 export { Dock } from "./dock";
 export {
-	Drawer,
-	DrawerClose,
-	DrawerContent,
-	DrawerDescription,
-	DrawerFooter,
-	DrawerHeader,
-	DrawerOverlay,
-	DrawerTitle,
-	DrawerTrigger,
-} from "./drawer";
-export {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
