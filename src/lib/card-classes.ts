@@ -6,9 +6,13 @@
 /** The card knobs WITHOUT fill or blur: the one `.glass` formula with the tint
  *  off (border, rim, lift, washes). The fill is set by each surface below so
  *  there is never a duplicate `--glass-fill` declaration for the browser to pick
- *  between. Set `--glass-tone` on the element for an accent card. */
+ *  between. Set `--glass-tone` on the element for an accent card. The top-left
+ *  white sheen is dialled well below the tinted `.glass` default (0.16 → 0.05):
+ *  a big neutral card wants a calm, near-flat surface, not the glossy pop a small
+ *  badge/button wears. It stays invisible on the near-white light card, so light
+ *  leans on the soft bottom-right `--glass-shade` for its bit of depth. */
 const CARD_KNOBS =
-	"glass [--glass-edge:color-mix(in_srgb,var(--border)_60%,transparent)] [--glass-text:0%] [--glass-glow:0] [--glass-drop:0] [--glass-wash-a:20%] [--glass-wash-b:6%] [--glass-lift:0.45]";
+	"glass [--glass-edge:color-mix(in_srgb,var(--border)_60%,transparent)] [--glass-text:0%] [--glass-glow:0] [--glass-drop:0] [--glass-wash-a:20%] [--glass-wash-b:6%] [--glass-light:0.05] [--glass-rim:0.3] [--glass-lift:0.45] [--glass-shade:0.05] dark:[--glass-shade:0]";
 
 /** The translucent card surface WITHOUT the backdrop blur (fill 60%). Split from
  *  the blur so a surface that paints its own frost (SectionCard under dash's
