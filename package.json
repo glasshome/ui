@@ -45,12 +45,14 @@
 		"./astro/*": "./src/astro/*",
 		"./styles": "./src/styles/globals.css",
 		"./package.json": "./package.json",
-		"./styles/theme": "./src/styles/theme.css"
+		"./styles/theme": "./src/styles/theme.css",
+		"./scripts/*": "./scripts/*"
 	},
 	"files": [
 		"dist",
 		"src/astro",
-		"src/styles"
+		"src/styles",
+		"scripts"
 	],
 	"scripts": {
 		"build": "vite build && tsc",
