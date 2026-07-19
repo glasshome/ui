@@ -1,8 +1,9 @@
 # @glasshome/ui — design system contract
 
 Shared by **hub** (Astro + Solid islands) and **dash** (Solid). Read this before
-building or styling any UI in either app. The gallery at hub `/dev/design`
-renders every primitive; treat it as the executable form of this document.
+building or styling any UI in either app. `bun run dev:gallery` (in this
+package) serves a live gallery of every primitive, hot-reloading against src;
+treat it as the executable form of this document.
 
 ## The one material
 
@@ -100,7 +101,7 @@ Checklist for a new component:
    through a pure `lib/` file, never duplicate it.
 5. Export via `src/solid/index.ts` (components) and root `src/index.ts` (pure
    recipes needed by SSR).
-6. Register a specimen in hub `/dev/design`.
+6. Register a specimen in the gallery (`dev/groups/*` in this package).
 7. Comments: only constraints the code cannot express (rendering bugs worked
    around, cascade requirements, a11y invariants). One line each.
 

@@ -9,6 +9,8 @@ export { isDemoMode, loadDemoData, unloadDemoData } from "@glasshome/sync-layer"
 // Color helpers for ColorWheel/ColorSlider consumers, re-exported so they
 // don't need a direct @kobalte/core dependency.
 export { type Color, parseColor } from "@kobalte/core/colors";
+// Floating glass panel + its shared surface token.
+export { OVERLAY_SURFACE } from "../lib/overlay-classes";
 // Section tokens re-exported from the Solid entry for convenience.
 export {
 	SECTION_INNER_RADIUS,
@@ -90,6 +92,7 @@ export {
 	CarouselNext,
 	CarouselPrevious,
 } from "./carousel";
+export { AreaChart, BarList, formatBytes, formatCompact, RangeToggle, StackedBar } from "./charts";
 export { Checkbox } from "./checkbox";
 export {
 	Collapsible,
@@ -265,6 +268,7 @@ export {
 	navigationMenuTriggerStyle,
 } from "./navigation-menu";
 export { NumberField } from "./number-field";
+export { Overlay } from "./overlay";
 export { PageHeader } from "./page-header";
 export {
 	Pagination,
@@ -275,9 +279,6 @@ export {
 	PaginationNext,
 	PaginationPrevious,
 } from "./pagination";
-// Floating glass panel + its shared surface token.
-export { OVERLAY_SURFACE } from "../lib/overlay-classes";
-export { Overlay } from "./overlay";
 export {
 	Popover,
 	PopoverAnchor,
@@ -395,6 +396,7 @@ export { Textarea } from "./textarea";
 export { Toggle, toggleVariants } from "./toggle";
 export { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 export { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+export { WidgetCard } from "./widget-card";
 export {
 	formatWidgetCount,
 	WidgetIdentity,
@@ -402,5 +404,4 @@ export {
 	type WidgetSummary,
 	widgetHref,
 } from "./widget-identity";
-export { WidgetCard } from "./widget-card";
 export { WidgetTrustBadge } from "./widget-trust-badge";

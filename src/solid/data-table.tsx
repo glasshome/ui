@@ -1,5 +1,6 @@
+import { Icon } from "@iconify-icon/solid";
 import { ArrowDown, ArrowUp, ChevronsUpDown, Filter, Search, X } from "lucide-solid";
-import { type JSX, For, Show, splitProps } from "solid-js";
+import { For, type JSX, Show, splitProps } from "solid-js";
 import { Button } from "./button";
 import { Input } from "./input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
@@ -46,7 +47,10 @@ export function TableFilterSelect(props: {
 				<SelectItem item={itemProps.item}>{props.label(itemProps.item.rawValue)}</SelectItem>
 			)}
 		>
-			<SelectTrigger class={`h-9 w-auto gap-1.5 text-xs ${props.class ?? ""}`} aria-label={props.ariaLabel}>
+			<SelectTrigger
+				class={`h-9 w-auto gap-1.5 text-xs ${props.class ?? ""}`}
+				aria-label={props.ariaLabel}
+			>
 				<Filter class="size-3.5 shrink-0 text-muted-foreground" />
 				<SelectValue<string>>{(state) => props.label(state.selectedOption())}</SelectValue>
 			</SelectTrigger>
@@ -65,7 +69,7 @@ export function TableSearchInput(props: {
 }) {
 	return (
 		<div class={`relative w-full sm:w-64 ${props.class ?? ""}`}>
-			<Search class="-translate-y-1/2 pointer-events-none absolute top-1/2 left-2 size-3.5 text-muted-foreground" />
+			<Search class="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground" />
 			<Input
 				placeholder={props.placeholder}
 				value={props.value}
@@ -77,7 +81,7 @@ export function TableSearchInput(props: {
 				<button
 					type="button"
 					onClick={() => props.onInput("")}
-					class="-translate-y-1/2 absolute top-1/2 right-2 rounded p-0.5 text-muted-foreground hover:text-foreground"
+					class="absolute top-1/2 right-2 -translate-y-1/2 rounded p-0.5 text-muted-foreground hover:text-foreground"
 					aria-label="Clear search"
 				>
 					<X class="size-3.5" />
@@ -106,10 +110,7 @@ export function TableSortHeader(props: {
 			aria-label={`Sort by ${props.label}`}
 		>
 			{props.label}
-			<Show
-				when={props.active}
-				fallback={<ChevronsUpDown class="size-3 opacity-30" />}
-			>
+			<Show when={props.active} fallback={<ChevronsUpDown class="size-3 opacity-30" />}>
 				<Show when={props.dir === "asc"} fallback={<ArrowDown class="size-3" />}>
 					<ArrowUp class="size-3" />
 				</Show>
@@ -118,11 +119,21 @@ export function TableSortHeader(props: {
 	);
 }
 
-/** Centered empty state inside the table body. */
-export function TableEmpty(props: { icon?: JSX.Element; message: JSX.Element; action?: JSX.Element }) {
+/** Centered empty state inside the table body. `icon` takes JSX or an iconify name. */
+export function TableEmpty(props: {
+	icon?: JSX.Element | string;
+	message: JSX.Element;
+	action?: JSX.Element;
+}) {
 	return (
 		<div class="flex flex-col items-center gap-3 px-4 py-12 text-center">
-			<Show when={props.icon}>{props.icon}</Show>
+			<Show when={props.icon}>
+				{typeof props.icon === "string" ? (
+					<Icon icon={props.icon} class="block text-[32px] text-muted-foreground/50" />
+				) : (
+					props.icon
+				)}
+			</Show>
 			<p class="text-muted-foreground text-sm">{props.message}</p>
 			<Show when={props.action}>{props.action}</Show>
 		</div>

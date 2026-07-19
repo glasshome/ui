@@ -8,11 +8,11 @@ export const buttonVariants = cva({
 	variants: {
 		variant: {
 			default:
-				"glass glass-tint [--glass-tone:var(--primary)] [--glass-wash:30%] [--glass-text:70%] hover:[--glass-wash:40%] hover:[--glass-edge:color-mix(in_srgb,var(--primary)_60%,transparent)]",
+				"glass glass-tint [--glass-text:70%] [--glass-tone:var(--primary)] [--glass-wash:30%] hover:[--glass-edge:color-mix(in_srgb,var(--primary)_60%,transparent)] hover:[--glass-wash:40%]",
 			destructive:
-				"glass glass-tint [--glass-tone:var(--destructive)] [--glass-wash:30%] [--glass-text:61%] hover:[--glass-wash:40%] hover:[--glass-edge:color-mix(in_srgb,var(--destructive)_60%,transparent)] focus-visible:ring-destructive/30",
+				"glass glass-tint [--glass-text:61%] [--glass-tone:var(--destructive)] [--glass-wash:30%] focus-visible:ring-destructive/30 hover:[--glass-edge:color-mix(in_srgb,var(--destructive)_60%,transparent)] hover:[--glass-wash:40%]",
 			secondary:
-				"glass glass-tint [--glass-tone:var(--accent)] [--glass-wash:30%] hover:[--glass-wash:40%] hover:[--glass-edge:color-mix(in_srgb,var(--accent)_60%,transparent)]",
+				"glass glass-tint [--glass-tone:var(--accent)] [--glass-wash:30%] hover:[--glass-edge:color-mix(in_srgb,var(--accent)_60%,transparent)] hover:[--glass-wash:40%]",
 			outline:
 				"glass [--glass-edge:var(--border)] hover:[--glass-base:var(--muted)] dark:[--glass-base:var(--input)] dark:hover:[--glass-base:var(--muted)]",
 			ghost: "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",
@@ -31,3 +31,14 @@ export const buttonVariants = cva({
 		size: "default",
 	},
 });
+
+// Evaluated once for static/SSR call sites (marketing CTAs, .astro frontmatter)
+// that want a class string without hydrating <Button>. Sizeless: callers add
+// their own height and padding.
+export const BUTTON_DEFAULT_CLASS = buttonVariants({ variant: "default", size: "none" });
+export const BUTTON_OUTLINE_CLASS = buttonVariants({ variant: "outline", size: "none" });
+
+/* Round ghost icon button (copy buttons, small icon actions). Size and text
+ * color stay at the call site. */
+export const ICON_BUTTON_CLASS =
+	"inline-flex shrink-0 cursor-pointer items-center justify-center rounded-full transition-all duration-150 hover:bg-primary/10 active:scale-90";

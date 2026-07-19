@@ -17,7 +17,12 @@ export {
 	alertIconBgStyle,
 	alertIconFill,
 } from "./lib/alert-tones";
-export { buttonVariants } from "./lib/button-variants";
+export {
+	BUTTON_DEFAULT_CLASS,
+	BUTTON_OUTLINE_CLASS,
+	buttonVariants,
+	ICON_BUTTON_CLASS,
+} from "./lib/button-variants";
 export {
 	CARD_BLUR,
 	CARD_SURFACE,

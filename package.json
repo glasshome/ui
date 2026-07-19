@@ -58,7 +58,8 @@
 		"build": "vite build && tsc",
 		"check:tokens": "bun scripts/check-tokens.ts",
 		"dev": "vite build --watch",
-		"lint": "biome check ."
+		"lint": "biome check .",
+		"dev:gallery": "vite --config vite.dev.config.ts"
 	},
 	"peerDependencies": {
 		"@glasshome/sync-layer": ">=0.1.0",
@@ -82,7 +83,8 @@
 		"typescript": "^5",
 		"vite": "^8.1.0",
 		"vite-plugin-solid": "^2.11.12",
-		"@biomejs/biome": "2.4.15"
+		"@biomejs/biome": "2.4.15",
+		"@tailwindcss/vite": "^4.1.13"
 	},
 	"repository": {
 		"type": "git",
