@@ -29,11 +29,22 @@ interface SlidingIndicatorProps extends ComponentProps<"div"> {
 	children: JSX.Element;
 }
 
-type Pos = { offset: number; size: number };
+type Pos = { offset: number; size: number; cross: number };
 
 // One duration for both the slide (transform transition) and the scale dip, so
 // they always overlap exactly. Shorter = snappier.
 const SLIDE_MS = 220;
+
+// Squash-and-stretch: at mid-flight the indicator stretches ALONG the travel axis
+// and pinches perpendicular, which reads as momentum/speed. Both deforms are a
+// fixed PIXEL budget on their own axis (not a percentage), so a 34px dropdown row
+// and a 300px-wide one deform by the same visible pixels — a big element no longer
+// animates more just because it's big. Each axis measures its own size (`size` =
+// travel, `cross` = perpendicular) to turn the pixel budget into a scale factor.
+// DEFORM_MAX caps the fraction so a very thin item can't collapse.
+const STRETCH_PX = 6; // grow along travel
+const SQUASH_PX = 6; // pinch perpendicular
+const DEFORM_MAX = 0.14;
 
 export function SlidingIndicator(props: SlidingIndicatorProps) {
 	const [local, rest] = splitProps(props, [
@@ -50,11 +61,13 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 	let containerRef: HTMLDivElement | undefined;
 	const [pos, setPos] = createSignal<Pos | null>(null);
 
-	// On a real move, play a symmetric scale dip (1 → 0.9 → 1) over the SAME
-	// duration as the slide, so the shrink and the travel fully overlap: smallest
-	// at mid-flight, full size at both ends (a bell curve — accelerate in, settle
-	// out). WAAPI on `scale` composes with the translate transition; it releases
-	// back to the base (1) on its own, so nothing can get stuck small.
+	// On a real move, play a symmetric squash-and-stretch (1 → peak → 1) over the
+	// SAME duration as the slide, so the deform and the travel fully overlap: fastest
+	// and most stretched at mid-flight, back to a square at both ends (accelerate in,
+	// settle out). At the peak the indicator STRETCHES along the travel axis and
+	// PINCHES perpendicular (the reciprocal, so volume is preserved) — the classic
+	// speed cue. WAAPI on `scale` composes with the translate transition; it releases
+	// back to the base (1) on its own, so nothing can get stuck deformed.
 	let indicatorEl: HTMLDivElement | undefined;
 	createEffect(
 		on(
@@ -63,7 +76,10 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 				// pos is a fresh object on every re-measure (the Select's MutationObserver
 				// fires often), so only animate on an actual travel.
 				if (!p || !prev || Math.abs(p.offset - prev.offset) < 1 || !indicatorEl) return;
-				indicatorEl.animate([{ scale: "1" }, { scale: "0.9" }, { scale: "1" }], {
+				const stretch = 1 + Math.min(DEFORM_MAX, STRETCH_PX / (p.size || 1));
+				const squash = 1 - Math.min(DEFORM_MAX, SQUASH_PX / (p.cross || 1));
+				const peak = horizontal() ? `${stretch} ${squash}` : `${squash} ${stretch}`;
+				indicatorEl.animate([{ scale: "1 1" }, { scale: peak }, { scale: "1 1" }], {
 					duration: SLIDE_MS,
 					easing: "ease-in-out",
 				});
@@ -109,10 +125,12 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 				? {
 						offset: er.left - cr.left - containerRef.clientLeft + containerRef.scrollLeft,
 						size: er.width,
+						cross: er.height,
 					}
 				: {
 						offset: er.top - cr.top - containerRef.clientTop + containerRef.scrollTop,
 						size: er.height,
+						cross: er.width,
 					},
 		);
 	};
