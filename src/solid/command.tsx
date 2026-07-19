@@ -88,7 +88,7 @@ const Command: ParentComponent<ComponentProps<"div">> = (props) => {
 			<div
 				data-slot="command"
 				class={cn(
-					"flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground [--glass-base:var(--popover)]",
+					"flex h-full w-full flex-col overflow-hidden rounded-md text-popover-foreground",
 					local.class,
 				)}
 				onKeyDown={handleKeyDown}

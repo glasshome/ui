@@ -1,5 +1,6 @@
 import { AlertDialog as AlertDialogPrimitive } from "@kobalte/core/alert-dialog";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes";
 import { cn } from "../lib/utils";
 import { buttonVariants } from "./button";
 
@@ -21,7 +22,7 @@ const AlertDialogOverlay: Component<ComponentProps<typeof AlertDialogPrimitive.O
 		<AlertDialogPrimitive.Overlay
 			data-slot="alert-dialog-overlay"
 			class={cn(
-				"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 fixed inset-0 z-50 bg-black/50 data-[closed]:animate-out data-[expanded]:animate-in",
+				`data-[closed]:fade-out-0 data-[expanded]:fade-in-0 fixed inset-0 z-50 ${SCRIM_CLASS} data-[closed]:animate-out data-[expanded]:animate-in`,
 				local.class,
 			)}
 			{...rest}
@@ -39,7 +40,8 @@ const AlertDialogContent: Component<ComponentProps<typeof AlertDialogPrimitive.C
 			<AlertDialogPrimitive.Content
 				data-slot="alert-dialog-content"
 				class={cn(
-					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 data-[closed]:animate-out data-[expanded]:animate-in sm:max-w-lg",
+					OVERLAY_SURFACE,
+					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg p-6 duration-200 data-[closed]:animate-out data-[expanded]:animate-in sm:max-w-lg",
 					local.class,
 				)}
 				{...rest}

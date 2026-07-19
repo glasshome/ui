@@ -7,6 +7,7 @@ import {
 	type ParentComponent,
 	splitProps,
 } from "solid-js";
+import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes";
 import { cn } from "../lib/utils";
 
 const Sheet = DialogPrimitive;
@@ -23,7 +24,7 @@ const SheetOverlay: Component<ComponentProps<typeof DialogPrimitive.Overlay>> = 
 		<DialogPrimitive.Overlay
 			data-slot="sheet-overlay"
 			class={cn(
-				"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 pointer-events-auto fixed inset-0 z-50 select-none bg-black/50 data-[closed]:animate-out data-[expanded]:animate-in",
+				`data-[closed]:fade-out-0 data-[expanded]:fade-in-0 pointer-events-auto fixed inset-0 z-50 select-none ${SCRIM_CLASS} data-[closed]:animate-out data-[expanded]:animate-in`,
 				local.class,
 			)}
 			{...rest}
@@ -49,11 +50,11 @@ const SheetContent: ParentComponent<
 				class={cn(
 					"fixed z-50 flex transition ease-in-out focus:outline-none focus-visible:outline-none data-[closed]:animate-out data-[expanded]:animate-in data-[closed]:duration-300 data-[expanded]:duration-500",
 					side() === "right" &&
-						"data-[closed]:slide-out-to-right data-[expanded]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 bg-background shadow-lg sm:max-w-sm",
+						`data-[closed]:slide-out-to-right data-[expanded]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 ${OVERLAY_SURFACE} sm:max-w-sm`,
 					side() === "left" &&
-						"data-[closed]:slide-out-to-left data-[expanded]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 bg-background shadow-lg sm:max-w-sm",
+						`data-[closed]:slide-out-to-left data-[expanded]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 ${OVERLAY_SURFACE} sm:max-w-sm`,
 					side() === "top" &&
-						"data-[closed]:slide-out-to-top data-[expanded]:slide-in-from-top inset-x-0 top-0 h-auto bg-background shadow-lg",
+						`data-[closed]:slide-out-to-top data-[expanded]:slide-in-from-top inset-x-0 top-0 h-auto ${OVERLAY_SURFACE}`,
 					side() === "bottom" &&
 						"data-[closed]:slide-out-to-bottom data-[expanded]:slide-in-from-bottom inset-x-0 bottom-0 flex h-auto max-h-[85vh] flex-col p-0",
 					local.class,
@@ -69,7 +70,7 @@ const SheetContent: ParentComponent<
 				<div
 					class={cn(
 						"relative flex flex-col",
-						isBottom() && "w-full overflow-hidden rounded-t-lg border bg-background shadow-lg",
+						isBottom() && `w-full overflow-hidden rounded-t-lg ${OVERLAY_SURFACE}`,
 					)}
 				>
 					<div class={cn("flex min-h-0 flex-1 flex-col", isBottom() && "overflow-y-auto")}>

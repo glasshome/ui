@@ -199,7 +199,6 @@ export {
 	FormMessage,
 	useFormField,
 } from "./form";
-export { GlassEffect, GlassFilter } from "./glass-effect";
 export {
 	HoverCard,
 	HoverCardContent,

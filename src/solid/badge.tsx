@@ -5,25 +5,20 @@ import { TIER_BADGE_CLASS, tierBadgeStyle } from "../lib/tier-badge";
 import { cn } from "../lib/utils";
 
 type BadgeProps = ComponentProps<"span"> & {
-	component?: ValidComponent;
-	/**
-	 * Glass tone: any CSS color (a semantic token like var(--success) or an
-	 * arbitrary categorical hue). The badge is a frosted tinted pill in both
-	 * themes, no dark: overrides. Defaults to var(--primary). There are no solid
-	 * variants — glass is the only badge.
-	 */
+	as?: ValidComponent;
+	/** Any CSS color (semantic token or arbitrary hue). Defaults to var(--primary). */
 	tone?: string;
 };
 
 const Badge: Component<BadgeProps> = (props) => {
-	const [local, others] = splitProps(props, ["class", "component", "tone", "children", "style"]);
-	const Comp = () => local.component || "span";
+	const [local, others] = splitProps(props, ["class", "as", "tone", "children", "style"]);
+	const Comp = () => local.as || "span";
 	const c = () => local.tone ?? BADGE_DEFAULT_TONE;
 	return (
 		<Dynamic
 			component={Comp()}
 			data-slot="badge"
-			class={cn(BADGE_TONE_CLASS, "glass", local.class)}
+			class={cn(BADGE_TONE_CLASS, "glass glass-tint", local.class)}
 			style={{ "--glass-tone": c(), ...(local.style as Record<string, string>) }}
 			{...others}
 		>

@@ -12,6 +12,7 @@ import {
 	useContext,
 } from "solid-js";
 import { Portal } from "solid-js/web";
+import { OVERLAY_SURFACE } from "../../lib/overlay-classes";
 import { cn } from "../../lib/utils";
 import { Z_BASE } from "./constants";
 import { attachDrag } from "./drag-controller";
@@ -323,7 +324,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
 			}}
 			class={cn(
 				"bs-content",
-				"fixed inset-x-0 bottom-0 flex max-h-[85dvh] flex-col rounded-t-xl border-border border-x border-t bg-background shadow-lg outline-none",
+				`fixed inset-x-0 bottom-0 flex max-h-[85dvh] flex-col rounded-t-xl ${OVERLAY_SURFACE} outline-none`,
 				"after:absolute after:inset-x-0 after:top-full after:h-1/2 after:bg-inherit",
 				local.class,
 			)}

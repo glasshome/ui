@@ -9,6 +9,7 @@ import {
 	splitProps,
 	useContext,
 } from "solid-js";
+import { TRACK_SURFACE } from "../lib/card-classes";
 import { cn } from "../lib/utils";
 import { SlidingIndicator } from "./sliding-indicator";
 import { toggleVariants } from "./toggle";
@@ -39,8 +40,7 @@ const ToggleGroup: ParentComponent<
 			data-variant={local.variant}
 			data-size={local.size}
 			class={cn(
-				// A track frame (like the Tabs list) so the segments read as one group.
-				"group/toggle-group flex w-fit items-center rounded-lg border border-border/50 bg-card/40 p-1 backdrop-blur-sm data-[variant=outline]:shadow-xs",
+				`group/toggle-group flex w-fit items-center rounded-lg ${TRACK_SURFACE} p-1 data-[variant=outline]:shadow-xs`,
 				local.class,
 			)}
 			{...rest}

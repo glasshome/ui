@@ -34,9 +34,7 @@ const Switch: Component<SwitchProps> = (props) => {
 			disabled={local.disabled}
 			class={cn(
 				"peer relative inline-flex shrink-0 cursor-pointer items-center rounded-xl border border-input outline-none transition-all duration-200 ease-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
-				// checked track wears the shared glass surface (frosted primary); off
-				// stays a neutral input-colored track.
-				local.checked ? "glass [--glass-tone:var(--primary)]" : "bg-input/30",
+				local.checked ? "glass glass-tint [--glass-tone:var(--primary)]" : "bg-input/30",
 				local.class,
 			)}
 			style={{

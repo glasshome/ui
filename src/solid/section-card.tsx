@@ -4,24 +4,8 @@ import { CARD_BLUR, CARD_SURFACE_BASE } from "../lib/card-classes";
 import { CountPill } from "./count-pill";
 import { SECTION_INNER_RADIUS, SECTION_PADDING, SECTION_ROW_CLASS } from "../lib/section-tokens";
 
-/**
- * Section card kit — the settings/list surface shared by dash and hub. Use these
- * primitives instead of hand-rolling padding, radius, or typography per call
- * site. Surface tokens live in ../lib/section-tokens.
- *
- * Canonical list page:
- *   <SectionCard icon title subtitle count action toolbar>
- *     <div class="space-y-2"> ...<SectionRow/> items... </div>
- *   </SectionCard>
- */
-
-/**
- * Injection point for dash's performant-blur engine (which blurs the background
- * once and paints an aligned slice per surface). Pass the object from dash's
- * `usePerformantBlur()`; when `active()` is true the card gates its own
- * `backdrop-blur` off and paints `style()` instead. Omitted (hub, the default)
- * → an inert noop → a normal frosted `bg-card/60 backdrop-blur-xl` card.
- */
+/* Performant-blur injection (dash): when active() the card gates CARD_BLUR off
+ * and paints the engine's precomputed slice via style() instead. */
 export type GlassSurface = {
 	ref?: (el: HTMLElement) => void;
 	style?: () => JSX.CSSProperties;
@@ -35,23 +19,13 @@ const NOOP_GLASS: Required<GlassSurface> = {
 };
 
 type SectionCardProps = {
-	/** Leading icon pill in the header. Optional: omit (with title/action) for a
-	 *  headerless plain panel. */
 	icon?: string;
-	/** Header heading. Optional. */
 	title?: JSX.Element;
-	/** Muted stats/meta line under the title. */
 	subtitle?: JSX.Element;
-	/** Small count pill next to the title. Only rendered when not null/undefined. */
 	count?: number | string;
-	/** Header right side. */
 	action?: JSX.Element;
-	/** Full-width region below the header, before children, with a top divider.
-	 *  Use for a search/filter toolbar row. */
 	toolbar?: JSX.Element;
-	/** Extra classes on the <header>. */
 	headerClass?: string;
-	/** Performant-blur injection (dash). Omit for a normal frosted card. */
 	glass?: GlassSurface;
 	children: JSX.Element;
 };
@@ -104,8 +78,6 @@ export function SectionCard(props: SectionCardProps) {
 	);
 }
 
-/** Inner card sitting flush against section padding. Use instead of
- *  hand-rolling `border bg-card p-3` + radius math. */
 export function SectionRow(props: ComponentProps<"div">) {
 	const [local, rest] = splitProps(props, ["class"]);
 	return <div class={`${SECTION_ROW_CLASS} ${local.class ?? ""}`} {...rest} />;
@@ -120,16 +92,12 @@ const ICON_DIMENSIONS: Record<SectionIconSize, string> = {
 };
 
 const ICON_TONES = {
-	/** Default: neutral chip (settings/list). */
 	neutral: "bg-foreground/10 text-foreground/80",
-	/** Branded: primary-tinted chip (the pill hand-inlined across widget/org rows). */
 	primary: "bg-primary/10 text-primary",
 } as const;
 
 export function SectionIcon(props: {
-	/** Iconify icon name. Ignored when `children` is provided. */
 	icon?: string;
-	/** Custom glyph (e.g. a lucide-solid component), overrides `icon`. */
 	children?: JSX.Element;
 	size?: SectionIconSize;
 	tone?: keyof typeof ICON_TONES;
@@ -147,7 +115,6 @@ export function SectionIcon(props: {
 	);
 }
 
-/** Main section heading, sits next to SectionIcon. Responsive. */
 export function SectionTitle(props: { children: JSX.Element; class?: string }) {
 	return (
 		<h2
@@ -158,14 +125,12 @@ export function SectionTitle(props: { children: JSX.Element; class?: string }) {
 	);
 }
 
-/** Title for a SectionRow / item. */
 export function SectionSubtitle(props: { children: JSX.Element; class?: string }) {
 	return (
 		<h3 class={`font-semibold text-base leading-tight ${props.class ?? ""}`}>{props.children}</h3>
 	);
 }
 
-/** Group label sitting above a stack of rows. Micro caps. */
 export function SectionLabel(props: { children: JSX.Element; class?: string }) {
 	return (
 		<p
@@ -176,12 +141,10 @@ export function SectionLabel(props: { children: JSX.Element; class?: string }) {
 	);
 }
 
-/** Muted helper text (descriptions, captions). */
 export function SectionMeta(props: { children: JSX.Element; class?: string }) {
 	return <p class={`text-muted-foreground text-xs ${props.class ?? ""}`}>{props.children}</p>;
 }
 
-/** Pulsing placeholder shaped like SectionRow. Use as loading fallback. */
 export function SectionRowSkeleton(props: { class?: string }) {
 	return (
 		<div
@@ -191,7 +154,6 @@ export function SectionRowSkeleton(props: { class?: string }) {
 	);
 }
 
-/** Stack of N row skeletons. */
 export function SectionRowSkeletons(props: { count?: number }) {
 	const n = props.count ?? 3;
 	return (

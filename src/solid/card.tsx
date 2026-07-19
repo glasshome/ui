@@ -16,18 +16,10 @@ import {
 import { cn } from "../lib/utils";
 
 type CardProps = ComponentProps<"div"> & {
-	/** Clickable surface: adds the hover/focus affordance. */
 	interactive?: boolean;
-	/** Opaque solid surface (no backdrop blur). Use over busy/dark backgrounds or
-	 *  in animated contexts where blur can't run (marquees, transformed grids). */
 	opaque?: boolean;
-	/** Padding preset. Default `none`: a bare surface you pad yourself (matches
-	 *  the Astro <Card>). Pass `slots` for the CardHeader/Content/Footer vertical
-	 *  rhythm, or `md`/`sm` for a uniform tile. */
 	padding?: CardPadding;
-	/** Render as another element, e.g. "a" (with href) or "section". */
 	as?: ValidComponent;
-	/** Convenience for `as="a"` cards (not part of the base div props). */
 	href?: string;
 };
 

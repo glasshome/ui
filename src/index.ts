@@ -1,7 +1,6 @@
-// Framework-agnostic utilities
-
-// Alert tone system (tones table + surface recipe), pure — shared by the Solid
-// <Alert>, the Astro <Alert>, and hub's docs Callout so all render identically.
+/* Framework-agnostic root. Components are the primary doors; surface recipes
+ * are exported here only for consumers that cannot run Solid (server .astro
+ * frontmatter) or that gate the blur themselves (performant-blur wrappers). */
 export {
 	ALERT_CLASS,
 	ALERT_CONTENT_CLASS,
@@ -18,30 +17,16 @@ export {
 	alertIconBgStyle,
 	alertIconFill,
 } from "./lib/alert-tones";
-// NOTE: badge tone tokens are internal (the Solid + Astro <Badge> import them
-// from ./lib). Outside the package, use the <Badge> component. Not re-exported.
-// Pure cva class recipes (no Solid) — Astro/SSR-safe, used to build class
-// strings without hydrating a component. The Solid components and the
-// `@glasshome/ui/astro` static components share these one-and-only recipes, so
-// a package badge/button and a marketing-page badge/button render identically.
 export { buttonVariants } from "./lib/button-variants";
-// NOTE: the card surface/interactive/blur/padding class strings are deliberately
-// NOT re-exported here. They are internal to the package (the Solid <Card>,
-// <SectionCard>, and the Astro <Card> import them straight from ./lib). Outside
-// the package there is exactly one door: the <Card> component, which applies
-// these in the correct combination. Do not add card-classes to this barrel.
-// The iconic glass tone surface (frosted tinted look, first shipped on <Badge>),
-// shape-free and shared by every tinted component: <Badge>, <Alert>, chips, etc.
 export {
-	type GlassSurfaceOptions,
-	glassSurface,
-	glassToneText,
-	toneTextMix,
-} from "./lib/glass-tone";
-// Input field recipe (pure), shared by the Solid <Input> and .astro consumers.
-export { INPUT_CLASS } from "./lib/input-classes";
-// The GlassHome lockup spec (mark + wordmark + sub-brand line), pure — shared
-// by the Solid <Logo>, the Astro <Logo>, and any .astro consumer.
+	CARD_BLUR,
+	CARD_SURFACE,
+	CARD_SURFACE_BASE,
+	CARD_SURFACE_OPAQUE,
+	TRACK_SURFACE,
+} from "./lib/card-classes";
+export { glassToneText, toneTextMix } from "./lib/glass-tone";
+export { FIELD_CHROME, INPUT_CLASS, INPUT_SURFACE } from "./lib/input-classes";
 export {
 	LOGO_DEFAULT_SIZE,
 	LOGO_DEFAULT_SRC,
@@ -55,18 +40,12 @@ export {
 	LOGO_SUB_CLASS,
 	type LogoSize,
 } from "./lib/logo-lockup";
-// Opaque floating-overlay glass (menus/popovers), worn by <Overlay> + primitives.
-export { OVERLAY_SURFACE } from "./lib/overlay-classes";
-// Section card surface tokens (pure) — shared by the Solid <SectionCard> kit and
-// static consumers (hub .astro/.ts).
+export { OVERLAY_SURFACE, SCRIM_CLASS } from "./lib/overlay-classes";
 export {
 	SECTION_INNER_RADIUS,
 	SECTION_OUTER_RADIUS,
 	SECTION_PADDING,
 	SECTION_ROW_CLASS,
 } from "./lib/section-tokens";
-// NOTE: tier-chip tokens are internal (the Solid + Astro <TierBadge> import them
-// from ./lib). Outside the package, use the <TierBadge> component. Not re-exported.
-// Hooks
 export { createIsMobile } from "./lib/use-is-mobile";
 export { cn } from "./lib/utils";

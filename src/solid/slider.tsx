@@ -71,10 +71,7 @@ const Slider: Component<SliderProps> = (props) => {
 				}}
 			>
 				<KSlider.Fill
-						// Bare `.glass` resets to the tinted defaults (see @layer base in
-						// globals.css), so the parent rail's INPUT_SURFACE knobs no longer
-						// flatten it; only the primary tone needs setting.
-						class="glass [--glass-tone:var(--primary)]"
+						class="glass glass-tint [--glass-tone:var(--primary)]"
 					style={{
 						position: "absolute",
 						top: "0",

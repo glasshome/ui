@@ -1,17 +1,9 @@
 ---
-/**
- * Static glass tone badge for Astro / SSR pages — the same tone helpers the
- * Solid <Badge> uses, rendered as plain HTML with zero JS. Badge is glass-only:
- * pass any tone color (a semantic token like var(--success) or an arbitrary
- * categorical hue); defaults to var(--primary). There are no solid variants.
- */
 import { BADGE_DEFAULT_TONE, BADGE_TONE_CLASS } from "../lib/badge-tone";
 import { cn } from "../lib/utils";
 
 interface Props {
-	/** Tone color. Defaults to var(--primary). */
 	tone?: string;
-	/** Element to render (e.g. "a" for a linked chip). Default "span". */
 	as?: keyof HTMLElementTagNameMap;
 	class?: string;
 }
@@ -19,6 +11,6 @@ interface Props {
 const { tone = BADGE_DEFAULT_TONE, as: Tag = "span", class: className, ...rest } = Astro.props;
 ---
 
-<Tag data-slot="badge" class={cn(BADGE_TONE_CLASS, "glass", className)} style={`--glass-tone:${tone}`} {...rest}>
+<Tag data-slot="badge" class={cn(BADGE_TONE_CLASS, "glass glass-tint", className)} style={`--glass-tone:${tone}`} {...rest}>
 	<slot />
 </Tag>

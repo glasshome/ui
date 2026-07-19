@@ -19,7 +19,7 @@ import {
 type WidgetCardProps = {
 	widget: WidgetSummary;
 	/** `row` for dense lists, `tile` for grids/galleries. Default `row`. */
-	variant?: "row" | "tile";
+	layout?: "row" | "tile";
 	/** When set, the whole card becomes a link. */
 	href?: string;
 	/** Click handler (used when no href). */
@@ -30,14 +30,14 @@ type WidgetCardProps = {
 	showVersions?: boolean;
 	/** Show the description (tile only). Default true for tiles. */
 	showDescription?: boolean;
-	/** Custom trailing element for the row variant. Defaults to a chevron when
+	/** Custom trailing element for the row layout. Defaults to a chevron when
 	 *  the card is interactive (href/onClick), otherwise nothing. */
 	trailing?: JSX.Element;
 	class?: string;
 };
 
 export function WidgetCard(_props: WidgetCardProps) {
-	const props = mergeProps({ variant: "row" as const }, _props);
+	const props = mergeProps({ layout: "row" as const }, _props);
 	// Default: link to the widget's public page. A call-site that wants different
 	// behavior (e.g. open a dialog) passes `onClick` and opts out of the link.
 	const href = () => props.href ?? (props.onClick ? undefined : widgetHref(props.widget));
@@ -45,7 +45,7 @@ export function WidgetCard(_props: WidgetCardProps) {
 
 	return (
 		<Show
-			when={props.variant === "tile"}
+			when={props.layout === "tile"}
 			fallback={<WidgetCardRow {...props} href={href()} interactive={interactive()} />}
 		>
 			<WidgetCardTile {...props} href={href()} interactive={interactive()} />

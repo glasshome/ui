@@ -33,16 +33,14 @@ const ButtonGroup: Component<ComponentProps<"div"> & VariantProps<typeof buttonG
 	);
 };
 
-const ButtonGroupText: Component<ComponentProps<"div"> & { component?: ValidComponent }> = (
-	props,
-) => {
-	const [local, rest] = splitProps(props, ["class", "component"] as const);
-	const Comp = () => local.component || "div";
+const ButtonGroupText: Component<ComponentProps<"div"> & { as?: ValidComponent }> = (props) => {
+	const [local, rest] = splitProps(props, ["class", "as"] as const);
+	const Comp = () => local.as || "div";
 	return (
 		<Dynamic
 			component={Comp()}
 			class={cn(
-				"glass-rim flex items-center gap-2 rounded-md border border-border bg-card px-4 font-medium text-muted-foreground text-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none",
+				"glass flex items-center gap-2 rounded-md [--glass-edge:var(--border)] px-4 font-medium text-muted-foreground text-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none",
 				local.class,
 			)}
 			{...rest}

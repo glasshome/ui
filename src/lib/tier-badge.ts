@@ -1,11 +1,4 @@
-/**
- * Tier chip tokens (PRO / EARLY BIRD / CREATOR / FOUNDER): a brushed-metal pill
- * with a 135deg corner-to-corner sweep (bright ends, dip in the middle) and dark
- * text. One family; only the hi/lo/text triplet changes per tier.
- *
- * Pure (no Solid), so the Solid <TierBadge> and the zero-JS Astro face render
- * from this one source instead of drifting apart.
- */
+/* Metallic tier chip: 135deg brushed sweep, bright ends, dip in the middle. */
 
 export const TIER_BADGE_CLASS =
 	"inline-flex cursor-default select-none items-center rounded-full px-2 py-0.5 font-black text-[10px] uppercase tracking-wider";

@@ -13,6 +13,7 @@ import {
 	onMount,
 	Show,
 } from "solid-js";
+import { FIELD_CHROME, INPUT_SURFACE } from "../lib/input-classes";
 import { OVERLAY_SURFACE } from "../lib/overlay-classes";
 import {
 	BottomSheet,
@@ -376,7 +377,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 				aria-expanded={open()}
 				aria-controls={listboxId}
 				aria-haspopup="listbox"
-				class={`flex h-9 w-full items-center gap-2 rounded-md border border-input bg-input/30 px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30 dark:hover:bg-input/50 ${
+				class={`flex h-9 w-full items-center gap-2 rounded-md ${INPUT_SURFACE} hover:[--glass-light:0.09] px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 ${
 					showTriggerClear() ? "pr-14" : ""
 				}`}
 				onClick={p.onClick}
@@ -466,7 +467,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 							class={`flex size-4 shrink-0 items-center justify-center overflow-hidden rounded-[5px] border shadow-xs transition-all duration-200 ease-out ${
 								selected()
 									? "glass border-transparent text-foreground [--glass-tone:var(--primary)]"
-									: "border-input bg-input/30 dark:bg-input/30"
+									: FIELD_CHROME
 							}`}
 							aria-hidden="true"
 						>

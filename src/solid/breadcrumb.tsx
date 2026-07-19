@@ -38,9 +38,9 @@ const BreadcrumbItem: Component<ComponentProps<"li">> = (props) => {
 	);
 };
 
-const BreadcrumbLink: Component<ComponentProps<"a"> & { component?: ValidComponent }> = (props) => {
-	const [local, rest] = splitProps(props, ["class", "component"]);
-	const Comp = () => local.component || "a";
+const BreadcrumbLink: Component<ComponentProps<"a"> & { as?: ValidComponent }> = (props) => {
+	const [local, rest] = splitProps(props, ["class", "as"]);
+	const Comp = () => local.as || "a";
 	return (
 		<Dynamic
 			component={Comp()}

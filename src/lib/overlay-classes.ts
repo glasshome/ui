@@ -1,7 +1,7 @@
-/**
- * The floating-overlay surface: the `.glass` formula, opaque (`--popover` fill,
- * no frost) so menus stay legible. Set independently (NOT derived from
- * CARD_SURFACE) so each knob — `--glass-fill` especially — is set exactly once.
- */
+/* Floating-panel glass: opaque popover fill so menus stay legible over anything. */
 export const OVERLAY_SURFACE =
-	"glass [--glass-edge:color-mix(in_srgb,var(--border)_60%,transparent)] [--glass-text:0%] [--glass-glow:0] [--glass-drop:0] [--glass-light:0.05] [--glass-rim:0.3] [--glass-base:var(--popover)] [--glass-fill:100%] [--glass-lift:0.55]";
+	"glass [--glass-base:var(--popover)] [--glass-rim:0.3] [--glass-lift:0.55]";
+
+/* Modal scrim behind dialogs/sheets. BottomSheet keeps its own unblurred scrim
+ * (backdrop-blur is too slow on mobile). */
+export const SCRIM_CLASS = "bg-background/70 backdrop-blur-sm";

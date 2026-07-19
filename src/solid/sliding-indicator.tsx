@@ -179,10 +179,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 						class={cn(
 							"-z-10 pointer-events-none absolute ease-out",
 							horizontal() ? "inset-y-0 left-0" : "inset-x-0 top-0",
-							// The ONE trusted look: the glass material, always. It tints to
-							// `--glass-tone` (primary by default), so every consumer's indicator
-							// reads as the same lit-glass pill. indicatorClass only tunes radius.
-							"glass",
+							"glass glass-tint",
 							local.indicatorClass ?? "rounded-lg",
 						)}
 						style={{

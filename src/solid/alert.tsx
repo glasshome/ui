@@ -13,22 +13,12 @@ import {
 import { glassToneText } from "../lib/glass-tone";
 import { cn } from "../lib/utils";
 
-/**
- * Tone-driven alert (the design formerly known as hub's SectionAlert). One
- * component, four tones, both themes. Tone table + surface recipe are the pure,
- * single-source `../lib/alert-tones` (shared with hub's docs Callout and the
- * `@glasshome/ui/astro` <Alert>), so all three faces render identically —
- * including the glyph, drawn from the shared ALERT_ICON_PATHS.
- */
 export type { AlertTone };
 
 type AlertProps = ComponentProps<"div"> & {
 	tone?: AlertTone;
-	/** Override the default per-tone icon with any JSX (e.g. a lucide-solid icon). */
 	icon?: JSX.Element;
-	/** Bold heading line. */
 	title?: JSX.Element;
-	/** Trailing element pinned right (e.g. a Button). */
 	action?: JSX.Element;
 };
 
@@ -40,7 +30,7 @@ const Alert: Component<AlertProps> = (props) => {
 		<div
 			data-slot="alert"
 			role={local.tone === "destructive" ? "alert" : "status"}
-			class={cn(ALERT_CLASS, "glass", local.class)}
+			class={cn(ALERT_CLASS, "glass glass-tint", local.class)}
 			style={{ "--glass-tone": tone().color, color: "var(--foreground)" }}
 			{...rest}
 		>
@@ -86,7 +76,6 @@ const Alert: Component<AlertProps> = (props) => {
 	);
 };
 
-/** Back-compat sub-parts for the older compound usage (Alert > AlertTitle/Description). */
 const AlertTitle: Component<ComponentProps<"div">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);
 	return <div data-slot="alert-title" class={cn(ALERT_TITLE_CLASS, local.class)} {...rest} />;

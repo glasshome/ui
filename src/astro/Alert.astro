@@ -40,7 +40,7 @@ const iconBgStyle = Object.entries(alertIconBgStyle(t.color))
 <div
 	data-slot="alert"
 	role={tone === "destructive" ? "alert" : "status"}
-	class={cn(ALERT_CLASS, "glass", className)}
+	class={cn(ALERT_CLASS, "glass glass-tint", className)}
 	style={surfaceStyle}
 	{...rest}
 >

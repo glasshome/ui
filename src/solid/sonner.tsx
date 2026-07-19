@@ -20,25 +20,15 @@ import {
 	ALERT_TITLE_CLASS,
 	alertIconBgStyle,
 } from "../lib/alert-tones";
-import { glassSurface, glassToneText } from "../lib/glass-tone";
+import { glassToneText } from "../lib/glass-tone";
 import { cn } from "../lib/utils";
 import { Spinner } from "./spinner";
 
 type Position = ComponentProps<typeof SolidSonner>["position"];
 type ToastMessage = JSX.Element | string;
 
-// ─── Glass toast card ────────────────────────────────────────────────────────
-// A toast IS an alert. Rather than fight sonner's default chrome with CSS
-// overrides (its border/background/box-shadow repaint kept killing our rim), we
-// render our OWN card via toast.custom() with the Toaster set `unstyled`. The
-// card is built from the exact same pieces as <Alert>: the shared glassSurface()
-// tint, glassToneText() title, and the alert icon-chip tokens — so a toast and
-// an alert of the same kind are visually identical, no drift possible.
-
 type ToastKind = "success" | "error" | "warning" | "info" | "loading" | "message";
 
-// Same tone map as <Alert>. `null` = neutral (message / loading): a frosted
-// --card surface, no color.
 const KIND_TONE: Record<ToastKind, string | null> = {
 	success: "var(--success)",
 	error: "var(--destructive)",
@@ -57,26 +47,13 @@ const KIND_ICON: Record<ToastKind, Component<{ size?: number }> | null> = {
 	message: null,
 };
 
-// NOTE: no `backdrop-filter` on toasts. sonner animates the toast's transform
-// (slide/stack), and a backdrop-filter on a transform-animated element renders
-// solid black mid-animation in Chromium. So instead of frosting what's behind
-// (the badge/alert trick), the toast composites the SAME tone over an opaque
-// --card base — glassy look, but nothing to blur, so it animates cleanly.
-function toneCardStyle(color: string): JSX.CSSProperties {
-	return {
-		...glassSurface(color, { opaque: true }),
-		color: "var(--foreground)",
-		"box-shadow": `var(--glass-rim-shine, 0 0 #0000), inset 0 -3px 8px color-mix(in srgb, ${color} 16%, transparent), 0 12px 32px -8px oklch(0 0 0 / 0.5)`,
-	};
-}
-
-const NEUTRAL_CARD_STYLE: JSX.CSSProperties = {
-	"border-color": "color-mix(in srgb, var(--foreground) 16%, transparent)",
-	background:
-		"linear-gradient(155deg, color-mix(in srgb, var(--foreground) 6%, var(--card)), var(--card))",
-	"box-shadow": "var(--glass-rim-shine, 0 0 #0000), 0 12px 32px -8px oklch(0 0 0 / 0.5)",
-	color: "var(--foreground)",
-};
+/* No backdrop-blur on toasts: sonner animates transform, and backdrop-filter on
+ * a transform-animated element renders solid black mid-animation in Chromium.
+ * The opaque --card base gives the glass look with nothing to blur. Toned and
+ * neutral toasts are the same .glass material with a stronger lift. */
+const TONE_TOAST_CLASS = "glass glass-tint [--glass-lift:0.5]";
+const NEUTRAL_TOAST_CLASS =
+	"glass [--glass-tone:var(--foreground)] [--glass-wash:6%] [--glass-glow:0%] [--glass-drop:0%] [--glass-edge:color-mix(in_srgb,var(--foreground)_16%,transparent)] [--glass-lift:0.5]";
 
 type GlassToastProps = {
 	kind: ToastKind;
@@ -89,8 +66,6 @@ type GlassToastProps = {
 const GlassToast: Component<GlassToastProps> = (props) => {
 	const tone = KIND_TONE[props.kind];
 	const ToneIcon = KIND_ICON[props.kind];
-	// Toned toasts get the corner watermark (like the alert). Loading keeps a
-	// small leading spinner chip; the neutral message toast has no icon at all.
 	const watermarkGlyph: JSX.Element | null =
 		props.icon ?? (ToneIcon ? <Dynamic component={ToneIcon} /> : null);
 
@@ -98,8 +73,12 @@ const GlassToast: Component<GlassToastProps> = (props) => {
 		<div
 			data-slot="toast"
 			role={props.kind === "error" ? "alert" : "status"}
-			class={cn(ALERT_CLASS, "w-[356px] max-w-[calc(100vw-2rem)]")}
-			style={tone ? toneCardStyle(tone) : NEUTRAL_CARD_STYLE}
+			class={cn(
+				ALERT_CLASS,
+				tone ? TONE_TOAST_CLASS : NEUTRAL_TOAST_CLASS,
+				"w-[356px] max-w-[calc(100vw-2rem)]",
+			)}
+			style={tone ? { "--glass-tone": tone, color: "var(--foreground)" } : undefined}
 		>
 			<Show when={tone && watermarkGlyph}>
 				<span
@@ -138,15 +117,11 @@ const GlassToast: Component<GlassToastProps> = (props) => {
 	);
 };
 
-// ─── toast() API ─────────────────────────────────────────────────────────────
-// Drop-in replacement for solid-sonner's `toast`: same helpers/signatures, every
-// one now renders a <GlassToast>. All ~200 existing call sites upgrade for free.
-
 const show =
 	(kind: ToastKind) =>
 	(message: ToastMessage, data: ExternalToast = {}): string | number => {
-		// Pull the fields our card renders out of the sonner options, else sonner
-		// renders `description` a second time as loose text under the toast.
+		/* Pull rendered fields out of the sonner options, else sonner renders
+		 * `description` a second time as loose text under the toast. */
 		const { description, icon, action, ...rest } = data;
 		return sonnerToast.custom(
 			() => (
@@ -228,8 +203,6 @@ const toast = Object.assign(
 	},
 );
 
-// ─── Toaster host ────────────────────────────────────────────────────────────
-
 function useIsMobile(breakpoint = 768) {
 	const [mobile, setMobile] = createSignal(
 		typeof window !== "undefined" ? window.innerWidth < breakpoint : false,
@@ -251,8 +224,6 @@ const Toaster: Component<ComponentProps<typeof SolidSonner>> = (rawProps) => {
 	const props = mergeProps({ duration: 3000, gap: 8, visibleToasts: 3 }, rawProps);
 	const position = (): Position => props.position ?? (isMobile() ? "top-center" : "bottom-right");
 
-	// Every toast is a fully custom <GlassToast>; `unstyled` strips sonner's own
-	// card chrome so our glass surface is the whole visual.
 	return (
 		<SolidSonner
 			{...props}

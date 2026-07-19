@@ -1,5 +1,6 @@
 import { Tabs as TabsPrimitive } from "@kobalte/core/tabs";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { TRACK_SURFACE } from "../lib/card-classes";
 import { cn } from "../lib/utils";
 import { SlidingIndicator } from "./sliding-indicator";
 
@@ -11,10 +12,7 @@ const TabsList: Component<ComponentProps<typeof TabsPrimitive.List>> = (props) =
 		<TabsPrimitive.List
 			data-slot="tabs-list"
 			class={cn(
-				// admin indicator spec: neutral card track (not primary-tinted), radius from
-				// --radius. The active state is a sliding indicator (SlidingIndicator), not a
-				// per-trigger fill, so selection glides between tabs.
-				"inline-flex h-9 w-full items-center rounded-lg border border-border/50 bg-card/40 p-1 text-muted-foreground backdrop-blur-sm",
+				`inline-flex h-9 w-full items-center rounded-lg ${TRACK_SURFACE} p-1 text-muted-foreground`,
 				local.class,
 			)}
 			{...others}

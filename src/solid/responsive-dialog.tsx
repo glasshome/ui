@@ -13,6 +13,7 @@ import {
 	useContext,
 } from "solid-js";
 import { Portal } from "solid-js/web";
+import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes";
 import { cn } from "../lib/utils";
 import {
 	BottomSheet,
@@ -188,7 +189,7 @@ const DesktopContent: ParentComponent<ComponentProps<"div">> = (props) => {
 				<div class="fixed inset-0 z-50">
 					<div
 						class={cn(
-							"fixed inset-0 bg-black/80 transition-opacity duration-100 ease-out",
+							`fixed inset-0 ${SCRIM_CLASS} transition-opacity duration-100 ease-out`,
 							isClosing() || isOpening() ? "opacity-0" : "opacity-100",
 						)}
 						onClick={handleClose}
@@ -208,7 +209,7 @@ const DesktopContent: ParentComponent<ComponentProps<"div">> = (props) => {
 							aria-modal="true"
 							tabIndex={-1}
 							class={cn(
-								"relative flex max-h-[70vh] w-full max-w-lg flex-col overflow-y-auto rounded-lg border border-border bg-background p-6 shadow-lg outline-none transition-all duration-50 ease-out",
+								`relative flex max-h-[70vh] w-full max-w-lg flex-col overflow-y-auto rounded-lg ${OVERLAY_SURFACE} p-6 outline-none transition-all duration-50 ease-out`,
 								isClosing() || isOpening() ? "scale-95 opacity-0" : "scale-100 opacity-100",
 								local.class,
 							)}

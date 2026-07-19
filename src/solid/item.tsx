@@ -49,12 +49,12 @@ const itemVariants = cva({
 
 const Item: Component<
 	ComponentProps<"div"> &
-		VariantProps<typeof itemVariants> & { component?: ValidComponent; href?: string }
+		VariantProps<typeof itemVariants> & { as?: ValidComponent; href?: string }
 > = (props) => {
-	const [local, rest] = splitProps(props, ["class", "variant", "size", "component"] as const);
+	const [local, rest] = splitProps(props, ["class", "variant", "size", "as"] as const);
 	const variant = () => local.variant ?? "default";
 	const size = () => local.size ?? "default";
-	const Comp = () => local.component || "div";
+	const Comp = () => local.as || "div";
 	return (
 		<Dynamic
 			component={Comp()}

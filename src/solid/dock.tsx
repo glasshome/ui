@@ -11,6 +11,7 @@ import {
 	splitProps,
 } from "solid-js";
 import { Dynamic } from "solid-js/web";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes";
 import { cn } from "../lib/utils";
 import { SlidingIndicator } from "./sliding-indicator";
 
@@ -79,7 +80,8 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
 				class={cn(
 					"absolute -top-8 left-1/2 -translate-x-1/2",
 					"rounded px-2 py-1 text-xs",
-					"border border-border bg-popover/90 text-popover-foreground backdrop-blur-sm [--glass-base:var(--popover)]",
+					OVERLAY_SURFACE,
+					"text-popover-foreground",
 					"opacity-0 group-hover:opacity-100",
 					"pointer-events-none whitespace-nowrap transition-opacity",
 					"z-10",
@@ -144,15 +146,12 @@ const Dock: Component<DockProps> = (props) => {
 					ref={containerRef}
 					class={cn(
 						"flex items-center gap-0.5 p-1.5 sm:gap-1 sm:p-2",
-						"border border-border bg-card/80 shadow-lg backdrop-blur-md",
-						"transition-shadow duration-300 hover:shadow-xl",
-						dockMode() === "floating" ? "rounded-xl" : "rounded-t-xl border-x border-t border-b-0",
+						"glass [--glass-base:color-mix(in_srgb,var(--card)_80%,transparent)] [--glass-rim:0.3] [--glass-lift:0.55] backdrop-blur-md backdrop-saturate-[1.8]",
+						dockMode() === "floating" ? "rounded-xl" : "rounded-t-xl",
 						needsScroll() ? "scrollbar-hide overflow-x-auto" : "overflow-visible",
 						!needsScroll() && "justify-center",
 					)}
 					style={{
-						"backdrop-filter": "blur(10px) saturate(180%)",
-						"-webkit-backdrop-filter": "blur(10px) saturate(180%)",
 						"min-width": needsScroll() ? "auto" : "fit-content",
 					}}
 				>

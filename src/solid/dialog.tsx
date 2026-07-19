@@ -1,5 +1,6 @@
 import { Dialog as DialogPrimitive } from "@kobalte/core/dialog";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes";
 import { cn } from "../lib/utils";
 
 const Dialog = DialogPrimitive;
@@ -10,12 +11,14 @@ const DialogContent: ParentComponent<ComponentProps<typeof DialogPrimitive.Conte
 	const [local, others] = splitProps(props, ["class", "children"]);
 	return (
 		<DialogPrimitive.Portal>
-			<DialogPrimitive.Overlay class="data-[closed]:fade-out-0 data-[expanded]:fade-in-0 fixed inset-0 z-50 bg-background/70 backdrop-blur-sm data-[closed]:animate-out data-[expanded]:animate-in" />
+			<DialogPrimitive.Overlay
+				class={`data-[closed]:fade-out-0 data-[expanded]:fade-in-0 fixed inset-0 z-50 ${SCRIM_CLASS} data-[closed]:animate-out data-[expanded]:animate-in`}
+			/>
 			<DialogPrimitive.Content
 				data-slot="dialog-content"
 				class={cn(
-					// glass panel (D1/GL1): translucent surface/85 + blur, radius from --radius.
-					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border border-border/50 bg-background/85 p-6 shadow-lg backdrop-blur-md duration-200 data-[closed]:animate-out data-[expanded]:animate-in sm:rounded-lg",
+					OVERLAY_SURFACE,
+					"data-[closed]:fade-out-0 data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 p-6 duration-200 data-[closed]:animate-out data-[expanded]:animate-in sm:rounded-lg",
 					local.class,
 				)}
 				{...others}

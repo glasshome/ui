@@ -6,101 +6,62 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Rim strength is a real number, not just a token: typed as `<number>` so
- * `calc(0.22 * var(--glass-rim))` inside the rim shadow alphas resolves (and
- * updates live when a surface or the playground changes it). An untyped custom
- * property left the calc unresolved and the bevel never moved. */
+/* Typed + inherits:false: a knob never leaks into a nested glass element, each
+ * element's calc() resolves against its own value, and typed knobs animate. */
+@property --glass-tone {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --glass-wash {
+	syntax: "<percentage>";
+	inherits: false;
+	initial-value: 28%;
+}
+@property --glass-light {
+	syntax: "<number>";
+	inherits: false;
+	initial-value: 0.05;
+}
+@property --glass-shade {
+	syntax: "<number>";
+	inherits: false;
+	initial-value: 0;
+}
+@property --glass-glow {
+	syntax: "<percentage>";
+	inherits: false;
+	initial-value: 16%;
+}
+@property --glass-drop {
+	syntax: "<percentage>";
+	inherits: false;
+	initial-value: 20%;
+}
+@property --glass-lift {
+	syntax: "<number>";
+	inherits: false;
+	initial-value: 0;
+}
+@property --glass-text {
+	syntax: "<percentage>";
+	inherits: false;
+	initial-value: 65%;
+}
 @property --glass-rim {
 	syntax: "<number>";
-	inherits: true;
+	inherits: false;
 	initial-value: 1;
 }
 
-/**
- * Single source for the glass "base effect": the tone-agnostic white rim +
- * top-left edge light. Referenced by glassSurface() and the toast surface (JS
- * inline) AND the @utility below (buttons), so the lit-glass look can't diverge
- * between them — change it here and every glass element moves together. The
- * tone-colored under-glow/drop stay per-consumer (they need the runtime tone).
- */
-:root {
-	/* Rim STRENGTH: one 0..1 scalar multiplying every rim-shine alpha below, so a
-	 * surface can dial its lit bevel down (calmer, near-flat edge) or off without
-	 * re-inlining the multi-part shadow. 1 = full bevel (the values as authored),
-	 * 0 = no rim. Override per element (a card softens its edge; the playground
-	 * sweeps it). Both `raise` and `sink` scale off it, so it works in either mode. */
-	--glass-rim: 1;
-	/* Lit from the top-left: a white highlight (reads on dark surfaces) plus a
-	 * bottom-right dark shade (reads on light surfaces), so the glass has depth in
-	 * both themes — a white-only rim goes flat on a white surface. Each alpha is
-	 * scaled by `--glass-rim` so the whole bevel rides one strength knob. */
-	--glass-rim-raise:
-		inset 0 1px 0 oklch(1 0 0 / calc(0.22 * var(--glass-rim))),
-		inset 2px 2px 5px -3px oklch(1 0 0 / calc(0.5 * var(--glass-rim))),
-		inset -2px -2px 4px -2px oklch(0 0 0 / calc(0.12 * var(--glass-rim)));
-	/* The raised (convex) rim is the default. Named alias so a glass child nested
-	 * under a surface that flipped this to `--glass-rim-sink` (INPUT_SURFACE) can
-	 * restore convex without re-inlining the value. */
-	--glass-rim-shine: var(--glass-rim-raise);
-	/* The INVERTED rim: the same lit-edge signature read as a concave pit instead
-	 * of a raised pane — the top inner wall casts a shadow down into the surface
-	 * and only the bottom edge catches light, so a field wearing it feels "dug
-	 * out". Feed it into `--glass-rim-shine` on an element (see INPUT_CLASS) to
-	 * flip that element's glass from convex to recessed. Also scaled by `--glass-rim`. */
-	--glass-rim-sink:
-		inset 0 2px 3px -1px oklch(0 0 0 / calc(0.28 * var(--glass-rim))),
-		inset 2px 2px 5px -3px oklch(0 0 0 / calc(0.22 * var(--glass-rim))),
-		inset 0 -1px 0 oklch(1 0 0 / calc(0.12 * var(--glass-rim)));
-	--glass-tone: transparent;
-}
-
-/* Class form of glassSurface's shadow for class-string recipes (buttons): the
- * shared shine + a tone glow. `--glass-tone` is the already-mixed glow color
- * (default transparent → neutral) — a bare var here, so lightningcss can't fold
- * away a color-mix and diverge from the inline glassSurface. */
-@utility glass-rim {
-	box-shadow:
-		var(--glass-rim-shine, 0 0 #0000),
-		inset 0 -2px 4px var(--glass-tone),
-		0 1px 2px oklch(0 0 0 / 0.08),
-		0 1px 3px var(--glass-tone);
-}
-
-/**
- * Per-element knob defaults, in `@layer base` (below Tailwind's `utilities`).
- * Custom properties INHERIT, so without a local declaration a nested `.glass`
- * child silently takes an ancestor surface's knobs (INPUT_SURFACE zeros the
- * washes + swaps base/rim; a card dims glow) and goes flat — the recurring
- * "layered glass lost its tint" bug. A declared value beats an inherited one,
- * so re-declaring the defaults here makes every `.glass` RESET locally.
- * CRUCIAL: this MUST stay in `@layer base`. Unlayered, it would beat the
- * `[--glass-*]` utilities (which live in `@layer utilities`) that CARD_SURFACE /
- * INPUT_SURFACE / OVERLAY_SURFACE apply, flattening every surface back to this
- * tinted default. Layered, utilities (and inline `style` knobs) still win; only
- * inheritance loses. Change a default in ONE place: here.
- */
+/* --glass-base and --glass-edge need var() defaults, which @property forbids,
+ * so they reset here instead. MUST stay in @layer base so [--glass-*] utilities
+ * and inline style knobs still win. Rim shadows are declared on .glass (not
+ * :root) so calc(var(--glass-rim)) resolves per element, not frozen at :root. */
 @layer base {
 	:where(.glass) {
-		--glass-tone: transparent;
-		--glass-edge: oklch(from var(--glass-tone) l c h / 0.45);
 		--glass-base: var(--card);
-		--glass-fill: 100%;
-		--glass-wash-a: 28%;
-		--glass-wash-b: 10%;
-		--glass-light: 0.16;
-		--glass-shade: 0;
-		--glass-text: 65%;
-		--glass-glow: 0.16;
-		--glass-drop: 0.2;
-		--glass-lift: 0;
-		/* Rim tokens are RE-declared here (not just inherited from :root) so their
-		 * `calc(… * var(--glass-rim))` resolves against THIS element's --glass-rim.
-		 * A chained custom property substitutes its var()s at the element where it
-		 * is DECLARED: the :root copies bake in :root's --glass-rim (=1, full) and
-		 * inherit down frozen, so a card lowering --glass-rim could never dim its
-		 * bevel. Declared on `.glass`, each surface recomputes with its own value.
-		 * (The :root copies stay for the `glass-rim` button utility, which is not
-		 * `.glass` and always wants the full bevel.) */
+		--glass-edge: color-mix(in srgb, var(--border) 60%, transparent);
 		--glass-rim-raise:
 			inset 0 1px 0 oklch(1 0 0 / calc(0.22 * var(--glass-rim))),
 			inset 2px 2px 5px -3px oklch(1 0 0 / calc(0.5 * var(--glass-rim))),
@@ -111,33 +72,37 @@
 			inset 0 -1px 0 oklch(1 0 0 / calc(0.12 * var(--glass-rim)));
 		--glass-rim-shine: var(--glass-rim-raise);
 	}
+	:where(.glass-tint) {
+		--glass-light: 0.16;
+		--glass-edge: oklch(from var(--glass-tone) l c h / 0.45);
+		color: color-mix(in oklab, var(--glass-tone) var(--glass-text), var(--foreground));
+	}
+	:where(.glass-sink) {
+		--glass-rim-shine: var(--glass-rim-sink);
+	}
 }
 
-/**
- * The ONE glass formula. Defaults render the TINTED look (badges, alerts, tab
- * indicators, …) driven by `--glass-tone`; every tone term vanishes when the
- * tone is transparent, so a neutral surface is the same formula with the tone
- * off + a few knobs — which is what <Card>/<Overlay> set (CARD_SURFACE /
- * OVERLAY_SURFACE). There is no `.glass-surface` class. Knob defaults live in the
- * `@layer base` block above; the `var(…, fallback)` here is a redundant backstop.
- */
+/* The ONE glass formula. Neutral by default (--glass-tone transparent makes
+ * every tone term inert); add .glass-tint for the tinted badge/alert look and
+ * .glass-sink for a recessed field. Tone mixes are srgb: oklch drags a tone
+ * mixed toward transparent-black down to mud on light surfaces. Deliberately
+ * unlayered so the material owns border/background/box-shadow; tune via knobs. */
 :where(.glass) {
-	border: 1px solid var(--glass-edge, oklch(from var(--glass-tone) l c h / 0.45));
+	border: 1px solid var(--glass-edge);
 	background:
-		radial-gradient(120% 120% at 22% 8%, oklch(1 0 0 / var(--glass-light, 0.16)), transparent 58%),
-		radial-gradient(120% 120% at 82% 100%, oklch(0 0 0 / var(--glass-shade, 0)), transparent 58%),
+		radial-gradient(120% 120% at 22% 8%, oklch(1 0 0 / var(--glass-light)), transparent 58%),
+		radial-gradient(120% 120% at 82% 100%, oklch(0 0 0 / var(--glass-shade)), transparent 58%),
 		linear-gradient(
 			135deg,
-			color-mix(in srgb, var(--glass-tone) var(--glass-wash-a, 28%), transparent),
-			color-mix(in srgb, var(--glass-tone) var(--glass-wash-b, 10%), transparent)
+			color-mix(in srgb, var(--glass-tone) var(--glass-wash), transparent),
+			color-mix(in srgb, var(--glass-tone) calc(var(--glass-wash) / 3), transparent)
 		),
-		color-mix(in srgb, var(--glass-base, var(--card)) var(--glass-fill, 100%), transparent);
-	color: color-mix(in oklab, var(--glass-tone) var(--glass-text, 65%), var(--foreground));
+		var(--glass-base);
 	box-shadow:
 		var(--glass-rim-shine, 0 0 #0000),
-		inset 0 -2px 4px oklch(from var(--glass-tone) l c h / var(--glass-glow, 0.16)),
-		0 1px 3px oklch(from var(--glass-tone) l c h / var(--glass-drop, 0.2)),
-		0 10px 30px -16px oklch(0 0 0 / var(--glass-lift, 0));
+		inset 0 -2px 4px color-mix(in srgb, var(--glass-tone) var(--glass-glow), transparent),
+		0 1px 3px color-mix(in srgb, var(--glass-tone) var(--glass-drop), transparent),
+		0 10px 30px -16px oklch(0 0 0 / var(--glass-lift));
 }
 
 /**

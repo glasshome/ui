@@ -53,12 +53,10 @@ const SelectContent: ParentComponent<
 			<SelectPrimitive.Content
 				data-slot="select-content"
 				class={cn(
-					// Width comes from Kobalte sameWidth (= trigger width). It overlaps the
-					// trigger and wears the SAME concave input surface as SelectTrigger, so
-					// opening reads as the input expanding, not a separate floating panel.
+					// Same concave surface as the trigger: opening reads as the input
+					// expanding, not a separate floating panel.
 					INPUT_SURFACE,
-						"relative z-50 overflow-y-auto overflow-x-hidden rounded-md p-1 text-popover-foreground",
-					// clip-path reveal, top row covers the input, options grow downward.
+					"relative z-50 overflow-y-auto overflow-x-hidden rounded-md p-1 text-popover-foreground",
 					"data-[closed]:animate-select-out data-[expanded]:animate-select-in",
 					local.class,
 				)}
@@ -68,11 +66,7 @@ const SelectContent: ParentComponent<
 					activeSelector="[data-highlighted]"
 					orientation="vertical"
 					class="w-full"
-					// The listbox surface is INPUT_SURFACE, which zeros the glass wash and
-					// dims the light; those cascade into this `.glass` pill and would flatten
-					// it to a grey block. Re-declare the highlight knobs so the primary tint
-					// matches every other menu indicator (which inherit the overlay surface).
-					indicatorClass="rounded-sm [--glass-base:var(--popover)] [--glass-fill:100%] [--glass-wash-a:28%] [--glass-wash-b:10%] [--glass-light:0.16]"
+					indicatorClass="rounded-sm [--glass-base:var(--popover)]"
 					indicatorTone="var(--primary)"
 				>
 					<SelectPrimitive.Listbox class={cn(local.listboxClass)} />

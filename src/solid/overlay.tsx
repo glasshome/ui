@@ -2,12 +2,8 @@ import { type Component, type ComponentProps, splitProps } from "solid-js";
 import { OVERLAY_SURFACE } from "../lib/overlay-classes";
 import { cn } from "../lib/utils";
 
-/**
- * A generic floating glass panel — the same material the Popover/DropdownMenu/…
- * primitives wear, for a custom floating surface that isn't one of them. Wears
- * `OVERLAY_SURFACE` (the shared overlay glass). Supply your own radius/padding;
- * pair with your own positioning.
- */
+/* The floating glass panel material, for custom floating surfaces that are not
+ * a Popover/Menu primitive. Caller owns radius, padding, positioning. */
 const Overlay: Component<ComponentProps<"div">> = (props) => {
 	const [local, others] = splitProps(props, ["class"]);
 	return (
