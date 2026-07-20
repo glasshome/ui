@@ -1,5 +1,6 @@
 import { type Component, splitProps } from "solid-js";
-import { cn } from "../lib/utils";
+import { INPUT_SURFACE } from "../lib/input-classes.js";
+import { cn } from "../lib/utils.js";
 
 const TRACK_HEIGHT = 28;
 const THUMB_SIZE = 28;
@@ -33,8 +34,11 @@ const Switch: Component<SwitchProps> = (props) => {
 			data-slot="switch"
 			disabled={local.disabled}
 			class={cn(
-				"peer relative inline-flex shrink-0 cursor-pointer items-center rounded-xl border border-input outline-none transition-all duration-200 ease-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
-				local.checked ? "glass glass-tint [--glass-tone:var(--primary)]" : "bg-input/30",
+				// Unchecked wears the recessed input surface, the same dug-out glass as
+				// the slider rail; checked matches the slider fill. A `border-input`
+				// utility here would beat `:where(.glass)` and flatten the rim.
+				"peer relative inline-flex shrink-0 cursor-pointer items-center rounded-xl outline-none transition-all duration-200 ease-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
+				local.checked ? "glass glass-tint [--glass-tone:var(--primary)]" : INPUT_SURFACE,
 				local.class,
 			)}
 			style={{
