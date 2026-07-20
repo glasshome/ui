@@ -1,8 +1,8 @@
 import { Checkbox as CheckboxPrimitive } from "@kobalte/core/checkbox";
 import { CheckIcon } from "lucide-solid";
 import { type Component, type ComponentProps, type JSX, splitProps } from "solid-js";
-import { FIELD_CHROME } from "../lib/input-classes";
-import { cn } from "../lib/utils";
+import { INPUT_SURFACE } from "../lib/input-classes.js";
+import { cn } from "../lib/utils.js";
 
 const Checkbox: Component<ComponentProps<typeof CheckboxPrimitive>> = (props) => {
 	const [local, others] = splitProps(props, ["class", "children"]);
@@ -12,13 +12,15 @@ const Checkbox: Component<ComponentProps<typeof CheckboxPrimitive>> = (props) =>
 			{/* One <label> row: the box is a plain span, not a Kobalte Control, so a
 			    click anywhere toggles exactly once. */}
 			{(state) => (
-				<CheckboxPrimitive.Label class="group inline-flex cursor-pointer items-center gap-2.5 select-none data-[disabled]:cursor-not-allowed">
+				<CheckboxPrimitive.Label class="group inline-flex cursor-pointer select-none items-center gap-2.5 data-[disabled]:cursor-not-allowed">
 					<CheckboxPrimitive.Input class="peer" />
 					<span
 						aria-hidden="true"
 						class={cn(
-							`box-border inline-flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-[5px] ${FIELD_CHROME} shadow-xs transition-all duration-200 ease-out group-active:scale-90 peer-focus-visible:border-ring peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50`,
-							state.checked() && "glass glass-tint [--glass-tone:var(--primary)] text-foreground",
+							"box-border inline-flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-[5px] shadow-xs transition-all duration-200 ease-out group-active:scale-90 peer-focus-visible:border-ring peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50",
+							state.checked()
+								? "glass glass-tint text-foreground [--glass-tone:var(--primary)]"
+								: INPUT_SURFACE,
 							props.disabled && "cursor-not-allowed border-dashed opacity-40",
 							local.class,
 						)}

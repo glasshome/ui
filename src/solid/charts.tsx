@@ -1,12 +1,12 @@
 import { createMemo, createSignal, createUniqueId, For, Show } from "solid-js";
-import { FIELD_CHROME } from "../lib/input-classes";
-import { Tabs, TabsList, TabsTrigger } from "./tabs";
+import { INPUT_SURFACE } from "../lib/input-classes.js";
+import { Tabs, TabsList, TabsTrigger } from "./tabs.js";
 
 const numberFmt = new Intl.NumberFormat("en-US");
 
 /* Bars and chart backings wear the field chrome so a ranked bar reads as a
  * static slider; fills are the slider's own tinted glass. */
-const SLIDER_WELL = FIELD_CHROME;
+const SLIDER_WELL = INPUT_SURFACE;
 const SLIDER_FILL = "glass glass-tint [--glass-tone:var(--primary)]";
 
 function formatDayLabel(day: string): string {
@@ -117,7 +117,10 @@ export function AreaChart(props: {
 		setHover(Math.round(ratio * (props.data.length - 1)));
 	};
 
-	const leftPct = () => (hover() == null ? 0 : (hover()! / (props.data.length - 1)) * 100);
+	const leftPct = () => {
+		const h = hover();
+		return h == null ? 0 : (h / (props.data.length - 1)) * 100;
+	};
 
 	return (
 		<Show

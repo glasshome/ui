@@ -1,8 +1,8 @@
 import { cva, type VariantProps } from "cva";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { FIELD_CHROME } from "../lib/input-classes";
-import { cn } from "../lib/utils";
-import { Button } from "./button";
+import { INPUT_SURFACE } from "../lib/input-classes.js";
+import { cn } from "../lib/utils.js";
+import { Button } from "./button.js";
 
 const InputGroup: Component<ComponentProps<"div">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);
@@ -12,7 +12,7 @@ const InputGroup: Component<ComponentProps<"div">> = (props) => {
 			data-slot="input-group"
 			role="group"
 			class={cn(
-				`group/input-group relative flex w-full items-center rounded-md ${FIELD_CHROME} outline-none transition-[color,box-shadow]`,
+				`group/input-group relative flex w-full items-center rounded-md ${INPUT_SURFACE} outline-none transition-[color,box-shadow]`,
 				"h-9 min-w-0 has-[>textarea]:h-auto",
 				"has-[>[data-align=inline-start]]:[&>input]:pl-2",
 				"has-[>[data-align=inline-end]]:[&>input]:pr-2",
