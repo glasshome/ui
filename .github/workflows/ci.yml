@@ -19,5 +19,6 @@ jobs:
       - run: bun run test
       - run: bun run build
       - run: bun run check:publish
-      # Real Node runtime import; tsc/attw only prove types, not loadability.
-      - run: node -e "await import('./dist/index.js'); await import('./dist/solid/index.js'); await import('./dist/tokens/index.js')"
+      # Real Node runtime import of the server-safe entries (root + tokens);
+      # ./solid is browser-only, it creates DOM templates at import time.
+      - run: node -e "await import('./dist/index.js'); await import('./dist/tokens/index.js')"

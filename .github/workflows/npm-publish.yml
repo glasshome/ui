@@ -27,5 +27,5 @@ jobs:
       - run: bun run test
       - run: bun run build
       - run: bun run check:publish
-      - run: node -e "await import('./dist/index.js'); await import('./dist/solid/index.js'); await import('./dist/tokens/index.js')"
+      - run: node -e "await import('./dist/index.js'); await import('./dist/tokens/index.js')"
       - run: npm publish --provenance --access public
