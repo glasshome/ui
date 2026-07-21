@@ -2,7 +2,7 @@ import { ColorWheel as KColorWheel } from "@kobalte/core/color-wheel";
 import type { Color } from "@kobalte/core/colors";
 import type { Component } from "solid-js";
 import { splitProps } from "solid-js";
-import { cn } from "../lib/utils";
+import { cn } from "../lib/utils.js";
 
 interface ColorWheelProps {
 	value?: Color;

@@ -12,9 +12,9 @@ import {
 	splitProps,
 	useContext,
 } from "solid-js";
-import { cn } from "../lib/utils";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./dialog";
-import { SlidingIndicator } from "./sliding-indicator";
+import { cn } from "../lib/utils.js";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./dialog.js";
+import { SlidingIndicator } from "./sliding-indicator.js";
 
 interface CommandContextValue {
 	search: () => string;

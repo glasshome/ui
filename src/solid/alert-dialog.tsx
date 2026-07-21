@@ -1,8 +1,8 @@
 import { AlertDialog as AlertDialogPrimitive } from "@kobalte/core/alert-dialog";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes";
-import { cn } from "../lib/utils";
-import { buttonVariants } from "./button";
+import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
+import { cn } from "../lib/utils.js";
+import { buttonVariants } from "./button.js";
 
 const AlertDialog = AlertDialogPrimitive;
 

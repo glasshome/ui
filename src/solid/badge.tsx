@@ -1,8 +1,8 @@
 import { type Component, type ComponentProps, splitProps, type ValidComponent } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { BADGE_DEFAULT_TONE, BADGE_TONE_CLASS } from "../lib/badge-tone";
-import { TIER_BADGE_CLASS, tierBadgeStyle } from "../lib/tier-badge";
-import { cn } from "../lib/utils";
+import { BADGE_DEFAULT_TONE, BADGE_TONE_CLASS } from "../lib/badge-tone.js";
+import { TIER_BADGE_CLASS, tierBadgeStyle } from "../lib/tier-badge.js";
+import { cn } from "../lib/utils.js";
 
 type BadgeProps = ComponentProps<"span"> & {
 	as?: ValidComponent;
@@ -47,7 +47,15 @@ type TierBadgeProps = ComponentProps<"span"> & {
  * One family; only the hi/lo/text triplet changes per tier.
  */
 const TierBadge: Component<TierBadgeProps> = (props) => {
-	const [local, others] = splitProps(props, ["class", "hi", "lo", "text", "end", "stop", "children"]);
+	const [local, others] = splitProps(props, [
+		"class",
+		"hi",
+		"lo",
+		"text",
+		"end",
+		"stop",
+		"children",
+	]);
 	return (
 		<span
 			data-slot="tier-badge"

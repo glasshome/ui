@@ -1,8 +1,8 @@
 import { cva, type VariantProps } from "cva";
 import { type Component, type ComponentProps, splitProps, type ValidComponent } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { cn } from "../lib/utils";
-import { Separator } from "./separator";
+import { cn } from "../lib/utils.js";
+import { Separator } from "./separator.js";
 
 const buttonGroupVariants = cva({
 	base: "flex w-fit items-stretch has-[>[data-slot=button-group]]:gap-2 [&>*]:focus-visible:relative [&>*]:focus-visible:z-10 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-md [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
@@ -40,7 +40,7 @@ const ButtonGroupText: Component<ComponentProps<"div"> & { as?: ValidComponent }
 		<Dynamic
 			component={Comp()}
 			class={cn(
-				"glass flex items-center gap-2 rounded-md [--glass-edge:var(--border)] px-4 font-medium text-muted-foreground text-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none",
+				"glass flex items-center gap-2 rounded-md px-4 font-medium text-muted-foreground text-sm [--glass-edge:var(--border)] [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none",
 				local.class,
 			)}
 			{...rest}

@@ -1,9 +1,9 @@
 import { Select as SelectPrimitive } from "@kobalte/core/select";
 import { Check, ChevronDown } from "lucide-solid";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
-import { INPUT_SURFACE } from "../lib/input-classes";
-import { cn } from "../lib/utils";
-import { SlidingIndicator } from "./sliding-indicator";
+import { INPUT_SURFACE } from "../lib/input-classes.js";
+import { cn } from "../lib/utils.js";
+import { SlidingIndicator } from "./sliding-indicator.js";
 
 // Open the listbox ON TOP of the trigger instead of below it. Anchoring to the
 // trigger's TOP edge (a zero-height rect) with gutter 0 puts the content's top at
@@ -31,7 +31,7 @@ const SelectTrigger: ParentComponent<
 			data-slot="select-trigger"
 			data-size={size()}
 			class={cn(
-				`flex w-fit items-center justify-between gap-2 whitespace-nowrap rounded-md ${INPUT_SURFACE} hover:[--glass-light:0.09] px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[size=default]:h-9 data-[size=sm]:h-8 data-[placeholder]:text-muted-foreground *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0`,
+				`flex w-fit items-center justify-between gap-2 whitespace-nowrap rounded-md ${INPUT_SURFACE} px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[size=default]:h-9 data-[size=sm]:h-8 data-[placeholder]:text-muted-foreground *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 dark:aria-invalid:ring-destructive/40 hover:[--glass-light:0.09] [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0`,
 				local.class,
 			)}
 			{...rest}

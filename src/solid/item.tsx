@@ -1,8 +1,8 @@
 import { cva, type VariantProps } from "cva";
 import { type Component, type ComponentProps, splitProps, type ValidComponent } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { cn } from "../lib/utils";
-import { Separator } from "./separator";
+import { cn } from "../lib/utils.js";
+import { Separator } from "./separator.js";
 
 const ItemGroup: Component<ComponentProps<"ul">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);
@@ -48,8 +48,7 @@ const itemVariants = cva({
 });
 
 const Item: Component<
-	ComponentProps<"div"> &
-		VariantProps<typeof itemVariants> & { as?: ValidComponent; href?: string }
+	ComponentProps<"div"> & VariantProps<typeof itemVariants> & { as?: ValidComponent; href?: string }
 > = (props) => {
 	const [local, rest] = splitProps(props, ["class", "variant", "size", "as"] as const);
 	const variant = () => local.variant ?? "default";

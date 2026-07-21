@@ -1,10 +1,10 @@
 import { Icon } from "@iconify-icon/solid";
 import { ArrowDownToLine, Layers, Package } from "lucide-solid";
-import { type JSX, Show, mergeProps } from "solid-js";
-import { cn } from "../lib/utils";
-import { SectionIcon, SectionSubtitle } from "./section-card";
-import { ScopeIndicator } from "./scope-indicator";
-import { WidgetTrustBadge } from "./widget-trust-badge";
+import { type JSX, mergeProps, Show } from "solid-js";
+import { cn } from "../lib/utils.js";
+import { ScopeIndicator } from "./scope-indicator.js";
+import { SectionIcon, SectionSubtitle } from "./section-card.js";
+import { WidgetTrustBadge } from "./widget-trust-badge.js";
 
 /**
  * The reusable nucleus for rendering one widget/package: icon pill + name (with
@@ -90,7 +90,10 @@ export function WidgetIdentity(_props: WidgetIdentityProps) {
 						@{props.widget.scope}/{props.widget.name}
 					</span>
 					<Show when={props.showScopeIndicator}>
-						<ScopeIndicator scope={props.widget.scope} type={props.widget.ownerType ?? "personal"} />
+						<ScopeIndicator
+							scope={props.widget.scope}
+							type={props.widget.ownerType ?? "personal"}
+						/>
 					</Show>
 				</div>
 			</div>

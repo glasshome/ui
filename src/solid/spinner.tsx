@@ -1,6 +1,6 @@
 import { Loader2 as Loader2Icon } from "lucide-solid";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { cn } from "../lib/utils";
+import { cn } from "../lib/utils.js";
 
 const Spinner: Component<ComponentProps<"svg">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);

@@ -58,6 +58,17 @@
 	},
 	"overrides": [
 		{
+			"includes": ["**/*.astro"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noUnusedVariables": "off",
+						"noUnusedImports": "off"
+					}
+				}
+			}
+		},
+		{
 			"includes": ["src/styles/*.css"],
 			"linter": {
 				"rules": {

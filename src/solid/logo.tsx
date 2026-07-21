@@ -12,8 +12,8 @@ import {
 	LOGO_STACK_CLASS,
 	LOGO_SUB_CLASS,
 	type LogoSize,
-} from "../lib/logo-lockup";
-import { cn } from "../lib/utils";
+} from "../lib/logo-lockup.js";
+import { cn } from "../lib/utils.js";
 
 type LogoProps = Omit<ComponentProps<"div">, "children"> & {
 	/** Sub-brand line. Defaults to "Dash". */

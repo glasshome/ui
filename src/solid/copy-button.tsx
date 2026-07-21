@@ -1,7 +1,7 @@
 import { Check, Copy } from "lucide-solid";
 import { type Component, createSignal, Show } from "solid-js";
-import { cn } from "../lib/utils";
-import { toast } from "./sonner";
+import { cn } from "../lib/utils.js";
+import { toast } from "./sonner.js";
 
 interface CopyButtonProps {
 	text: string;

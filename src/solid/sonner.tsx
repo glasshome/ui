@@ -19,10 +19,10 @@ import {
 	ALERT_ICON_CLASS,
 	ALERT_TITLE_CLASS,
 	alertIconBgStyle,
-} from "../lib/alert-tones";
-import { glassToneText } from "../lib/glass-tone";
-import { cn } from "../lib/utils";
-import { Spinner } from "./spinner";
+} from "../lib/alert-tones.js";
+import { glassToneText } from "../lib/glass-tone.js";
+import { cn } from "../lib/utils.js";
+import { Spinner } from "./spinner.js";
 
 type Position = ComponentProps<typeof SolidSonner>["position"];
 type ToastMessage = JSX.Element | string;
@@ -144,17 +144,22 @@ type PromiseData<T> = Omit<ExternalToast, "description"> & {
 	finally?: () => void | Promise<void>;
 };
 
-const resolveMsg = <T,>(m: ToastMessage | ((v: T) => ToastMessage) | undefined, v: T): ToastMessage =>
-	typeof m === "function" ? (m as (v: T) => ToastMessage)(v) : (m ?? "");
+const resolveMsg = <T,>(
+	m: ToastMessage | ((v: T) => ToastMessage) | undefined,
+	v: T,
+): ToastMessage => (typeof m === "function" ? (m as (v: T) => ToastMessage)(v) : (m ?? ""));
 
 function glassPromise<T>(
 	promise: Promise<T> | (() => Promise<T>),
 	data: PromiseData<T> = {},
 ): { unwrap: () => Promise<T> } {
-	const id = sonnerToast.custom(() => <GlassToast kind="loading" title={data.loading ?? "Loading"} />, {
-		unstyled: true,
-		duration: Number.POSITIVE_INFINITY,
-	});
+	const id = sonnerToast.custom(
+		() => <GlassToast kind="loading" title={data.loading ?? "Loading"} />,
+		{
+			unstyled: true,
+			duration: Number.POSITIVE_INFINITY,
+		},
+	);
 	const p = typeof promise === "function" ? promise() : promise;
 	p.then((v) => {
 		sonnerToast.custom(() => <GlassToast kind="success" title={resolveMsg(data.success, v)} />, {

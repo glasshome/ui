@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "cva";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { cn } from "../lib/utils";
+import { cn } from "../lib/utils.js";
 
 const Empty: Component<ComponentProps<"div">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);

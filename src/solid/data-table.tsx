@@ -1,9 +1,9 @@
 import { Icon } from "@iconify-icon/solid";
 import { ArrowDown, ArrowUp, ChevronsUpDown, Filter, Search, X } from "lucide-solid";
 import { For, type JSX, Show, splitProps } from "solid-js";
-import { Button } from "./button";
-import { Input } from "./input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
+import { Button } from "./button.js";
+import { Input } from "./input.js";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select.js";
 
 /**
  * Generic data-table vocabulary: sticky-less header, row height/padding, border

@@ -12,14 +12,14 @@ import {
 	useContext,
 } from "solid-js";
 import { Portal } from "solid-js/web";
-import { OVERLAY_SURFACE } from "../../lib/overlay-classes";
-import { cn } from "../../lib/utils";
-import { Z_BASE } from "./constants";
-import { attachDrag } from "./drag-controller";
-import { type InitialFocus, trapFocus } from "./focus-trap";
-import { watchKeyboard } from "./keyboard";
-import { acquireScrollLock, releaseScrollLock } from "./scroll-lock";
-import { assertTransition, type SheetState } from "./state-machine";
+import { OVERLAY_SURFACE } from "../../lib/overlay-classes.js";
+import { cn } from "../../lib/utils.js";
+import { Z_BASE } from "./constants.js";
+import { attachDrag } from "./drag-controller.js";
+import { type InitialFocus, trapFocus } from "./focus-trap.js";
+import { watchKeyboard } from "./keyboard.js";
+import { acquireScrollLock, releaseScrollLock } from "./scroll-lock.js";
+import { assertTransition, type SheetState } from "./state-machine.js";
 
 interface BottomSheetContextValue {
 	state: () => SheetState;

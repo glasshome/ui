@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-solid";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { cn } from "../lib/utils";
-import { buttonVariants } from "./button";
+import { cn } from "../lib/utils.js";
+import { buttonVariants } from "./button.js";
 
 const Pagination: Component<ComponentProps<"nav">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);

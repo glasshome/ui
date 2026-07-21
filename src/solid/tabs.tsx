@@ -1,8 +1,8 @@
 import { Tabs as TabsPrimitive } from "@kobalte/core/tabs";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { TRACK_SURFACE } from "../lib/card-classes";
-import { cn } from "../lib/utils";
-import { SlidingIndicator } from "./sliding-indicator";
+import { TRACK_SURFACE } from "../lib/card-classes.js";
+import { cn } from "../lib/utils.js";
+import { SlidingIndicator } from "./sliding-indicator.js";
 
 const Tabs = TabsPrimitive;
 

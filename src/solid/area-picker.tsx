@@ -1,11 +1,11 @@
 import { useAreas } from "@glasshome/sync-layer/solid";
 import { Icon } from "@iconify-icon/solid";
 import { createMemo, createSignal, For, Show } from "solid-js";
-import { INPUT_SURFACE } from "../lib/input-classes";
-import { OVERLAY_SURFACE } from "../lib/overlay-classes";
-import { Input } from "./input";
-import { anchorToTriggerTop, Popover, PopoverAnchor } from "./popover";
-import { SlidingIndicator } from "./sliding-indicator";
+import { INPUT_SURFACE } from "../lib/input-classes.js";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
+import { Input } from "./input.js";
+import { anchorToTriggerTop, Popover, PopoverAnchor } from "./popover.js";
+import { SlidingIndicator } from "./sliding-indicator.js";
 
 interface AreaPickerProps {
 	value: string;
@@ -86,7 +86,7 @@ export function AreaPicker(props: AreaPickerProps) {
 			<PopoverAnchor as="div" class={props.class}>
 				<button
 					type="button"
-					class={`flex h-9 w-full items-center gap-2 rounded-md ${INPUT_SURFACE} hover:[--glass-light:0.09] px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50`}
+					class={`flex h-9 w-full items-center gap-2 rounded-md ${INPUT_SURFACE} px-3 py-2 text-sm outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 hover:[--glass-light:0.09]`}
 					onClick={() => setOpen(!open())}
 				>
 					<Show

@@ -1,7 +1,7 @@
 import { Popover as PopoverPrimitive } from "@kobalte/core/popover";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { OVERLAY_SURFACE } from "../lib/overlay-classes";
-import { cn } from "../lib/utils";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
+import { cn } from "../lib/utils.js";
 
 const Popover = PopoverPrimitive;
 

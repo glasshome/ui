@@ -21,7 +21,7 @@ const RULES = [
 	[
 		"bespoke pill",
 		/rounded-full[^"'`]*\bborder\b[^"'`]*bg-(?:card|background)\b/,
-		"use <Badge tone> or <Button size=\"none\">",
+		'use <Badge tone> or <Button size="none">',
 	],
 	[
 		"raw palette color",
@@ -93,8 +93,13 @@ export function checkUiDrift({ root = "src", allowFiles = [], allowPrefixes = []
 	}
 
 	const byType = {};
-	for (const o of offenders) (byType[o.type] ??= []).push(o);
-	console.error(`ui:check — ${offenders.length} hand-rolled primitive(s) duplicating @glasshome/ui:\n`);
+	for (const o of offenders) {
+		byType[o.type] ??= [];
+		byType[o.type].push(o);
+	}
+	console.error(
+		`ui:check — ${offenders.length} hand-rolled primitive(s) duplicating @glasshome/ui:\n`,
+	);
 	for (const [type, list] of Object.entries(byType)) {
 		console.error(`  ${type} (${list.length}) — ${list[0].fix}`);
 		for (const o of list) console.error(`    ${o.file}${o.line ? `:${o.line}` : ""}`);

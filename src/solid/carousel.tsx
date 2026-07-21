@@ -16,8 +16,8 @@ import {
 	splitProps,
 	useContext,
 } from "solid-js";
-import { cn } from "../lib/utils";
-import { Button } from "./button";
+import { cn } from "../lib/utils.js";
+import { Button } from "./button.js";
 
 type CarouselApi = EmblaCarouselType;
 

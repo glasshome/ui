@@ -7,8 +7,8 @@ import {
 	For,
 	splitProps,
 } from "solid-js";
-import { cn } from "../lib/utils";
-import { Button, buttonVariants } from "./button";
+import { cn } from "../lib/utils.js";
+import { Button, buttonVariants } from "./button.js";
 
 type DateRange = { from: Date; to?: Date };
 

@@ -3,6 +3,6 @@
  * styles/theme.css (presets.ts is the machine-readable form of that palette).
  */
 
-export * from "./hex";
-export * from "./presets";
-export * from "./theme-colors";
+export * from "./hex.js";
+export * from "./presets.js";
+export * from "./theme-colors.js";

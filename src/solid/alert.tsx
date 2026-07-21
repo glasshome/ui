@@ -9,9 +9,9 @@ import {
 	ALERT_TONES,
 	type AlertTone,
 	alertIconBgStyle,
-} from "../lib/alert-tones";
-import { glassToneText } from "../lib/glass-tone";
-import { cn } from "../lib/utils";
+} from "../lib/alert-tones.js";
+import { glassToneText } from "../lib/glass-tone.js";
+import { cn } from "../lib/utils.js";
 
 export type { AlertTone };
 

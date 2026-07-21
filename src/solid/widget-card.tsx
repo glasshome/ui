@@ -1,14 +1,14 @@
 import { ArrowDownToLine, ChevronRight } from "lucide-solid";
-import { type JSX, Show, mergeProps } from "solid-js";
-import { cn } from "../lib/utils";
-import { Card } from "./card";
+import { type JSX, mergeProps, Show } from "solid-js";
+import { cn } from "../lib/utils.js";
+import { Card } from "./card.js";
 import {
 	formatWidgetCount,
 	WidgetIdentity,
 	WidgetMeta,
 	type WidgetSummary,
 	widgetHref,
-} from "./widget-identity";
+} from "./widget-identity.js";
 
 /**
  * The registry widget card: `row` for dense lists, `tile` for grids/galleries.
@@ -57,8 +57,7 @@ type InternalProps = WidgetCardProps & { interactive: boolean };
 
 function WidgetCardRow(props: InternalProps) {
 	const hasMeta = () =>
-		props.widget.downloadCount != null ||
-		(props.showVersions && props.widget.versionCount != null);
+		props.widget.downloadCount != null || (props.showVersions && props.widget.versionCount != null);
 	const showTrailing = () => props.trailing !== undefined || props.interactive;
 
 	return (

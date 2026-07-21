@@ -1,6 +1,6 @@
 import { Collapsible as CollapsiblePrimitive } from "@kobalte/core/collapsible";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { cn } from "../lib/utils";
+import { cn } from "../lib/utils.js";
 
 const Collapsible: Component<ComponentProps<typeof CollapsiblePrimitive>> = (props) => {
 	return <CollapsiblePrimitive data-slot="collapsible" {...props} />;

@@ -1,7 +1,7 @@
 import { Icon } from "@iconify-icon/solid";
 import { type JSX, Show } from "solid-js";
-import { CountPill } from "./count-pill";
-import type { GlassSurface } from "./section-card";
+import { CountPill } from "./count-pill.js";
+import type { GlassSurface } from "./section-card.js";
 
 /**
  * Page banner header, shared by dash and hub. The glassy banner (gradient fill,
@@ -41,33 +41,34 @@ export function PageHeader(props: {
 			ref={glass().ref}
 			class="relative mt-3 mb-5 overflow-hidden rounded-xl border border-white/[0.06] shadow-[inset_0_1px_0_0_rgb(255_255_255_/_0.06),0_8px_24px_-12px_rgb(0_0_0_/_0.4)]"
 			classList={{
-				"bg-gradient-to-br from-card/55 via-card/25 to-card/10 backdrop-blur-xl":
-					!(glass().active?.() ?? false),
+				"bg-gradient-to-br from-card/55 via-card/25 to-card/10 backdrop-blur-xl": !(
+					glass().active?.() ?? false
+				),
 			}}
 			style={glass().style?.() ?? {}}
 		>
-			<div class="-translate-x-1/3 -translate-y-1/2 pointer-events-none absolute top-0 left-0 h-48 w-72 rounded-full bg-primary/15 blur-3xl" />
+			<div class="pointer-events-none absolute top-0 left-0 h-48 w-72 -translate-x-1/3 -translate-y-1/2 rounded-full bg-primary/15 blur-3xl" />
 			<Show when={props.logo}>
 				{(logo) => (
 					<img
 						src={logo()}
 						alt=""
-						class="-top-4 -right-8 pointer-events-none absolute size-48 rotate-[14deg] opacity-[0.13] [mask-image:radial-gradient(circle_at_70%_30%,black,transparent_80%)]"
+						class="pointer-events-none absolute -top-4 -right-8 size-48 rotate-[14deg] opacity-[0.13] [mask-image:radial-gradient(circle_at_70%_30%,black,transparent_80%)]"
 					/>
 				)}
 			</Show>
 			<div class="relative flex min-h-[64px] items-center justify-between gap-2 px-4 py-3 sm:min-h-[80px] sm:gap-4 sm:px-6 sm:py-5">
 				<div class="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3">
-					<Show when={props.iconNode} fallback={
-						<Show when={props.icon}>
-							{(icon) => (
-								<Icon
-									icon={icon()}
-									class="shrink-0 text-[28px] text-primary sm:text-[32px]"
-								/>
-							)}
-						</Show>
-					}>
+					<Show
+						when={props.iconNode}
+						fallback={
+							<Show when={props.icon}>
+								{(icon) => (
+									<Icon icon={icon()} class="shrink-0 text-[28px] text-primary sm:text-[32px]" />
+								)}
+							</Show>
+						}
+					>
 						{props.iconNode}
 					</Show>
 					<div class="min-w-0">

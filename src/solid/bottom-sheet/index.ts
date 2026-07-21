@@ -11,5 +11,5 @@ export {
 	BottomSheetPortal,
 	BottomSheetTitle,
 	BottomSheetTrigger,
-} from "./bottom-sheet";
-export type { SheetState } from "./state-machine";
+} from "./bottom-sheet.js";
+export type { SheetState } from "./state-machine.js";

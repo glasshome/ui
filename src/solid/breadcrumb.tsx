@@ -7,7 +7,7 @@ import {
 	type ValidComponent,
 } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { cn } from "../lib/utils";
+import { cn } from "../lib/utils.js";
 
 const Breadcrumb: Component<ComponentProps<"nav">> = (props) => {
 	return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;

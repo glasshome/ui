@@ -1,5 +1,15 @@
-import { type ComponentProps, createEffect, createSignal, type JSX, on, onCleanup, onMount, Show, splitProps } from "solid-js";
-import { cn } from "../lib/utils";
+import {
+	type ComponentProps,
+	createEffect,
+	createSignal,
+	type JSX,
+	on,
+	onCleanup,
+	onMount,
+	Show,
+	splitProps,
+} from "solid-js";
+import { cn } from "../lib/utils.js";
 
 /**
  * The sliding "moving background": a tinted indicator that measures the active item
@@ -177,7 +187,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 						data-sliding-indicator
 						aria-hidden="true"
 						class={cn(
-							"-z-10 pointer-events-none absolute ease-out",
+							"pointer-events-none absolute -z-10 ease-out",
 							horizontal() ? "inset-y-0 left-0" : "inset-x-0 top-0",
 							"glass glass-tint",
 							local.indicatorClass ?? "rounded-lg",

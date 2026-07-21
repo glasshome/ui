@@ -4,7 +4,7 @@ import {
 	resolveThemeColors,
 	type ThemeBaseColors,
 	type ThemeColorsConfig,
-} from "./theme-colors";
+} from "./theme-colors.js";
 
 export interface ThemePreset {
 	id: string;
@@ -66,7 +66,7 @@ export const THEME_PRESETS: ThemePreset[] = [
 				background: "oklch(0.975 0.003 250)",
 				popover: "oklch(0.995 0.003 250)",
 				muted: "oklch(0.9702 0.008 250)",
-				mutedForeground: "oklch(0.3400 0 0)",
+				mutedForeground: "oklch(0.34 0 0)",
 				input: "oklch(0.9 0.012 250)",
 				ring: "oklch(0.6 0.2 195)",
 				destructive: "oklch(0.629 0.1902 23.0704)",
@@ -80,7 +80,7 @@ export const THEME_PRESETS: ThemePreset[] = [
 				background: "oklch(0.12 0.01 250)",
 				popover: "oklch(0.19 0.008 250)",
 				muted: "oklch(0.22 0.02 250)",
-				mutedForeground: "oklch(0.8100 0 0)",
+				mutedForeground: "oklch(0.81 0 0)",
 				input: "oklch(0.19 0.01 250)",
 				ring: "oklch(0.6 0.2 195)",
 				destructive: "oklch(0.7106 0.1661 22.2162)",

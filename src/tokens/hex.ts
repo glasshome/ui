@@ -1,4 +1,4 @@
-import { parseOklch } from "./theme-colors";
+import { parseOklch } from "./theme-colors.js";
 
 /**
  * oklch() string -> sRGB hex, matching browser rendering: out-of-gamut colors

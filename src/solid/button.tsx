@@ -1,8 +1,8 @@
 import { Button as KobalteButton } from "@kobalte/core/button";
 import type { VariantProps } from "cva";
 import { type ComponentProps, splitProps } from "solid-js";
-import { buttonVariants } from "../lib/button-variants";
-import { cn } from "../lib/utils";
+import { buttonVariants } from "../lib/button-variants.js";
+import { cn } from "../lib/utils.js";
 
 type ButtonProps = ComponentProps<typeof KobalteButton> & VariantProps<typeof buttonVariants>;
 

@@ -16,22 +16,22 @@ export {
 	alertFill,
 	alertIconBgStyle,
 	alertIconFill,
-} from "./lib/alert-tones";
+} from "./lib/alert-tones.js";
 export {
 	BUTTON_DEFAULT_CLASS,
 	BUTTON_OUTLINE_CLASS,
 	buttonVariants,
 	ICON_BUTTON_CLASS,
-} from "./lib/button-variants";
+} from "./lib/button-variants.js";
 export {
 	CARD_BLUR,
 	CARD_SURFACE,
 	CARD_SURFACE_BASE,
 	CARD_SURFACE_OPAQUE,
 	TRACK_SURFACE,
-} from "./lib/card-classes";
-export { glassToneText, toneTextMix } from "./lib/glass-tone";
-export { FIELD_CHROME, INPUT_CLASS, INPUT_SURFACE } from "./lib/input-classes";
+} from "./lib/card-classes.js";
+export { glassToneText, toneTextMix } from "./lib/glass-tone.js";
+export { INPUT_CLASS, INPUT_SURFACE } from "./lib/input-classes.js";
 export {
 	LOGO_DEFAULT_SIZE,
 	LOGO_DEFAULT_SRC,
@@ -44,13 +44,13 @@ export {
 	LOGO_STACK_CLASS,
 	LOGO_SUB_CLASS,
 	type LogoSize,
-} from "./lib/logo-lockup";
-export { OVERLAY_SURFACE, SCRIM_CLASS } from "./lib/overlay-classes";
+} from "./lib/logo-lockup.js";
+export { OVERLAY_SURFACE, SCRIM_CLASS } from "./lib/overlay-classes.js";
 export {
 	SECTION_INNER_RADIUS,
 	SECTION_OUTER_RADIUS,
 	SECTION_PADDING,
 	SECTION_ROW_CLASS,
-} from "./lib/section-tokens";
-export { createIsMobile } from "./lib/use-is-mobile";
-export { cn } from "./lib/utils";
+} from "./lib/section-tokens.js";
+export { createIsMobile } from "./lib/use-is-mobile.js";
+export { cn } from "./lib/utils.js";

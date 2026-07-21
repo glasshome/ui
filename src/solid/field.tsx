@@ -8,9 +8,9 @@ import {
 	Show,
 	splitProps,
 } from "solid-js";
-import { cn } from "../lib/utils";
-import { Label } from "./label";
-import { Separator } from "./separator";
+import { cn } from "../lib/utils.js";
+import { Label } from "./label.js";
+import { Separator } from "./separator.js";
 
 const FieldSet: Component<ComponentProps<"fieldset">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);

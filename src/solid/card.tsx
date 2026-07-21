@@ -12,8 +12,8 @@ import {
 	CARD_SURFACE_OPAQUE,
 	CARD_TITLE_CLASS,
 	type CardPadding,
-} from "../lib/card-classes";
-import { cn } from "../lib/utils";
+} from "../lib/card-classes.js";
+import { cn } from "../lib/utils.js";
 
 type CardProps = ComponentProps<"div"> & {
 	interactive?: boolean;

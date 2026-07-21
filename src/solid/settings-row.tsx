@@ -1,8 +1,8 @@
 import { Pencil, Plus, Trash2 } from "lucide-solid";
 import { type JSX, Show } from "solid-js";
-import { Button } from "./button";
-import { Input } from "./input";
-import { Switch } from "./switch";
+import { Button } from "./button.js";
+import { Input } from "./input.js";
+import { Switch } from "./switch.js";
 
 /**
  * Generic settings/list row primitives, shared by dash settings and any list UI.

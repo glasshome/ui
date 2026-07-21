@@ -18,7 +18,12 @@ jobs:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
       - run: bun install
+      - run: bun run lint
+      - run: bun run check:tokens
+      - run: bun run check:types
+      - run: bun run test
       - run: bun run build
+      - run: bun run check:publish
       - run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

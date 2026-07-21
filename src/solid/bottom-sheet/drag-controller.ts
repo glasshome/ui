@@ -1,4 +1,4 @@
-import { hasNoDragAncestor, shouldDrag } from "./arbitration";
+import { hasNoDragAncestor, shouldDrag } from "./arbitration.js";
 import {
 	CLOSE_DISTANCE_RATIO,
 	CLOSE_VELOCITY_PX_PER_MS,
@@ -6,9 +6,9 @@ import {
 	EASE,
 	TRANSITION_MS,
 	VELOCITY_PROJECTION_MS,
-} from "./constants";
-import type { SheetState } from "./state-machine";
-import { VelocityTracker } from "./velocity";
+} from "./constants.js";
+import type { SheetState } from "./state-machine.js";
+import { VelocityTracker } from "./velocity.js";
 
 const TRANSITION_CSS = `transform ${TRANSITION_MS}ms ${EASE}`;
 

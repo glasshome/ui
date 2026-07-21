@@ -2,8 +2,8 @@ import { NavigationMenu as NavMenuPrimitive } from "@kobalte/core/navigation-men
 import { cva } from "cva";
 import { ChevronDown } from "lucide-solid";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
-import { OVERLAY_SURFACE } from "../lib/overlay-classes";
-import { cn } from "../lib/utils";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
+import { cn } from "../lib/utils.js";
 
 const NavigationMenu: ParentComponent<
 	ComponentProps<typeof NavMenuPrimitive> & { viewport?: boolean }

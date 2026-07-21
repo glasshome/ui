@@ -1,4 +1,3 @@
-
 export const BADGE_DEFAULT_TONE = "var(--primary)";
 
 export const BADGE_TONE_CLASS =

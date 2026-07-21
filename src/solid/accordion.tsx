@@ -1,7 +1,7 @@
 import { Accordion as AccordionPrimitive } from "@kobalte/core/accordion";
 import { ChevronDown } from "lucide-solid";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
-import { cn } from "../lib/utils";
+import { cn } from "../lib/utils.js";
 
 const Accordion = AccordionPrimitive;
 

@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronUp } from "lucide-solid";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { INPUT_CLASS } from "../lib/input-classes";
-import { cn } from "../lib/utils";
+import { INPUT_CLASS } from "../lib/input-classes.js";
+import { cn } from "../lib/utils.js";
 
 const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) => {
 	const [local, others] = splitProps(props, ["class", "step", "min", "max"]);
@@ -33,7 +33,7 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
 				)}
 				{...others}
 			/>
-			<div class="absolute inset-y-0 right-0 flex w-10 flex-col divide-y divide-border overflow-hidden rounded-r-md border-l border-border">
+			<div class="absolute inset-y-0 right-0 flex w-10 flex-col divide-y divide-border overflow-hidden rounded-r-md border-border border-l">
 				<button
 					type="button"
 					tabindex={-1}

@@ -1,9 +1,9 @@
 import { Menubar as MenubarPrimitive } from "@kobalte/core/menubar";
 import { Check, ChevronRight, Circle } from "lucide-solid";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
-import { OVERLAY_SURFACE } from "../lib/overlay-classes";
-import { cn } from "../lib/utils";
-import { SlidingIndicator } from "./sliding-indicator";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
+import { cn } from "../lib/utils.js";
+import { SlidingIndicator } from "./sliding-indicator.js";
 
 const MenubarMenu = MenubarPrimitive.Menu;
 const MenubarGroup = MenubarPrimitive.Group;

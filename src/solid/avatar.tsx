@@ -1,6 +1,6 @@
 import { Image as ImagePrimitive } from "@kobalte/core/image";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { cn } from "../lib/utils";
+import { cn } from "../lib/utils.js";
 
 const Avatar: Component<ComponentProps<typeof ImagePrimitive>> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);
@@ -30,7 +30,7 @@ const AvatarFallback: Component<ComponentProps<typeof ImagePrimitive.Fallback>> 
 		<ImagePrimitive.Fallback
 			data-slot="avatar-fallback"
 			class={cn(
-				"glass [--glass-tone:var(--primary)] flex size-full items-center justify-center rounded-full font-semibold",
+				"glass flex size-full items-center justify-center rounded-full font-semibold [--glass-tone:var(--primary)]",
 				local.class,
 			)}
 			{...rest}

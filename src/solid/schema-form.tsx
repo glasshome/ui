@@ -1,12 +1,12 @@
 import type { JSONSchema7 } from "json-schema";
 import { createSignal, For, Show } from "solid-js";
-import { AreaPicker } from "./area-picker";
-import { EntitySelector } from "./entity-selector";
-import { Input } from "./input";
-import { Label } from "./label";
-import { NumberField } from "./number-field";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
-import { Switch } from "./switch";
+import { AreaPicker } from "./area-picker.js";
+import { EntitySelector } from "./entity-selector.js";
+import { Input } from "./input.js";
+import { Label } from "./label.js";
+import { NumberField } from "./number-field.js";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select.js";
+import { Switch } from "./switch.js";
 
 interface ExtendedJSONSchema extends JSONSchema7 {
 	domain?: string;

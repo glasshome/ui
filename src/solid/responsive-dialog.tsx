@@ -13,8 +13,8 @@ import {
 	useContext,
 } from "solid-js";
 import { Portal } from "solid-js/web";
-import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes";
-import { cn } from "../lib/utils";
+import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
+import { cn } from "../lib/utils.js";
 import {
 	BottomSheet,
 	BottomSheetBody,
@@ -22,8 +22,8 @@ import {
 	BottomSheetHandle,
 	BottomSheetOverlay,
 	BottomSheetPortal,
-} from "./bottom-sheet";
-import { Button } from "./button";
+} from "./bottom-sheet/index.js";
+import { Button } from "./button.js";
 
 const MOBILE_BREAKPOINT = 640;
 

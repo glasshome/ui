@@ -9,10 +9,10 @@ import {
 	splitProps,
 	useContext,
 } from "solid-js";
-import { TRACK_SURFACE } from "../lib/card-classes";
-import { cn } from "../lib/utils";
-import { SlidingIndicator } from "./sliding-indicator";
-import { toggleVariants } from "./toggle";
+import { TRACK_SURFACE } from "../lib/card-classes.js";
+import { cn } from "../lib/utils.js";
+import { SlidingIndicator } from "./sliding-indicator.js";
+import { toggleVariants } from "./toggle.js";
 
 // The group also tells its items whether a single sliding indicator is in play: in
 // single-select mode the indicator paints the selected segment, so items go
@@ -49,10 +49,7 @@ const ToggleGroup: ParentComponent<
 				value={{ variant: local.variant, size: local.size, sliding: sliding() }}
 			>
 				<Show when={sliding()} fallback={local.children}>
-					<SlidingIndicator
-						activeSelector="[data-pressed]"
-						class="flex w-fit items-center"
-					>
+					<SlidingIndicator activeSelector="[data-pressed]" class="flex w-fit items-center">
 						{local.children}
 					</SlidingIndicator>
 				</Show>

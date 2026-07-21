@@ -1,6 +1,6 @@
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { OVERLAY_SURFACE } from "../lib/overlay-classes";
-import { cn } from "../lib/utils";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
+import { cn } from "../lib/utils.js";
 
 /* The floating glass panel material, for custom floating surfaces that are not
  * a Popover/Menu primitive. Caller owns radius, padding, positioning. */

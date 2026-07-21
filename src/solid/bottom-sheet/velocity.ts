@@ -1,4 +1,4 @@
-import { VELOCITY_WINDOW_MS } from "./constants";
+import { VELOCITY_WINDOW_MS } from "./constants.js";
 
 interface Sample {
 	y: number;

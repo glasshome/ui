@@ -1,8 +1,8 @@
 import { DropdownMenu as DropdownMenuPrimitive } from "@kobalte/core/dropdown-menu";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { OVERLAY_SURFACE } from "../lib/overlay-classes";
-import { cn } from "../lib/utils";
-import { SlidingIndicator } from "./sliding-indicator";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
+import { cn } from "../lib/utils.js";
+import { SlidingIndicator } from "./sliding-indicator.js";
 
 const DropdownMenu = DropdownMenuPrimitive;
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;

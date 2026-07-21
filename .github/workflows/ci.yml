@@ -15,4 +15,7 @@ jobs:
       - run: bun install
       - run: bun run lint
       - run: bun run check:tokens
+      - run: bun run check:types
+      - run: bun run test
       - run: bun run build
+      - run: bun run check:publish

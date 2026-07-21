@@ -1,5 +1,5 @@
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { cn } from "../lib/utils";
+import { cn } from "../lib/utils.js";
 
 const Kbd: Component<ComponentProps<"kbd">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);

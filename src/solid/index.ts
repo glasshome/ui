@@ -10,23 +10,23 @@ export { isDemoMode, loadDemoData, unloadDemoData } from "@glasshome/sync-layer"
 // don't need a direct @kobalte/core dependency.
 export { type Color, parseColor } from "@kobalte/core/colors";
 // Floating glass panel + its shared surface token.
-export { OVERLAY_SURFACE } from "../lib/overlay-classes";
+export { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
 // Section tokens re-exported from the Solid entry for convenience.
 export {
 	SECTION_INNER_RADIUS,
 	SECTION_OUTER_RADIUS,
 	SECTION_PADDING,
 	SECTION_ROW_CLASS,
-} from "../lib/section-tokens";
+} from "../lib/section-tokens.js";
 // Wave 2: Simple Kobalte Components
 export {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from "./accordion";
+} from "./accordion.js";
 // Wave 1: Pure HTML+CSS Components
-export { Alert, AlertDescription, AlertTitle, type AlertTone } from "./alert";
+export { Alert, AlertDescription, AlertTitle, type AlertTone } from "./alert.js";
 export {
 	AlertDialog,
 	AlertDialogAction,
@@ -37,11 +37,11 @@ export {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from "./alert-dialog";
-export { AreaPicker } from "./area-picker";
-export { AspectRatio } from "./aspect-ratio";
-export { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-export { Badge, TierBadge } from "./badge";
+} from "./alert-dialog.js";
+export { AreaPicker } from "./area-picker.js";
+export { AspectRatio } from "./aspect-ratio.js";
+export { Avatar, AvatarFallback, AvatarImage } from "./avatar.js";
+export { Badge, TierBadge } from "./badge.js";
 export {
 	BottomSheet,
 	BottomSheetBody,
@@ -55,7 +55,7 @@ export {
 	BottomSheetPortal,
 	BottomSheetTitle,
 	BottomSheetTrigger,
-} from "./bottom-sheet";
+} from "./bottom-sheet/index.js";
 export {
 	Breadcrumb,
 	BreadcrumbEllipsis,
@@ -64,16 +64,16 @@ export {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from "./breadcrumb";
-export { Button, buttonVariants } from "./button";
+} from "./breadcrumb.js";
+export { Button, buttonVariants } from "./button.js";
 export {
 	ButtonGroup,
 	ButtonGroupSeparator,
 	ButtonGroupText,
 	buttonGroupVariants,
-} from "./button-group";
-export type { CalendarProps, DateRange } from "./calendar";
-export { Calendar } from "./calendar";
+} from "./button-group.js";
+export type { CalendarProps, DateRange } from "./calendar.js";
+export { Calendar } from "./calendar.js";
 export {
 	Card,
 	CardAction,
@@ -82,8 +82,8 @@ export {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "./card";
-export type { CarouselApi } from "./carousel";
+} from "./card.js";
+export type { CarouselApi } from "./carousel.js";
 // Wave 5: React-Library Alternatives - Complex
 export {
 	Carousel,
@@ -91,16 +91,23 @@ export {
 	CarouselItem,
 	CarouselNext,
 	CarouselPrevious,
-} from "./carousel";
-export { AreaChart, BarList, formatBytes, formatCompact, RangeToggle, StackedBar } from "./charts";
-export { Checkbox } from "./checkbox";
+} from "./carousel.js";
+export {
+	AreaChart,
+	BarList,
+	formatBytes,
+	formatCompact,
+	RangeToggle,
+	StackedBar,
+} from "./charts.js";
+export { Checkbox } from "./checkbox.js";
 export {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "./collapsible";
-export { ColorSlider } from "./color-slider";
-export { ColorWheel } from "./color-wheel";
+} from "./collapsible.js";
+export { ColorSlider } from "./color-slider.js";
+export { ColorWheel } from "./color-wheel.js";
 export {
 	Command,
 	CommandDialog,
@@ -111,7 +118,7 @@ export {
 	CommandList,
 	CommandSeparator,
 	CommandShortcut,
-} from "./command";
+} from "./command.js";
 export {
 	ContextMenu,
 	ContextMenuCheckboxItem,
@@ -127,9 +134,9 @@ export {
 	ContextMenuSubContent,
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
-} from "./context-menu";
-export { CopyButton } from "./copy-button";
-export { CountPill } from "./count-pill";
+} from "./context-menu.js";
+export { CopyButton } from "./copy-button.js";
+export { CountPill } from "./count-pill.js";
 export {
 	type SortDirection,
 	TABLE_BLEED,
@@ -146,7 +153,7 @@ export {
 	TableSearchInput,
 	TableSkeleton,
 	TableSortHeader,
-} from "./data-table";
+} from "./data-table.js";
 export {
 	Dialog,
 	DialogClose,
@@ -156,9 +163,9 @@ export {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "./dialog";
-export type { DockIconButtonProps, DockItem, DockProps } from "./dock";
-export { Dock } from "./dock";
+} from "./dialog.js";
+export type { DockIconButtonProps, DockItem, DockProps } from "./dock.js";
+export { Dock } from "./dock.js";
 export {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -170,7 +177,7 @@ export {
 	DropdownMenuShortcut,
 	DropdownMenuSub,
 	DropdownMenuTrigger,
-} from "./dropdown-menu";
+} from "./dropdown-menu.js";
 export {
 	Empty,
 	EmptyContent,
@@ -178,8 +185,8 @@ export {
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from "./empty";
-export { EntitySelector } from "./entity-selector";
+} from "./empty.js";
+export { EntitySelector } from "./entity-selector.js";
 export {
 	Field,
 	FieldContent,
@@ -191,7 +198,7 @@ export {
 	FieldSeparator,
 	FieldSet,
 	FieldTitle,
-} from "./field";
+} from "./field.js";
 export {
 	Form,
 	FormControl,
@@ -201,13 +208,13 @@ export {
 	FormLabel,
 	FormMessage,
 	useFormField,
-} from "./form";
+} from "./form.js";
 export {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
-} from "./hover-card";
-export { Input } from "./input";
+} from "./hover-card.js";
+export { Input } from "./input.js";
 export {
 	InputGroup,
 	InputGroupAddon,
@@ -215,13 +222,13 @@ export {
 	InputGroupInput,
 	InputGroupText,
 	InputGroupTextarea,
-} from "./input-group";
+} from "./input-group.js";
 export {
 	InputOTP,
 	InputOTPGroup,
 	InputOTPSeparator,
 	InputOTPSlot,
-} from "./input-otp";
+} from "./input-otp.js";
 export {
 	Item,
 	ItemActions,
@@ -233,10 +240,10 @@ export {
 	ItemMedia,
 	ItemSeparator,
 	ItemTitle,
-} from "./item";
-export { Kbd, KbdGroup } from "./kbd";
-export { Label } from "./label";
-export { Logo } from "./logo";
+} from "./item.js";
+export { Kbd, KbdGroup } from "./kbd.js";
+export { Label } from "./label.js";
+export { Logo } from "./logo.js";
 export {
 	Menubar,
 	MenubarCheckboxItem,
@@ -253,7 +260,7 @@ export {
 	MenubarSubContent,
 	MenubarSubTrigger,
 	MenubarTrigger,
-} from "./menubar";
+} from "./menubar.js";
 export {
 	NavigationMenu,
 	NavigationMenuContent,
@@ -266,10 +273,10 @@ export {
 	NavigationMenuTrigger,
 	NavigationMenuViewport,
 	navigationMenuTriggerStyle,
-} from "./navigation-menu";
-export { NumberField } from "./number-field";
-export { Overlay } from "./overlay";
-export { PageHeader } from "./page-header";
+} from "./navigation-menu.js";
+export { NumberField } from "./number-field.js";
+export { Overlay } from "./overlay.js";
+export { PageHeader } from "./page-header.js";
 export {
 	Pagination,
 	PaginationContent,
@@ -278,20 +285,20 @@ export {
 	PaginationLink,
 	PaginationNext,
 	PaginationPrevious,
-} from "./pagination";
+} from "./pagination.js";
 export {
 	Popover,
 	PopoverAnchor,
 	PopoverContent,
 	PopoverTrigger,
-} from "./popover";
-export { Progress } from "./progress";
-export { RadioGroup, RadioGroupItem } from "./radio-group";
+} from "./popover.js";
+export { Progress } from "./progress.js";
+export { RadioGroup, RadioGroupItem } from "./radio-group.js";
 export {
 	ResizableHandle,
 	ResizablePanel,
 	ResizablePanelGroup,
-} from "./resizable";
+} from "./resizable.js";
 // Wave 6: Compound Components
 export {
 	ResponsiveDialog,
@@ -302,10 +309,10 @@ export {
 	ResponsiveDialogHeader,
 	ResponsiveDialogTitle,
 	ResponsiveDialogTrigger,
-} from "./responsive-dialog";
-export { SchemaForm } from "./schema-form";
-export { ScopeIndicator } from "./scope-indicator";
-export { ScrollArea, ScrollBar } from "./scroll-area";
+} from "./responsive-dialog.js";
+export { SchemaForm } from "./schema-form.js";
+export { ScopeIndicator } from "./scope-indicator.js";
+export { ScrollArea, ScrollBar } from "./scroll-area.js";
 export {
 	type GlassSurface,
 	SectionCard,
@@ -317,7 +324,7 @@ export {
 	SectionRowSkeletons,
 	SectionSubtitle,
 	SectionTitle,
-} from "./section-card";
+} from "./section-card.js";
 // Wave 3: Complex Kobalte Components
 export {
 	Select,
@@ -328,8 +335,8 @@ export {
 	SelectSeparator,
 	SelectTrigger,
 	SelectValue,
-} from "./select";
-export { Separator } from "./separator";
+} from "./select.js";
+export { Separator } from "./separator.js";
 export {
 	LabeledField,
 	LabeledInput,
@@ -337,7 +344,7 @@ export {
 	SectionAddButton,
 	SectionEmpty,
 	SwitchRow,
-} from "./settings-row";
+} from "./settings-row.js";
 export {
 	Sheet,
 	SheetClose,
@@ -347,7 +354,7 @@ export {
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
-} from "./sheet";
+} from "./sheet.js";
 export {
 	Sidebar,
 	SidebarContent,
@@ -373,14 +380,14 @@ export {
 	SidebarSeparator,
 	SidebarTrigger,
 	useSidebar,
-} from "./sidebar";
-export { Skeleton } from "./skeleton";
-export { Slider } from "./slider";
-export { SlidingIndicator } from "./sliding-indicator";
+} from "./sidebar.js";
+export { Skeleton } from "./skeleton.js";
+export { Slider } from "./slider.js";
+export { SlidingIndicator } from "./sliding-indicator.js";
 // Wave 4: React-Library Alternatives - Simpler
-export { GlassToast, Toaster, toast } from "./sonner";
-export { Spinner } from "./spinner";
-export { Switch } from "./switch";
+export { GlassToast, Toaster, toast } from "./sonner.js";
+export { Spinner } from "./spinner.js";
+export { Switch } from "./switch.js";
 export {
 	Table,
 	TableBody,
@@ -390,18 +397,18 @@ export {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "./table";
-export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
-export { Textarea } from "./textarea";
-export { Toggle, toggleVariants } from "./toggle";
-export { ToggleGroup, ToggleGroupItem } from "./toggle-group";
-export { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
-export { WidgetCard } from "./widget-card";
+} from "./table.js";
+export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs.js";
+export { Textarea } from "./textarea.js";
+export { Toggle, toggleVariants } from "./toggle.js";
+export { ToggleGroup, ToggleGroupItem } from "./toggle-group.js";
+export { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js";
+export { WidgetCard } from "./widget-card.js";
 export {
 	formatWidgetCount,
 	WidgetIdentity,
 	WidgetMeta,
 	type WidgetSummary,
 	widgetHref,
-} from "./widget-identity";
-export { WidgetTrustBadge } from "./widget-trust-badge";
+} from "./widget-identity.js";
+export { WidgetTrustBadge } from "./widget-trust-badge.js";

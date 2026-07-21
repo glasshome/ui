@@ -1,8 +1,8 @@
 import { Slider as KSlider } from "@kobalte/core/slider";
 import type { Component } from "solid-js";
 import { Index, splitProps } from "solid-js";
-import { INPUT_SURFACE } from "../lib/input-classes";
-import { cn } from "../lib/utils";
+import { INPUT_SURFACE } from "../lib/input-classes.js";
+import { cn } from "../lib/utils.js";
 
 const THUMB_SIZE = 28;
 const HALF_THUMB = THUMB_SIZE / 2;
@@ -71,7 +71,7 @@ const Slider: Component<SliderProps> = (props) => {
 				}}
 			>
 				<KSlider.Fill
-						class="glass glass-tint [--glass-tone:var(--primary)]"
+					class="glass glass-tint [--glass-tone:var(--primary)]"
 					style={{
 						position: "absolute",
 						top: "0",
@@ -85,7 +85,7 @@ const Slider: Component<SliderProps> = (props) => {
 					{() => (
 						<KSlider.Thumb
 							class={cn(
-								"absolute top-0 block rounded-xl transition-transform duration-200 ease-out hover:scale-125 active:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+								"absolute top-0 block rounded-xl transition-transform duration-200 ease-out hover:scale-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-110",
 								local.disabled && "cursor-not-allowed",
 								local.thumbClass,
 							)}

@@ -2,7 +2,7 @@ import { ColorSlider as KColorSlider } from "@kobalte/core/color-slider";
 import type { Color, ColorChannel } from "@kobalte/core/colors";
 import type { Component } from "solid-js";
 import { splitProps } from "solid-js";
-import { cn } from "../lib/utils";
+import { cn } from "../lib/utils.js";
 
 const THUMB_SIZE = 28;
 const HALF_THUMB = THUMB_SIZE / 2;

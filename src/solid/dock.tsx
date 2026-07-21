@@ -11,9 +11,9 @@ import {
 	splitProps,
 } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { OVERLAY_SURFACE } from "../lib/overlay-classes";
-import { cn } from "../lib/utils";
-import { SlidingIndicator } from "./sliding-indicator";
+import { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
+import { cn } from "../lib/utils.js";
+import { SlidingIndicator } from "./sliding-indicator.js";
 
 interface DockItem {
 	id: string;
@@ -146,7 +146,7 @@ const Dock: Component<DockProps> = (props) => {
 					ref={containerRef}
 					class={cn(
 						"flex items-center gap-0.5 p-1.5 sm:gap-1 sm:p-2",
-						"glass [--glass-base:color-mix(in_srgb,var(--card)_80%,transparent)] [--glass-rim:0.3] [--glass-lift:0.55] backdrop-blur-md backdrop-saturate-[1.8]",
+						"glass backdrop-blur-md backdrop-saturate-[1.8] [--glass-base:color-mix(in_srgb,var(--card)_80%,transparent)] [--glass-lift:0.55] [--glass-rim:0.3]",
 						dockMode() === "floating" ? "rounded-xl" : "rounded-t-xl",
 						needsScroll() ? "scrollbar-hide overflow-x-auto" : "overflow-visible",
 						!needsScroll() && "justify-center",
@@ -155,10 +155,7 @@ const Dock: Component<DockProps> = (props) => {
 						"min-width": needsScroll() ? "auto" : "fit-content",
 					}}
 				>
-					<SlidingIndicator
-						active={activeIndex()}
-						class="flex items-center gap-0.5 sm:gap-1"
-								>
+					<SlidingIndicator active={activeIndex()} class="flex items-center gap-0.5 sm:gap-1">
 						<Index each={local.items}>
 							{(item) => (
 								<DockIconButton

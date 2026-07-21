@@ -1,6 +1,6 @@
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { INPUT_SURFACE } from "../lib/input-classes";
-import { cn } from "../lib/utils";
+import { INPUT_SURFACE } from "../lib/input-classes.js";
+import { cn } from "../lib/utils.js";
 
 const Textarea: Component<ComponentProps<"textarea">> = (props) => {
 	const [local, rest] = splitProps(props, ["class"]);
