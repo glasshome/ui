@@ -39,11 +39,11 @@ export function PageHeader(props: {
 	return (
 		<div
 			ref={glass().ref}
-			class="relative mt-3 mb-5 overflow-hidden rounded-xl border border-white/[0.06] shadow-[inset_0_1px_0_0_rgb(255_255_255_/_0.06),0_8px_24px_-12px_rgb(0_0_0_/_0.4)]"
+			class="glass-banner relative mt-3 mb-5 overflow-hidden rounded-xl border border-white/[0.06] shadow-[inset_0_1px_0_0_rgb(255_255_255_/_0.06),0_8px_24px_-12px_rgb(0_0_0_/_0.4)]"
 			classList={{
-				"bg-gradient-to-br from-card/55 via-card/25 to-card/10 backdrop-blur-xl": !(
-					glass().active?.() ?? false
-				),
+				// glass-banner paints the gradient in every mode (over the frost slice
+				// when the engine is active); only the live backdrop-filter is gated.
+				"backdrop-blur-xl": !(glass().active?.() ?? false),
 			}}
 			style={glass().style?.() ?? {}}
 		>

@@ -53,6 +53,16 @@
 	inherits: false;
 	initial-value: 1;
 }
+/* Frost slot: one full background layer (image + position / size + repeat),
+ * host-supplied, composited at the BOTTOM of the formula — the static
+ * equivalent of what backdrop-filter shows behind the element. Dash's
+ * performant-blur engine sets it inline per surface; unset -> the layer falls
+ * back to `none`. inherits:false so a surface's viewport-aligned slice never
+ * leaks into nested glass (inputs inside a frosted card). */
+@property --glass-frost {
+	syntax: "*";
+	inherits: false;
+}
 
 /* --glass-base and --glass-edge need var() defaults, which @property forbids,
  * so they reset here instead. MUST stay in @layer base so [--glass-*] utilities
@@ -89,6 +99,10 @@
  * unlayered so the material owns border/background/box-shadow; tune via knobs. */
 :where(.glass) {
 	border: 1px solid var(--glass-edge);
+	/* Base is a gradient layer (not background-color) so the frost slice can sit
+	 * BELOW it — background-color always paints under every image layer, which
+	 * would put the frost above the fill. Layer order top→bottom: light, shade,
+	 * tone wash, base fill, frost. */
 	background:
 		radial-gradient(120% 120% at 22% 8%, oklch(1 0 0 / var(--glass-light)), transparent 58%),
 		radial-gradient(120% 120% at 82% 100%, oklch(0 0 0 / var(--glass-shade)), transparent 58%),
@@ -97,12 +111,27 @@
 			color-mix(in srgb, var(--glass-tone) var(--glass-wash), transparent),
 			color-mix(in srgb, var(--glass-tone) calc(var(--glass-wash) / 3), transparent)
 		),
-		var(--glass-base);
+		linear-gradient(var(--glass-base), var(--glass-base)), var(--glass-frost, none);
 	box-shadow:
 		var(--glass-rim-shine, 0 0 #0000),
 		inset 0 -2px 4px color-mix(in srgb, var(--glass-tone) var(--glass-glow), transparent),
 		0 1px 3px color-mix(in srgb, var(--glass-tone) var(--glass-drop), transparent),
 		0 10px 30px -16px oklch(0 0 0 / var(--glass-lift));
+}
+
+/* PageHeader banner surface: bespoke three-stop card gradient (its material
+ * predates the one-glass formula) over the same frost slot .glass uses, so
+ * hosts wire the performant-blur engine identically on both. Frost defaults
+ * to none → plain gradient banner. */
+:where(.glass-banner) {
+	background:
+		linear-gradient(
+			to bottom right,
+			color-mix(in srgb, var(--card) 55%, transparent),
+			color-mix(in srgb, var(--card) 25%, transparent),
+			color-mix(in srgb, var(--card) 10%, transparent)
+		),
+		var(--glass-frost, none);
 }
 
 /**
