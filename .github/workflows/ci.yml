@@ -12,10 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
-      - run: bun install
+      - run: bun install --frozen-lockfile
       - run: bun run lint
       - run: bun run check:tokens
       - run: bun run check:types
       - run: bun run test
       - run: bun run build
       - run: bun run check:publish
+      # Real Node runtime import; tsc/attw only prove types, not loadability.
+      - run: node -e "await import('./dist/index.js'); await import('./dist/solid/index.js'); await import('./dist/tokens/index.js')"
