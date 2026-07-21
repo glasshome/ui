@@ -1,6 +1,45 @@
 # Changelog
 
-## Unreleased
+## 1.0.0 (2026-07-21)
+
+First stable release. The API surface is frozen: removals or reroutes from
+here on are semver majors.
+
+### Breaking
+
+- Removed Sidebar, Command, Calendar, Menubar and NavigationMenu (no known
+  call sites; re-adding later is a minor).
+- Dropped the `@glasshome/sync-layer` peer dependency. EntitySelector and
+  AreaPicker read entity/area data through the new `EntityDataAdapter`:
+  hosts call `provideEntityData(adapter)` at startup (or wrap a tree in
+  `EntityDataContext.Provider`). The `isDemoMode`/`loadDemoData`/
+  `unloadDemoData` re-exports are gone.
+- Icons are iconify-only: every lucide-solid usage migrated to
+  `@iconify-icon/solid` and the lucide-solid dependency is removed. Spinner
+  now takes iconify Icon props instead of svg props.
+- `tailwindcss` and `tw-animate-css` moved from dependencies to
+  peerDependencies (they are build tools, resolved by the consumer's own
+  build). `astro` declared as an optional peer for the `./astro/*` entries.
+- Removed unused exports: `AlertDialogOverlay`, `AlertDialogPortal`,
+  `SECTION_ROW_SURFACE`, bottom-sheet `TRANSITION_CSS`, `SheetState`,
+  `SwitchProps`, WidgetCard default export. Legacy top-level `main`/`types`
+  package fields removed (the `exports` map is the interface).
+
+### Added
+
+- `EntityDataAdapter` / `EntityDataContext` / `provideEntityData` /
+  `useEntityData` plus the structural `EntityViewLike` / `AreaViewLike`
+  view types.
+- `@source "../../dist"` in the shipped stylesheet, so npm consumers'
+  Tailwind builds see component class names without hand-pointed
+  node_modules paths.
+- Committed `bun.lock`; CI and publishes install with `--frozen-lockfile`.
+- Release automation: release-please manages versions and GitHub releases
+  from semantic commits; npm publishes use trusted publishing (OIDC).
+- Glass frost slot (`--glass-frost`, `--glass-frost-size`,
+  `--glass-frost-pos`): hosts can composite a pre-blurred backdrop under
+  the glass formula's own material (fixes performant-blur mode losing the
+  glass material).
 
 ### Fixed
 
