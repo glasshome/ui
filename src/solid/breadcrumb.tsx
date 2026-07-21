@@ -1,4 +1,4 @@
-import { ChevronRight, MoreHorizontal } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import {
 	type Component,
 	type ComponentProps,
@@ -73,7 +73,7 @@ const BreadcrumbSeparator: ParentComponent<ComponentProps<"li">> = (props) => {
 			class={cn("[&>svg]:size-3.5", local.class)}
 			{...rest}
 		>
-			{local.children ?? <ChevronRight />}
+			{local.children ?? <Icon icon="lucide:chevron-right" width={14} height={14} />}
 		</li>
 	);
 };
@@ -88,7 +88,7 @@ const BreadcrumbEllipsis: Component<ComponentProps<"span">> = (props) => {
 			class={cn("flex size-9 items-center justify-center", local.class)}
 			{...rest}
 		>
-			<MoreHorizontal class="size-4" />
+			<Icon icon="lucide:ellipsis" width={16} height={16} class="size-4" />
 			<span class="sr-only">More</span>
 		</span>
 	);

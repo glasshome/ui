@@ -1,4 +1,4 @@
-import { CircleCheck, Info, OctagonAlert, TriangleAlert } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import {
 	type Component,
 	type ComponentProps,
@@ -9,7 +9,6 @@ import {
 	onMount,
 	Show,
 } from "solid-js";
-import { Dynamic } from "solid-js/web";
 import { type ExternalToast, Toaster as SolidSonner, toast as sonnerToast } from "solid-sonner";
 import {
 	ALERT_CLASS,
@@ -38,11 +37,11 @@ const KIND_TONE: Record<ToastKind, string | null> = {
 	message: null,
 };
 
-const KIND_ICON: Record<ToastKind, Component<{ size?: number }> | null> = {
-	success: CircleCheck,
-	error: OctagonAlert,
-	warning: TriangleAlert,
-	info: Info,
+const KIND_ICON: Record<ToastKind, string | null> = {
+	success: "lucide:circle-check",
+	error: "lucide:octagon-alert",
+	warning: "lucide:triangle-alert",
+	info: "lucide:info",
 	loading: null,
 	message: null,
 };
@@ -65,9 +64,11 @@ type GlassToastProps = {
 
 const GlassToast: Component<GlassToastProps> = (props) => {
 	const tone = KIND_TONE[props.kind];
-	const ToneIcon = KIND_ICON[props.kind];
+	const toneIcon = KIND_ICON[props.kind];
+	// Explicit 112px (= the old [&>svg]:size-28) since host CSS can't reach the
+	// iconify shadow-DOM svg.
 	const watermarkGlyph: JSX.Element | null =
-		props.icon ?? (ToneIcon ? <Dynamic component={ToneIcon} /> : null);
+		props.icon ?? (toneIcon ? <Icon icon={toneIcon} width={112} height={112} /> : null);
 
 	return (
 		<div

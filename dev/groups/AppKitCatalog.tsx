@@ -1,4 +1,4 @@
-import { Inbox } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import { createSignal } from "solid-js";
 import {
 	Button,
@@ -108,7 +108,14 @@ export function AppKitCatalog() {
 
 			<CatalogItem name="TableEmpty" hint="empty state">
 				<TableEmpty
-					icon={<Inbox class="size-8 text-muted-foreground/50" />}
+					icon={
+						<Icon
+							icon="lucide:inbox"
+							width={32}
+							height={32}
+							class="size-8 text-muted-foreground/50"
+						/>
+					}
 					message="No widgets yet"
 					action={
 						<Button variant="outline" size="sm">

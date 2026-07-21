@@ -1,5 +1,5 @@
+import { Icon } from "@iconify-icon/solid";
 import { Select as SelectPrimitive } from "@kobalte/core/select";
-import { Check, ChevronDown } from "lucide-solid";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
 import { INPUT_SURFACE } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
@@ -38,7 +38,12 @@ const SelectTrigger: ParentComponent<
 		>
 			{local.children}
 			<SelectPrimitive.Icon>
-				<ChevronDown class="size-4 opacity-50" />
+				<Icon
+					icon="lucide:chevron-down"
+					width={16}
+					height={16}
+					class="size-4 text-muted-foreground opacity-50"
+				/>
 			</SelectPrimitive.Icon>
 		</SelectPrimitive.Trigger>
 	);
@@ -100,7 +105,7 @@ const SelectItem: ParentComponent<ComponentProps<typeof SelectPrimitive.Item>> =
 		>
 			<span class="absolute right-2 flex size-3.5 items-center justify-center">
 				<SelectPrimitive.ItemIndicator>
-					<Check class="size-4 text-current" />
+					<Icon icon="lucide:check" width={16} height={16} class="size-4 text-current" />
 				</SelectPrimitive.ItemIndicator>
 			</span>
 			<SelectPrimitive.ItemLabel>{local.children}</SelectPrimitive.ItemLabel>

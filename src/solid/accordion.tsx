@@ -1,5 +1,5 @@
+import { Icon } from "@iconify-icon/solid";
 import { Accordion as AccordionPrimitive } from "@kobalte/core/accordion";
-import { ChevronDown } from "lucide-solid";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
 import { cn } from "../lib/utils.js";
 
@@ -25,13 +25,18 @@ const AccordionTrigger: ParentComponent<ComponentProps<typeof AccordionPrimitive
 			<AccordionPrimitive.Trigger
 				data-slot="accordion-trigger"
 				class={cn(
-					"flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left font-medium text-sm outline-none transition-all hover:underline focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&[data-expanded]>svg]:rotate-180",
+					"flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left font-medium text-sm outline-none transition-all hover:underline focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&[data-expanded]>iconify-icon]:rotate-180",
 					local.class,
 				)}
 				{...rest}
 			>
 				{local.children}
-				<ChevronDown class="pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200" />
+				<Icon
+					icon="lucide:chevron-down"
+					width={16}
+					height={16}
+					class="pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200"
+				/>
 			</AccordionPrimitive.Trigger>
 		</AccordionPrimitive.Header>
 	);

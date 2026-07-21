@@ -12,8 +12,6 @@ const AlertDialogTrigger: Component<ComponentProps<typeof AlertDialogPrimitive.T
 	return <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />;
 };
 
-const AlertDialogPortal = AlertDialogPrimitive.Portal;
-
 const AlertDialogOverlay: Component<ComponentProps<typeof AlertDialogPrimitive.Overlay>> = (
 	props,
 ) => {
@@ -123,8 +121,6 @@ export {
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
-	AlertDialogOverlay,
-	AlertDialogPortal,
 	AlertDialogTitle,
 	AlertDialogTrigger,
 };

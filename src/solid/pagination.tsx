@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
 import { cn } from "../lib/utils.js";
 import { buttonVariants } from "./button.js";
@@ -64,7 +64,7 @@ const PaginationPrevious: Component<PaginationLinkProps> = (props) => {
 			class={cn("gap-1 px-2.5 sm:pl-2.5", local.class)}
 			{...rest}
 		>
-			<ChevronLeft />
+			<Icon icon="lucide:chevron-left" width={16} height={16} />
 			<span class="hidden sm:block">Previous</span>
 		</PaginationLink>
 	);
@@ -80,7 +80,7 @@ const PaginationNext: Component<PaginationLinkProps> = (props) => {
 			{...rest}
 		>
 			<span class="hidden sm:block">Next</span>
-			<ChevronRight />
+			<Icon icon="lucide:chevron-right" width={16} height={16} />
 		</PaginationLink>
 	);
 };
@@ -94,7 +94,7 @@ const PaginationEllipsis: Component<ComponentProps<"span">> = (props) => {
 			class={cn("flex size-9 items-center justify-center", local.class)}
 			{...rest}
 		>
-			<MoreHorizontal class="size-4" />
+			<Icon icon="lucide:ellipsis" width={16} height={16} class="size-4" />
 			<span class="sr-only">More pages</span>
 		</span>
 	);

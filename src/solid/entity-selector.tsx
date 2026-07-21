@@ -1,7 +1,4 @@
-import { type EntityView, getEntityView } from "@glasshome/sync-layer";
-import { byDomain, useAreas, useEntities } from "@glasshome/sync-layer/solid";
 import { Icon } from "@iconify-icon/solid";
-import { CheckIcon, X } from "lucide-solid";
 import {
 	createEffect,
 	createMemo,
@@ -22,6 +19,7 @@ import {
 	BottomSheetOverlay,
 	BottomSheetPortal,
 } from "./bottom-sheet/index.js";
+import { type EntityViewLike, useEntityData } from "./entity-data.js";
 import { anchorToTriggerTop, Popover, PopoverAnchor } from "./popover.js";
 
 interface EntitySelectorProps {
@@ -76,17 +74,18 @@ function createIsMobile() {
 	return isMobile;
 }
 
-function isUnavailable(view: EntityView) {
+function isUnavailable(view: EntityViewLike) {
 	return view.state === "unavailable" || view.state === "unknown";
 }
 
-function stateLabel(view: EntityView) {
+function stateLabel(view: EntityViewLike) {
 	if (isUnavailable(view)) return "Unavailable";
 	const unit = view.unitOfMeasurement;
 	return unit ? `${view.state} ${unit}` : view.state;
 }
 
 export function EntitySelector(props: EntitySelectorProps) {
+	const data = useEntityData();
 	const isMobile = createIsMobile();
 	const listboxId = createUniqueId();
 	const [open, setOpen] = createSignal(false);
@@ -99,10 +98,10 @@ export function EntitySelector(props: EntitySelectorProps) {
 	const [scrollTop, setScrollTop] = createSignal(0);
 	const [viewportHeight, setViewportHeight] = createSignal(320);
 
-	const domainEntityIds = createMemo(() => byDomain()[props.domain] ?? []);
+	const domainEntityIds = createMemo(() => data.entityIdsByDomain()[props.domain] ?? []);
 	const subscribedIds = createMemo(() => (open() ? domainEntityIds() : props.entityIds));
-	const allViews = useEntities(subscribedIds);
-	const areas = useAreas();
+	const allViews = data.useEntities(subscribedIds);
+	const areas = data.useAreas();
 	const areaNameById = createMemo(() => new Map(areas().map((a) => [a.id, a.name])));
 	const selectedSet = createMemo(() => new Set(props.entityIds));
 
@@ -144,7 +143,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 	// <For> see identical references on every entity state tick.
 	let prevRows: ListRow[] = [];
 	const rows = createMemo<ListRow[]>(() => {
-		const byAreaKey = new Map<string, EntityView[]>();
+		const byAreaKey = new Map<string, EntityViewLike[]>();
 		for (const v of searched()) {
 			const key = v.areaId ?? NO_AREA_KEY;
 			const bucket = byAreaKey.get(key);
@@ -350,7 +349,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 		if (count === 0) return null;
 		if (count === 1) {
 			const id = props.entityIds[0] ?? "";
-			const view = getEntityView(id);
+			const view = data.getEntityView(id);
 			return view?.friendlyName ?? id;
 		}
 		return `${count} entities selected`;
@@ -359,7 +358,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 	const triggerIcon = () => {
 		if (props.entityIds.length !== 1) return null;
 		const id = props.entityIds[0] ?? "";
-		return getEntityView(id)?.icon ?? null;
+		return data.getEntityView(id)?.icon ?? null;
 	};
 
 	const isSingle = () => props.multiple === false;
@@ -418,7 +417,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 	);
 
 	const EntityRowButton = (p: { id: string; entityIndex: number; top: number }) => {
-		const view = createMemo(() => getEntityView(p.id));
+		const view = createMemo(() => data.getEntityView(p.id));
 		const selected = () => selectedSet().has(p.id);
 		const unavailable = () => {
 			const v = view();
@@ -471,11 +470,13 @@ export function EntitySelector(props: EntitySelectorProps) {
 							}`}
 							aria-hidden="true"
 						>
-							<CheckIcon
+							<Icon
+								icon="lucide:check"
+								width={14}
+								height={14}
 								class={`size-3.5 transition-all duration-200 ease-out ${
 									selected() ? "scale-100 opacity-100" : "scale-0 opacity-0"
 								}`}
-								stroke-width={3}
 							/>
 						</div>
 					}
@@ -625,7 +626,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 			<div class="flex flex-wrap gap-1.5">
 				<For each={props.entityIds}>
 					{(id) => {
-						const view = createMemo(() => getEntityView(id));
+						const view = createMemo(() => data.getEntityView(id));
 						const unavailable = () => {
 							const v = view();
 							return v != null && isUnavailable(v);
@@ -651,7 +652,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 									class="flex w-8 shrink-0 cursor-pointer items-center justify-center text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
 									onClick={() => removeEntity(id)}
 								>
-									<X class="size-3.5" />
+									<Icon icon="lucide:x" width={14} height={14} class="size-3.5" />
 								</button>
 							</span>
 						);

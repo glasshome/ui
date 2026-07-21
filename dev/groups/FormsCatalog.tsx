@@ -1,4 +1,4 @@
-import { ArrowRight, Search } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import { createSignal } from "solid-js";
 import {
 	Checkbox,
@@ -115,7 +115,7 @@ export function FormsCatalog() {
 			<CatalogItem name="InputGroup" hint="addons + buttons" span={2}>
 				<InputGroup>
 					<InputGroupAddon>
-						<Search />
+						<Icon icon="lucide:search" width={16} height={16} />
 					</InputGroupAddon>
 					<InputGroupInput placeholder="Search…" />
 					<InputGroupAddon align="inline-end">
@@ -135,7 +135,7 @@ export function FormsCatalog() {
 						<InputGroupText>0 / 280</InputGroupText>
 						<InputGroupButton class="ml-auto">
 							Send
-							<ArrowRight />
+							<Icon icon="lucide:arrow-right" width={16} height={16} />
 						</InputGroupButton>
 					</InputGroupAddon>
 				</InputGroup>

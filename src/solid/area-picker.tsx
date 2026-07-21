@@ -1,8 +1,8 @@
-import { useAreas } from "@glasshome/sync-layer/solid";
 import { Icon } from "@iconify-icon/solid";
 import { createMemo, createSignal, For, Show } from "solid-js";
 import { INPUT_SURFACE } from "../lib/input-classes.js";
 import { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
+import { useEntityData } from "./entity-data.js";
 import { Input } from "./input.js";
 import { anchorToTriggerTop, Popover, PopoverAnchor } from "./popover.js";
 import { SlidingIndicator } from "./sliding-indicator.js";
@@ -16,10 +16,11 @@ interface AreaPickerProps {
 }
 
 export function AreaPicker(props: AreaPickerProps) {
+	const data = useEntityData();
 	const [open, setOpen] = createSignal(false);
 	const [search, setSearch] = createSignal("");
 
-	const areas = useAreas();
+	const areas = data.useAreas();
 
 	const areaList = createMemo(() =>
 		areas().map((a) => ({

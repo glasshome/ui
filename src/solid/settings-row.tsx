@@ -1,4 +1,4 @@
-import { Pencil, Plus, Trash2 } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import { type JSX, Show } from "solid-js";
 import { Button } from "./button.js";
 import { Input } from "./input.js";
@@ -13,7 +13,7 @@ import { Switch } from "./switch.js";
 export function SectionAddButton(props: { onClick: () => void }) {
 	return (
 		<Button variant="outline" size="sm" onClick={props.onClick}>
-			<Plus size={14} />
+			<Icon icon="lucide:plus" width={14} height={14} />
 			Add
 		</Button>
 	);
@@ -33,7 +33,7 @@ export function RowActions(props: {
 	return (
 		<div class="flex items-center gap-1">
 			<Button variant="ghost" size="icon" class="size-8" onClick={props.onEdit}>
-				<Pencil size={14} />
+				<Icon icon="lucide:pencil" width={14} height={14} />
 			</Button>
 			<Show when={props.showDelete ?? true}>
 				<Button
@@ -44,7 +44,7 @@ export function RowActions(props: {
 					disabled={props.deleteDisabled}
 					title={props.deleteTitle}
 				>
-					<Trash2 size={14} />
+					<Icon icon="lucide:trash-2" width={14} height={14} />
 				</Button>
 			</Show>
 		</div>

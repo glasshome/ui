@@ -7,7 +7,7 @@ const THUMB_SIZE = 28;
 const TRACK_WIDTH = THUMB_SIZE * 2;
 const THUMB_TRAVEL = TRACK_WIDTH - THUMB_SIZE;
 
-export interface SwitchProps {
+interface SwitchProps {
 	checked?: boolean;
 	defaultChecked?: boolean;
 	onChange?: (checked: boolean) => void;

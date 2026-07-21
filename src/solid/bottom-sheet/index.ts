@@ -12,4 +12,3 @@ export {
 	BottomSheetTitle,
 	BottomSheetTrigger,
 } from "./bottom-sheet.js";
-export type { SheetState } from "./state-machine.js";

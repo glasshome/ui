@@ -1,5 +1,4 @@
 import { Icon } from "@iconify-icon/solid";
-import { ArrowDown, ArrowUp, ChevronsUpDown, Filter, Search, X } from "lucide-solid";
 import { For, type JSX, Show, splitProps } from "solid-js";
 import { Button } from "./button.js";
 import { Input } from "./input.js";
@@ -51,7 +50,12 @@ export function TableFilterSelect(props: {
 				class={`h-9 w-auto gap-1.5 text-xs ${props.class ?? ""}`}
 				aria-label={props.ariaLabel}
 			>
-				<Filter class="size-3.5 shrink-0 text-muted-foreground" />
+				<Icon
+					icon="lucide:funnel"
+					width={14}
+					height={14}
+					class="size-3.5 shrink-0 text-muted-foreground"
+				/>
 				<SelectValue<string>>{(state) => props.label(state.selectedOption())}</SelectValue>
 			</SelectTrigger>
 			<SelectContent />
@@ -69,7 +73,12 @@ export function TableSearchInput(props: {
 }) {
 	return (
 		<div class={`relative w-full sm:w-64 ${props.class ?? ""}`}>
-			<Search class="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+			<Icon
+				icon="lucide:search"
+				width={14}
+				height={14}
+				class="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground"
+			/>
 			<Input
 				placeholder={props.placeholder}
 				value={props.value}
@@ -84,7 +93,7 @@ export function TableSearchInput(props: {
 					class="absolute top-1/2 right-2 -translate-y-1/2 rounded p-0.5 text-muted-foreground hover:text-foreground"
 					aria-label="Clear search"
 				>
-					<X class="size-3.5" />
+					<Icon icon="lucide:x" width={14} height={14} class="size-3.5" />
 				</button>
 			</Show>
 		</div>
@@ -110,9 +119,17 @@ export function TableSortHeader(props: {
 			aria-label={`Sort by ${props.label}`}
 		>
 			{props.label}
-			<Show when={props.active} fallback={<ChevronsUpDown class="size-3 opacity-30" />}>
-				<Show when={props.dir === "asc"} fallback={<ArrowDown class="size-3" />}>
-					<ArrowUp class="size-3" />
+			<Show
+				when={props.active}
+				fallback={
+					<Icon icon="lucide:chevrons-up-down" width={12} height={12} class="size-3 opacity-30" />
+				}
+			>
+				<Show
+					when={props.dir === "asc"}
+					fallback={<Icon icon="lucide:arrow-down" width={12} height={12} class="size-3" />}
+				>
+					<Icon icon="lucide:arrow-up" width={12} height={12} class="size-3" />
 				</Show>
 			</Show>
 		</button>

@@ -1,9 +1,9 @@
+import { Icon } from "@iconify-icon/solid";
 import EmblaCarousel, {
 	type EmblaCarouselType,
 	type EmblaOptionsType,
 	type EmblaPluginType,
 } from "embla-carousel";
-import { ArrowLeft, ArrowRight } from "lucide-solid";
 import {
 	type Accessor,
 	type Component,
@@ -182,7 +182,7 @@ const CarouselPrevious: Component<ComponentProps<typeof Button>> = (props) => {
 			onClick={scrollPrev}
 			{...rest}
 		>
-			<ArrowLeft />
+			<Icon icon="lucide:arrow-left" width={16} height={16} />
 			<span class="sr-only">Previous slide</span>
 		</Button>
 	);
@@ -208,7 +208,7 @@ const CarouselNext: Component<ComponentProps<typeof Button>> = (props) => {
 			onClick={scrollNext}
 			{...rest}
 		>
-			<ArrowRight />
+			<Icon icon="lucide:arrow-right" width={16} height={16} />
 			<span class="sr-only">Next slide</span>
 		</Button>
 	);

@@ -1,4 +1,4 @@
-import { ArrowDownToLine, ChevronRight } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import { type JSX, mergeProps, Show } from "solid-js";
 import { cn } from "../lib/utils.js";
 import { Card } from "./card.js";
@@ -83,7 +83,12 @@ function WidgetCardRow(props: InternalProps) {
 				<Show
 					when={props.trailing !== undefined}
 					fallback={
-						<ChevronRight class="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-foreground" />
+						<Icon
+							icon="lucide:chevron-right"
+							width={16}
+							height={16}
+							class="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
+						/>
 					}
 				>
 					{props.trailing}
@@ -114,7 +119,7 @@ function WidgetCardTile(props: InternalProps) {
 			<div class="mt-auto flex items-center gap-4 pt-3 text-muted-foreground text-xs">
 				<Show when={props.widget.downloadCount != null}>
 					<span class="flex items-center gap-1 tabular-nums">
-						<ArrowDownToLine class="size-3" />
+						<Icon icon="lucide:arrow-down-to-line" width={12} height={12} class="size-3" />
 						{formatWidgetCount(props.widget.downloadCount)}
 					</span>
 				</Show>
@@ -125,5 +130,3 @@ function WidgetCardTile(props: InternalProps) {
 		</Card>
 	);
 }
-
-export default WidgetCard;

@@ -1,4 +1,4 @@
-import { Minus } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import {
 	type Component,
 	type ComponentProps,
@@ -156,7 +156,7 @@ const InputOTPSlot: Component<ComponentProps<"div"> & { index: number }> = (prop
 const InputOTPSeparator: Component<ComponentProps<"div">> = (props) => {
 	return (
 		<div data-slot="input-otp-separator" aria-hidden="true" {...props}>
-			<Minus />
+			<Icon icon="lucide:minus" width={16} height={16} />
 		</div>
 	);
 };

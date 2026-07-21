@@ -1,4 +1,4 @@
-import { ChevronDown, Copy, Home, Package, Pencil, Search, Settings, Trash2 } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -21,14 +21,6 @@ import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-	Command,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-	CommandList,
-	CommandSeparator,
-	CommandShortcut,
 	ContextMenu,
 	ContextMenuContent,
 	ContextMenuItem,
@@ -69,7 +61,7 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "../../src/solid";
-import { CatalogGroup, CatalogItem, CatalogNote } from "../CatalogKit";
+import { CatalogGroup, CatalogItem } from "../CatalogKit";
 
 export function OverlaysCatalog() {
 	return (
@@ -169,15 +161,15 @@ export function OverlaysCatalog() {
 					<DropdownMenuContent class="border-border/50 bg-popover/85 backdrop-blur-md">
 						<DropdownMenuLabel>Widget</DropdownMenuLabel>
 						<DropdownMenuItem>
-							<Pencil /> Edit
+							<Icon icon="lucide:pencil" width={16} height={16} /> Edit
 							<DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
 						</DropdownMenuItem>
 						<DropdownMenuItem>
-							<Copy /> Duplicate
+							<Icon icon="lucide:copy" width={16} height={16} /> Duplicate
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem class="text-destructive">
-							<Trash2 /> Delete
+							<Icon icon="lucide:trash-2" width={16} height={16} /> Delete
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
@@ -191,58 +183,32 @@ export function OverlaysCatalog() {
 					<ContextMenuContent class="border-border/50 bg-popover/85 backdrop-blur-md">
 						<ContextMenuLabel>Widget</ContextMenuLabel>
 						<ContextMenuItem>
-							<Pencil /> Edit
+							<Icon icon="lucide:pencil" width={16} height={16} /> Edit
 							<ContextMenuShortcut>⌘E</ContextMenuShortcut>
 						</ContextMenuItem>
 						<ContextMenuItem>
-							<Copy /> Duplicate
+							<Icon icon="lucide:copy" width={16} height={16} /> Duplicate
 						</ContextMenuItem>
 						<ContextMenuSeparator />
 						<ContextMenuItem variant="destructive">
-							<Trash2 /> Delete
+							<Icon icon="lucide:trash-2" width={16} height={16} /> Delete
 						</ContextMenuItem>
 					</ContextMenuContent>
 				</ContextMenu>
-			</CatalogItem>
-
-			<CatalogItem name="Command" hint="inline palette" span={2}>
-				<div class="w-full overflow-hidden rounded-xl border border-border/50 bg-card/60 backdrop-blur-md">
-					<Command>
-						<CommandInput placeholder="Type a command or search…" />
-						<CommandList>
-							<CommandEmpty>No results.</CommandEmpty>
-							<CommandGroup heading="Navigation">
-								<CommandItem value="dashboard">
-									<Home /> Dashboard
-									<CommandShortcut>G D</CommandShortcut>
-								</CommandItem>
-								<CommandItem value="widgets">
-									<Package /> Widgets
-									<CommandShortcut>G W</CommandShortcut>
-								</CommandItem>
-							</CommandGroup>
-							<CommandSeparator />
-							<CommandGroup heading="Actions">
-								<CommandItem value="publish">
-									<Pencil /> Publish a widget
-								</CommandItem>
-								<CommandItem value="settings">
-									<Settings /> Settings
-								</CommandItem>
-							</CommandGroup>
-						</CommandList>
-					</Command>
-				</div>
-				<CatalogNote>filters live as you type; also ships as CommandDialog</CatalogNote>
 			</CatalogItem>
 
 			<CatalogItem name="Collapsible" hint="expand/collapse" span={2}>
 				<Collapsible class="w-full">
 					<CollapsibleTrigger class="flex w-full items-center justify-between gap-2 text-foreground text-sm">
 						<span class="inline-flex items-center gap-2">
-							<Search class="size-4" /> Advanced filters
+							<Icon icon="lucide:search" width={16} height={16} class="size-4" /> Advanced filters
 						</span>
-						<ChevronDown class="size-4 text-muted-foreground" />
+						<Icon
+							icon="lucide:chevron-down"
+							width={16}
+							height={16}
+							class="size-4 text-muted-foreground"
+						/>
 					</CollapsibleTrigger>
 					<CollapsibleContent>
 						<div class="rounded-md border border-border/50 bg-muted/20 p-3 text-muted-foreground text-sm">

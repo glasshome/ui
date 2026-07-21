@@ -11,26 +11,6 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-	Menubar,
-	MenubarCheckboxItem,
-	MenubarContent,
-	MenubarItem,
-	MenubarMenu,
-	MenubarRadioGroup,
-	MenubarRadioItem,
-	MenubarSeparator,
-	MenubarShortcut,
-	MenubarSub,
-	MenubarSubContent,
-	MenubarSubTrigger,
-	MenubarTrigger,
-	NavigationMenu,
-	NavigationMenuContent,
-	NavigationMenuItem,
-	NavigationMenuLink,
-	NavigationMenuList,
-	NavigationMenuMenu,
-	NavigationMenuTrigger,
 	Pagination,
 	PaginationContent,
 	PaginationEllipsis,
@@ -38,26 +18,15 @@ import {
 	PaginationLink,
 	PaginationNext,
 	PaginationPrevious,
-	Sidebar,
-	SidebarContent,
-	SidebarGroup,
-	SidebarGroupLabel,
-	SidebarHeader,
-	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
-	SidebarProvider,
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
 } from "../../src/solid";
-import { CatalogGroup, CatalogItem, CatalogNote } from "../CatalogKit";
+import { CatalogGroup, CatalogItem } from "../CatalogKit";
 
 export function NavCatalog() {
 	const [tab, setTab] = createSignal("overview");
-	const [bookmarks, setBookmarks] = createSignal(true);
-	const [layout, setLayout] = createSignal("comfortable");
 
 	return (
 		<CatalogGroup id="cat-nav" title="Navigation">
@@ -146,119 +115,6 @@ export function NavCatalog() {
 						</PaginationItem>
 					</PaginationContent>
 				</Pagination>
-			</CatalogItem>
-
-			<CatalogItem name="Menubar" hint="desktop-style menus" span={2}>
-				<Menubar>
-					<MenubarMenu>
-						<MenubarTrigger>File</MenubarTrigger>
-						<MenubarContent>
-							<MenubarItem>
-								New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-							</MenubarItem>
-							<MenubarItem>New Window</MenubarItem>
-							<MenubarSeparator />
-							<MenubarItem>
-								Print <MenubarShortcut>⌘P</MenubarShortcut>
-							</MenubarItem>
-						</MenubarContent>
-					</MenubarMenu>
-					<MenubarMenu>
-						<MenubarTrigger>Edit</MenubarTrigger>
-						<MenubarContent>
-							<MenubarItem>
-								Undo <MenubarShortcut>⌘Z</MenubarShortcut>
-							</MenubarItem>
-							<MenubarSeparator />
-							<MenubarSub>
-								<MenubarSubTrigger>Find</MenubarSubTrigger>
-								<MenubarSubContent>
-									<MenubarItem>Search…</MenubarItem>
-									<MenubarItem>Find Next</MenubarItem>
-								</MenubarSubContent>
-							</MenubarSub>
-						</MenubarContent>
-					</MenubarMenu>
-					<MenubarMenu>
-						<MenubarTrigger>View</MenubarTrigger>
-						<MenubarContent>
-							<MenubarCheckboxItem checked={bookmarks()} onChange={setBookmarks}>
-								Show Bookmarks
-							</MenubarCheckboxItem>
-							<MenubarSeparator />
-							<MenubarRadioGroup value={layout()} onChange={setLayout}>
-								<MenubarRadioItem value="comfortable">Comfortable</MenubarRadioItem>
-								<MenubarRadioItem value="compact">Compact</MenubarRadioItem>
-							</MenubarRadioGroup>
-						</MenubarContent>
-					</MenubarMenu>
-				</Menubar>
-			</CatalogItem>
-
-			<CatalogItem name="NavigationMenu" hint="wired dropdown (hover More)" span={2}>
-				<NavigationMenu viewport={false}>
-					<NavigationMenuList>
-						<NavigationMenuItem>
-							<NavigationMenuLink href="#" data-active="true">
-								Dashboard
-							</NavigationMenuLink>
-						</NavigationMenuItem>
-						<NavigationMenuItem>
-							<NavigationMenuLink href="#">Devices</NavigationMenuLink>
-						</NavigationMenuItem>
-						<NavigationMenuMenu>
-							<NavigationMenuTrigger>More</NavigationMenuTrigger>
-							<NavigationMenuContent>
-								<ul class="grid w-48 gap-1">
-									<li>
-										<NavigationMenuLink href="#">Automations</NavigationMenuLink>
-									</li>
-									<li>
-										<NavigationMenuLink href="#">Integrations</NavigationMenuLink>
-									</li>
-									<li>
-										<NavigationMenuLink href="#">Settings</NavigationMenuLink>
-									</li>
-								</ul>
-							</NavigationMenuContent>
-						</NavigationMenuMenu>
-					</NavigationMenuList>
-				</NavigationMenu>
-				<CatalogNote>
-					Dropdown wires via NavigationMenuMenu. Shown with viewport=false so each menu opens as a
-					self-contained bordered popover under its trigger (the default full-width viewport spills
-					in a compact cell).
-				</CatalogNote>
-			</CatalogItem>
-
-			<CatalogItem name="Sidebar" hint="collapsible=none (static)" span={3}>
-				<div class="h-64 w-full overflow-hidden rounded-md border border-border/50">
-					<SidebarProvider style={{ "min-height": "100%" }}>
-						<Sidebar collapsible="none" class="h-64 border-sidebar-border border-r">
-							<SidebarHeader class="px-3 py-2 font-semibold text-sm">GlassHome</SidebarHeader>
-							<SidebarContent>
-								<SidebarGroup>
-									<SidebarGroupLabel>Home</SidebarGroupLabel>
-									<SidebarMenu>
-										<SidebarMenuItem>
-											<SidebarMenuButton isActive>Dashboard</SidebarMenuButton>
-										</SidebarMenuItem>
-										<SidebarMenuItem>
-											<SidebarMenuButton>Devices</SidebarMenuButton>
-										</SidebarMenuItem>
-										<SidebarMenuItem>
-											<SidebarMenuButton>Automations</SidebarMenuButton>
-										</SidebarMenuItem>
-									</SidebarMenu>
-								</SidebarGroup>
-							</SidebarContent>
-						</Sidebar>
-					</SidebarProvider>
-				</div>
-				<CatalogNote>
-					Exported from the package as of 0.6.0. Shown with collapsible="none" (static); the app
-					shell uses the default offcanvas/icon collapsible mode with SidebarTrigger.
-				</CatalogNote>
 			</CatalogItem>
 		</CatalogGroup>
 	);

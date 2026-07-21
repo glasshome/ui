@@ -1,11 +1,5 @@
 // Original components
 
-// Demo-data seeding for the smart-home pickers (AreaPicker, EntitySelector),
-// re-exported so dev catalogs can populate the shared sync-layer store the
-// pickers read through the ui package alone, without a direct
-// @glasshome/sync-layer dependency (which would risk a second, disconnected
-// store instance).
-export { isDemoMode, loadDemoData, unloadDemoData } from "@glasshome/sync-layer";
 // Color helpers for ColorWheel/ColorSlider consumers, re-exported so they
 // don't need a direct @kobalte/core dependency.
 export { type Color, parseColor } from "@kobalte/core/colors";
@@ -72,8 +66,6 @@ export {
 	ButtonGroupText,
 	buttonGroupVariants,
 } from "./button-group.js";
-export type { CalendarProps, DateRange } from "./calendar.js";
-export { Calendar } from "./calendar.js";
 export {
 	Card,
 	CardAction,
@@ -108,17 +100,6 @@ export {
 } from "./collapsible.js";
 export { ColorSlider } from "./color-slider.js";
 export { ColorWheel } from "./color-wheel.js";
-export {
-	Command,
-	CommandDialog,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-	CommandList,
-	CommandSeparator,
-	CommandShortcut,
-} from "./command.js";
 export {
 	ContextMenu,
 	ContextMenuCheckboxItem,
@@ -186,6 +167,17 @@ export {
 	EmptyMedia,
 	EmptyTitle,
 } from "./empty.js";
+// Host-provided data source for the smart-home pickers (AreaPicker,
+// EntitySelector): ui owns only these structural types; the host app wires a
+// live adapter (dash: sync-layer) into EntityDataContext.
+export {
+	type AreaViewLike,
+	type EntityDataAdapter,
+	EntityDataContext,
+	type EntityViewLike,
+	provideEntityData,
+	useEntityData,
+} from "./entity-data.js";
 export { EntitySelector } from "./entity-selector.js";
 export {
 	Field,
@@ -244,36 +236,6 @@ export {
 export { Kbd, KbdGroup } from "./kbd.js";
 export { Label } from "./label.js";
 export { Logo } from "./logo.js";
-export {
-	Menubar,
-	MenubarCheckboxItem,
-	MenubarContent,
-	MenubarGroup,
-	MenubarItem,
-	MenubarLabel,
-	MenubarMenu,
-	MenubarRadioGroup,
-	MenubarRadioItem,
-	MenubarSeparator,
-	MenubarShortcut,
-	MenubarSub,
-	MenubarSubContent,
-	MenubarSubTrigger,
-	MenubarTrigger,
-} from "./menubar.js";
-export {
-	NavigationMenu,
-	NavigationMenuContent,
-	NavigationMenuIndicator,
-	NavigationMenuItem,
-	NavigationMenuLink,
-	NavigationMenuList,
-	NavigationMenuMenu,
-	NavigationMenuPortal,
-	NavigationMenuTrigger,
-	NavigationMenuViewport,
-	navigationMenuTriggerStyle,
-} from "./navigation-menu.js";
 export { NumberField } from "./number-field.js";
 export { Overlay } from "./overlay.js";
 export { PageHeader } from "./page-header.js";
@@ -355,32 +317,6 @@ export {
 	SheetTitle,
 	SheetTrigger,
 } from "./sheet.js";
-export {
-	Sidebar,
-	SidebarContent,
-	SidebarFooter,
-	SidebarGroup,
-	SidebarGroupAction,
-	SidebarGroupContent,
-	SidebarGroupLabel,
-	SidebarHeader,
-	SidebarInput,
-	SidebarInset,
-	SidebarMenu,
-	SidebarMenuAction,
-	SidebarMenuBadge,
-	SidebarMenuButton,
-	SidebarMenuItem,
-	SidebarMenuSkeleton,
-	SidebarMenuSub,
-	SidebarMenuSubButton,
-	SidebarMenuSubItem,
-	SidebarProvider,
-	SidebarRail,
-	SidebarSeparator,
-	SidebarTrigger,
-	useSidebar,
-} from "./sidebar.js";
 export { Skeleton } from "./skeleton.js";
 export { Slider } from "./slider.js";
 export { SlidingIndicator } from "./sliding-indicator.js";

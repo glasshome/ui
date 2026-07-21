@@ -1,5 +1,5 @@
+import { Icon } from "@iconify-icon/solid";
 import { ContextMenu as ContextMenuPrimitive } from "@kobalte/core/context-menu";
-import { Check, ChevronRight, Circle } from "lucide-solid";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
 import { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
@@ -26,7 +26,7 @@ const ContextMenuSubTrigger: ParentComponent<
 			{...rest}
 		>
 			{local.children}
-			<ChevronRight class="ml-auto" />
+			<Icon icon="lucide:chevron-right" width={16} height={16} class="ml-auto" />
 		</ContextMenuPrimitive.SubTrigger>
 	);
 };
@@ -112,7 +112,7 @@ const ContextMenuCheckboxItem: ParentComponent<
 		>
 			<span class="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
 				<ContextMenuPrimitive.ItemIndicator>
-					<Check class="size-4" />
+					<Icon icon="lucide:check" width={16} height={16} class="size-4" />
 				</ContextMenuPrimitive.ItemIndicator>
 			</span>
 			{local.children}
@@ -135,7 +135,8 @@ const ContextMenuRadioItem: ParentComponent<
 		>
 			<span class="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
 				<ContextMenuPrimitive.ItemIndicator>
-					<Circle class="size-2 fill-current" />
+					{/* mdi:circle is filled; lucide:circle is stroke-only and invisible at 8px. */}
+					<Icon icon="mdi:circle" width={8} height={8} class="size-2" />
 				</ContextMenuPrimitive.ItemIndicator>
 			</span>
 			{local.children}

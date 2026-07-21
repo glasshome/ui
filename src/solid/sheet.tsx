@@ -1,5 +1,5 @@
+import { Icon } from "@iconify-icon/solid";
 import { Dialog as DialogPrimitive } from "@kobalte/core/dialog";
-import { X } from "lucide-solid";
 import {
 	type Component,
 	type ComponentProps,
@@ -77,7 +77,7 @@ const SheetContent: ParentComponent<
 						{local.children}
 					</div>
 					<DialogPrimitive.CloseButton class="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[expanded]:bg-secondary">
-						<X class="size-4" />
+						<Icon icon="lucide:x" width={16} height={16} class="size-4" />
 						<span class="sr-only">Close</span>
 					</DialogPrimitive.CloseButton>
 				</div>

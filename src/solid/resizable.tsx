@@ -1,4 +1,4 @@
-import { GripVertical } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import {
 	type Component,
 	type ComponentProps,
@@ -139,7 +139,7 @@ const ResizableHandle: Component<ComponentProps<"div"> & { withHandle?: boolean 
 		>
 			<Show when={local.withHandle}>
 				<div class="z-10 flex h-4 w-3 items-center justify-center rounded-xs border bg-border">
-					<GripVertical class="size-2.5" />
+					<Icon icon="lucide:grip-vertical" width={10} height={10} class="size-2.5" />
 				</div>
 			</Show>
 		</div>

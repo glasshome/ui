@@ -1,4 +1,4 @@
-import { Check, Copy } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import { type Component, createSignal, Show } from "solid-js";
 import { cn } from "../lib/utils.js";
 import { toast } from "./sonner.js";
@@ -32,8 +32,13 @@ const CopyButton: Component<CopyButtonProps> = (props) => {
 			)}
 			aria-label={copied() ? "Copied!" : "Copy to clipboard"}
 		>
-			<Show when={copied()} fallback={<Copy class="h-4 w-4 text-muted-foreground" />}>
-				<Check class="h-4 w-4 text-success" />
+			<Show
+				when={copied()}
+				fallback={
+					<Icon icon="lucide:copy" width={16} height={16} class="h-4 w-4 text-muted-foreground" />
+				}
+			>
+				<Icon icon="lucide:check" width={16} height={16} class="h-4 w-4 text-success" />
 			</Show>
 		</button>
 	);

@@ -3,6 +3,9 @@
 @import "./theme.css";
 
 @source "../";
+/* npm consumers resolve components from dist/, not src/; without this their
+ * Tailwind build never sees the class names used inside the components. */
+@source "../../dist";
 
 @custom-variant dark (&:is(.dark *));
 

@@ -1,4 +1,4 @@
-import { Bell, Home, Search, Settings, User } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import { createSignal, For } from "solid-js";
 import {
 	Button,
@@ -36,7 +36,7 @@ export function ActionsCatalog() {
 				<Button size="default">default</Button>
 				<Button size="lg">lg</Button>
 				<Button size="icon" aria-label="settings">
-					<Settings />
+					<Icon icon="lucide:settings" width={16} height={16} />
 				</Button>
 			</CatalogItem>
 
@@ -56,11 +56,11 @@ export function ActionsCatalog() {
 
 			<CatalogItem name="Toggle" hint="pressed state">
 				<Toggle pressed={pressed()} onChange={setPressed}>
-					<Bell />
+					<Icon icon="lucide:bell" width={16} height={16} />
 					Notify
 				</Toggle>
 				<Toggle variant="outline">
-					<Search />
+					<Icon icon="lucide:search" width={16} height={16} />
 				</Toggle>
 			</CatalogItem>
 
@@ -97,28 +97,28 @@ export function ActionsCatalog() {
 					items={[
 						{
 							id: "home",
-							icon: Home,
+							icon: <Icon icon="lucide:house" width={20} height={20} />,
 							label: "Home",
 							isActive: dock() === "home",
 							onClick: () => setDock("home"),
 						},
 						{
 							id: "search",
-							icon: Search,
+							icon: <Icon icon="lucide:search" width={20} height={20} />,
 							label: "Search",
 							isActive: dock() === "search",
 							onClick: () => setDock("search"),
 						},
 						{
 							id: "user",
-							icon: User,
+							icon: <Icon icon="lucide:user" width={20} height={20} />,
 							label: "Profile",
 							isActive: dock() === "user",
 							onClick: () => setDock("user"),
 						},
 						{
 							id: "settings",
-							icon: Settings,
+							icon: <Icon icon="lucide:settings" width={20} height={20} />,
 							label: "Settings",
 							isActive: dock() === "settings",
 							onClick: () => setDock("settings"),

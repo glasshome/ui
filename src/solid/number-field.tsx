@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
 import { INPUT_CLASS } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
@@ -41,7 +41,7 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
 					onClick={() => nudge(1)}
 					class="flex flex-1 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:bg-muted"
 				>
-					<ChevronUp class="size-4" />
+					<Icon icon="lucide:chevron-up" width={16} height={16} class="size-4" />
 				</button>
 				<button
 					type="button"
@@ -50,7 +50,7 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
 					onClick={() => nudge(-1)}
 					class="flex flex-1 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:bg-muted"
 				>
-					<ChevronDown class="size-4" />
+					<Icon icon="lucide:chevron-down" width={16} height={16} class="size-4" />
 				</button>
 			</div>
 		</div>

@@ -1,4 +1,4 @@
-import { Folder, Inbox, MoreVertical } from "lucide-solid";
+import { Icon } from "@iconify-icon/solid";
 import {
 	Avatar,
 	AvatarFallback,
@@ -154,7 +154,7 @@ export function DataCatalog() {
 						<Item>
 							<ItemMedia>
 								<SectionIcon size="md">
-									<Folder class="size-5" />
+									<Icon icon="lucide:folder" width={20} height={20} class="size-5" />
 								</SectionIcon>
 							</ItemMedia>
 							<ItemContent>
@@ -163,7 +163,7 @@ export function DataCatalog() {
 							</ItemContent>
 							<ItemActions>
 								<Button variant="ghost" size="icon" aria-label="more">
-									<MoreVertical />
+									<Icon icon="lucide:ellipsis-vertical" width={16} height={16} />
 								</Button>
 							</ItemActions>
 						</Item>
@@ -229,7 +229,7 @@ export function DataCatalog() {
 				<Empty class="w-full border">
 					<EmptyHeader>
 						<EmptyMedia variant="icon">
-							<Inbox />
+							<Icon icon="lucide:inbox" width={24} height={24} />
 						</EmptyMedia>
 						<EmptyTitle>No devices yet</EmptyTitle>
 						<EmptyDescription>

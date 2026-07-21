@@ -1,5 +1,4 @@
 import { Icon } from "@iconify-icon/solid";
-import { ArrowDownToLine, Layers, Package } from "lucide-solid";
 import { type JSX, mergeProps, Show } from "solid-js";
 import { cn } from "../lib/utils.js";
 import { ScopeIndicator } from "./scope-indicator.js";
@@ -65,7 +64,7 @@ export function WidgetIdentity(_props: WidgetIdentityProps) {
 	return (
 		<div class={cn("flex min-w-0 items-center gap-3", props.class)}>
 			<SectionIcon size={props.iconSize}>
-				<Show when={props.widget.icon} fallback={<Package />}>
+				<Show when={props.widget.icon} fallback={<Icon icon="lucide:package" />}>
 					{(icon) => <Icon icon={icon()} />}
 				</Show>
 			</SectionIcon>
@@ -111,13 +110,13 @@ export function WidgetMeta(props: {
 		<div class={cn("flex items-center gap-4 text-muted-foreground text-xs", props.class)}>
 			<Show when={props.widget.downloadCount != null}>
 				<span class="flex items-center gap-1 tabular-nums">
-					<ArrowDownToLine class="size-3" />
+					<Icon icon="lucide:arrow-down-to-line" width={12} height={12} class="size-3" />
 					{formatWidgetCount(props.widget.downloadCount)}
 				</span>
 			</Show>
 			<Show when={props.showVersions && props.widget.versionCount != null}>
 				<span class="flex items-center gap-1 tabular-nums">
-					<Layers class="size-3" />
+					<Icon icon="lucide:layers" width={12} height={12} class="size-3" />
 					{props.widget.versionCount} versions
 				</span>
 			</Show>
