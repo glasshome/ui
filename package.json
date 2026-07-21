@@ -1,6 +1,6 @@
 {
 	"name": "@glasshome/ui",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "SolidJS component library for GlassHome, built on Kobalte",
 	"type": "module",
 	"homepage": "https://github.com/glasshome/ui#readme",
@@ -51,6 +51,7 @@
 	"files": [
 		"dist",
 		"src/astro",
+		"src/lib",
 		"src/styles",
 		"scripts"
 	],

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1 (2026-07-21)
+
+### Fixed
+
+- npm tarball now includes `src/lib/`: the `./astro/*` components import
+  shared class recipes from `../lib/*`, which the 1.0.0 package left out
+  (fine under a link: symlink, unresolvable from npm).
+
 ## 1.0.0 (2026-07-21)
 
 First stable release. The API surface is frozen: removals or reroutes from
