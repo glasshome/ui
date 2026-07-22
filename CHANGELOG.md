@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/glasshome/ui/compare/v1.0.1...v2.0.0) (2026-07-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop the unused Carousel port
+
+### Code Refactoring
+
+* drop the unused Carousel port ([e273fa7](https://github.com/glasshome/ui/commit/e273fa778435cd271a1b95cc2afbf4869e7b2443))
+
 ## 1.0.1 (2026-07-21)
 
 ### Fixed
