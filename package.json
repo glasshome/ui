@@ -1,6 +1,6 @@
 {
 	"name": "@glasshome/ui",
-	"version": "1.0.1",
+	"version": "2.0.0",
 	"description": "SolidJS component library for GlassHome, built on Kobalte",
 	"type": "module",
 	"homepage": "https://github.com/glasshome/ui#readme",
