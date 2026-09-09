@@ -765,6 +765,23 @@ Replace the blind `waitForTimeout(800)` on the route path with waiting for `[dat
 if (flag("reduced-motion", false) === true) await page.emulateMedia({ reducedMotion: "reduce" });
 ```
 
+- [ ] **Step 4b: Make an unclickable `try` fail loudly**
+
+Add `--verify-triggers`: load the bare `#/all` route, and for every cell carrying `data-try`, assert the value resolves to exactly one element inside that cell's `[data-stage]`. Exit non-zero listing every cell that fails. Wire it into CI beside the shot run.
+
+Without this the `try` slot rots back into prose. Six values are descriptions rather than trigger text today, and each one must be fixed or dropped as part of this step:
+
+| Specimen | current `try` | real trigger |
+| --- | --- | --- |
+| `DropdownMenuSub` (DataCatalog) | "click Actions" | `Actions` |
+| `SlidingIndicator` (ActionsCatalog) | "click a segment to slide" | `Day` / `Week` / `Month` |
+| `Toaster` (FeedbackCatalog) | "click a kind to raise a toast" | the kind's own label |
+| `HoverCard` (FeedbackCatalog) | "hover the trigger" | a `--hover` target, not `--click` |
+| `IconPicker` (PickersCatalog) | "mdi:lightbulb" | the picked value, not the trigger |
+| `CopyButton` (ActionsCatalog) | "click the copy glyph" | icon-only button, no text: drop `try` |
+
+`Dock` is the precedent for dropping: its items render an icon plus an `aria-label` and a tooltip that only mounts on hover, so no `try` string can ever resolve. It carries `state` instead.
+
 - [ ] **Step 5: Verify all three modes**
 
 ```bash
