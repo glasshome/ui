@@ -43,6 +43,7 @@ type SectionCardProps = {
 	children?: JSX.Element;
 };
 
+// The section owns every gap; the header, toolbar and rows inside it add none.
 export function SectionCard(props: SectionCardProps) {
 	const glass = () => props.glass ?? NOOP_GLASS;
 	const active = () => glass().active?.() ?? false;

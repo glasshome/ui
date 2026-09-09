@@ -1,14 +1,6 @@
 import { For } from "solid-js";
 import {
 	AspectRatio,
-	Button,
-	Card,
-	CardAction,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
 	Carousel,
 	CarouselContent,
 	CarouselDots,
@@ -25,16 +17,12 @@ import {
 	SectionMeta,
 	SectionRow,
 } from "../../src/solid";
-import { CatalogGroup, CatalogItem, CatalogNote } from "../CatalogKit";
+import { Axis, CatalogGroup, Specimen } from "../CatalogKit";
 
 export function LayoutCatalog() {
 	return (
 		<CatalogGroup id="cat-layout" title="Layout, cards & media">
-			<CatalogItem
-				name="SectionCard stat tiles"
-				hint="three SectionRows, label over number — the admin dashboard shape"
-				span={3}
-			>
+			<Specimen name="SectionRow" span={3}>
 				<SectionCard
 					icon="lucide:activity"
 					title="This week"
@@ -58,42 +46,9 @@ export function LayoutCatalog() {
 						</For>
 					</div>
 				</SectionCard>
-				<CatalogNote>
-					rows are glass on glass, never a flat bg-card/60 plate; the section owns every gap
-				</CatalogNote>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem
-				name="Card padding md"
-				hint="header / content / footer stack on the card gap"
-				span={2}
-			>
-				<Card padding="md" class="w-full max-w-md">
-					<CardHeader>
-						<CardTitle>Managed tunnel</CardTitle>
-						<CardDescription>Reachable from anywhere</CardDescription>
-						<CardAction>
-							<Button variant="outline" size="sm">
-								Manage
-							</Button>
-						</CardAction>
-					</CardHeader>
-					<CardContent>
-						<p class="text-muted-foreground text-sm">
-							Traffic is relayed through GlassHome. No port forwarding needed.
-						</p>
-					</CardContent>
-					<CardFooter class="justify-between">
-						<span class="text-muted-foreground text-xs">v2026.7</span>
-						<Button size="sm">Renew</Button>
-					</CardFooter>
-				</Card>
-				<CatalogNote>
-					the card owns the padding; the parts carry none, and no part has a margin
-				</CatalogNote>
-			</CatalogItem>
-
-			<CatalogItem name="AspectRatio" hint="16 / 9">
+			<Specimen name="AspectRatio" state="16 / 9">
 				<div class="w-full max-w-[240px]">
 					<AspectRatio
 						ratio={16 / 9}
@@ -104,9 +59,9 @@ export function LayoutCatalog() {
 						</div>
 					</AspectRatio>
 				</div>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="ScrollArea" hint="ScrollArea · ScrollBar">
+			<Specimen name="ScrollArea">
 				<ScrollArea class="h-32 w-full rounded-md border border-border/50 bg-muted/20">
 					<div class="space-y-1 p-3">
 						<For each={Array.from({ length: 16 }, (_, i) => i + 1)}>
@@ -117,84 +72,71 @@ export function LayoutCatalog() {
 					</div>
 					<ScrollBar orientation="vertical" />
 				</ScrollArea>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="Carousel" hint="embla · CarouselContent/Item/Prev/Next">
-				<div class="w-full px-12">
-					<Carousel opts={{ loop: true }} class="w-full">
-						<CarouselContent>
-							<For each={["A", "B", "C", "D"]}>
-								{(slide) => (
-									<CarouselItem>
-										<div class="flex h-24 items-center justify-center rounded-md border border-border/50 bg-muted/30 font-semibold text-2xl text-foreground">
-											{slide}
-										</div>
-									</CarouselItem>
-								)}
-							</For>
-						</CarouselContent>
-						<CarouselPrevious />
-						<CarouselNext />
-					</Carousel>
-				</div>
-				<CatalogNote>arrows / arrow-keys scroll; loops</CatalogNote>
-			</CatalogItem>
+			<Specimen name="Carousel" span={3}>
+				<Axis of="transition">
+					<div class="grid w-full gap-4 lg:grid-cols-3">
+						<div class="px-12">
+							<Carousel opts={{ loop: true }} class="w-full">
+								<CarouselContent>
+									<For each={["slide 1", "slide 2", "slide 3"]}>
+										{(slide) => (
+											<CarouselItem>
+												<div class="flex h-24 items-center justify-center rounded-md border border-border/50 bg-muted/30 font-semibold text-foreground text-xl">
+													{slide}
+												</div>
+											</CarouselItem>
+										)}
+									</For>
+								</CarouselContent>
+								<CarouselPrevious />
+								<CarouselNext />
+							</Carousel>
+						</div>
+						<div class="px-12">
+							<Carousel transition="wipe" autoplay={2500} opts={{ loop: true }} class="w-full">
+								<CarouselContent>
+									<For each={["wipe 1", "wipe 2", "wipe 3"]}>
+										{(slide, i) => (
+											<CarouselItem>
+												<div
+													class="flex h-24 items-center justify-center rounded-md border border-border/50 font-semibold text-foreground text-xl"
+													style={{ background: `var(--chart-${i() + 1})` }}
+												>
+													{slide}
+												</div>
+											</CarouselItem>
+										)}
+									</For>
+								</CarouselContent>
+								<CarouselDots class="mt-3" />
+							</Carousel>
+						</div>
+						<div class="px-12">
+							<Carousel transition="fade" autoplay={2000} opts={{ loop: true }} class="w-full">
+								<CarouselContent>
+									<For each={["fade 1", "fade 2", "fade 3"]}>
+										{(slide, i) => (
+											<CarouselItem>
+												<div
+													class="flex h-24 items-center justify-center rounded-md border border-border/50 font-semibold text-foreground text-xl"
+													style={{ background: `var(--chart-${i() + 1})` }}
+												>
+													{slide}
+												</div>
+											</CarouselItem>
+										)}
+									</For>
+								</CarouselContent>
+								<CarouselDots class="mt-3" />
+							</Carousel>
+						</div>
+					</div>
+				</Axis>
+			</Specimen>
 
-			<CatalogItem name="Carousel wipe" hint="stacked slides · autoplay · dots">
-				<div class="w-full px-12">
-					<Carousel transition="wipe" autoplay={2500} opts={{ loop: true }} class="w-full">
-						<CarouselContent>
-							<For each={["one", "two", "three"]}>
-								{(slide, i) => (
-									<CarouselItem>
-										<div
-											class="flex h-24 items-center justify-center rounded-md border border-border/50 font-semibold text-2xl text-foreground"
-											style={{ background: `var(--chart-${i() + 1})` }}
-										>
-											{slide}
-										</div>
-									</CarouselItem>
-								)}
-							</For>
-						</CarouselContent>
-						<CarouselDots class="mt-3" />
-					</Carousel>
-				</div>
-				<CatalogNote>
-					transition="wipe" | "fade" | "slide"; autoplay pauses on interaction and is skipped under
-					prefers-reduced-motion. Known: wipe stacks its slides in one grid cell, which collapses
-					every scroll snap onto one point, so wipe cannot be dragged. Autoplay, arrows and dots
-					drive it by index and do work.
-				</CatalogNote>
-			</CatalogItem>
-
-			<CatalogItem name="Carousel fade" hint="cross-fade · autoplay 2s · dots">
-				<div class="w-full px-12">
-					<Carousel transition="fade" autoplay={2000} opts={{ loop: true }} class="w-full">
-						<CarouselContent>
-							<For each={["one", "two", "three"]}>
-								{(slide, i) => (
-									<CarouselItem>
-										<div
-											class="flex h-24 items-center justify-center rounded-md border border-border/50 font-semibold text-2xl text-foreground"
-											style={{ background: `var(--chart-${i() + 1})` }}
-										>
-											{slide}
-										</div>
-									</CarouselItem>
-								)}
-							</For>
-						</CarouselContent>
-						<CarouselDots class="mt-3" />
-					</Carousel>
-				</div>
-				<CatalogNote>
-					three dots, cross-fading one → two → three every 2s on its own, and draggable. Anything
-					less means the fade track lost embla's scroll snaps.
-				</CatalogNote>
-			</CatalogItem>
-
-			<CatalogItem name="Overlay" hint="floating glass panel">
+			<Specimen name="Overlay">
 				<div class="relative flex h-32 w-full items-center justify-center overflow-hidden rounded-md">
 					<div class="absolute inset-0 bg-gradient-to-br from-primary/60 via-accent/40 to-muted" />
 					<div class="absolute inset-0 grid grid-cols-4 gap-2 p-3 opacity-70">
@@ -206,25 +148,27 @@ export function LayoutCatalog() {
 						<span class="font-medium text-foreground text-sm">Floating panel</span>
 					</Overlay>
 				</div>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="Resizable" hint="PanelGroup · Panel · Handle (drag divider)" span={2}>
-				<div class="h-40 w-full overflow-hidden rounded-md border border-border/50">
-					<ResizablePanelGroup direction="horizontal">
-						<ResizablePanel defaultSize={40} minSize={20}>
-							<div class="flex h-full items-center justify-center bg-muted/30 p-4 font-mono text-muted-foreground text-xs">
-								Sidebar
-							</div>
-						</ResizablePanel>
-						<ResizableHandle withHandle />
-						<ResizablePanel defaultSize={60} minSize={20}>
-							<div class="flex h-full items-center justify-center bg-card/40 p-4 font-mono text-muted-foreground text-xs">
-								Content
-							</div>
-						</ResizablePanel>
-					</ResizablePanelGroup>
-				</div>
-			</CatalogItem>
+			<Specimen name="ResizablePanelGroup" span={2}>
+				<Axis of="direction">
+					<div class="h-40 w-full overflow-hidden rounded-md border border-border/50">
+						<ResizablePanelGroup direction="horizontal">
+							<ResizablePanel defaultSize={40} minSize={20}>
+								<div class="flex h-full items-center justify-center bg-muted/30 p-4 font-mono text-muted-foreground text-xs">
+									Sidebar
+								</div>
+							</ResizablePanel>
+							<ResizableHandle withHandle />
+							<ResizablePanel defaultSize={60} minSize={20}>
+								<div class="flex h-full items-center justify-center bg-card/40 p-4 font-mono text-muted-foreground text-xs">
+									Content
+								</div>
+							</ResizablePanel>
+						</ResizablePanelGroup>
+					</div>
+				</Axis>
+			</Specimen>
 		</CatalogGroup>
 	);
 }

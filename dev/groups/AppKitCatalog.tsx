@@ -1,7 +1,6 @@
 import { createSignal } from "solid-js";
 import {
 	Button,
-	Dock,
 	LabeledField,
 	LabeledInput,
 	PageHeader,
@@ -17,7 +16,7 @@ import {
 	TableSortHeader,
 } from "../../src/solid";
 import { Icon } from "../../src/solid/icon.js";
-import { CatalogGroup, CatalogItem, CatalogNote } from "../CatalogKit";
+import { Axis, CatalogGroup, Specimen } from "../CatalogKit";
 
 export function AppKitCatalog() {
 	const [on, setOn] = createSignal(true);
@@ -29,35 +28,7 @@ export function AppKitCatalog() {
 
 	return (
 		<CatalogGroup id="cat-appkit" title="App kit (chrome, settings + tables)">
-			<CatalogItem name="Dock badge" hint="pending count rides the item as a Badge" span={2}>
-				<Dock
-					items={[
-						{
-							id: "home",
-							icon: <Icon icon="lucide:house" width={20} height={20} />,
-							label: "Home",
-							isActive: true,
-						},
-						{
-							id: "inbox",
-							icon: <Icon icon="lucide:inbox" width={20} height={20} />,
-							label: "Inbox",
-							badge: 3,
-						},
-						{
-							id: "updates",
-							icon: <Icon icon="lucide:arrow-up-circle" width={20} height={20} />,
-							label: "Updates",
-							badge: 12,
-						},
-					]}
-				/>
-				<CatalogNote>
-					counts over 9 read as 9+; the label is a real Tooltip, not a hidden hover span
-				</CatalogNote>
-			</CatalogItem>
-
-			<CatalogItem name="PageHeader" hint="banner — icon + title + count + actions" span={3}>
+			<Specimen name="PageHeader" span={3}>
 				<div class="w-full">
 					<PageHeader
 						icon="lucide:layout-dashboard"
@@ -71,75 +42,89 @@ export function AppKitCatalog() {
 						}
 					/>
 				</div>
-				<CatalogNote>
-					dash injects performant-blur + logo watermark via the glass/logo props
-				</CatalogNote>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="SwitchRow" hint="label + optional description + switch">
+			<Specimen name="SwitchRow" span={2}>
+				<Axis of="description">
+					<div class="w-full">
+						<SwitchRow label="Enable notifications" checked={on()} onChange={setOn} />
+						<SwitchRow
+							label="Weekly digest"
+							description="One summary of everything that happened at home."
+							checked={digest()}
+							onChange={setDigest}
+						/>
+					</div>
+				</Axis>
+				<Axis of="disabled">
+					<div class="w-full">
+						<SwitchRow
+							label="Away mode"
+							description="Only a household admin can change this."
+							checked
+							disabled
+							onChange={() => {}}
+						/>
+					</div>
+				</Axis>
+			</Specimen>
+
+			<Specimen name="LabeledInput">
 				<div class="w-full">
-					<SwitchRow label="Enable notifications" checked={on()} onChange={setOn} />
-					<SwitchRow
-						label="Weekly digest"
-						description="One summary of everything that happened at home."
-						checked={digest()}
-						onChange={setDigest}
-					/>
-					<SwitchRow
-						label="Away mode"
-						description="Only a household admin can change this."
-						checked
-						disabled
-						onChange={() => {}}
-					/>
-				</div>
-				<CatalogNote>disabled dims the row and freezes the switch</CatalogNote>
-			</CatalogItem>
-
-			<CatalogItem name="LabeledField / LabeledInput">
-				<div class="w-full space-y-3">
 					<LabeledInput
 						label="Name"
 						value={text()}
 						onInput={setText}
 						placeholder="Household name"
 					/>
+				</div>
+			</Specimen>
+
+			<Specimen name="LabeledField">
+				<div class="w-full">
 					<LabeledField label="Custom">
 						<p class="text-muted-foreground text-sm">any children</p>
 					</LabeledField>
 				</div>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="RowActions + SectionAddButton" hint="edit / delete · add">
+			<Specimen name="RowActions">
 				<RowActions onEdit={() => {}} onDelete={() => {}} />
+			</Specimen>
+
+			<Specimen name="SectionAddButton">
 				<SectionAddButton onClick={() => {}} />
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="Table toolbar" hint="search / filter / sort" span={2}>
-				<div class="flex w-full flex-wrap items-center gap-2">
-					<TableSearchInput
-						value={search()}
-						onInput={setSearch}
-						placeholder="Search…"
-						label="Search"
-					/>
-					<TableFilterSelect
-						options={["All", "Published", "Draft"]}
-						value={filter()}
-						onChange={setFilter}
-						label={(v) => v}
-						ariaLabel="Filter"
-					/>
-					<TableSortHeader
-						label="Name"
-						active
-						dir={dir()}
-						onClick={() => setDir(dir() === "asc" ? "desc" : "asc")}
-					/>
-				</div>
-			</CatalogItem>
+			<Specimen name="TableSearchInput">
+				<TableSearchInput
+					value={search()}
+					onInput={setSearch}
+					placeholder="Search…"
+					label="Search"
+				/>
+			</Specimen>
 
-			<CatalogItem name="TableBulkBar" hint="selection actions" span={2}>
+			<Specimen name="TableFilterSelect" state={filter()}>
+				<TableFilterSelect
+					options={["All", "Published", "Draft"]}
+					value={filter()}
+					onChange={setFilter}
+					label={(v) => v}
+					ariaLabel="Filter"
+				/>
+			</Specimen>
+
+			<Specimen name="TableSortHeader" try="Name" state={dir()}>
+				<TableSortHeader
+					label="Name"
+					active
+					dir={dir()}
+					onClick={() => setDir(dir() === "asc" ? "desc" : "asc")}
+				/>
+			</Specimen>
+
+			<Specimen name="TableBulkBar" span={2}>
 				<div class="w-full overflow-hidden rounded-md border border-border/50">
 					<TableBulkBar>
 						<span class="text-muted-foreground text-xs">2 selected</span>
@@ -148,9 +133,9 @@ export function AppKitCatalog() {
 						</Button>
 					</TableBulkBar>
 				</div>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="TableEmpty" hint="empty state">
+			<Specimen name="TableEmpty">
 				<TableEmpty
 					icon={
 						<Icon
@@ -167,17 +152,17 @@ export function AppKitCatalog() {
 						</Button>
 					}
 				/>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="TableError" hint="inline error + retry">
+			<Specimen name="TableError">
 				<TableError message="Failed to load." onRetry={() => {}} />
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="TableSkeleton" hint="loading rows" span={2}>
+			<Specimen name="TableSkeleton" span={2}>
 				<div class="w-full">
 					<TableSkeleton count={3} />
 				</div>
-			</CatalogItem>
+			</Specimen>
 		</CatalogGroup>
 	);
 }

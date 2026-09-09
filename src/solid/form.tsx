@@ -43,6 +43,7 @@ const FormContext = createContext<FormContextValue>();
 
 const Form: ParentComponent<
 	ComponentProps<"form"> & {
+		/** Headless: the parent's validation lib owns these; label, control aria-invalid and message all react to them. */
 		errors?: Record<string, string>;
 		onSetError?: (name: string, error: string) => void;
 		onClearError?: (name: string) => void;

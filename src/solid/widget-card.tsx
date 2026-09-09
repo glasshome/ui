@@ -103,6 +103,7 @@ function WidgetCardTile(props: InternalProps) {
 			padding="md"
 			class={cn("group h-full", props.class)}
 		>
+			{/* flex-1 body: the meta stays pinned to the tile's foot whether the description is long, missing or off. */}
 			<div data-slot="widget-card-body" class="flex flex-1 flex-col gap-3">
 				<WidgetIdentity widget={props.widget} iconSize="md" showVersionInline={false} />
 				<Show when={showDescription() && props.widget.description}>

@@ -79,7 +79,7 @@ import {
 	TabsTrigger,
 } from "../../src/solid";
 import { Icon } from "../../src/solid/icon.js";
-import { CatalogGroup, CatalogItem } from "../CatalogKit";
+import { CatalogGroup, Specimen } from "../CatalogKit";
 
 /* Dev-only: keeps a specimen open across HMR full-reloads (any edit to a
  * shared lib constant like OVERLAY_SURFACE reloads the whole gallery, which
@@ -124,7 +124,7 @@ export function OverlaysCatalog() {
 	const [tab, setTab] = createSignal("controls");
 	return (
 		<CatalogGroup id="cat-overlays" title="Overlays">
-			<CatalogItem name="Dialog" hint="modal · click to open">
+			<Specimen name="Dialog" try="Open dialog">
 				<Dialog open={dialogOpen()} onOpenChange={setDialogOpen}>
 					<DialogTrigger as={Button} variant="outline">
 						Open dialog
@@ -150,9 +150,9 @@ export function OverlaysCatalog() {
 						</DialogFooter>
 					</DialogContent>
 				</Dialog>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="AlertDialog" hint="confirm · click to open">
+			<Specimen name="AlertDialog" try="Delete widget">
 				<AlertDialog>
 					<AlertDialogTrigger as={Button} variant="destructive">
 						Delete widget
@@ -175,9 +175,9 @@ export function OverlaysCatalog() {
 						</AlertDialogFooter>
 					</AlertDialogContent>
 				</AlertDialog>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="Sheet" hint="side panel · click to open">
+			<Specimen name="Sheet" try="Open sheet">
 				<Sheet open={sheetOpen()} onOpenChange={setSheetOpen}>
 					<SheetTrigger as={Button} variant="outline">
 						Open sheet
@@ -196,11 +196,11 @@ export function OverlaysCatalog() {
 						</SheetFooter>
 					</SheetContent>
 				</Sheet>
-			</CatalogItem>
+			</Specimen>
 
 			{/* The raw surface: handle plus one scrolling Body, the shape the mobile
 			    pickers wear. A titled, footed sheet is a ResponsiveDialog. */}
-			<CatalogItem name="BottomSheet" hint="drag-to-dismiss · click to open">
+			<Specimen name="BottomSheet" try="Open bottom sheet">
 				<BottomSheet>
 					<BottomSheetTrigger class={buttonVariants({ variant: "outline" })}>
 						Open bottom sheet
@@ -222,9 +222,9 @@ export function OverlaysCatalog() {
 						</BottomSheetContent>
 					</BottomSheetPortal>
 				</BottomSheet>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="Popover" hint="anchored · click to open">
+			<Specimen name="Popover" try="Open popover">
 				<Popover>
 					<PopoverTrigger as={Button} variant="outline">
 						Open popover
@@ -236,9 +236,9 @@ export function OverlaysCatalog() {
 						</p>
 					</PopoverContent>
 				</Popover>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="DropdownMenu" hint="menu · click to open">
+			<Specimen name="DropdownMenu" try="Actions">
 				<DropdownMenu>
 					<DropdownMenuTrigger as={Button} variant="outline">
 						Actions
@@ -260,9 +260,9 @@ export function OverlaysCatalog() {
 						</DropdownMenuGroup>
 					</DropdownMenuContent>
 				</DropdownMenu>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="ContextMenu" hint="right-click">
+			<Specimen name="ContextMenu" try="Right-click me">
 				<ContextMenu>
 					<ContextMenuTrigger class="flex h-16 w-full items-center justify-center rounded-md border border-border/60 border-dashed bg-muted/20 text-muted-foreground text-xs">
 						Right-click me
@@ -284,9 +284,9 @@ export function OverlaysCatalog() {
 						</ContextMenuGroup>
 					</ContextMenuContent>
 				</ContextMenu>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="Collapsible" hint="expand/collapse" span={2}>
+			<Specimen name="Collapsible" try="Advanced filters" span={2}>
 				<Collapsible class="w-full">
 					<CollapsibleTrigger class="flex w-full items-center justify-between gap-2 text-foreground text-sm">
 						<span class="inline-flex items-center gap-2">
@@ -305,9 +305,9 @@ export function OverlaysCatalog() {
 						</div>
 					</CollapsibleContent>
 				</Collapsible>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="DialogHeaderTabs" hint="tabs in the header · click to open">
+			<Specimen name="DialogHeader" try="Open tabbed dialog">
 				<Dialog open={tabsOpen()} onOpenChange={setTabsOpen}>
 					<DialogTrigger as={Button} variant="outline">
 						Open tabbed dialog
@@ -354,9 +354,9 @@ export function OverlaysCatalog() {
 						</Tabs>
 					</DialogContent>
 				</Dialog>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="ResponsiveDialog" hint="adaptive · click to open">
+			<Specimen name="ResponsiveDialog" try="Open responsive">
 				<ResponsiveDialog>
 					<ResponsiveDialogTrigger class={buttonVariants({ variant: "outline" })}>
 						Open responsive
@@ -377,7 +377,7 @@ export function OverlaysCatalog() {
 						</ResponsiveDialogFooter>
 					</ResponsiveDialogContent>
 				</ResponsiveDialog>
-			</CatalogItem>
+			</Specimen>
 		</CatalogGroup>
 	);
 }

@@ -14,7 +14,7 @@ import {
 	ToggleGroupItem,
 } from "../../src/solid";
 import { Icon } from "../../src/solid/icon.js";
-import { CatalogGroup, CatalogItem, CatalogNote } from "../CatalogKit";
+import { Axis, CatalogGroup, Specimen } from "../CatalogKit";
 
 export function ActionsCatalog() {
 	const [pressed, setPressed] = createSignal(true);
@@ -25,37 +25,39 @@ export function ActionsCatalog() {
 
 	return (
 		<CatalogGroup id="cat-actions" title="Actions">
-			<CatalogItem name="Button" hint="6 variants" span={2}>
-				<Button variant="default">Default</Button>
-				<Button variant="destructive">Destructive</Button>
-				<Button variant="outline">Outline</Button>
-				<Button variant="secondary">Secondary</Button>
-				<Button variant="ghost">Ghost</Button>
-				<Button variant="link">Link</Button>
-				<CatalogNote>sizes</CatalogNote>
-				<Button size="sm">sm</Button>
-				<Button size="default">default</Button>
-				<Button size="lg">lg</Button>
-				<Button size="icon" aria-label="settings">
-					<Icon icon="lucide:settings" width={16} height={16} />
-				</Button>
-			</CatalogItem>
+			<Specimen name="Button" span={2}>
+				<Axis of="variant">
+					<Button variant="default">Default</Button>
+					<Button variant="destructive">Destructive</Button>
+					<Button variant="outline">Outline</Button>
+					<Button variant="secondary">Secondary</Button>
+					<Button variant="ghost">Ghost</Button>
+					<Button variant="link">Link</Button>
+				</Axis>
+				<Axis of="size">
+					<Button size="sm">sm</Button>
+					<Button size="default">default</Button>
+					<Button size="lg">lg</Button>
+					<Button size="icon" aria-label="settings">
+						<Icon icon="lucide:settings" width={16} height={16} />
+					</Button>
+				</Axis>
+			</Specimen>
 
-			<CatalogItem name="ButtonGroup" hint="joined actions">
+			<Specimen name="ButtonGroup">
 				<ButtonGroup>
 					<Button variant="outline">Copy</Button>
 					<Button variant="outline">Paste</Button>
 					<ButtonGroupSeparator />
 					<Button variant="outline">Cut</Button>
 				</ButtonGroup>
-				<CatalogNote>with text label</CatalogNote>
 				<ButtonGroup>
 					<ButtonGroupText>https://</ButtonGroupText>
 					<Button variant="outline">glasshome.app</Button>
 				</ButtonGroup>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="Toggle" hint="pressed state">
+			<Specimen name="Toggle" state={pressed() ? "pressed" : "released"}>
 				<Toggle pressed={pressed()} onChange={setPressed}>
 					<Icon icon="lucide:bell" width={16} height={16} />
 					Notify
@@ -63,32 +65,33 @@ export function ActionsCatalog() {
 				<Toggle variant="outline">
 					<Icon icon="lucide:search" width={16} height={16} />
 				</Toggle>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="ToggleGroup" hint={`value: ${align()}`}>
-				<ToggleGroup value={align()} onChange={(v) => v && setAlign(v as string)}>
-					<ToggleGroupItem value="left">Left</ToggleGroupItem>
-					<ToggleGroupItem value="center">Center</ToggleGroupItem>
-					<ToggleGroupItem value="right">Right</ToggleGroupItem>
-				</ToggleGroup>
-			</CatalogItem>
+			<Specimen name="ToggleGroup" state={`${align()} · ${styles().join(", ") || "none"}`}>
+				<Axis of="value">
+					<ToggleGroup value={align()} onChange={(v) => v && setAlign(v as string)}>
+						<ToggleGroupItem value="left">Left</ToggleGroupItem>
+						<ToggleGroupItem value="center">Center</ToggleGroupItem>
+						<ToggleGroupItem value="right">Right</ToggleGroupItem>
+					</ToggleGroup>
+				</Axis>
+				<Axis of="multiple">
+					<ToggleGroup multiple value={styles()} onChange={(v) => setStyles(v as string[])}>
+						<ToggleGroupItem value="bold">Bold</ToggleGroupItem>
+						<ToggleGroupItem value="italic">Italic</ToggleGroupItem>
+						<ToggleGroupItem value="underline">Underline</ToggleGroupItem>
+					</ToggleGroup>
+				</Axis>
+			</Specimen>
 
-			<CatalogItem name="ToggleGroup, multiple" hint={`value: ${styles().join(", ") || "none"}`}>
-				<ToggleGroup multiple value={styles()} onChange={(v) => setStyles(v as string[])}>
-					<ToggleGroupItem value="bold">Bold</ToggleGroupItem>
-					<ToggleGroupItem value="italic">Italic</ToggleGroupItem>
-					<ToggleGroupItem value="underline">Underline</ToggleGroupItem>
-				</ToggleGroup>
-			</CatalogItem>
-
-			<CatalogItem name="CopyButton" hint="clipboard">
+			<Specimen name="CopyButton" try="click the copy glyph">
 				<div class="relative flex h-16 w-full items-center rounded-md border border-border/50 bg-muted/30 px-3 font-mono text-muted-foreground text-xs">
 					npm run build
 					<CopyButton text="npm run build" />
 				</div>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="Kbd" hint="shortcut hints">
+			<Specimen name="Kbd">
 				<Kbd>Esc</Kbd>
 				<KbdGroup>
 					<Kbd>⌘</Kbd>
@@ -99,9 +102,9 @@ export function ActionsCatalog() {
 					<Kbd>⇧</Kbd>
 					<Kbd>P</Kbd>
 				</KbdGroup>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="Dock" hint="floating nav · click to slide the active pill" span={2}>
+			<Specimen name="Dock" try="click an item to slide the pill" span={2}>
 				<Dock
 					items={[
 						{
@@ -134,9 +137,9 @@ export function ActionsCatalog() {
 						},
 					]}
 				/>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="SlidingIndicator" hint="the moving background · click to slide" span={2}>
+			<Specimen name="SlidingIndicator" try="click a segment to slide" span={2}>
 				<SlidingIndicator
 					active={seg()}
 					class="inline-flex gap-1 rounded-lg border border-border/50 bg-card/40 p-1"
@@ -158,11 +161,7 @@ export function ActionsCatalog() {
 						)}
 					</For>
 				</SlidingIndicator>
-				<CatalogNote>
-					the reusable "moving background" — powers Dock + Tabs; index-driven (active) or
-					attribute-driven (activeSelector, e.g. Kobalte's [data-selected])
-				</CatalogNote>
-			</CatalogItem>
+			</Specimen>
 		</CatalogGroup>
 	);
 }

@@ -15,6 +15,7 @@ interface AreaPickerBaseProps {
 	class?: string;
 	/** false: a re-tap on the picked area keeps it instead of clearing. */
 	allowClear?: boolean;
+	/** A read-only caller renders the real picker dimmed, never a plain text line. */
 	disabled?: boolean;
 	/** Id of the element naming the trigger, for forms that label it outside. */
 	"aria-labelledby"?: string;

@@ -36,6 +36,7 @@ type CardProps = ComponentProps<"div"> &
 		ornament?: "arrow" | "check";
 	};
 
+// The card owns the padding: every part below carries none, and no part has a margin.
 const Card: Component<CardProps> = (props) => {
 	const [local, others] = splitProps(props, [
 		"class",

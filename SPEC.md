@@ -171,6 +171,10 @@ gets any motion of its own; a motion need none of them covers is added to
   slots).
 - All color comes from theme vars (`var(--primary)` etc.). No hex/oklch
   literals in components except neutral black/white shadow alphas.
+- Text chrome (`Badge`, `CountPill`, `SectionMeta`, `SectionCard.subtitleClass`)
+  merges the caller's classes through `cn`, so `class="text-sm"` is the
+  sanctioned size door for a desk-distance surface. The default register stays
+  `text-xs`; no component grows a `size` prop for this.
 
 ## Extending the system
 

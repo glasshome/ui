@@ -25,14 +25,14 @@ import {
 	TabsTrigger,
 } from "../../src/solid";
 import { Icon } from "../../src/solid/icon.js";
-import { CatalogGroup, CatalogItem } from "../CatalogKit";
+import { CatalogGroup, Specimen } from "../CatalogKit";
 
 export function NavCatalog() {
 	const [tab, setTab] = createSignal("overview");
 
 	return (
 		<CatalogGroup id="cat-nav" title="Navigation">
-			<CatalogItem name="Tabs" hint={`value: ${tab()}`} span={2}>
+			<Specimen name="Tabs" state={`value: ${tab()}`} span={2}>
 				<Tabs value={tab()} onChange={setTab} class="w-full">
 					<TabsList>
 						<TabsTrigger value="overview">
@@ -58,9 +58,9 @@ export function NavCatalog() {
 						(disabled trigger)
 					</TabsContent>
 				</Tabs>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="Accordion" hint="collapsible">
+			<Specimen name="Accordion">
 				<Accordion collapsible defaultValue={["item-1"]} class="w-full">
 					<AccordionItem value="item-1">
 						<AccordionTrigger>Is it accessible?</AccordionTrigger>
@@ -75,9 +75,9 @@ export function NavCatalog() {
 						</AccordionContent>
 					</AccordionItem>
 				</Accordion>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="Breadcrumb" hint="link / ellipsis / page" span={2}>
+			<Specimen name="Breadcrumb" span={2}>
 				<Breadcrumb>
 					<BreadcrumbList>
 						<BreadcrumbItem>
@@ -97,9 +97,9 @@ export function NavCatalog() {
 						</BreadcrumbItem>
 					</BreadcrumbList>
 				</Breadcrumb>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="Pagination" hint="page 2 active">
+			<Specimen name="Pagination" state="page 2 active">
 				<Pagination>
 					<PaginationContent>
 						<PaginationItem>
@@ -124,11 +124,11 @@ export function NavCatalog() {
 						</PaginationItem>
 					</PaginationContent>
 				</Pagination>
-			</CatalogItem>
+			</Specimen>
 
-			<CatalogItem name="StepIndicator" hint="step 2 of 4">
+			<Specimen name="StepIndicator" state="step 2 of 4">
 				<StepIndicator count={4} index={1} />
-			</CatalogItem>
+			</Specimen>
 		</CatalogGroup>
 	);
 }

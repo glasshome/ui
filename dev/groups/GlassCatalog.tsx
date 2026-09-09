@@ -11,16 +11,18 @@ import {
 	Overlay,
 	SectionIcon,
 } from "../../src/solid";
-import { CatalogGroup, CatalogItem, CatalogNote } from "../CatalogKit";
+import { CatalogGroup } from "../CatalogKit";
 import { GlassPlayground } from "../GlassPlayground";
 
-/** Glass showcase. Specimens sit over a soft glow so the frost reads. */
+/** The material itself, not a component: full-width blocks over a soft glow so
+ *  the frost reads. Moves to the Foundations area. */
 
 const STAGE = "relative flex w-full flex-wrap items-start gap-4 overflow-hidden rounded-lg p-6";
 const STAGE_STYLE = {
 	background:
 		"radial-gradient(42% 68% at 18% 0%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 72%), radial-gradient(38% 60% at 92% 100%, color-mix(in srgb, var(--primary) 22%, transparent), transparent 72%), var(--background)",
 };
+const BLOCK = "sm:col-span-2 lg:col-span-3";
 
 const KNOBS: [string, string, string][] = [
 	["--glass-base", "card/60%", "ground color + opacity (overlays: --popover)"],
@@ -33,11 +35,11 @@ const KNOBS: [string, string, string][] = [
 export function GlassCatalog() {
 	return (
 		<CatalogGroup id="cat-glass" title="Glass — the one material">
-			<CatalogItem name="Tune the material" hint="every knob set inline on one card" span={3}>
+			<div class={BLOCK}>
 				<GlassPlayground />
-			</CatalogItem>
+			</div>
 
-			<CatalogItem name="Surfaces" hint="Card · accent Card · Overlay" span={3}>
+			<div class={BLOCK}>
 				<div class={STAGE} style={STAGE_STYLE}>
 					<Card padding="md" class="w-48">
 						<p class="font-semibold text-sm">Card</p>
@@ -52,9 +54,9 @@ export function GlassCatalog() {
 						<p class="mt-1 text-muted-foreground text-xs">opaque · floats</p>
 					</Overlay>
 				</div>
-			</CatalogItem>
+			</div>
 
-			<CatalogItem name="Rows are structure" hint="transparent Items in one card" span={3}>
+			<div class={BLOCK}>
 				<div class={STAGE} style={STAGE_STYLE}>
 					<Card padding="none" class="w-72 overflow-hidden">
 						<ItemGroup>
@@ -80,29 +82,19 @@ export function GlassCatalog() {
 						</ItemGroup>
 					</Card>
 				</div>
-			</CatalogItem>
+			</div>
 
-			<CatalogItem name="The knobs" hint=":root — tune once, whole app re-skins" span={3}>
-				<div class="w-full divide-y divide-border/40">
-					<For each={KNOBS}>
-						{([name, def, desc]) => (
-							<div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-2">
-								<code class="w-36 font-mono text-foreground text-xs">{name}</code>
-								<code class="w-24 font-mono text-primary text-xs tabular-nums">{def}</code>
-								<span class="text-muted-foreground text-xs">{desc}</span>
-							</div>
-						)}
-					</For>
-				</div>
-			</CatalogItem>
-
-			<CatalogNote>
-				One material, one place to tune it. Set a knob on <code>:root</code> for the whole app, on
-				an element for a one-off, or on a wrapper for a whole region — a neutral{" "}
-				<code>&lt;Card&gt;</code> and an accent card run the same code, the tone knob just decides.
-				The colored <code>.glass</code> sibling (badges, buttons) is frozen and lives in the Actions
-				and Data groups.
-			</CatalogNote>
+			<div class={`${BLOCK} divide-y divide-border/40`}>
+				<For each={KNOBS}>
+					{([name, def, desc]) => (
+						<div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-2">
+							<code class="w-36 font-mono text-foreground text-xs">{name}</code>
+							<code class="w-24 font-mono text-primary text-xs tabular-nums">{def}</code>
+							<span class="text-muted-foreground text-xs">{desc}</span>
+						</div>
+					)}
+				</For>
+			</div>
 		</CatalogGroup>
 	);
 }

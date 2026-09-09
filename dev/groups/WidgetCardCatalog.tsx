@@ -1,5 +1,5 @@
 import { Button, WidgetCard, type WidgetSummary } from "../../src/solid";
-import { CatalogGroup, CatalogItem, CatalogNote } from "../CatalogKit";
+import { Axis, CatalogGroup, Specimen } from "../CatalogKit";
 
 // The registry's most-repeated surface: every list, grid, gallery, and admin
 // table composes it. A <Card> + the WidgetIdentity/WidgetMeta nucleus.
@@ -56,65 +56,39 @@ const UNPUBLISHED_WIDGET: WidgetSummary = {
 export function WidgetCardCatalog() {
 	return (
 		<CatalogGroup id="cat-widget-card" title="Widget card">
-			<CatalogItem
-				name="WidgetCard · row"
-				hint="dense lists, admin tables, pickers — Card sm + nucleus + right meta"
-				span={3}
-			>
-				<div class="w-full max-w-xl space-y-2">
-					<WidgetCard widget={OFFICIAL_WIDGET} href="#cat-widget-card" showScopeIndicator />
-					<WidgetCard widget={COMMUNITY_WIDGET} href="#cat-widget-card" showVersions />
-					<WidgetCard
-						widget={COMMUNITY_WIDGET}
-						onClick={() => {}}
-						trailing={
-							<Button variant="outline" size="sm" class="shrink-0">
-								Install
-							</Button>
-						}
-					/>
-				</div>
-				<CatalogNote>
-					official = decagram check, community = muted people glyph; chevron when interactive,
-					custom trailing otherwise
-				</CatalogNote>
-			</CatalogItem>
-
-			<CatalogItem
-				name="WidgetCard · tile"
-				hint="grids and galleries — Card md, description, download + version footer"
-				span={3}
-			>
-				<div class="grid w-full gap-3 sm:grid-cols-2 lg:grid-cols-3">
-					<WidgetCard layout="tile" widget={OFFICIAL_WIDGET} href="#cat-widget-card" />
-					<WidgetCard layout="tile" widget={BARE_WIDGET} href="#cat-widget-card" />
-					<WidgetCard
-						layout="tile"
-						widget={COMMUNITY_WIDGET}
-						href="#cat-widget-card"
-						showDescription={false}
-					/>
-				</div>
-				<CatalogNote>
-					meta stays pinned to the footer whether the description is long, missing, or turned off
-				</CatalogNote>
-			</CatalogItem>
-
-			<CatalogItem
-				name="WidgetCard · state markers"
-				hint="owner-facing lists — visibility and publish state ride next to the name"
-				span={3}
-			>
-				<div class="w-full max-w-xl space-y-2">
-					<WidgetCard widget={UNLISTED_WIDGET} onClick={() => {}} showVersions />
-					<WidgetCard widget={UNPUBLISHED_WIDGET} onClick={() => {}} showVersions />
-				</div>
-				<CatalogNote>
-					unlisted = published but hidden from search (warning); not published = newest version
-					never finished uploading, nothing installable (destructive). Both are owner-only, public
-					surfaces leave the flags off
-				</CatalogNote>
-			</CatalogItem>
+			<Specimen name="WidgetCard" span={3}>
+				<Axis of="layout">
+					<div class="w-full max-w-xl space-y-2">
+						<WidgetCard widget={OFFICIAL_WIDGET} href="#cat-widget-card" showScopeIndicator />
+						<WidgetCard widget={COMMUNITY_WIDGET} href="#cat-widget-card" showVersions />
+						<WidgetCard
+							widget={COMMUNITY_WIDGET}
+							onClick={() => {}}
+							trailing={
+								<Button variant="outline" size="sm" class="shrink-0">
+									Install
+								</Button>
+							}
+						/>
+					</div>
+					<div class="grid w-full gap-3 sm:grid-cols-2 lg:grid-cols-3">
+						<WidgetCard layout="tile" widget={OFFICIAL_WIDGET} href="#cat-widget-card" />
+						<WidgetCard layout="tile" widget={BARE_WIDGET} href="#cat-widget-card" />
+						<WidgetCard
+							layout="tile"
+							widget={COMMUNITY_WIDGET}
+							href="#cat-widget-card"
+							showDescription={false}
+						/>
+					</div>
+				</Axis>
+				<Axis of="state">
+					<div class="w-full max-w-xl space-y-2">
+						<WidgetCard widget={UNLISTED_WIDGET} onClick={() => {}} showVersions />
+						<WidgetCard widget={UNPUBLISHED_WIDGET} onClick={() => {}} showVersions />
+					</div>
+				</Axis>
+			</Specimen>
 		</CatalogGroup>
 	);
 }
