@@ -1,4 +1,3 @@
-import { For } from "solid-js";
 import {
 	Card,
 	Item,
@@ -12,7 +11,6 @@ import {
 	SectionIcon,
 } from "../../src/solid";
 import { CatalogGroup } from "../CatalogKit";
-import { GlassPlayground } from "../GlassPlayground";
 
 /** The material itself, not a component: full-width blocks over a soft glow so
  *  the frost reads. Moves to the Foundations area. */
@@ -24,21 +22,9 @@ const STAGE_STYLE = {
 };
 const BLOCK = "sm:col-span-2 lg:col-span-3";
 
-const KNOBS: [string, string, string][] = [
-	["--glass-base", "card/60%", "ground color + opacity (overlays: --popover)"],
-	["--glass-blur", "24px", "frost / backdrop-blur (panels only)"],
-	["--glass-lift", "0.45", "soft shadow that floats the pane"],
-	["--glass-tone", "transparent", "optional color — accent surfaces + chips"],
-	["--glass-wash", "20%", "tone wash strength (tinted look via .glass-tint)"],
-];
-
 export function GlassCatalog() {
 	return (
 		<CatalogGroup id="cat-glass" title="Glass — the one material">
-			<div class={BLOCK}>
-				<GlassPlayground />
-			</div>
-
 			<div class={BLOCK}>
 				<div class={STAGE} style={STAGE_STYLE}>
 					<Card padding="md" class="w-48">
@@ -82,18 +68,6 @@ export function GlassCatalog() {
 						</ItemGroup>
 					</Card>
 				</div>
-			</div>
-
-			<div class={`${BLOCK} divide-y divide-border/40`}>
-				<For each={KNOBS}>
-					{([name, def, desc]) => (
-						<div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-2">
-							<code class="w-36 font-mono text-foreground text-xs">{name}</code>
-							<code class="w-24 font-mono text-primary text-xs tabular-nums">{def}</code>
-							<span class="text-muted-foreground text-xs">{desc}</span>
-						</div>
-					)}
-				</For>
 			</div>
 		</CatalogGroup>
 	);
