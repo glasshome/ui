@@ -1,127 +1,25 @@
-import { createMemo, createSignal } from "solid-js";
+import { createSignal } from "solid-js";
 import {
 	AreaPicker,
-	type AreaViewLike,
 	type Color,
 	ColorSlider,
 	ColorWheel,
-	type EntityDataAdapter,
-	EntityDataContext,
 	EntitySelector,
-	type EntityViewLike,
 	IconPicker,
 	ImagePicker,
-	type MediaStore,
 	MediaStoreContext,
 	MediaTile,
 	parseColor,
-	type StoredMedia,
 } from "../../src/solid";
 import { CatalogGroup, CatalogItem, CatalogNote } from "../CatalogKit";
-
-const DEMO_AREAS: AreaViewLike[] = [
-	{
-		id: "living_room",
-		name: "Living Room",
-		icon: "mdi:sofa",
-		entityIds: ["light.sofa", "light.reading_lamp"],
-	},
-	{
-		id: "kitchen",
-		name: "Kitchen",
-		icon: "mdi:silverware-fork-knife",
-		entityIds: ["light.counter"],
-	},
-	{ id: "bedroom", name: "Bedroom", icon: "mdi:bed", entityIds: ["light.nightstand"] },
-];
-
-function demoLight(
-	id: string,
-	name: string,
-	areaId: string | null,
-	state: "on" | "off",
-): EntityViewLike {
-	return {
-		id,
-		state,
-		name,
-		friendlyName: name,
-		aliases: [],
-		areaId,
-		icon: "mdi:lightbulb",
-		entityCategory: null,
-		isHidden: false,
-		isDisabled: false,
-	};
-}
-
-const DEMO_ENTITIES: EntityViewLike[] = [
-	demoLight("light.sofa", "Sofa Lamp", "living_room", "on"),
-	demoLight("light.reading_lamp", "Reading Lamp", "living_room", "off"),
-	demoLight("light.counter", "Counter Light", "kitchen", "on"),
-	demoLight("light.nightstand", "Nightstand", "bedroom", "off"),
-	demoLight("light.hallway", "Hallway Spot", null, "off"),
-];
-
-const DEMO_BY_ID = new Map(DEMO_ENTITIES.map((e) => [e.id, e]));
-
-const DEMO_MEDIA: [StoredMedia, StoredMedia] = [
-	{ id: "demo-1", mimeType: "image/png", width: 96, height: 64, size: 42_000, usedBy: 0 },
-	{ id: "demo-2", mimeType: "image/png", width: 96, height: 64, size: 88_000, usedBy: 1 },
-];
-
-// In-memory stand-in for the host's media store: keeps the picker's upload,
-// delete and quota-error paths interactive without a real backend.
-function createDemoMediaStore(): MediaStore {
-	let images = [...DEMO_MEDIA];
-	let nextId = 3;
-	return {
-		index: async () => ({
-			media: images,
-			usage: {
-				bytes: images.reduce((sum, image) => sum + image.size, 0),
-				limitBytes: 262_144_000,
-				files: images.length,
-				limitFiles: 200,
-			},
-		}),
-		upload: async (file) => {
-			const stored = {
-				id: `demo-${nextId++}`,
-				mimeType: file.type,
-				width: 96,
-				height: 64,
-				size: file.size,
-				usedBy: 0,
-			};
-			images = [...images, stored];
-			return stored;
-		},
-		remove: async (id) => {
-			images = images.filter((image) => image.id !== id);
-		},
-		url: (_id, variant) =>
-			variant === "thumb" ? "https://placehold.co/48x32/png" : "https://placehold.co/96x64/png",
-	};
-}
-
-const demoMediaStore = createDemoMediaStore();
-
-// Static in-memory stand-in for the host's sync-layer adapter, so the pickers
-// render live options without the design system depending on the HA runtime.
-const demoAdapter: EntityDataAdapter = {
-	entityIdsByDomain: () => ({ light: DEMO_ENTITIES.map((e) => e.id) }),
-	useEntities: (ids) => createMemo(() => ids().flatMap((id) => DEMO_BY_ID.get(id) ?? [])),
-	getEntityView: (id) => DEMO_BY_ID.get(id),
-	useAreas: () => () => DEMO_AREAS,
-};
+import { DEMO_MEDIA, DemoHost, demoMediaStore } from "../fixtures";
 
 /**
  * Smart-home / rich pickers from @glasshome/ui. ColorWheel and ColorSlider
  * are fully self-contained and driven by local signals below.
  *
  * AreaPicker and EntitySelector read their options through EntityDataContext,
- * NOT from props. The static demo adapter above gives them a populated,
+ * NOT from props. DemoHost (dev/fixtures.tsx) gives them a populated,
  * interactive specimen, so the glass trigger, popover, rows and selection
  * chrome are all live.
  */
@@ -137,7 +35,7 @@ export function PickersCatalog() {
 	const [imageId, setImageId] = createSignal("");
 
 	return (
-		<EntityDataContext.Provider value={demoAdapter}>
+		<DemoHost>
 			<CatalogGroup id="cat-pickers" title="Pickers (smart-home)">
 				<CatalogItem name="ColorWheel" hint="hue ring (Kobalte)" span={2}>
 					<div class="flex items-center gap-4">
@@ -271,6 +169,6 @@ export function PickersCatalog() {
 					</CatalogNote>
 				</CatalogItem>
 			</CatalogGroup>
-		</EntityDataContext.Provider>
+		</DemoHost>
 	);
 }
