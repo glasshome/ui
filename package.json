@@ -94,6 +94,9 @@
 	"devDependencies": {
 		"@arethetypeswrong/cli": "^0.18.5",
 		"@biomejs/biome": "2.4.15",
+		"@iconify-json/lucide": "^1.2.130",
+		"@iconify-json/mdi": "^1.2.3",
+		"@iconify-json/simple-icons": "^1.2.95",
 		"@solidjs/testing-library": "^0.8.10",
 		"@tailwindcss/vite": "^4.1.13",
 		"@types/json-schema": "^7.0.15",

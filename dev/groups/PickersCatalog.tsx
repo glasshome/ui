@@ -65,7 +65,7 @@ const DEMO_ENTITIES: EntityViewLike[] = [
 
 const DEMO_BY_ID = new Map(DEMO_ENTITIES.map((e) => [e.id, e]));
 
-const DEMO_MEDIA: StoredMedia[] = [
+const DEMO_MEDIA: [StoredMedia, StoredMedia] = [
 	{ id: "demo-1", mimeType: "image/png", width: 96, height: 64, size: 42_000, usedBy: 0 },
 	{ id: "demo-2", mimeType: "image/png", width: 96, height: 64, size: 88_000, usedBy: 1 },
 ];

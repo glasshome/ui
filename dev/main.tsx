@@ -1,11 +1,14 @@
 /* Dev-only gallery entry (`bun run dev:gallery`): every package primitive live,
  * hot-reloading against src. Never shipped. */
 
+import { bundled } from "virtual:gallery-icons";
 import { createSignal, Show } from "solid-js";
 import { render } from "solid-js/web";
-import { Button, Toaster } from "../src/solid";
+import { Button, provideIcons, Toaster } from "../src/solid";
 import PackageCatalog from "./PackageCatalog";
 import "./styles.css";
+
+provideIcons({ bundled });
 
 function Gallery() {
 	const [dark, setDark] = createSignal(window.matchMedia("(prefers-color-scheme: dark)").matches);

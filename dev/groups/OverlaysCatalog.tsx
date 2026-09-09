@@ -202,7 +202,7 @@ export function OverlaysCatalog() {
 			    pickers wear. A titled, footed sheet is a ResponsiveDialog. */}
 			<CatalogItem name="BottomSheet" hint="drag-to-dismiss · click to open">
 				<BottomSheet>
-					<BottomSheetTrigger as={Button} variant="outline">
+					<BottomSheetTrigger class={buttonVariants({ variant: "outline" })}>
 						Open bottom sheet
 					</BottomSheetTrigger>
 					<BottomSheetPortal>
@@ -358,7 +358,7 @@ export function OverlaysCatalog() {
 
 			<CatalogItem name="ResponsiveDialog" hint="adaptive · click to open">
 				<ResponsiveDialog>
-					<ResponsiveDialogTrigger as={Button} variant="outline">
+					<ResponsiveDialogTrigger class={buttonVariants({ variant: "outline" })}>
 						Open responsive
 					</ResponsiveDialogTrigger>
 					<ResponsiveDialogContent>

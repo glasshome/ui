@@ -7,5 +7,5 @@
 		"declarationDir": null,
 		"rootDir": "."
 	},
-	"include": ["src/**/*", "tests/**/*", "vitest.config.ts"]
+	"include": ["src/**/*", "tests/**/*", "dev/**/*", "vitest.config.ts"]
 }

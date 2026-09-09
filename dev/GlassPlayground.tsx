@@ -58,7 +58,7 @@ function knobVars(v: Record<string, number>): Record<string, string> {
 	};
 	for (const k of KNOBS) {
 		if (k.key === "fill") continue;
-		out[`--glass-${k.key}`] = knobValue(k, v[k.key]);
+		out[`--glass-${k.key}`] = knobValue(k, v[k.key] ?? k.def);
 	}
 	return out;
 }
@@ -71,8 +71,9 @@ export function GlassPlayground() {
 	const style = () => ({ "--glass-tone": tone(), ...knobVars(vals()) });
 
 	const set = (key: string, n: number) => setVals((p) => ({ ...p, [key]: n }));
+	const knobAt = (k: Knob) => vals()[k.key] ?? k.def;
 	const fmt = (k: Knob) => {
-		const raw = vals()[k.key];
+		const raw = knobAt(k);
 		return k.scale ? (raw / k.scale).toFixed(2) : `${raw}${k.unit ?? ""}`;
 	};
 	const toneName = createMemo(() => TONES.find(([, v]) => v === tone())?.[0] ?? "custom");
@@ -113,8 +114,11 @@ export function GlassPlayground() {
 								<Slider
 									min={k.min}
 									max={k.max}
-									value={[vals()[k.key]]}
-									onChange={(v) => set(k.key, v[0])}
+									value={[knobAt(k)]}
+									onChange={(v) => {
+										const next = v[0];
+										if (next !== undefined) set(k.key, next);
+									}}
 									aria-label={k.prop}
 								/>
 							</div>

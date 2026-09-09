@@ -23,7 +23,7 @@
 		"emitDeclarationOnly": true,
 		"outDir": "dist",
 		"rootDir": "src",
-		"types": ["node"],
+		"types": ["node", "vite/client"],
 		"lib": ["ESNext", "DOM"]
 	},
 	"include": ["src/**/*"],
