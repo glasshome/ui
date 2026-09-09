@@ -83,4 +83,12 @@ export default defineConfig({
 	server: {
 		port: 5199,
 	},
+	build: {
+		rollupOptions: {
+			input: {
+				index: join(import.meta.dirname, "dev", "index.html"),
+				stage: join(import.meta.dirname, "dev", "stage.html"),
+			},
+		},
+	},
 });
