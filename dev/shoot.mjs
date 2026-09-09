@@ -5,7 +5,11 @@
 //   bun run gallery:shots                      every cell
 //   bun run gallery:shots ResponsiveDialog Select
 //   bun run gallery:shots ResponsiveDialog --click "Open responsive"   (viewport shot after the click)
+//   bun run gallery:shots ContextMenu --right-click "Right-click me"   (same, with the right button)
 //   bun run gallery:shots ToggleGroup --hover "Center"                 (cell shot with the pointer on it)
+//
+// Trigger text resolves inside the cell's [data-stage] body only: the header
+// chip repeats it, and an unscoped locator clicks the chip instead.
 //   flags: --width 1280 --height 900 --light --scale 2 --out ~/.cache/glasshome-gallery-shots --no-build
 //
 // CHROMIUM_PATH points at a system Chromium when Playwright's bundled one
@@ -36,7 +40,13 @@ const scale = Number(flag("scale", 1));
 const light = flag("light", false) === true;
 const noBuild = flag("no-build", false) === true;
 const click = flag("click", null);
+const rightClick = flag("right-click", null);
 const hover = flag("hover", null);
+const press = click
+	? { text: String(click), button: "left", prefix: "" }
+	: rightClick
+		? { text: String(rightClick), button: "right", prefix: "right-" }
+		: null;
 // Per-checkout cache dirs, so parallel worktrees never overwrite each other.
 const checkout = pkg
 	.replace(/[^a-z0-9]+/gi, "-")
@@ -109,18 +119,19 @@ const slug = (s) => s.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
 const widthSuffix = width === 1280 ? "" : `@${width}`;
 for (const name of wanted) {
 	const cell = page.locator(`[data-specimen="${name}"]`);
+	const stage = cell.locator("[data-stage]");
 	await cell.scrollIntoViewIfNeeded();
-	if (click) {
-		await cell.getByText(String(click), { exact: true }).first().click();
+	if (press) {
+		await stage.getByText(press.text, { exact: true }).first().click({ button: press.button });
 		await page.waitForTimeout(700);
-		const out = join(outDir, `${slug(name)}--${slug(String(click))}${widthSuffix}.png`);
+		const out = join(outDir, `${slug(name)}--${press.prefix}${slug(press.text)}${widthSuffix}.png`);
 		await page.screenshot({ path: out });
 		console.log(out);
 		await page.keyboard.press("Escape");
 		await page.waitForTimeout(500);
 	} else {
 		if (hover) {
-			await cell.getByText(String(hover), { exact: true }).first().hover();
+			await stage.getByText(String(hover), { exact: true }).first().hover();
 			await page.waitForTimeout(400);
 		}
 		const out = join(

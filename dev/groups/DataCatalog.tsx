@@ -134,26 +134,35 @@ export function DataCatalog() {
 			</Specimen>
 
 			<Specimen name="Card" span={2}>
-				<Card padding="slots" class="w-full max-w-sm">
-					<CardHeader>
-						<CardTitle>Home Assistant</CardTitle>
-						<CardDescription>Connected via managed tunnel</CardDescription>
-						<CardAction>
-							<Badge tone="var(--success)">Live</Badge>
-						</CardAction>
-					</CardHeader>
-					<CardContent>
-						<p class="text-muted-foreground text-sm">
-							42 entities exposed. Last sync 2 minutes ago.
-						</p>
-					</CardContent>
-					<CardFooter class="justify-between">
-						<span class="text-muted-foreground text-xs">v2026.7</span>
-						<Button variant="outline" size="sm">
-							Manage
-						</Button>
-					</CardFooter>
-				</Card>
+				<Axis of="padding">
+					<Card padding="slots" class="w-full max-w-sm">
+						<CardHeader>
+							<CardTitle>Home Assistant</CardTitle>
+							<CardDescription>Connected via managed tunnel</CardDescription>
+							<CardAction>
+								<Badge tone="var(--success)">Live</Badge>
+							</CardAction>
+						</CardHeader>
+						<CardContent>
+							<p class="text-muted-foreground text-sm">
+								42 entities exposed. Last sync 2 minutes ago.
+							</p>
+						</CardContent>
+						<CardFooter class="justify-between">
+							<span class="text-muted-foreground text-xs">v2026.7</span>
+							<Button variant="outline" size="sm">
+								Manage
+							</Button>
+						</CardFooter>
+					</Card>
+					<Card padding="md" class="w-full max-w-sm">
+						<CardTitle>Fixed padding</CardTitle>
+						<CardDescription>
+							padding="md" stays p-4 at every width; padding="slots" steps p-3 to p-4 at the md
+							breakpoint.
+						</CardDescription>
+					</Card>
+				</Axis>
 			</Specimen>
 
 			<Specimen name="Item" span={2}>
@@ -306,7 +315,7 @@ export function DataCatalog() {
 				</DropdownMenu>
 			</Specimen>
 
-			<Specimen name="ContextMenuItem" try="right-click the pad">
+			<Specimen name="ContextMenuItem" try="Right-click here">
 				<ContextMenu>
 					<ContextMenuTrigger class="flex h-16 w-full items-center justify-center rounded-md border border-border/60 border-dashed bg-muted/20 text-muted-foreground text-xs">
 						Right-click here

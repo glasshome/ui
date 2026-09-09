@@ -104,39 +104,59 @@ export function ActionsCatalog() {
 				</KbdGroup>
 			</Specimen>
 
-			<Specimen name="Dock" try="click an item to slide the pill" span={2}>
-				<Dock
-					items={[
-						{
-							id: "home",
-							icon: <Icon icon="lucide:house" width={20} height={20} />,
-							label: "Home",
-							isActive: dock() === "home",
-							onClick: () => setDock("home"),
-						},
-						{
-							id: "search",
-							icon: <Icon icon="lucide:search" width={20} height={20} />,
-							label: "Search",
-							isActive: dock() === "search",
-							onClick: () => setDock("search"),
-						},
-						{
-							id: "user",
-							icon: <Icon icon="lucide:user" width={20} height={20} />,
-							label: "Profile",
-							isActive: dock() === "user",
-							onClick: () => setDock("user"),
-						},
-						{
-							id: "settings",
-							icon: <Icon icon="lucide:settings" width={20} height={20} />,
-							label: "Settings",
-							isActive: dock() === "settings",
-							onClick: () => setDock("settings"),
-						},
-					]}
-				/>
+			<Specimen name="Dock" state={dock()} span={2}>
+				<Axis of="items">
+					<Dock
+						items={[
+							{
+								id: "home",
+								icon: <Icon icon="lucide:house" width={20} height={20} />,
+								label: "Home",
+								isActive: dock() === "home",
+								onClick: () => setDock("home"),
+							},
+							{
+								id: "search",
+								icon: <Icon icon="lucide:search" width={20} height={20} />,
+								label: "Search",
+								isActive: dock() === "search",
+								onClick: () => setDock("search"),
+							},
+							{
+								id: "user",
+								icon: <Icon icon="lucide:user" width={20} height={20} />,
+								label: "Profile",
+								isActive: dock() === "user",
+								onClick: () => setDock("user"),
+							},
+							{
+								id: "settings",
+								icon: <Icon icon="lucide:settings" width={20} height={20} />,
+								label: "Settings",
+								isActive: dock() === "settings",
+								onClick: () => setDock("settings"),
+							},
+						]}
+					/>
+				</Axis>
+				<Axis of="badge">
+					<Dock
+						items={[
+							{
+								id: "updates",
+								icon: <Icon icon="lucide:download" width={20} height={20} />,
+								label: "Updates",
+								badge: 3,
+							},
+							{
+								id: "inbox",
+								icon: <Icon icon="lucide:inbox" width={20} height={20} />,
+								label: "Inbox",
+								badge: 12,
+							},
+						]}
+					/>
+				</Axis>
 			</Specimen>
 
 			<Specimen name="SlidingIndicator" try="click a segment to slide" span={2}>

@@ -50,7 +50,11 @@ export function Specimen(props: {
 					{(chip) => <span class="truncate text-[10px] text-muted-foreground">{chip()}</span>}
 				</Show>
 			</div>
-			<div class="flex min-h-24 flex-1 not-has-[[data-axis]]:flex-row flex-col not-has-[[data-axis]]:flex-wrap not-has-[[data-axis]]:items-center not-has-[[data-axis]]:gap-3 not-has-[[data-axis]]:p-4">
+			{/* shoot.mjs scopes its triggers here, so the header's `try` chip is never clicked. */}
+			<div
+				data-stage
+				class="flex min-h-24 flex-1 not-has-[[data-axis]]:flex-row flex-col not-has-[[data-axis]]:flex-wrap not-has-[[data-axis]]:items-center not-has-[[data-axis]]:gap-3 not-has-[[data-axis]]:p-4"
+			>
 				{props.children}
 			</div>
 		</div>
