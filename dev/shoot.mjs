@@ -91,7 +91,7 @@ const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
 page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
 
-await page.goto("http://gallery.local/");
+await page.goto("http://gallery.local/#/all");
 await page.waitForTimeout(800);
 
 const cells = page.locator("[data-specimen]");

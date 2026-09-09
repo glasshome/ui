@@ -11,18 +11,10 @@ import { OverlaysCatalog } from "./groups/OverlaysCatalog";
 import { PickersCatalog } from "./groups/PickersCatalog";
 import { WidgetCardCatalog } from "./groups/WidgetCardCatalog";
 
-/**
- * The @glasshome/ui component catalog: a live, at-a-glance overview of every
- * component the package ships, grouped by kind. Mounted client:only on
- * /dev/design. This is the systematic "keep a visual eye on the design system"
- * view — one scroll, every primitive, real instances (not screenshots), theme
- * following the page. Add a new component to the package → add a <CatalogItem>
- * to the matching group.
- *
- * Each group is wrapped in an ErrorBoundary so one component that throws at
- * mount (e.g. a picker that expects a live Home Assistant store) degrades to a
- * single visible error card instead of blanking the whole catalog.
- */
+/* The components area (`#/components/all`) and the shoot-everything route
+ * (`#/all`). Each group is wrapped in an ErrorBoundary so one component that
+ * throws at mount (a picker expecting a live Home Assistant store) degrades to
+ * one visible error card instead of blanking the whole catalog. */
 function Guard(props: { name: string; children: JSX.Element }) {
 	return (
 		<ErrorBoundary
