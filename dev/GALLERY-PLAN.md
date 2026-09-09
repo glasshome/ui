@@ -887,14 +887,22 @@ git commit -m "docs(skill): point at the ui gallery's screen compositions" -- .c
 ### Task 14: Wire every entry into the router
 
 **Files:**
-- Modify: `dev/routes.ts`
+- Modify: `dev/routes.ts`, `dev/main.tsx`, `.fallowrc.json`
 
 **Interfaces:**
 - Consumes: the components from Tasks 7, 9 and 10, and `Stage` from Task 8.
 
 - [ ] **Step 1: Fill both empty areas**
 
-`foundations`: the six components from Task 7. `screens`: the four from Tasks 9 and 10, each wrapped so the main entry point renders it inside `<Stage route="screens/<id>">` while `stage.html` renders it bare.
+`foundations`: the six components from Task 7. `screens`: the four from Tasks 9 and 10.
+
+Register every screen entry BARE. `dev/stage-main.tsx` renders `entry.component` directly, so an entry that itself renders `<Stage>` makes `stage.html` nest a second iframe. Do the wrapping on the parent side instead: in `dev/main.tsx`'s `AreaView`, render `<Stage route={`${area.id}/${entry.id}`} />` when `area.id === "screens"`.
+
+The stage entry point is `dev/stage-main.tsx`, not `dev/stage.tsx`: `tsc` rejects a `stage.tsx` that differs from `Stage.tsx` only in casing (TS1149).
+
+- [ ] **Step 1b: Add the second entry point to the dead-code config**
+
+`.fallowrc.json`'s `entry` list needs `dev/stage-main.tsx`. Without it `bun run check:dead` reports both it and `dev/Stage.tsx` as unreachable.
 
 - [ ] **Step 2: Walk every route by hand**
 
