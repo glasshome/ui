@@ -1,4 +1,10 @@
 import type { Component } from "solid-js";
+import ColourRoles from "./foundations/ColourRoles";
+import Elevation from "./foundations/Elevation";
+import GlassPlayground from "./foundations/GlassPlayground";
+import Motion from "./foundations/Motion";
+import Radii from "./foundations/Radii";
+import Surfaces from "./foundations/Surfaces";
 import PackageCatalog from "./PackageCatalog";
 
 export interface Entry {
@@ -15,7 +21,19 @@ export interface Area {
 }
 
 export const AREAS: Area[] = [
-	{ id: "foundations", title: "Foundations", icon: "lucide:palette", entries: [] },
+	{
+		id: "foundations",
+		title: "Foundations",
+		icon: "lucide:palette",
+		entries: [
+			{ id: "colour-roles", title: "Colour roles", component: ColourRoles },
+			{ id: "radii", title: "Radii", component: Radii },
+			{ id: "elevation", title: "Elevation", component: Elevation },
+			{ id: "motion", title: "Motion", component: Motion },
+			{ id: "surfaces", title: "Surfaces", component: Surfaces },
+			{ id: "glass-playground", title: "Glass playground", component: GlassPlayground },
+		],
+	},
 	{
 		id: "components",
 		title: "Components",
