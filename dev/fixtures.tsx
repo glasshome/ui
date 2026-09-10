@@ -182,23 +182,6 @@ export const DEMO_PEOPLE: DemoPerson[] = [
 	{ id: "person.ben", name: "Ben Ellis" },
 ];
 
-export interface DemoWidget {
-	id: string;
-	title: string;
-	icon: string;
-	w: number;
-	h: number;
-}
-
-export const DEMO_WIDGETS: DemoWidget[] = [
-	{ id: "lights", title: "Lights", icon: "lucide:lightbulb", w: 2, h: 2 },
-	{ id: "climate", title: "Climate", icon: "lucide:thermometer", w: 2, h: 1 },
-	{ id: "now-playing", title: "Now Playing", icon: "lucide:music", w: 3, h: 2 },
-	{ id: "weather", title: "Weather", icon: "lucide:cloud-sun", w: 2, h: 2 },
-	{ id: "front-door", title: "Front Door", icon: "lucide:camera", w: 2, h: 3 },
-	{ id: "household", title: "Household", icon: "lucide:list-todo", w: 1, h: 2 },
-];
-
 // In-memory stand-in for the host's media store: keeps the picker's upload,
 // delete and quota-error paths interactive without a real backend.
 function createDemoMediaStore(): MediaStore {
