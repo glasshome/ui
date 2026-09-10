@@ -63,6 +63,7 @@
 		"build": "rm -rf dist && vite build && tsc",
 		"check:structural": "bun scripts/check-structural-classes.ts",
 		"check:dead": "fallow dead-code --fail-on-issues",
+		"check:gallery": "bun scripts/check-gallery.ts",
 		"check:styling": "fallow health --css",
 		"check:tokens": "bun scripts/check-tokens.ts",
 		"check:types": "tsc --noEmit -p tsconfig.test.json",

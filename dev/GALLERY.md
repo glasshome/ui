@@ -152,6 +152,11 @@ gate registry does not reach into a submodule.
 
 1. Every component-valued export from `src/solid/index.ts` has a `<Specimen>`.
    Type-only exports and `SCREAMING_CASE` class strings are excluded by rule.
+   A part also counts as covered when it renders as a JSX tag inside the
+   specimen of another export declared in the same source file
+   (`DialogTitle` inside `Dialog`'s cell). Rendering from a different file does
+   not count, and neither does a part no specimen renders. Without this rule 188
+   of 282 component exports report; with it, 30 did on day one.
 2. Every `<Specimen name>` is an export name.
 
 `src/index.ts` (surface and motion recipes) is covered by Foundations rendering

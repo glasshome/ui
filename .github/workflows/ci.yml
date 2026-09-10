@@ -17,6 +17,7 @@ jobs:
       - run: bun run check:tokens
       - run: bun run check:structural
       - run: bun run check:dead
+      - run: bun run check:gallery
       # Styling health is a report, not a gate: it is a score, and failing CI on a
       # score turns every honest refactor into a threshold argument. Read it in the
       # log when touching CSS.
@@ -24,6 +25,8 @@ jobs:
         continue-on-error: true
       - run: bun run check:types
       - run: bun run test
+      - run: bunx playwright install --with-deps chromium
+      - run: bun run gallery:shots --verify-triggers
       - run: bun run build
       - run: bun run check:publish
       # Real Node runtime import of the server-safe entries (root + tokens);
