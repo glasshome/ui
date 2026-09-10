@@ -84,7 +84,7 @@ export function ActionsCatalog() {
 				</Axis>
 			</Specimen>
 
-			<Specimen name="CopyButton" try="click the copy glyph">
+			<Specimen name="CopyButton">
 				<div class="relative flex h-16 w-full items-center rounded-md border border-border/50 bg-muted/30 px-3 font-mono text-muted-foreground text-xs">
 					npm run build
 					<CopyButton text="npm run build" />
@@ -159,7 +159,7 @@ export function ActionsCatalog() {
 				</Axis>
 			</Specimen>
 
-			<Specimen name="SlidingIndicator" try="click a segment to slide" span={2}>
+			<Specimen name="SlidingIndicator" try="Week" span={2}>
 				<SlidingIndicator
 					active={seg()}
 					class="inline-flex gap-1 rounded-lg border border-border/50 bg-card/40 p-1"

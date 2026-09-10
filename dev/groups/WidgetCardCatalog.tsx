@@ -1,4 +1,4 @@
-import { Button, WidgetCard, type WidgetSummary } from "../../src/solid";
+import { Button, WidgetCard, WidgetMeta, type WidgetSummary } from "../../src/solid";
 import { Axis, CatalogGroup, Specimen } from "../CatalogKit";
 
 // The registry's most-repeated surface: every list, grid, gallery, and admin
@@ -87,6 +87,18 @@ export function WidgetCardCatalog() {
 						<WidgetCard widget={UNLISTED_WIDGET} onClick={() => {}} showVersions />
 						<WidgetCard widget={UNPUBLISHED_WIDGET} onClick={() => {}} showVersions />
 					</div>
+				</Axis>
+			</Specimen>
+
+			<Specimen name="WidgetMeta">
+				<Axis of="showVersions">
+					<div class="flex flex-col gap-2">
+						<WidgetMeta widget={OFFICIAL_WIDGET} />
+						<WidgetMeta widget={OFFICIAL_WIDGET} showVersions />
+					</div>
+				</Axis>
+				<Axis of="showLatestVersion">
+					<WidgetMeta widget={OFFICIAL_WIDGET} showLatestVersion />
 				</Axis>
 			</Specimen>
 		</CatalogGroup>

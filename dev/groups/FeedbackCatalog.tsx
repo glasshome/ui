@@ -3,6 +3,7 @@ import {
 	AlertDescription,
 	AlertTitle,
 	Button,
+	GlassToast,
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
@@ -80,7 +81,7 @@ export function FeedbackCatalog() {
 				</Button>
 			</Specimen>
 
-			<Specimen name="Toaster" try="click a kind to raise a toast" span={2}>
+			<Specimen name="Toaster" try="success" span={2}>
 				<Toaster />
 				<Button
 					variant="outline"
@@ -117,6 +118,15 @@ export function FeedbackCatalog() {
 				</Button>
 			</Specimen>
 
+			<Specimen name="GlassToast" span={2}>
+				<Axis of="kind">
+					<GlassToast kind="success" title="Saved" description="Your changes are live." />
+					<GlassToast kind="warning" title="Certificate expires soon" />
+					<GlassToast kind="error" title="Upload failed" />
+					<GlassToast kind="message" title="Draft restored" />
+				</Axis>
+			</Specimen>
+
 			<Specimen name="Tooltip" state="open" span={2}>
 				<div class="relative flex h-32 w-full items-end justify-center overflow-hidden rounded-md">
 					<div class="absolute inset-0 bg-gradient-to-br from-primary/60 via-accent/40 to-muted" />
@@ -129,7 +139,7 @@ export function FeedbackCatalog() {
 				</div>
 			</Specimen>
 
-			<Specimen name="HoverCard" try="hover the trigger">
+			<Specimen name="HoverCard" try="@glasshome">
 				<HoverCard openDelay={150}>
 					<HoverCardTrigger as={Button} variant="outline">
 						@glasshome

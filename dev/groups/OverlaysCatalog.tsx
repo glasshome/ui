@@ -28,12 +28,18 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 	ContextMenu,
+	ContextMenuCheckboxItem,
 	ContextMenuContent,
 	ContextMenuGroup,
 	ContextMenuItem,
 	ContextMenuLabel,
+	ContextMenuRadioGroup,
+	ContextMenuRadioItem,
 	ContextMenuSeparator,
 	ContextMenuShortcut,
+	ContextMenuSub,
+	ContextMenuSubContent,
+	ContextMenuSubTrigger,
 	ContextMenuTrigger,
 	Dialog,
 	DialogBody,
@@ -49,10 +55,13 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 	Popover,
+	PopoverAnchor,
 	PopoverContent,
 	PopoverTrigger,
 	ResponsiveDialog,
@@ -122,6 +131,7 @@ export function OverlaysCatalog() {
 	const [sheetOpen, setSheetOpen] = usePersistentOpen("sheet");
 	const [tabsOpen, setTabsOpen] = usePersistentOpen("dialog-header-tabs");
 	const [tab, setTab] = createSignal("controls");
+	const [anchorOpen, setAnchorOpen] = createSignal(false);
 	return (
 		<CatalogGroup id="cat-overlays" title="Overlays">
 			<Specimen name="Dialog" try="Open dialog">
@@ -284,6 +294,66 @@ export function OverlaysCatalog() {
 						</ContextMenuGroup>
 					</ContextMenuContent>
 				</ContextMenu>
+			</Specimen>
+
+			<Specimen name="ContextMenuSub" try="Right-click for view options">
+				<ContextMenu>
+					<ContextMenuTrigger class="flex h-16 w-full items-center justify-center rounded-md border border-border/60 border-dashed bg-muted/20 text-muted-foreground text-xs">
+						Right-click for view options
+					</ContextMenuTrigger>
+					<ContextMenuContent>
+						<ContextMenuCheckboxItem defaultChecked>Show hidden widgets</ContextMenuCheckboxItem>
+						<ContextMenuSeparator />
+						<ContextMenuRadioGroup defaultValue="grid">
+							<ContextMenuRadioItem value="grid">Grid</ContextMenuRadioItem>
+							<ContextMenuRadioItem value="list">List</ContextMenuRadioItem>
+						</ContextMenuRadioGroup>
+						<ContextMenuSeparator />
+						<ContextMenuSub>
+							<ContextMenuSubTrigger>Sort by</ContextMenuSubTrigger>
+							<ContextMenuSubContent>
+								<ContextMenuItem>Name</ContextMenuItem>
+								<ContextMenuItem>Last changed</ContextMenuItem>
+							</ContextMenuSubContent>
+						</ContextMenuSub>
+					</ContextMenuContent>
+				</ContextMenu>
+			</Specimen>
+
+			<Specimen name="DropdownMenuRadioGroup" try="Sort by">
+				<DropdownMenu>
+					<DropdownMenuTrigger as={Button} variant="outline">
+						Sort by
+					</DropdownMenuTrigger>
+					<DropdownMenuContent>
+						<DropdownMenuGroup>
+							<DropdownMenuLabel>Sort widgets</DropdownMenuLabel>
+							<DropdownMenuRadioGroup defaultValue="name">
+								<DropdownMenuRadioItem value="name">Name</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem value="changed">Last changed</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem value="size">Size</DropdownMenuRadioItem>
+							</DropdownMenuRadioGroup>
+						</DropdownMenuGroup>
+					</DropdownMenuContent>
+				</DropdownMenu>
+			</Specimen>
+
+			<Specimen name="PopoverAnchor" try="Choose a scene">
+				<Popover surface="field" open={anchorOpen()} onOpenChange={setAnchorOpen}>
+					<PopoverAnchor as="div" class="w-full max-w-xs">
+						<Button
+							variant="outline"
+							class="w-full justify-between"
+							onClick={() => setAnchorOpen(!anchorOpen())}
+						>
+							Choose a scene
+							<Icon icon="lucide:chevron-down" width={16} height={16} />
+						</Button>
+					</PopoverAnchor>
+					<PopoverContent>
+						<p class="p-3 text-muted-foreground text-sm">Evening, Movie night, Away</p>
+					</PopoverContent>
+				</Popover>
 			</Specimen>
 
 			<Specimen name="Collapsible" try="Advanced filters" span={2}>

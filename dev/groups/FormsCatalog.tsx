@@ -11,6 +11,7 @@ import {
 	FieldLegend,
 	FieldSeparator,
 	FieldSet,
+	FieldSubGroup,
 	FieldTitle,
 	Form,
 	FormControl,
@@ -47,6 +48,7 @@ import {
 	SelectValue,
 	Slider,
 	Switch,
+	SwitchRow,
 	Textarea,
 } from "../../src/solid";
 import { Icon } from "../../src/solid/icon.js";
@@ -95,6 +97,9 @@ export function FormsCatalog() {
 	const [codeLength, setCodeLength] = createSignal<string | undefined>("6");
 	const [switchOn, setSwitchOn] = createSignal(true);
 	const [fieldSwitch, setFieldSwitch] = createSignal(true);
+	const [limitDashboards, setLimitDashboards] = createSignal(true);
+	const [livingRoom, setLivingRoom] = createSignal(true);
+	const [kitchen, setKitchen] = createSignal(false);
 	const [slider, setSlider] = createSignal([60]);
 	const [range, setRange] = createSignal([35, 72]);
 	const [setpoints, setSetpoints] = createSignal([12, 30]);
@@ -164,6 +169,20 @@ export function FormsCatalog() {
 						</Field>
 					</FieldGroup>
 				</FieldSet>
+			</Specimen>
+
+			<Specimen name="FieldSubGroup" span={2}>
+				<div class="w-full">
+					<SwitchRow
+						label="Only some dashboards"
+						checked={limitDashboards()}
+						onChange={setLimitDashboards}
+					/>
+					<FieldSubGroup>
+						<SwitchRow label="Living room" checked={livingRoom()} onChange={setLivingRoom} />
+						<SwitchRow label="Kitchen" checked={kitchen()} onChange={setKitchen} />
+					</FieldSubGroup>
+				</div>
 			</Specimen>
 
 			<Specimen name="InputGroup" span={2}>

@@ -1,21 +1,28 @@
 import { For } from "solid-js";
 import {
 	AspectRatio,
+	Badge,
 	Carousel,
 	CarouselContent,
 	CarouselDots,
 	CarouselItem,
 	CarouselNext,
 	CarouselPrevious,
+	ListRow,
 	Overlay,
 	ResizableHandle,
 	ResizablePanel,
 	ResizablePanelGroup,
+	RowActions,
 	ScrollArea,
 	ScrollBar,
 	SectionCard,
+	SectionIcon,
+	SectionLabel,
 	SectionMeta,
 	SectionRow,
+	SectionRowSkeletons,
+	SectionTitle,
 } from "../../src/solid";
 import { Axis, CatalogGroup, Specimen } from "../CatalogKit";
 
@@ -46,6 +53,48 @@ export function LayoutCatalog() {
 						</For>
 					</div>
 				</SectionCard>
+			</Specimen>
+
+			<Specimen name="ListRow" span={3}>
+				<Axis of="onOpen">
+					<div class="w-full">
+						<ListRow
+							leading={<SectionIcon icon="lucide:users" size="sm" />}
+							title="Household"
+							badges={<Badge>Admin</Badge>}
+							subtitle="4 people, 2 guests"
+							meta="Updated today"
+							onOpen={() => {}}
+							openLabel="Open household"
+						/>
+					</div>
+				</Axis>
+				<Axis of="actions">
+					<div class="w-full">
+						<ListRow
+							leading={<SectionIcon icon="lucide:key-round" size="sm" />}
+							title="Front door code"
+							subtitle="Shared with 3 people"
+							actions={<RowActions onEdit={() => {}} onDelete={() => {}} />}
+						/>
+					</div>
+				</Axis>
+			</Specimen>
+
+			<Specimen name="SectionLabel">
+				<div class="flex flex-col gap-1">
+					<SectionTitle>SectionTitle</SectionTitle>
+					<SectionLabel>SectionLabel</SectionLabel>
+					<SectionMeta>SectionMeta</SectionMeta>
+				</div>
+			</Specimen>
+
+			<Specimen name="SectionRowSkeletons" span={2}>
+				<Axis of="count">
+					<div class="w-full">
+						<SectionRowSkeletons count={3} />
+					</div>
+				</Axis>
 			</Specimen>
 
 			<Specimen name="AspectRatio" state="16 / 9">

@@ -2,10 +2,12 @@ import { createSignal } from "solid-js";
 import {
 	Button,
 	LabeledField,
+	LabeledIconPicker,
 	LabeledInput,
 	PageHeader,
 	RowActions,
 	SectionAddButton,
+	SectionEmpty,
 	SwitchRow,
 	TableBulkBar,
 	TableEmpty,
@@ -22,6 +24,7 @@ export function AppKitCatalog() {
 	const [on, setOn] = createSignal(true);
 	const [digest, setDigest] = createSignal(false);
 	const [text, setText] = createSignal("");
+	const [roomIcon, setRoomIcon] = createSignal("mdi:sofa");
 	const [search, setSearch] = createSignal("");
 	const [filter, setFilter] = createSignal("All");
 	const [dir, setDir] = createSignal<"asc" | "desc">("asc");
@@ -94,6 +97,18 @@ export function AppKitCatalog() {
 
 			<Specimen name="SectionAddButton">
 				<SectionAddButton onClick={() => {}} />
+			</Specimen>
+
+			<Specimen name="SectionEmpty">
+				<div class="w-full">
+					<SectionEmpty>No schedules yet.</SectionEmpty>
+				</div>
+			</Specimen>
+
+			<Specimen name="LabeledIconPicker">
+				<div class="w-full">
+					<LabeledIconPicker label="Icon" value={roomIcon()} onChange={setRoomIcon} />
+				</div>
 			</Specimen>
 
 			<Specimen name="TableSearchInput">

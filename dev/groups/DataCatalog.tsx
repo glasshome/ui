@@ -111,6 +111,22 @@ export function DataCatalog() {
 				</TierBadge>
 			</Specimen>
 
+			<Specimen name="CountPill">
+				<Axis of="children">
+					<CountPill>3</CountPill>
+					<CountPill>12</CountPill>
+					<CountPill>128</CountPill>
+				</Axis>
+			</Specimen>
+
+			<Specimen name="Icon">
+				<Axis of="width">
+					<Icon icon="lucide:cloud" width={16} height={16} />
+					<Icon icon="lucide:cloud" width={20} height={20} />
+					<Icon icon="lucide:cloud" width={24} height={24} />
+				</Axis>
+			</Specimen>
+
 			<Specimen name="Avatar">
 				<Avatar>
 					<AvatarImage src="" alt="" />
@@ -287,7 +303,7 @@ export function DataCatalog() {
 				</Axis>
 			</Specimen>
 
-			<Specimen name="DropdownMenuSub" try="click Actions" span={2}>
+			<Specimen name="DropdownMenuSub" try="Actions" span={2}>
 				<DropdownMenu>
 					<DropdownMenuTrigger as={Button} variant="outline">
 						Actions

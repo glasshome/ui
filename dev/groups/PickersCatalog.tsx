@@ -9,6 +9,8 @@ import {
 	ImagePicker,
 	MediaStoreContext,
 	MediaTile,
+	PickerRow,
+	PickerSearch,
 	parseColor,
 } from "../../src/solid";
 import { Axis, CatalogGroup, Specimen } from "../CatalogKit";
@@ -66,16 +68,16 @@ export function PickersCatalog() {
 					</Axis>
 				</Specimen>
 
-				<Specimen name="IconPicker" try="mdi:lightbulb" span={2}>
+				<Specimen name="IconPicker" try={icon()} span={2}>
 					<div class="w-full max-w-sm">
 						<IconPicker value={icon()} onChange={setIcon} placeholder="mdi:lightbulb" />
 					</div>
 				</Specimen>
 
-				<Specimen name="AreaPicker" try="Select area..." span={2}>
+				<Specimen name="AreaPicker" try="Choose a room..." span={2}>
 					<Axis of="value">
 						<div class="w-full max-w-sm">
-							<AreaPicker value={area()} onChange={setArea} placeholder="Select area..." />
+							<AreaPicker value={area()} onChange={setArea} placeholder="Choose a room..." />
 						</div>
 					</Axis>
 					<Axis of="disabled">
@@ -145,6 +147,53 @@ export function PickersCatalog() {
 								onSelect={() => {}}
 								onBroken={() => {}}
 							/>
+						</div>
+					</Axis>
+				</Specimen>
+
+				<Specimen name="PickerRow" span={2}>
+					<Axis of="multi">
+						<div class="w-full max-w-sm">
+							<PickerRow
+								icon="mdi:lightbulb"
+								title="Ceiling light"
+								subtitle="Living room"
+								selected
+								multi={false}
+							/>
+							<PickerRow
+								icon="mdi:lightbulb"
+								title="Reading lamp"
+								subtitle="Living room"
+								meta="Off"
+								selected
+								multi
+							/>
+						</div>
+					</Axis>
+					<Axis of="dimmed">
+						<div class="w-full max-w-sm">
+							<PickerRow
+								icon="mdi:lightbulb"
+								title="Porch light"
+								subtitle="Unavailable"
+								selected={false}
+								multi
+								dimmed
+							/>
+						</div>
+					</Axis>
+				</Specimen>
+
+				<Specimen name="PickerSearch" span={2}>
+					<Axis of="size">
+						<div class="flex w-full max-w-sm flex-col gap-3">
+							<PickerSearch
+								placeholder="Search entities"
+								value="kitchen"
+								clearLabel="Clear search"
+							/>
+							<PickerSearch placeholder="Search entities" size="touch" />
 						</div>
 					</Axis>
 				</Specimen>
