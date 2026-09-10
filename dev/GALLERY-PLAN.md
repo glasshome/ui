@@ -934,6 +934,16 @@ git commit -m "feat(gallery): wire foundations and screens routes" -- dev/routes
 
 ---
 
+## Gaps the screens found
+
+Named by the screen tasks, not worked around locally. None is in this plan's scope; each is a package decision.
+
+1. **`Field orientation="responsive"` silently no-ops** unless an ancestor is the package's `FieldGroup`, the only declarer of `@container/field-group`. A caller wrapping rows in a bare `FieldSet` gets stacked rows and no error. Either `FieldSet` declares the container or `SPEC.md` says so. Silence is the wrong failure.
+2. **`Alert` has no wrapping `action`.** `Header` takes `wrap`; `Alert` does not, so at phone width an action button starves the message column.
+3. **No slider row.** `settings-row.tsx` ships `SwitchRow`, `LabeledInput`, `LabeledIconPicker`, but nothing pairs a label, a value readout and a full-width control, so a brightness row is composed by hand.
+4. **`Logo` cannot render in the gallery.** `LOGO_DEFAULT_SRC` is `/assets/glasshome_logo.png` and `dev/` serves no such asset.
+5. **`virtual:gallery-icons` is cached per dev-server process.** An icon name introduced by a new file renders as an empty placeholder until the server restarts. Dash's equivalent plugin has the same trait.
+
 ## Done when
 
 - `bun run check:types && bun run lint && bun run check:dead && bun run check:tokens && bun run check:gallery` all pass in `packages/public/ui`.
