@@ -944,6 +944,12 @@ Named by the screen tasks, not worked around locally. None is in this plan's sco
 4. **`Logo` cannot render in the gallery.** `LOGO_DEFAULT_SRC` is `/assets/glasshome_logo.png` and `dev/` serves no such asset.
 5. **`virtual:gallery-icons` is cached per dev-server process.** An icon name introduced by a new file renders as an empty placeholder until the server restarts. Dash's equivalent plugin has the same trait.
 
+6. **No stat or figure export.** A big number with its unit is plain text plus type classes in every stat tile.
+7. **`AreaChart`** has no minimum value (a temperature line plots from zero, so the screen offsets the data), no axis ticks, no colour option, a tooltip clipped at peaks, a screen-reader label hardcoded to "per day", and a fixed pixel height that cannot fill a taller card.
+8. **`StackedBar`** legend values have no thousands separator ("1413"), and the glass fill washes the segments out in light mode so they barely separate.
+9. **`BarList`** has one fixed colour and a 48px value column, too narrow for "1.2 kW".
+10. **`--chart-1` and `--chart-3` fail the dark band.** Lightness 0.80 against a 0.67 limit, per the dataviz validator; in light they sit at 1.9:1 and 2.2:1 and lean on legend labels. A `theme.css` change, not a screen change.
+
 ## Done when
 
 - `bun run check:types && bun run lint && bun run check:dead && bun run check:tokens && bun run check:gallery` all pass in `packages/public/ui`.
