@@ -238,7 +238,7 @@ export const demoMediaStore = createDemoMediaStore();
 
 // Static in-memory stand-in for the host's sync-layer adapter, so the pickers
 // render live options without the design system depending on the HA runtime.
-export const demoAdapter: EntityDataAdapter = {
+const demoAdapter: EntityDataAdapter = {
 	entityIdsByDomain: () => DEMO_IDS_BY_DOMAIN,
 	useEntities: (ids) => createMemo(() => ids().flatMap((id) => DEMO_BY_ID.get(id) ?? [])),
 	getEntityView: (id) => DEMO_BY_ID.get(id),

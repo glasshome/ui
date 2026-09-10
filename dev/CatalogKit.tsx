@@ -75,36 +75,3 @@ export function Axis(props: { of: string; children: JSX.Element }) {
 		</div>
 	);
 }
-
-/**
- * One specimen cell. `name` is the exported identifier; `span` widens a cell to
- * 2 or 3 columns for wide demos (tables, calendars, color wheels). The demo
- * lives in `children` and is vertically centered in a min-height stage.
- */
-export function CatalogItem(props: {
-	name: string;
-	hint?: string;
-	span?: 2 | 3;
-	children: JSX.Element;
-}) {
-	const spanClass =
-		props.span === 3 ? "sm:col-span-2 lg:col-span-3" : props.span === 2 ? "sm:col-span-2" : "";
-	return (
-		<div
-			data-specimen={props.name}
-			// Opaque on purpose: glass specimens need a known backdrop.
-			class={`flex flex-col overflow-hidden rounded-lg border border-border/60 bg-card ${spanClass}`}
-		>
-			<div class="flex items-baseline justify-between gap-2 border-border/50 border-b bg-muted/30 px-3 py-1.5">
-				<code class="font-mono font-semibold text-foreground text-xs">{props.name}</code>
-				{props.hint && <span class="truncate text-[10px] text-muted-foreground">{props.hint}</span>}
-			</div>
-			<div class="flex min-h-24 flex-1 flex-wrap items-center gap-3 p-4">{props.children}</div>
-		</div>
-	);
-}
-
-/** Small muted caption for a variant/state row inside a cell. */
-export function CatalogNote(props: { children: JSX.Element }) {
-	return <span class="w-full text-[10px] text-muted-foreground">{props.children}</span>;
-}

@@ -6,6 +6,10 @@ import Motion from "./foundations/Motion";
 import Radii from "./foundations/Radii";
 import Surfaces from "./foundations/Surfaces";
 import PackageCatalog from "./PackageCatalog";
+import DashboardShape from "./screens/dashboard-shape";
+import EntityModalShape from "./screens/entity-modal-shape";
+import SettingsShape from "./screens/settings-shape";
+import WizardShape from "./screens/wizard-shape";
 
 export interface Entry {
 	id: string;
@@ -40,7 +44,17 @@ export const AREAS: Area[] = [
 		icon: "lucide:box",
 		entries: [{ id: "all", title: "All components", component: PackageCatalog }],
 	},
-	{ id: "screens", title: "Screens", icon: "lucide:layout-dashboard", entries: [] },
+	{
+		id: "screens",
+		title: "Screens",
+		icon: "lucide:layout-dashboard",
+		entries: [
+			{ id: "settings-shape", title: "Settings", component: SettingsShape },
+			{ id: "dashboard-shape", title: "Dashboard", component: DashboardShape },
+			{ id: "wizard-shape", title: "Wizard step", component: WizardShape },
+			{ id: "entity-modal-shape", title: "Entity modal", component: EntityModalShape },
+		],
+	},
 ];
 
 export function findEntry(areaId: string, entryId: string): Entry | undefined {

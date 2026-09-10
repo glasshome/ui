@@ -1,5 +1,5 @@
 {
 	"$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
-	"entry": ["dev/main.tsx", "scripts/*.{ts,mjs}"],
+	"entry": ["dev/main.tsx", "dev/stage-main.tsx", "dev/screens/*.tsx", "scripts/*.{ts,mjs}"],
 	"ignoreDependencies": ["@arethetypeswrong/cli"]
 }

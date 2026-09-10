@@ -20,6 +20,7 @@ import {
 } from "../src/solid";
 import PackageCatalog from "./PackageCatalog";
 import { AREAS, type Area, findEntry } from "./routes";
+import { Stage } from "./Stage";
 import "./styles.css";
 
 provideIcons({ bundled });
@@ -89,7 +90,13 @@ function AreaView(props: { area: Area; entryId: string }) {
 					</For>
 				</nav>
 			</Show>
-			<Show when={entry()}>{(e) => <Dynamic component={e().component} />}</Show>
+			<Show when={entry()}>
+				{(e) => (
+					<Show when={props.area.id === "screens"} fallback={<Dynamic component={e().component} />}>
+						<Stage route={`${props.area.id}/${e().id}`} />
+					</Show>
+				)}
+			</Show>
 		</Show>
 	);
 }
