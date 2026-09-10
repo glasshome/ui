@@ -183,7 +183,7 @@ function Figure(props: { value: string; unit: string; class?: string }) {
 	);
 }
 
-function StatTile(props: {
+export function StatTile(props: {
 	icon: string;
 	label: string;
 	value: string;
@@ -210,7 +210,7 @@ function StatTile(props: {
 	);
 }
 
-function EnergyCard(props: { class?: string }) {
+export function EnergyCard(props: { class?: string }) {
 	const [range, setRange] = createSignal(7);
 	const days = createMemo(() => ENERGY_YEAR.slice(-range()));
 	const series = createMemo(() => days().map((day) => ({ day: day.day, count: dayTotal(day) })));
@@ -267,7 +267,7 @@ function EnergyCard(props: { class?: string }) {
 	);
 }
 
-function PowerCard() {
+export function PowerCard() {
 	const total = DRAWING_NOW.reduce((sum, item) => sum + item.value, 0);
 	return (
 		<SectionCard icon="lucide:plug-zap" title="Using power now" subtitle="Live draw by device">
@@ -282,7 +282,7 @@ function PowerCard() {
 	);
 }
 
-function ClimateCard() {
+export function ClimateCard() {
 	const now = LIVING_ROOM_TODAY[LIVING_ROOM_TODAY.length - 1];
 	const low = LIVING_ROOM_TODAY.reduce((a, b) => (b.celsius < a.celsius ? b : a));
 	const high = LIVING_ROOM_TODAY.reduce((a, b) => (b.celsius > a.celsius ? b : a));
@@ -319,7 +319,7 @@ function ClimateCard() {
 	);
 }
 
-function MediaPlayer(props: { entity: EntityViewLike; track: Track }) {
+export function MediaPlayer(props: { entity: EntityViewLike; track: Track }) {
 	const [playing, setPlaying] = createSignal(true);
 	const [volume, setVolume] = createSignal(35);
 	return (
@@ -380,7 +380,7 @@ function MediaPlayer(props: { entity: EntityViewLike; track: Track }) {
 	);
 }
 
-function RoomCard(props: {
+export function RoomCard(props: {
 	area: AreaViewLike;
 	power: Record<string, boolean>;
 	brightness: number;
