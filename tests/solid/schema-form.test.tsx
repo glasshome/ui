@@ -522,11 +522,11 @@ describe("field stack", () => {
 		expect(root?.className).not.toContain("space-y");
 	});
 
-	it("puts a field's own hint below its control", () => {
+	it("puts a field's own hint between its label and its control", () => {
 		const { container } = renderScene();
 		const field = container.querySelector<HTMLElement>('[data-slot="field"]');
 		const slots = Array.from(field?.children ?? []).map((child) => child.getAttribute("data-slot"));
-		expect(slots).toEqual(["field-label", "input", "field-description"]);
+		expect(slots).toEqual(["field-label", "field-description", "input"]);
 	});
 
 	it("puts a group's explanation above the group", () => {
@@ -696,5 +696,60 @@ describe("SchemaForm labelling", () => {
 				`${label.textContent} has no labelled control`,
 			).not.toBeNull();
 		}
+	});
+});
+
+describe("multi-choice arrays", () => {
+	it("renders an array of enum as a multiple toggle group and lifts toggles", () => {
+		const onChange = vi.fn();
+		const { getByRole } = render(() => (
+			<SchemaForm
+				schema={{
+					type: "object",
+					properties: {
+						chips: {
+							type: "array",
+							title: "Show",
+							items: { type: "string", enum: ["lights", "locks"] },
+							labels: { lights: "Lights", locks: "Locks" },
+						},
+					},
+				}}
+				data={{ chips: ["lights"] }}
+				onChange={onChange}
+			/>
+		));
+		const locks = getByRole("button", { name: "Locks" });
+		expect(getByRole("button", { name: "Lights" }).getAttribute("aria-pressed")).toBe("true");
+		fireEvent.click(locks);
+		expect(onChange).toHaveBeenCalledWith({ chips: ["lights", "locks"] });
+	});
+});
+
+describe("labelled choices", () => {
+	it("shows a choice's label instead of its raw value", () => {
+		const { getByText, queryByText } = render(() => (
+			<SchemaForm
+				schema={{
+					type: "object",
+					properties: {
+						scope: {
+							type: "string",
+							title: "Where",
+							enum: ["dashboard", "home", "area"],
+							labels: {
+								dashboard: "This dashboard's area",
+								home: "The whole home",
+								area: "Somewhere specific",
+							},
+						},
+					},
+				}}
+				data={{ scope: "dashboard" }}
+				onChange={() => {}}
+			/>
+		));
+		expect(getByText("This dashboard's area")).toBeTruthy();
+		expect(queryByText("dashboard")).toBeNull();
 	});
 });

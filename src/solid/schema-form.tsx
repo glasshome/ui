@@ -20,6 +20,7 @@ import { useMediaStore } from "./media-store.js";
 import { NumberField } from "./number-field.js";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select.js";
 import { Switch } from "./switch.js";
+import { ToggleGroup, ToggleGroupItem } from "./toggle-group.js";
 
 export interface ExtendedJSONSchema extends JSONSchema7 {
 	/* Nested schemas carry the same extensions, so a whole tree types as one. */
@@ -105,6 +106,10 @@ function isStringArray(prop: ExtendedJSONSchema): boolean {
 	return prop.type === "array" && itemsOf(prop).type === "string";
 }
 
+function isChoiceArray(prop: ExtendedJSONSchema): boolean {
+	return prop.type === "array" && itemsOf(prop).enum !== undefined;
+}
+
 function isObjectGroup(prop: ExtendedJSONSchema): boolean {
 	return prop.type === "object" && prop.properties !== undefined && prop.formType === undefined;
 }
@@ -168,7 +173,7 @@ export function switchVariantValue(
 }
 
 interface SchemaFormProps {
-	schema: JSONSchema7;
+	schema: ExtendedJSONSchema;
 	data: Record<string, unknown>;
 	onChange: (data: Record<string, unknown>) => void;
 	errors?: string[];
@@ -181,7 +186,7 @@ export function SchemaForm(props: SchemaFormProps) {
 	const properties = () => {
 		const schema = props.schema;
 		if (schema.type !== "object" || !schema.properties) return [];
-		return propertiesOf(schema as ExtendedJSONSchema);
+		return propertiesOf(schema);
 	};
 
 	// Controlled: props.data is the single source of truth, so parent-driven
@@ -251,6 +256,7 @@ type ControlKind =
 	| "enum"
 	| "boolean"
 	| "number"
+	| "choices"
 	| "strings"
 	| "group"
 	| "text";
@@ -268,6 +274,7 @@ const CONTROL_KINDS: ReadonlyArray<
 	["enum", (prop) => prop.enum !== undefined],
 	["boolean", (prop) => prop.type === "boolean"],
 	["number", (prop) => prop.type === "number" || prop.type === "integer"],
+	["choices", (prop) => isChoiceArray(prop)],
 	["strings", (prop) => isStringArray(prop)],
 	["group", (prop) => isObjectGroup(prop)],
 ];
@@ -290,13 +297,14 @@ const LABEL_TARGET: Record<ControlKind, "for" | "labelledby" | "none"> = {
 	boolean: "labelledby",
 	list: "labelledby",
 	variants: "labelledby",
+	choices: "labelledby",
 	strings: "labelledby",
 	unknown: "none",
 	group: "none",
 };
 
-/* A control's own hint sits below the control; a group carries its legend and
- * explanation above its rows, so the group branch renders its own caption. */
+/* A hint belongs to the label above it, not to the control below: under the
+ * control it reads as the next field's. Groups carry their own caption. */
 function LabeledField(props: FieldProps) {
 	const kind = () => controlKind(props.prop, props.name);
 	const labelId = () => `${props.id}-label`;
@@ -307,10 +315,10 @@ function LabeledField(props: FieldProps) {
 				<FieldLabel id={labelId()} for={target() === "for" ? props.id : undefined}>
 					{props.prop.title || props.name}
 				</FieldLabel>
-				<FieldControl {...props} labelledBy={target() === "labelledby" ? labelId() : undefined} />
 				<Show when={props.prop.description}>
 					{(description) => <FieldDescription>{description()}</FieldDescription>}
 				</Show>
+				<FieldControl {...props} labelledBy={target() === "labelledby" ? labelId() : undefined} />
 			</Field>
 		</Show>
 	);
@@ -319,6 +327,7 @@ function LabeledField(props: FieldProps) {
 /** The one recursive dispatch: every nesting level renders through here. */
 function FieldControl(props: FieldProps) {
 	const current = () => props.value ?? props.prop.default;
+	const enumLabel = (value: string) => props.prop.labels?.[value] ?? value;
 	const kind = () => controlKind(props.prop, props.name);
 	return (
 		<SwitchFlow
@@ -382,11 +391,13 @@ function FieldControl(props: FieldProps) {
 					}}
 					options={(props.prop.enum ?? []).map(String)}
 					itemComponent={(itemProps) => (
-						<SelectItem item={itemProps.item}>{String(itemProps.item.rawValue)}</SelectItem>
+						<SelectItem item={itemProps.item}>
+							{enumLabel(String(itemProps.item.rawValue))}
+						</SelectItem>
 					)}
 				>
 					<SelectTrigger class="w-full" aria-labelledby={props.labelledBy}>
-						<SelectValue<string>>{(state) => state.selectedOption()}</SelectValue>
+						<SelectValue<string>>{(state) => enumLabel(state.selectedOption())}</SelectValue>
 					</SelectTrigger>
 					<SelectContent />
 				</Select>
@@ -410,6 +421,9 @@ function FieldControl(props: FieldProps) {
 					step={props.prop.type === "integer" ? 1 : "any"}
 					onInput={(e) => props.onChange(Number(e.currentTarget.value))}
 				/>
+			</Match>
+			<Match when={kind() === "choices"}>
+				<ChoicesControl {...props} />
 			</Match>
 			<Match when={kind() === "strings"}>
 				<StringListField
@@ -493,18 +507,21 @@ function ListControl(props: FieldProps) {
 		return schema.labels?.[kind] ?? kind;
 	};
 
-	// The kind badge carries the variant label, so the caption never repeats it:
-	// labelField value, else "Item N".
-	const caption = (item: unknown, index: number) => {
-		const record = recordOf(item);
+	const labelFieldValue = (item: unknown): string | undefined => {
 		const labelField = props.prop.labelField;
-		if (labelField !== undefined) {
-			const value = record[labelField];
-			if (typeof value === "string" && value.trim() !== "") return value;
-			if (typeof value === "number") return String(value);
-		}
-		return `Item ${index + 1}`;
+		if (labelField === undefined) return undefined;
+		const value = recordOf(item)[labelField];
+		if (typeof value === "string" && value.trim() !== "") return value;
+		if (typeof value === "number") return String(value);
+		return undefined;
 	};
+
+	const caption = (item: unknown, index: number) =>
+		labelFieldValue(item) ?? kindLabel(item) ?? `Item ${index + 1}`;
+
+	// Only a row the labelField already named has anything left for the badge.
+	const badgeLabel = (item: unknown) =>
+		labelFieldValue(item) === undefined ? undefined : kindLabel(item);
 
 	const replaceAt = (index: number, value: unknown) => {
 		props.onChange(items().map((item, i) => (i === index ? value : item)));
@@ -630,7 +647,7 @@ function ListControl(props: FieldProps) {
 								<span class="pointer-events-none relative min-w-0 flex-1 truncate text-left text-sm">
 									{caption(item(), index)}
 								</span>
-								<Show when={kindLabel(item())}>
+								<Show when={badgeLabel(item())}>
 									{(label) => (
 										<Badge class="pointer-events-none relative shrink-0">{label()}</Badge>
 									)}
@@ -771,6 +788,29 @@ function VariantsControl(props: FieldProps) {
 				)}
 			</Show>
 		</fieldset>
+	);
+}
+
+function ChoicesControl(props: FieldProps) {
+	const current = () => props.value ?? props.prop.default;
+	const enumValues = () => (itemsOf(props.prop).enum ?? []).map(String);
+	const labelFor = (v: string) => props.prop.labels?.[v] ?? v;
+
+	return (
+		<ToggleGroup
+			multiple
+			aria-labelledby={props.labelledBy}
+			value={(current() as string[] | undefined) ?? []}
+			onChange={(vals) => {
+				const order = enumValues();
+				props.onChange((vals ?? []).slice().sort((a, b) => order.indexOf(a) - order.indexOf(b)));
+			}}
+			class="flex flex-wrap gap-1"
+		>
+			<For each={enumValues()}>
+				{(v) => <ToggleGroupItem value={v}>{labelFor(v)}</ToggleGroupItem>}
+			</For>
+		</ToggleGroup>
 	);
 }
 
