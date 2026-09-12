@@ -152,7 +152,13 @@ Motion is one system, not per-component flair. Four rules, all held by
    widget shadow roots on the inherited `--motion-ambient` (1 live, else 0)
    or, for a loop that can only pause, `--motion-play` (`running` live, else
    `paused`). A wrapper with `data-motion="still"` opts out: thumbnails are
-   stills.
+   stills. A mode indicator is not decoration: it may loop for as long
+   as its mode is on, provided the mode itself is bounded (dash leaves edit mode
+   after three idle minutes). `.glass-edge-orbit` is that rim.
+
+`HOLD_MOTION`: hold progress. A fill grows out of the touch while held, dissolves once the hold fires, and drains back faster if let go early (holding the dock to change modes).
+
+`RISE_MOTION`: `MODAL_MOTION`'s twin for a surface that stays mounted; its closed state is a resting style, since a mount door's exit ends and leaves the element showing.
 
 A new component with an open, pick or reveal state uses these doors before it
 gets any motion of its own; a motion need none of them covers is added to
