@@ -4,11 +4,12 @@
 import { bundled } from "virtual:gallery-icons";
 import { createSignal, For, onCleanup, Show } from "solid-js";
 import { Dynamic, render } from "solid-js/web";
+import { CARD_SURFACE } from "../src/index.js";
+import { cn } from "../src/lib/utils.js";
 import {
 	Button,
 	Card,
 	CardTitle,
-	Dock,
 	Empty,
 	EmptyDescription,
 	EmptyHeader,
@@ -117,17 +118,6 @@ function Gallery() {
 	// `#/all` is the shoot-everything route: every specimen, no chrome around it.
 	const bare = () => areaId() === "all";
 
-	const dockItems = () =>
-		AREAS.map((a) => ({
-			id: a.id,
-			icon: <Icon icon={a.icon} width="24" height="24" />,
-			label: a.title,
-			isActive: a.id === areaId(),
-			onClick: () => {
-				window.location.hash = `#/${a.id}/${a.entries[0]?.id ?? ""}`;
-			},
-		}));
-
 	return (
 		<>
 			<Show
@@ -140,25 +130,50 @@ function Gallery() {
 					</div>
 				}
 			>
-				<div class="min-h-screen bg-background pb-28 text-foreground">
-					<header class="sticky top-0 z-50 flex items-center justify-between gap-4 border-border/50 border-b bg-background/80 px-6 py-3 backdrop-blur-md">
-						<a class="font-bold text-lg" href="#/">
-							@glasshome/ui
-						</a>
-						<Button variant="outline" size="sm" onClick={() => apply(!dark())}>
-							<Show when={dark()} fallback={"Dark"}>
-								Light
-							</Show>
-						</Button>
+				<div class="min-h-screen bg-background pb-16 text-foreground">
+					<header class="sticky top-0 z-50 flex w-full justify-center px-3 pt-2 sm:px-4 sm:pt-3 md:pt-4">
+						<div
+							class={cn(
+								CARD_SURFACE,
+								"flex h-14 w-full max-w-6xl items-center gap-3 rounded-2xl px-4 sm:h-16 sm:gap-4 sm:px-5",
+							)}
+						>
+							<a class="min-w-0 shrink truncate font-bold text-base sm:text-lg" href="#/">
+								@glasshome/ui
+							</a>
+							<nav
+								class="flex shrink-0 items-center justify-end gap-1 sm:flex-1 sm:justify-center sm:gap-2"
+								aria-label="Gallery areas"
+							>
+								<For each={AREAS}>
+									{(a) => (
+										<a
+											href={`#/${a.id}/${a.entries[0]?.id ?? ""}`}
+											aria-current={a.id === areaId() ? "page" : undefined}
+											class="flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-1.5 font-medium text-sm transition-colors"
+											classList={{
+												"bg-muted text-foreground": a.id === areaId(),
+												"text-muted-foreground hover:text-primary": a.id !== areaId(),
+											}}
+										>
+											<Icon icon={a.icon} width="18" height="18" />
+											<span class="hidden sm:inline">{a.title}</span>
+										</a>
+									)}
+								</For>
+							</nav>
+							<Button variant="ghost" size="sm" class="shrink-0" onClick={() => apply(!dark())}>
+								<Show when={dark()} fallback={"Dark"}>
+									Light
+								</Show>
+							</Button>
+						</div>
 					</header>
 					<main class="mx-auto max-w-6xl px-6 py-8">
 						<Show when={area()} fallback={<AreaIndex />}>
 							{(current) => <AreaView area={current()} entryId={entryId()} />}
 						</Show>
 					</main>
-					<nav class="fixed bottom-4 left-1/2 z-50 -translate-x-1/2" aria-label="Gallery areas">
-						<Dock items={dockItems()} dockMode="floating" />
-					</nav>
 				</div>
 			</Show>
 			<Toaster />
