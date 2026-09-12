@@ -1,6 +1,6 @@
 # Gallery rebuild implementation plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Give `@glasshome/ui`'s gallery a Foundations area and a Screens area, and put every component specimen on one grammar.
 
@@ -36,7 +36,7 @@
 - Consumes: nothing.
 - Produces: a gallery that `bun run check:types` covers. Every later task depends on this.
 
-- [ ] **Step 1: Add `dev/` to the typecheck project**
+- [x] **Step 1: Add `dev/` to the typecheck project**
 
 In `tsconfig.test.json`, change `"include"` to:
 
@@ -50,16 +50,16 @@ In `tsconfig.json`, change `"types": ["node"]` to:
 "types": ["node", "vite/client"]
 ```
 
-- [ ] **Step 2: Run the typecheck and capture the failures**
+- [x] **Step 2: Run the typecheck and capture the failures**
 
 Run: `bun run check:types`
 Expected: FAIL, roughly 12 errors across `dev/`.
 
-- [ ] **Step 3: Fix the two real API misuses**
+- [x] **Step 3: Fix the two real API misuses**
 
 `dev/groups/OverlaysCatalog.tsx:205` and `:361` pass `variant` to a `<Button as={…}>`. `Button`'s `as` form does not take `variant`. Move the styling to the wrapped element's own class, or drop `as` and keep `variant`. Read both call sites and pick whichever preserves the rendered specimen.
 
-- [ ] **Step 4: Fix the index-access errors**
+- [x] **Step 4: Fix the index-access errors**
 
 `dev/GlassPlayground.tsx` and `dev/groups/PickersCatalog.tsx` fail `noUncheckedIndexedAccess`. Guard each read; never use `!`:
 
@@ -68,7 +68,7 @@ const first = items[0];
 if (!first) return null;
 ```
 
-- [ ] **Step 5: Give the gallery real icons**
+- [x] **Step 5: Give the gallery real icons**
 
 `dev/main.tsx` never calls `provideIcons`, so every `<Icon>` in the gallery renders the empty `viewBox="0 0 16 16"` placeholder. Add, above `render(...)`:
 
@@ -81,12 +81,12 @@ provideIcons({ bundled: lucide });
 
 If `@iconify-json/lucide` is not a devDependency, add it with `bun add -D @iconify-json/lucide`. Check how `tests/setup.ts` shapes the argument and match it.
 
-- [ ] **Step 6: Verify**
+- [x] **Step 6: Verify**
 
 Run: `bun run check:types && bun run lint && bun run dev:gallery`
 Expected: typecheck passes, and icons render as glyphs rather than empty boxes.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git commit -m "fix(gallery): typecheck dev/ and provide icons" -- tsconfig.json tsconfig.test.json dev/
@@ -110,7 +110,7 @@ git commit -m "fix(gallery): typecheck dev/ and provide icons" -- tsconfig.json 
   - `contrastRatio(oklchA: string, oklchB: string): number`
   Both exported from `src/tokens/index.ts`. Task 7 (Foundations) consumes both.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `tests/tokens/theme-css.test.ts`:
 
@@ -158,12 +158,12 @@ describe("contrastRatio", () => {
 });
 ```
 
-- [ ] **Step 2: Run it to confirm it fails**
+- [x] **Step 2: Run it to confirm it fails**
 
 Run: `bunx vitest run tests/tokens/theme-css.test.ts`
 Expected: FAIL, `parseThemeBlock` is not exported.
 
-- [ ] **Step 3: Write the module**
+- [x] **Step 3: Write the module**
 
 Create `src/tokens/theme-css.ts`:
 
@@ -204,12 +204,12 @@ Add to `src/tokens/index.ts`:
 export { contrastRatio, parseThemeBlock } from "./theme-css.js";
 ```
 
-- [ ] **Step 4: Run the test**
+- [x] **Step 4: Run the test**
 
 Run: `bunx vitest run tests/tokens/theme-css.test.ts`
 Expected: PASS.
 
-- [ ] **Step 5: Delete the two duplicate parsers**
+- [x] **Step 5: Delete the two duplicate parsers**
 
 In `scripts/check-tokens.ts`, delete the local `cssVars` function and use `parseThemeBlock(css, block)`.
 In `tests/tokens/contrast.test.ts`, delete the local `themeVars`, `luminance` and `contrast` functions and use `parseThemeBlock` and `contrastRatio`. Keep the `role()` guard: it throws a better message. Note that `themeVars` only matched `oklch(...)` values while `parseThemeBlock` matches every declaration, so `role()` now also has to reject a non-oklch value:
@@ -224,12 +224,12 @@ function role(vars: Record<string, string>, name: string): string {
 }
 ```
 
-- [ ] **Step 6: Verify nothing regressed**
+- [x] **Step 6: Verify nothing regressed**
 
 Run: `bun run check:tokens && bunx vitest run tests/tokens && bun run check:types`
 Expected: all pass.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git commit -m "refactor(tokens): one theme.css parser and contrast helper" -- src/tokens scripts/check-tokens.ts tests/tokens
@@ -251,7 +251,7 @@ git commit -m "refactor(tokens): one theme.css parser and contrast helper" -- sr
   - Route grammar: `#/`, `#/<areaId>`, `#/<areaId>/<entryId>`, plus `#/all`.
   Tasks 5, 7, 9, 10, 11 register entries here.
 
-- [ ] **Step 1: Write `dev/routes.ts`**
+- [x] **Step 1: Write `dev/routes.ts`**
 
 ```ts
 import type { Component } from "solid-js";
@@ -286,7 +286,7 @@ export function findEntry(areaId: string, entryId: string): Entry | undefined {
 }
 ```
 
-- [ ] **Step 2: Rewrite `dev/main.tsx`**
+- [x] **Step 2: Rewrite `dev/main.tsx`**
 
 Keep the existing theme toggle behaviour. Replace the body with a hash router, the dock, and a labelled entry list.
 
@@ -376,16 +376,16 @@ function Gallery() {
 
 `AreaIndex` is a small component rendering one `Button` per area, shown at `#/`. Write it in the same file.
 
-- [ ] **Step 3: Keep the shoot-everything route working**
+- [x] **Step 3: Keep the shoot-everything route working**
 
 `shoot.mjs` loads `/` and expects every `[data-specimen]` cell present. Add to the router: when `hash()` is `all`, render `<PackageCatalog />` with no chrome. Screens and Foundations are excluded from that route on purpose; only specimens live there.
 
-- [ ] **Step 4: Verify by eye**
+- [x] **Step 4: Verify by eye**
 
 Run: `bun run dev:gallery`
 Check: `#/` shows three areas, the dock switches area, `#/components/all` lists every group, the back/forward buttons move between routes, and `#/all` renders the bare catalog.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit -m "feat(gallery): three areas behind a hash router" -- dev/main.tsx dev/routes.ts dev/PackageCatalog.tsx
@@ -409,11 +409,11 @@ git commit -m "feat(gallery): three areas behind a hash router" -- dev/main.tsx 
   - `<DemoHost>`, a component wrapping children in `EntityDataContext.Provider value={demoAdapter}`
   Tasks 9, 10, 11 consume `DemoHost` and the demo arrays.
 
-- [ ] **Step 1: Move the existing adapter out of the pickers group**
+- [x] **Step 1: Move the existing adapter out of the pickers group**
 
 `dev/groups/PickersCatalog.tsx` already defines `DEMO_ENTITIES`, `DEMO_BY_ID`, `DEMO_AREAS` and `demoAdapter`. Cut them into `dev/fixtures.tsx` unchanged, export them, and import them back in `PickersCatalog.tsx`.
 
-- [ ] **Step 2: Add `DemoHost`**
+- [x] **Step 2: Add `DemoHost`**
 
 ```tsx
 import type { JSX } from "solid-js";
@@ -424,16 +424,16 @@ export function DemoHost(props: { children: JSX.Element }) {
 }
 ```
 
-- [ ] **Step 3: Add the demo data the screens need**
+- [x] **Step 3: Add the demo data the screens need**
 
 Homeowner-plausible, no lorem: areas Living room, Kitchen, Bedroom, Office; entities across `light`, `switch`, `sensor`, `media_player`; four people with names; six widgets with titles, lucide icon names and grid sizes.
 
-- [ ] **Step 4: Verify**
+- [x] **Step 4: Verify**
 
 Run: `bun run check:types && bun run dev:gallery`
 Check: the Pickers group still renders live area and entity pickers.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit -m "feat(gallery): shared demo fixtures" -- dev/fixtures.tsx dev/groups/PickersCatalog.tsx
@@ -454,7 +454,7 @@ git commit -m "feat(gallery): shared demo fixtures" -- dev/fixtures.tsx dev/grou
   - `<Axis of>` where `of: string` is a real prop name
   - `CatalogItem` and `CatalogNote` are deleted in Task 6, not here; keep them exported until then so the tree still builds.
 
-- [ ] **Step 1: Write the new parts**
+- [x] **Step 1: Write the new parts**
 
 ```tsx
 /** One specimen cell. `name` is the exported identifier. */
@@ -500,12 +500,12 @@ export function Axis(props: { of: string; children: JSX.Element }) {
 }
 ```
 
-- [ ] **Step 2: Verify in the browser**
+- [x] **Step 2: Verify in the browser**
 
 Run: `bun run dev:gallery`
 Check: nothing changed yet, since no group uses `Specimen` before Task 6.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git commit -m "feat(gallery): Specimen and Axis" -- dev/CatalogKit.tsx
@@ -522,23 +522,23 @@ git commit -m "feat(gallery): Specimen and Axis" -- dev/CatalogKit.tsx
 - Consumes: `Specimen`, `Axis` from Task 5.
 - Produces: nothing later tasks import.
 
-- [ ] **Step 1: Rewrite every `CatalogItem` as a `Specimen`**
+- [x] **Step 1: Rewrite every `CatalogItem` as a `Specimen`**
 
 For each cell:
 - `name` stays, unless it is not an export name. Rename `DataTable empty` to `DataTable` with a second `Axis of="state"`; rename `Sonner` to `Toaster`; `Thumbs` to `CarouselThumbs` if that is the export, otherwise fold it into `Carousel`. Read `src/solid/index.ts` and use the real name.
 - A `hint` naming variants becomes `<Axis of="variant">`. A `hint` naming an interaction becomes `try=`. A `hint` showing a live value becomes `state=`.
 - Each `CatalogNote` row becomes an `<Axis of="…">` with the axis's real prop name.
 
-- [ ] **Step 2: Rehome the invariants, same commit**
+- [x] **Step 2: Rehome the invariants, same commit**
 
 Some `CatalogNote` texts are constraints recorded nowhere else, for example "wipe stacks its slides in one grid cell, which collapses every scroll snap onto one point, so wipe cannot be dragged", "rows are glass on glass, never a flat `bg-card/60` plate", "the card owns the padding; the parts carry none", "counts over 9 read as 9+". For each, put one line in the component's own source file (a `//` line above the constraint it describes) or a row in `SPEC.md`'s relevant table. One home each. Do not delete without rehoming; do not put it in two places.
 
-- [ ] **Step 3: Verify**
+- [x] **Step 3: Verify**
 
 Run: `bun run check:types && bun run lint && bun run gallery:shots --no-build`
 Expected: typecheck and lint pass, shots exit 0 with no page errors.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git commit -m "refactor(gallery): one grammar for glass, actions, forms, data, widget card, feedback" -- dev/groups src/solid SPEC.md
@@ -556,25 +556,25 @@ git commit -m "refactor(gallery): one grammar for glass, actions, forms, data, w
 - Consumes: `Specimen`, `Axis` from Task 5; `DemoHost` from Task 4.
 - Produces: `CatalogKit.tsx` exporting only `CatalogGroup`, `Specimen`, `Axis`.
 
-- [ ] **Step 1: Same migration as Task 6a for these five files**
+- [x] **Step 1: Same migration as Task 6a for these five files**
 
 `OverlaysCatalog.tsx` carries most of the interaction hints ("modal · click to open", "right-click", "drag-to-dismiss · click to open", "click Actions"). Every one becomes `try=`, with the exact trigger text `shoot.mjs` will click.
 
-- [ ] **Step 2: Have `PickersCatalog` use `DemoHost`**
+- [x] **Step 2: Have `PickersCatalog` use `DemoHost`**
 
 Replace its inline `EntityDataContext.Provider` with `<DemoHost>`.
 
-- [ ] **Step 3: Delete the old parts**
+- [x] **Step 3: Delete the old parts**
 
 Run: `grep -rn "CatalogItem\|CatalogNote" dev/`
 Expected: no hits. Then delete both from `dev/CatalogKit.tsx`.
 
-- [ ] **Step 4: Verify**
+- [x] **Step 4: Verify**
 
 Run: `bun run check:types && bun run lint && bun run check:dead && bun run gallery:shots --no-build`
 Expected: all pass, no page errors.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit -m "refactor(gallery): one grammar for nav, overlays, layout, pickers, app kit" -- dev/groups dev/CatalogKit.tsx src/solid SPEC.md
@@ -594,7 +594,7 @@ git commit -m "refactor(gallery): one grammar for nav, overlays, layout, pickers
 - Consumes: `parseThemeBlock`, `contrastRatio` from Task 2; the route registry from Task 3.
 - Produces: six entries under the `foundations` area.
 
-- [ ] **Step 1: Read theme.css at build time**
+- [x] **Step 1: Read theme.css at build time**
 
 Vite inlines a `?raw` import, so no fetch and no parser at runtime beyond the one function:
 
@@ -606,30 +606,30 @@ const LIGHT = parseThemeBlock(themeCss, ":root");
 const DARK = parseThemeBlock(themeCss, ".dark");
 ```
 
-- [ ] **Step 2: `ColourRoles.tsx`**
+- [x] **Step 2: `ColourRoles.tsx`**
 
 One swatch per role, in both themes, each labelled with its variable name and its measured contrast against that theme's `--background`. Roles: `--foreground`, `--muted-foreground`, `--primary`, `--accent`, `--secondary`, `--border`, `--ring`, `--success`, `--warning`, `--destructive`, `--love`, `--chart-1` through `--chart-5`. Skip any whose value is not an `oklch(` literal rather than throwing; a role defined by `color-mix` has no single ratio.
 
-- [ ] **Step 3: `Radii.tsx`, `Elevation.tsx`, `Motion.tsx`**
+- [x] **Step 3: `Radii.tsx`, `Elevation.tsx`, `Motion.tsx`**
 
 `Radii`: one box per `--radius-*` found in the parsed block, labelled with name and value.
 `Elevation`: one card per shadow token found.
 `Motion`: one row per `--duration-*` / `--ease-*` pair, each with a button that toggles a class so the sample animates on that pair. No inline animation strings; use the classes in `src/lib/motion-classes.ts`.
 
-- [ ] **Step 4: `Surfaces.tsx`**
+- [x] **Step 4: `Surfaces.tsx`**
 
 Six panels over one shared decorative ground, each wearing exactly one recipe imported from `src/index.ts`: `CARD_SURFACE`, `OVERLAY_SURFACE`, `INPUT_SURFACE`, `FIELD_CHROME`, `TRACK_SURFACE`, `SCRIM_CLASS`. Label each with the export name.
 
-- [ ] **Step 5: Derive the glass knobs**
+- [x] **Step 5: Derive the glass knobs**
 
 `dev/groups/GlassCatalog.tsx:25` holds a hand-kept `KNOBS` list of five of SPEC's fourteen, and it has drifted from `SPEC.md` (`--glass-wash` 20% against SPEC's 28%, `--glass-lift` 0.45 against 0). Move the playground to `dev/foundations/`, and read each knob's default from the parsed theme block rather than retyping it. A knob SPEC documents but `theme.css` does not declare is listed with its value read from `getComputedStyle(document.documentElement)`.
 
-- [ ] **Step 7: Verify in pixels**
+- [x] **Step 7: Verify in pixels**
 
 Run: `bun run dev:gallery`, open `#/foundations/colour-roles`, then toggle the theme.
 Check: swatches match what dash renders, contrast numbers are plausible (`--foreground` well above 10, semantic roles above 4.5), and no role renders as white because its value failed to parse.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git commit -m "feat(gallery): foundations area" -- dev/foundations dev/groups/GlassCatalog.tsx dev/routes.ts
@@ -650,20 +650,20 @@ git commit -m "feat(gallery): foundations area" -- dev/foundations dev/groups/Gl
 - Consumes: Task 3's router.
 - Produces: `<Stage route={string}>`, used by the screens area. Widths: `phone` 390x844, `tablet` 834x1112, `desktop` 1280x900.
 
-- [ ] **Step 1: Add a second entry point**
+- [x] **Step 1: Add a second entry point**
 
 `dev/stage.html` loads `dev/stage.tsx`, which mounts one entry by reading its own hash, with no dock and no header. Register it in `vite.dev.config.ts`'s `build.rollupOptions.input` beside the main `index.html`.
 
-- [ ] **Step 2: Write `Stage.tsx`**
+- [x] **Step 2: Write `Stage.tsx`**
 
 An `<iframe src={`/stage.html#/${props.route}`}>` sized to the selected width, with the width buttons above it. The iframe carries the parent's theme through a query parameter, since a class on the parent's `documentElement` does not cross the boundary.
 
-- [ ] **Step 3: Verify the axis is honest**
+- [x] **Step 3: Verify the axis is honest**
 
 Run: `bun run dev:gallery`, open a screens entry at `phone`, open a modal inside it.
 Check: the dialog is phone-width and sits inside the iframe. This is the whole point of the iframe; if the modal escapes, the stage is wrong.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git commit -m "feat(gallery): iframe width stage" -- dev/Stage.tsx dev/stage.html dev/stage.tsx dev/main.tsx vite.dev.config.ts
@@ -681,20 +681,20 @@ git commit -m "feat(gallery): iframe width stage" -- dev/Stage.tsx dev/stage.htm
 - Consumes: `DemoHost`, `DEMO_AREAS`, `DEMO_PEOPLE` from Task 4.
 - Produces: from `settings-shape.tsx`, `export function FieldGroup(props)` and `export function DangerZone(props)`; from `wizard-shape.tsx`, `export function ChoiceStep(props)`. Default export per file is the whole screen.
 
-- [ ] **Step 1: `settings-shape.tsx`**
+- [x] **Step 1: `settings-shape.tsx`**
 
 Sections built from `SectionCard` with `icon`, `title`, `subtitle`, `count` and `action`; rows from `SectionRow`; a `FieldSet` + `FieldLegend` + `FieldDescription` + `FieldSubGroup` group; switches, selects and a slider; and a destructive zone. Export `FieldGroup` and `DangerZone` as standalone components, then compose them in the default export. Nothing hand-rolls a panel, a row, a chip or a callout: every one comes from an export.
 
-- [ ] **Step 2: `wizard-shape.tsx`**
+- [x] **Step 2: `wizard-shape.tsx`**
 
 `StepIndicator` with `count` and `index`, `OptionCardGroup` + `OptionCard` for the choice, a header and a footer action pair. Export `ChoiceStep`.
 
-- [ ] **Step 4: Verify in pixels at three widths**
+- [x] **Step 4: Verify in pixels at three widths**
 
 Run: `bun run gallery:shots --route screens/settings-shape --stage phone`, then `tablet`, then `desktop`.
 Check each decoded PNG: rows do not overflow at phone width, the danger zone reads as destructive in both themes, and no page errors.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit -m "feat(gallery): settings and wizard screens" -- dev/screens dev/routes.ts
@@ -712,19 +712,19 @@ git commit -m "feat(gallery): settings and wizard screens" -- dev/screens dev/ro
 - Consumes: `DemoHost`, `DEMO_WIDGETS`, `DEMO_ENTITIES` from Task 4.
 - Produces: from `entity-modal-shape.tsx`, `export function ModalForm(props)` and `export function ListTriad(props)`.
 
-- [ ] **Step 1: `dashboard-shape.tsx`**
+- [x] **Step 1: `dashboard-shape.tsx`**
 
 A decorative wallpaper ground, a grid of `WidgetCard`s in both `layout="tile"` and `layout="row"`, and a floating `Dock`. The dock here is a specimen of the package's dock, not the gallery's own nav; render it inside the screen.
 
-- [ ] **Step 2: `entity-modal-shape.tsx`**
+- [x] **Step 2: `entity-modal-shape.tsx`**
 
 A `ResponsiveDialog` with a header carrying `media`, a `Body as="form" id="…"`, and a footer button with `form="…"`. Beside it, `ListTriad`: the same list in three states, loaded, `Empty` with its parts, and `SectionRowSkeletons`. Export `ModalForm` and `ListTriad`.
 
-- [ ] **Step 3: Verify in pixels, same as Task 9**
+- [x] **Step 3: Verify in pixels, same as Task 9**
 
 Shoot each at all three stages, decode and look. The modal at `phone` must be the bottom-sheet form, which is the case the iframe exists for.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git commit -m "feat(gallery): dashboard and entity modal screens" -- dev/screens dev/routes.ts
@@ -741,7 +741,7 @@ git commit -m "feat(gallery): dashboard and entity modal screens" -- dev/screens
 - Consumes: Task 3's routes, Task 8's stage.
 - Produces: `--route`, `--stage`, `--reduced-motion`.
 
-- [ ] **Step 1: Add the flags**
+- [x] **Step 1: Add the flags**
 
 `--stage phone|tablet|desktop` maps to a viewport pair and overrides `width`/`height`. Do not reuse `--width`: it is already `Number(flag("width", 1280))` at line 33, so `--width phone` produces `viewport: { width: NaN }` and an `@NaN` filename.
 
@@ -751,21 +751,21 @@ const stage = flag("stage", null);
 const [stageW, stageH] = STAGES[stage] ?? [];
 ```
 
-- [ ] **Step 2: Add the route path**
+- [x] **Step 2: Add the route path**
 
 When `--route` is given, `goto` `http://gallery.local/stage.html#/<route>`, wait for the settle condition, and take one full-page screenshot named for the route and stage. The existing `[data-specimen]` loop must not run in this mode: it would find no cells and exit 0 having written nothing.
 
-- [ ] **Step 3: Settle deliberately**
+- [x] **Step 3: Settle deliberately**
 
 Replace the blind `waitForTimeout(800)` on the route path with waiting for `[data-screen]` to be visible, then one animation frame past the longest `--duration-*`. Screens stagger their rows in, so a shot taken too early catches a half-arrived list.
 
-- [ ] **Step 4: `--reduced-motion`**
+- [x] **Step 4: `--reduced-motion`**
 
 ```js
 if (flag("reduced-motion", false) === true) await page.emulateMedia({ reducedMotion: "reduce" });
 ```
 
-- [ ] **Step 4b: Make an unclickable `try` fail loudly**
+- [x] **Step 4b: Make an unclickable `try` fail loudly**
 
 Add `--verify-triggers`: load the bare `#/all` route, and for every cell carrying `data-try`, assert the value resolves to exactly one element inside that cell's `[data-stage]`. Exit non-zero listing every cell that fails. Wire it into CI beside the shot run.
 
@@ -782,7 +782,7 @@ Without this the `try` slot rots back into prose. Six values are descriptions ra
 
 `Dock` is the precedent for dropping: its items render an icon plus an `aria-label` and a tooltip that only mounts on hover, so no `try` string can ever resolve. It carries `state` instead.
 
-- [ ] **Step 5: Verify all three modes**
+- [x] **Step 5: Verify all three modes**
 
 ```bash
 bun run gallery:shots Button                                  # unchanged behaviour
@@ -791,7 +791,7 @@ bun run gallery:shots --route screens/wizard-shape --reduced-motion
 ```
 Decode each output PNG and look at it. A zero-byte or blank shot is a failure, not a pass.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git commit -m "feat(gallery): shoot routes and stages" -- dev/shoot.mjs
@@ -812,7 +812,7 @@ git commit -m "feat(gallery): shoot routes and stages" -- dev/shoot.mjs
 - Consumes: every specimen from Tasks 6a and 6b.
 - Produces: `bun run check:gallery`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -825,7 +825,7 @@ describe("gallery coverage", () => {
 });
 ```
 
-- [ ] **Step 2: Write the script**
+- [x] **Step 2: Write the script**
 
 `uncoveredExports()` returns names that fail either rule:
 1. A component-valued export from `src/solid/index.ts` with no `<Specimen name="…">` anywhere under `dev/`. Resolve each export to its declaration file and keep only those whose declaration is a component (a function returning JSX). Exclude `export type` names and `SCREAMING_CASE` identifiers by rule, never by an allowlist entry.
@@ -840,20 +840,20 @@ export const ALLOW: Array<[name: string, reason: string]> = [];
 
 The script fails if any allow entry has an empty reason, and if any allow entry names an export that is now covered (a stale allowlist is the failure mode this rule prevents).
 
-- [ ] **Step 3: Run it and empty the allowlist honestly**
+- [x] **Step 3: Run it and empty the allowlist honestly**
 
 Run: `bun scripts/check-gallery.ts`
 Every reported name is either a missing specimen (add it in the group it belongs to) or a genuine exclusion (add it to `ALLOW` with a reason worth reading). Do not add entries in bulk to make the run green.
 
-- [ ] **Step 4: Wire it up**
+- [x] **Step 4: Wire it up**
 
 Add to `package.json` scripts: `"check:gallery": "bun scripts/check-gallery.ts"`. Add a step to `.github/workflows/ci.yml` beside the other `bun run` checks.
 
-- [ ] **Step 5: Verify it fails when it should**
+- [x] **Step 5: Verify it fails when it should**
 
 Delete one `<Specimen>` temporarily, run `bun run check:gallery`, confirm a non-zero exit naming that export, then restore it.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git commit -m "feat(gallery): specimen coverage gate" -- scripts/check-gallery.ts dev/coverage-allow.ts tests/gallery-coverage.test.ts package.json .github/workflows/ci.yml
@@ -871,7 +871,7 @@ git commit -m "feat(gallery): specimen coverage gate" -- scripts/check-gallery.t
 
 **This task commits in the dash repository, not the submodule.**
 
-- [ ] **Step 1: Add the table**
+- [x] **Step 1: Add the table**
 
 Under "Resolve every surface before writing code", add:
 
@@ -892,7 +892,7 @@ A screen documents the package, not dash. It will drift from dash's real
 settings page; it is not dash's spec.
 ```
 
-- [ ] **Step 2: Commit in the dash repo**
+- [x] **Step 2: Commit in the dash repo**
 
 ```bash
 cd /home/ihsen/Documents/repos/glasshome/dash
@@ -909,7 +909,7 @@ git commit -m "docs(skill): point at the ui gallery's screen compositions" -- .c
 **Interfaces:**
 - Consumes: the components from Tasks 7, 9 and 10, and `Stage` from Task 8.
 
-- [ ] **Step 1: Fill both empty areas**
+- [x] **Step 1: Fill both empty areas**
 
 `foundations`: the six components from Task 7. `screens`: the four from Tasks 9 and 10.
 
@@ -917,16 +917,16 @@ Register every screen entry BARE. `dev/stage-main.tsx` renders `entry.component`
 
 The stage entry point is `dev/stage-main.tsx`, not `dev/stage.tsx`: `tsc` rejects a `stage.tsx` that differs from `Stage.tsx` only in casing (TS1149).
 
-- [ ] **Step 1b: Add the second entry point to the dead-code config**
+- [x] **Step 1b: Add the second entry point to the dead-code config**
 
 `.fallowrc.json`'s `entry` list needs `dev/stage-main.tsx`. Without it `bun run check:dead` reports both it and `dev/Stage.tsx` as unreachable.
 
-- [ ] **Step 2: Walk every route by hand**
+- [x] **Step 2: Walk every route by hand**
 
 Run: `bun run dev:gallery`, click every dock item and every entry.
 Expected: no blank panes, no console errors.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git commit -m "feat(gallery): wire foundations and screens routes" -- dev/routes.ts
@@ -956,3 +956,33 @@ Named by the screen tasks, not worked around locally. None is in this plan's sco
 - `bun run gallery:shots --no-build` exits 0.
 - Each of the four screens has been shot at `phone`, `tablet` and `desktop`, decoded and looked at.
 - The submodule pointer in dash is NOT advanced, and nothing is published. That is a separate decision for the owner.
+
+## Built, and where it left the plan
+
+Every task above is done. What the build changed about the plan, recorded because
+the code is now the truth and this file is not:
+
+- **The dock stayed.** The plan gave the three areas to `<Dock>`, then a revision
+  moved them to a floating top bar, then the owner split the two: `Dock` carries
+  the areas at the foot, the top bar carries the current area's pages and the
+  options. `dev/GALLERY.md`'s Shell section describes the shipped shape.
+- **`dev/stage.tsx` is `dev/stage-main.tsx`.** `tsc` rejects a filename differing
+  from `Stage.tsx` only in casing (TS1149).
+- **Icons are bundled at build time.** `provideIcons({ bundled: lucide })` cannot
+  work: iconify sets key icons by bare name. A `gallery-icons` plugin in
+  `vite.dev.config.ts` scans `dev/` and `src/` and serves `virtual:gallery-icons`.
+  It is cached per dev-server process, so a new icon name needs a restart.
+- **The gate counts same-file parts as covered.** Applied literally the rule
+  reported 188 of 282 exports. See `dev/GALLERY.md`'s Gate section.
+- **`shoot.mjs` gained `--verify-triggers` and `--right-click`.** The first was
+  added after `--click` was found to be clicking the header chip rather than the
+  trigger, passing silently on every overlay. The second exists because a left
+  click cannot open a context menu.
+- **The dashboard screen was rebuilt.** Its first form was `WidgetCard`s, which
+  is the catalog card, so it read as a widget store. It is now stat tiles,
+  `AreaChart`, `StackedBar`, `BarList`, room controls and a media player.
+- **`DEMO_WIDGETS` is gone.** The rebuild left it with no consumer.
+- **The gallery serves a favicon** as an inline data URI, so no request 404s.
+
+Not done, and deliberately: nothing here advances the dash submodule pointer to a
+published `@glasshome/ui`, and nothing is released. The ten gaps above are open.
