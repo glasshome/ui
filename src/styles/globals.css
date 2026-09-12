@@ -213,6 +213,46 @@
 	pointer-events: none;
 }
 
+/* A mode's rim: the masked ring of .glass-edge-gradient, but the gradient orbits,
+ * so a surface can say a mode is on for as long as it lasts. The mask sits on the
+ * parent and the gradient rotates as a child, or the ring would rotate with it. */
+:where(.glass-edge-orbit) {
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	padding: 1px;
+	overflow: hidden;
+	mask:
+		linear-gradient(#fff 0 0) content-box,
+		linear-gradient(#fff 0 0);
+	mask-composite: exclude;
+	pointer-events: none;
+	/* A conic wedge crosses a wide pill's ends fast and its long edges slowly, so the
+	 * ring keeps a constant floor and the orbit only adds the travelling highlight. */
+	background: color-mix(in oklab, var(--primary) 30%, transparent);
+}
+:where(.glass-edge-orbit) > * {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 150%;
+	aspect-ratio: 1;
+	translate: -50% -50%;
+	background: conic-gradient(
+		from 0deg,
+		transparent 0deg,
+		color-mix(in oklab, var(--primary) 95%, transparent) 40deg,
+		transparent 100deg,
+		transparent 360deg
+	);
+	animation: spin-slow 8s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+	:where(.glass-edge-orbit) > * {
+		animation: none;
+	}
+}
+
 /**
  * Consistent, theme-aware overlay scrollbar across browsers. Firefox uses
  * scrollbar-width/color; Chromium/WebKit use the ::-webkit-scrollbar pseudos

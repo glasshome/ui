@@ -132,8 +132,8 @@ describe("Dock", () => {
 
 	it("wears the shared card surface", () => {
 		const { container } = render(() => <Dock items={items} />);
-		const bar = slot(container, "dock-bar");
-		expect(bar.className).toContain(cn(CARD_SURFACE, "[--glass-lift:0.55]"));
+		const surface = slot(container, "dock-surface");
+		expect(surface.className).toContain(cn(CARD_SURFACE, "[--glass-lift:0.55]"));
 	});
 });
 
