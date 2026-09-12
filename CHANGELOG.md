@@ -18,6 +18,35 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.13.0](https://github.com/glasshome/ui/compare/v1.12.0...v1.13.0) (2026-09-12)
+
+
+### Features
+
+* **gallery:** a floating top bar carries the areas ([4283668](https://github.com/glasshome/ui/commit/428366858a3fff728f42b5b231907fe571b086d0))
+* **gallery:** a specimen for every component export, and triggers that resolve ([0d68aed](https://github.com/glasshome/ui/commit/0d68aeda4ab7e1578f0ff9819e30c928560510c4))
+* **gallery:** coverage gate and trigger verification in CI ([fcf914c](https://github.com/glasshome/ui/commit/fcf914c76af743bb06280495238cd5f1b95d056d))
+* **gallery:** dashboard and entity modal screens ([f93025e](https://github.com/glasshome/ui/commit/f93025e6252ae72edb70cc24fb3f9e56e2312bf7))
+* **gallery:** foundations area ([6113f18](https://github.com/glasshome/ui/commit/6113f189f3cbaf0d12de12907ab816114feb10b2))
+* **gallery:** iframe width stage ([1f06fef](https://github.com/glasshome/ui/commit/1f06fef17ced56313d8a223b1a2ffced6cc4c8f4))
+* **gallery:** settings and wizard screens ([3a4ba70](https://github.com/glasshome/ui/commit/3a4ba70bb3217f6811adbfeaa9c16167f897de07))
+* **gallery:** shared demo fixtures ([969ec9a](https://github.com/glasshome/ui/commit/969ec9a261fbcc8b6f33807f74fd7a4cfc661cf8))
+* **gallery:** shoot routes, stages, reduced motion and trigger verification ([ece13ef](https://github.com/glasshome/ui/commit/ece13ef7bf10403034713345c26440689d0dc7ae))
+* **gallery:** Specimen and Axis ([311b06c](https://github.com/glasshome/ui/commit/311b06c4c53f028251b3ced221e0ee3fe6471894))
+* **gallery:** the dashboard screen shows live readings, not a catalog ([c7fa320](https://github.com/glasshome/ui/commit/c7fa320a693554b67abc1532cc81b3caa0eef48e))
+* **gallery:** the dashboard's blocks are named exports ([79c10fa](https://github.com/glasshome/ui/commit/79c10fa7f02c3b441487dfca335161a3b128ab9f))
+* **gallery:** the dock carries areas, the top bar carries pages ([b2713fd](https://github.com/glasshome/ui/commit/b2713fdcd27576daab3e41b8014882f9a3773055))
+* **gallery:** three areas behind a hash router ([04fd2d1](https://github.com/glasshome/ui/commit/04fd2d198276f35ca1dc26f6e1a135ebc4cd2257))
+* **gallery:** wire the foundations entries ([0049593](https://github.com/glasshome/ui/commit/004959357b7adc0c5901144d945d4a8aa5bc7985))
+* **gallery:** wire the screens through the width stage ([347a9a3](https://github.com/glasshome/ui/commit/347a9a341ef97236e8394f1d58b89bd4da461236))
+
+
+### Bug Fixes
+
+* **gallery:** serve a favicon so the tab stops 404ing ([7d55c23](https://github.com/glasshome/ui/commit/7d55c2397024dd04dbcadf24368b8d1c5aed7e78))
+* **gallery:** shoot clicks the stage, not the header chip ([64a86c6](https://github.com/glasshome/ui/commit/64a86c69b07aab2f08fba104c4e6fb0bbcccc27b))
+* **gallery:** typecheck dev/ and bundle real icons ([c2fc978](https://github.com/glasshome/ui/commit/c2fc978a0af87de1af9f8cbd796a2acb9d160dc5))
+
 ## [1.12.0](https://github.com/glasshome/ui/compare/v1.11.0...v1.12.0) (2026-09-07)
 
 
