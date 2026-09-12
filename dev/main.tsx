@@ -10,6 +10,7 @@ import {
 	Button,
 	Card,
 	CardTitle,
+	Dock,
 	Empty,
 	EmptyDescription,
 	EmptyHeader,
@@ -74,23 +75,6 @@ function AreaView(props: { area: Area; entryId: string }) {
 				</Empty>
 			}
 		>
-			<Show when={props.area.entries.length > 1}>
-				<nav class="mb-5 flex flex-wrap gap-2">
-					<For each={props.area.entries}>
-						{(e) => (
-							<Button
-								variant={e.id === props.entryId ? "secondary" : "ghost"}
-								size="sm"
-								onClick={() => {
-									window.location.hash = `#/${props.area.id}/${e.id}`;
-								}}
-							>
-								{e.title}
-							</Button>
-						)}
-					</For>
-				</nav>
-			</Show>
 			<Show when={entry()}>
 				{(e) => (
 					<Show when={props.area.id === "screens"} fallback={<Dynamic component={e().component} />}>
@@ -118,6 +102,17 @@ function Gallery() {
 	// `#/all` is the shoot-everything route: every specimen, no chrome around it.
 	const bare = () => areaId() === "all";
 
+	const dockItems = () =>
+		AREAS.map((a) => ({
+			id: a.id,
+			icon: <Icon icon={a.icon} width="24" height="24" />,
+			label: a.title,
+			isActive: a.id === areaId(),
+			onClick: () => {
+				window.location.hash = `#/${a.id}/${a.entries[0]?.id ?? ""}`;
+			},
+		}));
+
 	return (
 		<>
 			<Show
@@ -130,7 +125,7 @@ function Gallery() {
 					</div>
 				}
 			>
-				<div class="min-h-screen bg-background pb-16 text-foreground">
+				<div class="min-h-screen bg-background pb-28 text-foreground">
 					<header class="sticky top-0 z-50 flex w-full justify-center px-3 pt-2 sm:px-4 sm:pt-3 md:pt-4">
 						<div
 							class={cn(
@@ -138,26 +133,25 @@ function Gallery() {
 								"flex h-14 w-full max-w-6xl items-center gap-3 rounded-2xl px-4 sm:h-16 sm:gap-4 sm:px-5",
 							)}
 						>
-							<a class="min-w-0 shrink truncate font-bold text-base sm:text-lg" href="#/">
+							<a class="hidden shrink-0 font-bold sm:block sm:text-lg" href="#/">
 								@glasshome/ui
 							</a>
 							<nav
-								class="flex shrink-0 items-center justify-end gap-1 sm:flex-1 sm:justify-center sm:gap-2"
-								aria-label="Gallery areas"
+								class="flex min-w-0 flex-1 items-center justify-start gap-1 overflow-x-auto sm:justify-center sm:gap-2"
+								aria-label="Pages in this area"
 							>
-								<For each={AREAS}>
-									{(a) => (
+								<For each={area()?.entries ?? []}>
+									{(e) => (
 										<a
-											href={`#/${a.id}/${a.entries[0]?.id ?? ""}`}
-											aria-current={a.id === areaId() ? "page" : undefined}
-											class="flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-1.5 font-medium text-sm transition-colors"
+											href={`#/${areaId()}/${e.id}`}
+											aria-current={e.id === entryId() ? "page" : undefined}
+											class="whitespace-nowrap rounded-full px-3 py-1.5 font-medium text-sm transition-colors"
 											classList={{
-												"bg-muted text-foreground": a.id === areaId(),
-												"text-muted-foreground hover:text-primary": a.id !== areaId(),
+												"bg-muted text-foreground": e.id === entryId(),
+												"text-muted-foreground hover:text-primary": e.id !== entryId(),
 											}}
 										>
-											<Icon icon={a.icon} width="18" height="18" />
-											<span class="hidden sm:inline">{a.title}</span>
+											{e.title}
 										</a>
 									)}
 								</For>
@@ -174,6 +168,9 @@ function Gallery() {
 							{(current) => <AreaView area={current()} entryId={entryId()} />}
 						</Show>
 					</main>
+					<nav class="fixed bottom-4 left-1/2 z-50 -translate-x-1/2" aria-label="Gallery areas">
+						<Dock items={dockItems()} dockMode="floating" />
+					</nav>
 				</div>
 			</Show>
 			<Toaster />

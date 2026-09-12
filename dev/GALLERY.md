@@ -123,16 +123,14 @@ dev/
 
 Hash routing is a signal, about fifteen lines. No `@solidjs/router` dependency.
 
-A floating bar at the top carries the three areas, the same shape hub's
-`site/Header.astro` wears: a sticky centred pill on `CARD_SURFACE`, brand at the
-left, areas centred, theme at the right. Below `sm` the area labels drop to
-icons and the brand truncates. Entries inside an area are a labelled row under
-the bar.
+`<Dock>` carries the three areas, floating at the foot. A bar at the top carries
+the pages of the current area and the options: a sticky centred pill on
+`CARD_SURFACE`, the same shape hub's `site/Header.astro` wears, with the brand
+left, page links centred, theme right. Below `sm` the brand drops and the page
+links scroll horizontally.
 
-The bar replaced a bottom `<Dock>`. `Dock` hides its tooltip labels below `sm`
-(`dock.tsx:92`) and scrolls horizontally when crowded, and it reads as an app's
-own navigation rather than a documentation shell. It still has its specimen, and
-the dashboard screen renders it.
+The gallery wearing the package's own `Dock` is deliberate: a regression in it
+shows on every screen of the gallery at once.
 
 Width renders the route in an `<iframe>` at a real viewport size.
 `use-is-mobile.ts` reads `window.innerWidth` (used by `responsive-dialog.tsx`,
