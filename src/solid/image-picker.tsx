@@ -8,7 +8,7 @@ import {
 	Show,
 	Switch,
 } from "solid-js";
-import { PICKER_LIST, PICKER_TRIGGER } from "../lib/picker-classes.js";
+import { PICKER_LIST } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
 import { Alert } from "./alert.js";
 import {
@@ -49,6 +49,7 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "./pagination.js";
+import { PickerTrigger } from "./picker-trigger.js";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover.js";
 import { SectionMeta } from "./section-card.js";
 import { Skeleton } from "./skeleton.js";
@@ -103,6 +104,11 @@ export function ImagePicker(props: ImagePickerProps) {
 			: `This image is used in ${used} widget${used === 1 ? "" : "s"}. Deleting it will leave those widgets without an image.`;
 	});
 
+	const clearImage = () => {
+		props.onChange("");
+		setThumbBroken(false);
+	};
+
 	const openGallery = (next: boolean) => {
 		if (next) setEverOpened(true);
 		setOpen(next);
@@ -154,13 +160,13 @@ export function ImagePicker(props: ImagePickerProps) {
 		<div data-slot="image-picker" class={cn(props.class)}>
 			<Popover surface="field" open={open()} onOpenChange={openGallery} modal>
 				<PopoverAnchor as="div">
-					<button
-						type="button"
+					<PickerTrigger
 						id={props.id}
-						data-slot="image-picker-trigger"
-						data-expanded={open() || undefined}
-						class={PICKER_TRIGGER}
-						onClick={() => openGallery(!open())}
+						slot="image-picker-trigger"
+						open={open()}
+						onToggle={() => openGallery(!open())}
+						onClear={props.value ? clearImage : undefined}
+						clearLabel="Clear image"
 					>
 						<Show
 							when={!thumbBroken() && props.value}
@@ -189,13 +195,7 @@ export function ImagePicker(props: ImagePickerProps) {
 							/>
 							<span class="flex-1 truncate text-left">Image selected</span>
 						</Show>
-						<Icon
-							icon="lucide:chevron-down"
-							width={16}
-							height={16}
-							class="shrink-0 text-muted-foreground"
-						/>
-					</button>
+					</PickerTrigger>
 				</PopoverAnchor>
 				<PopoverContent class="min-w-72" onInteractOutside={() => setOpen(false)}>
 					{/* The panel owns no padding: the gallery body owns its own inset. */}
@@ -268,7 +268,7 @@ export function ImagePicker(props: ImagePickerProps) {
 													markUnused
 													selected={props.value === image.id}
 													onSelect={() => {
-														props.onChange(image.id);
+														props.onChange(props.value === image.id ? "" : image.id);
 														setThumbBroken(false);
 														setOpen(false);
 													}}

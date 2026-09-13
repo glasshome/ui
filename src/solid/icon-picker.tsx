@@ -1,10 +1,11 @@
 import { createMemo, createSignal, For, Show } from "solid-js";
 import { STAGGER } from "../lib/motion-classes.js";
-import { PICKER_LIST, PICKER_TRIGGER } from "../lib/picker-classes.js";
+import { PICKER_LIST } from "../lib/picker-classes.js";
 import { CHIP, ICON_PILL_TINT } from "../lib/pill-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { PickerSearch } from "./picker-search.js";
+import { PickerTrigger } from "./picker-trigger.js";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover.js";
 
 const ICON_LIBRARIES = [
@@ -311,11 +312,14 @@ export function IconPicker(props: IconPickerProps) {
 		return defaultIcons().filter((icon) => icon.toLowerCase().includes(q));
 	});
 
+	// A re-tap on the picked icon clears it, the way every picker toggles.
 	const selectIcon = (icon: string) => {
-		props.onChange(icon);
+		props.onChange(icon === props.value.trim() ? "" : icon);
 		setOpen(false);
 		setSearch("");
 	};
+
+	const clearIcon = () => props.onChange("");
 
 	const handleLibChange = (prefix: string) => {
 		setActiveLib(prefix);
@@ -328,13 +332,13 @@ export function IconPicker(props: IconPickerProps) {
 	return (
 		<Popover surface="field" open={open()} onOpenChange={setOpen} modal>
 			<PopoverAnchor as="div" class={props.class}>
-				<button
-					type="button"
-					data-slot="icon-picker-trigger"
-					data-expanded={open() || undefined}
+				<PickerTrigger
+					slot="icon-picker-trigger"
+					open={open()}
+					onToggle={() => setOpen(!open())}
 					aria-labelledby={props["aria-labelledby"]}
-					class={PICKER_TRIGGER}
-					onClick={() => setOpen(!open())}
+					onClear={props.value.trim() ? clearIcon : undefined}
+					clearLabel="Clear icon"
 				>
 					<Show
 						when={props.value.trim()}
@@ -347,13 +351,7 @@ export function IconPicker(props: IconPickerProps) {
 						<Icon icon={props.value.trim()} width={18} height={18} class="shrink-0" />
 						<span class="flex-1 truncate text-left">{props.value}</span>
 					</Show>
-					<Icon
-						icon="mdi:chevron-down"
-						width={16}
-						height={16}
-						class="shrink-0 text-muted-foreground"
-					/>
-				</button>
+				</PickerTrigger>
 			</PopoverAnchor>
 			<PopoverContent
 				onOpenAutoFocus={(e) => {

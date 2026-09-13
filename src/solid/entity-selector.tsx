@@ -10,7 +10,7 @@ import {
 	Show,
 } from "solid-js";
 import { MENU_LABEL } from "../lib/menu-classes.js";
-import { PICKER_LIST, PICKER_TRIGGER } from "../lib/picker-classes.js";
+import { PICKER_LIST } from "../lib/picker-classes.js";
 import { createIsMobile } from "../lib/use-is-mobile.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -24,6 +24,7 @@ import { type EntityViewLike, useEntityData } from "./entity-data.js";
 import { Icon } from "./icon.js";
 import { PICKER_ROW_HEIGHT, PickerRow } from "./picker-row.js";
 import { PickerSearch } from "./picker-search.js";
+import { PickerTrigger } from "./picker-trigger.js";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover.js";
 import { SlidingIndicator } from "./sliding-indicator.js";
 
@@ -309,9 +310,10 @@ export function EntitySelector(props: EntitySelectorProps) {
 		setActiveIndex(0);
 	};
 
+	// A re-tap on the picked entity clears it, the way every picker toggles.
 	const toggleEntity = (entityId: string) => {
 		if (props.multiple === false) {
-			props.onEntityIdsChange([entityId]);
+			props.onEntityIdsChange(props.entityIds.includes(entityId) ? [] : [entityId]);
 			closePicker();
 			return;
 		}
@@ -375,59 +377,40 @@ export function EntitySelector(props: EntitySelectorProps) {
 	};
 
 	const isSingle = () => props.multiple === false;
-	const showTriggerClear = () => isSingle() && props.entityIds.length > 0;
+	const showTriggerClear = () => props.entityIds.length > 0;
 
 	const clearSelection = () => {
 		props.onEntityIdsChange([]);
 	};
 
 	const TriggerButton = (p: { onClick: () => void }) => (
-		<div class="relative">
-			<button
-				type="button"
-				role="combobox"
-				data-slot="entity-selector-trigger"
-				data-expanded={open() || undefined}
-				aria-labelledby={props["aria-labelledby"]}
-				aria-expanded={open()}
-				aria-controls={listboxId}
-				aria-haspopup="listbox"
-				class={cn(PICKER_TRIGGER, showTriggerClear() && "pr-14")}
-				onClick={p.onClick}
-			>
-				<Show when={triggerIcon()}>
-					{(icon) => (
-						<Icon icon={icon()} width={16} height={16} class="shrink-0 text-muted-foreground" />
-					)}
-				</Show>
-				<Show
-					when={triggerLabel()}
-					fallback={
-						<span class="flex-1 truncate text-left text-muted-foreground">
-							Select {props.domain} {isSingle() ? "entity" : "entities"}...
-						</span>
-					}
-				>
-					{(label) => <span class="flex-1 truncate text-left">{label()}</span>}
-				</Show>
-				<Icon
-					icon="mdi:chevron-down"
-					width={16}
-					height={16}
-					class={`shrink-0 text-muted-foreground transition-transform ${open() ? "rotate-180" : ""}`}
-				/>
-			</button>
-			<Show when={showTriggerClear()}>
-				<button
-					type="button"
-					aria-label="Clear selection"
-					class="absolute top-1/2 right-8 flex -translate-y-1/2 items-center rounded-sm p-1 text-muted-foreground transition-colors hover:text-foreground"
-					onClick={clearSelection}
-				>
-					<Icon icon="mdi:close-circle" width={16} height={16} />
-				</button>
+		<PickerTrigger
+			slot="entity-selector-trigger"
+			role="combobox"
+			open={open()}
+			onToggle={p.onClick}
+			aria-labelledby={props["aria-labelledby"]}
+			aria-expanded={open()}
+			aria-controls={listboxId}
+			aria-haspopup="listbox"
+			onClear={showTriggerClear() ? clearSelection : undefined}
+		>
+			<Show when={triggerIcon()}>
+				{(icon) => (
+					<Icon icon={icon()} width={16} height={16} class="shrink-0 text-muted-foreground" />
+				)}
 			</Show>
-		</div>
+			<Show
+				when={triggerLabel()}
+				fallback={
+					<span class="flex-1 truncate text-left text-muted-foreground">
+						Select {props.domain} {isSingle() ? "entity" : "entities"}...
+					</span>
+				}
+			>
+				{(label) => <span class="flex-1 truncate text-left">{label()}</span>}
+			</Show>
+		</PickerTrigger>
 	);
 
 	const EntityRow = (p: { id: string; entityIndex: number; top: number }) => {

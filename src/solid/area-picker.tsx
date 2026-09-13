@@ -1,12 +1,13 @@
 import { createMemo, createSignal, For, Show } from "solid-js";
 import { MENU_ITEM } from "../lib/menu-classes.js";
 import { STAGGER } from "../lib/motion-classes.js";
-import { PICKER_LIST, PICKER_TRIGGER } from "../lib/picker-classes.js";
+import { PICKER_LIST } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
 import { useEntityData } from "./entity-data.js";
 import { Icon } from "./icon.js";
 import { PickerRow } from "./picker-row.js";
 import { PickerSearch } from "./picker-search.js";
+import { PickerTrigger } from "./picker-trigger.js";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover.js";
 import { SlidingIndicator } from "./sliding-indicator.js";
 
@@ -106,6 +107,15 @@ export function AreaPicker(props: AreaPickerProps) {
 		setSearch("");
 	};
 
+	const showTriggerClear = () =>
+		props.allowClear !== false && (multi() ? selected().length > 0 : Boolean(props.value));
+
+	const clearSelection = () => {
+		if (props.disabled) return;
+		props.onChange?.("");
+		props.onValuesChange?.([]);
+	};
+
 	const toggleArea = (areaId: string) => {
 		if (props.disabled) return;
 		const current = selected();
@@ -127,14 +137,14 @@ export function AreaPicker(props: AreaPickerProps) {
 			modal
 		>
 			<PopoverAnchor as="div" class={props.class}>
-				<button
-					type="button"
-					data-slot="area-picker-trigger"
-					data-expanded={open() || undefined}
+				<PickerTrigger
+					slot="area-picker-trigger"
+					open={open()}
+					onToggle={() => setOpen(!open())}
 					aria-labelledby={props["aria-labelledby"]}
-					class={PICKER_TRIGGER}
 					disabled={props.disabled}
-					onClick={() => setOpen(!open())}
+					onClear={showTriggerClear() ? clearSelection : undefined}
+					clearLabel={multi() ? "Clear areas" : "Clear area"}
 				>
 					<Show
 						when={triggerArea()}
@@ -160,13 +170,7 @@ export function AreaPicker(props: AreaPickerProps) {
 							</>
 						)}
 					</Show>
-					<Icon
-						icon="mdi:chevron-down"
-						width={16}
-						height={16}
-						class="shrink-0 text-muted-foreground"
-					/>
-				</button>
+				</PickerTrigger>
 			</PopoverAnchor>
 			<PopoverContent
 				onOpenAutoFocus={(e) => e.preventDefault()}

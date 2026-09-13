@@ -11,6 +11,7 @@ import {
 	MediaTile,
 	PickerRow,
 	PickerSearch,
+	PickerTrigger,
 	parseColor,
 } from "../../src/solid";
 import { Axis, CatalogGroup, Specimen } from "../CatalogKit";
@@ -181,6 +182,29 @@ export function PickersCatalog() {
 								multi
 								dimmed
 							/>
+						</div>
+					</Axis>
+				</Specimen>
+
+				<Specimen name="PickerTrigger" span={2}>
+					<Axis of="state">
+						<div class="flex w-full max-w-sm flex-col gap-3">
+							<PickerTrigger slot="demo-trigger" open={false} onToggle={() => {}}>
+								<span class="flex-1 truncate text-left text-muted-foreground">
+									Select entity...
+								</span>
+							</PickerTrigger>
+							<PickerTrigger
+								slot="demo-trigger"
+								open={false}
+								onToggle={() => {}}
+								onClear={() => {}}
+							>
+								<span class="flex-1 truncate text-left">Ceiling light</span>
+							</PickerTrigger>
+							<PickerTrigger slot="demo-trigger" open onToggle={() => {}} onClear={() => {}}>
+								<span class="flex-1 truncate text-left">Ceiling light</span>
+							</PickerTrigger>
 						</div>
 					</Axis>
 				</Specimen>
