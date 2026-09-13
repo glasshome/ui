@@ -18,6 +18,13 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.15.0](https://github.com/glasshome/ui/compare/v1.14.0...v1.15.0) (2026-09-13)
+
+
+### Features
+
+* **pickers:** one trigger, and every picker can be unpicked ([0340a1a](https://github.com/glasshome/ui/commit/0340a1a6a87d29a20682b20363825cab67bf7734))
+
 ## [1.14.0](https://github.com/glasshome/ui/compare/v1.13.0...v1.14.0) (2026-09-12)
 
 
