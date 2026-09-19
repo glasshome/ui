@@ -18,6 +18,20 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.16.0](https://github.com/glasshome/ui/compare/v1.15.0...v1.16.0) (2026-09-19)
+
+
+### Features
+
+* **data-table:** a row that the keyboard can open, and a head that can stick ([abe43cf](https://github.com/glasshome/ui/commit/abe43cf15943906027761b1163c8f1aa0dbea100))
+* **section-card:** FactRow, the key/value counterpart of ListRow ([7d2a323](https://github.com/glasshome/ui/commit/7d2a323f5d3c75385f95d5faaa09098f528e987d))
+
+
+### Bug Fixes
+
+* **data-table:** a table no longer caps its own height ([6335e94](https://github.com/glasshome/ui/commit/6335e94a3c15cef7cb8b16a64c239b6a26a82b44))
+* **tabs:** a track with more tabs than room scrolls to them ([bb4beaf](https://github.com/glasshome/ui/commit/bb4beafaa8e574f22783f85651385f30d0a829e9))
+
 ## [1.15.0](https://github.com/glasshome/ui/compare/v1.14.0...v1.15.0) (2026-09-13)
 
 
