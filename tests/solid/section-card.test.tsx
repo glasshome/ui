@@ -155,7 +155,7 @@ describe("section kit material", () => {
 });
 
 describe("Empty", () => {
-	it("draws the dashed frame itself", () => {
+	it("draws no frame of its own, so the surface under it owns the chrome", () => {
 		const { container } = render(() => (
 			<Empty>
 				<EmptyHeader>
@@ -167,8 +167,8 @@ describe("Empty", () => {
 			</Empty>
 		));
 		const root = slot(container, "empty");
-		expect(root.className).toMatch(/(^|\s)border(\s|$)/);
-		expect(root.className).toContain("border-dashed");
+		expect(root.className).not.toMatch(/(^|\s)border(\s|$)/);
+		expect(root.className).not.toContain("border-dashed");
 	});
 
 	it("lets the header own the gap under the media pill", () => {
