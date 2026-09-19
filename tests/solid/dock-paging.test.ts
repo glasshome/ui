@@ -12,6 +12,11 @@ describe("dock paging", () => {
 		expect(pageCount(900, 400)).toBe(3);
 	});
 
+	it("a strip a sub-pixel over its viewport is still one page", () => {
+		expect(pageCount(726, 725.606)).toBe(1);
+		expect(pageCount(401, 400)).toBe(1);
+	});
+
 	it("an unmeasured strip has a single page", () => {
 		expect(pageCount(0, 0)).toBe(1);
 		expect(pageCount(800, 0)).toBe(1);

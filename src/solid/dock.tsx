@@ -134,51 +134,36 @@ const Dock: Component<DockProps> = (props) => {
 	const itemWidth = () =>
 		containerRef?.querySelector('[data-slot="dock-item"]')?.getBoundingClientRect().width ?? 0;
 
+	const padX = (el: Element) => {
+		const style = getComputedStyle(el);
+		return (
+			(Number.parseFloat(style.paddingLeft) || 0) + (Number.parseFloat(style.paddingRight) || 0)
+		);
+	};
+
+	// The width the app gave the dock. Never the surface: it shrink-wraps this strip,
+	// so measuring it asks the strip how wide the strip is.
+	const availableWidth = () => {
+		const box = containerRef?.closest<HTMLElement>('[data-slot="dock"]');
+		if (!box || !surfaceRef) return 0;
+		return box.clientWidth - padX(box) - padX(surfaceRef);
+	};
+
 	const checkOverflow = () => {
 		if (!containerRef) return;
-		const surface = containerRef.parentElement;
-		if (!surface) {
-			setNeedsScroll(containerRef.scrollWidth > window.innerWidth);
-			return;
+		const available = availableWidth();
+		const overflowing = available > 0 && containerRef.scrollWidth > available + 1;
+		if (overflowing) {
+			const trimmed = stripWidth(available, itemWidth(), gapWidth());
+			if (trimmed > 0) containerRef.style.width = `${trimmed}px`;
+		} else if (containerRef.style.width) {
+			containerRef.style.width = "";
 		}
-		const surfaceStyle = getComputedStyle(surface);
-		const paddingX =
-			(Number.parseFloat(surfaceStyle.paddingLeft) || 0) +
-			(Number.parseFloat(surfaceStyle.paddingRight) || 0);
-		let siblingWidth = 0;
-		for (const child of Array.from(surface.children)) {
-			if (child === containerRef) continue;
-			const childStyle = getComputedStyle(child);
-			// The page dots overlay the bar out of flow; they do not narrow it.
-			if (childStyle.position === "absolute" || childStyle.position === "fixed") continue;
-			siblingWidth +=
-				child.getBoundingClientRect().width +
-				(Number.parseFloat(childStyle.marginLeft) || 0) +
-				(Number.parseFloat(childStyle.marginRight) || 0);
-		}
-		const availableWidth = surface.clientWidth - paddingX - siblingWidth;
-		const overflowing = containerRef.scrollWidth > availableWidth;
-		const trimmed = overflowing ? stripWidth(availableWidth, itemWidth(), gapWidth()) : 0;
-		if (trimmed > 0) containerRef.style.width = `${trimmed}px`;
 		setNeedsScroll(overflowing);
-		const viewport = trimmed > 0 ? trimmed : containerRef.clientWidth;
+		const viewport = containerRef.clientWidth;
 		setViewportWidth(viewport);
 		setPages(pageCount(containerRef.scrollWidth, viewport));
 		setPage(pageOf(containerRef.scrollLeft, viewport));
-	};
-
-	// The surface animates its width, so a read taken right after we set one is
-	// mid-transition: clearing our trim has to settle before the next measure.
-	let settleId: ReturnType<typeof setTimeout> | undefined;
-	const remeasure = () => {
-		if (!containerRef) return;
-		if (!containerRef.style.width) {
-			checkOverflow();
-			return;
-		}
-		containerRef.style.width = "";
-		clearTimeout(settleId);
-		settleId = setTimeout(checkOverflow, 250);
 	};
 
 	const goToPage = (next: number) => {
@@ -198,26 +183,25 @@ const Dock: Component<DockProps> = (props) => {
 	});
 
 	onMount(() => {
-		const timeoutId = setTimeout(remeasure, 100);
-		// Watching the bar would see its own trim and re-trim forever; the viewport
-		// is the only width the dock does not derive from itself.
+		const timeoutId = setTimeout(checkOverflow, 100);
 		let resizeTimeoutId: ReturnType<typeof setTimeout> | undefined;
 		const onResize = () => {
 			clearTimeout(resizeTimeoutId);
-			resizeTimeoutId = setTimeout(remeasure, 50);
+			resizeTimeoutId = setTimeout(checkOverflow, 50);
 		};
 		window.addEventListener("resize", onResize);
 		onCleanup(() => {
 			clearTimeout(timeoutId);
 			clearTimeout(resizeTimeoutId);
-			clearTimeout(settleId);
 			window.removeEventListener("resize", onResize);
 		});
 	});
 
 	createEffect(() => {
 		local.items.length;
-		const timeoutId = setTimeout(remeasure, 150);
+		// The box pads by mode, so switching it changes the room the strip has.
+		dockMode();
+		const timeoutId = setTimeout(checkOverflow, 150);
 		onCleanup(() => clearTimeout(timeoutId));
 	});
 
@@ -236,7 +220,7 @@ const Dock: Component<DockProps> = (props) => {
 				data-slot="dock-surface"
 				class={cn(
 					// isolate: the layers behind the icons stay inside the dock even with blur off.
-					"relative isolate flex max-w-full items-center justify-center p-1.5 sm:p-2",
+					"pointer-events-auto relative isolate flex max-w-full items-center justify-center p-1.5 sm:p-2",
 					// Room for the page dots inside the glass; outside it they sit on
 					// the screen edge and get clipped.
 					pages() > 1 && "pb-4 sm:pb-5",
