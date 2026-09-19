@@ -40,9 +40,9 @@ describe("TableEmpty", () => {
 });
 
 describe("TABLE_SCROLL_CLASS", () => {
-	it("carries the shared scrollbar and keeps its default max height", () => {
+	it("carries the shared scrollbar and caps no height of its own", () => {
 		expect(TABLE_SCROLL_CLASS).toContain("gh-scroll");
-		expect(TABLE_SCROLL_CLASS).toContain("max-h-[600px]");
+		expect(TABLE_SCROLL_CLASS).not.toMatch(/max-h-/);
 	});
 });
 
