@@ -239,7 +239,7 @@ export function TableEmpty(props: {
 	action?: JSX.Element;
 }) {
 	return (
-		<Empty class="gap-3 rounded-none border-none py-12">
+		<Empty class="gap-3 rounded-none py-12">
 			<EmptyHeader>
 				<Show when={props.icon}>
 					<EmptyMedia media="icon">
