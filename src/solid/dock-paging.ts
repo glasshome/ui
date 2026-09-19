@@ -1,7 +1,9 @@
-/** A page is one strip-width of items. The last one is whatever is left. */
+/** A page is one strip-width of items. The last one is whatever is left.
+ *  The tolerance keeps a strip a sub-pixel over its viewport on one page: both
+ *  numbers are rounded reads of the same box. */
 export function pageCount(scrollWidth: number, viewport: number): number {
 	if (viewport <= 0) return 1;
-	return Math.max(1, Math.ceil(scrollWidth / viewport));
+	return Math.max(1, Math.ceil((scrollWidth - 1) / viewport));
 }
 
 /** The page a scroll position sits on, counting a half-page as turned. */

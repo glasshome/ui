@@ -42,6 +42,30 @@ describe("Dock paging", () => {
 		expect(container.querySelector('[data-slot="dock-pages"]')).toBeNull();
 	});
 
+	it("takes the room it has from the box the app gave it, not from its own surface", async () => {
+		// The surface hugs the strip; only the outer box knows what the app allowed.
+		Object.defineProperty(HTMLElement.prototype, "scrollWidth", {
+			configurable: true,
+			get() {
+				return this.getAttribute("data-slot") === "dock-bar" ? 900 : 0;
+			},
+		});
+		Object.defineProperty(HTMLElement.prototype, "clientWidth", {
+			configurable: true,
+			get() {
+				const slot = this.getAttribute("data-slot");
+				if (slot === "dock") return 1200;
+				if (slot === "dock-surface") return 600;
+				return 900;
+			},
+		});
+		const { container } = render(() => <Dock items={items(10)} />);
+		await new Promise((r) => setTimeout(r, 150));
+
+		expect(container.querySelector('[data-slot="dock-pages"]')).toBeNull();
+		expect(container.querySelector<HTMLElement>('[data-slot="dock-bar"]')?.style.width).toBe("");
+	});
+
 	it("shows a dot per page once the strip overflows, the first one current", async () => {
 		measured(1000, 400);
 		const { container } = render(() => <Dock items={items(12)} />);
