@@ -1,4 +1,5 @@
 import { createSignal } from "solid-js";
+import { cn } from "../../src/lib/utils.js";
 import {
 	AreaChart,
 	Avatar,
@@ -22,6 +23,8 @@ import {
 	ContextMenuSeparator,
 	ContextMenuTrigger,
 	CountPill,
+	DataTableHead,
+	DataTableRow,
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
@@ -59,6 +62,8 @@ import {
 	SectionTitle,
 	Separator,
 	StackedBar,
+	TABLE_HEAD_LABEL_CLASS,
+	TABLE_NUM_CELL_CLASS,
 	Table,
 	TableBody,
 	TableBulkBar,
@@ -299,6 +304,59 @@ export function DataCatalog() {
 					/>
 					<div class="w-full">
 						<TableSkeleton count={3} />
+					</div>
+				</Axis>
+			</Specimen>
+
+			<Specimen name="DataTableRow" span={3}>
+				<Axis of="parts">
+					<div class="w-full">
+						<DataTableHead sticky>
+							<div class={cn(TABLE_HEAD_LABEL_CLASS, "flex-1")}>Widget</div>
+							<div class={cn(TABLE_HEAD_LABEL_CLASS, "w-24")}>Status</div>
+							<div class={cn(TABLE_HEAD_LABEL_CLASS, "w-16 text-right")}>Runs</div>
+							<div class="w-8" />
+						</DataTableHead>
+						<DataTableRow onOpen={() => {}} openLabel="Open Clock">
+							<div class="min-w-0 flex-1 truncate font-medium text-sm">Clock</div>
+							<div class="w-24">
+								<Badge tone="var(--success)">Done</Badge>
+							</div>
+							<div class={cn(TABLE_NUM_CELL_CLASS, "w-16")}>412</div>
+						</DataTableRow>
+						<DataTableRow onOpen={() => {}} openLabel="Open Tides" selected>
+							<div class="min-w-0 flex-1 truncate font-medium text-sm">Tides</div>
+							<div class="w-24">
+								<Badge tone="var(--warning)">Pending</Badge>
+							</div>
+							<div class={cn(TABLE_NUM_CELL_CLASS, "w-16")}>38</div>
+						</DataTableRow>
+						<DataTableRow
+							onOpen={() => {}}
+							openLabel="Open Aurora"
+							actions={
+								<Button variant="ghost" size="sm">
+									Retry
+								</Button>
+							}
+						>
+							<div class="min-w-0 flex-1 truncate font-medium text-sm">Aurora</div>
+							<div class="w-24">
+								<Badge tone="var(--destructive)">Failed</Badge>
+							</div>
+							<div class={cn(TABLE_NUM_CELL_CLASS, "w-16")}>5</div>
+						</DataTableRow>
+					</div>
+				</Axis>
+			</Specimen>
+
+			<Specimen name="DataTableHead" span={2}>
+				<Axis of="parts">
+					<div class="w-full">
+						<DataTableHead>
+							<div class={cn(TABLE_HEAD_LABEL_CLASS, "flex-1")}>Name</div>
+							<div class={cn(TABLE_HEAD_LABEL_CLASS, "w-20 text-right")}>Size</div>
+						</DataTableHead>
 					</div>
 				</Axis>
 			</Specimen>

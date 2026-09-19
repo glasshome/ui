@@ -10,10 +10,11 @@ import { Skeleton } from "./skeleton.js";
 import { TABLE_HEAD_CELL_CLASS, TABLE_HEAD_LABEL_CLASS } from "./table.js";
 
 /**
- * Generic data-table vocabulary: sticky-less header, row height/padding, border
+ * Generic data-table vocabulary: head strip, row height/padding, border
  * treatment, hover, numeric alignment, toolbar (search/filter/sort), bulk bar,
- * and empty/loading/error states. Each list renders its own row markup but
- * shares these primitives + class tokens. Presentational only — no app data.
+ * and empty/loading/error states. A list composes DataTableRow for the shared
+ * press and keyboard behaviour, or the class tokens for bespoke markup.
+ * Presentational only — no app data.
  *
  * Tables live inside a card; go edge-to-edge with `TABLE_BLEED` (cancels the
  * card's p-3) and re-add the inset via the cell padding tokens.
@@ -114,6 +115,77 @@ export function TableSearchInput(props: {
 					<Icon icon="lucide:x" width={14} height={14} class="size-3.5" />
 				</Button>
 			</Show>
+		</div>
+	);
+}
+
+/**
+ * One row of a flex data table. The row itself is what you press: activation
+ * rides on a real button covering it, the same mechanism `ListRow` uses, so a
+ * row reachable by Tab is also openable by Enter. Cells go in `children`;
+ * anything separately clickable goes in `actions`, which stacks above the
+ * overlay.
+ */
+export function DataTableRow(props: {
+	children: JSX.Element;
+	/** Activates the whole row. Requires `openLabel`. */
+	onOpen?: () => void;
+	/** The whole row is a link. Requires `openLabel`. */
+	href?: string;
+	/** Accessible name for the whole-row activation. */
+	openLabel?: string;
+	selected?: boolean;
+	actions?: JSX.Element;
+	class?: string;
+}) {
+	const opens = () => props.onOpen !== undefined || props.href !== undefined;
+	return (
+		<div
+			data-slot="data-table-row"
+			data-state={props.selected ? "selected" : undefined}
+			class={cn(
+				TABLE_ROW_CLASS,
+				"relative",
+				opens() && "cursor-pointer",
+				props.selected && "bg-foreground/[0.04]",
+				props.class,
+			)}
+		>
+			<Show when={props.href}>
+				{(href) => (
+					<a href={href()} class="absolute inset-0 outline-none">
+						<span class="sr-only">{props.openLabel}</span>
+					</a>
+				)}
+			</Show>
+			<Show when={props.href === undefined && props.onOpen}>
+				<button
+					type="button"
+					class="absolute inset-0 outline-none"
+					aria-label={props.openLabel}
+					onClick={() => props.onOpen?.()}
+				/>
+			</Show>
+			{props.children}
+			<Show when={props.actions}>
+				<div class="relative flex shrink-0 items-center gap-1">{props.actions}</div>
+			</Show>
+		</div>
+	);
+}
+
+/**
+ * Column header strip. `sticky` keeps the labels against the top of the
+ * scrollport while a long list scrolls under them, which needs its own
+ * background so rows do not read through the glass.
+ */
+export function DataTableHead(props: { children: JSX.Element; sticky?: boolean; class?: string }) {
+	return (
+		<div
+			data-slot="data-table-head"
+			class={cn(TABLE_HEAD_CLASS, props.sticky && "sticky top-0 z-10 bg-background", props.class)}
+		>
+			{props.children}
 		</div>
 	);
 }
