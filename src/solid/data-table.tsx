@@ -32,7 +32,10 @@ export const TABLE_CELL_X = "px-4";
 export const TABLE_ROW_CLASS =
 	"flex items-center gap-4 border-border/50 border-b px-4 py-2.5 transition-colors last:border-b-0 hover:bg-foreground/[0.03]";
 export const TABLE_HEAD_CLASS = "flex items-center gap-4 border-border/50 border-b px-4 py-2";
-export const TABLE_SCROLL_CLASS = "max-h-[600px] overflow-auto gh-scroll";
+/* No vertical cap: a table inside a page that already scrolls got a second
+ * scrollbar and hid most of its own rows. A list that genuinely boxes adds its
+ * own max-h. */
+export const TABLE_SCROLL_CLASS = "overflow-x-auto gh-scroll";
 export const TABLE_NUM_CELL_CLASS = "text-right text-muted-foreground text-xs tabular-nums";
 
 export type SortDirection = "asc" | "desc";
