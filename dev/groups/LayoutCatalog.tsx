@@ -8,6 +8,7 @@ import {
 	CarouselItem,
 	CarouselNext,
 	CarouselPrevious,
+	FactRow,
 	ListRow,
 	Overlay,
 	ResizableHandle,
@@ -53,6 +54,20 @@ export function LayoutCatalog() {
 						</For>
 					</div>
 				</SectionCard>
+			</Specimen>
+
+			<Specimen name="FactRow" span={2}>
+				<Axis of="parts">
+					<div class="w-full">
+						<FactRow label="Owner">Maya Chen</FactRow>
+						<FactRow label="Version id">
+							<span class="font-mono text-xs">wv_clock_1_2_0</span>
+						</FactRow>
+						<FactRow label="Status">
+							<Badge tone="var(--success)">Done</Badge>
+						</FactRow>
+					</div>
+				</Axis>
 			</Specimen>
 
 			<Specimen name="ListRow" span={3}>

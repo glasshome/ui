@@ -147,6 +147,23 @@ type ListRowProps = {
 };
 
 /**
+ * One labelled fact: the name on the left, the value hard against the right.
+ * The counterpart of ListRow for a detail panel, where the rows are key/value
+ * rather than navigable items.
+ */
+export function FactRow(props: { label: JSX.Element; children: JSX.Element; class?: string }) {
+	return (
+		<div
+			data-slot="fact-row"
+			class={cn("flex items-baseline justify-between gap-3 py-1.5", props.class)}
+		>
+			<span class="shrink-0 text-muted-foreground text-xs">{props.label}</span>
+			<span class="min-w-0 text-right text-sm">{props.children}</span>
+		</div>
+	);
+}
+
+/**
  * One item in a settings list. Fixed slots so every list reads the same
  * whatever it holds; the row itself, not a nested button, is what you press.
  */

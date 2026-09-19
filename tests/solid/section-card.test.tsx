@@ -6,6 +6,7 @@ import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from "../../src/solid/empt
 import { HeroAction } from "../../src/solid/hero-action.js";
 import { PageHeader } from "../../src/solid/page-header.js";
 import {
+	FactRow,
 	SectionCard,
 	SectionIcon,
 	SectionLabel,
@@ -252,5 +253,14 @@ describe("WidgetCard tile", () => {
 			expect(meta?.className).not.toMatch(/(^|\s)-?m[trblxy]?-/);
 			unmount();
 		}
+	});
+});
+
+describe("FactRow", () => {
+	it("puts the label and the value in one row, value to the right", () => {
+		const { container } = render(() => <FactRow label="Owner">Maya Chen</FactRow>);
+		const row = container.querySelector("[data-slot='fact-row']");
+		expect(row?.textContent).toBe("OwnerMaya Chen");
+		expect(row?.lastElementChild?.className).toContain("text-right");
 	});
 });
