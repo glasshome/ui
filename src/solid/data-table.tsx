@@ -145,9 +145,10 @@ export function DataTableRow(props: {
 			data-state={props.selected ? "selected" : undefined}
 			class={cn(
 				TABLE_ROW_CLASS,
-				"relative",
+				// Same selected treatment the semantic TableRow uses, keyed off the
+				// same data-state, so the two table families read alike.
+				"relative data-[state=selected]:bg-muted",
 				opens() && "cursor-pointer",
-				props.selected && "bg-foreground/[0.04]",
 				props.class,
 			)}
 		>

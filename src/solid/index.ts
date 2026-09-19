@@ -336,6 +336,7 @@ export {
 export { ScopeIndicator } from "./scope-indicator.js";
 export { ScrollArea, ScrollBar } from "./scroll-area.js";
 export {
+	FactRow,
 	type GlassSurface,
 	ListRow,
 	NOOP_GLASS,
