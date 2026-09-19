@@ -123,6 +123,8 @@ export {
 export { CopyButton } from "./copy-button.js";
 export { CountPill } from "./count-pill.js";
 export {
+	DataTableHead,
+	DataTableRow,
 	type SortDirection,
 	TABLE_BLEED,
 	TABLE_CELL_X,
