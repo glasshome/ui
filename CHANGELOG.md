@@ -18,6 +18,15 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.16.1](https://github.com/glasshome/ui/compare/v1.16.0...v1.16.1) (2026-09-20)
+
+
+### Bug Fixes
+
+* **dock:** the strip measures the box the app gave it, not its own surface ([4852136](https://github.com/glasshome/ui/commit/4852136c68b00ca1f837f7d43c26ffd8668841fb))
+* **empty:** the specimen and the table well stop drawing a frame the primitive dropped ([5f5cfa3](https://github.com/glasshome/ui/commit/5f5cfa3a8f52e0f2d381d606269f039478fe2817))
+* **empty:** the zero state draws no frame, so the surface under it owns the chrome ([509f397](https://github.com/glasshome/ui/commit/509f397adc520849bcf08a2de23f218c1ece06f5))
+
 ## [1.16.0](https://github.com/glasshome/ui/compare/v1.15.0...v1.16.0) (2026-09-19)
 
 
