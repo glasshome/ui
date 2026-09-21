@@ -21,6 +21,7 @@ import {
 import {
 	anchorToTriggerTop,
 	FLOATING_PANEL,
+	FLOATING_PANEL_SURFACE,
 	OVERLAY_SURFACE,
 } from "../../src/lib/overlay-classes.js";
 import { CHIP, ICON_PILL } from "../../src/lib/pill-classes.js";
@@ -50,6 +51,14 @@ describe("floating panel recipe", () => {
 		expect(FLOATING_PANEL).toContain(OVERLAY_SURFACE);
 		expect(FLOATING_PANEL).toContain(Z_CLASS.overlay);
 		expect(FLOATING_PANEL).not.toMatch(/\bp-\d/);
+	});
+
+	it("FLOATING_PANEL_SURFACE is FLOATING_PANEL without the relative token", () => {
+		expect(FLOATING_PANEL_SURFACE).toBe(
+			FLOATING_PANEL.split(" ")
+				.filter((t) => t !== "relative")
+				.join(" "),
+		);
 	});
 
 	it("motion strings are exported once", () => {

@@ -27,14 +27,16 @@ export const OVERLAY_SURFACE_OPAQUE = `${OVERLAY_KNOBS} [--glass-base:var(--popo
  * unblurred scrim (backdrop-blur is too slow on mobile). */
 export const SCRIM_CLASS = "bg-scrim backdrop-blur-md";
 
+const PANEL_TAIL = `${Z_CLASS.overlay} rounded-md text-popover-foreground outline-hidden`;
+
 /* The floating panel surface, minus positioning: a caller that is not
  * anchor-relative (Spotlight's fixed bubble) composes this instead of
  * FLOATING_PANEL. */
-export const FLOATING_PANEL_SURFACE = `${OVERLAY_SURFACE} ${Z_CLASS.overlay} rounded-md text-popover-foreground outline-hidden`;
+export const FLOATING_PANEL_SURFACE = `${OVERLAY_SURFACE} ${PANEL_TAIL}`;
 
 /* The floating panel every anchored surface wears. Padding is the caller's:
  * menus add p-1, popovers p-4, pickers none. */
-export const FLOATING_PANEL = `${FLOATING_PANEL_SURFACE} relative`;
+export const FLOATING_PANEL = `${OVERLAY_SURFACE} relative ${PANEL_TAIL}`;
 
 /* Zero-height rect on the trigger's top edge. With gutter 0 and the panel
  * width bound to --kb-popper-anchor-width, the panel covers the trigger and
