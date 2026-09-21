@@ -47,7 +47,12 @@
 		"./styles": "./src/styles/globals.css",
 		"./package.json": "./package.json",
 		"./styles/theme": "./src/styles/theme.css",
-		"./scripts/*": "./scripts/*"
+		"./scripts/*": "./scripts/*",
+		"./backgrounds": {
+			"@glasshome/source": "./src/backgrounds/index.ts",
+			"types": "./dist/backgrounds/index.d.ts",
+			"import": "./dist/backgrounds/index.js"
+		}
 	},
 	"files": [
 		"dist",

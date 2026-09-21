@@ -12,6 +12,7 @@ export default defineConfig({
 				index: "src/index.ts",
 				"solid/index": "src/solid/index.ts",
 				"tokens/index": "src/tokens/index.ts",
+				"backgrounds/index": "src/backgrounds/index.ts",
 			},
 			formats: ["es"],
 		},
