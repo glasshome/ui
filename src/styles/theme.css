@@ -214,8 +214,12 @@
 	--field-edge: var(--border);
 	/* The knob says the state too: on wears --primary's hue, off stays inert
 	 * metal in the recessed well. Light reads lit by going darker than its pale
-	 * track, dark by going lighter; the hue is what carries across both. */
-	--thumb-face-on: oklch(0.55 0.16 215);
+	 * track, dark by going lighter; the hue is what carries across both. The
+	 * knob derives in its own scope (lib/thumb-classes.ts); --thumb-face-on is
+	 * the same expression at page scope, for anything else that reads it. */
+	--thumb-on-l: 0.55;
+	--thumb-on-c: 0.16;
+	--thumb-face-on: oklch(from var(--primary) var(--thumb-on-l) min(c, var(--thumb-on-c)) h);
 	--thumb-face-off: oklch(0.62 0.015 250);
 	--chart-1: oklch(0.7459 0.1483 156.4499);
 	--chart-2: oklch(0.48 0.2 215.221);
@@ -309,7 +313,9 @@ html[data-motion="live"] {
 	--field-edge: color-mix(in srgb, var(--border) 60%, transparent);
 	/* Lit through hue, not brightness: a neutral knob this light read as the
 	 * loudest pixel in the row. Carries --primary's hue, so on ties to the rim. */
-	--thumb-face-on: oklch(0.78 0.1 215);
+	--thumb-on-l: 0.78;
+	--thumb-on-c: 0.1;
+	--thumb-face-on: oklch(from var(--primary) var(--thumb-on-l) min(c, var(--thumb-on-c)) h);
 	--thumb-face-off: oklch(0.45 0.015 250);
 	--chart-1: oklch(0.8003 0.1821 151.711);
 	--chart-2: oklch(0.48 0.2 215.221);

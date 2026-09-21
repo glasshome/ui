@@ -1,6 +1,6 @@
 import { type Component, type ComponentProps, createSignal, splitProps } from "solid-js";
 import { FIELD_CHROME, FOCUS_RING } from "../lib/input-classes.js";
-import { THUMB_CLASS } from "../lib/thumb-classes.js";
+import { THUMB_CLASS, THUMB_FACE_ON } from "../lib/thumb-classes.js";
 import { cn } from "../lib/utils.js";
 
 type SwitchProps = Omit<ComponentProps<"button">, "onChange" | "children"> & {
@@ -52,7 +52,10 @@ const Switch: Component<SwitchProps> = (props) => {
 				)}
 				// Off must read quieter than on: the knob dims with the track rather
 				// than staying one bright material in both states.
-				style={{ background: checked() ? "var(--thumb-face-on)" : "var(--thumb-face-off)" }}
+				style={{
+					"--thumb-face-on": THUMB_FACE_ON,
+					background: checked() ? "var(--thumb-face-on)" : "var(--thumb-face-off)",
+				}}
 			/>
 			{local.name && <input type="hidden" name={local.name} value={checked() ? "on" : "off"} />}
 		</button>
