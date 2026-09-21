@@ -22,18 +22,29 @@ const VIEWPORT_MARGIN = 12;
 interface SpotlightProps {
 	target: Element | undefined;
 	scrim: boolean;
+	pad?: number;
 	onSkip?: () => void;
 	class?: string;
 	children: JSX.Element;
 }
 
+/* Field-by-field so an unchanged measure (same numbers, new object) writes nothing. */
+function sameFields<T extends object>(a: T | null, b: T | null): boolean {
+	if (a === b) return true;
+	if (!a || !b) return false;
+	return (Object.keys(a) as (keyof T)[]).every((key) => a[key] === b[key]);
+}
+
 const Spotlight: Component<SpotlightProps> = (props) => {
-	const [box, setBox] = createSignal<Box | null>(null);
-	const [viewport, setViewport] = createSignal({
-		width: window.innerWidth,
-		height: window.innerHeight,
-	});
-	const [bubbleSize, setBubbleSize] = createSignal({ width: 288, height: 96 });
+	const [box, setBox] = createSignal<Box | null>(null, { equals: sameFields });
+	const [viewport, setViewport] = createSignal(
+		{ width: window.innerWidth, height: window.innerHeight },
+		{ equals: sameFields },
+	);
+	const [bubbleSize, setBubbleSize] = createSignal(
+		{ width: 288, height: 96 },
+		{ equals: sameFields },
+	);
 	let bubble: HTMLDivElement | undefined;
 
 	const measure = () => {
@@ -47,9 +58,9 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 	createEffect(() => {
 		const target = props.target;
 		measure();
-		if (!target) return;
 		const observer = new ResizeObserver(measure);
-		observer.observe(target);
+		if (target) observer.observe(target);
+		if (bubble) observer.observe(bubble);
 		onCleanup(() => observer.disconnect());
 	});
 
@@ -60,7 +71,6 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 		window.addEventListener("resize", measure);
 		window.addEventListener("scroll", measure, { capture: true, passive: true });
 		document.addEventListener("keydown", onKey);
-		bubble?.focus({ preventScroll: true });
 		onCleanup(() => {
 			window.removeEventListener("resize", measure);
 			window.removeEventListener("scroll", measure, { capture: true });
@@ -77,9 +87,15 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 					data-slot="spotlight-scrim"
 					data-expanded=""
 					aria-hidden="true"
-					class={cn("fixed inset-0 bg-scrim", Z_CLASS.overlay, SCRIM_MOTION, TRAVEL_MOTION)}
+					class={cn(
+						"fixed inset-0 bg-scrim",
+						Z_CLASS.overlay,
+						SCRIM_MOTION,
+						TRAVEL_MOTION,
+						!box() && "pointer-events-none",
+					)}
 					style={{
-						"clip-path": `path(evenodd, "${holePath(viewport(), box(), HOLE_PAD, HOLE_RADIUS)}")`,
+						"clip-path": `path(evenodd, "${holePath(viewport(), box(), props.pad ?? HOLE_PAD, HOLE_RADIUS)}")`,
 					}}
 				/>
 			</Show>
@@ -87,9 +103,6 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 				ref={bubble}
 				data-slot="spotlight-bubble"
 				data-side={place().side}
-				role="status"
-				aria-live="polite"
-				tabindex="-1"
 				class={cn(
 					FLOATING_PANEL_SURFACE,
 					TRAVEL_MOTION,

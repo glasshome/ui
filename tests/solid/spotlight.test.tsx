@@ -65,6 +65,71 @@ describe("Spotlight", () => {
 		expect(onSkip).toHaveBeenCalledOnce();
 	});
 
+	it("blocks no presses when the target is unmeasured", () => {
+		render(() => (
+			<Spotlight target={undefined} scrim>
+				Step
+			</Spotlight>
+		));
+		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
+		expect(scrim?.classList.contains("pointer-events-none")).toBe(true);
+	});
+
+	it("blocks presses outside a measured target", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim>
+				Step
+			</Spotlight>
+		));
+		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
+		expect(scrim?.classList.contains("pointer-events-none")).toBe(false);
+	});
+
+	it("observes the bubble element too, so its own size change re-places it", () => {
+		const observe = vi.fn();
+		const Original = globalThis.ResizeObserver;
+		globalThis.ResizeObserver = class {
+			observe = observe;
+			unobserve() {}
+			disconnect() {}
+		} as unknown as typeof ResizeObserver;
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim>
+				Step
+			</Spotlight>
+		));
+		const bubble = document.querySelector('[data-slot="spotlight-bubble"]');
+		expect(observe.mock.calls.map((c) => c[0])).toContain(bubble);
+		globalThis.ResizeObserver = Original;
+	});
+
+	it("skips the scrim style write when a remeasure finds the same rect", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim>
+				Step
+			</Spotlight>
+		));
+		const setProperty = vi.spyOn(CSSStyleDeclaration.prototype, "setProperty");
+		setProperty.mockClear();
+		window.dispatchEvent(new Event("scroll"));
+		expect(setProperty).not.toHaveBeenCalled();
+		setProperty.mockRestore();
+	});
+
+	it("cuts the hole with a custom pad", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim pad={0}>
+				Step
+			</Spotlight>
+		));
+		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
+		expect(scrim?.style.clipPath).toContain("M112 200");
+	});
+
 	it("leaves no listener or observer behind", () => {
 		const disconnect = vi.fn();
 		const Original = globalThis.ResizeObserver;
