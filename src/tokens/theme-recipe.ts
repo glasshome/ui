@@ -79,10 +79,10 @@ function baseFromSeeds(recipe: ThemeRecipe, mode: Mode): ThemeBaseColors {
 	};
 }
 
-// `primary` is the accent as chosen and is left alone: the studio warns instead of repainting it.
-const SETTLED: (keyof ThemeColors)[] = ["ring", "mutedForeground", "destructive"];
+// The accent seed stays as chosen; per mode it lands on the nearest lightness that reads on its ground.
+const SETTLED: (keyof ThemeColors)[] = ["primary", "ring", "mutedForeground", "destructive"];
 
-/** A derived theme reads well without anyone fixing it: these three move to the nearest passing lightness. */
+/** A derived theme reads well without anyone fixing it: these move to the nearest passing lightness. */
 function settle(colors: ThemeColors): ThemeColors {
 	const out = { ...colors };
 	const failing = new Set(findUnreadable(out).map((issue) => issue.text));

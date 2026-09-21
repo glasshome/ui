@@ -84,7 +84,9 @@ describe("seedsFromColors", () => {
 	});
 
 	it("keeps only the colors the derivation would not have produced", () => {
-		const derived = resolveRecipe({ ...base, darkLinked: false });
+		// An accent that already reads on a light ground, so the seed and the light primary agree.
+		const readable = { ...base, accent: "oklch(0.55 0.14 215)", darkLinked: false };
+		const derived = resolveRecipe(readable);
 		const recipe = seedsFromColors(derived, base.radius, base.background);
 		expect(recipe.set).toEqual({ light: {}, dark: {} });
 	});

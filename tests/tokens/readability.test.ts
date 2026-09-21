@@ -72,7 +72,7 @@ describe("fixReadable", () => {
 });
 
 describe("a derived theme", () => {
-	it("reads well for any accent and surface; only the accent itself may need the author", () => {
+	it("reads well for any accent and surface, with nothing left for the author to fix", () => {
 		const offenders: string[] = [];
 		for (const h of [0, 45, 90, 150, 215, 280, 330]) {
 			for (const l of [0.45, 0.7, 0.88]) {
@@ -89,8 +89,7 @@ describe("a derived theme", () => {
 						});
 						for (const mode of ["light", "dark"] as const) {
 							for (const issue of findUnreadable(colors[mode])) {
-								if (issue.text !== "primary")
-									offenders.push(`${h}/${l}/${mode}: ${issue.text} on ${issue.surface}`);
+								offenders.push(`${h}/${l}/${mode}: ${issue.text} on ${issue.surface}`);
 							}
 						}
 					}
