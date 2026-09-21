@@ -108,7 +108,7 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | a tab row in a modal header | `<Tabs layout="split">` around the parts, `<Header wrap action={<TabsList class="w-auto">…}>` | `class="contents"` on `Tabs` and `flex-wrap` by hand |
 | a form inside a modal | `<Body as="form" id="…">` + a footer button with `form="…"` | a `display: contents` form wrapper inside the Body |
 | a glyph | `<Icon icon="lucide:plus" width={16}>` (inline svg from the host's `provideIcons` source) | `<iconify-icon>`, `@iconify-icon/solid` |
-| a status chip | `<Badge tone="var(--success)">` | `rounded-full bg-green-500/10` |
+| a status chip | `<Badge tone="var(--success)">` | `rounded-lg bg-green-500/10` |
 | a callout | `<Alert tone="warning">` | `border-amber-500/30 bg-amber-500/10` |
 | a labelled group inside a card | `<SectionGroup icon label count action>` | a hand-rolled `SectionIcon` + `SectionSubtitle` header row |
 | a titled group of form rows | `<FieldSet>` + `<FieldLegend>` (+ `<FieldDescription>`) | a tracked uppercase `SectionLabel` eyebrow |

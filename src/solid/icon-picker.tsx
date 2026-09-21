@@ -410,7 +410,7 @@ export function IconPicker(props: IconPickerProps) {
 										type="button"
 										aria-pressed={props.value === icon}
 										class={cn(
-											"mx-auto flex size-11 cursor-pointer items-center justify-center rounded-full transition-glass hover:bg-accent",
+											"mx-auto flex size-11 cursor-pointer items-center justify-center rounded-lg transition-glass hover:bg-accent",
 											props.value === icon &&
 												`${ICON_PILL_TINT} text-foreground [--glass-tone:var(--primary)] hover:bg-transparent`,
 										)}

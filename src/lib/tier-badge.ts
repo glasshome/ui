@@ -1,7 +1,7 @@
 /* Metallic tier chip: 135deg brushed sweep, bright ends, dip in the middle. */
 
 export const TIER_BADGE_CLASS =
-	"inline-flex cursor-default select-none items-center rounded-full px-2 py-0.5 font-black text-[10px] tracking-wide";
+	"inline-flex cursor-default select-none items-center rounded-lg px-2 py-0.5 font-black text-[10px] tracking-wide";
 
 /** Optional sweep shaping. Default is the symmetric brushed look (both ends
  *  `hi`, dipping to `lo` at the midpoint). The collectible/license golds are a
