@@ -7,3 +7,4 @@ export * from "./hex.js";
 export * from "./presets.js";
 export * from "./theme-colors.js";
 export { contrastRatio, parseThemeBlock } from "./theme-css.js";
+export * from "./theme-recipe.js";
