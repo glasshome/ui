@@ -119,6 +119,8 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | position inside a multi-step flow | `<StepIndicator count index>` | a hand-rolled row of dots |
 | tinted text alone | `glassToneText(tone)` | ad-hoc color-mix |
 | a metallic tier chip | `<TierBadge>` | gradients by hand |
+| the ambient motion window | `startMotionWindow()` | an app-local timer writing `data-motion` |
+| a built-in wallpaper | `GEOMETRIC_HOUSES_SVG` from `@glasshome/ui/backgrounds` | an app's own copy of the SVG |
 
 Server-run `.astro` markup imports `@glasshome/ui/solid` too: the `solid`
 export condition hands Astro the source, and a component with no `client:`
@@ -148,8 +150,10 @@ Motion is one system, not per-component flair. Four rules, all held by
    the arrival time. Pressables dip (`PRESS_DIP`).
 5. **Ambient motion is an event.** A wallpaper or decorative loop runs for a
    window after mount or a touch, then freezes mid-phase; an idle screen
-   animates nothing. The host holds `html[data-motion="live"]` for the window
-   (dash: `createMotionWindow`, 30 s); light-DOM loops gate on that attribute,
+   animates nothing. `startMotionWindow()` (package root) holds
+   `html[data-motion="live"]` for the window: 30 s, woken by `pointerdown`,
+   frozen on tab hide. Dash wraps it as `createMotionWindow` for Solid's
+   lifecycle; hub calls it directly. Light-DOM loops gate on that attribute,
    widget shadow roots on the inherited `--motion-ambient` (1 live, else 0)
    or, for a loop that can only pause, `--motion-play` (`running` live, else
    `paused`). A wrapper with `data-motion="still"` opts out: thumbnails are

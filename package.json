@@ -57,6 +57,7 @@
 	"files": [
 		"dist",
 		"src/index.ts",
+		"src/backgrounds",
 		"src/lib",
 		"src/solid",
 		"src/styles",
