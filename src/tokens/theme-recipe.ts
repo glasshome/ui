@@ -1,3 +1,4 @@
+import { findUnreadable, fixReadable } from "./readability.js";
 import {
 	type BackgroundConfig,
 	clamp,
@@ -78,13 +79,26 @@ function baseFromSeeds(recipe: ThemeRecipe, mode: Mode): ThemeBaseColors {
 	};
 }
 
+// `primary` is the accent as chosen and is left alone: the studio warns instead of repainting it.
+const SETTLED: (keyof ThemeColors)[] = ["ring", "mutedForeground", "destructive"];
+
+/** A derived theme reads well without anyone fixing it: these three move to the nearest passing lightness. */
+function settle(colors: ThemeColors): ThemeColors {
+	const out = { ...colors };
+	const failing = new Set(findUnreadable(out).map((issue) => issue.text));
+	for (const key of SETTLED) {
+		if (failing.has(key)) out[key] = fixReadable(out, key) ?? out[key];
+	}
+	return out;
+}
+
 function derive(recipe: ThemeRecipe): ThemeColorsConfig {
 	const lightBase = baseFromSeeds(recipe, "light");
 	const light = resolveThemeColors(lightBase, "light");
 	const dark = recipe.darkLinked
 		? deriveDarkFromLight(lightBase)
 		: resolveThemeColors(baseFromSeeds(recipe, "dark"), "dark");
-	return { light, dark };
+	return { light: settle(light), dark: settle(dark) };
 }
 
 export function resolveRecipe(recipe: ThemeRecipe): ThemeColorsConfig {
