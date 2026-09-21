@@ -82,6 +82,7 @@ export {
 	SETTLE_MOTION,
 	STAGGER,
 } from "./lib/motion-classes.js";
+export { MOTION_WINDOW_MS, startMotionWindow } from "./lib/motion-window.js";
 export {
 	anchorToTriggerTop,
 	FLOATING_PANEL,
