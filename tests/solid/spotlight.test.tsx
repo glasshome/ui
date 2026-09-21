@@ -86,6 +86,37 @@ describe("Spotlight", () => {
 		expect(scrim?.classList.contains("pointer-events-none")).toBe(false);
 	});
 
+	it("blocks presses on an unmeasured target when blocking", () => {
+		render(() => (
+			<Spotlight target={undefined} scrim blocking>
+				Step
+			</Spotlight>
+		));
+		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
+		expect(scrim?.classList.contains("pointer-events-none")).toBe(false);
+	});
+
+	it("keeps blocking presses off when no blocking is set", () => {
+		render(() => (
+			<Spotlight target={undefined} scrim>
+				Step
+			</Spotlight>
+		));
+		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
+		expect(scrim?.classList.contains("pointer-events-none")).toBe(true);
+	});
+
+	it("leaves a measured target unaffected by blocking", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim blocking>
+				Step
+			</Spotlight>
+		));
+		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
+		expect(scrim?.classList.contains("pointer-events-none")).toBe(false);
+	});
+
 	it("observes the bubble element too, so its own size change re-places it", () => {
 		const observe = vi.fn();
 		const Original = globalThis.ResizeObserver;

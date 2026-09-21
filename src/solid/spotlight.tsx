@@ -22,6 +22,7 @@ const VIEWPORT_MARGIN = 12;
 interface SpotlightProps {
 	target: Element | undefined;
 	scrim: boolean;
+	blocking?: boolean;
 	pad?: number;
 	onSkip?: () => void;
 	class?: string;
@@ -92,7 +93,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 						Z_CLASS.overlay,
 						SCRIM_MOTION,
 						TRAVEL_MOTION,
-						!box() && "pointer-events-none",
+						!box() && !props.blocking && "pointer-events-none",
 					)}
 					style={{
 						"clip-path": `path(evenodd, "${holePath(viewport(), box(), props.pad ?? HOLE_PAD, HOLE_RADIUS)}")`,
