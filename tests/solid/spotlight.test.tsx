@@ -1,6 +1,7 @@
 import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { SCRIM_CLASS } from "../../src/lib/overlay-classes.js";
 import { Spotlight } from "../../src/solid/spotlight.js";
 
 function targetAt(x: number, y: number, width: number, height: number) {
@@ -148,6 +149,19 @@ describe("Spotlight", () => {
 		window.dispatchEvent(new Event("scroll"));
 		expect(setProperty).not.toHaveBeenCalled();
 		setProperty.mockRestore();
+	});
+
+	it("wears the modal scrim recipe", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim>
+				Step
+			</Spotlight>
+		));
+		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
+		for (const token of SCRIM_CLASS.split(" ")) {
+			expect(scrim?.classList.contains(token)).toBe(true);
+		}
 	});
 
 	it("cuts the hole with a custom pad", () => {

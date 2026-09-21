@@ -10,7 +10,7 @@ import {
 import { Portal } from "solid-js/web";
 import { Z_CLASS } from "../lib/layers.js";
 import { SCRIM_MOTION, TRAVEL_MOTION } from "../lib/motion-classes.js";
-import { FLOATING_PANEL_SURFACE } from "../lib/overlay-classes.js";
+import { FLOATING_PANEL_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
 import { type Box, holePath, placeBubble } from "../lib/spotlight-geometry.js";
 import { cn } from "../lib/utils.js";
 
@@ -89,7 +89,8 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 					data-expanded=""
 					aria-hidden="true"
 					class={cn(
-						"fixed inset-0 bg-scrim",
+						"fixed inset-0",
+						SCRIM_CLASS,
 						Z_CLASS.overlay,
 						SCRIM_MOTION,
 						TRAVEL_MOTION,
