@@ -1,4 +1,4 @@
-import { createSignal, For } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -86,6 +86,8 @@ import {
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
+	Spotlight,
+	Switch,
 	Tabs,
 	TabsContent,
 	TabsList,
@@ -138,6 +140,9 @@ export function OverlaysCatalog() {
 	const [tabsOpen, setTabsOpen] = usePersistentOpen("dialog-header-tabs");
 	const [tab, setTab] = createSignal("controls");
 	const [anchorOpen, setAnchorOpen] = createSignal(false);
+	const [spotlightOpen, setSpotlightOpen] = createSignal(false);
+	const [spotlightScrim, setSpotlightScrim] = createSignal(true);
+	const [spotlightTarget, setSpotlightTarget] = createSignal<HTMLButtonElement>();
 	return (
 		<CatalogGroup id="cat-overlays" title="Overlays">
 			<Specimen name="Dialog" try="Open dialog">
@@ -385,6 +390,32 @@ export function OverlaysCatalog() {
 						<p class="p-3 text-muted-foreground text-sm">Evening, Movie night, Away</p>
 					</PopoverContent>
 				</Popover>
+			</Specimen>
+
+			<Specimen name="Spotlight" try="Point at the button">
+				<div class="flex items-center gap-3">
+					<Button
+						ref={setSpotlightTarget}
+						variant="outline"
+						onClick={() => setSpotlightOpen(!spotlightOpen())}
+					>
+						Point at me
+					</Button>
+					<Switch
+						checked={spotlightScrim()}
+						onChange={setSpotlightScrim}
+						aria-label="Dim the rest of the screen"
+					/>
+				</div>
+				<Show when={spotlightOpen()}>
+					<Spotlight
+						target={spotlightTarget()}
+						scrim={spotlightScrim()}
+						onSkip={() => setSpotlightOpen(false)}
+					>
+						<p class="text-foreground text-sm">This is the button. Press it to move on.</p>
+					</Spotlight>
+				</Show>
 			</Specimen>
 
 			<Specimen name="Collapsible" try="Advanced filters" span={2}>
