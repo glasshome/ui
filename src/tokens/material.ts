@@ -2,9 +2,9 @@ import { clamp } from "./theme-colors.js";
 
 export const MATERIAL_VERSION = 1;
 
-export type MaterialPresetId = "frosted" | "paper";
+export type MaterialPresetId = "frosted" | "paper" | "poster" | "glow";
 
-/** Tier 2 of the glass formula: what every surface's knobs are multiplied by. */
+/** Tier 2 of the glass formula: what every surface's knobs are multiplied by. The homeowner's dials. */
 export interface MaterialDials {
 	/** Backdrop blur radius, px. */
 	blur: number;
@@ -16,6 +16,20 @@ export interface MaterialDials {
 	tint: number;
 }
 
+/** Terms a preset turns on; inert at zero, never a homeowner dial. */
+export interface MaterialTerms {
+	/** Edge width, px. */
+	edgeWidth: number;
+	/** 0..1, how far the edge moves toward the foreground ink. */
+	edgeInk: number;
+	/** Hard down-right shadow offset in the ink, px. */
+	cast: number;
+	/** Outer accent bloom radius, px. */
+	glow: number;
+}
+
+export type MaterialSpec = MaterialDials & MaterialTerms;
+
 /** What was chosen, never what was computed. */
 export interface Material {
 	v: typeof MATERIAL_VERSION;
@@ -25,9 +39,22 @@ export interface Material {
 
 export type BlurMode = "dynamic" | "performant" | "none";
 
-export const MATERIAL_PRESETS: Record<MaterialPresetId, MaterialDials> = {
-	frosted: { blur: 24, clarity: 60, depth: 1, tint: 1 },
-	paper: { blur: 0, clarity: 100, depth: 0.3, tint: 1 },
+const PLAIN: MaterialTerms = { edgeWidth: 1, edgeInk: 0, cast: 0, glow: 0 };
+
+export const MATERIAL_PRESETS: Record<MaterialPresetId, MaterialSpec> = {
+	frosted: { blur: 24, clarity: 60, depth: 1, tint: 1, ...PLAIN },
+	paper: { blur: 0, clarity: 100, depth: 0.3, tint: 1, ...PLAIN },
+	poster: {
+		blur: 0,
+		clarity: 100,
+		depth: 0,
+		tint: 1.4,
+		edgeWidth: 2.5,
+		edgeInk: 1,
+		cast: 6,
+		glow: 0,
+	},
+	glow: { blur: 12, clarity: 85, depth: 0.6, tint: 0.6, ...PLAIN, glow: 24 },
 };
 
 export const FROSTED: Material = { v: 1, preset: "frosted" };
@@ -57,6 +84,7 @@ export function resolveMaterial(
 	blurMode: BlurMode,
 ): Record<`--material-${string}`, string> {
 	const d = materialDials(material);
+	const t = MATERIAL_PRESETS[material.preset];
 	const blur = blurMode === "none" ? 0 : d.blur;
 	const clarity = blurMode === "none" ? Math.max(d.clarity, NO_BLUR_CLARITY_FLOOR) : d.clarity;
 	return {
@@ -64,5 +92,9 @@ export function resolveMaterial(
 		"--material-clarity": `${clarity}%`,
 		"--material-depth": `${d.depth}`,
 		"--material-tint": `${d.tint}`,
+		"--material-edge-width": `${t.edgeWidth}px`,
+		"--material-edge-ink": `${t.edgeInk}`,
+		"--material-cast": `${t.cast}px`,
+		"--material-glow": `${t.glow}px`,
 	};
 }

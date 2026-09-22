@@ -77,12 +77,21 @@ identity; the tier scales all of them at once, chrome and widgets alike.
 | `--material-depth` | number | 1 | `--glass-light`, `--glass-shade`, `--glass-rim`, `--glass-lift` |
 | `--material-tint` | number | 1 | `--glass-wash`, `--glass-wash-2` |
 
-A preset is a point in that space (`tokens/material.ts`, `resolveMaterial`
-composes it with the host blur mode); a theme stores the preset and any dial it
-moved, never the resolved values. A look the dials cannot express adds an
-inert-by-default term here (a ui minor), then, if that is not enough, a second
-formula body under `:root[data-material=…] :where(.glass)`. The class name
-never changes.
+Four more are preset terms, inert at their defaults and never a homeowner dial:
+
+| Variable | Type | Default | Turns on |
+| --- | --- | --- | --- |
+| `--material-edge-width` | length | 1px | the edge weight (Poster 2.5px) |
+| `--material-edge-ink` | number | 0 | the edge's mix toward `--foreground` (Poster 1) |
+| `--material-cast` | length | 0px | a hard down-right shadow in the ink (Poster 6px) |
+| `--material-glow` | length | 0px | an outer bloom of `--primary` (Glow 24px) |
+
+A preset is a point in that space (`tokens/material.ts`: Frosted, Paper, Poster,
+Glow; `resolveMaterial` composes it with the host blur mode); a theme stores the
+preset and any dial it moved, never the resolved values. A look these cannot
+express adds another inert-by-default term here (a ui minor), then, if that is
+not enough, a second formula body under `:root[data-material=…] :where(.glass)`.
+The class name never changes.
 
 ## Surfaces (the only sanctioned recipes)
 

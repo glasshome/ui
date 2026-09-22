@@ -105,6 +105,31 @@
 	inherits: true;
 	initial-value: 1;
 }
+/* Preset-only terms, inert at their defaults: Poster raises the first three,
+ * Glow the last. */
+@property --material-edge-width {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 1px;
+}
+/* 0..1, how far the edge colour moves toward the foreground ink. */
+@property --material-edge-ink {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
+/* A hard, unblurred shadow offset down-right in the foreground ink. */
+@property --material-cast {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+/* An outer bloom of the accent. */
+@property --material-glow {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
 
 /* --glass-base and --glass-edge need var() defaults, which @property forbids,
  * so they reset here instead. MUST stay in @layer base so [--glass-*] utilities
@@ -114,7 +139,8 @@
 	/* biome-ignore-start lint/correctness/noMissingVarFunction: transition-property takes property names, and these are the registered knobs */
 	--glass-transition:
 		--glass-tone, --glass-wash, --glass-light, --glass-shade, --glass-rim, --glass-lift,
-		--glass-glow, --glass-drop, --glass-text, --material-depth, --material-tint, color,
+		--glass-glow, --glass-drop, --glass-text, --material-depth, --material-tint,
+		--material-edge-width, --material-edge-ink, --material-cast, --material-glow, color,
 		background-color, border-color, box-shadow, opacity, transform, translate, scale, width, height;
 	/* biome-ignore-end lint/correctness/noMissingVarFunction: see above */
 }
@@ -184,7 +210,8 @@
 	--glass-tone-2: var(--glass-tone);
 	--glass-wash-2: calc(var(--glass-wash) / 3);
 	--glass-wash-angle: 135deg;
-	border: 1px solid var(--glass-edge);
+	border: var(--material-edge-width) solid
+		color-mix(in srgb, var(--foreground) calc(var(--material-edge-ink) * 100%), var(--glass-edge));
 	/* Base is a gradient layer (not background-color) so the frost slice can sit
 	 * BELOW it — background-color always paints under every image layer, which
 	 * would put the frost above the fill. Layer order top→bottom: grain, light,
@@ -219,7 +246,10 @@
 		var(--glass-rim-shine, 0 0 #0000),
 		inset 0 -2px 4px color-mix(in srgb, var(--glass-tone) var(--glass-glow), transparent),
 		0 1px 3px color-mix(in srgb, var(--glass-tone) var(--glass-drop), transparent),
-		0 10px 30px -16px oklch(0 0 0 / calc(var(--glass-lift) * var(--material-depth)));
+		0 10px 30px -16px oklch(0 0 0 / calc(var(--glass-lift) * var(--material-depth))),
+		var(--material-cast) var(--material-cast) 0 0
+		color-mix(in srgb, var(--foreground) 92%, transparent),
+		0 0 var(--material-glow) color-mix(in srgb, var(--primary) 40%, transparent);
 }
 
 /* Two-tone edge: border-color cannot gradient, so the border goes transparent

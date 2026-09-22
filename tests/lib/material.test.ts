@@ -6,6 +6,13 @@ import {
 	resolveMaterial,
 } from "../../src/tokens/material.js";
 
+const INERT = {
+	"--material-edge-width": "1px",
+	"--material-edge-ink": "0",
+	"--material-cast": "0px",
+	"--material-glow": "0px",
+};
+
 describe("material presets", () => {
 	it("Frosted resolves to the theme.css defaults, byte for byte", () => {
 		expect(resolveMaterial(FROSTED, "dynamic")).toEqual({
@@ -13,12 +20,23 @@ describe("material presets", () => {
 			"--material-clarity": "60%",
 			"--material-depth": "1",
 			"--material-tint": "1",
+			...INERT,
 		});
 	});
 
 	it("a dial overrides its preset value and nothing else", () => {
 		const dials = materialDials({ v: 1, preset: "paper", dials: { depth: 0.8 } });
-		expect(dials).toEqual({ ...MATERIAL_PRESETS.paper, depth: 0.8 });
+		const { blur, clarity, tint } = MATERIAL_PRESETS.paper;
+		expect(dials).toEqual({ blur, clarity, tint, depth: 0.8 });
+	});
+
+	it("Poster and Glow carry their own terms; a dial never reaches a term", () => {
+		const poster = resolveMaterial({ v: 1, preset: "poster", dials: { clarity: 50 } }, "dynamic");
+		expect(poster["--material-edge-width"]).toBe("2.5px");
+		expect(poster["--material-edge-ink"]).toBe("1");
+		expect(poster["--material-cast"]).toBe("6px");
+		expect(poster["--material-clarity"]).toBe("50%");
+		expect(resolveMaterial({ v: 1, preset: "glow" }, "dynamic")["--material-glow"]).toBe("24px");
 	});
 
 	it("no-blur mode drops the blur and lifts clarity to the readable floor", () => {
@@ -31,7 +49,7 @@ describe("material presets", () => {
 		expect(resolveMaterial(FROSTED, "performant")["--material-blur"]).toBe("24px");
 	});
 
-	it("every preset differs from every other on at least one dial", () => {
+	it("every preset differs from every other on at least one value", () => {
 		const ids = Object.keys(MATERIAL_PRESETS) as (keyof typeof MATERIAL_PRESETS)[];
 		for (const a of ids) {
 			for (const b of ids) {
@@ -51,6 +69,7 @@ describe("material presets", () => {
 			"--material-clarity": "0%",
 			"--material-depth": "2",
 			"--material-tint": "0",
+			...INERT,
 		});
 	});
 });

@@ -237,6 +237,10 @@
 	--material-clarity: 60%;
 	--material-depth: 1;
 	--material-tint: 1;
+	--material-edge-width: 1px;
+	--material-edge-ink: 0;
+	--material-cast: 0px;
+	--material-glow: 0px;
 	--glass-blur: var(--material-blur);
 	--shadow-x: 0px;
 	--shadow-y: 2px;

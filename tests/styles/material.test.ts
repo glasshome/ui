@@ -22,6 +22,10 @@ describe("the material tier", () => {
 		["--material-clarity", "<percentage>", "60%"],
 		["--material-depth", "<number>", "1"],
 		["--material-tint", "<number>", "1"],
+		["--material-edge-width", "<length>", "1px"],
+		["--material-edge-ink", "<number>", "0"],
+		["--material-cast", "<length>", "0px"],
+		["--material-glow", "<length>", "0px"],
 	])("%s is registered, inheriting, with the Frosted default", (name, syntax, initial) => {
 		const block = property(name);
 		expect(block).toContain(`syntax: "${syntax}"`);
@@ -33,6 +37,16 @@ describe("the material tier", () => {
 		expect(theme).toContain("--material-blur: 24px;");
 		expect(theme).toContain("--glass-blur: var(--material-blur);");
 		expect(theme).toContain("--material-clarity: 60%;");
+		expect(theme).toContain("--material-cast: 0px;");
+	});
+
+	it("the preset terms sit in the formula, inert at zero", () => {
+		expect(globals).toContain("border: var(--material-edge-width) solid");
+		expect(globals).toContain("var(--foreground) calc(var(--material-edge-ink) * 100%)");
+		expect(globals).toContain("var(--material-cast) var(--material-cast) 0 0");
+		expect(globals).toContain(
+			"0 0 var(--material-glow) color-mix(in srgb, var(--primary) 40%, transparent)",
+		);
 	});
 
 	it("depth scales sheen, shade, rim and lift; tint scales the wash", () => {
