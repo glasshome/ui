@@ -43,10 +43,11 @@ describe("the material tier", () => {
 	it("the preset terms sit in the formula, inert at zero", () => {
 		expect(globals).toContain("border: var(--material-edge-width) solid");
 		expect(globals).toContain("var(--foreground) calc(var(--material-edge-ink) * 100%)");
-		expect(globals).toContain("var(--material-cast) var(--material-cast) 0 0");
-		expect(globals).toContain(
-			"0 0 var(--material-glow) color-mix(in srgb, var(--primary) 40%, transparent)",
+		expect(globals).toContain("--material-reach: calc(0.35 + var(--glass-lift) * 1.45);");
+		expect(globals).toMatch(
+			/calc\(var\(--material-cast\) \* var\(--material-reach\)\)\s+calc\(var\(--material-cast\) \* var\(--material-reach\)\) 0 0/,
 		);
+		expect(globals).toContain("0 0 calc(var(--material-glow) * var(--material-reach))");
 	});
 
 	it("depth scales sheen, shade, rim and lift; tint scales the wash", () => {

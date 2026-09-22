@@ -242,14 +242,20 @@
 			)
 		),
 		linear-gradient(var(--glass-base), var(--glass-base)), var(--glass-frost, none);
+	/* Cast and glow scale with --glass-lift, the knob that already says how big a
+	 * surface floats: a card (0.45) takes the full term, a chip or button (0)
+	 * about a third, so a 6px cast never dwarfs a badge. */
+	--material-reach: calc(0.35 + var(--glass-lift) * 1.45);
 	box-shadow:
 		var(--glass-rim-shine, 0 0 #0000),
 		inset 0 -2px 4px color-mix(in srgb, var(--glass-tone) var(--glass-glow), transparent),
 		0 1px 3px color-mix(in srgb, var(--glass-tone) var(--glass-drop), transparent),
 		0 10px 30px -16px oklch(0 0 0 / calc(var(--glass-lift) * var(--material-depth))),
-		var(--material-cast) var(--material-cast) 0 0
+		calc(var(--material-cast) * var(--material-reach))
+		calc(var(--material-cast) * var(--material-reach)) 0 0
 		color-mix(in srgb, var(--foreground) 92%, transparent),
-		0 0 var(--material-glow) color-mix(in srgb, var(--primary) 40%, transparent);
+		0 0 calc(var(--material-glow) * var(--material-reach))
+		color-mix(in srgb, var(--primary) 40%, transparent);
 }
 
 /* Two-tone edge: border-color cannot gradient, so the border goes transparent
