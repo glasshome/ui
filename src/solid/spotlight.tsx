@@ -124,7 +124,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 						SCRIM_CLASS,
 						Z_CLASS.overlay,
 						SCRIM_MOTION,
-						TRAVEL_MOTION,
+						!props.live && TRAVEL_MOTION,
 						!box() && !props.blocking && "pointer-events-none",
 					)}
 					style={{
@@ -139,7 +139,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 						aria-hidden="true"
 						class={cn(
 							"pointer-events-none fixed top-0 left-0 rounded-2xl shadow-lg ring-2 ring-primary",
-							TRAVEL_MOTION,
+							!props.live && TRAVEL_MOTION,
 						)}
 						style={{
 							width: `${current().width + (props.pad ?? HOLE_PAD) * 2}px`,
@@ -155,7 +155,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 				data-side={place().side}
 				class={cn(
 					FLOATING_PANEL_SURFACE,
-					TRAVEL_MOTION,
+					!props.live && TRAVEL_MOTION,
 					"fixed top-0 left-0 w-72 p-4",
 					props.class,
 				)}

@@ -1,6 +1,7 @@
 import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { TRAVEL_MOTION } from "../../src/lib/motion-classes.js";
 import { SCRIM_CLASS } from "../../src/lib/overlay-classes.js";
 import { Spotlight } from "../../src/solid/spotlight.js";
 
@@ -323,6 +324,32 @@ describe("Spotlight", () => {
 		));
 		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
 		for (const token of SCRIM_CLASS.split(" ")) {
+			expect(scrim?.classList.contains(token)).toBe(true);
+		}
+	});
+
+	it("drops the travel transition while live, so the hole stays on a dragged target", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim live>
+				Step
+			</Spotlight>
+		));
+		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
+		for (const token of TRAVEL_MOTION.split(" ")) {
+			expect(scrim?.classList.contains(token)).toBe(false);
+		}
+	});
+
+	it("keeps the travel transition when not live", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim>
+				Step
+			</Spotlight>
+		));
+		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
+		for (const token of TRAVEL_MOTION.split(" ")) {
 			expect(scrim?.classList.contains(token)).toBe(true);
 		}
 	});
