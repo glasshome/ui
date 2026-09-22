@@ -77,17 +77,21 @@ identity; the tier scales all of them at once, chrome and widgets alike.
 | `--material-depth` | number | 1 | `--glass-light`, `--glass-shade`, `--glass-rim`, `--glass-lift` |
 | `--material-tint` | number | 1 | `--glass-wash`, `--glass-wash-2` |
 
-Four more are preset terms, inert at their defaults and never a homeowner dial:
+Five more are preset terms, inert at their defaults and never a homeowner dial.
+Cast and glow scale with `--glass-lift` (`--material-reach`), so a chip takes
+about a third of what a card takes. `--material-hue` is the surface's own hue,
+opaque: its tone when it has one, the accent otherwise.
 
 | Variable | Type | Default | Turns on |
 | --- | --- | --- | --- |
-| `--material-edge-width` | length | 1px | the edge weight (Poster 2.5px) |
-| `--material-edge-ink` | number | 0 | the edge's mix toward `--foreground` (Poster 1) |
-| `--material-cast` | length | 0px | a hard down-right shadow in the ink (Poster 6px) |
-| `--material-glow` | length | 0px | an outer bloom of `--primary` (Glow 24px) |
+| `--material-edge-width` | length | 1px | the edge weight (Poster 3px, Neon 1.5px) |
+| `--material-edge-ink` | number | 0 | the edge's mix toward `--foreground` (Paper 0.2, Poster 1) |
+| `--material-edge-accent` | number | 0 | the edge's mix toward `--material-hue` (Neon 1) |
+| `--material-cast` | length | 0px | a hard down-right shadow in the ink (Poster 5px) |
+| `--material-glow` | length | 0px | an outer bloom in `--material-hue` (Neon 18px) |
 
 A preset is a point in that space (`tokens/material.ts`: Frosted, Paper, Poster,
-Glow; `resolveMaterial` composes it with the host blur mode); a theme stores the
+Neon; `resolveMaterial` composes it with the host blur mode); a theme stores the
 preset and any dial it moved, never the resolved values. A look these cannot
 express adds another inert-by-default term here (a ui minor), then, if that is
 not enough, a second formula body under `:root[data-material=…] :where(.glass)`.

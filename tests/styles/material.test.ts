@@ -24,6 +24,7 @@ describe("the material tier", () => {
 		["--material-tint", "<number>", "1"],
 		["--material-edge-width", "<length>", "1px"],
 		["--material-edge-ink", "<number>", "0"],
+		["--material-edge-accent", "<number>", "0"],
 		["--material-cast", "<length>", "0px"],
 		["--material-glow", "<length>", "0px"],
 	])("%s is registered, inheriting, with the Frosted default", (name, syntax, initial) => {
@@ -48,6 +49,8 @@ describe("the material tier", () => {
 			/calc\(var\(--material-cast\) \* var\(--material-reach\)\)\s+calc\(var\(--material-cast\) \* var\(--material-reach\)\) 0 0/,
 		);
 		expect(globals).toContain("0 0 calc(var(--material-glow) * var(--material-reach))");
+		expect(globals).toContain("var(--material-hue) calc(var(--material-edge-accent) * 100%)");
+		expect(globals).toContain("oklch(from var(--material-hue) l c h / 0.45)");
 	});
 
 	it("depth scales sheen, shade, rim and lift; tint scales the wash", () => {

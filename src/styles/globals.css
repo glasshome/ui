@@ -124,7 +124,14 @@
 	inherits: true;
 	initial-value: 0px;
 }
-/* An outer bloom of the accent. */
+/* 0..1, how far the edge moves toward the surface's own hue (its tone, else
+ * the accent). */
+@property --material-edge-accent {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
+/* An outer bloom in the surface's own hue. */
 @property --material-glow {
 	syntax: "<length>";
 	inherits: true;
@@ -140,7 +147,8 @@
 	--glass-transition:
 		--glass-tone, --glass-wash, --glass-light, --glass-shade, --glass-rim, --glass-lift,
 		--glass-glow, --glass-drop, --glass-text, --material-depth, --material-tint,
-		--material-edge-width, --material-edge-ink, --material-cast, --material-glow, color,
+		--material-edge-width, --material-edge-ink, --material-edge-accent, --material-cast,
+		--material-glow, color,
 		background-color, border-color, box-shadow, opacity, transform, translate, scale, width, height;
 	/* biome-ignore-end lint/correctness/noMissingVarFunction: see above */
 }
@@ -210,8 +218,15 @@
 	--glass-tone-2: var(--glass-tone);
 	--glass-wash-2: calc(var(--glass-wash) / 3);
 	--glass-wash-angle: 135deg;
+	/* The surface's own hue, opaque: its tone when it has one, the accent otherwise
+	 * (a transparent tone mixes to the accent at low alpha; the /1 restores it). */
+	--material-hue: oklch(from color-mix(in srgb, var(--glass-tone) 60%, var(--primary)) l c h / 1);
 	border: var(--material-edge-width) solid
-		color-mix(in srgb, var(--foreground) calc(var(--material-edge-ink) * 100%), var(--glass-edge));
+		color-mix(
+			in srgb,
+			var(--material-hue) calc(var(--material-edge-accent) * 100%),
+			color-mix(in srgb, var(--foreground) calc(var(--material-edge-ink) * 100%), var(--glass-edge))
+		);
 	/* Base is a gradient layer (not background-color) so the frost slice can sit
 	 * BELOW it — background-color always paints under every image layer, which
 	 * would put the frost above the fill. Layer order top→bottom: grain, light,
@@ -255,7 +270,7 @@
 		calc(var(--material-cast) * var(--material-reach)) 0 0
 		color-mix(in srgb, var(--foreground) 92%, transparent),
 		0 0 calc(var(--material-glow) * var(--material-reach))
-		color-mix(in srgb, var(--primary) 40%, transparent);
+		oklch(from var(--material-hue) l c h / 0.45);
 }
 
 /* Two-tone edge: border-color cannot gradient, so the border goes transparent

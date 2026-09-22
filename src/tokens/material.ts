@@ -2,7 +2,7 @@ import { clamp } from "./theme-colors.js";
 
 export const MATERIAL_VERSION = 1;
 
-export type MaterialPresetId = "frosted" | "paper" | "poster" | "glow";
+export type MaterialPresetId = "frosted" | "paper" | "poster" | "neon";
 
 /** Tier 2 of the glass formula: what every surface's knobs are multiplied by. The homeowner's dials. */
 export interface MaterialDials {
@@ -22,9 +22,11 @@ export interface MaterialTerms {
 	edgeWidth: number;
 	/** 0..1, how far the edge moves toward the foreground ink. */
 	edgeInk: number;
+	/** 0..1, how far the edge moves toward the surface's own hue (its tone, else the accent). */
+	edgeAccent: number;
 	/** Hard down-right shadow offset in the ink, px. */
 	cast: number;
-	/** Outer accent bloom radius, px. */
+	/** Outer bloom radius in the surface's own hue, px. */
 	glow: number;
 }
 
@@ -39,22 +41,37 @@ export interface Material {
 
 export type BlurMode = "dynamic" | "performant" | "none";
 
-const PLAIN: MaterialTerms = { edgeWidth: 1, edgeInk: 0, cast: 0, glow: 0 };
+const PLAIN: MaterialTerms = { edgeWidth: 1, edgeInk: 0, edgeAccent: 0, cast: 0, glow: 0 };
 
 export const MATERIAL_PRESETS: Record<MaterialPresetId, MaterialSpec> = {
+	/** Today's glass: translucent, blurred, lit rim. */
 	frosted: { blur: 24, clarity: 60, depth: 1, tint: 1, ...PLAIN },
-	paper: { blur: 0, clarity: 100, depth: 0.3, tint: 1, ...PLAIN },
+	/** Opaque matte stock, a faint inked cut edge, calm tint. */
+	paper: { blur: 0, clarity: 100, depth: 0.5, tint: 0.85, ...PLAIN, edgeInk: 0.2 },
+	/** Flat fill, thick ink edge, hard cast; no sheen at all. */
 	poster: {
 		blur: 0,
 		clarity: 100,
 		depth: 0,
-		tint: 1.4,
-		edgeWidth: 2.5,
+		tint: 1.3,
+		edgeWidth: 3,
 		edgeInk: 1,
-		cast: 6,
+		edgeAccent: 0,
+		cast: 5,
 		glow: 0,
 	},
-	glow: { blur: 12, clarity: 85, depth: 0.6, tint: 0.6, ...PLAIN, glow: 24 },
+	/** Near-opaque dark tile, thin tube of its own hue at the edge, bloom around it. */
+	neon: {
+		blur: 8,
+		clarity: 92,
+		depth: 0.4,
+		tint: 0.9,
+		edgeWidth: 1.5,
+		edgeInk: 0,
+		edgeAccent: 1,
+		cast: 0,
+		glow: 18,
+	},
 };
 
 export const FROSTED: Material = { v: 1, preset: "frosted" };
@@ -94,6 +111,7 @@ export function resolveMaterial(
 		"--material-tint": `${d.tint}`,
 		"--material-edge-width": `${t.edgeWidth}px`,
 		"--material-edge-ink": `${t.edgeInk}`,
+		"--material-edge-accent": `${t.edgeAccent}`,
 		"--material-cast": `${t.cast}px`,
 		"--material-glow": `${t.glow}px`,
 	};

@@ -9,6 +9,7 @@ import {
 const INERT = {
 	"--material-edge-width": "1px",
 	"--material-edge-ink": "0",
+	"--material-edge-accent": "0",
 	"--material-cast": "0px",
 	"--material-glow": "0px",
 };
@@ -30,13 +31,15 @@ describe("material presets", () => {
 		expect(dials).toEqual({ blur, clarity, tint, depth: 0.8 });
 	});
 
-	it("Poster and Glow carry their own terms; a dial never reaches a term", () => {
+	it("Poster and Neon carry their own terms; a dial never reaches a term", () => {
 		const poster = resolveMaterial({ v: 1, preset: "poster", dials: { clarity: 50 } }, "dynamic");
-		expect(poster["--material-edge-width"]).toBe("2.5px");
+		expect(poster["--material-edge-width"]).toBe("3px");
 		expect(poster["--material-edge-ink"]).toBe("1");
-		expect(poster["--material-cast"]).toBe("6px");
+		expect(poster["--material-cast"]).toBe("5px");
 		expect(poster["--material-clarity"]).toBe("50%");
-		expect(resolveMaterial({ v: 1, preset: "glow" }, "dynamic")["--material-glow"]).toBe("24px");
+		const neon = resolveMaterial({ v: 1, preset: "neon" }, "dynamic");
+		expect(neon["--material-glow"]).toBe("18px");
+		expect(neon["--material-edge-accent"]).toBe("1");
 	});
 
 	it("no-blur mode drops the blur and lifts clarity to the readable floor", () => {

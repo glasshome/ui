@@ -7,7 +7,7 @@ const SAMPLES: [name: string, material: Material][] = [
 	["Frosted", FROSTED],
 	["Paper", { v: 1, preset: "paper" }],
 	["Poster", { v: 1, preset: "poster" }],
-	["Glow", { v: 1, preset: "glow" }],
+	["Neon", { v: 1, preset: "neon" }],
 	["Frosted, depth 0.3", { v: 1, preset: "frosted", dials: { depth: 0.3 } }],
 	[
 		"Frosted, tint 1.6, clarity 30%",
