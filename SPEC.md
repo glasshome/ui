@@ -85,10 +85,13 @@ opaque: its tone when it has one, the accent otherwise.
 | Variable | Type | Default | Turns on |
 | --- | --- | --- | --- |
 | `--material-edge-width` | length | 1px | the edge weight (Poster 3px, Neon 1.5px) |
-| `--material-edge-ink` | number | 0 | the edge's mix toward `--foreground` (Paper 0.2, Poster 1) |
+| `--material-edge-ink` | number | 0 | the edge's mix toward `--material-ink` (Paper 0.3, Poster 1) |
 | `--material-edge-accent` | number | 0 | the edge's mix toward `--material-hue` (Neon 1) |
 | `--material-cast` | length | 0px | a hard down-right shadow in the ink (Poster 5px) |
 | `--material-glow` | length | 0px | an outer bloom in `--material-hue` (Neon 18px) |
+
+`--material-ink` follows the foreground except for Poster, which uses the fixed
+dark `--material-print-ink` from theme.css for its border and cast in both modes.
 
 A preset is a point in that space (`tokens/material.ts`: Frosted, Paper, Poster,
 Neon; `resolveMaterial` composes it with the host blur mode); a theme stores the

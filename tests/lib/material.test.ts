@@ -9,6 +9,7 @@ import {
 const INERT = {
 	"--material-edge-width": "1px",
 	"--material-edge-ink": "0",
+	"--material-ink": "var(--foreground)",
 	"--material-edge-accent": "0",
 	"--material-cast": "0px",
 	"--material-glow": "0px",
@@ -36,9 +37,11 @@ describe("material presets", () => {
 		expect(poster["--material-edge-width"]).toBe("3px");
 		expect(poster["--material-edge-ink"]).toBe("1");
 		expect(poster["--material-cast"]).toBe("5px");
+		expect(poster["--material-ink"]).toBe("var(--material-print-ink)");
 		expect(poster["--material-clarity"]).toBe("50%");
 		const neon = resolveMaterial({ v: 1, preset: "neon" }, "dynamic");
 		expect(neon["--material-glow"]).toBe("18px");
+		expect(neon["--material-ink"]).toBe("var(--foreground)");
 		expect(neon["--material-edge-accent"]).toBe("1");
 	});
 

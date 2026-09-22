@@ -239,6 +239,8 @@
 	--material-tint: 1;
 	--material-edge-width: 1px;
 	--material-edge-ink: 0;
+	--material-ink: var(--foreground);
+	--material-print-ink: oklch(0.16 0 0);
 	--material-edge-accent: 0;
 	--material-cast: 0px;
 	--material-glow: 0px;

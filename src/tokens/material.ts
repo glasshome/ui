@@ -20,7 +20,7 @@ export interface MaterialDials {
 export interface MaterialTerms {
 	/** Edge width, px. */
 	edgeWidth: number;
-	/** 0..1, how far the edge moves toward the foreground ink. */
+	/** 0..1, how far the edge moves toward the material ink. */
 	edgeInk: number;
 	/** 0..1, how far the edge moves toward the surface's own hue (its tone, else the accent). */
 	edgeAccent: number;
@@ -47,7 +47,7 @@ export const MATERIAL_PRESETS: Record<MaterialPresetId, MaterialSpec> = {
 	/** Today's glass: translucent, blurred, lit rim. */
 	frosted: { blur: 24, clarity: 60, depth: 1, tint: 1, ...PLAIN },
 	/** Opaque matte stock, a faint inked cut edge, calm tint. */
-	paper: { blur: 0, clarity: 100, depth: 0.5, tint: 0.85, ...PLAIN, edgeInk: 0.2 },
+	paper: { blur: 0, clarity: 100, depth: 0.5, tint: 0.85, ...PLAIN, edgeInk: 0.3 },
 	/** Flat fill, thick ink edge, hard cast; no sheen at all. */
 	poster: {
 		blur: 0,
@@ -111,6 +111,8 @@ export function resolveMaterial(
 		"--material-tint": `${d.tint}`,
 		"--material-edge-width": `${t.edgeWidth}px`,
 		"--material-edge-ink": `${t.edgeInk}`,
+		"--material-ink":
+			material.preset === "poster" ? "var(--material-print-ink)" : "var(--foreground)",
 		"--material-edge-accent": `${t.edgeAccent}`,
 		"--material-cast": `${t.cast}px`,
 		"--material-glow": `${t.glow}px`,

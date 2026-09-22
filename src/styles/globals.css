@@ -225,7 +225,11 @@
 		color-mix(
 			in srgb,
 			var(--material-hue) calc(var(--material-edge-accent) * 100%),
-			color-mix(in srgb, var(--foreground) calc(var(--material-edge-ink) * 100%), var(--glass-edge))
+			color-mix(
+				in srgb,
+				var(--material-ink) calc(var(--material-edge-ink) * 100%),
+				var(--glass-edge)
+			)
 		);
 	/* Base is a gradient layer (not background-color) so the frost slice can sit
 	 * BELOW it — background-color always paints under every image layer, which
@@ -268,9 +272,9 @@
 		0 10px 30px -16px oklch(0 0 0 / calc(var(--glass-lift) * var(--material-depth))),
 		calc(var(--material-cast) * var(--material-reach))
 		calc(var(--material-cast) * var(--material-reach)) 0 0
-		color-mix(in srgb, var(--foreground) 92%, transparent),
+		color-mix(in srgb, var(--material-ink) 92%, transparent),
 		0 0 calc(var(--material-glow) * var(--material-reach))
-		oklch(from var(--material-hue) l c h / 0.45);
+		oklch(from var(--material-hue) l c h / 0.65);
 }
 
 /* Two-tone edge: border-color cannot gradient, so the border goes transparent
