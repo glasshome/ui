@@ -64,6 +64,26 @@ Mixing rules: tone washes mix in **srgb** (oklch drags a tone mixed toward
 transparent down to mud); tinted text mixes in **oklab** (no hue channel, so a
 tone desaturates without swinging yellow — `glassToneText()`).
 
+### The material tier
+
+Four `@property inherits: true` variables, declared once in `theme.css` and
+multiplied into every surface's knobs by the formula. A knob is a surface's
+identity; the tier scales all of them at once, chrome and widgets alike.
+
+| Variable | Type | Frosted | Multiplies |
+| --- | --- | --- | --- |
+| `--material-blur` | length | 24px | the backdrop radius (`--glass-blur` is its alias) |
+| `--material-clarity` | % | 60% | the card fill's share of `--card` (the rest is wallpaper) |
+| `--material-depth` | number | 1 | `--glass-light`, `--glass-shade`, `--glass-rim`, `--glass-lift` |
+| `--material-tint` | number | 1 | `--glass-wash`, `--glass-wash-2` |
+
+A preset is a point in that space (`tokens/material.ts`, `resolveMaterial`
+composes it with the host blur mode); a theme stores the preset and any dial it
+moved, never the resolved values. A look the dials cannot express adds an
+inert-by-default term here (a ui minor), then, if that is not enough, a second
+formula body under `:root[data-material=…] :where(.glass)`. The class name
+never changes.
+
 ## Surfaces (the only sanctioned recipes)
 
 | Recipe | File | Wear it for |

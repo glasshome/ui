@@ -2,6 +2,7 @@ import type { Component } from "solid-js";
 import ColourRoles from "./foundations/ColourRoles";
 import Elevation from "./foundations/Elevation";
 import GlassPlayground from "./foundations/GlassPlayground";
+import MaterialFoundation from "./foundations/Material";
 import Motion from "./foundations/Motion";
 import Radii from "./foundations/Radii";
 import Surfaces from "./foundations/Surfaces";
@@ -36,6 +37,7 @@ export const AREAS: Area[] = [
 			{ id: "motion", title: "Motion", component: Motion },
 			{ id: "surfaces", title: "Surfaces", component: Surfaces },
 			{ id: "glass-playground", title: "Glass playground", component: GlassPlayground },
+			{ id: "material", title: "Material", component: MaterialFoundation },
 		],
 	},
 	{
