@@ -41,6 +41,65 @@ describe("Spotlight", () => {
 		);
 	});
 
+	it("marks the target with a ring when there is no veil", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim={false}>
+				Drag it
+			</Spotlight>
+		));
+		const ring = document.querySelector<HTMLElement>('[data-slot="spotlight-ring"]');
+		expect(ring).not.toBeNull();
+		expect(ring?.classList.contains("ring-primary")).toBe(true);
+		expect(ring?.style.translate).toBe("92px 192px");
+		expect(ring?.style.width).toBe("316px");
+		expect(ring?.style.height).toBe("66px");
+	});
+
+	it("draws no ring when the veil is on", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim>
+				Step
+			</Spotlight>
+		));
+		expect(document.querySelector('[data-slot="spotlight-ring"]')).toBeNull();
+	});
+
+	it("draws no ring without a measured target", () => {
+		render(() => (
+			<Spotlight target={undefined} scrim={false}>
+				Step
+			</Spotlight>
+		));
+		expect(document.querySelector('[data-slot="spotlight-ring"]')).toBeNull();
+	});
+
+	it("re-measures the bubble one frame later, so content that grows after the target changes is placed from the grown height", () => {
+		let rafCallback: FrameRequestCallback | undefined;
+		const rafSpy = vi.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
+			rafCallback = cb;
+			return 0;
+		});
+		const a = targetAt(100, 200, 300, 50);
+		const b = targetAt(500, 600, 100, 40);
+		const [target, setTarget] = createSignal<Element>(a);
+		render(() => (
+			<Spotlight target={target()} scrim={false}>
+				Step
+			</Spotlight>
+		));
+		const bubble = document.querySelector<HTMLElement>('[data-slot="spotlight-bubble"]');
+		let height = 116;
+		Object.defineProperty(bubble, "offsetHeight", { get: () => height, configurable: true });
+		Object.defineProperty(bubble, "offsetWidth", { get: () => 288, configurable: true });
+		setTarget(b);
+		height = 137;
+		rafCallback?.(0);
+		expect(bubble?.style.translate).toBe("406px 451px");
+		rafSpy.mockRestore();
+	});
+
 	it("follows a new target", () => {
 		const a = targetAt(100, 200, 300, 50);
 		const b = targetAt(500, 600, 100, 40);

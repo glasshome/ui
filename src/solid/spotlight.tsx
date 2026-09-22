@@ -59,10 +59,14 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 	createEffect(() => {
 		const target = props.target;
 		measure();
+		const raf = requestAnimationFrame(measure);
 		const observer = new ResizeObserver(measure);
 		if (target) observer.observe(target);
 		if (bubble) observer.observe(bubble);
-		onCleanup(() => observer.disconnect());
+		onCleanup(() => {
+			cancelAnimationFrame(raf);
+			observer.disconnect();
+		});
 	});
 
 	onMount(() => {
@@ -100,6 +104,23 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 						"clip-path": `path(evenodd, "${holePath(viewport(), box(), props.pad ?? HOLE_PAD, HOLE_RADIUS)}")`,
 					}}
 				/>
+			</Show>
+			<Show when={!props.scrim && box()}>
+				{(current) => (
+					<div
+						data-slot="spotlight-ring"
+						aria-hidden="true"
+						class={cn(
+							"pointer-events-none fixed top-0 left-0 rounded-2xl shadow-lg ring-2 ring-primary",
+							TRAVEL_MOTION,
+						)}
+						style={{
+							width: `${current().width + (props.pad ?? HOLE_PAD) * 2}px`,
+							height: `${current().height + (props.pad ?? HOLE_PAD) * 2}px`,
+							translate: `${current().x - (props.pad ?? HOLE_PAD)}px ${current().y - (props.pad ?? HOLE_PAD)}px`,
+						}}
+					/>
+				)}
 			</Show>
 			<div
 				ref={bubble}
