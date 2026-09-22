@@ -22,8 +22,9 @@ export default function MaterialFoundation() {
 	return (
 		<section class="flex flex-col gap-4" data-foundation="material">
 			<p class="text-muted-foreground text-sm">
-				One card, one badge, one button, one switch, under four materials. The wrapper sets only the
-				four tier variables; every surface inside multiplies them into its own knobs.
+				One card, one badge, one button, one switch, under the four presets and two dialled
+				Frosteds. The wrapper sets only the four tier variables; every surface inside multiplies
+				them into its own knobs.
 			</p>
 			<div
 				class="grid grid-cols-1 gap-6 overflow-hidden rounded-xl p-6 sm:grid-cols-2"
