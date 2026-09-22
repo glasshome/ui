@@ -293,8 +293,8 @@ export function TableSkeleton(props: { count?: number; class?: string }) {
 									class={cn("h-2.5", SKELETON_META_WIDTHS[i() % SKELETON_META_WIDTHS.length])}
 								/>
 								<div class="flex gap-1 pt-0.5 sm:hidden">
-									<Skeleton class="h-4 w-12 rounded-full" />
-									<Skeleton class="h-4 w-16 rounded-full" />
+									<Skeleton class="h-4 w-12 rounded-lg" />
+									<Skeleton class="h-4 w-16 rounded-lg" />
 								</div>
 							</div>
 							<Skeleton class="h-3 w-12 shrink-0" />

@@ -85,7 +85,7 @@ export function MediaTile(props: MediaTileProps) {
 					data-slot="media-tile-delete"
 					// after:-inset-1.5 lifts the touch target to ~44px without growing the glyph or its scrim.
 					class={cn(
-						"absolute top-1 right-1 size-8 rounded-full text-destructive hover:text-destructive",
+						"absolute top-1 right-1 size-8 text-destructive hover:text-destructive",
 						"after:absolute after:-inset-1.5 after:content-['']",
 						SCRIM_CLASS,
 					)}

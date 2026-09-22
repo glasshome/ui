@@ -11,6 +11,13 @@ export const THUMB_SIZE = 31;
 export const THUMB_CLASS =
 	"block size-7 shrink-0 rounded-xl shadow-[0_2px_5px_oklch(0_0_0/0.35),inset_0_1px_0_oklch(1_0_0/0.35),inset_0_-2px_3px_oklch(0_0_0/0.2)]";
 
+/* The lit knob wears the theme's hue at the depth theme.css sets per mode. The
+ * knob re-declares --thumb-face-on on itself with this value: a var() resolves
+ * where it is declared, so the :root one answers for the page only and a
+ * container that re-scopes --primary (a theme preview) would keep the page's. */
+export const THUMB_FACE_ON =
+	"oklch(from var(--primary) var(--thumb-on-l) min(c, var(--thumb-on-c)) h)";
+
 /* A rail pads by half a thumb so the knob stays inside the track at both ends;
  * the fill cancels the same inset to reach the rounded edges. */
 /* A thumb painted the live channel colour sits on a track of that same colour,

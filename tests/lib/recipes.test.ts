@@ -92,7 +92,7 @@ describe("pill recipes are glass, not flat fills", () => {
 
 	it("CHIP is the Badge material", () => {
 		expect(CHIP).toContain("glass glass-tint");
-		expect(CHIP).toContain("rounded-full");
+		expect(CHIP).toContain("rounded-lg");
 		expect(CHIP).not.toMatch(/\bborder\b/);
 		expect(CHIP).not.toMatch(/\bbg-/);
 	});

@@ -26,7 +26,7 @@ afterEach(() => {
  * CHIP verbatim; the material it must keep is the assertion. */
 const expectChipMaterial = (el: HTMLElement) => {
 	expect(el.className).toContain("glass glass-tint");
-	expect(el.className).toContain("rounded-full");
+	expect(el.className).toContain("rounded-lg");
 };
 
 const slot = (root: ParentNode, name: string) => {
