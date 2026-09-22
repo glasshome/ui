@@ -59,23 +59,18 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 	createEffect(() => {
 		const target = props.target;
 		let raf = 0;
-		let previous: Box | null = null;
-		const start = performance.now();
+		let start: number | undefined;
 
-		/* A transform-animating target never fires ResizeObserver, so keep sampling
-		 * until two consecutive frames agree the target has landed. */
-		const settle = () => {
+		/* A transform-animating target never fires ResizeObserver, and its motion may
+		 * start a few frames late, so sample the whole window instead of stopping early. */
+		const tick = (time: number) => {
+			start ??= time;
 			measure();
-			const current = box();
-			const settled = sameFields(current, previous);
-			previous = current;
-			if (settled || performance.now() - start >= 600) return;
-			raf = requestAnimationFrame(settle);
+			if (time - start < 600) raf = requestAnimationFrame(tick);
 		};
 
 		measure();
-		previous = box();
-		raf = requestAnimationFrame(settle);
+		raf = requestAnimationFrame(tick);
 
 		const observer = new ResizeObserver(measure);
 		if (target) observer.observe(target);

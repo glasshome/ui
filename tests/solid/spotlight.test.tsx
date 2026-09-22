@@ -100,17 +100,18 @@ describe("Spotlight", () => {
 		rafSpy.mockRestore();
 	});
 
-	it("keeps measuring an animating target until two frames agree, then stops", () => {
+	it("keeps re-measuring for the full window even when the target's motion starts late", () => {
 		vi.useFakeTimers({ toFake: ["requestAnimationFrame"] });
 		const rafSpy = vi.spyOn(window, "requestAnimationFrame");
 		const el = document.createElement("button");
 		document.body.append(el);
-		const rect1 = { x: 100, y: 220, width: 300, height: 50 };
-		const rect2 = { x: 100, y: 210, width: 300, height: 50 };
-		const rect3 = { x: 100, y: 200, width: 300, height: 50 };
+		const before = { x: 100, y: 220, width: 300, height: 50 };
+		const after = { x: 100, y: 200, width: 300, height: 50 };
+		/* Mimics a grid tile whose transition starts a few frames after mount: rect
+		 * only starts moving on frame 5, and has landed by frame 12. */
 		let call = 0;
 		el.getBoundingClientRect = () => {
-			const r = call === 0 ? rect1 : call === 1 ? rect2 : rect3;
+			const r = call < 5 ? before : call < 12 ? { ...before, y: before.y - (call - 4) * 3 } : after;
 			call++;
 			return {
 				...r,
@@ -121,21 +122,21 @@ describe("Spotlight", () => {
 			} as DOMRect;
 		};
 		render(() => (
-			<Spotlight target={el} scrim={false}>
+			<Spotlight target={el} scrim>
 				Step
 			</Spotlight>
 		));
-		const ring = () => document.querySelector<HTMLElement>('[data-slot="spotlight-ring"]');
-		expect(ring()?.style.translate).toBe("92px 212px");
+		const scrim = () => document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
+		expect(scrim()?.style.clipPath).toContain("M104 212");
+
+		for (let i = 0; i < 40; i++) vi.advanceTimersToNextFrame();
+		expect(scrim()?.style.clipPath).toContain("M104 192");
+
+		const callsInWindow = rafSpy.mock.calls.length;
+		expect(callsInWindow).toBeGreaterThan(20);
 
 		vi.advanceTimersToNextFrame();
-		vi.advanceTimersToNextFrame();
-		expect(ring()?.style.translate).toBe("92px 192px");
-
-		const callsAtSettle = rafSpy.mock.calls.length;
-		vi.advanceTimersToNextFrame();
-		expect(rafSpy.mock.calls.length).toBe(callsAtSettle);
-		expect(ring()?.style.translate).toBe("92px 192px");
+		expect(rafSpy.mock.calls.length).toBe(callsInWindow);
 
 		rafSpy.mockRestore();
 		vi.useRealTimers();
