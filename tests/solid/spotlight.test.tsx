@@ -100,6 +100,47 @@ describe("Spotlight", () => {
 		rafSpy.mockRestore();
 	});
 
+	it("keeps measuring an animating target until two frames agree, then stops", () => {
+		vi.useFakeTimers({ toFake: ["requestAnimationFrame"] });
+		const rafSpy = vi.spyOn(window, "requestAnimationFrame");
+		const el = document.createElement("button");
+		document.body.append(el);
+		const rect1 = { x: 100, y: 220, width: 300, height: 50 };
+		const rect2 = { x: 100, y: 210, width: 300, height: 50 };
+		const rect3 = { x: 100, y: 200, width: 300, height: 50 };
+		let call = 0;
+		el.getBoundingClientRect = () => {
+			const r = call === 0 ? rect1 : call === 1 ? rect2 : rect3;
+			call++;
+			return {
+				...r,
+				left: r.x,
+				top: r.y,
+				right: r.x + r.width,
+				bottom: r.y + r.height,
+			} as DOMRect;
+		};
+		render(() => (
+			<Spotlight target={el} scrim={false}>
+				Step
+			</Spotlight>
+		));
+		const ring = () => document.querySelector<HTMLElement>('[data-slot="spotlight-ring"]');
+		expect(ring()?.style.translate).toBe("92px 212px");
+
+		vi.advanceTimersToNextFrame();
+		vi.advanceTimersToNextFrame();
+		expect(ring()?.style.translate).toBe("92px 192px");
+
+		const callsAtSettle = rafSpy.mock.calls.length;
+		vi.advanceTimersToNextFrame();
+		expect(rafSpy.mock.calls.length).toBe(callsAtSettle);
+		expect(ring()?.style.translate).toBe("92px 192px");
+
+		rafSpy.mockRestore();
+		vi.useRealTimers();
+	});
+
 	it("follows a new target", () => {
 		const a = targetAt(100, 200, 300, 50);
 		const b = targetAt(500, 600, 100, 40);

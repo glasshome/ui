@@ -58,8 +58,25 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 
 	createEffect(() => {
 		const target = props.target;
+		let raf = 0;
+		let previous: Box | null = null;
+		const start = performance.now();
+
+		/* A transform-animating target never fires ResizeObserver, so keep sampling
+		 * until two consecutive frames agree the target has landed. */
+		const settle = () => {
+			measure();
+			const current = box();
+			const settled = sameFields(current, previous);
+			previous = current;
+			if (settled || performance.now() - start >= 600) return;
+			raf = requestAnimationFrame(settle);
+		};
+
 		measure();
-		const raf = requestAnimationFrame(measure);
+		previous = box();
+		raf = requestAnimationFrame(settle);
+
 		const observer = new ResizeObserver(measure);
 		if (target) observer.observe(target);
 		if (bubble) observer.observe(bubble);
