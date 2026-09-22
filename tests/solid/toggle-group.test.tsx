@@ -65,6 +65,25 @@ describe("ToggleGroup", () => {
 		}
 	});
 
+	it("paints the sliding indicator in the group's tone", async () => {
+		const { container } = render(() => (
+			<ToggleGroup value="left" tone="oklch(0.66 0.2 30)">
+				<ToggleGroupItem value="left">Left</ToggleGroupItem>
+				<ToggleGroupItem value="right">Right</ToggleGroupItem>
+			</ToggleGroup>
+		));
+		const items = container.querySelectorAll<HTMLElement>('[data-slot="toggle-group-item"]');
+		const root = items[0]?.parentElement;
+		if (!root) throw new Error("no root");
+		stubRect(root, { left: 0, top: 0, width: 160, height: 32 });
+		stubRect(items[0] as HTMLElement, { left: 0, top: 0, width: 80, height: 32 });
+		stubRect(items[1] as HTMLElement, { left: 80, top: 0, width: 80, height: 32 });
+		await flush();
+
+		const indicator = container.querySelector<HTMLElement>("[data-sliding-indicator]");
+		expect(indicator?.style.getPropertyValue("--glass-tone")).toBe("oklch(0.66 0.2 30)");
+	});
+
 	it("matches the item radius on the sliding indicator", async () => {
 		const { container } = render(() => (
 			<ToggleGroup value="left">

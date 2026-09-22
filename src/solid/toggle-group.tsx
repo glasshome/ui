@@ -27,9 +27,19 @@ const ToggleGroupContext = createContext<ToggleGroupContextValue>({
 });
 
 const ToggleGroup: ParentComponent<
-	ComponentProps<typeof ToggleGroupPrimitive> & VariantProps<typeof toggleVariants>
+	ComponentProps<typeof ToggleGroupPrimitive> &
+		VariantProps<typeof toggleVariants> & {
+			/** CSS colour for the selected segment's glass. Default `var(--primary)`. */
+			tone?: string;
+		}
 > = (props) => {
-	const [local, rest] = splitProps(props, ["class", "variant", "size", "children"] as const);
+	const [local, rest] = splitProps(props, [
+		"class",
+		"variant",
+		"size",
+		"tone",
+		"children",
+	] as const);
 	// Read `multiple` without splitting it out: Kobalte's root is a single/multiple
 	// discriminated union, so pulling `multiple` into a separate prop collapses the
 	// union and mistypes `value`. Leave it in `rest` and just peek at it here.
@@ -54,6 +64,7 @@ const ToggleGroup: ParentComponent<
 					<SlidingIndicator
 						activeSelector="[data-pressed]"
 						indicatorClass="rounded-md"
+						indicatorTone={local.tone}
 						class="flex w-full items-center"
 					>
 						{local.children}
