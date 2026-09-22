@@ -144,12 +144,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 				ref={bubble}
 				data-slot="spotlight-bubble"
 				data-side={place().side}
-				class={cn(
-					FLOATING_PANEL_SURFACE,
-					TRAVEL_MOTION,
-					"fixed top-0 left-0 w-72 p-4",
-					props.class,
-				)}
+				class={cn(TRAVEL_MOTION, "fixed top-0 left-0 w-72", props.class)}
 				style={{ translate: `${place().x}px ${place().y}px` }}
 			>
 				<Show when={place().tail}>
@@ -170,7 +165,9 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 						/>
 					)}
 				</Show>
-				{props.children}
+				<div data-slot="spotlight-panel" class={cn(FLOATING_PANEL_SURFACE, "relative p-4")}>
+					{props.children}
+				</div>
 			</div>
 		</Portal>
 	);

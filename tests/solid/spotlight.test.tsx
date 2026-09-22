@@ -325,6 +325,24 @@ describe("Spotlight", () => {
 		expect(tail?.getAttribute("data-side")).toBe("above");
 	});
 
+	it("paints the panel over the tail's inner half, so only the outer half shows", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim={false}>
+				Step
+			</Spotlight>
+		));
+		const bubble = document.querySelector<HTMLElement>('[data-slot="spotlight-bubble"]');
+		const tail = bubble?.querySelector('[data-slot="spotlight-tail"]');
+		const panel = bubble?.querySelector('[data-slot="spotlight-panel"]');
+		expect(tail).toBeTruthy();
+		expect(panel).toBeTruthy();
+		expect(tail?.compareDocumentPosition(panel as Node) === Node.DOCUMENT_POSITION_FOLLOWING).toBe(
+			true,
+		);
+		expect(panel?.classList.contains("relative")).toBe(true);
+	});
+
 	it("draws no tail when the bubble is centred with no target", () => {
 		render(() => (
 			<Spotlight target={undefined} scrim={false}>
