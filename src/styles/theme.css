@@ -232,6 +232,12 @@
 	--font-caveat: "Caveat Variable", cursive;
 	--font-bebas: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
 	--radius: 1.4rem;
+	/* The material tier; the studio writes these per theme (Frosted defaults). */
+	--material-blur: 24px;
+	--material-clarity: 60%;
+	--material-depth: 1;
+	--material-tint: 1;
+	--glass-blur: var(--material-blur);
 	--shadow-x: 0px;
 	--shadow-y: 2px;
 	--shadow-blur: 3px;

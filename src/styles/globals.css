@@ -83,6 +83,29 @@
 	inherits: false;
 }
 
+/* Tier 2, the material: inheriting, theme-written, multiplied into every
+ * surface's own knobs. A knob is a surface's identity; these scale all of them. */
+@property --material-blur {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 24px;
+}
+@property --material-clarity {
+	syntax: "<percentage>";
+	inherits: true;
+	initial-value: 60%;
+}
+@property --material-depth {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 1;
+}
+@property --material-tint {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 1;
+}
+
 /* --glass-base and --glass-edge need var() defaults, which @property forbids,
  * so they reset here instead. MUST stay in @layer base so [--glass-*] utilities
  * and inline style knobs still win. Rim shadows are declared on .glass (not
@@ -91,8 +114,8 @@
 	/* biome-ignore-start lint/correctness/noMissingVarFunction: transition-property takes property names, and these are the registered knobs */
 	--glass-transition:
 		--glass-tone, --glass-wash, --glass-light, --glass-shade, --glass-rim, --glass-lift,
-		--glass-glow, --glass-drop, --glass-text, color, background-color, border-color, box-shadow,
-		opacity, transform, translate, scale, width, height;
+		--glass-glow, --glass-drop, --glass-text, --material-depth, --material-tint, color,
+		background-color, border-color, box-shadow, opacity, transform, translate, scale, width, height;
 	/* biome-ignore-end lint/correctness/noMissingVarFunction: see above */
 }
 
@@ -115,13 +138,13 @@
 		--glass-base: var(--card);
 		--glass-edge: color-mix(in srgb, var(--border) 60%, transparent);
 		--glass-rim-raise:
-			inset 0 1px 0 oklch(1 0 0 / calc(0.22 * var(--glass-rim))),
-			inset 2px 2px 5px -3px oklch(1 0 0 / calc(0.5 * var(--glass-rim))),
-			inset -2px -2px 4px -2px oklch(0 0 0 / calc(0.12 * var(--glass-rim)));
+			inset 0 1px 0 oklch(1 0 0 / calc(0.22 * var(--glass-rim) * var(--material-depth))),
+			inset 2px 2px 5px -3px oklch(1 0 0 / calc(0.5 * var(--glass-rim) * var(--material-depth))),
+			inset -2px -2px 4px -2px oklch(0 0 0 / calc(0.12 * var(--glass-rim) * var(--material-depth)));
 		--glass-rim-sink:
-			inset 0 2px 3px -1px oklch(0 0 0 / calc(0.28 * var(--glass-rim))),
-			inset 2px 2px 5px -3px oklch(0 0 0 / calc(0.22 * var(--glass-rim))),
-			inset 0 -1px 0 oklch(1 0 0 / calc(0.12 * var(--glass-rim)));
+			inset 0 2px 3px -1px oklch(0 0 0 / calc(0.28 * var(--glass-rim) * var(--material-depth))),
+			inset 2px 2px 5px -3px oklch(0 0 0 / calc(0.22 * var(--glass-rim) * var(--material-depth))),
+			inset 0 -1px 0 oklch(1 0 0 / calc(0.12 * var(--glass-rim) * var(--material-depth)));
 		--glass-rim-shine: var(--glass-rim-raise);
 	}
 	:where(.glass-tint) {
@@ -170,21 +193,33 @@
 		var(--glass-grain, none),
 		radial-gradient(
 			var(--glass-sheen, 120% 120%) at 22% 8%,
-			oklch(1 0 0 / var(--glass-light)),
+			oklch(1 0 0 / calc(var(--glass-light) * var(--material-depth))),
 			transparent 58%
 		),
-		radial-gradient(120% 120% at 82% 100%, oklch(0 0 0 / var(--glass-shade)), transparent 58%),
+		radial-gradient(
+			120% 120% at 82% 100%,
+			oklch(0 0 0 / calc(var(--glass-shade) * var(--material-depth))),
+			transparent 58%
+		),
 		linear-gradient(
 			var(--glass-wash-angle),
-			color-mix(in srgb, var(--glass-tone) var(--glass-wash), transparent),
-			color-mix(in srgb, var(--glass-tone-2) var(--glass-wash-2), transparent)
+			color-mix(
+				in srgb,
+				var(--glass-tone) calc(var(--glass-wash) * var(--material-tint)),
+				transparent
+			),
+			color-mix(
+				in srgb,
+				var(--glass-tone-2) calc(var(--glass-wash-2) * var(--material-tint)),
+				transparent
+			)
 		),
 		linear-gradient(var(--glass-base), var(--glass-base)), var(--glass-frost, none);
 	box-shadow:
 		var(--glass-rim-shine, 0 0 #0000),
 		inset 0 -2px 4px color-mix(in srgb, var(--glass-tone) var(--glass-glow), transparent),
 		0 1px 3px color-mix(in srgb, var(--glass-tone) var(--glass-drop), transparent),
-		0 10px 30px -16px oklch(0 0 0 / var(--glass-lift));
+		0 10px 30px -16px oklch(0 0 0 / calc(var(--glass-lift) * var(--material-depth)));
 }
 
 /* Two-tone edge: border-color cannot gradient, so the border goes transparent
