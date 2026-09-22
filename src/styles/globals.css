@@ -105,8 +105,7 @@
 	inherits: true;
 	initial-value: 1;
 }
-/* Preset-only terms, inert at their defaults: Poster raises the first three,
- * Glow the last. */
+/* Preset terms, inert at their defaults: Paper and Neon raise the edge. */
 @property --material-edge-width {
 	syntax: "<length>";
 	inherits: true;
@@ -117,12 +116,6 @@
 	syntax: "<number>";
 	inherits: true;
 	initial-value: 0;
-}
-/* A hard, unblurred shadow offset down-right in the foreground ink. */
-@property --material-cast {
-	syntax: "<length>";
-	inherits: true;
-	initial-value: 0px;
 }
 /* 0..1, how far the edge moves toward the surface's own hue (its tone, else
  * the accent). */
@@ -137,6 +130,12 @@
 	inherits: true;
 	initial-value: 0px;
 }
+/* Registered so the Ink body's style query compares a computed number. */
+@property --material-ink-level {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
 
 /* --glass-base and --glass-edge need var() defaults, which @property forbids,
  * so they reset here instead. MUST stay in @layer base so [--glass-*] utilities
@@ -147,8 +146,7 @@
 	--glass-transition:
 		--glass-tone, --glass-wash, --glass-light, --glass-shade, --glass-rim, --glass-lift,
 		--glass-glow, --glass-drop, --glass-text, --material-depth, --material-tint,
-		--material-edge-width, --material-edge-ink, --material-edge-accent, --material-cast,
-		--material-glow, color,
+		--material-edge-width, --material-edge-ink, --material-edge-accent, --material-glow, color,
 		background-color, border-color, box-shadow, opacity, transform, translate, scale, width, height;
 	/* biome-ignore-end lint/correctness/noMissingVarFunction: see above */
 }
@@ -218,9 +216,10 @@
 	--glass-tone-2: var(--glass-tone);
 	--glass-wash-2: calc(var(--glass-wash) / 3);
 	--glass-wash-angle: 135deg;
+	--surface-wash: calc(var(--glass-wash) * var(--material-tint));
 	/* The surface's own hue, opaque: its tone when it has one, the accent otherwise
 	 * (a transparent tone mixes to the accent at low alpha; the /1 restores it). */
-	--material-hue: oklch(from color-mix(in srgb, var(--glass-tone) 60%, var(--primary)) l c h / 1);
+	--material-hue: oklch(from color-mix(in srgb, var(--glass-tone) 99%, var(--primary)) l c h / 1);
 	border: var(--material-edge-width) solid
 		color-mix(
 			in srgb,
@@ -261,18 +260,14 @@
 			)
 		),
 		linear-gradient(var(--glass-base), var(--glass-base)), var(--glass-frost, none);
-	/* Cast and glow scale with --glass-lift, the knob that already says how big a
-	 * surface floats: a card (0.45) takes the full term, a chip or button (0)
-	 * about a third, so a 6px cast never dwarfs a badge. */
+	/* Glow scales with --glass-lift, the knob that already says how big a surface
+	 * floats: a card (0.45) takes the full bloom, a chip or button (0) about a third. */
 	--material-reach: calc(0.35 + var(--glass-lift) * 1.45);
 	box-shadow:
 		var(--glass-rim-shine, 0 0 #0000),
 		inset 0 -2px 4px color-mix(in srgb, var(--glass-tone) var(--glass-glow), transparent),
 		0 1px 3px color-mix(in srgb, var(--glass-tone) var(--glass-drop), transparent),
 		0 10px 30px -16px oklch(0 0 0 / calc(var(--glass-lift) * var(--material-depth))),
-		calc(var(--material-cast) * var(--material-reach))
-		calc(var(--material-cast) * var(--material-reach)) 0 0
-		color-mix(in srgb, var(--material-ink) 92%, transparent),
 		0 0 calc(var(--material-glow) * var(--material-reach))
 		oklch(from var(--material-hue) l c h / 0.65);
 }
@@ -301,6 +296,62 @@
 		linear-gradient(#fff 0 0);
 	mask-composite: exclude;
 	pointer-events: none;
+}
+
+/* Ink: a hand-drawn line over a hand-laid fill that strays over and under it.
+ * Uneven radii make each corner bow differently; the fill takes its own radii and
+ * a nudge, so it misses the line. Both are pseudos because a negative-z child
+ * paints above its parent's own background and border; contain: layout anchors
+ * them and makes the stacking context without repositioning the surface. */
+@container not style(--material-ink-level: 0) {
+	:where(.glass) {
+		--ink-r: var(--radius);
+		contain: layout;
+		background: none;
+		border-color: transparent;
+		box-shadow: none;
+		border-radius:
+			calc(var(--ink-r) * 1.7) calc(var(--ink-r) * 0.5) calc(var(--ink-r) * 1.35)
+			calc(var(--ink-r) * 0.65) / calc(var(--ink-r) * 0.55) calc(var(--ink-r) * 1.45)
+			calc(var(--ink-r) * 0.7) calc(var(--ink-r) * 1.6);
+	}
+	:where(.glass)::before,
+	:where(.glass)::after {
+		content: "";
+		position: absolute;
+		z-index: -1;
+		pointer-events: none;
+	}
+	:where(.glass)::before {
+		inset: -5px -3px -2px -6px;
+		padding: 0;
+		mask: none;
+		translate: 3px 2px;
+		border-radius:
+			calc(var(--ink-r) * 0.6) calc(var(--ink-r) * 1.6) calc(var(--ink-r) * 0.75)
+			calc(var(--ink-r) * 1.5) / calc(var(--ink-r) * 1.4) calc(var(--ink-r) * 0.6)
+			calc(var(--ink-r) * 1.5) calc(var(--ink-r) * 0.65);
+		background:
+			linear-gradient(color-mix(in srgb, var(--surface-tone) var(--surface-wash), transparent) 0 0),
+			linear-gradient(var(--glass-base) 0 0);
+	}
+	/* Above every widget layer (the SDK stacks to 30): full-bleed media would bury the line. */
+	:where(.glass)::after {
+		z-index: 40;
+		inset: 0;
+		border: 3px solid var(--material-ink);
+		border-radius: inherit;
+		rotate: -0.2deg;
+		/* Chalk: grain tiled at 1:1, so no browser stretches it; no-clip keeps the passes. */
+		mask:
+			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='c' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='5' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -3.4 2.55'/></filter><rect width='120' height='120' filter='url(%23c)'/></svg>")
+			0 0 / 120px 120px repeat;
+		mask-clip: no-clip;
+		opacity: var(--material-ink-level);
+		box-shadow:
+			-2px 2px 0 -1.2px color-mix(in srgb, var(--material-ink) 55%, transparent),
+			2px -1.5px 0 -1.4px color-mix(in srgb, var(--material-ink) 45%, transparent);
+	}
 }
 
 /* A mode's rim: the masked ring of .glass-edge-gradient, but the gradient orbits,

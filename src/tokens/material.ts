@@ -2,7 +2,7 @@ import { clamp } from "./theme-colors.js";
 
 export const MATERIAL_VERSION = 1;
 
-export type MaterialPresetId = "frosted" | "paper" | "poster" | "neon";
+export type MaterialPresetId = "frosted" | "paper" | "neon";
 
 /** Tier 2 of the glass formula: what every surface's knobs are multiplied by. The homeowner's dials. */
 export interface MaterialDials {
@@ -14,6 +14,10 @@ export interface MaterialDials {
 	depth: number;
 	/** Scales the tone wash. */
 	tint: number;
+	/** Outer bloom radius in the surface's own hue, px. */
+	glow: number;
+	/** 0..1; above 0 every surface is hand-inked: a drawn line over a hand-laid fill. */
+	ink: number;
 }
 
 /** Terms a preset turns on; inert at zero, never a homeowner dial. */
@@ -24,10 +28,6 @@ export interface MaterialTerms {
 	edgeInk: number;
 	/** 0..1, how far the edge moves toward the surface's own hue (its tone, else the accent). */
 	edgeAccent: number;
-	/** Hard down-right shadow offset in the ink, px. */
-	cast: number;
-	/** Outer bloom radius in the surface's own hue, px. */
-	glow: number;
 }
 
 export type MaterialSpec = MaterialDials & MaterialTerms;
@@ -41,25 +41,13 @@ export interface Material {
 
 export type BlurMode = "dynamic" | "performant" | "none";
 
-const PLAIN: MaterialTerms = { edgeWidth: 1, edgeInk: 0, edgeAccent: 0, cast: 0, glow: 0 };
+const PLAIN: MaterialTerms = { edgeWidth: 1, edgeInk: 0, edgeAccent: 0 };
 
 export const MATERIAL_PRESETS: Record<MaterialPresetId, MaterialSpec> = {
 	/** Today's glass: translucent, blurred, lit rim. */
-	frosted: { blur: 24, clarity: 60, depth: 1, tint: 1, ...PLAIN },
-	/** Opaque matte stock, a faint inked cut edge, calm tint. */
-	paper: { blur: 0, clarity: 100, depth: 0.5, tint: 0.85, ...PLAIN, edgeInk: 0.3 },
-	/** Flat fill, thick ink edge, hard cast; no sheen at all. */
-	poster: {
-		blur: 0,
-		clarity: 100,
-		depth: 0,
-		tint: 1.3,
-		edgeWidth: 3,
-		edgeInk: 1,
-		edgeAccent: 0,
-		cast: 5,
-		glow: 0,
-	},
+	frosted: { blur: 24, clarity: 60, depth: 1, tint: 1, glow: 0, ink: 0, ...PLAIN },
+	/** Opaque matte stock, a faint inked cut edge, calm tint; the Ink dial draws on it. */
+	paper: { blur: 0, clarity: 100, depth: 0.5, tint: 0.85, glow: 0, ink: 0, ...PLAIN, edgeInk: 0.3 },
 	/** Near-opaque dark tile, thin tube of its own hue at the edge, bloom around it. */
 	neon: {
 		blur: 8,
@@ -69,8 +57,8 @@ export const MATERIAL_PRESETS: Record<MaterialPresetId, MaterialSpec> = {
 		edgeWidth: 1.5,
 		edgeInk: 0,
 		edgeAccent: 1,
-		cast: 0,
 		glow: 18,
+		ink: 0,
 	},
 };
 
@@ -81,6 +69,8 @@ const RANGE: Record<keyof MaterialDials, [number, number]> = {
 	clarity: [0, 100],
 	depth: [0, 2],
 	tint: [0, 2],
+	glow: [0, 40],
+	ink: [0, 1],
 };
 
 /** Below this the text floor fails over a busy wallpaper with nothing blurred behind it. */
@@ -93,6 +83,8 @@ export function materialDials(material: Material): MaterialDials {
 		clarity: clamp(merged.clarity, ...RANGE.clarity),
 		depth: clamp(merged.depth, ...RANGE.depth),
 		tint: clamp(merged.tint, ...RANGE.tint),
+		glow: clamp(merged.glow, ...RANGE.glow),
+		ink: clamp(merged.ink, ...RANGE.ink),
 	};
 }
 
@@ -111,10 +103,8 @@ export function resolveMaterial(
 		"--material-tint": `${d.tint}`,
 		"--material-edge-width": `${t.edgeWidth}px`,
 		"--material-edge-ink": `${t.edgeInk}`,
-		"--material-ink":
-			material.preset === "poster" ? "var(--material-print-ink)" : "var(--foreground)",
 		"--material-edge-accent": `${t.edgeAccent}`,
-		"--material-cast": `${t.cast}px`,
-		"--material-glow": `${t.glow}px`,
+		"--material-glow": `${d.glow}px`,
+		"--material-ink-level": `${d.ink}`,
 	};
 }

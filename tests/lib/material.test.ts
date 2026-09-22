@@ -9,10 +9,9 @@ import {
 const INERT = {
 	"--material-edge-width": "1px",
 	"--material-edge-ink": "0",
-	"--material-ink": "var(--foreground)",
 	"--material-edge-accent": "0",
-	"--material-cast": "0px",
 	"--material-glow": "0px",
+	"--material-ink-level": "0",
 };
 
 describe("material presets", () => {
@@ -28,21 +27,39 @@ describe("material presets", () => {
 
 	it("a dial overrides its preset value and nothing else", () => {
 		const dials = materialDials({ v: 1, preset: "paper", dials: { depth: 0.8 } });
-		const { blur, clarity, tint } = MATERIAL_PRESETS.paper;
-		expect(dials).toEqual({ blur, clarity, tint, depth: 0.8 });
+		const { blur, clarity, tint, glow, ink } = MATERIAL_PRESETS.paper;
+		expect(dials).toEqual({ blur, clarity, tint, glow, ink, depth: 0.8 });
 	});
 
-	it("Poster and Neon carry their own terms; a dial never reaches a term", () => {
-		const poster = resolveMaterial({ v: 1, preset: "poster", dials: { clarity: 50 } }, "dynamic");
-		expect(poster["--material-edge-width"]).toBe("3px");
-		expect(poster["--material-edge-ink"]).toBe("1");
-		expect(poster["--material-cast"]).toBe("5px");
-		expect(poster["--material-ink"]).toBe("var(--material-print-ink)");
-		expect(poster["--material-clarity"]).toBe("50%");
+	it("Paper and Neon carry their own terms; a dial never reaches a term", () => {
+		const paper = resolveMaterial({ v: 1, preset: "paper", dials: { clarity: 50 } }, "dynamic");
+		expect(paper["--material-edge-ink"]).toBe("0.3");
+		expect(paper["--material-clarity"]).toBe("50%");
 		const neon = resolveMaterial({ v: 1, preset: "neon" }, "dynamic");
 		expect(neon["--material-glow"]).toBe("18px");
-		expect(neon["--material-ink"]).toBe("var(--foreground)");
+		expect(neon["--material-edge-width"]).toBe("1.5px");
 		expect(neon["--material-edge-accent"]).toBe("1");
+	});
+
+	it("ink is a dial: Paper inks at any level, clamped to 0..1", () => {
+		expect(
+			resolveMaterial({ v: 1, preset: "paper", dials: { ink: 0.6 } }, "dynamic")[
+				"--material-ink-level"
+			],
+		).toBe("0.6");
+		expect(materialDials({ v: 1, preset: "paper", dials: { ink: 3 } }).ink).toBe(1);
+	});
+
+	it("glow is a dial: any preset can bloom, and the dial is clamped to its range", () => {
+		expect(
+			resolveMaterial({ v: 1, preset: "neon", dials: { glow: 30 } }, "dynamic")["--material-glow"],
+		).toBe("30px");
+		expect(
+			resolveMaterial({ v: 1, preset: "frosted", dials: { glow: 12 } }, "dynamic")[
+				"--material-glow"
+			],
+		).toBe("12px");
+		expect(materialDials({ v: 1, preset: "neon", dials: { glow: 99 } }).glow).toBe(40);
 	});
 
 	it("no-blur mode drops the blur and lifts clarity to the readable floor", () => {

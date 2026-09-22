@@ -66,7 +66,7 @@ tone desaturates without swinging yellow — `glassToneText()`).
 
 ### The material tier
 
-Four `@property inherits: true` variables, declared once in `theme.css` and
+Five inheriting variables, the homeowner's dials, declared once in `theme.css` and
 multiplied into every surface's knobs by the formula. A knob is a surface's
 identity; the tier scales all of them at once, chrome and widgets alike.
 
@@ -76,28 +76,36 @@ identity; the tier scales all of them at once, chrome and widgets alike.
 | `--material-clarity` | % | 60% | the card fill's share of `--card` (the rest is wallpaper) |
 | `--material-depth` | number | 1 | `--glass-light`, `--glass-shade`, `--glass-rim`, `--glass-lift` |
 | `--material-tint` | number | 1 | `--glass-wash`, `--glass-wash-2` |
+| `--material-glow` | length | 0px | an outer bloom in `--material-hue` (Neon 18px) |
+| `--material-ink-level` | number | 0 | above 0, the Ink body: every surface hand-inked |
 
-Five more are preset terms, inert at their defaults and never a homeowner dial.
-Cast and glow scale with `--glass-lift` (`--material-reach`), so a chip takes
-about a third of what a card takes. `--material-hue` is the surface's own hue,
+Three more are preset terms, inert at their defaults and never a homeowner dial.
+Glow scales with `--glass-lift` (`--material-reach`), so a chip takes about a
+third of what a card takes. `--material-hue` is the surface's own hue,
 opaque: its tone when it has one, the accent otherwise.
 
 | Variable | Type | Default | Turns on |
 | --- | --- | --- | --- |
-| `--material-edge-width` | length | 1px | the edge weight (Poster 3px, Neon 1.5px) |
-| `--material-edge-ink` | number | 0 | the edge's mix toward `--material-ink` (Paper 0.3, Poster 1) |
+| `--material-edge-width` | length | 1px | the edge weight (Neon 1.5px) |
+| `--material-edge-ink` | number | 0 | the edge's mix toward `--material-ink` (Paper 0.3) |
 | `--material-edge-accent` | number | 0 | the edge's mix toward `--material-hue` (Neon 1) |
-| `--material-cast` | length | 0px | a hard down-right shadow in the ink (Poster 5px) |
-| `--material-glow` | length | 0px | an outer bloom in `--material-hue` (Neon 18px) |
 
-`--material-ink` follows the foreground except for Poster, which uses the fixed
-dark `--material-print-ink` from theme.css for its border and cast in both modes.
+`--material-ink` is fixed per mode in theme.css: dark ink in light mode, a mid
+grey in dark mode.
 
-A preset is a point in that space (`tokens/material.ts`: Frosted, Paper, Poster,
+**Ink** is the second formula body, selected by a style query while
+`--material-ink-level` is above 0. The surface paints nothing itself and takes
+uneven radii scaled from `--radius`; `::before` lays the fill with its own radii
+and a nudge, so it strays over and under the line, and `::after` draws the line
+(opacity = the level) with two faint offset passes. No images or masks: it
+renders the same in every browser with style queries.
+
+A preset is a point in that space (`tokens/material.ts`: Frosted, Paper,
 Neon; `resolveMaterial` composes it with the host blur mode); a theme stores the
 preset and any dial it moved, never the resolved values. A look these cannot
 express adds another inert-by-default term here (a ui minor), then, if that is
-not enough, a second formula body under `:root[data-material=…] :where(.glass)`.
+not enough, a second formula body selected by a style query on a material
+variable, as Ink is.
 The class name never changes.
 
 ## Surfaces (the only sanctioned recipes)

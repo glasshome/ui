@@ -6,7 +6,7 @@ import { FROSTED, type Material, resolveMaterial } from "../../src/tokens";
 const SAMPLES: [name: string, material: Material][] = [
 	["Frosted", FROSTED],
 	["Paper", { v: 1, preset: "paper" }],
-	["Poster", { v: 1, preset: "poster" }],
+	["Paper, inked", { v: 1, preset: "paper", dials: { ink: 1 } }],
 	["Neon", { v: 1, preset: "neon" }],
 	["Frosted, depth 0.3", { v: 1, preset: "frosted", dials: { depth: 0.3 } }],
 	[
