@@ -94,7 +94,7 @@ export const THEME_PRESETS: ThemePreset[] = [
 	preset(
 		"sunrise-studio",
 		"Sunrise Studio",
-		1.2,
+		1.1,
 		["#e8590c", "#fab005"],
 		{
 			primary: "oklch(0.68 0.16 50)",
@@ -109,7 +109,7 @@ export const THEME_PRESETS: ThemePreset[] = [
 	preset(
 		"forest-zen",
 		"Forest Zen",
-		1.5,
+		1.6,
 		["#2f9e44", "#12b886"],
 		{
 			primary: "oklch(0.58 0.13 145)",
@@ -124,7 +124,7 @@ export const THEME_PRESETS: ThemePreset[] = [
 	preset(
 		"lavender-dreams",
 		"Lavender Dreams",
-		1.6,
+		1.8,
 		["#9c36b5", "#e64980"],
 		{
 			primary: "oklch(0.62 0.14 300)",
@@ -139,7 +139,7 @@ export const THEME_PRESETS: ThemePreset[] = [
 	preset(
 		"coral-reef",
 		"Coral Reef",
-		1.3,
+		1.25,
 		["#e03131", "#fd7e14"],
 		{
 			primary: "oklch(0.66 0.19 20)",
@@ -169,7 +169,7 @@ export const THEME_PRESETS: ThemePreset[] = [
 	preset(
 		"ocean-breeze",
 		"Ocean Breeze",
-		1.45,
+		1.5,
 		["#1098ad", "#3b5bdb"],
 		{
 			primary: "oklch(0.6 0.16 235)",
@@ -179,7 +179,7 @@ export const THEME_PRESETS: ThemePreset[] = [
 			card: "oklch(0.97 0.01 230)",
 			background: "oklch(0.99 0.01 235)",
 		},
-		bg("ride-the-wave", { url: "/backgrounds/ride-the-wave.svg" }),
+		bg("abstract-pattern", { url: "/backgrounds/ride-the-wave.svg" }),
 	),
 ];
 
