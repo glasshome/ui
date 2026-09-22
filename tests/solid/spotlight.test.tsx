@@ -1,6 +1,7 @@
 import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { Z_CLASS } from "../../src/lib/layers.js";
 import { TRAVEL_MOTION } from "../../src/lib/motion-classes.js";
 import { SCRIM_CLASS } from "../../src/lib/overlay-classes.js";
 import { Spotlight } from "../../src/solid/spotlight.js";
@@ -341,6 +342,19 @@ describe("Spotlight", () => {
 			true,
 		);
 		expect(panel?.classList.contains("relative")).toBe(true);
+	});
+
+	it("carries the overlay layer on the positioner, so the panel never outranks the scrim", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim={false}>
+				Step
+			</Spotlight>
+		));
+		const bubble = document.querySelector<HTMLElement>('[data-slot="spotlight-bubble"]');
+		const panel = document.querySelector<HTMLElement>('[data-slot="spotlight-panel"]');
+		expect(bubble?.classList.contains(Z_CLASS.overlay)).toBe(true);
+		expect(panel?.classList.contains(Z_CLASS.overlay)).toBe(false);
 	});
 
 	it("draws no tail when the bubble is centred with no target", () => {
