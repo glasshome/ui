@@ -42,18 +42,26 @@ export function holePath(
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
+const TAIL_MARGIN = 16;
+
 export function placeBubble(
 	viewport: Viewport,
 	target: Box | null,
 	bubble: { width: number; height: number },
 	gap: number,
 	margin: number,
-): { x: number; y: number; side: "above" | "below" | "center" | "inside" } {
+): {
+	x: number;
+	y: number;
+	side: "above" | "below" | "center" | "inside";
+	tail: { x: number } | null;
+} {
 	if (!target) {
 		return {
 			x: (viewport.width - bubble.width) / 2,
 			y: (viewport.height - bubble.height) / 2,
 			side: "center",
+			tail: null,
 		};
 	}
 	const rawX = target.x + target.width / 2 - bubble.width / 2;
@@ -62,14 +70,18 @@ export function placeBubble(
 			x: clamp(rawX, margin, viewport.width - bubble.width - margin),
 			y: clamp(target.y + gap, margin, viewport.height - bubble.height - margin),
 			side: "inside",
+			tail: null,
 		};
 	}
 	const centreY = target.y + target.height / 2;
 	const side = centreY > viewport.height / 2 ? "above" : "below";
 	const rawY = side === "above" ? target.y - gap - bubble.height : target.y + target.height + gap;
+	const x = clamp(rawX, margin, viewport.width - bubble.width - margin);
+	const anchorCentre = target.x + target.width / 2;
 	return {
-		x: clamp(rawX, margin, viewport.width - bubble.width - margin),
+		x,
 		y: clamp(rawY, margin, viewport.height - bubble.height - margin),
 		side,
+		tail: { x: clamp(anchorCentre - x, TAIL_MARGIN, bubble.width - TAIL_MARGIN) },
 	};
 }

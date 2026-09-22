@@ -10,7 +10,11 @@ import {
 import { Portal } from "solid-js/web";
 import { Z_CLASS } from "../lib/layers.js";
 import { SCRIM_MOTION, TRAVEL_MOTION } from "../lib/motion-classes.js";
-import { FLOATING_PANEL_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
+import {
+	FLOATING_PANEL_SURFACE,
+	OVERLAY_SURFACE_OPAQUE,
+	SCRIM_CLASS,
+} from "../lib/overlay-classes.js";
 import { type Box, holePath, placeBubble } from "../lib/spotlight-geometry.js";
 import { cn } from "../lib/utils.js";
 
@@ -18,9 +22,14 @@ const HOLE_PAD = 8;
 const HOLE_RADIUS = 12;
 const BUBBLE_GAP = 12;
 const VIEWPORT_MARGIN = 12;
+const TAIL_SIZE = 12;
+/* The gap grows by the tail's half-diagonal so the rotated square never touches the anchor. */
+const BUBBLE_GAP_WITH_TAIL = BUBBLE_GAP + (TAIL_SIZE * Math.SQRT2) / 2;
 
 interface SpotlightProps {
 	target: Element | undefined;
+	/** What the bubble is placed against and the tail points at. Defaults to `target`. */
+	anchor?: Element;
 	scrim: boolean;
 	blocking?: boolean;
 	pad?: number;
@@ -38,6 +47,7 @@ function sameFields<T extends object>(a: T | null, b: T | null): boolean {
 
 const Spotlight: Component<SpotlightProps> = (props) => {
 	const [box, setBox] = createSignal<Box | null>(null, { equals: sameFields });
+	const [anchorBox, setAnchorBox] = createSignal<Box | null>(null, { equals: sameFields });
 	const [viewport, setViewport] = createSignal(
 		{ width: window.innerWidth, height: window.innerHeight },
 		{ equals: sameFields },
@@ -48,16 +58,27 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 	);
 	let bubble: HTMLDivElement | undefined;
 
+	const anchorEl = () => props.anchor ?? props.target;
+
+	const rectToBox = (el: Element | undefined) => {
+		const r = el?.getBoundingClientRect();
+		return r ? { x: r.left, y: r.top, width: r.width, height: r.height } : null;
+	};
+
 	const measure = () => {
 		setViewport({ width: window.innerWidth, height: window.innerHeight });
-		const r = props.target?.getBoundingClientRect();
-		setBox(r ? { x: r.left, y: r.top, width: r.width, height: r.height } : null);
+		const targetBox = rectToBox(props.target);
+		setBox(targetBox);
+		const anchor = anchorEl();
+		/* Same element as target: reuse its box instead of measuring it twice a tick. */
+		setAnchorBox(anchor === props.target ? targetBox : rectToBox(anchor));
 		if (bubble)
 			setBubbleSize({ width: bubble.offsetWidth || 288, height: bubble.offsetHeight || 96 });
 	};
 
 	createEffect(() => {
 		const target = props.target;
+		const anchor = anchorEl();
 		let raf = 0;
 		let start: number | undefined;
 
@@ -74,6 +95,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 
 		const observer = new ResizeObserver(measure);
 		if (target) observer.observe(target);
+		if (anchor && anchor !== target) observer.observe(anchor);
 		if (bubble) observer.observe(bubble);
 		onCleanup(() => {
 			cancelAnimationFrame(raf);
@@ -95,7 +117,8 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 		});
 	});
 
-	const place = () => placeBubble(viewport(), box(), bubbleSize(), BUBBLE_GAP, VIEWPORT_MARGIN);
+	const place = () =>
+		placeBubble(viewport(), anchorBox(), bubbleSize(), BUBBLE_GAP_WITH_TAIL, VIEWPORT_MARGIN);
 
 	return (
 		<Portal>
@@ -129,6 +152,24 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 				)}
 				style={{ translate: `${place().x}px ${place().y}px` }}
 			>
+				<Show when={place().tail}>
+					{(tail) => (
+						<div
+							data-slot="spotlight-tail"
+							data-side={place().side}
+							aria-hidden="true"
+							class={cn(OVERLAY_SURFACE_OPAQUE, "absolute rotate-45 rounded-[2px]")}
+							style={{
+								width: `${TAIL_SIZE}px`,
+								height: `${TAIL_SIZE}px`,
+								left: `${tail().x - TAIL_SIZE / 2}px`,
+								...(place().side === "above"
+									? { bottom: `${-TAIL_SIZE / 2}px` }
+									: { top: `${-TAIL_SIZE / 2}px` }),
+							}}
+						/>
+					)}
+				</Show>
 				{props.children}
 			</div>
 		</Portal>

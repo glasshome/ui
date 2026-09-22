@@ -170,7 +170,7 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | a metallic tier chip | `<TierBadge>` | gradients by hand |
 | the ambient motion window | `startMotionWindow()` | an app-local timer writing `data-motion` |
 | a built-in wallpaper | `GEOMETRIC_HOUSES_SVG` from `@glasshome/ui/backgrounds` | an app's own copy of the SVG |
-| pointing at a control while the user operates it | `<Spotlight>` (`blocking` on a targetless veil so the action inside the bubble is the only press that lands; a target taller than half the viewport places the bubble inside it, near the top, instead of above or below) | a hand-rolled fixed overlay with a cutout |
+| pointing at a control while the user operates it | `<Spotlight>` (`blocking` on a targetless veil so the action inside the bubble is the only press that lands; a target taller than half the viewport places the bubble inside it, near the top, instead of above or below; the bubble carries a tail toward its `anchor`, which defaults to `target` and may point at a different element than the hole) | a hand-rolled fixed overlay with a cutout |
 
 Server-run `.astro` markup imports `@glasshome/ui/solid` too: the `solid`
 export condition hands Astro the source, and a component with no `client:`

@@ -63,7 +63,11 @@ describe("Spotlight", () => {
 		setTarget(b);
 		height = 137;
 		rafCallback?.(0);
-		expect(bubble?.style.translate).toBe("406px 451px");
+		/* The tail's half-diagonal (6√2) grows the gap below BUBBLE_GAP=12. */
+		const gap = 12 + 6 * Math.SQRT2;
+		const [x, y] = (bubble?.style.translate ?? "").split(" ");
+		expect(x).toBe("406px");
+		expect(Number.parseFloat(y ?? "")).toBeCloseTo(600 - gap - 137, 5);
 		rafSpy.mockRestore();
 	});
 
@@ -295,4 +299,60 @@ describe("Spotlight", () => {
 		);
 		globalThis.ResizeObserver = Original;
 	});
+
+	it("points the tail at the target on a below-placed bubble", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim={false}>
+				Step
+			</Spotlight>
+		));
+		expect(bubbleSide()).toBe("below");
+		const tail = document.querySelector<HTMLElement>('[data-slot="spotlight-tail"]');
+		expect(tail?.getAttribute("data-side")).toBe("below");
+		expect(tail?.style.left).toBe(`${144 - 6}px`);
+	});
+
+	it("points the tail at the target on an above-placed bubble", () => {
+		const el = targetAt(400, 700, 200, 60);
+		render(() => (
+			<Spotlight target={el} scrim={false}>
+				Step
+			</Spotlight>
+		));
+		expect(bubbleSide()).toBe("above");
+		const tail = document.querySelector<HTMLElement>('[data-slot="spotlight-tail"]');
+		expect(tail?.getAttribute("data-side")).toBe("above");
+	});
+
+	it("draws no tail when the bubble is centred with no target", () => {
+		render(() => (
+			<Spotlight target={undefined} scrim={false}>
+				Step
+			</Spotlight>
+		));
+		expect(bubbleSide()).toBe("center");
+		expect(document.querySelector('[data-slot="spotlight-tail"]')).toBeNull();
+	});
+
+	it("anchors the bubble and its tail to a different element than the target's hole", () => {
+		const target = targetAt(100, 200, 300, 50);
+		const anchor = targetAt(500, 200, 60, 30);
+		render(() => (
+			<Spotlight target={target} anchor={anchor} scrim>
+				Step
+			</Spotlight>
+		));
+		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
+		expect(scrim?.style.clipPath).toContain("M104 192");
+		const bubble = document.querySelector<HTMLElement>('[data-slot="spotlight-bubble"]');
+		const gap = 12 + 6 * Math.SQRT2;
+		const [x, y] = (bubble?.style.translate ?? "").split(" ");
+		expect(x).toBe("386px");
+		expect(Number.parseFloat(y ?? "")).toBeCloseTo(200 + 30 + gap, 5);
+	});
 });
+
+function bubbleSide() {
+	return document.querySelector('[data-slot="spotlight-bubble"]')?.getAttribute("data-side");
+}

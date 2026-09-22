@@ -58,4 +58,35 @@ describe("placeBubble", () => {
 		expect(p.y).toBe(0 + 12);
 		expect(p.x).toBe(100 + 100 - 144);
 	});
+
+	it("points the tail at the anchor's centre, above", () => {
+		const p = placeBubble(viewport, { x: 400, y: 700, width: 200, height: 60 }, bubble, 12, 12);
+		expect(p.tail).toEqual({ x: 144 });
+	});
+
+	it("points the tail at the anchor's centre, below", () => {
+		const p = placeBubble(viewport, { x: 400, y: 40, width: 200, height: 60 }, bubble, 12, 12);
+		expect(p.tail).toEqual({ x: 144 });
+	});
+
+	it("clamps the tail to the bubble's low edge when the bubble is pinned to the left margin", () => {
+		const p = placeBubble(viewport, { x: 0, y: 700, width: 40, height: 40 }, bubble, 12, 12);
+		expect(p.x).toBe(12);
+		expect(p.tail).toEqual({ x: 16 });
+	});
+
+	it("clamps the tail to the bubble's high edge when the bubble is pinned to the right margin", () => {
+		const p = placeBubble(viewport, { x: 960, y: 700, width: 40, height: 40 }, bubble, 12, 12);
+		expect(p.tail).toEqual({ x: bubble.width - 16 });
+	});
+
+	it("has no tail for a centred bubble", () => {
+		const p = placeBubble(viewport, null, bubble, 12, 12);
+		expect(p.tail).toBeNull();
+	});
+
+	it("has no tail for a bubble placed inside a tall target", () => {
+		const p = placeBubble(viewport, { x: 100, y: 0, width: 200, height: 800 }, bubble, 12, 12);
+		expect(p.tail).toBeNull();
+	});
 });
