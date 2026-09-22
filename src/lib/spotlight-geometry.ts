@@ -42,7 +42,10 @@ export function holePath(
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-const TAIL_MARGIN = 16;
+/* --radius-md (the panel's rounding) at the default 16px root: --radius 22.4px minus 2px. */
+const PANEL_RADIUS = 20.4;
+/* Keeps the tail off the rounded corners it would otherwise sit under. */
+const TAIL_MARGIN = PANEL_RADIUS + 8;
 
 export function placeBubble(
 	viewport: Viewport,

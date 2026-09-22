@@ -3,7 +3,7 @@ import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Z_CLASS } from "../../src/lib/layers.js";
 import { TRAVEL_MOTION } from "../../src/lib/motion-classes.js";
-import { SCRIM_CLASS } from "../../src/lib/overlay-classes.js";
+import { OVERLAY_SURFACE_OPAQUE, SCRIM_CLASS } from "../../src/lib/overlay-classes.js";
 import { Spotlight } from "../../src/solid/spotlight.js";
 
 function targetAt(x: number, y: number, width: number, height: number) {
@@ -64,8 +64,8 @@ describe("Spotlight", () => {
 		setTarget(b);
 		height = 137;
 		rafCallback?.(0);
-		/* The tail's half-diagonal (6√2) grows the gap below BUBBLE_GAP=12. */
-		const gap = 12 + 6 * Math.SQRT2;
+		/* The tail's half-diagonal (8√2) grows the gap below BUBBLE_GAP=12. */
+		const gap = 12 + 8 * Math.SQRT2;
 		const [x, y] = (bubble?.style.translate ?? "").split(" ");
 		expect(x).toBe("406px");
 		expect(Number.parseFloat(y ?? "")).toBeCloseTo(600 - gap - 137, 5);
@@ -311,7 +311,10 @@ describe("Spotlight", () => {
 		expect(bubbleSide()).toBe("below");
 		const tail = document.querySelector<HTMLElement>('[data-slot="spotlight-tail"]');
 		expect(tail?.getAttribute("data-side")).toBe("below");
-		expect(tail?.style.left).toBe(`${144 - 6}px`);
+		/* Bubble defaults to 384px wide (fallback for an unmeasured 0-width bubble in jsdom). */
+		const rawX = 100 + 300 / 2 - 384 / 2;
+		const anchorCentre = 100 + 300 / 2;
+		expect(tail?.style.left).toBe(`${anchorCentre - rawX - 8}px`);
 	});
 
 	it("points the tail at the target on an above-placed bubble", () => {
@@ -357,6 +360,34 @@ describe("Spotlight", () => {
 		expect(panel?.classList.contains(Z_CLASS.overlay)).toBe(false);
 	});
 
+	it("wears the opaque recipe on both the panel and the tail, so the tail reads as part of the panel", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim={false}>
+				Step
+			</Spotlight>
+		));
+		const bubble = document.querySelector<HTMLElement>('[data-slot="spotlight-bubble"]');
+		const tail = bubble?.querySelector('[data-slot="spotlight-tail"]');
+		const panel = bubble?.querySelector('[data-slot="spotlight-panel"]');
+		for (const token of OVERLAY_SURFACE_OPAQUE.split(" ")) {
+			expect(tail?.classList.contains(token)).toBe(true);
+			expect(panel?.classList.contains(token)).toBe(true);
+		}
+	});
+
+	it("grows the tail to 16px", () => {
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim={false}>
+				Step
+			</Spotlight>
+		));
+		const tail = document.querySelector<HTMLElement>('[data-slot="spotlight-tail"]');
+		expect(tail?.style.width).toBe("16px");
+		expect(tail?.style.height).toBe("16px");
+	});
+
 	it("draws no tail when the bubble is centred with no target", () => {
 		render(() => (
 			<Spotlight target={undefined} scrim={false}>
@@ -378,9 +409,11 @@ describe("Spotlight", () => {
 		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
 		expect(scrim?.style.clipPath).toContain("M104 192");
 		const bubble = document.querySelector<HTMLElement>('[data-slot="spotlight-bubble"]');
-		const gap = 12 + 6 * Math.SQRT2;
+		const gap = 12 + 8 * Math.SQRT2;
+		/* Bubble defaults to 384px wide (fallback for an unmeasured 0-width bubble in jsdom). */
+		const rawX = 500 + 60 / 2 - 384 / 2;
 		const [x, y] = (bubble?.style.translate ?? "").split(" ");
-		expect(x).toBe("386px");
+		expect(x).toBe(`${rawX}px`);
 		expect(Number.parseFloat(y ?? "")).toBeCloseTo(200 + 30 + gap, 5);
 	});
 });

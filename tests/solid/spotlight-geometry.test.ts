@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { holePath, placeBubble } from "../../src/lib/spotlight-geometry.js";
 
 const viewport = { width: 1000, height: 800 };
+/* Mirrors spotlight-geometry.ts: --radius-md (20.4px at the default 16px root) plus 8. */
+const TAIL_MARGIN = 20.4 + 8;
 
 describe("holePath", () => {
 	it("cuts a rounded hole, padded, out of the viewport rect", () => {
@@ -72,12 +74,12 @@ describe("placeBubble", () => {
 	it("clamps the tail to the bubble's low edge when the bubble is pinned to the left margin", () => {
 		const p = placeBubble(viewport, { x: 0, y: 700, width: 40, height: 40 }, bubble, 12, 12);
 		expect(p.x).toBe(12);
-		expect(p.tail).toEqual({ x: 16 });
+		expect(p.tail).toEqual({ x: TAIL_MARGIN });
 	});
 
 	it("clamps the tail to the bubble's high edge when the bubble is pinned to the right margin", () => {
 		const p = placeBubble(viewport, { x: 960, y: 700, width: 40, height: 40 }, bubble, 12, 12);
-		expect(p.tail).toEqual({ x: bubble.width - 16 });
+		expect(p.tail).toEqual({ x: bubble.width - TAIL_MARGIN });
 	});
 
 	it("has no tail for a centred bubble", () => {

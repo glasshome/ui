@@ -10,11 +10,7 @@ import {
 import { Portal } from "solid-js/web";
 import { Z_CLASS } from "../lib/layers.js";
 import { SCRIM_MOTION, TRAVEL_MOTION } from "../lib/motion-classes.js";
-import {
-	FLOATING_PANEL_SURFACE,
-	OVERLAY_SURFACE_OPAQUE,
-	SCRIM_CLASS,
-} from "../lib/overlay-classes.js";
+import { OVERLAY_SURFACE_OPAQUE, PANEL_TAIL, SCRIM_CLASS } from "../lib/overlay-classes.js";
 import { type Box, holePath, placeBubble } from "../lib/spotlight-geometry.js";
 import { cn } from "../lib/utils.js";
 
@@ -22,7 +18,8 @@ const HOLE_PAD = 8;
 const HOLE_RADIUS = 12;
 const BUBBLE_GAP = 12;
 const VIEWPORT_MARGIN = 12;
-const TAIL_SIZE = 12;
+const TAIL_SIZE = 16;
+const BUBBLE_DEFAULT_WIDTH = 384;
 /* The gap grows by the tail's half-diagonal so the rotated square never touches the anchor. */
 const BUBBLE_GAP_WITH_TAIL = BUBBLE_GAP + (TAIL_SIZE * Math.SQRT2) / 2;
 
@@ -53,7 +50,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 		{ equals: sameFields },
 	);
 	const [bubbleSize, setBubbleSize] = createSignal(
-		{ width: 288, height: 96 },
+		{ width: BUBBLE_DEFAULT_WIDTH, height: 96 },
 		{ equals: sameFields },
 	);
 	let bubble: HTMLDivElement | undefined;
@@ -73,7 +70,10 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 		/* Same element as target: reuse its box instead of measuring it twice a tick. */
 		setAnchorBox(anchor === props.target ? targetBox : rectToBox(anchor));
 		if (bubble)
-			setBubbleSize({ width: bubble.offsetWidth || 288, height: bubble.offsetHeight || 96 });
+			setBubbleSize({
+				width: bubble.offsetWidth || BUBBLE_DEFAULT_WIDTH,
+				height: bubble.offsetHeight || 96,
+			});
 	};
 
 	createEffect(() => {
@@ -144,7 +144,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 				ref={bubble}
 				data-slot="spotlight-bubble"
 				data-side={place().side}
-				class={cn(TRAVEL_MOTION, Z_CLASS.overlay, "fixed top-0 left-0 w-72", props.class)}
+				class={cn(TRAVEL_MOTION, Z_CLASS.overlay, "fixed top-0 left-0 w-96", props.class)}
 				style={{ translate: `${place().x}px ${place().y}px` }}
 			>
 				<Show when={place().tail}>
@@ -165,7 +165,10 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 						/>
 					)}
 				</Show>
-				<div data-slot="spotlight-panel" class={cn(FLOATING_PANEL_SURFACE, "relative z-auto p-4")}>
+				<div
+					data-slot="spotlight-panel"
+					class={cn(OVERLAY_SURFACE_OPAQUE, PANEL_TAIL, "relative z-auto p-4")}
+				>
 					{props.children}
 				</div>
 			</div>
