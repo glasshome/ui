@@ -48,7 +48,7 @@ export function placeBubble(
 	bubble: { width: number; height: number },
 	gap: number,
 	margin: number,
-): { x: number; y: number; side: "above" | "below" | "center" } {
+): { x: number; y: number; side: "above" | "below" | "center" | "inside" } {
 	if (!target) {
 		return {
 			x: (viewport.width - bubble.width) / 2,
@@ -56,10 +56,17 @@ export function placeBubble(
 			side: "center",
 		};
 	}
+	const rawX = target.x + target.width / 2 - bubble.width / 2;
+	if (target.height > viewport.height / 2) {
+		return {
+			x: clamp(rawX, margin, viewport.width - bubble.width - margin),
+			y: clamp(target.y + gap, margin, viewport.height - bubble.height - margin),
+			side: "inside",
+		};
+	}
 	const centreY = target.y + target.height / 2;
 	const side = centreY > viewport.height / 2 ? "above" : "below";
 	const rawY = side === "above" ? target.y - gap - bubble.height : target.y + target.height + gap;
-	const rawX = target.x + target.width / 2 - bubble.width / 2;
 	return {
 		x: clamp(rawX, margin, viewport.width - bubble.width - margin),
 		y: clamp(rawY, margin, viewport.height - bubble.height - margin),

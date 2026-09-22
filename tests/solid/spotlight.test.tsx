@@ -42,40 +42,6 @@ describe("Spotlight", () => {
 		);
 	});
 
-	it("marks the target with a ring when there is no veil", () => {
-		const el = targetAt(100, 200, 300, 50);
-		render(() => (
-			<Spotlight target={el} scrim={false}>
-				Drag it
-			</Spotlight>
-		));
-		const ring = document.querySelector<HTMLElement>('[data-slot="spotlight-ring"]');
-		expect(ring).not.toBeNull();
-		expect(ring?.classList.contains("ring-primary")).toBe(true);
-		expect(ring?.style.translate).toBe("92px 192px");
-		expect(ring?.style.width).toBe("316px");
-		expect(ring?.style.height).toBe("66px");
-	});
-
-	it("draws no ring when the veil is on", () => {
-		const el = targetAt(100, 200, 300, 50);
-		render(() => (
-			<Spotlight target={el} scrim>
-				Step
-			</Spotlight>
-		));
-		expect(document.querySelector('[data-slot="spotlight-ring"]')).toBeNull();
-	});
-
-	it("draws no ring without a measured target", () => {
-		render(() => (
-			<Spotlight target={undefined} scrim={false}>
-				Step
-			</Spotlight>
-		));
-		expect(document.querySelector('[data-slot="spotlight-ring"]')).toBeNull();
-	});
-
 	it("re-measures the bubble one frame later, so content that grows after the target changes is placed from the grown height", () => {
 		let rafCallback: FrameRequestCallback | undefined;
 		const rafSpy = vi.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
@@ -157,34 +123,7 @@ describe("Spotlight", () => {
 		expect(scrim?.style.clipPath).toContain("M504 592");
 	});
 
-	it("live keeps following a target that moves after the settle window ends", () => {
-		vi.useFakeTimers({ toFake: ["requestAnimationFrame"] });
-		const el = document.createElement("button");
-		document.body.append(el);
-		const before = { x: 100, y: 200, width: 300, height: 50 };
-		const after = { x: 100, y: 260, width: 300, height: 50 };
-		let moved = false;
-		el.getBoundingClientRect = () => {
-			const r = moved ? after : before;
-			return { ...r, left: r.x, top: r.y, right: r.x + r.width, bottom: r.y + r.height } as DOMRect;
-		};
-		render(() => (
-			<Spotlight target={el} scrim live>
-				Step
-			</Spotlight>
-		));
-		const scrim = () => document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
-		for (let i = 0; i < 45; i++) vi.advanceTimersToNextFrame();
-		expect(scrim()?.style.clipPath).toContain("M104 192");
-
-		moved = true;
-		for (let i = 0; i < 8; i++) vi.advanceTimersToNextFrame();
-		expect(scrim()?.style.clipPath).toContain("M104 252");
-
-		vi.useRealTimers();
-	});
-
-	it("without live, requests no more frames once the settle window ends", () => {
+	it("requests no more frames once the settle window ends", () => {
 		vi.useFakeTimers({ toFake: ["requestAnimationFrame"] });
 		const rafSpy = vi.spyOn(window, "requestAnimationFrame");
 		const el = targetAt(100, 200, 300, 50);
@@ -197,24 +136,6 @@ describe("Spotlight", () => {
 		const settled = rafSpy.mock.calls.length;
 		for (let i = 0; i < 10; i++) vi.advanceTimersToNextFrame();
 		expect(rafSpy.mock.calls.length).toBe(settled);
-		rafSpy.mockRestore();
-		vi.useRealTimers();
-	});
-
-	it("turning live off stops the per-frame follow", () => {
-		vi.useFakeTimers({ toFake: ["requestAnimationFrame", "cancelAnimationFrame"] });
-		const el = targetAt(100, 200, 300, 50);
-		const [live, setLive] = createSignal(true);
-		render(() => (
-			<Spotlight target={el} scrim live={live()}>
-				Step
-			</Spotlight>
-		));
-		for (let i = 0; i < 45; i++) vi.advanceTimersToNextFrame();
-		setLive(false);
-		const rafSpy = vi.spyOn(window, "requestAnimationFrame");
-		for (let i = 0; i < 10; i++) vi.advanceTimersToNextFrame();
-		expect(rafSpy.mock.calls.length).toBe(0);
 		rafSpy.mockRestore();
 		vi.useRealTimers();
 	});
@@ -328,20 +249,7 @@ describe("Spotlight", () => {
 		}
 	});
 
-	it("drops the travel transition while live, so the hole stays on a dragged target", () => {
-		const el = targetAt(100, 200, 300, 50);
-		render(() => (
-			<Spotlight target={el} scrim live>
-				Step
-			</Spotlight>
-		));
-		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
-		for (const token of TRAVEL_MOTION.split(" ")) {
-			expect(scrim?.classList.contains(token)).toBe(false);
-		}
-	});
-
-	it("keeps the travel transition when not live", () => {
+	it("keeps the travel transition", () => {
 		const el = targetAt(100, 200, 300, 50);
 		render(() => (
 			<Spotlight target={el} scrim>

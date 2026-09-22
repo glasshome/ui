@@ -51,4 +51,11 @@ describe("placeBubble", () => {
 		expect(p.x).toBe(356);
 		expect(p.y).toBe(340);
 	});
+
+	it("sits inside a target taller than half the viewport, near its top", () => {
+		const p = placeBubble(viewport, { x: 100, y: 0, width: 200, height: 800 }, bubble, 12, 12);
+		expect(p.side).toBe("inside");
+		expect(p.y).toBe(0 + 12);
+		expect(p.x).toBe(100 + 100 - 144);
+	});
 });

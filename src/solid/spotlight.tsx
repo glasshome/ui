@@ -24,8 +24,6 @@ interface SpotlightProps {
 	scrim: boolean;
 	blocking?: boolean;
 	pad?: number;
-	/** Re-measure every frame, for a target that moves under a live pointer gesture. */
-	live?: boolean;
 	onSkip?: () => void;
 	class?: string;
 	children: JSX.Element;
@@ -83,19 +81,6 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 		});
 	});
 
-	/* A dragged or resized target moves under a transform every frame; no ResizeObserver
-	 * fires for that, so the hole must be re-measured on the gesture's own clock. */
-	createEffect(() => {
-		if (!props.live) return;
-		let raf = 0;
-		const tick = () => {
-			measure();
-			raf = requestAnimationFrame(tick);
-		};
-		raf = requestAnimationFrame(tick);
-		onCleanup(() => cancelAnimationFrame(raf));
-	});
-
 	onMount(() => {
 		const onKey = (e: KeyboardEvent) => {
 			if (e.key === "Escape") props.onSkip?.();
@@ -124,7 +109,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 						SCRIM_CLASS,
 						Z_CLASS.overlay,
 						SCRIM_MOTION,
-						!props.live && TRAVEL_MOTION,
+						TRAVEL_MOTION,
 						!box() && !props.blocking && "pointer-events-none",
 					)}
 					style={{
@@ -132,30 +117,13 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 					}}
 				/>
 			</Show>
-			<Show when={!props.scrim && box()}>
-				{(current) => (
-					<div
-						data-slot="spotlight-ring"
-						aria-hidden="true"
-						class={cn(
-							"pointer-events-none fixed top-0 left-0 rounded-2xl shadow-lg ring-2 ring-primary",
-							!props.live && TRAVEL_MOTION,
-						)}
-						style={{
-							width: `${current().width + (props.pad ?? HOLE_PAD) * 2}px`,
-							height: `${current().height + (props.pad ?? HOLE_PAD) * 2}px`,
-							translate: `${current().x - (props.pad ?? HOLE_PAD)}px ${current().y - (props.pad ?? HOLE_PAD)}px`,
-						}}
-					/>
-				)}
-			</Show>
 			<div
 				ref={bubble}
 				data-slot="spotlight-bubble"
 				data-side={place().side}
 				class={cn(
 					FLOATING_PANEL_SURFACE,
-					!props.live && TRAVEL_MOTION,
+					TRAVEL_MOTION,
 					"fixed top-0 left-0 w-72 p-4",
 					props.class,
 				)}
