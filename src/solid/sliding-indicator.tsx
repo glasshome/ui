@@ -145,12 +145,8 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 			setPos(null);
 			return;
 		}
-		// Not laid out yet: a hidden/collapsing popover, a display:none tab panel, a
-		// portal measured before Kobalte positions it, or a dialog still running its
-		// open transform. Measuring then would fling the indicator to a bogus offset
-		// (a stray tinted blob a screenshot catches mid-open) or scale it by the
-		// ancestor's in-flight transform, so hide until there is real geometry.
-		// Rects, not clientWidth: a transformed ancestor leaves layout size intact.
+		// Not laid out yet: a hidden/collapsing popover, a display:none tab panel, or
+		// a portal measured before Kobalte positions it. Hide until real geometry.
 		const er = el.getBoundingClientRect();
 		const cr = containerRef.getBoundingClientRect();
 		if (er.width === 0 || er.height === 0 || cr.width === 0 || cr.height === 0) {
@@ -166,18 +162,23 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 		// border so it aligns to the padding box (where the absolute indicator anchors).
 		// A row arriving through gh-stagger is still translated: bounding rects
 		// include that travel, its resting place does not.
+		// An ancestor mid-zoom (a dialog opening) scales every rect and ends without
+		// a resize, so rects convert back to layout pixels by the container's ratio.
+		const sx = containerRef.offsetWidth > 0 ? cr.width / containerRef.offsetWidth : 1;
+		const sy = containerRef.offsetHeight > 0 ? cr.height / containerRef.offsetHeight : 1;
 		const [tx, ty] = readTranslate(el);
 		setPos(
 			horizontal()
 				? {
-						offset: er.left - tx - cr.left - containerRef.clientLeft + containerRef.scrollLeft,
-						size: er.width,
-						cross: er.height,
+						offset:
+							(er.left - cr.left) / sx - tx - containerRef.clientLeft + containerRef.scrollLeft,
+						size: er.width / sx,
+						cross: er.height / sy,
 					}
 				: {
-						offset: er.top - ty - cr.top - containerRef.clientTop + containerRef.scrollTop,
-						size: er.height,
-						cross: er.width,
+						offset: (er.top - cr.top) / sy - ty - containerRef.clientTop + containerRef.scrollTop,
+						size: er.height / sy,
+						cross: er.width / sx,
 					},
 		);
 	};

@@ -189,6 +189,27 @@ describe("SlidingIndicator", () => {
 		expect(container.querySelector("[data-sliding-indicator]")).toBeNull();
 	});
 
+	it("lands in layout pixels while an ancestor is mid-zoom", async () => {
+		const { container } = render(() => (
+			<SlidingIndicator active={1}>
+				<button type="button">Edit</button>
+				<button type="button">Debug</button>
+			</SlidingIndicator>
+		));
+		const root = container.firstElementChild;
+		const buttons = container.querySelectorAll("button");
+		if (!(root instanceof HTMLElement)) throw new Error("no root");
+		stubRect(root, { left: 6, top: 1, width: 188, height: 30.08 });
+		stubRect(buttons[1] as HTMLElement, { left: 100, top: 1, width: 75.2, height: 30.08 });
+		Object.defineProperty(root, "offsetWidth", { value: 200, configurable: true });
+		Object.defineProperty(root, "offsetHeight", { value: 32, configurable: true });
+		await flush();
+
+		const indicator = container.querySelector<HTMLElement>("[data-sliding-indicator]");
+		expect(indicator?.style.transform).toBe("translateX(100px)");
+		expect(indicator?.style.width).toBe("80px");
+	});
+
 	it("times the slide from one inline transition", async () => {
 		const { container } = render(() => (
 			<SlidingIndicator active={0}>
