@@ -6,6 +6,9 @@ import { TRAVEL_MOTION } from "../../src/lib/motion-classes.js";
 import { OVERLAY_SURFACE_OPAQUE, SCRIM_CLASS } from "../../src/lib/overlay-classes.js";
 import { Spotlight } from "../../src/solid/spotlight.js";
 
+const TAIL_SIZE = 20;
+const BUBBLE_GAP = 12;
+
 function targetAt(x: number, y: number, width: number, height: number) {
 	const el = document.createElement("button");
 	el.getBoundingClientRect = () =>
@@ -65,7 +68,7 @@ describe("Spotlight", () => {
 		height = 137;
 		rafCallback?.(0);
 		/* The tail's half-diagonal (8√2) grows the gap below BUBBLE_GAP=12. */
-		const gap = 12 + 8 * Math.SQRT2;
+		const gap = BUBBLE_GAP + (TAIL_SIZE * Math.SQRT2) / 2;
 		const [x, y] = (bubble?.style.translate ?? "").split(" ");
 		expect(x).toBe("406px");
 		expect(Number.parseFloat(y ?? "")).toBeCloseTo(600 - gap - 137, 5);
@@ -314,7 +317,7 @@ describe("Spotlight", () => {
 		/* Bubble defaults to 384px wide (fallback for an unmeasured 0-width bubble in jsdom). */
 		const rawX = 100 + 300 / 2 - 384 / 2;
 		const anchorCentre = 100 + 300 / 2;
-		expect(tail?.style.left).toBe(`${anchorCentre - rawX - 8}px`);
+		expect(tail?.style.left).toBe(`${anchorCentre - rawX - TAIL_SIZE / 2}px`);
 	});
 
 	it("points the tail at the target on an above-placed bubble", () => {
@@ -376,7 +379,7 @@ describe("Spotlight", () => {
 		}
 	});
 
-	it("grows the tail to 16px", () => {
+	it(`grows the tail to ${TAIL_SIZE}px`, () => {
 		const el = targetAt(100, 200, 300, 50);
 		render(() => (
 			<Spotlight target={el} scrim={false}>
@@ -384,8 +387,8 @@ describe("Spotlight", () => {
 			</Spotlight>
 		));
 		const tail = document.querySelector<HTMLElement>('[data-slot="spotlight-tail"]');
-		expect(tail?.style.width).toBe("16px");
-		expect(tail?.style.height).toBe("16px");
+		expect(tail?.style.width).toBe(`${TAIL_SIZE}px`);
+		expect(tail?.style.height).toBe(`${TAIL_SIZE}px`);
 	});
 
 	it("draws no tail when the bubble is centred with no target", () => {
@@ -409,7 +412,7 @@ describe("Spotlight", () => {
 		const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
 		expect(scrim?.style.clipPath).toContain("M104 192");
 		const bubble = document.querySelector<HTMLElement>('[data-slot="spotlight-bubble"]');
-		const gap = 12 + 8 * Math.SQRT2;
+		const gap = BUBBLE_GAP + (TAIL_SIZE * Math.SQRT2) / 2;
 		/* Bubble defaults to 384px wide (fallback for an unmeasured 0-width bubble in jsdom). */
 		const rawX = 500 + 60 / 2 - 384 / 2;
 		const [x, y] = (bubble?.style.translate ?? "").split(" ");

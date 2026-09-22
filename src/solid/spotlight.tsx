@@ -18,7 +18,7 @@ const HOLE_PAD = 8;
 const HOLE_RADIUS = 12;
 const BUBBLE_GAP = 12;
 const VIEWPORT_MARGIN = 12;
-const TAIL_SIZE = 16;
+const TAIL_SIZE = 20;
 const BUBBLE_DEFAULT_WIDTH = 384;
 /* The gap grows by the tail's half-diagonal so the rotated square never touches the anchor. */
 const BUBBLE_GAP_WITH_TAIL = BUBBLE_GAP + (TAIL_SIZE * Math.SQRT2) / 2;
