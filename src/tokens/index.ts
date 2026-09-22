@@ -4,6 +4,7 @@
  */
 
 export * from "./hex.js";
+export * from "./material.js";
 export * from "./presets.js";
 export * from "./readability.js";
 export * from "./theme-colors.js";
