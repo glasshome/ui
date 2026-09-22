@@ -24,6 +24,8 @@ interface SpotlightProps {
 	scrim: boolean;
 	blocking?: boolean;
 	pad?: number;
+	/** Re-measure every frame, for a target that moves under a live pointer gesture. */
+	live?: boolean;
 	onSkip?: () => void;
 	class?: string;
 	children: JSX.Element;
@@ -79,6 +81,19 @@ const Spotlight: Component<SpotlightProps> = (props) => {
 			cancelAnimationFrame(raf);
 			observer.disconnect();
 		});
+	});
+
+	/* A dragged or resized target moves under a transform every frame; no ResizeObserver
+	 * fires for that, so the hole must be re-measured on the gesture's own clock. */
+	createEffect(() => {
+		if (!props.live) return;
+		let raf = 0;
+		const tick = () => {
+			measure();
+			raf = requestAnimationFrame(tick);
+		};
+		raf = requestAnimationFrame(tick);
+		onCleanup(() => cancelAnimationFrame(raf));
 	});
 
 	onMount(() => {

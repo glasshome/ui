@@ -156,6 +156,68 @@ describe("Spotlight", () => {
 		expect(scrim?.style.clipPath).toContain("M504 592");
 	});
 
+	it("live keeps following a target that moves after the settle window ends", () => {
+		vi.useFakeTimers({ toFake: ["requestAnimationFrame"] });
+		const el = document.createElement("button");
+		document.body.append(el);
+		const before = { x: 100, y: 200, width: 300, height: 50 };
+		const after = { x: 100, y: 260, width: 300, height: 50 };
+		let moved = false;
+		el.getBoundingClientRect = () => {
+			const r = moved ? after : before;
+			return { ...r, left: r.x, top: r.y, right: r.x + r.width, bottom: r.y + r.height } as DOMRect;
+		};
+		render(() => (
+			<Spotlight target={el} scrim live>
+				Step
+			</Spotlight>
+		));
+		const scrim = () => document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
+		for (let i = 0; i < 45; i++) vi.advanceTimersToNextFrame();
+		expect(scrim()?.style.clipPath).toContain("M104 192");
+
+		moved = true;
+		for (let i = 0; i < 8; i++) vi.advanceTimersToNextFrame();
+		expect(scrim()?.style.clipPath).toContain("M104 252");
+
+		vi.useRealTimers();
+	});
+
+	it("without live, requests no more frames once the settle window ends", () => {
+		vi.useFakeTimers({ toFake: ["requestAnimationFrame"] });
+		const rafSpy = vi.spyOn(window, "requestAnimationFrame");
+		const el = targetAt(100, 200, 300, 50);
+		render(() => (
+			<Spotlight target={el} scrim>
+				Step
+			</Spotlight>
+		));
+		for (let i = 0; i < 45; i++) vi.advanceTimersToNextFrame();
+		const settled = rafSpy.mock.calls.length;
+		for (let i = 0; i < 10; i++) vi.advanceTimersToNextFrame();
+		expect(rafSpy.mock.calls.length).toBe(settled);
+		rafSpy.mockRestore();
+		vi.useRealTimers();
+	});
+
+	it("turning live off stops the per-frame follow", () => {
+		vi.useFakeTimers({ toFake: ["requestAnimationFrame", "cancelAnimationFrame"] });
+		const el = targetAt(100, 200, 300, 50);
+		const [live, setLive] = createSignal(true);
+		render(() => (
+			<Spotlight target={el} scrim live={live()}>
+				Step
+			</Spotlight>
+		));
+		for (let i = 0; i < 45; i++) vi.advanceTimersToNextFrame();
+		setLive(false);
+		const rafSpy = vi.spyOn(window, "requestAnimationFrame");
+		for (let i = 0; i < 10; i++) vi.advanceTimersToNextFrame();
+		expect(rafSpy.mock.calls.length).toBe(0);
+		rafSpy.mockRestore();
+		vi.useRealTimers();
+	});
+
 	it("calls onSkip on Escape", () => {
 		const onSkip = vi.fn();
 		render(() => (
