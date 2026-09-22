@@ -18,6 +18,23 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.18.0](https://github.com/glasshome/ui/compare/v1.17.0...v1.18.0) (2026-09-22)
+
+
+### Features
+
+* **tokens:** a theme recipe derives the palette from an accent and a surface ([cdcd0f6](https://github.com/glasshome/ui/commit/cdcd0f64f358a183515e9217f2dc18f61b23d7f4))
+* **tokens:** readable-pair checks, a lightness fixer, and derived themes that settle their indicators ([fc282ef](https://github.com/glasshome/ui/commit/fc282ef132964830d4829862e5e17683fb8bfaaf))
+* **tokens:** the derived primary settles per mode, so a fresh recipe has nothing to fix ([cc1ae54](https://github.com/glasshome/ui/commit/cc1ae545c7c481a17fabe8d2d8fc23cca3e45348))
+* **tokens:** theme recipe, readability helpers, and theme-hued controls ([89198c1](https://github.com/glasshome/ui/commit/89198c18cc58c361962bfa5954bdcb69dd6f3c85))
+
+
+### Bug Fixes
+
+* **controls:** buttons and chips take the theme's corner instead of a fixed capsule ([98aa187](https://github.com/glasshome/ui/commit/98aa18743d877f2453fbc58d837acf1c1dceaf2a))
+* **presets:** Ocean Breeze names its background by the registry's id, and the preset radii spread out ([3043f98](https://github.com/glasshome/ui/commit/3043f98e6a5f53f9f3116cdcb700360bc74909d0))
+* **switch:** the lit knob wears the theme's hue, in whatever scope it sits ([1982b06](https://github.com/glasshome/ui/commit/1982b06ff27a60b09f06195b4b8ad2a96f20ef2a))
+
 ## [1.17.0](https://github.com/glasshome/ui/compare/v1.16.1...v1.17.0) (2026-09-21)
 
 
