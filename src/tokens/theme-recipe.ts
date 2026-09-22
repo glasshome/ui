@@ -1,3 +1,4 @@
+import type { Material } from "./material.js";
 import { findUnreadable, fixReadable } from "./readability.js";
 import {
 	type BackgroundConfig,
@@ -28,6 +29,8 @@ export interface ThemeRecipe {
 	darkLinked: boolean;
 	/** Hand-set colors only; everything absent is derived. */
 	set: { light: Partial<ThemeColors>; dark: Partial<ThemeColors> };
+	/** The glass material; absent is Frosted, so no stored theme moved when this arrived. */
+	material?: Material;
 }
 
 interface Step {

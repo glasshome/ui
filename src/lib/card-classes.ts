@@ -3,7 +3,7 @@ import { PRESS_DIP } from "./motion-classes.js";
 const CARD_KNOBS =
 	"glass [--glass-wash:20%] [--glass-rim:0.3] [--glass-lift:0.45] [--glass-shade:0.05] dark:[--glass-shade:0]";
 
-export const CARD_SURFACE_BASE = `${CARD_KNOBS} [--glass-base:color-mix(in_srgb,var(--card)_60%,transparent)]`;
+export const CARD_SURFACE_BASE = `${CARD_KNOBS} [--glass-base:color-mix(in_srgb,var(--card)_var(--material-clarity),transparent)]`;
 
 /* Split from the surface so dash's performant-blur engine can gate it off and
  * paint a precomputed frost instead. */
@@ -18,7 +18,7 @@ export const CARD_SURFACE_OPAQUE = CARD_KNOBS;
 /* Rows inside a section: the card material again, one step in, so a row never
  * reads as a flat plate on a glass panel. */
 export const SECTION_ROW_SURFACE =
-	"glass [--glass-rim:0.3] [--glass-base:color-mix(in_srgb,var(--card)_60%,transparent)]";
+	"glass [--glass-rim:0.3] [--glass-base:color-mix(in_srgb,var(--card)_var(--material-clarity),transparent)]";
 
 /* Recessed track frame (tabs, segmented controls). */
 export const TRACK_SURFACE = "border border-border/50 bg-card/40 backdrop-blur-sm";

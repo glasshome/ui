@@ -1,3 +1,4 @@
+import type { Material } from "./material.js";
 import {
 	type BackgroundConfig,
 	deriveDarkFromLight,
@@ -14,6 +15,8 @@ export interface ThemePreset {
 	background: BackgroundConfig;
 	/** Curated two-stop gradient used for theme picker dots and marketing swatches. */
 	swatch: [string, string];
+	/** Absent: Frosted. */
+	material?: Material;
 }
 
 export const DEFAULT_THEME_ID = "midnight-glass";
@@ -35,12 +38,14 @@ function preset(
 	light: ThemeBaseColors,
 	background: BackgroundConfig,
 	dark?: ThemeBaseColors,
+	material?: Material,
 ): ThemePreset {
 	return {
 		id,
 		name,
 		radius,
 		swatch,
+		material,
 		colors: {
 			light: resolveThemeColors(light, "light"),
 			dark: dark ? resolveThemeColors(dark, "dark") : deriveDarkFromLight(light),
@@ -180,6 +185,30 @@ export const THEME_PRESETS: ThemePreset[] = [
 			background: "oklch(0.99 0.01 235)",
 		},
 		bg("abstract-pattern", { url: "/backgrounds/ride-the-wave.svg" }),
+	),
+	preset(
+		"retrowave",
+		"Retrowave",
+		1.2,
+		["#ff2bd6", "#35e0ff"],
+		{
+			primary: "oklch(0.58 0.24 345)",
+			accent: "oklch(0.6 0.14 215)",
+			secondary: "oklch(0.93 0.03 320)",
+			border: "oklch(0.84 0.04 320)",
+			card: "oklch(0.96 0.02 320)",
+			background: "oklch(0.98 0.015 320)",
+		},
+		bg("sunset-grid", { url: "/backgrounds/sunset-grid.svg" }),
+		{
+			primary: "oklch(0.68 0.27 345)",
+			accent: "oklch(0.8 0.14 205)",
+			secondary: "oklch(0.2 0.06 290)",
+			border: "oklch(0.34 0.1 300)",
+			card: "oklch(0.19 0.07 290)",
+			background: "oklch(0.13 0.06 285)",
+		},
+		{ v: 1, preset: "neon", dials: { glow: 24 } },
 	),
 ];
 
