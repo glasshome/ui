@@ -17,7 +17,6 @@ import {
 	Badge,
 	Button,
 	Field,
-	FieldContent,
 	FieldDescription,
 	FieldLegend,
 	FieldGroup as FieldRows,
@@ -32,14 +31,10 @@ import {
 	SectionIcon,
 	SectionMeta,
 	SectionRow,
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
 	Slider,
-	Switch,
 	SwitchRow,
+	ToggleGroup,
+	ToggleGroupItem,
 } from "../../src/solid";
 import { DEMO_AREAS, DEMO_ENTITIES, DEMO_PEOPLE, DemoHost } from "../fixtures";
 
@@ -107,7 +102,11 @@ export function DangerZone(props: {
 	);
 }
 
-const THEMES = ["Follow the sun", "Always dark", "Always light"];
+const THEMES = [
+	{ value: "sun", label: "Follow the sun", icon: "lucide:sun-moon" },
+	{ value: "dark", label: "Always dark", icon: "lucide:moon" },
+	{ value: "light", label: "Always light", icon: "lucide:sun" },
+];
 
 const CONFIRM_FIRST: Record<string, string> = {
 	"switch.coffee_maker": "mdi:coffee-maker",
@@ -129,8 +128,8 @@ function initials(name: string): string {
 
 function RoomsCard() {
 	const [shown, setShown] = createSignal(DEMO_AREAS.map((area) => area.id));
-	const toggle = (id: string, next: boolean) =>
-		setShown((ids) => (next ? [...ids, id] : ids.filter((value) => value !== id)));
+	const toggle = (id: string) =>
+		setShown((ids) => (ids.includes(id) ? ids.filter((value) => value !== id) : [...ids, id]));
 
 	return (
 		<SectionCard
@@ -149,15 +148,24 @@ function RoomsCard() {
 				<For each={DEMO_AREAS}>
 					{(area) => (
 						<ListRow
+							class={shown().includes(area.id) ? undefined : "opacity-50"}
 							leading={<SectionIcon icon={area.icon ?? "mdi:home-outline"} size="sm" />}
 							title={area.name}
 							subtitle={`${area.entityIds.length} devices`}
 							actions={
-								<Switch
-									checked={shown().includes(area.id)}
-									onChange={(next) => toggle(area.id, next)}
-									aria-label={`Show ${area.name}`}
-								/>
+								<Button
+									variant="ghost"
+									size="icon"
+									aria-pressed={!shown().includes(area.id)}
+									aria-label={`Hide ${area.name}`}
+									onClick={() => toggle(area.id)}
+								>
+									<Icon
+										icon={shown().includes(area.id) ? "lucide:eye" : "lucide:eye-off"}
+										width={18}
+										height={18}
+									/>
+								</Button>
 							}
 						/>
 					)}
@@ -196,7 +204,6 @@ function HouseholdCard() {
 									<Badge>Owner</Badge>
 								</Show>
 							}
-							subtitle={index() === 0 ? "Signed in on this display" : "Phone and tablet"}
 							actions={
 								<RowActions onEdit={() => {}} onDelete={() => {}} showDelete={index() > 0} />
 							}
@@ -209,7 +216,7 @@ function HouseholdCard() {
 }
 
 function DisplayCard() {
-	const [theme, setTheme] = createSignal<string | null>("Follow the sun");
+	const [theme, setTheme] = createSignal("sun");
 	const [dims, setDims] = createSignal(true);
 	const [sleeps, setSleeps] = createSignal(false);
 	const [wakes, setWakes] = createSignal(true);
@@ -224,36 +231,27 @@ function DisplayCard() {
 			subtitle="The tablet on the living room wall."
 		>
 			<div class="flex flex-col gap-8">
-				<FieldGroup
-					legend="Appearance"
-					description="How the dashboard looks on this screen. Every other phone and tablet keeps its own setting."
-				>
+				<FieldGroup legend="Appearance">
 					<Field orientation="responsive">
-						<FieldContent>
-							<FieldTitle>Theme</FieldTitle>
-							<FieldDescription>
-								Dark after sunset and light through the day, or pick one and keep it.
-							</FieldDescription>
-						</FieldContent>
-						<Select
+						<FieldTitle>Theme</FieldTitle>
+						<ToggleGroup
 							value={theme()}
-							onChange={setTheme}
-							options={THEMES}
-							placeholder="Pick a theme"
-							itemComponent={(itemProps) => (
-								<SelectItem item={itemProps.item}>{itemProps.item.rawValue}</SelectItem>
-							)}
+							onChange={(value) => value && setTheme(value as string)}
+							aria-label="Theme"
 						>
-							<SelectTrigger aria-label="Theme">
-								<SelectValue<string>>{(state) => state.selectedOption()}</SelectValue>
-							</SelectTrigger>
-							<SelectContent />
-						</Select>
+							<For each={THEMES}>
+								{(option) => (
+									<ToggleGroupItem value={option.value} aria-label={option.label}>
+										<Icon icon={option.icon} width={16} height={16} />
+									</ToggleGroupItem>
+								)}
+							</For>
+						</ToggleGroup>
 					</Field>
 
 					<SwitchRow
 						label="Dim after bedtime"
-						description="From 10pm the screen fades down so it does not light the hallway."
+						description="From 10pm"
 						checked={dims()}
 						onChange={setDims}
 					/>
@@ -287,21 +285,15 @@ function DisplayCard() {
 					</FieldSubGroup>
 				</FieldGroup>
 
-				<FieldGroup
-					legend="What this display shows"
-					description="Only these rooms get a place on the dashboard. The rest stay one tap away in search."
-				>
+				<FieldGroup legend="What this display shows">
 					<Field>
 						<FieldTitle id="display-rooms">Rooms on this display</FieldTitle>
 						<AreaPicker
 							values={rooms()}
 							onValuesChange={setRooms}
 							aria-labelledby="display-rooms"
-							placeholder="Pick rooms"
+							placeholder="The whole house"
 						/>
-						<FieldDescription>
-							Leave it empty to show the whole house, room by room, in the order above.
-						</FieldDescription>
 					</Field>
 				</FieldGroup>
 			</div>

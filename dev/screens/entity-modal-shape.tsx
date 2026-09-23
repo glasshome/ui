@@ -1,7 +1,8 @@
-import { createSignal, createUniqueId, For, Match, Switch as SwitchFlow } from "solid-js";
+import { createSignal, createUniqueId, For, Match, Show, Switch as SwitchFlow } from "solid-js";
 import {
-	Alert,
 	AreaPicker,
+	Avatar,
+	AvatarFallback,
 	Badge,
 	Button,
 	Empty,
@@ -36,7 +37,7 @@ import {
 	Slider,
 	Switch,
 } from "../../src/solid";
-import { DEMO_AREAS, DEMO_BY_ID, DemoHost } from "../fixtures";
+import { DEMO_AREAS, DEMO_BY_ID, DEMO_PEOPLE, DemoHost } from "../fixtures";
 
 const STATE_WORDS: Record<string, string> = {
 	on: "On",
@@ -49,6 +50,16 @@ const STATE_WORDS: Record<string, string> = {
 function stateLabel(entity: EntityViewLike): string {
 	if (entity.unitOfMeasurement) return `${entity.state} ${entity.unitOfMeasurement}`;
 	return STATE_WORDS[entity.state] ?? entity.state;
+}
+
+const ACTIVE_STATES = new Set(["on", "playing"]);
+
+function StateMeta(props: { entity: EntityViewLike }) {
+	return (
+		<Show when={ACTIVE_STATES.has(props.entity.state)} fallback={stateLabel(props.entity)}>
+			<Badge tone="var(--primary)">{stateLabel(props.entity)}</Badge>
+		</Show>
+	);
 }
 
 const LIVING_ROOM = DEMO_AREAS.find((area) => area.id === "living_room");
@@ -139,14 +150,20 @@ export function ModalForm(props: {
 						<Field>
 							<FieldTitle>Brightness when it turns on</FieldTitle>
 							<Slider defaultValue={[62]} aria-label="Brightness when it turns on" />
-							<FieldDescription>
-								Evening scenes set their own level and ignore this one.
-							</FieldDescription>
 						</Field>
 
-						<Alert tone="info" title="Everyone at home sees this change">
-							Names and rooms are shared, so Daniel's phone renames it too.
-						</Alert>
+						<Field orientation="horizontal">
+							<FieldTitle>Shared with everyone</FieldTitle>
+							<div class="flex -space-x-2">
+								<For each={DEMO_PEOPLE}>
+									{(person) => (
+										<Avatar class="size-8 ring-2 ring-background">
+											<AvatarFallback class="text-xs">{person.name.slice(0, 1)}</AvatarFallback>
+										</Avatar>
+									)}
+								</For>
+							</div>
+						</Field>
 					</FieldGroup>
 				</ResponsiveDialogBody>
 
@@ -183,8 +200,7 @@ export function ListTriad(props: { entities: EntityViewLike[]; onOpen?: (id: str
 											<ListRow
 												leading={<SectionIcon icon={entity.icon ?? "mdi:help-circle"} size="sm" />}
 												title={entity.name}
-												subtitle={entity.id}
-												meta={stateLabel(entity)}
+												meta={<StateMeta entity={entity} />}
 												openLabel={`Open ${entity.name}`}
 												onOpen={() => props.onOpen?.(entity.id)}
 											/>

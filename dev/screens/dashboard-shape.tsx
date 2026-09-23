@@ -12,14 +12,13 @@ import {
 	Icon,
 	ItemDescription,
 	ItemTitle,
-	ListRow,
 	PageHeader,
 	Progress,
 	RangeToggle,
 	SectionCard,
 	SectionIcon,
 	SectionMeta,
-	SectionRow,
+	Separator,
 	Slider,
 	StackedBar,
 	SwitchRow,
@@ -126,11 +125,13 @@ const TRACKS: Record<string, Track> = {
 	},
 };
 
-const READINGS: Record<string, (entity: EntityViewLike) => string> = {
-	temperature: (entity) => `${Number(entity.state).toFixed(1)} °C`,
-	humidity: (entity) => `${entity.state}% humidity`,
-	carbon_dioxide: (entity) => `${entity.state} ppm CO₂`,
+const READINGS: Record<string, { icon: string; text: (entity: EntityViewLike) => string }> = {
+	temperature: { icon: "lucide:thermometer", text: (entity) => `${Number(entity.state).toFixed(1)}°` },
+	humidity: { icon: "lucide:droplets", text: (entity) => `${entity.state}%` },
+	carbon_dioxide: { icon: "lucide:wind", text: (entity) => `${entity.state} ppm` },
 };
+
+const FRESH_AIR_PPM = 800;
 
 const ROOM_BRIGHTNESS: Record<string, number> = {
 	living_room: 70,
@@ -215,9 +216,6 @@ export function EnergyCard(props: { class?: string }) {
 	const days = createMemo(() => ENERGY_YEAR.slice(-range()));
 	const series = createMemo(() => days().map((day) => ({ day: day.day, count: dayTotal(day) })));
 	const total = createMemo(() => series().reduce((sum, point) => sum + point.count, 0));
-	const peak = createMemo(() =>
-		series().reduce((best, point) => (point.count > best.count ? point : best)),
-	);
 	const segments = createMemo(() =>
 		ENERGY_USES.map((use) => ({
 			label: use.label,
@@ -240,14 +238,7 @@ export function EnergyCard(props: { class?: string }) {
 						<Figure value={kwh(total())} unit="kWh" />
 						<SectionMeta class="text-sm">Used in {RANGE_WORDS[range()]}</SectionMeta>
 					</div>
-					<div class="flex flex-col gap-0.5 sm:items-end">
-						<SectionMeta class="text-sm">
-							{(total() / range()).toFixed(1)} kWh a day on average
-						</SectionMeta>
-						<SectionMeta>
-							Highest {peak().count.toFixed(1)} kWh on {dateLabel(peak().day)}
-						</SectionMeta>
-					</div>
+					<SectionMeta class="text-sm">{(total() / range()).toFixed(1)} kWh a day</SectionMeta>
 				</div>
 				<div class="flex flex-col gap-1.5">
 					<AreaChart data={series()} height={168} format={(value) => `${value.toFixed(1)} kWh`} />
@@ -256,12 +247,7 @@ export function EnergyCard(props: { class?: string }) {
 						<SectionMeta>Today</SectionMeta>
 					</div>
 				</div>
-				<div class="flex flex-col gap-2">
-					<SectionMeta class="font-medium text-foreground text-sm">
-						Where it went, in kWh
-					</SectionMeta>
-					<StackedBar segments={segments()} />
-				</div>
+				<StackedBar segments={segments()} />
 			</div>
 		</SectionCard>
 	);
@@ -323,9 +309,9 @@ export function MediaPlayer(props: { entity: EntityViewLike; track: Track }) {
 	const [playing, setPlaying] = createSignal(true);
 	const [volume, setVolume] = createSignal(35);
 	return (
-		<SectionRow class="flex flex-col gap-3">
+		<div class="flex flex-col gap-3">
 			<div class="flex items-center gap-3">
-				<SectionIcon icon={props.entity.icon ?? "mdi:television"} size="lg" tone="var(--primary)" />
+				<SectionIcon icon={props.entity.icon ?? "mdi:television"} size="md" tone="var(--primary)" />
 				<div class="flex min-w-0 flex-1 flex-col gap-0.5">
 					<ItemTitle>{props.track.title}</ItemTitle>
 					<ItemDescription class="text-xs">
@@ -376,7 +362,7 @@ export function MediaPlayer(props: { entity: EntityViewLike; track: Track }) {
 					/>
 				</div>
 			</div>
-		</SectionRow>
+		</div>
 	);
 }
 
@@ -397,43 +383,47 @@ export function RoomCard(props: {
 		const level = lightsOn() > 0 ? `${props.brightness}%` : "Off";
 		return lights().length === 1 ? level : `${level} · ${lightNames()}`;
 	};
-	const lightSummary = () => {
-		const count = lights().length;
-		if (count === 0) return undefined;
-		if (count === 1) return lightsOn() ? "Light on" : "Light off";
-		return `${lightsOn()} of ${count} lights on`;
-	};
-	const subtitle = () =>
-		[
-			...entitiesIn(props.area, "sensor").flatMap((sensor) => {
-				const reading = READINGS[sensor.deviceClass ?? ""];
-				return reading ? [reading(sensor)] : [];
-			}),
-			lightSummary(),
-		]
-			.filter(Boolean)
-			.join(" · ");
-	const co2 = () =>
-		entitiesIn(props.area, "sensor").find((s) => s.deviceClass === "carbon_dioxide");
+	const readings = () =>
+		entitiesIn(props.area, "sensor").flatMap((sensor) => {
+			const reading = READINGS[sensor.deviceClass ?? ""];
+			return reading ? [{ icon: reading.icon, text: reading.text(sensor) }] : [];
+		});
+	const staleAir = () =>
+		entitiesIn(props.area, "sensor").some(
+			(sensor) => sensor.deviceClass === "carbon_dioxide" && Number(sensor.state) >= FRESH_AIR_PPM,
+		);
 
 	return (
 		<SectionCard
 			icon={props.area.icon ?? "mdi:home"}
 			title={props.area.name}
-			subtitle={subtitle()}
+			subtitle={
+				<span class="flex flex-wrap items-center gap-x-3 gap-y-1">
+					<For each={readings()}>
+						{(reading) => (
+							<span class="flex items-center gap-1">
+								<Icon icon={reading.icon} width={14} height={14} />
+								{reading.text}
+							</span>
+						)}
+					</For>
+					<Show when={lights().length > 0}>
+						<span class="flex items-center gap-1">
+							<Icon icon="lucide:lamp" width={14} height={14} />
+							{`${lightsOn()}/${lights().length}`}
+						</span>
+					</Show>
+				</span>
+			}
 			action={
-				<Show when={co2()}>
-					{(sensor) => (
-						<Badge tone={Number(sensor().state) < 800 ? "var(--success)" : "var(--warning)"}>
-							{Number(sensor().state) < 800 ? "Fresh air" : "Open a window"}
-						</Badge>
-					)}
+				<Show when={staleAir()}>
+					<Badge tone="var(--warning)">Open a window</Badge>
 				</Show>
 			}
 		>
-			<div class="flex flex-col gap-2">
+			<div class="flex flex-col gap-3 [&>[data-slot=separator]]:my-0">
 				<Show when={lights().length > 0}>
-					<SectionRow class="flex flex-col gap-2">
+					<div class="flex flex-col gap-2">
 						<SwitchRow
 							icon="lucide:lamp"
 							label={lights().length === 1 ? lightNames() : "Lights"}
@@ -452,11 +442,12 @@ export function RoomCard(props: {
 							disabled={lightsOn() === 0}
 							aria-label={`${props.area.name} brightness`}
 						/>
-					</SectionRow>
+					</div>
 				</Show>
 				<For each={entitiesIn(props.area, "switch")}>
 					{(entity) => (
-						<SectionRow>
+						<>
+							<Separator />
 							<SwitchRow
 								icon={SWITCHES[entity.id]?.icon}
 								label={entity.name}
@@ -464,32 +455,37 @@ export function RoomCard(props: {
 								checked={props.power[entity.id] ?? false}
 								onChange={(on) => props.onPower([entity.id], on)}
 							/>
-						</SectionRow>
+						</>
 					)}
 				</For>
 				<For each={entitiesIn(props.area, "media_player")}>
 					{(entity) => {
 						const track = TRACKS[entity.id];
 						return (
+							<>
+							<Separator />
 							<Show
 								when={entity.state === "playing" && track}
 								fallback={
-									<ListRow
-										leading={<SectionIcon icon={entity.icon ?? "mdi:speaker"} size="sm" />}
-										title={entity.name}
-										subtitle={track ? `Paused, ${track.title}` : "Nothing playing"}
-										actions={
-											<Show when={track}>
-												<Button variant="ghost" size="icon" aria-label={`Play ${entity.name}`}>
-													<Icon icon="lucide:play" width={18} height={18} />
-												</Button>
-											</Show>
-										}
-									/>
+									<div class="flex items-center gap-3">
+										<SectionIcon icon={entity.icon ?? "mdi:speaker"} size="sm" />
+										<div class="flex min-w-0 flex-1 flex-col gap-0.5">
+											<ItemTitle>{entity.name}</ItemTitle>
+											<ItemDescription class="text-xs">
+												{track ? `Paused, ${track.title}` : "Nothing playing"}
+											</ItemDescription>
+										</div>
+										<Show when={track}>
+											<Button variant="ghost" size="icon" aria-label={`Play ${entity.name}`}>
+												<Icon icon="lucide:play" width={18} height={18} />
+											</Button>
+										</Show>
+									</div>
 								}
 							>
 								{(playing) => <MediaPlayer entity={entity} track={playing()} />}
 							</Show>
+							</>
 						);
 					}}
 				</For>
@@ -589,7 +585,6 @@ export default function DashboardShape() {
 							value={humidity?.state ?? "–"}
 							unit="%"
 							detail="Kitchen"
-							status={<Badge tone="var(--success)">Comfortable</Badge>}
 						/>
 						<StatTile
 							icon="lucide:zap"

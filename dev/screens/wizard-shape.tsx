@@ -1,5 +1,7 @@
-import { createSignal, For, Show } from "solid-js";
+import { createSignal, For, type JSX, Show } from "solid-js";
 import {
+	Avatar,
+	AvatarFallback,
 	Button,
 	Card,
 	CardContent,
@@ -47,11 +49,15 @@ export function ChoiceStep(props: {
 	onBack: () => void;
 	continueLabel: string;
 	onContinue: () => void;
+	aside?: JSX.Element;
 	class?: string;
 }) {
 	return (
 		<Card padding="md" class={props.class}>
-			<StepIndicator count={props.count} index={props.index} />
+			<div class="flex items-center justify-between gap-3">
+				<StepIndicator count={props.count} index={props.index} class="justify-start" />
+				{props.aside}
+			</div>
 			<CardHeader>
 				<SectionTitle>{props.title}</SectionTitle>
 				<CardDescription>{props.description}</CardDescription>
@@ -148,9 +154,6 @@ export default function WizardShape() {
 			data-screen="wizard-shape"
 			class="flex min-h-screen w-full flex-col items-center justify-center gap-4 p-4 sm:gap-6 sm:p-8"
 		>
-			<Show when={owner}>
-				{(person) => <SectionMeta>{`Setting up the Ellis home as ${person().name}`}</SectionMeta>}
-			</Show>
 			<ChoiceStep
 				count={5}
 				index={1}
@@ -165,6 +168,18 @@ export default function WizardShape() {
 				onBack={() => {}}
 				continueLabel="Continue"
 				onContinue={() => {}}
+				aside={
+					<Show when={owner}>
+						{(person) => (
+							<span class="flex items-center gap-2">
+								<SectionMeta>{person().name}</SectionMeta>
+								<Avatar class="size-7">
+									<AvatarFallback class="text-xs">{person().name.slice(0, 1)}</AvatarFallback>
+								</Avatar>
+							</span>
+						)}
+					</Show>
+				}
 				class="w-full max-w-lg"
 			/>
 		</div>
