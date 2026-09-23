@@ -34,9 +34,9 @@ describe("the material tier", () => {
 		expect(block).toContain(`initial-value: ${initial}`);
 	});
 
-	it("the theme declares the tier once and aliases the published blur name", () => {
+	it("the theme declares material blur without freezing the optional surface override", () => {
 		expect(theme).toContain("--material-blur: 24px;");
-		expect(theme).toContain("--glass-blur: var(--material-blur);");
+		expect(theme).not.toMatch(/--glass-blur\s*:/);
 		expect(theme).toContain("--material-clarity: 60%;");
 		expect(theme).toContain("--material-ink-level: 0;");
 	});

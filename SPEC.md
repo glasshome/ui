@@ -54,7 +54,7 @@ border/background/box-shadow on the element: `bg-*`, `border-*`, and `shadow-*`
 utilities on a glass element are no-ops. Tune via knobs instead.
 
 `backdrop-blur` is not part of the formula. Cards add `CARD_BLUR` and overlays
-`OVERLAY_BLUR` (both read the `--glass-blur` px knob); toasts and other
+`OVERLAY_BLUR` (both read `--material-blur`, with an optional `--glass-blur` override); toasts and other
 transform-animated surfaces must not blur (Chromium renders black
 mid-animation), and a surface that skips the blur takes an opaque fill
 (`CARD_SURFACE_OPAQUE`, `OVERLAY_SURFACE_OPAQUE`) — a translucent fill with
@@ -72,7 +72,7 @@ identity; the tier scales all of them at once, chrome and widgets alike.
 
 | Variable | Type | Frosted | Multiplies |
 | --- | --- | --- | --- |
-| `--material-blur` | length | 24px | the backdrop radius (`--glass-blur` is its alias) |
+| `--material-blur` | length | 24px | the backdrop radius (`--glass-blur` overrides it when set) |
 | `--material-clarity` | % | 60% | the card fill's share of `--card` (the rest is wallpaper) |
 | `--material-depth` | number | 1 | `--glass-light`, `--glass-shade`, `--glass-rim`, `--glass-lift` |
 | `--material-tint` | number | 1 | `--glass-wash`, `--glass-wash-2` |
