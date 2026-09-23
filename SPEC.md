@@ -170,6 +170,35 @@ Server-run `.astro` markup imports `@glasshome/ui/solid` too: the `solid`
 export condition hands Astro the source, and a component with no `client:`
 directive renders to static HTML with no runtime shipped.
 
+## Composition (the pillar)
+
+Nobody reads a screen. A homeowner arrives with one question and hunts for the
+answer; every rule here makes that hunt shorter.
+
+1. **Edges place things.** Every element sits on at least two edges: a side of
+   its surface, or an edge another element makes (an avatar's bottom, the row
+   above). Text leads on the left, values and actions trail on the right;
+   centre only what nobody needs to read. Empty space is resolved by moving
+   content onto an edge or making a new edge (a `Separator`, an aligned row),
+   never by adding content to fill it or hiding actions in an overflow menu.
+2. **Density is fixed by difference.** A long uniform list is
+   grouped by what the homeowner looks for (area, day, person) under
+   `SectionGroup` / `FieldSet`, and its rows vary with the visual of what they
+   name. More spacing only makes the same wall longer.
+3. **Show before you tell.** A concept with a recognizable visual wears it: a
+   person is their `Avatar`, an area its icon, a state a `Badge`, a level a
+   fill. One visual per concept everywhere, rendered by one component. A label,
+   helper line or tooltip added to explain something is the last resort: it
+   makes the screen harder to scan, and touch has no hover.
+4. **Emphasis is contrast with neighbours.** A value at its default is quiet
+   (`--muted-foreground`, no fill); a changed or active one earns the tone. One
+   accent per view. To lift one thing, quiet what surrounds it.
+5. **Glass means a unit.** A glass surface says "this floats on its own". Page
+   sections are cards; inside a surface that is already glass (dialog, sheet,
+   popover, card), group with `SectionGroup`, `FieldSet` and `Separator`, and
+   stop at one bordered row layer (`SectionRow`, `OptionCard`). A `Card` or
+   `SectionCard` never goes inside another glass surface.
+
 ## Motion (the pillar)
 
 Motion is one system, not per-component flair. Four rules, all held by
