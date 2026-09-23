@@ -126,7 +126,10 @@ const TRACKS: Record<string, Track> = {
 };
 
 const READINGS: Record<string, { icon: string; text: (entity: EntityViewLike) => string }> = {
-	temperature: { icon: "lucide:thermometer", text: (entity) => `${Number(entity.state).toFixed(1)}°` },
+	temperature: {
+		icon: "lucide:thermometer",
+		text: (entity) => `${Number(entity.state).toFixed(1)}°`,
+	},
 	humidity: { icon: "lucide:droplets", text: (entity) => `${entity.state}%` },
 	carbon_dioxide: { icon: "lucide:wind", text: (entity) => `${entity.state} ppm` },
 };
@@ -463,28 +466,28 @@ export function RoomCard(props: {
 						const track = TRACKS[entity.id];
 						return (
 							<>
-							<Separator />
-							<Show
-								when={entity.state === "playing" && track}
-								fallback={
-									<div class="flex items-center gap-3">
-										<SectionIcon icon={entity.icon ?? "mdi:speaker"} size="sm" />
-										<div class="flex min-w-0 flex-1 flex-col gap-0.5">
-											<ItemTitle>{entity.name}</ItemTitle>
-											<ItemDescription class="text-xs">
-												{track ? `Paused, ${track.title}` : "Nothing playing"}
-											</ItemDescription>
+								<Separator />
+								<Show
+									when={entity.state === "playing" && track}
+									fallback={
+										<div class="flex items-center gap-3">
+											<SectionIcon icon={entity.icon ?? "mdi:speaker"} size="sm" />
+											<div class="flex min-w-0 flex-1 flex-col gap-0.5">
+												<ItemTitle>{entity.name}</ItemTitle>
+												<ItemDescription class="text-xs">
+													{track ? `Paused, ${track.title}` : "Nothing playing"}
+												</ItemDescription>
+											</div>
+											<Show when={track}>
+												<Button variant="ghost" size="icon" aria-label={`Play ${entity.name}`}>
+													<Icon icon="lucide:play" width={18} height={18} />
+												</Button>
+											</Show>
 										</div>
-										<Show when={track}>
-											<Button variant="ghost" size="icon" aria-label={`Play ${entity.name}`}>
-												<Icon icon="lucide:play" width={18} height={18} />
-											</Button>
-										</Show>
-									</div>
-								}
-							>
-								{(playing) => <MediaPlayer entity={entity} track={playing()} />}
-							</Show>
+									}
+								>
+									{(playing) => <MediaPlayer entity={entity} track={playing()} />}
+								</Show>
 							</>
 						);
 					}}
