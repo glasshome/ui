@@ -50,6 +50,8 @@ type WidgetIdentityProps = {
 	widget: WidgetSummary;
 	/** Icon pill size. Rows use sm, tiles use md. */
 	iconSize?: "sm" | "md";
+	/** CSS color for the icon pill; neutral when unset. */
+	iconTone?: string;
 	/** Append `v{latestVersion}` next to the name. Default true. */
 	showVersionInline?: boolean;
 	/** Show the (personal/org) scope pill after the @scope/name line. */
@@ -61,7 +63,7 @@ export function WidgetIdentity(_props: WidgetIdentityProps) {
 	const props = mergeProps({ iconSize: "sm" as const, showVersionInline: true }, _props);
 	return (
 		<div data-slot="widget-identity" class={cn("flex min-w-0 items-center gap-3", props.class)}>
-			<SectionIcon size={props.iconSize}>
+			<SectionIcon size={props.iconSize} tone={props.iconTone}>
 				<Show when={props.widget.icon} fallback={<Icon icon="lucide:package" />}>
 					{(icon) => <Icon icon={icon()} />}
 				</Show>
