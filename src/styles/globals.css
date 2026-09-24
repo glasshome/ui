@@ -130,6 +130,12 @@
 	inherits: true;
 	initial-value: 0px;
 }
+/* 0..1, how far the Ink line moves toward the foreground (Chalk 1). */
+@property --material-ink-lift {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
 /* Registered so the Ink body's style query compares a computed number. */
 @property --material-ink-level {
 	syntax: "<number>";
@@ -306,6 +312,11 @@
 @container not style(--material-ink-level: 0) {
 	:where(.glass) {
 		--ink-r: var(--radius);
+		--ink-line: color-mix(
+			in oklch,
+			var(--foreground) calc(var(--material-ink-lift) * 100%),
+			var(--material-ink)
+		);
 		contain: layout;
 		background: none;
 		border-color: transparent;
@@ -339,7 +350,7 @@
 	:where(.glass)::after {
 		z-index: 40;
 		inset: 0;
-		border: 3px solid var(--material-ink);
+		border: 3px solid var(--ink-line);
 		border-radius: inherit;
 		rotate: -0.2deg;
 		/* Chalk: grain tiled at 1:1, so no browser stretches it; no-clip keeps the passes. */
@@ -349,8 +360,8 @@
 		mask-clip: no-clip;
 		opacity: var(--material-ink-level);
 		box-shadow:
-			-2px 2px 0 -1.2px color-mix(in srgb, var(--material-ink) 55%, transparent),
-			2px -1.5px 0 -1.4px color-mix(in srgb, var(--material-ink) 45%, transparent);
+			-2px 2px 0 -1.2px color-mix(in srgb, var(--ink-line) 55%, transparent),
+			2px -1.5px 0 -1.4px color-mix(in srgb, var(--ink-line) 45%, transparent);
 	}
 }
 

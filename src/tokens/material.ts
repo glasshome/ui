@@ -2,7 +2,7 @@ import { clamp } from "./theme-colors.js";
 
 export const MATERIAL_VERSION = 1;
 
-export type MaterialPresetId = "frosted" | "paper" | "neon";
+export type MaterialPresetId = "frosted" | "paper" | "neon" | "chalk";
 
 /** Tier 2 of the glass formula: what every surface's knobs are multiplied by. The homeowner's dials. */
 export interface MaterialDials {
@@ -28,6 +28,8 @@ export interface MaterialTerms {
 	edgeInk: number;
 	/** 0..1, how far the edge moves toward the surface's own hue (its tone, else the accent). */
 	edgeAccent: number;
+	/** 0..1, how far the Ink line moves from the mode's ink toward the foreground: chalk on a dark board. */
+	inkLift: number;
 }
 
 export type MaterialSpec = MaterialDials & MaterialTerms;
@@ -41,7 +43,7 @@ export interface Material {
 
 export type BlurMode = "dynamic" | "performant" | "none";
 
-const PLAIN: MaterialTerms = { edgeWidth: 1, edgeInk: 0, edgeAccent: 0 };
+const PLAIN: MaterialTerms = { edgeWidth: 1, edgeInk: 0, edgeAccent: 0, inkLift: 0 };
 
 export const MATERIAL_PRESETS: Record<MaterialPresetId, MaterialSpec> = {
 	/** Today's glass: translucent, blurred, lit rim. */
@@ -57,9 +59,12 @@ export const MATERIAL_PRESETS: Record<MaterialPresetId, MaterialSpec> = {
 		edgeWidth: 1.5,
 		edgeInk: 0,
 		edgeAccent: 1,
+		inkLift: 0,
 		glow: 18,
 		ink: 0,
 	},
+	/** Matte board, the Ink body drawn in the foreground colour. */
+	chalk: { blur: 0, clarity: 100, depth: 0.3, tint: 0.7, glow: 0, ink: 1, ...PLAIN, inkLift: 1 },
 };
 
 export const FROSTED: Material = { v: 1, preset: "frosted" };
@@ -106,5 +111,6 @@ export function resolveMaterial(
 		"--material-edge-accent": `${t.edgeAccent}`,
 		"--material-glow": `${d.glow}px`,
 		"--material-ink-level": `${d.ink}`,
+		"--material-ink-lift": `${t.inkLift}`,
 	};
 }

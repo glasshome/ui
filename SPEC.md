@@ -79,7 +79,7 @@ identity; the tier scales all of them at once, chrome and widgets alike.
 | `--material-glow` | length | 0px | an outer bloom in `--material-hue` (Neon 18px) |
 | `--material-ink-level` | number | 0 | above 0, the Ink body: every surface hand-inked |
 
-Three more are preset terms, inert at their defaults and never a homeowner dial.
+Four more are preset terms, inert at their defaults and never a homeowner dial.
 Glow scales with `--glass-lift` (`--material-reach`), so a chip takes about a
 third of what a card takes. `--material-hue` is the surface's own hue,
 opaque: its tone when it has one, the accent otherwise.
@@ -88,6 +88,7 @@ opaque: its tone when it has one, the accent otherwise.
 | --- | --- | --- | --- |
 | `--material-edge-width` | length | 1px | the edge weight (Neon 1.5px) |
 | `--material-edge-ink` | number | 0 | the edge's mix toward `--material-ink` (Paper 0.3) |
+| `--material-ink-lift` | number | 0 | the Ink line's mix toward `--foreground` (Chalk 1) |
 | `--material-edge-accent` | number | 0 | the edge's mix toward `--material-hue` (Neon 1) |
 
 `--material-ink` is fixed per mode in theme.css: dark ink in light mode, a mid
@@ -101,7 +102,7 @@ and a nudge, so it strays over and under the line, and `::after` draws the line
 renders the same in every browser with style queries.
 
 A preset is a point in that space (`tokens/material.ts`: Frosted, Paper,
-Neon; `resolveMaterial` composes it with the host blur mode); a theme stores the
+Neon, Chalk; `resolveMaterial` composes it with the host blur mode); a theme stores the
 preset and any dial it moved, never the resolved values. A look these cannot
 express adds another inert-by-default term here (a ui minor), then, if that is
 not enough, a second formula body selected by a style query on a material
@@ -158,6 +159,10 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | a titled group of form rows | `<FieldSet>` + `<FieldLegend>` (+ `<FieldDescription>`) | a tracked uppercase `SectionLabel` eyebrow |
 | rows that belong to the row above them | `<FieldSubGroup>` | a bare `<Separator>` and a left pad |
 | picking one of a few described choices | `<OptionCardGroup>` + `<OptionCard>` | a hand-rolled `role="radio"` card list |
+| picking one of a few results you can see (pictures, shapes, previews) | `<PreviewTileGroup>` + `<PreviewTile>` | a grid of `aria-pressed` buttons by hand |
+| one colour out of a few | `<SwatchPicker>` (+ a picker as its child) | round buttons by hand |
+| an editor that leaves the page live behind it | `<DockedPanel>` + its Header, Body, Footer | a `<Sheet>` with its scrim hidden |
+| tabs above a stack of toggle groups | `<TabsTrigger icon>` | an `<Icon>` placed inside the trigger by hand |
 | picking one area, or several | `<AreaPicker>` (`values` + `onValuesChange` for multi) | a hand-rolled checkbox list of areas |
 | a field-shaped picker's trigger | `<PickerTrigger>` (chevron, clear button, expanded state) | a `PICKER_TRIGGER` button with its own chevron |
 | position inside a multi-step flow | `<StepIndicator count index>` | a hand-rolled row of dots |

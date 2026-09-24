@@ -4,6 +4,7 @@ import { TRACK_SURFACE } from "../lib/card-classes.js";
 import { PRESS_DIP, SETTLE_MOTION } from "../lib/motion-classes.js";
 import { SEGMENT_ITEM } from "../lib/segment-classes.js";
 import { cn } from "../lib/utils.js";
+import { Icon } from "./icon.js";
 import { SlidingIndicator } from "./sliding-indicator.js";
 
 /** `split`: the root is `display: contents`, so a host (a modal panel) lays the
@@ -67,7 +68,7 @@ const TabsList: Component<ComponentProps<typeof TabsPrimitive.List>> = (props) =
 			ref={listRef}
 			data-slot="tabs-list"
 			class={cn(
-				`scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg ${TRACK_SURFACE} p-1 text-muted-foreground`,
+				`scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto ${TRACK_SURFACE} p-1 text-muted-foreground`,
 				local.class,
 			)}
 			{...others}
@@ -85,8 +86,11 @@ const TabsList: Component<ComponentProps<typeof TabsPrimitive.List>> = (props) =
 	);
 };
 
-const TabsTrigger: Component<ComponentProps<typeof TabsPrimitive.Trigger>> = (props) => {
-	const [local, others] = splitProps(props, ["class"]);
+/** `icon` stacks a glyph over the word, so a tab row reads apart from the toggle groups under it. */
+const TabsTrigger: Component<ComponentProps<typeof TabsPrimitive.Trigger> & { icon?: string }> = (
+	props,
+) => {
+	const [local, others] = splitProps(props, ["class", "icon", "children"]);
 	return (
 		<TabsPrimitive.Trigger
 			data-slot="tabs-trigger"
@@ -94,10 +98,22 @@ const TabsTrigger: Component<ComponentProps<typeof TabsPrimitive.Trigger>> = (pr
 				SEGMENT_ITEM,
 				PRESS_DIP,
 				"hover:text-primary/80 data-[selected]:text-primary",
+				local.icon && "h-auto flex-1 flex-col gap-1 py-2 text-xs",
 				local.class,
 			)}
 			{...others}
-		/>
+		>
+			{local.icon && (
+				<Icon
+					data-slot="tabs-trigger-icon"
+					icon={local.icon}
+					width={18}
+					height={18}
+					aria-hidden="true"
+				/>
+			)}
+			{local.children}
+		</TabsPrimitive.Trigger>
 	);
 };
 

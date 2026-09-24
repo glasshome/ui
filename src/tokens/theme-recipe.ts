@@ -14,6 +14,15 @@ import {
 
 export const RECIPE_VERSION = 1;
 
+/** The studio's glass tint: `auto` follows the background picture; the rest are fixed surfaces. */
+export type GlassTint = "auto" | "cool" | "neutral" | "warm";
+
+export const TINT_SURFACES: Record<Exclude<GlassTint, "auto">, string> = {
+	cool: "oklch(0.965 0.02 240)",
+	neutral: "oklch(0.97 0 0)",
+	warm: "oklch(0.965 0.025 75)",
+};
+
 type Mode = "light" | "dark";
 
 /** What was chosen, never what was computed: a stored theme re-derives on read. */
@@ -29,6 +38,8 @@ export interface ThemeRecipe {
 	darkLinked: boolean;
 	/** Hand-set colors only; everything absent is derived. */
 	set: { light: Partial<ThemeColors>; dark: Partial<ThemeColors> };
+	/** What the studio's tint choice was; `surface` stays the value the math reads. Absent is a hand-set surface. */
+	tint?: GlassTint;
 	/** The glass material; absent is Frosted, so no stored theme moved when this arrived. */
 	material?: Material;
 }
@@ -53,10 +64,10 @@ const LADDER_V1: Record<
 		accent: { l: 0.05, c: 0.85 },
 	},
 	dark: {
-		ground: { lTo: 0.14, c: 1.5, cMax: 0.04 },
-		card: { lTo: 0.18, c: 1.5, cMax: 0.04 },
-		border: { lTo: 0.26, c: 1.5, cMax: 0.05 },
-		secondary: { lTo: 0.21, c: 1.5, cMax: 0.04 },
+		ground: { lTo: 0.15, c: 2.6, cMax: 0.07 },
+		card: { lTo: 0.19, c: 2.6, cMax: 0.07 },
+		border: { lTo: 0.27, c: 2.6, cMax: 0.08 },
+		secondary: { lTo: 0.22, c: 2.6, cMax: 0.07 },
 		primary: { l: 0.08 },
 		accent: { l: 0.12, c: 0.85 },
 	},

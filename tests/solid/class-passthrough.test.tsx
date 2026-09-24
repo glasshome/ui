@@ -515,6 +515,18 @@ const CASES: Record<string, () => JSX.Element> = {
 			onBroken={noop}
 		/>
 	),
+	DockedPanel: () => (
+		<solid.DockedPanel open ariaLabel="Editor" class="probe">
+			<span />
+		</solid.DockedPanel>
+	),
+	PreviewTile: () => (
+		<solid.PreviewTileGroup aria-label="Tiles" value={null} onChange={noop}>
+			<solid.PreviewTile class="probe" value="a" label="A">
+				<span />
+			</solid.PreviewTile>
+		</solid.PreviewTileGroup>
+	),
 	OptionCard: () => (
 		<solid.OptionCardGroup value={null} onChange={noop}>
 			<solid.OptionCard class="probe" value="a" title="A" />

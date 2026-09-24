@@ -242,6 +242,7 @@
 	--material-edge-accent: 0;
 	--material-glow: 0px;
 	--material-ink-level: 0;
+	--material-ink-lift: 0;
 	--material-ink: oklch(0.16 0 0);
 	--shadow-x: 0px;
 	--shadow-y: 2px;

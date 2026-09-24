@@ -27,6 +27,7 @@ describe("the material tier", () => {
 		["--material-edge-accent", "<number>", "0"],
 		["--material-glow", "<length>", "0px"],
 		["--material-ink-level", "<number>", "0"],
+		["--material-ink-lift", "<number>", "0"],
 	])("%s is registered, inheriting, with the Frosted default", (name, syntax, initial) => {
 		const block = property(name);
 		expect(block).toContain(`syntax: "${syntax}"`);
@@ -52,7 +53,7 @@ describe("the material tier", () => {
 
 	it("the Ink body turns on by a style query and draws fill and line on the surface's pseudos", () => {
 		expect(globals).toContain("@container not style(--material-ink-level: 0)");
-		expect(globals).toContain("border: 3px solid var(--material-ink);");
+		expect(globals).toContain("border: 3px solid var(--ink-line);");
 		expect(globals).toContain("mask-clip: no-clip;");
 		expect(globals).toContain("opacity: var(--material-ink-level)");
 		expect(theme).toMatch(/\.dark \{[\s\S]*--material-ink: oklch\(0\.68 0 0\);/);

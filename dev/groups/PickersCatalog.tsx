@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { createSignal, For } from "solid-js";
 import {
 	AreaPicker,
 	type Color,
@@ -12,7 +12,10 @@ import {
 	PickerRow,
 	PickerSearch,
 	PickerTrigger,
+	PreviewTile,
+	PreviewTileGroup,
 	parseColor,
+	SwatchPicker,
 } from "../../src/solid";
 import { Axis, CatalogGroup, Specimen } from "../CatalogKit";
 import { DEMO_MEDIA, DemoHost, demoMediaStore } from "../fixtures";
@@ -36,6 +39,8 @@ export function PickersCatalog() {
 	const [rooms, setRooms] = createSignal<string[]>([]);
 	const [lightIds, setLightIds] = createSignal<string[]>([]);
 	const [imageId, setImageId] = createSignal("");
+	const [tile, setTile] = createSignal<string | null>("soft");
+	const [swatch, setSwatch] = createSignal<string | null>("var(--primary)");
 
 	return (
 		<DemoHost>
@@ -207,6 +212,52 @@ export function PickersCatalog() {
 							</PickerTrigger>
 						</div>
 					</Axis>
+				</Specimen>
+
+				<Specimen name="PreviewTile" state={`value: ${tile() ?? "none"}`} span={2}>
+					<PreviewTileGroup
+						aria-label="Corners"
+						columns={3}
+						value={tile()}
+						onChange={setTile}
+						class="w-full max-w-sm"
+					>
+						<For
+							each={
+								[
+									["sharp", "Sharp", "2px"],
+									["soft", "Soft", "10px"],
+									["round", "Round", "20px"],
+								] as const
+							}
+						>
+							{([value, label, radius]) => (
+								<PreviewTile value={value} label={label} shape="tile">
+									<div class="absolute inset-0 bg-gradient-to-br from-primary/40 to-accent/40" />
+									<div
+										class="absolute inset-x-2 top-1/3 bottom-2 border border-foreground/20 bg-card/80"
+										style={{ "border-radius": radius }}
+									/>
+								</PreviewTile>
+							)}
+						</For>
+					</PreviewTileGroup>
+				</Specimen>
+
+				<Specimen name="SwatchPicker" state={swatch() ?? "none"} span={2}>
+					<SwatchPicker
+						aria-label="Accent"
+						colors={[
+							"var(--primary)",
+							"var(--accent)",
+							"var(--success)",
+							"var(--warning)",
+							"var(--destructive)",
+						]}
+						value={swatch()}
+						onChange={setSwatch}
+						labelOf={(_, i) => ["Primary", "Accent", "Success", "Warning", "Destructive"][i] ?? ""}
+					/>
 				</Specimen>
 
 				<Specimen name="PickerSearch" span={2}>

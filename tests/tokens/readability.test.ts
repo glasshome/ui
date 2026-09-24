@@ -26,18 +26,7 @@ describe("findUnreadable", () => {
 		expect(issues[0]?.ratio).toBeLessThan(4.5);
 	});
 
-	// dash docs/work/2026-09-22-presets-fail-indicator-contrast-in-light: a ratchet, fixing a preset shortens it.
-	const KNOWN = [
-		"sunrise-studio light: primary on background",
-		"sunrise-studio light: primary on card",
-		"sunrise-studio light: ring on background",
-		"forest-zen light: ring on background",
-		"lavender-dreams light: ring on background",
-		"coral-reef light: ring on background",
-		"ocean-breeze light: ring on background",
-	];
-
-	it("passes every shipped preset in both modes, but for the filed ones", () => {
+	it("passes every shipped preset in both modes", () => {
 		const failing = THEME_PRESETS.flatMap((preset) =>
 			(["light", "dark"] as const).flatMap((mode) =>
 				findUnreadable(preset.colors[mode]).map(
@@ -45,7 +34,7 @@ describe("findUnreadable", () => {
 				),
 			),
 		);
-		expect(failing).toEqual(KNOWN);
+		expect(failing).toEqual([]);
 	});
 });
 

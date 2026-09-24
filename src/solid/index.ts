@@ -157,6 +157,12 @@ export type { ModalSize } from "./dialog-parts.js";
 export type { DockIconButtonProps, DockItem, DockProps } from "./dock.js";
 export { Dock } from "./dock.js";
 export {
+	DockedPanel,
+	DockedPanelBody,
+	DockedPanelFooter,
+	DockedPanelHeader,
+} from "./docked-panel.js";
+export {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
@@ -309,6 +315,7 @@ export {
 	PopoverContent,
 	PopoverTrigger,
 } from "./popover.js";
+export { PreviewTile, PreviewTileGroup } from "./preview-tile.js";
 export { Progress } from "./progress.js";
 export { RadioGroup, RadioGroupItem } from "./radio-group.js";
 export {
@@ -390,6 +397,7 @@ export { SlidingIndicator } from "./sliding-indicator.js";
 export { GlassToast, Toaster, toast } from "./sonner.js";
 export { Spinner } from "./spinner.js";
 export { StepIndicator } from "./step-indicator.js";
+export { SwatchPicker } from "./swatch-picker.js";
 export { Switch } from "./switch.js";
 export {
 	TABLE_CELL_INSET,

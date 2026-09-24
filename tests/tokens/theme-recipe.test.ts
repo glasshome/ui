@@ -6,6 +6,7 @@ import {
 	resolveRecipe,
 	seedsFromColors,
 	type ThemeRecipe,
+	TINT_SURFACES,
 } from "../../src/tokens/theme-recipe";
 
 const base: ThemeRecipe = {
@@ -89,5 +90,14 @@ describe("seedsFromColors", () => {
 		const derived = resolveRecipe(readable);
 		const recipe = seedsFromColors(derived, base.radius, base.background);
 		expect(recipe.set).toEqual({ light: {}, dark: {} });
+	});
+});
+
+describe("dark cards", () => {
+	it("keep the surface's hue, so a tint still shows at night", () => {
+		const warm = resolveRecipe({ ...base, darkLinked: false, surface: TINT_SURFACES.warm });
+		const card = parseOklch(warm.dark.card);
+		expect(card?.c ?? 0).toBeGreaterThan(0.04);
+		expect(Math.round(card?.h ?? 0)).toBe(75);
 	});
 });

@@ -12,6 +12,7 @@ const INERT = {
 	"--material-edge-accent": "0",
 	"--material-glow": "0px",
 	"--material-ink-level": "0",
+	"--material-ink-lift": "0",
 };
 
 describe("material presets", () => {
@@ -39,6 +40,13 @@ describe("material presets", () => {
 		expect(neon["--material-glow"]).toBe("18px");
 		expect(neon["--material-edge-width"]).toBe("1.5px");
 		expect(neon["--material-edge-accent"]).toBe("1");
+	});
+
+	it("Chalk inks every surface and lifts the line toward the foreground", () => {
+		const chalk = resolveMaterial({ v: 1, preset: "chalk" }, "dynamic");
+		expect(chalk["--material-ink-level"]).toBe("1");
+		expect(chalk["--material-ink-lift"]).toBe("1");
+		expect(chalk["--material-blur"]).toBe("0px");
 	});
 
 	it("ink is a dial: Paper inks at any level, clamped to 0..1", () => {

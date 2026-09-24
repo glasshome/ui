@@ -23,14 +23,26 @@ export interface ThemeColorsConfig {
 	dark: ThemeColors;
 }
 
-export interface BackgroundConfig {
+export interface BackgroundLayer {
 	type: "solid" | "static" | "custom";
 	id: string;
+	fit?: "cover" | "contain" | "tile";
+	/** 0 to 1: how far the wallpaper fades toward `--background`. */
+	overlay?: number;
+	/** 0 to 20, in px. */
+	blur?: number;
+	/** 0 to 1: how dark the corners fall. */
+	vignette?: number;
+}
+
+/** The picture alone; visibility and softness belong to the theme, the same in both modes. */
+export type BackgroundImage = Pick<BackgroundLayer, "type" | "id" | "fit">;
+
+export interface BackgroundConfig extends BackgroundLayer {
 	themed: boolean;
 	url?: string;
-	fit?: "cover" | "contain" | "tile";
-	overlay?: number;
-	blur?: number;
+	/** Shown in dark mode instead of the top-level picture. */
+	dark?: BackgroundImage;
 }
 
 /** The 6 base colors used as input for resolving a full ThemeColors */

@@ -50,6 +50,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
+	DockedPanel,
+	DockedPanelBody,
+	DockedPanelFooter,
+	DockedPanelHeader,
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
@@ -129,6 +133,8 @@ function HeaderAction() {
 export function OverlaysCatalog() {
 	const [dialogOpen, setDialogOpen] = usePersistentOpen("dialog");
 	const [sheetOpen, setSheetOpen] = usePersistentOpen("sheet");
+	const [docked, setDocked] = createSignal(false);
+	const [dockedCollapsed, setDockedCollapsed] = createSignal(false);
 	const [tabsOpen, setTabsOpen] = usePersistentOpen("dialog-header-tabs");
 	const [tab, setTab] = createSignal("controls");
 	const [anchorOpen, setAnchorOpen] = createSignal(false);
@@ -185,6 +191,31 @@ export function OverlaysCatalog() {
 						</AlertDialogFooter>
 					</AlertDialogContent>
 				</AlertDialog>
+			</Specimen>
+
+			<Specimen name="DockedPanel" try="Open docked panel">
+				<Button variant="outline" onClick={() => setDocked(!docked())}>
+					{docked() ? "Close docked panel" : "Open docked panel"}
+				</Button>
+				<DockedPanel
+					open={docked()}
+					ariaLabel="Theme studio"
+					collapsed={dockedCollapsed()}
+					onCollapsedChange={setDockedCollapsed}
+				>
+					<DockedPanelHeader>
+						<span class="font-semibold">Live editor</span>
+					</DockedPanelHeader>
+					<DockedPanelBody>
+						<DemoRows />
+					</DockedPanelBody>
+					<DockedPanelFooter>
+						<Button variant="ghost" onClick={() => setDocked(false)}>
+							Cancel
+						</Button>
+						<Button class="flex-1">Save</Button>
+					</DockedPanelFooter>
+				</DockedPanel>
 			</Specimen>
 
 			<Specimen name="Sheet" try="Open sheet">
