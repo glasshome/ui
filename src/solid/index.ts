@@ -5,7 +5,7 @@
 export { type Color, parseColor } from "@kobalte/core/colors";
 // Floating glass panel + its shared surface token.
 export { SECTION_ROW_SURFACE } from "../lib/card-classes.js";
-export { RISE_MOTION } from "../lib/motion-classes.js";
+export { RISE_MOTION, SETTLE_MOTION, TRAVEL_MOTION } from "../lib/motion-classes.js";
 export { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
 // Section tokens re-exported from the Solid entry for convenience.
 export {
@@ -396,6 +396,7 @@ export { SlidingIndicator } from "./sliding-indicator.js";
 // Wave 4: React-Library Alternatives - Simpler
 export { GlassToast, Toaster, toast } from "./sonner.js";
 export { Spinner } from "./spinner.js";
+export { Spotlight } from "./spotlight.js";
 export { StepIndicator } from "./step-indicator.js";
 export { SwatchPicker } from "./swatch-picker.js";
 export { Switch } from "./switch.js";

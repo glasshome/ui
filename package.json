@@ -109,7 +109,7 @@
 		"@tailwindcss/vite": "^4.1.13",
 		"@types/node": "^25.2.2",
 		"fallow": "3.17.0",
-		"happy-dom": "^20.11.0",
+		"happy-dom": "^20.14.0",
 		"playwright": "^1.60.0",
 		"publint": "^0.3.21",
 		"tailwindcss": "^4.1.13",

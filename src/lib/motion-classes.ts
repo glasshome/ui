@@ -49,3 +49,8 @@ export const HOLD_MOTION =
  * ends and leaves the element showing. */
 export const RISE_MOTION =
 	"origin-bottom transition-[opacity,scale,translate] data-[expanded]:duration-(--duration-expand) data-[expanded]:ease-(--ease-expand) data-[closed]:duration-(--duration-micro) data-[closed]:ease-(--ease-contract) data-[closed]:pointer-events-none data-[closed]:translate-y-2 data-[closed]:scale-95 data-[closed]:opacity-0";
+
+/* A mounted surface that follows its subject from place to place (the
+ * spotlight's hole and bubble). */
+export const TRAVEL_MOTION =
+	"transition-[translate,clip-path] duration-(--duration-morph) ease-(--ease-expand)";

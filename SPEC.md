@@ -170,6 +170,7 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | a metallic tier chip | `<TierBadge>` | gradients by hand |
 | the ambient motion window | `startMotionWindow()` | an app-local timer writing `data-motion` |
 | a built-in wallpaper | `GEOMETRIC_HOUSES_SVG` from `@glasshome/ui/backgrounds` | an app's own copy of the SVG |
+| pointing at a control while the user operates it | `<Spotlight>` (`blocking` on a targetless veil so the action inside the bubble is the only press that lands; a target taller than half the viewport places the bubble inside it, near the top, instead of above or below; the bubble carries a tail toward its `anchor`, which defaults to `target` and may point at a different element than the hole) | a hand-rolled fixed overlay with a cutout |
 
 Server-run `.astro` markup imports `@glasshome/ui/solid` too: the `solid`
 export condition hands Astro the source, and a component with no `client:`
@@ -242,6 +243,8 @@ Motion is one system, not per-component flair. Four rules, all held by
 `HOLD_MOTION`: hold progress. A fill grows out of the touch while held, dissolves once the hold fires, and drains back faster if let go early (holding the dock to change modes).
 
 `RISE_MOTION`: `MODAL_MOTION`'s twin for a surface that stays mounted; its closed state is a resting style, since a mount door's exit ends and leaves the element showing.
+
+`TRAVEL_MOTION`: a mounted surface that follows its subject from place to place, transitioning translate and clip-path (the spotlight's hole and bubble as the target changes).
 
 A new component with an open, pick or reveal state uses these doors before it
 gets any motion of its own; a motion need none of them covers is added to
