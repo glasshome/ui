@@ -1,6 +1,5 @@
 import { type JSX, Show } from "solid-js";
 import { glassToneText, isNeutralTone, NEUTRAL_KNOBS } from "../lib/glass-tone.js";
-import { SECTION_OUTER_RADIUS } from "../lib/section-tokens.js";
 import { cn } from "../lib/utils.js";
 import { Badge } from "./badge.js";
 import { Icon } from "./icon.js";
@@ -11,7 +10,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js";
  * wizard's connect/sign-in steps and People's pick-one dialogs. Chrome lives
  * here once; the two call shapes below (nav button vs. grouped radio item)
  * share it so neither surface can drift from the other. */
-const HERO_ACTION_CHROME = `glass group relative flex min-h-[6.25rem] items-center gap-4 overflow-hidden ${SECTION_OUTER_RADIUS} p-4 text-left transition-glass duration-200 [--glass-lift:0.4] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 hover:[--glass-lift:0.85] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 data-[disabled]:hover:translate-y-0`;
+const HERO_ACTION_CHROME =
+	"glass group relative flex min-h-[6.25rem] items-center gap-4 overflow-hidden rounded-[calc(var(--radius)+8px)] p-4 text-left transition-glass duration-200 [--glass-lift:0.4] [--glass-wash:20%] hover:[--glass-wash:30%] [--glass-edge:oklch(from_var(--glass-tone)_l_c_h/0.5)] [&_[data-slot=ornament-arrow]]:opacity-35 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 hover:[--glass-lift:0.85] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 data-[disabled]:hover:translate-y-0";
 
 /* glassToneText tints a label toward its own tone, which stops being legible
  * on a dark surface once the tone itself is dark (the GlassHome deep blue).

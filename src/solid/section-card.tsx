@@ -252,7 +252,7 @@ export function SectionIcon(props: {
 }) {
 	const tone = () => {
 		const t = props.tone;
-		if (t == null) return undefined;
+		if (t == null) return "var(--primary)";
 		return t in LEGACY_TONES ? LEGACY_TONES[t] : t;
 	};
 	return (

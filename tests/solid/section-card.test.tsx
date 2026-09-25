@@ -126,11 +126,17 @@ describe("section kit material", () => {
 		expect(rows[0]?.className).toContain("glass");
 	});
 
-	it("SectionIcon defaults to the neutral glass well", () => {
+	it("SectionIcon defaults to the theme colour", () => {
 		const { container } = render(() => <SectionIcon icon="lucide:cloud" />);
 		const icon = slot(container, "section-icon");
-		expect(icon.className).toContain("glass");
-		expect(icon.className).not.toMatch(/(^|\s)bg-/);
+		expect(icon.className).toContain("glass-tint");
+		expect(icon.getAttribute("style")).toContain("var(--primary)");
+	});
+
+	it("SectionIcon tone='neutral' keeps the plain well", () => {
+		const { container } = render(() => <SectionIcon icon="lucide:cloud" tone="neutral" />);
+		const icon = slot(container, "section-icon");
+		expect(icon.className).not.toContain("glass-tint");
 		expect(icon.getAttribute("style") ?? "").not.toContain("--glass-tone");
 	});
 
