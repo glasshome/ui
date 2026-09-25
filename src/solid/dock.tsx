@@ -2,6 +2,7 @@ import {
 	type Component,
 	type ComponentProps,
 	createEffect,
+	createMemo,
 	createSignal,
 	Index,
 	type JSX,
@@ -27,6 +28,8 @@ interface DockItem {
 	isActive?: boolean;
 	/** Optional count badge on the item (e.g. pending updates). */
 	badge?: number;
+	/** Something dragged is held over this item and will land here on release. */
+	isDropTarget?: boolean;
 }
 
 interface DockProps extends ComponentProps<"div"> {
@@ -36,19 +39,31 @@ interface DockProps extends ComponentProps<"div"> {
 	hold?: { x: number; y: number; fired: boolean } | null;
 	/** A rim light that orbits for as long as a mode is on. */
 	glow?: boolean;
+	/** Where a drag from outside the dock is pointing, in client coordinates. */
+	dragPoint?: { x: number; y: number } | null;
 }
 
 interface DockIconButtonProps extends ComponentProps<"button"> {
 	icon: Component<{ class?: string }> | JSX.Element;
 	label: string;
 	isActive?: boolean;
+	/** Sits on the sliding pill: the active item, or the one a drag would land on. */
+	lit?: boolean;
 	badge?: number;
 }
 
 const DockIconButton: Component<DockIconButtonProps> = (props) => {
 	// Kobalte's button root narrows `type`; Solid's ComponentProps<"button"> also
 	// admits "menu", so it is split off rather than spread.
-	const [local, rest] = splitProps(props, ["icon", "label", "class", "isActive", "badge", "type"]);
+	const [local, rest] = splitProps(props, [
+		"icon",
+		"label",
+		"class",
+		"isActive",
+		"badge",
+		"type",
+		"lit",
+	]);
 	const isElement = () => typeof local.icon !== "function";
 
 	return (
@@ -68,8 +83,8 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
 				<div
 					data-slot="dock-item-icon"
 					class={cn(
-						"flex items-center justify-center transition-colors duration-300",
-						local.isActive ? "text-primary" : "text-foreground group-hover:text-primary/80",
+						"flex items-center justify-center transition-colors duration-(--duration-state)",
+						local.lit ? "text-primary" : "text-foreground group-hover:text-primary/80",
 					)}
 				>
 					{isElement() ? (
@@ -100,7 +115,14 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
 };
 
 const Dock: Component<DockProps> = (props) => {
-	const [local, rest] = splitProps(props, ["items", "class", "dockMode", "hold", "glow"]);
+	const [local, rest] = splitProps(props, [
+		"items",
+		"class",
+		"dockMode",
+		"hold",
+		"glow",
+		"dragPoint",
+	]);
 	// The drain plays where the fill grew, so the point outlives the hold.
 	const [holdPoint, setHoldPoint] = createSignal({ x: 0, y: 0, r: 0 });
 	let surfaceRef: HTMLDivElement | undefined;
@@ -124,10 +146,16 @@ const Dock: Component<DockProps> = (props) => {
 	const [viewportWidth, setViewportWidth] = createSignal(0);
 
 	// The moving background: the shared SlidingIndicator tracks the active item.
-	const activeIndex = () => {
+	// A memo: the items list is rebuilt on every hover change, and only a new active item may scroll the strip.
+	const activeIndex = createMemo(() => {
 		const i = local.items.findIndex((it) => it.isActive);
 		return i < 0 ? null : i;
-	};
+	});
+	// A drag borrows the pill: it slides to where the drop would land and back when the drag leaves.
+	const pillIndex = createMemo(() => {
+		const i = local.items.findIndex((it) => it.isDropTarget);
+		return i < 0 ? activeIndex() : i;
+	});
 
 	const gapWidth = () =>
 		containerRef ? Number.parseFloat(getComputedStyle(containerRef).columnGap) || 0 : 0;
@@ -174,12 +202,39 @@ const Dock: Component<DockProps> = (props) => {
 		});
 	};
 
+	// A drag cannot click a page dot, so resting on the dot row turns to the page under it.
+	createEffect(() => {
+		const point = local.dragPoint;
+		if (!point || pages() < 2 || !surfaceRef || !containerRef) return;
+		const strip = containerRef.getBoundingClientRect();
+		const surface = surfaceRef.getBoundingClientRect();
+		const onDotRow =
+			point.y > strip.bottom &&
+			point.y <= surface.bottom &&
+			point.x >= surface.left &&
+			point.x <= surface.right;
+		if (!onDotRow) return;
+		const target = Math.min(
+			pages() - 1,
+			Math.floor(((point.x - surface.left) / surface.width) * pages()),
+		);
+		if (target === page()) return;
+		const timer = setTimeout(() => goToPage(target), 300);
+		onCleanup(() => clearTimeout(timer));
+	});
+
 	// The active dashboard may sit on another page after a switch elsewhere.
 	createEffect(() => {
 		const i = activeIndex();
 		if (i === null || !containerRef || !needsScroll()) return;
 		const item = containerRef.querySelectorAll('[data-slot="dock-item"]')[i];
-		item?.scrollIntoView({ inline: "nearest", block: "nearest", behavior: "smooth" });
+		if (!item || viewportWidth() <= 0) return;
+		// The strip only: scrollIntoView would also scroll the page and any frame embedding it.
+		const left =
+			item.getBoundingClientRect().left -
+			containerRef.getBoundingClientRect().left +
+			containerRef.scrollLeft;
+		goToPage(Math.floor(left / viewportWidth()));
 	});
 
 	onMount(() => {
@@ -275,16 +330,19 @@ const Dock: Component<DockProps> = (props) => {
 						"min-width": needsScroll() ? "auto" : "fit-content",
 					}}
 				>
-					<SlidingIndicator active={activeIndex()} class="flex items-center gap-0.5 sm:gap-1">
+					<SlidingIndicator active={pillIndex()} class="flex items-center gap-0.5 sm:gap-1">
 						<Index each={local.items}>
-							{(item) => (
+							{(item, i) => (
 								<DockIconButton
 									class={needsScroll() ? "snap-start" : undefined}
 									icon={item().icon}
 									label={item().label}
 									onClick={item().onClick}
 									isActive={item().isActive}
+									lit={i === pillIndex()}
 									badge={item().badge}
+									data-drop-target={item().isDropTarget ? "" : undefined}
+									data-dock-id={item().id}
 								/>
 							)}
 						</Index>
