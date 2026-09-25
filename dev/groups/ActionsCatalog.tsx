@@ -4,6 +4,7 @@ import {
 	ButtonGroup,
 	ButtonGroupSeparator,
 	ButtonGroupText,
+	ButtonWell,
 	CopyButton,
 	Dock,
 	Kbd,
@@ -40,6 +41,13 @@ export function ActionsCatalog() {
 					<Button size="lg">lg</Button>
 					<Button size="icon" aria-label="settings">
 						<Icon icon="lucide:settings" width={16} height={16} />
+					</Button>
+					<Button size="xl">
+						<ButtonWell icon="lucide:download" />
+						<span class="grid">
+							<span>Install GlassHome</span>
+							<span class="font-medium text-[13px] opacity-80">Free, about two minutes</span>
+						</span>
 					</Button>
 				</Axis>
 			</Specimen>

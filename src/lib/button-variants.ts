@@ -32,6 +32,7 @@ export const buttonVariants = cva({
 			sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5",
 			lg: "h-10 px-6 has-[>svg]:px-4",
 			icon: "size-9 p-2",
+			xl: "h-[72px] gap-3.5 rounded-full pr-7 pl-3 text-left font-semibold text-[17px] [&_svg:not([class*='size-'])]:size-5",
 			none: "",
 		},
 	},
