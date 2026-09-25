@@ -18,6 +18,8 @@ function targetAt(x: number, y: number, width: number, height: number) {
 }
 
 afterEach(() => {
+	vi.restoreAllMocks();
+	vi.useRealTimers();
 	document.body.innerHTML = "";
 });
 
