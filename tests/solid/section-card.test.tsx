@@ -8,6 +8,7 @@ import { PageHeader } from "../../src/solid/page-header.js";
 import {
 	FactRow,
 	SectionCard,
+	SectionGroup,
 	SectionIcon,
 	SectionLabel,
 	SectionRow,
@@ -129,8 +130,25 @@ describe("section kit material", () => {
 	it("SectionIcon defaults to the neutral glass well", () => {
 		const { container } = render(() => <SectionIcon icon="lucide:cloud" />);
 		const icon = slot(container, "section-icon");
-		expect(icon.className).toContain("glass");
-		expect(icon.className).not.toMatch(/(^|\s)bg-/);
+		expect(icon.className).not.toContain("glass-tint");
+		expect(icon.getAttribute("style") ?? "").not.toContain("--glass-tone");
+	});
+
+	it("SectionCard and SectionGroup headers tint their icon in the theme colour", () => {
+		const card = render(() => <SectionCard icon="lucide:users" title="People" />);
+		expect(slot(card.container, "section-icon").getAttribute("style")).toContain("var(--primary)");
+		const group = render(() => (
+			<SectionGroup icon="lucide:users" label="People">
+				{null}
+			</SectionGroup>
+		));
+		expect(slot(group.container, "section-icon").getAttribute("style")).toContain("var(--primary)");
+	});
+
+	it("SectionIcon tone='neutral' keeps the plain well", () => {
+		const { container } = render(() => <SectionIcon icon="lucide:cloud" tone="neutral" />);
+		const icon = slot(container, "section-icon");
+		expect(icon.className).not.toContain("glass-tint");
 		expect(icon.getAttribute("style") ?? "").not.toContain("--glass-tone");
 	});
 

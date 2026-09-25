@@ -43,8 +43,13 @@ const RadioGroupItem: Component<
 						    that animates in. */}
 						<RadioGroupPrimitive.ItemIndicator
 							data-slot="radio-group-item-indicator"
-							class="glass glass-tint zoom-in-50 fade-in absolute inset-0 animate-in rounded-full duration-200 [--glass-tone:var(--primary)]"
-						/>
+							class="glass glass-tint zoom-in-50 fade-in absolute inset-0 grid animate-in place-items-center rounded-full duration-200 [--glass-tone:var(--primary)] [--glass-wash:90%]"
+						>
+							<span
+								data-slot="radio-group-item-dot"
+								class="size-[36%] rounded-full [background:oklch(from_var(--primary)_calc((0.42_-_l)*100)_0_0)] dark:[background:oklch(from_var(--primary)_calc((0.6_-_l)*100)_0_0)]"
+							/>
+						</RadioGroupPrimitive.ItemIndicator>
 					</RadioGroupPrimitive.ItemControl>
 				</Show>
 				{local.children && (

@@ -62,7 +62,7 @@ export {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "./breadcrumb.js";
-export { Button, buttonVariants } from "./button.js";
+export { Button, ButtonWell, buttonVariants } from "./button.js";
 export {
 	ButtonGroup,
 	ButtonGroupSeparator,
