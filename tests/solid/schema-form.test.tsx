@@ -427,6 +427,20 @@ describe("list rows preview their picture", () => {
 	const thumb = (container: Element) =>
 		container.querySelector('[data-slot="schema-form-list-item-thumb"]');
 
+	it("draws a built-in picture's chip from its preset thumb", () => {
+		const withPresets = pictureList({
+			image: {
+				type: "string",
+				formType: "image-picker",
+				presets: { dog: { label: "Dog", thumb: "data:image/webp;base64,dog" } },
+			},
+		});
+		const { container } = renderList(withPresets, { pictures: [{ image: "preset:dog" }] });
+		expect(thumb(container)?.querySelector("img")?.getAttribute("src")).toBe(
+			"data:image/webp;base64,dog",
+		);
+	});
+
 	it("draws the row chip from the thumb variant, never the full original", () => {
 		const { container } = renderList(oneImage, { pictures: [{ image: "photo1" }] });
 		const img = thumb(container)?.querySelector("img");
@@ -751,5 +765,53 @@ describe("labelled choices", () => {
 		));
 		expect(getByText("This dashboard's area")).toBeTruthy();
 		expect(queryByText("dashboard")).toBeNull();
+	});
+});
+
+describe("choices with icons", () => {
+	const lampSchema: ExtendedJSONSchema = {
+		type: "object",
+		properties: {
+			lamp: {
+				type: "string",
+				title: "Lamp",
+				enum: ["table", "floor"],
+				labels: { table: "Table lamp", floor: "Floor lamp" },
+				icons: { table: "mdi:lamp", floor: "mdi:floor-lamp" },
+			},
+		},
+	};
+
+	it("renders one labelled card per option, the current one checked", () => {
+		const { container, getByText } = render(() => (
+			<SchemaForm schema={lampSchema} data={{ lamp: "floor" }} onChange={() => {}} />
+		));
+		expect(container.querySelectorAll('[data-slot="option-card"]')).toHaveLength(2);
+		expect(getByText("Table lamp")).toBeTruthy();
+		const checked = container.querySelector('[data-slot="option-card"][data-checked]');
+		expect(checked?.textContent).toContain("Floor lamp");
+	});
+
+	it("picking a card writes its value", () => {
+		const onChange = vi.fn();
+		const { getByText } = render(() => (
+			<SchemaForm schema={lampSchema} data={{ lamp: "floor" }} onChange={onChange} />
+		));
+		fireEvent.click(getByText("Table lamp"));
+		expect(onChange).toHaveBeenLastCalledWith({ lamp: "table" });
+	});
+
+	it("without icons, a choice stays a select", () => {
+		const { container } = render(() => (
+			<SchemaForm
+				schema={{
+					type: "object",
+					properties: { mode: { type: "string", title: "Mode", enum: ["a", "b"] } },
+				}}
+				data={{ mode: "a" }}
+				onChange={() => {}}
+			/>
+		));
+		expect(container.querySelector('[data-slot="option-card"]')).toBeNull();
 	});
 });

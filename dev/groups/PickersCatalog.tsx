@@ -42,6 +42,7 @@ export function PickersCatalog() {
 	const [imageId, setImageId] = createSignal("");
 	const [tile, setTile] = createSignal<string | null>("soft");
 	const [swatch, setSwatch] = createSignal<string | null>("var(--primary)");
+	const [presetId, setPresetId] = createSignal("preset:coast");
 
 	return (
 		<DemoHost>
@@ -113,9 +114,27 @@ export function PickersCatalog() {
 
 				<Specimen name="ImagePicker" try="Choose image" span={2}>
 					<MediaStoreContext.Provider value={demoMediaStore}>
-						<div class="w-full max-w-sm">
-							<ImagePicker value={imageId()} onChange={setImageId} />
-						</div>
+						<Axis of="presets">
+							<div class="w-full max-w-sm">
+								<ImagePicker value={imageId()} onChange={setImageId} />
+							</div>
+							<div class="w-full max-w-sm">
+								<ImagePicker
+									value={presetId()}
+									onChange={setPresetId}
+									presets={{
+										meadow: {
+											label: "Meadow",
+											thumb: demoMediaStore.url(DEMO_MEDIA[0].id, "thumb"),
+										},
+										coast: {
+											label: "Coast",
+											thumb: demoMediaStore.url(DEMO_MEDIA[1].id, "thumb"),
+										},
+									}}
+								/>
+							</div>
+						</Axis>
 					</MediaStoreContext.Provider>
 				</Specimen>
 

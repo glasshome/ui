@@ -16,8 +16,9 @@ import { IconPicker, type IconPickerProps } from "./icon-picker.js";
 import { ImagePicker } from "./image-picker.js";
 import { Input } from "./input.js";
 import { createListReorder } from "./list-reorder.js";
-import { useMediaStore } from "./media-store.js";
+import { type ImagePreset, imagePreset, useMediaStore } from "./media-store.js";
 import { NumberField } from "./number-field.js";
+import { OptionCard, OptionCardGroup } from "./option-card.js";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select.js";
 import { Switch } from "./switch.js";
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group.js";
@@ -33,8 +34,12 @@ export interface ExtendedJSONSchema extends JSONSchema7 {
 	deviceClass?: string;
 	/** formType "variants": the property that selects the active branch. */
 	discriminator?: string;
-	/** formType "variants": kind → display name for the discriminator Select. */
+	/** Enum value → display name (field.choice, field.choices, the variants selector). */
 	labels?: Record<string, string>;
+	/** field.choice: enum value → icon name; set, the choice renders as icon cards. */
+	icons?: Record<string, string>;
+	/** formType "image-picker": built-in pictures offered beside the uploads. */
+	presets?: Record<string, ImagePreset>;
 	/** formType "list": add-button caption. */
 	addLabel?: string;
 	/** formType "list": item field whose value captions the collapsed row. */
@@ -372,6 +377,7 @@ function FieldControl(props: FieldProps) {
 			<Match when={kind() === "image"}>
 				<ImagePicker
 					id={props.id}
+					presets={props.prop.presets}
 					value={String(current() ?? "")}
 					onChange={(val) => props.onChange(val)}
 				/>
@@ -382,6 +388,22 @@ function FieldControl(props: FieldProps) {
 					value={String(current() ?? "")}
 					onChange={(val) => props.onChange(val)}
 				/>
+			</Match>
+			<Match when={kind() === "enum" && props.prop.icons}>
+				{(icons) => (
+					<OptionCardGroup
+						aria-labelledby={props.labelledBy}
+						value={String(current() ?? "")}
+						onChange={(val) => props.onChange(val)}
+						class="grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]"
+					>
+						<For each={(props.prop.enum ?? []).map(String)}>
+							{(value) => (
+								<OptionCard value={value} title={enumLabel(value)} icon={icons()[value]} />
+							)}
+						</For>
+					</OptionCardGroup>
+				)}
 			</Match>
 			<Match when={kind() === "enum"}>
 				<Select
@@ -479,10 +501,14 @@ function ListControl(props: FieldProps) {
 
 	const thumbUrl = (item: unknown) => {
 		const key = imageKey();
-		const store = mediaStore;
-		if (key === undefined || !store) return undefined;
+		if (key === undefined) return undefined;
 		const id = recordOf(item)[key];
 		if (typeof id !== "string" || id === "") return undefined;
+		const preset = imagePreset(id);
+		if (preset !== undefined)
+			return propertiesOf(itemSchema()).find(([k]) => k === key)?.[1].presets?.[preset]?.thumb;
+		const store = mediaStore;
+		if (!store) return undefined;
 		// A 32px row chip: the thumb variant, never the original.
 		return store.url(id, "thumb");
 	};

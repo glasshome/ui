@@ -101,8 +101,27 @@ export function createBrokenMedia(thumbUrl: (id: string) => string): BrokenMedia
 	};
 }
 
+const PRESET_PREFIX = "preset:";
+
+/** A built-in picture a widget offers beside the household's own uploads. */
+export interface ImagePreset {
+	label: string;
+	/** Small image for the picker; the widget keeps the full picture. */
+	thumb: string;
+}
+
+/** The stored value that picks a built-in picture. */
+export function presetValue(key: string): string {
+	return `${PRESET_PREFIX}${key}`;
+}
+
+/** The built-in picture a stored image value names, or undefined for an upload. */
+export function imagePreset(value: string | null | undefined): string | undefined {
+	return value?.startsWith(PRESET_PREFIX) ? value.slice(PRESET_PREFIX.length) : undefined;
+}
+
 export function mediaUrl(id: string | null | undefined): string | undefined {
-	if (!id) return undefined;
+	if (!id || imagePreset(id) !== undefined) return undefined;
 	return useMediaStore()?.url(id);
 }
 

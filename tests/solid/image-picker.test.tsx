@@ -465,3 +465,56 @@ describe("ImagePicker", () => {
 		);
 	});
 });
+
+describe("ImagePicker built-in pictures", () => {
+	const presets = {
+		living: { label: "Living room", thumb: "data:image/webp;base64,living" },
+		kitchen: { label: "Kitchen", thumb: "data:image/webp;base64,kitchen" },
+	};
+	const presetTiles = () =>
+		Array.from(
+			document.querySelectorAll<HTMLButtonElement>('[data-slot="image-picker-preset"] button'),
+		);
+	const galleryTiles = () =>
+		Array.from(document.querySelectorAll('[data-slot="image-picker-gallery"] > *')).map(
+			(el) => el.getAttribute("data-slot"),
+		);
+
+	it("puts the built-in pictures first in the one grid, each tagged, before the uploads", async () => {
+		withStore(storeWith(), () => <ImagePicker value="" onChange={() => {}} presets={presets} />);
+		openGallery();
+		await waitFor(() => expect(galleryTiles()).toHaveLength(4));
+		expect(galleryTiles()).toEqual([
+			"image-picker-preset",
+			"image-picker-preset",
+			"media-tile",
+			"media-tile",
+		]);
+		expect(screen.getAllByText("Built in")).toHaveLength(2);
+	});
+
+	it("picking a built-in picture stores its preset value", async () => {
+		const onChange = vi.fn();
+		withStore(storeWith(), () => <ImagePicker value="" onChange={onChange} presets={presets} />);
+		openGallery();
+		await waitFor(() => expect(presetTiles()).toHaveLength(2));
+		press(first(presetTiles(), "preset tile"));
+		expect(onChange).toHaveBeenLastCalledWith("preset:living");
+	});
+
+	it("names the picked built-in picture on the trigger", () => {
+		withStore(storeWith(), () => (
+			<ImagePicker value="preset:kitchen" onChange={() => {}} presets={presets} />
+		));
+		expect(trigger().textContent).toContain("Kitchen");
+		expect(trigger().querySelector("img")?.getAttribute("src")).toBe(presets.kitchen.thumb);
+	});
+
+	it("still offers them where the dashboard cannot store images", async () => {
+		render(() => <ImagePicker value="" onChange={() => {}} presets={presets} />);
+		expect(screen.queryByText(/dashboard cannot store images/i)).toBeNull();
+		openGallery();
+		await waitFor(() => expect(presetTiles()).toHaveLength(2));
+		expect(document.querySelector('[data-slot="image-picker-upload"]')).toBeNull();
+	});
+});

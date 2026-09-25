@@ -409,6 +409,24 @@ export function FormsCatalog() {
 									description: "Percent of full output.",
 								},
 								mode: { type: "string", title: "Mode", enum: ["auto", "manual", "off"] },
+								lamp: {
+									type: "string",
+									title: "Lamp picture",
+									enum: ["table", "floor", "desk", "ceiling"],
+									default: "table",
+									labels: {
+										table: "Table lamp",
+										floor: "Floor lamp",
+										desk: "Desk lamp",
+										ceiling: "Ceiling light",
+									},
+									icons: {
+										table: "mdi:lamp",
+										floor: "mdi:floor-lamp",
+										desk: "mdi:desk-lamp",
+										ceiling: "mdi:ceiling-light",
+									},
+								},
 								enabled: { type: "boolean", title: "Enabled" },
 								placement: {
 									type: "object",

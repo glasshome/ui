@@ -79,6 +79,7 @@ export function OptionCardGroup(props: {
 	value: string | null;
 	onChange: (value: string) => void;
 	"aria-label"?: string;
+	"aria-labelledby"?: string;
 	class?: string;
 	children: JSX.Element;
 }) {
@@ -88,6 +89,7 @@ export function OptionCardGroup(props: {
 			value={props.value ?? undefined}
 			onChange={props.onChange}
 			aria-label={props["aria-label"]}
+			aria-labelledby={props["aria-labelledby"]}
 		>
 			{props.children}
 		</RadioGroup>

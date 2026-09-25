@@ -276,6 +276,8 @@ export {
 export {
 	type BrokenMedia,
 	createBrokenMedia,
+	type ImagePreset,
+	imagePreset,
 	imageUrl,
 	isMediaImage,
 	MEDIA_PAGE_SIZE,
@@ -287,6 +289,7 @@ export {
 	type MediaStoreErrorKind,
 	type MediaVariant,
 	mediaUrl,
+	presetValue,
 	provideMediaStore,
 	type StoredMedia,
 	sortMediaForClearing,
