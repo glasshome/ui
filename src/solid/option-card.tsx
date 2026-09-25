@@ -139,6 +139,7 @@ export function OptionCard(props: {
 		<div
 			data-slot="option-card"
 			data-checked={checked() ? "" : undefined}
+			data-disabled={props.disabled ? "" : undefined}
 			class={cn(OPTION_CARD_CHROME, props.class)}
 			style={
 				props.accentVar ? ({ "--glass-tone": props.accentVar } as JSX.CSSProperties) : undefined

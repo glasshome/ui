@@ -271,8 +271,8 @@ describe("OptionCard colour", () => {
 				<OptionCard value="a" title="Later" disabled />
 			</OptionCardGroup>
 		));
-		expect(container.querySelector('[data-slot="option-card"]')?.className).toContain(
-			"data-[disabled]:opacity-50",
-		);
+		const card = container.querySelector('[data-slot="option-card"]');
+		expect(card?.hasAttribute("data-disabled")).toBe(true);
+		expect(card?.className).toContain("data-[disabled]:opacity-50");
 	});
 });
