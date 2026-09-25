@@ -18,11 +18,11 @@ export const buttonVariants = cva({
 	variants: {
 		variant: {
 			default:
-				"glass glass-tint [--glass-text:70%] [--glass-tone:var(--primary)] [--glass-wash:30%] hover:[--glass-edge:color-mix(in_srgb,var(--primary)_60%,transparent)] hover:[--glass-wash:40%]",
+				"glass glass-tint [--glass-text:0%] [--glass-tone:var(--primary)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--primary)_60%,transparent)] hover:[--glass-wash:65%] dark:[--glass-wash:78%] dark:hover:[--glass-wash:90%]",
 			destructive:
-				"glass glass-tint [--glass-text:61%] [--glass-tone:var(--destructive)] [--glass-wash:30%] focus-visible:ring-destructive/30 hover:[--glass-edge:color-mix(in_srgb,var(--destructive)_60%,transparent)] hover:[--glass-wash:40%]",
+				"glass glass-tint [--glass-text:0%] [--glass-tone:var(--destructive)] [--glass-wash:55%] focus-visible:ring-destructive/30 hover:[--glass-edge:color-mix(in_srgb,var(--destructive)_60%,transparent)] hover:[--glass-wash:65%] dark:[--glass-wash:78%] dark:hover:[--glass-wash:90%]",
 			secondary:
-				"glass glass-tint [--glass-tone:var(--accent)] [--glass-wash:30%] hover:[--glass-edge:color-mix(in_srgb,var(--accent)_60%,transparent)] hover:[--glass-wash:40%]",
+				"glass glass-tint [--glass-text:0%] [--glass-tone:var(--accent)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--accent)_60%,transparent)] hover:[--glass-wash:65%] dark:[--glass-wash:78%] dark:hover:[--glass-wash:90%]",
 			outline: OUTLINE_SURFACE,
 			ghost: "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",
 			link: "text-primary underline-offset-4 hover:underline",
