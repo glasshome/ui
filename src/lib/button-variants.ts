@@ -1,13 +1,16 @@
 import { cva } from "cva";
 
+/* Clear control glass: a see-through card fill over a blur, both scaled from the
+ * theme's material tier. `glass-control` lets reduce-blur restore the opaque fill. */
+const CONTROL_GLASS =
+	"glass-control [--glass-base:color-mix(in_srgb,var(--card)_calc(var(--material-clarity)*0.6),transparent)] [--glass-light:0.1] backdrop-blur-[calc(var(--material-blur,24px)*0.6)] backdrop-saturate-[1.6] backdrop-brightness-[1.1]";
+
 /* One outline material, worn by the pill and by Toggle: `glass` owns the
  * element's background and border, so a real border-input box is a no-op. */
-export const OUTLINE_SURFACE =
-	"glass [--glass-edge:var(--border)] hover:[--glass-base:var(--muted)] dark:[--glass-base:var(--input)] dark:hover:[--glass-base:var(--muted)]";
+export const OUTLINE_SURFACE = `glass ${CONTROL_GLASS} [--glass-edge:var(--border)] dark:[--glass-edge:oklch(1_0_0/0.16)] hover:[--glass-light:0.18]`;
 
-/* Buttons are glass pills on an OPAQUE --card base: a translucent fill goes
- * muddy over dark heroes/sections. Every class is literal for Tailwind's
- * scanner. `size: none` is sizeless for callers that own height/padding. */
+/* Every class is literal for Tailwind's scanner. `size: none` is sizeless for
+ * callers that own height/padding. */
 /* Controls take the theme's corner (rounded-lg is --radius): a capsule at the
  * roundness every preset but the sharp one ships, square at zero. */
 export const buttonVariants = cva({
@@ -17,12 +20,9 @@ export const buttonVariants = cva({
 	base: "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium text-sm outline-none transition-glass focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 	variants: {
 		variant: {
-			default:
-				"glass glass-tint [--glass-text:0%] [--glass-tone:var(--primary)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--primary)_60%,transparent)] hover:[--glass-wash:65%] dark:[--glass-tone:oklch(from_var(--primary)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:hover:[--glass-wash:62%]",
-			destructive:
-				"glass glass-tint [--glass-text:0%] [--glass-tone:var(--destructive)] [--glass-wash:55%] focus-visible:ring-destructive/30 hover:[--glass-edge:color-mix(in_srgb,var(--destructive)_60%,transparent)] hover:[--glass-wash:65%] dark:[--glass-tone:oklch(from_var(--destructive)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:hover:[--glass-wash:62%]",
-			secondary:
-				"glass glass-tint [--glass-text:0%] [--glass-tone:var(--accent)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--accent)_60%,transparent)] hover:[--glass-wash:65%] dark:[--glass-tone:oklch(from_var(--accent)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:hover:[--glass-wash:62%]",
+			default: `glass glass-tint ${CONTROL_GLASS} [--glass-text:0%] [--glass-tone:var(--primary)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--primary)_60%,transparent)] hover:[--glass-wash:65%] dark:[--glass-tone:oklch(from_var(--primary)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:hover:[--glass-wash:62%]`,
+			destructive: `glass glass-tint ${CONTROL_GLASS} [--glass-text:0%] [--glass-tone:var(--destructive)] [--glass-wash:55%] focus-visible:ring-destructive/30 hover:[--glass-edge:color-mix(in_srgb,var(--destructive)_60%,transparent)] hover:[--glass-wash:65%] dark:[--glass-tone:oklch(from_var(--destructive)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:hover:[--glass-wash:62%]`,
+			secondary: `glass glass-tint ${CONTROL_GLASS} [--glass-text:0%] [--glass-tone:var(--accent)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--accent)_60%,transparent)] hover:[--glass-wash:65%] dark:[--glass-tone:oklch(from_var(--accent)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:hover:[--glass-wash:62%]`,
 			outline: OUTLINE_SURFACE,
 			ghost: "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",
 			link: "text-primary-tint-foreground underline-offset-4 hover:underline",

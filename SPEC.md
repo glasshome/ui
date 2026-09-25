@@ -122,6 +122,7 @@ The class name never changes.
 | `INPUT_SURFACE` / `INPUT_CLASS` | lib/input-classes.ts | text fields + pickers (concave) |
 | `FIELD_CHROME` | lib/input-classes.ts | toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) |
 | `TRACK_SURFACE` | lib/card-classes.ts | segmented tracks (tabs, toggle groups) |
+| `buttonVariants` / `OUTLINE_SURFACE` | lib/button-variants.ts | buttons and toggles: clear glass, a see-through card fill over a blur scaled from the material tier; opaque under reduce-blur |
 
 **Fields are not symmetric across the themes.** The recess is `.glass-sink`'s
 rim, which is theme independent; the fill under it is not. On the dark ground a
