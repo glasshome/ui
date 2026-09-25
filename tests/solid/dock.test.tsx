@@ -127,3 +127,26 @@ describe("Dock mode rim", () => {
 		expect(container.querySelector('[data-slot="dock-glow"]')).not.toBeNull();
 	});
 });
+
+describe("Dock drop target", () => {
+	it("names each item and marks the one a drag would land on", () => {
+		const [target, setTarget] = createSignal<string | null>(null);
+		const { container } = render(() => (
+			<Dock
+				items={["a", "b"].map((id) => ({
+					id,
+					icon: <span />,
+					label: id,
+					isDropTarget: id === target(),
+				}))}
+			/>
+		));
+		const marked = () =>
+			[...container.querySelectorAll("[data-drop-target]")].map((e) =>
+				e.getAttribute("data-dock-id"),
+			);
+		expect(marked()).toEqual([]);
+		setTarget("b");
+		expect(marked()).toEqual(["b"]);
+	});
+});
