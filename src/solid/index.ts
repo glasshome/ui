@@ -122,6 +122,7 @@ export {
 } from "./context-menu.js";
 export { CopyButton } from "./copy-button.js";
 export { CountPill } from "./count-pill.js";
+export { DashboardPreview, type DashboardPreviewTile } from "./dashboard-preview.js";
 export {
 	DataTableHead,
 	DataTableRow,
