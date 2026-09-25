@@ -131,7 +131,7 @@ describe("Dock mode rim", () => {
 describe("Dock drop target", () => {
 	it("names each item and marks the one a drag would land on", () => {
 		const [target, setTarget] = createSignal<string | null>(null);
-		const { container } = render(() => (
+		const { container, unmount } = render(() => (
 			<Dock
 				items={["a", "b"].map((id) => ({
 					id,
@@ -148,5 +148,7 @@ describe("Dock drop target", () => {
 		expect(marked()).toEqual([]);
 		setTarget("b");
 		expect(marked()).toEqual(["b"]);
+		// Unmounting clears the dock's overflow timer, which would otherwise fire after teardown.
+		unmount();
 	});
 });
