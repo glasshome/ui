@@ -41,7 +41,7 @@ describe("filled buttons are lit", () => {
 		const cls = buttonVariants({ variant });
 		expect(cls).toContain("[--glass-text:0%]");
 		expect(cls).toContain("[--glass-wash:55%]");
-		expect(cls).toContain("dark:[--glass-wash:78%]");
+		expect(cls).toContain("dark:[--glass-wash:62%]");
 		expect(cls).not.toMatch(/text-white|shadow-\[/);
 	});
 
