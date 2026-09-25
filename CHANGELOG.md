@@ -18,6 +18,60 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.19.0](https://github.com/glasshome/ui/compare/v1.18.0...v1.19.0) (2026-09-25)
+
+
+### Features
+
+* **button:** filled variants carry their tone with full-contrast text ([34f8ec1](https://github.com/glasshome/ui/commit/34f8ec11a6363d4cee632f28010ec4b4de648d18))
+* **button:** xl pill size with a ButtonWell icon part ([a21212f](https://github.com/glasshome/ui/commit/a21212f00bd9d20c74d09ae1523edd696b5f409d))
+* **dock:** a drag can land on a dock item ([d2b3ba1](https://github.com/glasshome/ui/commit/d2b3ba1318783305ee1e0d9cc6784046558fd727))
+* **dock:** a drag can land on a dock item ([ee5195c](https://github.com/glasshome/ui/commit/ee5195ceb8caaeb929d29860ff68de13451d9e3a))
+* **glass:** Neon replaces Glow; edges and bloom take the surface's own hue; Paper and Poster retuned ([9fe9346](https://github.com/glasshome/ui/commit/9fe9346690bbfd04176f5cebd24aa9166f16314b))
+* **glass:** Poster and Glow; four inert preset terms (edge width, edge ink, cast, glow) ([2602346](https://github.com/glasshome/ui/commit/26023468675ca7c0965c9c68db5caa6688587171))
+* **glass:** the material tier; four inheriting properties every surface multiplies in ([d0e906f](https://github.com/glasshome/ui/commit/d0e906fbe0de5bac51ffbbbdfd92f0bea983d3b1))
+* **hero-action,section-icon:** carry the tone on the surface ([ca18e6d](https://github.com/glasshome/ui/commit/ca18e6d1917cb9d97ba4bf166e86ccca697ced78))
+* livelier choice and action surfaces, readable on every theme ([07243cb](https://github.com/glasshome/ui/commit/07243cb8194f97600afb7a97981dfba9f32ecd9f))
+* **material:** Ink and Glow are dials; Poster retires ([a778089](https://github.com/glasshome/ui/commit/a778089c1e57966f595e69314cefd6b752849fb5))
+* **option-card:** toned icon well and a resting tint in the card's colour ([29cff49](https://github.com/glasshome/ui/commit/29cff49a339c18d83da90d528b8cdba95f4648f0))
+* **presets:** Retrowave, and a preset can carry a material ([6fab2a3](https://github.com/glasshome/ui/commit/6fab2a32c8576fa175b13cd73c6ffa5fb2ed51af))
+* **spotlight:** a first-run tour primitive ([688192c](https://github.com/glasshome/ui/commit/688192c6b33258ef0319b234d81218f9aab97bb0))
+* **spotlight:** a ring marks the target when there is no veil, and the bubble measures after its content settles ([2e3e04a](https://github.com/glasshome/ui/commit/2e3e04afee7918a8394dbe8738e6d9b093f75d32))
+* **spotlight:** a scrim with a pressable hole and a bubble that follows its target ([cf42cc1](https://github.com/glasshome/ui/commit/cf42cc1b8f28d8365200e2e08c4d60e2c56833a5))
+* **spotlight:** blocking keeps a targetless veil from passing presses through ([be3189f](https://github.com/glasshome/ui/commit/be3189fbea28253c6107e028aa88d039c32e47e8))
+* **spotlight:** hole path and bubble placement, TRAVEL_MOTION ([16baacd](https://github.com/glasshome/ui/commit/16baacd86183428336b57c47e6dca6ad71820dd8))
+* **spotlight:** live follows a target that moves under the pointer ([a1b1abf](https://github.com/glasshome/ui/commit/a1b1abfd2c9b593f5417dff0672124d6c99a2e55))
+* **spotlight:** the bubble anchors to an element and points a tail at it ([b87f206](https://github.com/glasshome/ui/commit/b87f206980cee9cdddefe10bfcda3be626533144))
+* **spotlight:** the bubble is an opaque popup with its arrow built in ([42602b2](https://github.com/glasshome/ui/commit/42602b21d3fa8bdba030d35cae0078af77245ee1))
+* **spotlight:** the veil wears the modal scrim recipe, blur included ([1b1e4e4](https://github.com/glasshome/ui/commit/1b1e4e4fd5e46d7587fe87b0f7f7d84637e59230))
+* themes v2 presets, chalk material and live theme studio parts ([0045de3](https://github.com/glasshome/ui/commit/0045de37aded3ef467ea6ff1ec6d4819e2998823))
+* **tokens:** a theme recipe carries its material ([2a1c0e0](https://github.com/glasshome/ui/commit/2a1c0e0f250d63158f3a21db0132651f1e8d383d))
+* **tokens:** material presets and a resolver that composes the host blur mode ([31b7c9d](https://github.com/glasshome/ui/commit/31b7c9d16921638cd3ba2ce311c8b9b2900f02c9))
+* **widget-identity:** iconTone tints the icon pill ([7b1b5f3](https://github.com/glasshome/ui/commit/7b1b5f37b85f4107752e799ba4cd95457abc7992))
+
+
+### Bug Fixes
+
+* **button,radio,option-card:** readable text and glyphs on every theme ([64d844e](https://github.com/glasshome/ui/commit/64d844ec117a140c43dd578d100cdb30b7132fab))
+* **button:** dark-mode filled buttons keep AA contrast ([9dd6479](https://github.com/glasshome/ui/commit/9dd6479daa6dcadf5d839513268a4f7f3e7ebe03))
+* **gallery:** the Spotlight specimen's try names its button ([61e0d54](https://github.com/glasshome/ui/commit/61e0d54c9e9e65a3694cceaf3cd4b9347909498b))
+* **glass:** cast and glow scale with the surface's lift, so a chip takes a third of a card's ([448e88c](https://github.com/glasshome/ui/commit/448e88ca6615d4964c1676743adf316176404f3d))
+* **material:** refine print edges and neon bloom ([812429f](https://github.com/glasshome/ui/commit/812429fdded2d6862f61815feb972446cb8a58ba))
+* **option-card:** a disabled card dims, its root now carries data-disabled ([277ae65](https://github.com/glasshome/ui/commit/277ae658cf47b732afe3fe86c96c8ce0751869cb))
+* **overlay-classes:** keep FLOATING_PANEL's class string byte-identical after the surface split ([c1d64ed](https://github.com/glasshome/ui/commit/c1d64edf9336e49aa10af86b373d4d0b3d9440a2))
+* **radio-group:** fill the picked radio so it reads at a glance ([f36e702](https://github.com/glasshome/ui/commit/f36e70240e34456b2fcd6769452fe5ecf0c49d97))
+* resolve material blur at each surface ([c725158](https://github.com/glasshome/ui/commit/c725158888c2bfaab09af1c4a1ba18b8f14ee77b))
+* **section-card:** tint header icons, keep SectionIcon neutral by default ([4e4d74a](https://github.com/glasshome/ui/commit/4e4d74ac1a7057422a50424a96506c657b0d1d63))
+* **sliding-indicator:** measure in layout pixels while an ancestor zooms ([525307a](https://github.com/glasshome/ui/commit/525307ac6b58a7464d4415a5732b73adab95bdb9))
+* **spotlight:** a 20px arrow ([b8a0b5f](https://github.com/glasshome/ui/commit/b8a0b5fc78515e93a572f953a73f4ebd3f430a8e))
+* **spotlight:** a target is re-measured for a full window after it changes, since its motion may start late ([9bde2b5](https://github.com/glasshome/ui/commit/9bde2b5c71cbd314d21321ef8ab73692530c88cb))
+* **spotlight:** an unmeasured scrim lets presses through, the bubble re-measures itself, and the caller owns the live region ([3c75131](https://github.com/glasshome/ui/commit/3c7513104d8d878cccd93bfcab4f799a783a9a9b))
+* **spotlight:** measure until the target stops moving, so an animating widget is marked where it lands ([ca446a9](https://github.com/glasshome/ui/commit/ca446a9840fd3788ba64d7ee235bd60582092d85))
+* **spotlight:** no travel transition while live, so the hole stays on a dragged target ([54628d3](https://github.com/glasshome/ui/commit/54628d312ddd93b80abf534f2f264fe341265998))
+* **spotlight:** the positioner carries the overlay layer, so the veil never paints over the bubble ([74e1522](https://github.com/glasshome/ui/commit/74e15220e727b773e54d27b378ee566c59c7fa72))
+* **spotlight:** the tail sits behind the panel, so only its outer half shows ([c3b6701](https://github.com/glasshome/ui/commit/c3b67018abb9f01517f5c173326437382652c9ed))
+* **toggle-group:** round every segment so the focus ring follows the pill ([d0bb05a](https://github.com/glasshome/ui/commit/d0bb05a52682130aaa8004bcb1af29c9eda4580a))
+
 ## [1.18.0](https://github.com/glasshome/ui/compare/v1.17.0...v1.18.0) (2026-09-22)
 
 
