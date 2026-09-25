@@ -130,7 +130,9 @@ describe("OptionCard", () => {
 			"They pick a password.",
 		);
 		const card = container.querySelector('[data-slot="option-card"]');
-		expect(card?.className).toContain("data-[checked]:[--glass-tone:var(--primary)]");
+		expect(card?.className).toContain(
+			"[&:not([style*=--glass-tone])]:[--glass-tone:var(--primary)]",
+		);
 	});
 
 	it("wears the card surface and tints it when picked, never a flat fill", () => {
@@ -143,12 +145,13 @@ describe("OptionCard", () => {
 		const card = container.querySelector('[data-slot="option-card"]');
 		const className = card?.className ?? "";
 		expect(card?.hasAttribute("data-checked")).toBe(true);
-		for (const token of CARD_SURFACE.split(" ")) expect(className, token).toContain(token);
+		for (const token of CARD_SURFACE.split(" ").filter((t) => !t.startsWith("[--glass-wash:")))
+			expect(className, token).toContain(token);
 		// .glass-tint would tint the card's own body copy, and mix it toward
 		// `transparent` on every unpicked card.
 		expect(className).not.toContain("glass-tint");
 		expect(className).toContain(
-			"data-[checked]:[--glass-edge:color-mix(in_srgb,var(--primary)_45%,transparent)]",
+			"data-[checked]:[--glass-edge:oklch(from_var(--glass-tone)_l_c_h/0.75)]",
 		);
 		expect(className, "bg-* is a no-op on glass").not.toContain("bg-primary/5");
 		expect(className).not.toContain("border-border");
@@ -161,12 +164,12 @@ describe("OptionCard", () => {
 			</OptionCardGroup>
 		));
 
-		expect(container.querySelector('[data-slot="option-card-row"]')?.className).toContain("p-3");
+		expect(container.querySelector('[data-slot="option-card-row"]')?.className).toContain("p-3.5");
 		expect(container.querySelector('[data-slot="option-card-title"]')?.className).toContain(
-			"font-medium",
+			"font-semibold",
 		);
 		expect(container.querySelector('[data-slot="option-card-title"]')?.className).toContain(
-			"text-sm",
+			"text-[15px]",
 		);
 		const description = container.querySelector('[data-slot="option-card-description"]')?.className;
 		expect(description).toContain("text-sm");
@@ -220,5 +223,56 @@ describe("OptionCard", () => {
 		fireEvent.click(rows[1] as HTMLElement);
 		expect(len()).toBe("8");
 		expect(rows[1]?.getAttribute("aria-checked")).toBe("true");
+	});
+});
+
+describe("OptionCard colour", () => {
+	it("puts the icon in a toned well", () => {
+		const { container } = render(() => (
+			<OptionCardGroup value={null} onChange={() => {}}>
+				<OptionCard
+					value="a"
+					title="Home Assistant"
+					icon="lucide:house"
+					accentVar="oklch(0.72 0.13 226)"
+				/>
+			</OptionCardGroup>
+		));
+		const well = container.querySelector('[data-slot="option-card-icon"]');
+		expect(well).not.toBeNull();
+		expect(well?.className).toContain("var(--surface-tone)");
+	});
+
+	it("puts a brand image in the same well", () => {
+		const { container } = render(() => (
+			<OptionCardGroup value={null} onChange={() => {}}>
+				<OptionCard value="a" title="Home Assistant" iconImage="/ha.svg" />
+			</OptionCardGroup>
+		));
+		expect(container.querySelector('[data-slot="option-card-icon"] img')).not.toBeNull();
+	});
+
+	it("tints at rest, more when picked, and uses the theme colour without an accent", () => {
+		const { container } = render(() => (
+			<OptionCardGroup value="a" onChange={() => {}}>
+				<OptionCard value="a" title="Invite" />
+			</OptionCardGroup>
+		));
+		const card = container.querySelector('[data-slot="option-card"]');
+		expect(card?.className).toContain("[--glass-wash:9%]");
+		expect(card?.className).toContain("data-[checked]:[--glass-wash:30%]");
+		expect(card?.className).toContain("[--glass-tone:var(--primary)]");
+		expect(card?.className).not.toMatch(/shadow-\[/);
+	});
+
+	it("keeps a disabled card visibly disabled", () => {
+		const { container } = render(() => (
+			<OptionCardGroup value={null} onChange={() => {}}>
+				<OptionCard value="a" title="Later" disabled />
+			</OptionCardGroup>
+		));
+		expect(container.querySelector('[data-slot="option-card"]')?.className).toContain(
+			"data-[disabled]:opacity-50",
+		);
 	});
 });

@@ -10,7 +10,6 @@ import {
 	useContext,
 } from "solid-js";
 import { CARD_SURFACE } from "../lib/card-classes.js";
-import { isNeutralTone, NEUTRAL_KNOBS } from "../lib/glass-tone.js";
 import { STAGGER } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -24,7 +23,7 @@ import { RadioGroup, RadioGroupItem } from "./radio-group.js";
  * colour toward the tone, and toward `transparent` while nothing is picked.
  * Padding lives inside the label, not on the item, so the whole card is a
  * click target. */
-const OPTION_CARD_CHROME = `${CARD_SURFACE} group/option-card relative cursor-pointer overflow-hidden rounded-md transition-glass duration-200 hover:[--glass-base:color-mix(in_srgb,var(--card)_80%,transparent)] has-[:focus-visible]:[--glass-edge:var(--ring)] has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50 [&:not([style*=--glass-tone])]:data-[checked]:[--glass-tone:var(--primary)] data-[checked]:[--glass-edge:color-mix(in_srgb,var(--primary)_45%,transparent)] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50`;
+const OPTION_CARD_CHROME = `${CARD_SURFACE} group/option-card relative cursor-pointer overflow-hidden rounded-xl transition-glass duration-200 [&:not([style*=--glass-tone])]:[--glass-tone:var(--primary)] [--glass-wash:9%] hover:[--glass-wash:16%] has-[:focus-visible]:[--glass-edge:var(--ring)] has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50 data-[checked]:[--glass-wash:30%] data-[checked]:[--glass-edge:oklch(from_var(--glass-tone)_l_c_h/0.75)] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50`;
 
 /* Sub-options live inside the card: the card grows (a grid row morphing
  * 0fr -> 1fr on the morph token) while it is picked, and the content settles
@@ -37,7 +36,7 @@ const OPTION_CHOICE_ROW =
 	"rounded-sm text-foreground/75 transition-colors hover:bg-foreground/5 aria-checked:text-foreground";
 
 const OPTION_CARD_DRAWER_CONTENT =
-	"-translate-y-2 flex flex-col gap-0.5 pr-1 pb-2 pl-[calc(var(--spacing)*4+20px)] opacity-0 transition-[opacity,translate] duration-(--duration-expand) ease-(--ease-morph) group-data-[checked]/option-card:translate-y-0 group-data-[checked]/option-card:opacity-100 group-data-[checked]/option-card:delay-[80ms]";
+	"-translate-y-2 flex flex-col gap-0.5 pr-1 pb-2 pl-[calc(var(--spacing)*3.5+54px)] opacity-0 transition-[opacity,translate] duration-(--duration-expand) ease-(--ease-morph) group-data-[checked]/option-card:translate-y-0 group-data-[checked]/option-card:opacity-100 group-data-[checked]/option-card:delay-[80ms]";
 
 /* Sub-options are rows of the card, chosen in place: the same row a picker
  * list shows, flat on the card (a glass pill on a glass card is a layer too
@@ -140,7 +139,7 @@ export function OptionCard(props: {
 		<div
 			data-slot="option-card"
 			data-checked={checked() ? "" : undefined}
-			class={cn(OPTION_CARD_CHROME, isNeutralTone(props.accentVar) && NEUTRAL_KNOBS, props.class)}
+			class={cn(OPTION_CARD_CHROME, props.class)}
 			style={
 				props.accentVar ? ({ "--glass-tone": props.accentVar } as JSX.CSSProperties) : undefined
 			}
@@ -154,14 +153,10 @@ export function OptionCard(props: {
 			>
 				{/* On the header row, not the card: a grown card keeps its rows clear. */}
 				<Ornament kind={props.ornament ?? "check"} />
-				<div data-slot="option-card-row" class="flex w-full items-start gap-3 p-3">
-					<Show when={props.iconImage} fallback={<OptionIcon icon={props.icon} />}>
-						{(src) => (
-							<img src={src()} alt="" aria-hidden="true" class="size-5 shrink-0 object-contain" />
-						)}
-					</Show>
+				<div data-slot="option-card-row" class="flex w-full items-center gap-3.5 p-3.5">
+					<OptionIconWell icon={props.icon} image={props.iconImage} />
 					<div class="flex min-w-0 flex-1 flex-col gap-0.5">
-						<span data-slot="option-card-title" class="font-medium text-sm leading-snug">
+						<span data-slot="option-card-title" class="font-semibold text-[15px] leading-snug">
 							{props.title}
 						</span>
 						<Show when={props.description}>
@@ -196,20 +191,23 @@ export function OptionCard(props: {
 	);
 }
 
-/* The icon sits on the title line, the mini form of HeroAction's big glyph,
- * in text colour: the tone belongs to the surface and the ornament. */
-function OptionIcon(props: { icon?: string }) {
+function OptionIconWell(props: { icon?: string; image?: string }) {
 	return (
-		<Show when={props.icon}>
-			{(icon) => (
-				<Icon
-					icon={icon()}
-					width={20}
-					height={20}
-					aria-hidden="true"
-					class="mt-px shrink-0 text-muted-foreground"
-				/>
-			)}
+		<Show when={props.icon || props.image}>
+			<span
+				data-slot="option-card-icon"
+				aria-hidden="true"
+				class="grid size-10 shrink-0 place-items-center rounded-[14px] bg-[color-mix(in_oklab,var(--surface-tone)_80%,black)] text-white"
+			>
+				<Show
+					when={props.image}
+					fallback={
+						<Show when={props.icon}>{(icon) => <Icon icon={icon()} width={20} height={20} />}</Show>
+					}
+				>
+					{(src) => <img src={src()} alt="" class="size-5 object-contain" />}
+				</Show>
+			</span>
 		</Show>
 	);
 }
