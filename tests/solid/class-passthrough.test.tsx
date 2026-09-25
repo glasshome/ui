@@ -520,6 +520,7 @@ const CASES: Record<string, () => JSX.Element> = {
 			<span />
 		</solid.DockedPanel>
 	),
+	DashboardPreview: () => <solid.DashboardPreview class="probe" columns={12} tiles={[]} />,
 	PreviewTile: () => (
 		<solid.PreviewTileGroup aria-label="Tiles" value={null} onChange={noop}>
 			<solid.PreviewTile class="probe" value="a" label="A">
