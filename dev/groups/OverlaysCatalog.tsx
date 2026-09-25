@@ -392,7 +392,7 @@ export function OverlaysCatalog() {
 				</Popover>
 			</Specimen>
 
-			<Specimen name="Spotlight" try="Point at the button">
+			<Specimen name="Spotlight" try="Point at me">
 				<div class="flex items-center gap-3">
 					<Button
 						ref={setSpotlightTarget}
