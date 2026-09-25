@@ -17,12 +17,7 @@ import { Ornament } from "./ornament.js";
 import { PickerRow } from "./picker-row.js";
 import { RadioGroup, RadioGroupItem } from "./radio-group.js";
 
-/* The card is the affordance, so the radio's own control is suppressed and the
- * toned surface plus the check ornament carry the picked state; an accented card keeps its own tone at rest. Tone alone (no
- * .glass-tint) because a card is body copy: .glass-tint would mix the label
- * colour toward the tone, and toward `transparent` while nothing is picked.
- * Padding lives inside the label, not on the item, so the whole card is a
- * click target. */
+/* Tone without .glass-tint: the card holds body copy, which must stay foreground-coloured. */
 const OPTION_CARD_CHROME = `${CARD_SURFACE} group/option-card relative cursor-pointer overflow-hidden rounded-xl transition-glass duration-200 [&:not([style*=--glass-tone])]:[--glass-tone:var(--primary)] [--glass-wash:9%] hover:[--glass-wash:16%] has-[:focus-visible]:[--glass-edge:var(--ring)] has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50 data-[checked]:[--glass-wash:30%] data-[checked]:[--glass-edge:oklch(from_var(--glass-tone)_l_c_h/0.75)] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50`;
 
 /* Sub-options live inside the card: the card grows (a grid row morphing
@@ -105,7 +100,7 @@ export function OptionCard(props: {
 	description?: string;
 	icon?: string;
 	iconImage?: string;
-	/** Per-option tone at rest (setup's brand colours); neutral by default. */
+	/** Per-option tone (setup's brand colours); the theme primary when absent. */
 	accentVar?: string;
 	/** Drop the check when picking the card is itself the next step. */
 	ornament?: "check" | "none";
@@ -198,7 +193,7 @@ function OptionIconWell(props: { icon?: string; image?: string }) {
 			<span
 				data-slot="option-card-icon"
 				aria-hidden="true"
-				class="grid size-10 shrink-0 place-items-center rounded-[14px] bg-[color-mix(in_oklab,var(--surface-tone)_80%,black)] text-white"
+				class="grid size-10 shrink-0 place-items-center rounded-[14px] bg-[color-mix(in_oklab,var(--surface-tone)_80%,black)] [color:oklch(from_var(--surface-tone)_calc((0.75_-_l)*100)_0_0)]"
 			>
 				<Show
 					when={props.image}
