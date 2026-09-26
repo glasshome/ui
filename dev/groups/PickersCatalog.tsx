@@ -47,19 +47,6 @@ export function PickersCatalog() {
 	const [presetId, setPresetId] = createSignal("preset:coast");
 	const [disc, setDisc] = createSignal<Color>(parseColor("hsb(330, 60%, 100%)"));
 	const [kelvin, setKelvin] = createSignal(2700);
-	const discPins = [
-		{ id: "warm", color: "#ffb35a", label: "Warm white", hue: 28, saturation: 70 },
-		{ id: "soft", color: "#ffd79a", label: "Soft white", hue: 36, saturation: 42 },
-		{ id: "cool", color: "#dfeeff", label: "Cool white", hue: 214, saturation: 13 },
-		{ id: "pink", color: "#ec5aa0", label: "Pink", hue: 330, saturation: 62 },
-		{ id: "blue", color: "#3f8cff", label: "Blue", hue: 216, saturation: 75 },
-	];
-	const whitePins = [
-		{ id: "warm", color: "#ffb35a", label: "Warm white", kelvin: 2200 },
-		{ id: "soft", color: "#ffd79a", label: "Soft white", kelvin: 2700 },
-		{ id: "neutral", color: "#fff1dc", label: "Neutral white", kelvin: 4000 },
-		{ id: "cool", color: "#dfeeff", label: "Cool white", kelvin: 6000 },
-	];
 
 	return (
 		<DemoHost>
@@ -80,25 +67,11 @@ export function PickersCatalog() {
 				</Specimen>
 
 				<Specimen name="ColorDisc" state={disc().toString("hex")}>
-					<ColorDisc
-						value={disc()}
-						onChange={setDisc}
-						pins={discPins}
-						onPin={(id) => {
-							const pin = discPins.find((p) => p.id === id);
-							if (pin) setDisc(parseColor(`hsb(${pin.hue}, ${pin.saturation}%, 100%)`));
-						}}
-						size={220}
-					/>
+					<ColorDisc value={disc()} onChange={setDisc} size={220} />
 				</Specimen>
 
 				<Specimen name="TemperatureBar" state={`${kelvin()} K`}>
-					<TemperatureBar
-						value={kelvin()}
-						onChange={setKelvin}
-						pins={whitePins}
-						onPin={(id) => setKelvin(whitePins.find((p) => p.id === id)?.kelvin ?? kelvin())}
-					/>
+					<TemperatureBar value={kelvin()} onChange={setKelvin} />
 				</Specimen>
 
 				<Specimen name="ColorSlider">

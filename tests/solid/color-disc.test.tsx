@@ -6,21 +6,6 @@ import { ColorDisc, TemperatureBar } from "../../src/solid/color-disc.js";
 afterEach(cleanup);
 
 describe("ColorDisc", () => {
-	it("hands back the pin tapped, so a preset is one tap", () => {
-		const onPin = vi.fn();
-		render(() => (
-			<ColorDisc
-				value={parseColor("hsb(330, 60%, 100%)")}
-				pins={[{ id: "pink", color: "#ec5aa0", label: "Pink", hue: 330, saturation: 62 }]}
-				onPin={onPin}
-			/>
-		));
-
-		fireEvent.click(screen.getByRole("button", { name: "Pink" }));
-
-		expect(onPin).toHaveBeenCalledWith("pink");
-	});
-
 	it("turns the hue with left and right and the saturation with up and down", () => {
 		const seen: string[] = [];
 		render(() => (
@@ -40,22 +25,12 @@ describe("ColorDisc", () => {
 });
 
 describe("TemperatureBar", () => {
-	it("hands back a white pin tapped, and steps its Kelvin from the keyboard", () => {
-		const onPin = vi.fn();
+	it("steps its Kelvin from the keyboard", () => {
 		const onChange = vi.fn();
-		render(() => (
-			<TemperatureBar
-				value={2700}
-				pins={[{ id: "warm", color: "#ffb35a", label: "Warm white", kelvin: 2200 }]}
-				onPin={onPin}
-				onChange={onChange}
-			/>
-		));
+		render(() => <TemperatureBar value={2700} onChange={onChange} />);
 
-		fireEvent.click(screen.getByRole("button", { name: "Warm white" }));
 		fireEvent.keyDown(screen.getByRole("slider", { name: "White" }), { key: "ArrowRight" });
 
-		expect(onPin).toHaveBeenCalledWith("warm");
 		expect(onChange).toHaveBeenCalledWith(2800);
 	});
 });

@@ -1,23 +1,9 @@
 import type { Color } from "@kobalte/core/colors";
 import { parseColor } from "@kobalte/core/colors";
-import { type Component, createSignal, For, type JSX } from "solid-js";
+import { type Component, createSignal, type JSX } from "solid-js";
 import { FOCUS_RING } from "../lib/input-classes.js";
 import { THUMB_COLOR_RING } from "../lib/thumb-classes.js";
 import { cn } from "../lib/utils.js";
-
-/** A one-tap choice on a colour picker. */
-export interface ColorPin {
-	id: string;
-	/** What the pin shows, any CSS colour. */
-	color: string;
-	label: string;
-}
-
-/** A pin on the disc, placed at its own hue and saturation. */
-export interface ColorDiscPin extends ColorPin {
-	hue: number;
-	saturation: number;
-}
 
 const PIN = 34;
 const WHITE = parseColor("hsb(0, 0%, 100%)");
@@ -28,48 +14,11 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 const discBackground =
 	"radial-gradient(closest-side, #fff, rgb(255 255 255 / 0) 100%), conic-gradient(from 90deg, hsl(0 100% 50%), hsl(60 100% 50%), hsl(120 100% 50%), hsl(180 100% 50%), hsl(240 100% 50%), hsl(300 100% 50%), hsl(360 100% 50%))";
 
-function Pin(props: {
-	pin: ColorPin;
-	x: number | string;
-	y: number | string;
-	active: boolean;
-	onPick: (id: string) => void;
-}) {
-	return (
-		<button
-			type="button"
-			data-slot="color-pin"
-			data-active={props.active ? "" : undefined}
-			aria-label={props.pin.label}
-			aria-pressed={props.active}
-			class={cn(
-				"absolute cursor-pointer rounded-full border-2 border-black/40 shadow-[0_0_0_2px_rgb(255_255_255/0.9),0_2px_6px_rgb(0_0_0/0.4)] transition-transform duration-150 active:scale-90 data-[active]:scale-110",
-				FOCUS_RING,
-			)}
-			style={{
-				left: typeof props.x === "number" ? `${props.x}px` : props.x,
-				top: typeof props.y === "number" ? `${props.y}px` : props.y,
-				width: `${PIN}px`,
-				height: `${PIN}px`,
-				translate: "-50% -50%",
-				background: props.pin.color,
-			}}
-			onPointerDown={(e) => e.stopPropagation()}
-			onClick={() => props.onPick(props.pin.id)}
-		/>
-	);
-}
-
 interface ColorDiscProps {
 	/** The colour shown and moved: its hue is the direction from the centre, its saturation the distance. */
 	value?: Color;
 	onChange?: (value: Color) => void;
 	onChangeEnd?: (value: Color) => void;
-	/** One-tap choices, pinned on the disc at their own colour. */
-	pins?: ColorDiscPin[];
-	/** The pin the current colour came from, drawn raised. */
-	activePin?: string;
-	onPin?: (id: string) => void;
 	/** Diameter in px. */
 	size?: number;
 	disabled?: boolean;
@@ -78,8 +27,7 @@ interface ColorDiscProps {
 }
 
 /**
- * A colour disc: hue around it, saturation from the white centre to the rim, one thumb for both, and
- * the choices people make most often pinned on it for one tap.
+ * A colour disc: hue around it, saturation from the white centre to the rim, one thumb for both.
  */
 const ColorDisc: Component<ColorDiscProps> = (props) => {
 	const size = () => props.size ?? 260;
@@ -93,16 +41,6 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
 	};
 	const thumb = () => place(hsb().getChannelValue("hue"), hsb().getChannelValue("saturation"));
 	const [dragging, setDragging] = createSignal(false);
-	/** The pin the current colour sits on: it shows as chosen and the thumb steps aside, until a drag. */
-	const onPin = () => {
-		if (dragging()) return undefined;
-		const t = thumb();
-		return (props.pins ?? []).find((p) => {
-			const at = place(p.hue, p.saturation);
-			return Math.hypot(at.x - t.x, at.y - t.y) < PIN * 0.6;
-		})?.id;
-	};
-
 	const colourAt = (e: PointerEvent, el: HTMLElement): Color => {
 		const box = el.getBoundingClientRect();
 		const dx = e.clientX - (box.left + box.width / 2);
@@ -166,20 +104,6 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
 			}}
 			onPointerCancel={() => setDragging(false)}
 		>
-			<For each={props.pins ?? []}>
-				{(pin) => {
-					const at = () => place(pin.hue, pin.saturation);
-					return (
-						<Pin
-							pin={pin}
-							x={at().x}
-							y={at().y}
-							active={(props.activePin ?? onPin()) === pin.id}
-							onPick={(id) => props.onPin?.(id)}
-						/>
-					);
-				}}
-			</For>
 			<div
 				role="slider"
 				tabIndex={props.disabled ? -1 : 0}
@@ -202,18 +126,12 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
 					translate: "-50% -50%",
 					background: value().toString("css"),
 					"pointer-events": "none",
-					opacity: onPin() ? 0 : 1,
 				}}
 				onKeyDown={onKeyDown}
 			/>
 		</div>
 	);
 };
-
-/** A pin on the temperature bar, placed at its own Kelvin. */
-export interface TemperaturePin extends ColorPin {
-	kelvin: number;
-}
 
 interface TemperatureBarProps {
 	/** The white shown, in Kelvin. */
@@ -222,9 +140,6 @@ interface TemperatureBarProps {
 	max?: number;
 	onChange?: (kelvin: number) => void;
 	onChangeEnd?: (kelvin: number) => void;
-	pins?: TemperaturePin[];
-	activePin?: string;
-	onPin?: (id: string) => void;
 	disabled?: boolean;
 	class?: string;
 	"aria-label"?: string;
@@ -242,7 +157,7 @@ export function kelvinToCss(kelvin: number): string {
 	return `rgb(${mix("red")} ${mix("green")} ${mix("blue")})`;
 }
 
-/** Warm to cool white on one bar, for lamps that only change their white, with the same pins as the disc. */
+/** Warm to cool white on one bar, in Kelvin, over the span the lamps can reach. */
 const TemperatureBar: Component<TemperatureBarProps> = (props) => {
 	const min = () => props.min ?? 2000;
 	const max = () => props.max ?? 6500;
@@ -281,21 +196,6 @@ const TemperatureBar: Component<TemperatureBarProps> = (props) => {
 			}}
 			onPointerCancel={() => setDragging(false)}
 		>
-			<div class="pointer-events-none absolute inset-x-[28px] inset-y-0">
-				<For each={props.pins ?? []}>
-					{(pin) => (
-						<span class="pointer-events-auto">
-							<Pin
-								pin={pin}
-								x={`${pos(pin.kelvin)}%`}
-								y="50%"
-								active={props.activePin === pin.id}
-								onPick={(id) => props.onPin?.(id)}
-							/>
-						</span>
-					)}
-				</For>
-			</div>
 			<div
 				role="slider"
 				tabIndex={props.disabled ? -1 : 0}

@@ -104,11 +104,8 @@ export {
 } from "./collapsible.js";
 export {
 	ColorDisc,
-	type ColorDiscPin,
-	type ColorPin,
 	kelvinToCss,
 	TemperatureBar,
-	type TemperaturePin,
 } from "./color-disc.js";
 export { ColorSlider } from "./color-slider.js";
 export { ColorWheel } from "./color-wheel.js";
