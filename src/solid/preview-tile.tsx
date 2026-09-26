@@ -38,6 +38,8 @@ export function PreviewTileGroup(props: {
 export function PreviewTile(props: {
 	value: string;
 	label: string;
+	/** A quieter second line under the caption. */
+	meta?: string;
 	/** Off for pictures that name themselves; the label still reaches assistive tech. */
 	caption?: boolean;
 	icon?: string;
@@ -73,6 +75,14 @@ export function PreviewTile(props: {
 					</Show>
 					{props.label}
 				</span>
+				<Show when={props.meta}>
+					<span
+						data-slot="preview-tile-meta"
+						class="-mt-1 text-center text-[11px] text-muted-foreground/80 leading-tight"
+					>
+						{props.meta}
+					</span>
+				</Show>
 			</Show>
 		</RadioGroupItem>
 	);

@@ -4,6 +4,7 @@ import {
 	type Color,
 	ColorSlider,
 	ColorWheel,
+	DashboardPreview,
 	EntitySelector,
 	IconPicker,
 	ImagePicker,
@@ -232,7 +233,7 @@ export function PickersCatalog() {
 							}
 						>
 							{([value, label, radius]) => (
-								<PreviewTile value={value} label={label} shape="tile">
+								<PreviewTile value={value} label={label} meta={radius} shape="tile">
 									<div class="absolute inset-0 bg-gradient-to-br from-primary/40 to-accent/40" />
 									<div
 										class="absolute inset-x-2 top-1/3 bottom-2 border border-foreground/20 bg-card/80"
@@ -242,6 +243,30 @@ export function PickersCatalog() {
 							)}
 						</For>
 					</PreviewTileGroup>
+				</Specimen>
+
+				<Specimen name="DashboardPreview" span={2}>
+					<DashboardPreview
+						stage
+						columns={12}
+						class="max-w-xl"
+						tiles={[
+							{
+								key: "a",
+								x: 0,
+								y: 0,
+								w: 4,
+								h: 3,
+								icon: "lucide:clock",
+								label: "Clock",
+								description: "The time, big",
+							},
+							{ key: "b", x: 4, y: 0, w: 4, h: 2, icon: "lucide:music", label: "Media player" },
+							{ key: "c", x: 8, y: 0, w: 2, h: 2, icon: "lucide:cloud-sun", label: "Weather" },
+							{ key: "d", x: 10, y: 0, w: 2, h: 1, icon: "lucide:lock", label: "Lock" },
+							{ key: "e", x: 4, y: 2, w: 8, h: 1, icon: "lucide:lightbulb", label: "Lights" },
+						]}
+					/>
 				</Specimen>
 
 				<Specimen name="SwatchPicker" state={swatch() ?? "none"} span={2}>
