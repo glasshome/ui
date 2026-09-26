@@ -245,7 +245,7 @@ export function PickersCatalog() {
 					</PreviewTileGroup>
 				</Specimen>
 
-				<Specimen name="DashboardPreview" try="icon tiles, staged" span={2}>
+				<Specimen name="DashboardPreview" span={2}>
 					<DashboardPreview
 						stage
 						columns={12}
