@@ -1,6 +1,7 @@
 import { Dialog as DialogPrimitive, useDialogContext } from "@kobalte/core/dialog";
 import type { VariantProps } from "cva";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import { besideAnchor } from "../lib/anchor-placement.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -55,11 +56,35 @@ type DialogContentProps = ComponentProps<typeof DialogPrimitive.Content> & {
 	size?: ModalSize;
 	/** Names a panel that has no `DialogTitle`. A registered Title wins. */
 	ariaLabel?: string;
+	/** Opens the panel beside this element (the tile or row it came from) instead of centred. */
+	anchor?: HTMLElement;
+};
+
+/* Pixel widths of the sizes an anchored panel keeps (Tailwind's max-w-sm/md/lg/3xl/5xl). */
+const ANCHORED_WIDTH: Record<ModalSize, number> = {
+	sm: 384,
+	md: 448,
+	lg: 512,
+	xl: 768,
+	full: 1024,
 };
 
 const DialogContent: ParentComponent<DialogContentProps> = (props) => {
-	const [local, others] = splitProps(props, ["class", "children", "size", "ariaLabel"]);
+	const [local, others] = splitProps(props, [
+		"class",
+		"children",
+		"size",
+		"ariaLabel",
+		"anchor",
+		"style",
+	]);
 	const context = useDialogContext();
+	const placement = () => {
+		const a = local.anchor;
+		return a
+			? besideAnchor(a.getBoundingClientRect(), ANCHORED_WIDTH[local.size ?? "lg"])
+			: undefined;
+	};
 	return (
 		<DialogPrimitive.Portal>
 			<ModalScrollLock />
@@ -70,10 +95,11 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
 				aria-label={context.titleId() ? undefined : local.ariaLabel}
 				class={cn(
 					MODAL_PANEL,
-					MODAL_WIDTH[local.size ?? "lg"],
-					MODAL_ANCHOR[local.size ?? "lg"],
+					!local.anchor && MODAL_WIDTH[local.size ?? "lg"],
+					!local.anchor && MODAL_ANCHOR[local.size ?? "lg"],
 					local.class,
 				)}
+				style={{ ...(typeof local.style === "object" ? local.style : {}), ...placement() }}
 				{...others}
 			>
 				{local.children}

@@ -95,17 +95,25 @@ type ResponsiveDialogContentProps = ComponentProps<"div"> & {
 	size?: ModalSize;
 	/** Names a panel that has no `ResponsiveDialogTitle`. */
 	ariaLabel?: string;
+	/** Desktop only: opens the panel beside this element instead of centred. The mobile sheet ignores it. */
+	anchor?: HTMLElement;
 };
 
 const ResponsiveDialogContent: ParentComponent<ResponsiveDialogContentProps> = (props) => {
 	const ctx = useResponsiveDialogContext();
-	const [local, rest] = splitProps(props, ["class", "children", "size", "ariaLabel"]);
+	const [local, rest] = splitProps(props, ["class", "children", "size", "ariaLabel", "anchor"]);
 
 	return (
 		<Show
 			when={ctx.isMobile()}
 			fallback={
-				<DialogContent class={local.class} size={local.size} ariaLabel={local.ariaLabel} {...rest}>
+				<DialogContent
+					class={local.class}
+					size={local.size}
+					ariaLabel={local.ariaLabel}
+					anchor={local.anchor}
+					{...rest}
+				>
 					{local.children}
 				</DialogContent>
 			}

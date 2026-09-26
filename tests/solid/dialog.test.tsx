@@ -776,3 +776,55 @@ describe("a tab row hosted by the modal Header", () => {
 		).not.toBeNull();
 	});
 });
+
+describe("an anchored dialog", () => {
+	const anchorAt = (left: number, top: number, width: number, height: number) => {
+		const el = document.createElement("div");
+		document.body.appendChild(el);
+		el.getBoundingClientRect = () =>
+			({
+				left,
+				top,
+				width,
+				height,
+				right: left + width,
+				bottom: top + height,
+				x: left,
+				y: top,
+			}) as DOMRect;
+		return el;
+	};
+
+	it("opens right of the element that opened it when there is room", () => {
+		window.innerWidth = 1440;
+		window.innerHeight = 900;
+		const tile = anchorAt(300, 200, 200, 150);
+		render(() => (
+			<Dialog open>
+				<DialogContent size="sm" anchor={tile} ariaLabel="Lights">
+					extras
+				</DialogContent>
+			</Dialog>
+		));
+
+		expect(panel().style.left).toBe("512px");
+		expect(panel().style.top).toBe("200px");
+		expect(panel().style.width).toBe("384px");
+		expect(panel().className).not.toContain("top-1/2");
+	});
+
+	it("opens left of it when the right side has no room", () => {
+		window.innerWidth = 1440;
+		window.innerHeight = 900;
+		const tile = anchorAt(1100, 100, 300, 240);
+		render(() => (
+			<Dialog open>
+				<DialogContent size="sm" anchor={tile} ariaLabel="Living Room">
+					extras
+				</DialogContent>
+			</Dialog>
+		));
+
+		expect(panel().style.left).toBe(`${1100 - 12 - 384}px`);
+	});
+});
