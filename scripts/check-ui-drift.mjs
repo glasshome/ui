@@ -24,6 +24,11 @@ const RULES = [
 		'use <Badge tone> or <Button size="none">',
 	],
 	[
+		"hand-rolled icon well",
+		/(?=[^"'`]*\brounded-full\b)(?=[^"'`]*\bbg-foreground\/\d+)[^"'`]*\bsize-\d+\b/,
+		'a round well is <SectionIcon icon> (or children), a pressable one <Button size="icon">, a person <Avatar>',
+	],
+	[
 		"raw palette color",
 		/\b(?:bg|text|border)-(?:amber|green|yellow|red|blue|orange|emerald|rose|sky)-\d{3}\b/,
 		"use theme vars: var(--success)/var(--warning)/var(--destructive) via <Badge>/<Alert>",
