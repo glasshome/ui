@@ -32,3 +32,30 @@ describe("ColorWheel ring", () => {
 		expect(maskInnerStop(container)).toBeCloseTo(70 - 14, 5);
 	});
 });
+
+describe("ColorWheel saturation ring", () => {
+	it("sets the saturation of the same colour from the keyboard, keeping its hue", async () => {
+		const { parseColor } = await import("@kobalte/core/colors");
+		const seen: string[] = [];
+		const { getByRole } = render(() => (
+			<ColorWheel
+				saturationRing
+				value={parseColor("hsb(120, 50%, 100%)")}
+				onChange={(c) => seen.push(c.toString("hsb"))}
+			/>
+		));
+		const thumb = getByRole("slider", { name: "Saturation" });
+		expect(thumb.getAttribute("aria-valuenow")).toBe("50");
+
+		thumb.dispatchEvent(
+			new KeyboardEvent("keydown", { key: "ArrowRight", shiftKey: true, bubbles: true }),
+		);
+
+		expect(seen.at(-1)).toMatch(/hsb\(120,? 60%,? 100%\)/);
+	});
+
+	it("draws no inner ring unless asked", () => {
+		const { container } = render(() => <ColorWheel />);
+		expect(container.querySelector('[data-slot="color-wheel-saturation"]')).toBeNull();
+	});
+});
