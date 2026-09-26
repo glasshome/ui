@@ -25,7 +25,8 @@ export const MORPH_MOTION =
 
 /* A dialog anchored on the element that opened it (a tile): it unrolls out of
  * that element's box and rolls back into it, on MORPH_MOTION's keyframes. */
-export const ANCHORED_MOTION = "data-[expanded]:animate-morph-in data-[closed]:animate-morph-out";
+export const ANCHORED_MOTION =
+	"data-[expanded]:animate-anchored-in data-[closed]:animate-morph-out";
 
 /* Children of a panel arrive staggered through the `gh-stagger` class
  * (globals.css): one door, no per-row index, mount-only. */

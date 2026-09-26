@@ -19,7 +19,7 @@ export function overAnchor(anchor: HTMLElement, width: number): JSX.CSSPropertie
 		translate: "none",
 		width: `${w}px`,
 		"max-width": "none",
-		"min-height": `${box.height}px`,
+		"min-height": `${Math.min(box.height, vh - y - EDGE)}px`,
 		"max-height": `${vh - y - EDGE}px`,
 		"--morph-x": `${box.left - x}px`,
 		"--morph-y": `${box.top - y}px`,

@@ -8,6 +8,8 @@ import { cn } from "../lib/utils.js";
 const PIN = 34;
 const WHITE = parseColor("hsb(0, 0%, 100%)");
 const THUMB = 38;
+/* The bar keeps its thumb this far from each end, so a press maps to the same span. */
+const THUMB_INSET = 28;
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
 /* Hue 0 at three o'clock, turning clockwise, the direction the conic gradient paints. */
@@ -41,15 +43,17 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
 	};
 	const thumb = () => place(hsb().getChannelValue("hue"), hsb().getChannelValue("saturation"));
 	const [dragging, setDragging] = createSignal(false);
+	let last: Color | undefined;
 	const colourAt = (e: PointerEvent, el: HTMLElement): Color => {
 		const box = el.getBoundingClientRect();
 		const dx = e.clientX - (box.left + box.width / 2);
 		const dy = e.clientY - (box.top + box.height / 2);
 		const hue = ((Math.atan2(dy, dx) * 180) / Math.PI + 360) % 360;
 		const saturation = clamp((Math.hypot(dx, dy) / (box.width / 2 - PIN / 2)) * 100, 0, 100);
-		return hsb()
+		last = hsb()
 			.withChannelValue("hue", Math.round(hue))
 			.withChannelValue("saturation", Math.round(saturation));
+		return last;
 	};
 
 	const onKeyDown = (e: KeyboardEvent) => {
@@ -102,7 +106,11 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
 				setDragging(false);
 				props.onChangeEnd?.(colourAt(e, e.currentTarget));
 			}}
-			onPointerCancel={() => setDragging(false)}
+			onPointerCancel={() => {
+				if (!dragging()) return;
+				setDragging(false);
+				if (last) props.onChangeEnd?.(last);
+			}}
 		>
 			<div
 				role="slider"
@@ -161,12 +169,19 @@ export function kelvinToCss(kelvin: number): string {
 const TemperatureBar: Component<TemperatureBarProps> = (props) => {
 	const min = () => props.min ?? 2000;
 	const max = () => props.max ?? 6500;
-	const pos = (k: number) => ((clamp(k, min(), max()) - min()) / (max() - min())) * 100;
+	const span = () => Math.max(max() - min(), 1);
+	const pos = (k: number) => ((clamp(k, min(), max()) - min()) / span()) * 100;
 	const [dragging, setDragging] = createSignal(false);
+	let last: number | undefined;
 	const kelvinAt = (e: PointerEvent, el: HTMLElement) => {
 		const box = el.getBoundingClientRect();
-		const t = clamp((e.clientX - box.left) / box.width, 0, 1);
-		return Math.round((min() + t * (max() - min())) / 50) * 50;
+		const t = clamp(
+			(e.clientX - box.left - THUMB_INSET) / Math.max(box.width - 2 * THUMB_INSET, 1),
+			0,
+			1,
+		);
+		last = clamp(Math.round((min() + t * span()) / 50) * 50, min(), max());
+		return last;
 	};
 	const gradient = (): JSX.CSSProperties => ({
 		background: `linear-gradient(90deg, ${kelvinToCss(min())}, ${kelvinToCss((min() + max()) / 2)}, ${kelvinToCss(max())})`,
@@ -194,7 +209,11 @@ const TemperatureBar: Component<TemperatureBarProps> = (props) => {
 				setDragging(false);
 				props.onChangeEnd?.(kelvinAt(e, e.currentTarget));
 			}}
-			onPointerCancel={() => setDragging(false)}
+			onPointerCancel={() => {
+				if (!dragging()) return;
+				setDragging(false);
+				if (last !== undefined) props.onChangeEnd?.(last);
+			}}
 		>
 			<div
 				role="slider"
@@ -211,7 +230,7 @@ const TemperatureBar: Component<TemperatureBarProps> = (props) => {
 					FOCUS_RING,
 				)}
 				style={{
-					left: `calc(28px + (100% - 56px) * ${pos(props.value) / 100})`,
+					left: `calc(${THUMB_INSET}px + (100% - ${2 * THUMB_INSET}px) * ${pos(props.value) / 100})`,
 					width: `${THUMB}px`,
 					height: `${THUMB}px`,
 					translate: "-50% -50%",

@@ -73,6 +73,8 @@
 	 * becomes the panel; nothing scales, so no row or radius distorts. */
 	--animate-morph-in: morph-in var(--duration-morph) var(--ease-morph) both;
 	--animate-morph-out: morph-out calc(var(--duration-morph) / 2) var(--ease-contract) both;
+	/* Unfilled once done, so the anchored panel's clip lets go and its shadow shows. */
+	--animate-anchored-in: morph-in var(--duration-morph) var(--ease-morph) backwards;
 }
 
 @keyframes collapsible-down {

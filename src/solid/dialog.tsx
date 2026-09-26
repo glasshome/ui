@@ -1,6 +1,14 @@
 import { Dialog as DialogPrimitive, useDialogContext } from "@kobalte/core/dialog";
 import type { VariantProps } from "cva";
-import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import {
+	type Component,
+	type ComponentProps,
+	createEffect,
+	createSignal,
+	onCleanup,
+	type ParentComponent,
+	splitProps,
+} from "solid-js";
 import { overAnchor } from "../lib/anchor-placement.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
@@ -81,7 +89,15 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
 		"style",
 	]);
 	const context = useDialogContext();
+	const [viewport, setViewport] = createSignal(0);
+	createEffect(() => {
+		if (!local.anchor || !context.isOpen()) return;
+		const measure = () => setViewport((n) => n + 1);
+		window.addEventListener("resize", measure);
+		onCleanup(() => window.removeEventListener("resize", measure));
+	});
 	const placement = () => {
+		viewport();
 		const a = local.anchor;
 		return a ? overAnchor(a, ANCHORED_WIDTH[local.size ?? "lg"]) : undefined;
 	};
