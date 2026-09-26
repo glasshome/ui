@@ -20,6 +20,7 @@ export interface ColorDiscPin extends ColorPin {
 }
 
 const PIN = 34;
+const WHITE = parseColor("hsb(0, 0%, 100%)");
 const THUMB = 38;
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
@@ -61,7 +62,7 @@ function Pin(props: {
 
 interface ColorDiscProps {
 	/** The colour shown and moved: its hue is the direction from the centre, its saturation the distance. */
-	value: Color;
+	value?: Color;
 	onChange?: (value: Color) => void;
 	onChangeEnd?: (value: Color) => void;
 	/** One-tap choices, pinned on the disc at their own colour. */
@@ -83,7 +84,8 @@ interface ColorDiscProps {
 const ColorDisc: Component<ColorDiscProps> = (props) => {
 	const size = () => props.size ?? 260;
 	const radius = () => size() / 2;
-	const hsb = () => props.value.toFormat("hsb");
+	const value = () => props.value ?? WHITE;
+	const hsb = () => value().toFormat("hsb");
 	const place = (hue: number, saturation: number) => {
 		const a = (hue * Math.PI) / 180;
 		const r = (clamp(saturation, 0, 100) / 100) * (radius() - PIN / 2);
@@ -198,7 +200,7 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
 					width: `${THUMB}px`,
 					height: `${THUMB}px`,
 					translate: "-50% -50%",
-					background: props.value.toString("css"),
+					background: value().toString("css"),
 					"pointer-events": "none",
 					opacity: onPin() ? 0 : 1,
 				}}
