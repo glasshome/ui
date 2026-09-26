@@ -476,8 +476,8 @@ describe("ImagePicker built-in pictures", () => {
 			document.querySelectorAll<HTMLButtonElement>('[data-slot="image-picker-preset"] button'),
 		);
 	const galleryTiles = () =>
-		Array.from(document.querySelectorAll('[data-slot="image-picker-gallery"] > *')).map(
-			(el) => el.getAttribute("data-slot"),
+		Array.from(document.querySelectorAll('[data-slot="image-picker-gallery"] > *')).map((el) =>
+			el.getAttribute("data-slot"),
 		);
 
 	it("puts the built-in pictures first in the one grid, each tagged, before the uploads", async () => {
