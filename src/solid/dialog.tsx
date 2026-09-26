@@ -1,10 +1,11 @@
 import { Dialog as DialogPrimitive, useDialogContext } from "@kobalte/core/dialog";
 import type { VariantProps } from "cva";
 import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
-import { besideAnchor } from "../lib/anchor-placement.js";
+import { overAnchor } from "../lib/anchor-placement.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
+	ANCHORED_PANEL,
 	createModalDismiss,
 	createModalParts,
 	MODAL_ANCHOR,
@@ -56,7 +57,8 @@ type DialogContentProps = ComponentProps<typeof DialogPrimitive.Content> & {
 	size?: ModalSize;
 	/** Names a panel that has no `DialogTitle`. A registered Title wins. */
 	ariaLabel?: string;
-	/** Opens the panel beside this element (the tile or row it came from) instead of centred. */
+	/** Opens the panel out of this element (the tile it came from): it grows from the element's box
+	 *  over it instead of appearing centred, and closes back into it. */
 	anchor?: HTMLElement;
 };
 
@@ -81,9 +83,7 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
 	const context = useDialogContext();
 	const placement = () => {
 		const a = local.anchor;
-		return a
-			? besideAnchor(a.getBoundingClientRect(), ANCHORED_WIDTH[local.size ?? "lg"])
-			: undefined;
+		return a ? overAnchor(a, ANCHORED_WIDTH[local.size ?? "lg"]) : undefined;
 	};
 	return (
 		<DialogPrimitive.Portal>
@@ -94,7 +94,7 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
 				role="dialog"
 				aria-label={context.titleId() ? undefined : local.ariaLabel}
 				class={cn(
-					MODAL_PANEL,
+					local.anchor ? ANCHORED_PANEL : MODAL_PANEL,
 					!local.anchor && MODAL_WIDTH[local.size ?? "lg"],
 					!local.anchor && MODAL_ANCHOR[local.size ?? "lg"],
 					local.class,

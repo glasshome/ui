@@ -1,30 +1,30 @@
 import type { JSX } from "solid-js";
 
-const GAP = 12;
 const EDGE = 16;
-/* The least room kept below the panel's top, so a tile near the bottom still opens a usable panel. */
-const MIN_HEIGHT = 240;
 
-/** A panel beside the element that opened it: right when there is room, else left, else over it;
- *  top-aligned with it and kept on screen. */
-export function besideAnchor(anchor: DOMRect, width: number): JSX.CSSProperties {
+/** A panel that grows out of the element that opened it: its corner on the element's corner, at
+ *  least as wide as the element, shifted only as far as the screen needs. The --morph-* values
+ *  start the panel clipped to the element's box (MORPH_MOTION's keyframes), so it unrolls out of it. */
+export function overAnchor(anchor: HTMLElement, width: number): JSX.CSSProperties {
+	const box = anchor.getBoundingClientRect();
 	const vw = window.innerWidth;
 	const vh = window.innerHeight;
-	const right = anchor.right + GAP;
-	const left = anchor.left - GAP - width;
-	const x =
-		right + width <= vw - EDGE
-			? right
-			: left >= EDGE
-				? left
-				: Math.max(EDGE, Math.min(anchor.left, vw - EDGE - width));
-	const y = Math.max(EDGE, Math.min(anchor.top, vh - EDGE - MIN_HEIGHT));
+	const w = Math.min(Math.max(width, box.width), vw - 2 * EDGE);
+	const x = Math.max(EDGE, Math.min(box.left, vw - EDGE - w));
+	const y = Math.max(EDGE, Math.min(box.top, vh - EDGE - Math.max(box.height, 240)));
+	const radius = getComputedStyle(anchor).borderTopLeftRadius || "0px";
 	return {
 		left: `${x}px`,
 		top: `${y}px`,
 		translate: "none",
-		width: `${Math.min(width, vw - 2 * EDGE)}px`,
+		width: `${w}px`,
 		"max-width": "none",
+		"min-height": `${box.height}px`,
 		"max-height": `${vh - y - EDGE}px`,
-	};
+		"--morph-x": `${box.left - x}px`,
+		"--morph-y": `${box.top - y}px`,
+		"--morph-w": `${box.width}px`,
+		"--morph-h": `${box.height}px`,
+		"--morph-radius": radius,
+	} as JSX.CSSProperties;
 }

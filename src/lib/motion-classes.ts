@@ -23,6 +23,10 @@ export const FIELD_MOTION = "data-[closed]:animate-select-out data-[expanded]:an
 export const MORPH_MOTION =
 	"[--morph-w:var(--kb-popper-anchor-width)] min-w-[var(--kb-popper-anchor-width)] data-[expanded]:animate-morph-in data-[closed]:animate-morph-out";
 
+/* A dialog anchored on the element that opened it (a tile): it unrolls out of
+ * that element's box and rolls back into it, on MORPH_MOTION's keyframes. */
+export const ANCHORED_MOTION = "data-[expanded]:animate-morph-in data-[closed]:animate-morph-out";
+
 /* Children of a panel arrive staggered through the `gh-stagger` class
  * (globals.css): one door, no per-row index, mount-only. */
 export const STAGGER = "gh-stagger";

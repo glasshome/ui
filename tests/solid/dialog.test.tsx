@@ -795,7 +795,7 @@ describe("an anchored dialog", () => {
 		return el;
 	};
 
-	it("opens right of the element that opened it when there is room", () => {
+	it("grows out of the element that opened it, from its corner", () => {
 		window.innerWidth = 1440;
 		window.innerHeight = 900;
 		const tile = anchorAt(300, 200, 200, 150);
@@ -807,13 +807,15 @@ describe("an anchored dialog", () => {
 			</Dialog>
 		));
 
-		expect(panel().style.left).toBe("512px");
+		expect(panel().style.left).toBe("300px");
 		expect(panel().style.top).toBe("200px");
 		expect(panel().style.width).toBe("384px");
+		expect(panel().style.getPropertyValue("--morph-w")).toBe("200px");
+		expect(panel().style.getPropertyValue("--morph-h")).toBe("150px");
 		expect(panel().className).not.toContain("top-1/2");
 	});
 
-	it("opens left of it when the right side has no room", () => {
+	it("shifts only as far as the screen needs, and starts from where the element is", () => {
 		window.innerWidth = 1440;
 		window.innerHeight = 900;
 		const tile = anchorAt(1100, 100, 300, 240);
@@ -825,6 +827,7 @@ describe("an anchored dialog", () => {
 			</Dialog>
 		));
 
-		expect(panel().style.left).toBe(`${1100 - 12 - 384}px`);
+		expect(panel().style.left).toBe(`${1440 - 16 - 384}px`);
+		expect(panel().style.getPropertyValue("--morph-x")).toBe(`${1100 - (1440 - 16 - 384)}px`);
 	});
 });

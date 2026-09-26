@@ -68,7 +68,8 @@
 
 	/* Trigger morph: the panel is anchored over the trigger's top edge and starts
 	 * clipped to the trigger's own box and radius (--morph-w/h/radius, written by
-	 * the content from its trigger), then unrolls into its own box. The pill
+	 * the content from its trigger; --morph-x/y when the panel had to shift off
+	 * the trigger's corner to stay on screen), then unrolls into its own box. The pill
 	 * becomes the panel; nothing scales, so no row or radius distorts. */
 	--animate-morph-in: morph-in var(--duration-morph) var(--ease-morph) both;
 	--animate-morph-out: morph-out calc(var(--duration-morph) / 2) var(--ease-contract) both;
@@ -120,7 +121,8 @@
 	from {
 		opacity: 0;
 		clip-path: inset(
-			0 calc(100% - var(--morph-w, 100%)) calc(100% - var(--morph-h, 2.5rem)) 0 round
+			var(--morph-y, 0px) calc(100% - var(--morph-x, 0px) - var(--morph-w, 100%))
+				calc(100% - var(--morph-y, 0px) - var(--morph-h, 2.5rem)) var(--morph-x, 0px) round
 				var(--morph-radius, 9999px)
 		);
 		pointer-events: none;
@@ -145,7 +147,8 @@
 	to {
 		opacity: 0;
 		clip-path: inset(
-			0 calc(100% - var(--morph-w, 100%)) calc(100% - var(--morph-h, 2.5rem)) 0 round
+			var(--morph-y, 0px) calc(100% - var(--morph-x, 0px) - var(--morph-w, 100%))
+				calc(100% - var(--morph-y, 0px) - var(--morph-h, 2.5rem)) var(--morph-x, 0px) round
 				var(--morph-radius, 9999px)
 		);
 	}

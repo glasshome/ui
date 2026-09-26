@@ -18,7 +18,7 @@ import {
 } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Z_CLASS } from "../lib/layers.js";
-import { MODAL_MOTION, SCRIM_MOTION } from "../lib/motion-classes.js";
+import { ANCHORED_MOTION, MODAL_MOTION, SCRIM_MOTION } from "../lib/motion-classes.js";
 import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import { acquireScrollLock, releaseScrollLock } from "./bottom-sheet/scroll-lock.js";
@@ -60,6 +60,10 @@ export const MODAL_ANCHOR: Record<ModalSize, string> = {
  * belongs to Header, Body or Footer, so the Body scrollbar rides inside the
  * panel edge instead of under the header. */
 export const MODAL_PANEL = `${OVERLAY_SURFACE} ${MODAL_MOTION} fixed left-1/2 flex ${MODAL_MAX_H} w-[calc(100%-2rem)] -translate-x-1/2 flex-col overflow-hidden rounded-lg outline-none ${Z_CLASS.overlay}`;
+
+/* A panel anchored on the element that opened it: placed and sized inline (lib/anchor-placement),
+ * so it drops the centring, and it unrolls out of that element instead of rising in. */
+export const ANCHORED_PANEL = `${OVERLAY_SURFACE} ${ANCHORED_MOTION} fixed flex ${MODAL_MAX_H} flex-col overflow-hidden rounded-lg outline-none ${Z_CLASS.overlay}`;
 
 export const MODAL_SCRIM = `${SCRIM_MOTION} fixed inset-0 ${Z_CLASS.overlay} ${SCRIM_CLASS}`;
 
