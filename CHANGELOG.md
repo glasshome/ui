@@ -18,6 +18,19 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.20.0](https://github.com/glasshome/ui/compare/v1.19.0...v1.20.0) (2026-09-26)
+
+
+### Features
+
+* dashboard preview and a meta line on preview tiles ([8a74762](https://github.com/glasshome/ui/commit/8a747622928422164f96b4426a13b79db9e96f18))
+* dashboard preview and a meta line on preview tiles ([733258b](https://github.com/glasshome/ui/commit/733258b3dcd09e7e70a81d6c2157db879c722d0c))
+
+
+### Bug Fixes
+
+* **gallery:** the dashboard preview specimen has nothing to try ([a88aa24](https://github.com/glasshome/ui/commit/a88aa242a5c50fff9679521eee6ac9aad3fb64bf))
+
 ## [1.19.0](https://github.com/glasshome/ui/compare/v1.18.0...v1.19.0) (2026-09-25)
 
 
