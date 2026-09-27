@@ -257,7 +257,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 		// (the same class of bug the item-level ResizeObserver above fixes for
 		// icons); one extra pass once fonts settle catches that too.
 		if (typeof document !== "undefined" && document.fonts) {
-			document.fonts.ready.then(() => {
+			void document.fonts.ready.then(() => {
 				if (!disposed) measure();
 			});
 		}

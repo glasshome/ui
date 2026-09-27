@@ -6,6 +6,7 @@ import {
 	createSignal,
 	Index,
 	type JSX,
+	on,
 	onCleanup,
 	onMount,
 	Show,
@@ -252,13 +253,13 @@ const Dock: Component<DockProps> = (props) => {
 		});
 	});
 
-	createEffect(() => {
-		local.items.length;
-		// The box pads by mode, so switching it changes the room the strip has.
-		dockMode();
-		const timeoutId = setTimeout(checkOverflow, 150);
-		onCleanup(() => clearTimeout(timeoutId));
-	});
+	// The box pads by mode, so switching it changes the room the strip has.
+	createEffect(
+		on([() => local.items.length, dockMode], () => {
+			const timeoutId = setTimeout(checkOverflow, 150);
+			onCleanup(() => clearTimeout(timeoutId));
+		}),
+	);
 
 	return (
 		<div
