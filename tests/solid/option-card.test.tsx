@@ -19,19 +19,19 @@ function radioAt(container: HTMLElement, index: number) {
 
 describe("OptionCard", () => {
 	it("renders one named radio per card", () => {
-		const { container, getByLabelText } = render(() => (
+		const view = render(() => (
 			<OptionCardGroup value={null} onChange={() => {}} aria-label="How they sign in">
 				<OptionCard value="invite" title="Send an invite" description="They pick a password." />
 				<OptionCard value="code" title="Share a code" />
 			</OptionCardGroup>
 		));
 
-		expect(container.querySelector('[role="radiogroup"]')?.getAttribute("aria-label")).toBe(
+		expect(view.container.querySelector('[role="radiogroup"]')?.getAttribute("aria-label")).toBe(
 			"How they sign in",
 		);
-		expect(radios(container).map((radio) => radio.value)).toEqual(["invite", "code"]);
-		expect(getByLabelText(/Send an invite/)).toBe(radios(container)[0]);
-		expect(getByLabelText("Share a code")).toBe(radios(container)[1]);
+		expect(radios(view.container).map((radio) => radio.value)).toEqual(["invite", "code"]);
+		expect(view.getByLabelText(/Send an invite/)).toBe(radios(view.container)[0]);
+		expect(view.getByLabelText("Share a code")).toBe(radios(view.container)[1]);
 	});
 
 	it("reports the picked value once per click and marks the card checked", () => {
@@ -92,7 +92,7 @@ describe("OptionCard", () => {
 	});
 
 	it("renders sub-options inside the card, outside the radio item", () => {
-		const { container, getByTestId } = render(() => (
+		const view = render(() => (
 			<OptionCardGroup value="person" onChange={() => {}}>
 				<OptionCard value="person" title="A person">
 					<button type="button" data-testid="slot">
@@ -102,16 +102,18 @@ describe("OptionCard", () => {
 			</OptionCardGroup>
 		));
 
-		const slot = getByTestId("slot");
-		expect(container.querySelector('[data-slot="option-card"]')?.contains(slot)).toBe(true);
-		expect(container.querySelector('[data-slot="radio-group-item"]')?.contains(slot)).toBe(false);
+		const slot = view.getByTestId("slot");
+		expect(view.container.querySelector('[data-slot="option-card"]')?.contains(slot)).toBe(true);
+		expect(view.container.querySelector('[data-slot="radio-group-item"]')?.contains(slot)).toBe(
+			false,
+		);
 		// Inside the card, in a drawer that morphs the card open on the morph token.
-		const drawer = container.querySelector('[data-slot="option-card-drawer"]');
+		const drawer = view.container.querySelector('[data-slot="option-card-drawer"]');
 		expect(drawer?.contains(slot)).toBe(true);
 		expect(drawer?.className).toContain("grid-rows-[0fr]");
 		expect(drawer?.className).toContain("duration-(--duration-morph)");
 		expect(
-			container.querySelector('[data-slot="option-card"]:not(:has([data-testid]))'),
+			view.container.querySelector('[data-slot="option-card"]:not(:has([data-testid]))'),
 		).toBeNull();
 	});
 

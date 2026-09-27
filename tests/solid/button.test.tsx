@@ -7,13 +7,13 @@ afterEach(cleanup);
 
 describe("Button xl", () => {
 	it("is a tall pill that lays out a well and two text lines", () => {
-		const { getByRole } = render(() => (
+		const view = render(() => (
 			<Button size="xl">
 				<ButtonWell icon="lucide:download" />
 				<span>Install GlassHome</span>
 			</Button>
 		));
-		const cls = getByRole("button").className;
+		const cls = view.getByRole("button").className;
 		expect(cls).toContain("h-[72px]");
 		expect(cls).toContain("rounded-full");
 		expect(cls).toContain("text-left");

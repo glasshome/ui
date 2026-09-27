@@ -68,12 +68,12 @@ describe("TABLE_HEAD_LABEL_CLASS", () => {
 describe("DataTableRow", () => {
 	it("activates the whole row from the keyboard, not just the pointer", () => {
 		let opened = 0;
-		const { getByRole } = render(() => (
+		const view = render(() => (
 			<DataTableRow onOpen={() => opened++} openLabel="Open Clock">
 				<span>Clock</span>
 			</DataTableRow>
 		));
-		const opener = getByRole("button", { name: "Open Clock" });
+		const opener = view.getByRole("button", { name: "Open Clock" });
 		opener.focus();
 		expect(document.activeElement).toBe(opener);
 		opener.click();
@@ -81,22 +81,22 @@ describe("DataTableRow", () => {
 	});
 
 	it("leaves a row with no opener inert", () => {
-		const { queryByRole } = render(() => (
+		const view = render(() => (
 			<DataTableRow>
 				<span>Clock</span>
 			</DataTableRow>
 		));
-		expect(queryByRole("button")).toBeNull();
-		expect(queryByRole("link")).toBeNull();
+		expect(view.queryByRole("button")).toBeNull();
+		expect(view.queryByRole("link")).toBeNull();
 	});
 
 	it("renders a link row as a link, so middle-click and copy-address work", () => {
-		const { getByRole } = render(() => (
+		const view = render(() => (
 			<DataTableRow href="/admin#widgets/w_clock" openLabel="Open Clock">
 				<span>Clock</span>
 			</DataTableRow>
 		));
-		expect(getByRole("link", { name: "Open Clock" }).getAttribute("href")).toBe(
+		expect(view.getByRole("link", { name: "Open Clock" }).getAttribute("href")).toBe(
 			"/admin#widgets/w_clock",
 		);
 	});
@@ -104,7 +104,7 @@ describe("DataTableRow", () => {
 	it("stacks actions above the row opener so their own click still lands", () => {
 		let opened = 0;
 		let retried = 0;
-		const { getByRole } = render(() => (
+		const view = render(() => (
 			<DataTableRow
 				onOpen={() => opened++}
 				openLabel="Open Aurora"
@@ -117,7 +117,7 @@ describe("DataTableRow", () => {
 				<span>Aurora</span>
 			</DataTableRow>
 		));
-		getByRole("button", { name: "Retry" }).click();
+		view.getByRole("button", { name: "Retry" }).click();
 		expect(retried).toBe(1);
 		expect(opened).toBe(0);
 	});

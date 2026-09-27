@@ -21,8 +21,8 @@ import { Textarea } from "../../src/solid/textarea.js";
 
 describe("solid primitives render", () => {
 	it("Button", () => {
-		const { getByRole } = render(() => <Button>Click me</Button>);
-		expect(getByRole("button").textContent).toBe("Click me");
+		const view = render(() => <Button>Click me</Button>);
+		expect(view.getByRole("button").textContent).toBe("Click me");
 	});
 
 	it("Badge", () => {
@@ -55,13 +55,13 @@ describe("solid primitives render", () => {
 	});
 
 	it("Input + Label", () => {
-		const { getByLabelText } = render(() => (
+		const view = render(() => (
 			<>
 				<Label for="name">Name</Label>
 				<Input id="name" value="glasshome" />
 			</>
 		));
-		expect((getByLabelText("Name") as HTMLInputElement).value).toBe("glasshome");
+		expect((view.getByLabelText("Name") as HTMLInputElement).value).toBe("glasshome");
 	});
 
 	it("Textarea", () => {
