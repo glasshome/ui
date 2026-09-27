@@ -111,6 +111,7 @@ export const THEME_PRESETS: ThemePreset[] = [
 			themed: false,
 			night: "glass-house-night",
 			vignette: 0.65,
+			blur: 4,
 		}),
 	},
 	preset(
