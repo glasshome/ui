@@ -4,9 +4,6 @@ import {
 	type Component,
 	type ComponentProps,
 	createContext,
-	createSignal,
-	onCleanup,
-	onMount,
 	type ParentComponent,
 	Show,
 	splitProps,
@@ -47,36 +44,13 @@ const ToggleGroup: ParentComponent<
 	// discriminated union, so pulling `multiple` into a separate prop collapses the
 	// union and mistypes `value`. Leave it in `rest` and just peek at it here.
 	const sliding = () => !(props as { multiple?: boolean }).multiple;
-	// Items that overflow the width they are given wrap onto rows; measured, so labels of any length work.
-	const [wrap, setWrap] = createSignal(false);
-	let root: HTMLDivElement | undefined;
-	const measure = () => {
-		if (!root) return;
-		const items = root.querySelectorAll<HTMLElement>('[data-slot="toggle-group-item"]');
-		let needed = 8 + 4 * Math.max(0, items.length - 1);
-		for (const item of items) needed += item.scrollWidth;
-		const room = root.parentElement?.clientWidth ?? root.clientWidth;
-		setWrap(needed > room + 1);
-	};
-	onMount(() => {
-		if (!root || typeof ResizeObserver === "undefined") return;
-		const ro = new ResizeObserver(measure);
-		ro.observe(root);
-		if (root.parentElement) ro.observe(root.parentElement);
-		onCleanup(() => ro.disconnect());
-	});
 	return (
 		<ToggleGroupPrimitive
-			ref={(el: HTMLDivElement) => {
-				root = el;
-			}}
 			data-slot="toggle-group"
 			data-variant={local.variant}
 			data-size={local.size}
-			data-wrap={wrap() ? "" : undefined}
 			class={cn(
-				`group/toggle-group flex w-fit max-w-full items-center rounded-lg ${TRACK_SURFACE} p-1 data-[variant=outline]:shadow-xs`,
-				wrap() && "flex-wrap gap-1",
+				`group/toggle-group flex w-fit max-w-full flex-wrap items-center gap-y-1 rounded-lg ${TRACK_SURFACE} p-1 data-[variant=outline]:shadow-xs`,
 				local.class,
 			)}
 			{...rest}
@@ -91,8 +65,8 @@ const ToggleGroup: ParentComponent<
 						activeSelector="[data-pressed]"
 						indicatorClass="rounded-md"
 						indicatorTone={local.tone}
-						wrapped={wrap()}
-						class={cn("flex w-full items-center", wrap() && "flex-wrap gap-1")}
+						wrapped
+						class="flex w-full flex-wrap items-center gap-y-1"
 					>
 						{local.children}
 					</SlidingIndicator>
@@ -118,7 +92,8 @@ const ToggleGroupItem: Component<
 					variant: context.variant || local.variant,
 					size: context.size || local.size,
 				}),
-				"min-w-0 flex-1 shrink-0 rounded-md px-4 shadow-none focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first-of-type:border-l group-data-[wrap]/toggle-group:flex-none",
+				// Wrapping is plain CSS: an item never shrinks below its label, so a row that runs out of width breaks.
+				"min-w-max flex-1 shrink-0 rounded-md px-4 shadow-none focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first-of-type:border-l",
 				// Single-select: the sliding indicator paints the active segment, so the
 				// item needs no pressed fill of its own and hover only tints the text.
 				// Multi-select has no single indicator, so each pressed segment carries
