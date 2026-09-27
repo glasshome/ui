@@ -507,7 +507,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 										</span>
 										<button
 											type="button"
-											class="text-primary text-sm hover:underline"
+											class="text-primary-tint-foreground text-sm hover:underline"
 											onClick={() => setShowDiagnostics(true)}
 										>
 											Show diagnostic entities
@@ -520,7 +520,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 								</span>
 								<button
 									type="button"
-									class="text-primary text-sm hover:underline"
+									class="text-primary-tint-foreground text-sm hover:underline"
 									onClick={() => setSearch("")}
 								>
 									Clear search

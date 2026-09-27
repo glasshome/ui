@@ -25,7 +25,7 @@ export const buttonVariants = cva({
 				"glass glass-tint [--glass-text:0%] [--glass-tone:var(--accent)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--accent)_60%,transparent)] hover:[--glass-wash:65%] dark:[--glass-tone:oklch(from_var(--accent)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:hover:[--glass-wash:62%]",
 			outline: OUTLINE_SURFACE,
 			ghost: "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",
-			link: "text-primary underline-offset-4 hover:underline",
+			link: "text-primary-tint-foreground underline-offset-4 hover:underline",
 		},
 		size: {
 			default: "h-9 px-4 py-2 has-[>svg]:px-3",
