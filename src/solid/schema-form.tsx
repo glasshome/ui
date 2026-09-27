@@ -123,6 +123,12 @@ function recordOf(value: unknown): Record<string, unknown> {
 	return typeof value === "object" && value !== null ? (value as Record<string, unknown>) : {};
 }
 
+function textOf(value: unknown): string {
+	return typeof value === "string" || typeof value === "number" || typeof value === "boolean"
+		? String(value)
+		: "";
+}
+
 /** Property defaults declared on the wire (`default`), plus `const` seeds
  * (a variant branch's discriminator literal serializes as `const`). */
 function propertyDefaults(branch: ExtendedJSONSchema): Record<string, unknown> {
@@ -332,6 +338,7 @@ function LabeledField(props: FieldProps) {
 /** The one recursive dispatch: every nesting level renders through here. */
 function FieldControl(props: FieldProps) {
 	const current = () => props.value ?? props.prop.default;
+	const text = () => textOf(current());
 	const enumLabel = (value: string) => props.prop.labels?.[value] ?? value;
 	const kind = () => controlKind(props.prop, props.name);
 	return (
@@ -340,7 +347,7 @@ function FieldControl(props: FieldProps) {
 				<Input
 					id={props.id}
 					type="text"
-					value={String(current() ?? "")}
+					value={text()}
 					onInput={(e) => props.onChange(e.currentTarget.value)}
 				/>
 			}
@@ -369,7 +376,7 @@ function FieldControl(props: FieldProps) {
 			<Match when={kind() === "icon"}>
 				<IconPicker
 					aria-labelledby={props.labelledBy}
-					value={String(current() ?? "")}
+					value={text()}
 					onChange={(val) => props.onChange(val)}
 					searchIcons={props.searchIcons}
 				/>
@@ -378,14 +385,14 @@ function FieldControl(props: FieldProps) {
 				<ImagePicker
 					id={props.id}
 					presets={props.prop.presets}
-					value={String(current() ?? "")}
+					value={text()}
 					onChange={(val) => props.onChange(val)}
 				/>
 			</Match>
 			<Match when={kind() === "area"}>
 				<AreaPicker
 					aria-labelledby={props.labelledBy}
-					value={String(current() ?? "")}
+					value={text()}
 					onChange={(val) => props.onChange(val)}
 				/>
 			</Match>
@@ -393,7 +400,7 @@ function FieldControl(props: FieldProps) {
 				{(icons) => (
 					<OptionCardGroup
 						aria-labelledby={props.labelledBy}
-						value={String(current() ?? "")}
+						value={text()}
 						onChange={(val) => props.onChange(val)}
 						class="grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]"
 					>
@@ -407,7 +414,7 @@ function FieldControl(props: FieldProps) {
 			</Match>
 			<Match when={kind() === "enum"}>
 				<Select
-					value={String(current() ?? "")}
+					value={text()}
 					onChange={(val) => {
 						if (val != null) props.onChange(val);
 					}}
