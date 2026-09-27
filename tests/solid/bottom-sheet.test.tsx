@@ -86,3 +86,18 @@ describe("BottomSheet labelling", () => {
 		expect(panel?.getAttribute("aria-labelledby")).toBe(title?.id);
 	});
 });
+
+describe("BottomSheet content style", () => {
+	it("keeps the caller's style beside its own", () => {
+		render(() => (
+			<BottomSheet open>
+				<BottomSheetPortal>
+					<BottomSheetContent style={{ "--glass-tone": "red" }}>Body</BottomSheetContent>
+				</BottomSheetPortal>
+			</BottomSheet>
+		));
+		const panel = document.querySelector<HTMLElement>('[data-slot="bottom-sheet-content"]');
+		expect(panel?.style.getPropertyValue("--glass-tone")).toBe("red");
+		expect(panel?.style.getPropertyValue("touch-action")).toBe("pan-y");
+	});
+});

@@ -188,7 +188,13 @@ interface BottomSheetContentProps extends ComponentProps<"div"> {
 }
 
 const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => {
-	const [local, rest] = splitProps(props, ["class", "children", "initialFocus", "ariaLabel"]);
+	const [local, rest] = splitProps(props, [
+		"class",
+		"children",
+		"initialFocus",
+		"ariaLabel",
+		"style",
+	]);
 	const ctx = useBottomSheetContext();
 	const labels = createModalLabels();
 	let el: HTMLDivElement | undefined;
@@ -349,6 +355,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
 				onAnimationEnd={onAnimationEnd}
 				onTransitionEnd={onTransitionEnd}
 				style={{
+					...(typeof local.style === "object" ? local.style : {}),
 					"z-index": Z.sheet,
 					"--bs-duration": `${TRANSITION_MS}ms`,
 					"--bs-ease": EASE,
