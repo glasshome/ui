@@ -45,10 +45,12 @@ interface SlidingIndicatorProps extends ComponentProps<"div"> {
 	indicatorTone?: string;
 	/** Selector for the measurable items. Default: direct children (minus the indicator). */
 	itemSelector?: string;
+	/** Items wrap onto rows: the indicator follows the active item's row as well as its place in it. */
+	wrapped?: boolean;
 	children: JSX.Element;
 }
 
-type Pos = { offset: number; size: number; cross: number };
+type Pos = { offset: number; size: number; cross: number; crossOffset: number };
 
 // One duration for both the slide (transform transition) and the scale dip, so
 // they always overlap exactly. Shorter = snappier.
@@ -73,6 +75,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 		"indicatorClass",
 		"indicatorTone",
 		"itemSelector",
+		"wrapped",
 		"class",
 		"children",
 		"ref",
@@ -174,11 +177,14 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 							(er.left - cr.left) / sx - tx - containerRef.clientLeft + containerRef.scrollLeft,
 						size: er.width / sx,
 						cross: er.height / sy,
+						crossOffset:
+							(er.top - cr.top) / sy - ty - containerRef.clientTop + containerRef.scrollTop,
 					}
 				: {
 						offset: (er.top - cr.top) / sy - ty - containerRef.clientTop + containerRef.scrollTop,
 						size: er.height / sy,
 						cross: er.width / sx,
+						crossOffset: 0,
 					},
 		);
 	};
@@ -275,16 +281,26 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
 						aria-hidden="true"
 						class={cn(
 							"pointer-events-none absolute -z-10",
-							horizontal() ? "inset-y-0 left-0" : "inset-x-0 top-0",
+							local.wrapped
+								? "top-0 left-0"
+								: horizontal()
+									? "inset-y-0 left-0"
+									: "inset-x-0 top-0",
 							"glass glass-tint",
 							local.indicatorClass ?? "rounded-lg",
 						)}
 						style={{
 							transition: `transform ${SLIDE_MS}ms ease-in-out, width ${SLIDE_MS}ms ease-in-out, height ${SLIDE_MS}ms ease-in-out`,
 							"--glass-tone": local.indicatorTone ?? "var(--primary)",
-							...(horizontal()
-								? { transform: `translateX(${p().offset}px)`, width: `${p().size}px` }
-								: { transform: `translateY(${p().offset}px)`, height: `${p().size}px` }),
+							...(local.wrapped && horizontal()
+								? {
+										transform: `translate(${p().offset}px, ${p().crossOffset}px)`,
+										width: `${p().size}px`,
+										height: `${p().cross}px`,
+									}
+								: horizontal()
+									? { transform: `translateX(${p().offset}px)`, width: `${p().size}px` }
+									: { transform: `translateY(${p().offset}px)`, height: `${p().size}px` }),
 						}}
 					/>
 				)}
