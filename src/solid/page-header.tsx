@@ -1,13 +1,13 @@
 import { type JSX, Show } from "solid-js";
 import { CARD_BLUR, CARD_SURFACE_BASE } from "../lib/card-classes.js";
+import { SECTION_OUTER_RADIUS } from "../lib/section-tokens.js";
 import { cn } from "../lib/utils.js";
 import { CountPill } from "./count-pill.js";
-import { Icon } from "./icon.js";
-import { type GlassSurface, NOOP_GLASS } from "./section-card.js";
+import { type GlassSurface, NOOP_GLASS, SectionIcon } from "./section-card.js";
 
 /**
- * Page banner header, shared by dash and hub: the card surface with a primary
- * glow and an optional logo watermark. Content is a superset API: icon/iconNode
+ * Page banner header, shared by dash and hub: the card surface with a display
+ * title and an optional logo watermark. Content is a superset API: icon/iconNode
  * + title + count pill + subtitle on the left, actions on the right. The caller
  * owns the space around it.
  *
@@ -36,14 +36,10 @@ export function PageHeader(props: {
 		<div
 			data-slot="page-header"
 			ref={glass().ref}
-			class={cn(CARD_SURFACE_BASE, "relative overflow-hidden rounded-xl")}
+			class={cn(CARD_SURFACE_BASE, SECTION_OUTER_RADIUS, "relative overflow-hidden")}
 			classList={{ [CARD_BLUR]: !(glass().active?.() ?? false) }}
 			style={glass().style?.() ?? {}}
 		>
-			<div
-				data-slot="page-header-glow"
-				class="pointer-events-none absolute top-0 left-0 h-48 w-72 -translate-x-1/3 -translate-y-1/2 rounded-full bg-primary/15 blur-3xl"
-			/>
 			<Show when={props.logo}>
 				{(logo) => (
 					<img
@@ -54,27 +50,24 @@ export function PageHeader(props: {
 					/>
 				)}
 			</Show>
-			<div
-				data-slot="page-header-row"
-				class="relative flex min-h-[64px] items-center gap-2.5 px-4 py-3 sm:min-h-[80px] sm:gap-4 sm:px-6 sm:py-5"
-			>
+			<div data-slot="page-header-row" class="relative flex items-center gap-3 p-4 sm:gap-5 sm:p-6">
 				<Show
 					when={props.iconNode}
 					fallback={
 						<Show when={props.icon}>
 							{(icon) => (
-								<Icon icon={icon()} class="shrink-0 text-[28px] text-primary sm:text-[32px]" />
+								<SectionIcon icon={icon()} size="lg" tone="var(--primary)" class="shrink-0" />
 							)}
 						</Show>
 					}
 				>
 					{props.iconNode}
 				</Show>
-				<div data-slot="page-header-headings" class="flex min-w-0 flex-1 flex-col gap-0.5">
+				<div data-slot="page-header-headings" class="flex min-w-0 flex-1 flex-col gap-1.5 sm:gap-2">
 					<div data-slot="page-header-headline" class="flex min-w-0 items-center gap-2 sm:gap-3">
 						<h1
 							data-slot="page-header-title"
-							class="min-w-0 truncate font-bold text-foreground text-xl tracking-[-0.02em] sm:text-2xl"
+							class="min-w-0 truncate pb-0.5 font-bold text-[1.75rem] text-foreground leading-none tracking-[-0.035em] sm:text-[2.5rem]"
 						>
 							{props.title}
 						</h1>
