@@ -18,6 +18,18 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.21.0](https://github.com/glasshome/ui/compare/v1.20.0...v1.21.0) (2026-09-27)
+
+
+### Features
+
+* **presets:** Midnight Glass softens its background with a light blur ([b981dd9](https://github.com/glasshome/ui/commit/b981dd9be45785ed732318bb21081bd094e43b0a))
+
+
+### Bug Fixes
+
+* **toggle-group:** wrap with plain CSS so the selected segment stops jittering ([5e5d2c1](https://github.com/glasshome/ui/commit/5e5d2c1399777cc8a604e3dc5c3a87410d977d9c))
+
 ## [1.20.0](https://github.com/glasshome/ui/compare/v1.19.0...v1.20.0) (2026-09-27)
 
 
