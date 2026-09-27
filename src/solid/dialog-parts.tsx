@@ -93,7 +93,7 @@ const MODAL_FOOTER =
 export const MODAL_TITLE = "font-semibold text-foreground text-lg leading-none tracking-tight";
 export const MODAL_DESCRIPTION = "text-muted-foreground text-sm";
 
-export type ModalHeaderProps = ComponentProps<"div"> & {
+type ModalHeaderProps = ComponentProps<"div"> & {
 	/** Avatar or icon, rendered ahead of the title column. */
 	media?: JSX.Element;
 	action?: JSX.Element;
@@ -104,7 +104,7 @@ export type ModalHeaderProps = ComponentProps<"div"> & {
 
 /** `as="form"` makes the scroll container the form, so a footer submit button
  *  reaches it through `form="<id>"` with no wrapper in between. */
-export type ModalBodyProps = ComponentProps<"div"> & { as?: ValidComponent };
+type ModalBodyProps = ComponentProps<"div"> & { as?: ValidComponent };
 
 export interface ModalParts {
 	Header: Component<ModalHeaderProps>;

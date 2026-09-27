@@ -125,5 +125,8 @@ export function mediaUrl(id: string | null | undefined): string | undefined {
 	return useMediaStore()?.url(id);
 }
 
-/** Reads better than mediaUrl in an image widget's source. */
+/**
+ * Reads better than mediaUrl in an image widget's source.
+ * @alias
+ */
 export const imageUrl = mediaUrl;

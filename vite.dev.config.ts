@@ -10,10 +10,15 @@ import solid from "vite-plugin-solid";
 /* Dev-only gallery server (`bun run dev:gallery`). The publishable library
  * build stays in vite.config.ts; this config never ships anything. */
 
-const ICON_PREFIXES = ["lucide", "mdi", "simple-icons"];
+const require = createRequire(import.meta.url);
+const ICON_SETS: Record<string, string> = {
+	lucide: require.resolve("@iconify-json/lucide/icons.json"),
+	mdi: require.resolve("@iconify-json/mdi/icons.json"),
+	"simple-icons": require.resolve("@iconify-json/simple-icons/icons.json"),
+};
+const ICON_PREFIXES = Object.keys(ICON_SETS);
 const ICONS_ID = "virtual:gallery-icons";
 const RESOLVED_ICONS_ID = `\0${ICONS_ID}`;
-const require = createRequire(import.meta.url);
 
 function sources(dir: string): string[] {
 	return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -39,13 +44,9 @@ function iconModule(dirs: string[], warn: (message: string) => void): string {
 	const bundled: Record<string, IconifyIcon> = {};
 	for (const name of [...namedIcons(dirs)].sort()) {
 		const [prefix = "", ...rest] = name.split(":");
-		if (!sets.has(prefix)) {
-			sets.set(
-				prefix,
-				JSON.parse(
-					readFileSync(require.resolve(`@iconify-json/${prefix}/icons.json`), "utf-8"),
-				) as IconifyJSON,
-			);
+		const file = ICON_SETS[prefix];
+		if (file && !sets.has(prefix)) {
+			sets.set(prefix, JSON.parse(readFileSync(file, "utf-8")) as IconifyJSON);
 		}
 		const set = sets.get(prefix);
 		const data = set ? getIconData(set, rest.join(":")) : null;
