@@ -18,6 +18,34 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.20.0](https://github.com/glasshome/ui/compare/v1.19.0...v1.20.0) (2026-09-27)
+
+
+### Features
+
+* **color-disc:** ColorDisc and TemperatureBar pick a colour with one tap on a pin, or one drag ([71a260a](https://github.com/glasshome/ui/commit/71a260a992dcca4358dbbd7824964f2fa7810639))
+* **color-wheel:** an optional inner ring sets saturation, so hue and saturation are one control ([89818cb](https://github.com/glasshome/ui/commit/89818cb1585cefdea8ef4a97c21d613b50bb922e))
+* dashboard preview and a meta line on preview tiles ([8a74762](https://github.com/glasshome/ui/commit/8a747622928422164f96b4426a13b79db9e96f18))
+* dashboard preview and a meta line on preview tiles ([733258b](https://github.com/glasshome/ui/commit/733258b3dcd09e7e70a81d6c2157db879c722d0c))
+* **dialog:** an anchored dialog grows out of the element that opened it ([ce64333](https://github.com/glasshome/ui/commit/ce643333e9ec97102e11d0accaf4c37062f3b059))
+* **dialog:** anchor opens a dialog beside the element that opened it ([8609bd7](https://github.com/glasshome/ui/commit/8609bd7fd5dd0901426dd6fc3f50c713c179fbdb))
+* **material:** buttons and toggles wear clear glass ([cbc6373](https://github.com/glasshome/ui/commit/cbc637322beee2a23a26e2671fbc970ca6f93d40))
+* **page-header:** display title, icon well, no glow ([1f343fd](https://github.com/glasshome/ui/commit/1f343fd1d50c73b5921782e8f05457a48176eeeb))
+* **page-header:** display title, icon well, no glow ([07cc995](https://github.com/glasshome/ui/commit/07cc995d802799005c54d4b4cc268981c55bbf8f))
+* **schema-form:** choices with icons render as icon cards, and the image picker offers a widget's built-in pictures ([44775dd](https://github.com/glasshome/ui/commit/44775dd09da3f06e2b342e5e8b73a1a028132632))
+* **toggle-group:** a tone for the selected segment's glass ([7576559](https://github.com/glasshome/ui/commit/757655948bb09d18063fb938140bfba825fb3e74))
+* **toggle-group:** items that run out of width wrap onto rows, and the sliding indicator follows the active item's row ([739781a](https://github.com/glasshome/ui/commit/739781abcf0a2fe3f3f6551d259578c6218d74a3))
+
+
+### Bug Fixes
+
+* **bottom-sheet:** the content keeps the caller's style beside its own ([199916d](https://github.com/glasshome/ui/commit/199916d15b49098484f82cfdac20d1ec10056dc8))
+* **button:** link text meets contrast in dark mode ([b69a8c4](https://github.com/glasshome/ui/commit/b69a8c44af5a8db9a22546260095fd961e97c7e7))
+* **button:** link text meets contrast in dark mode ([d751f80](https://github.com/glasshome/ui/commit/d751f80325a7b3ecaa26d39c55989ef794593585))
+* **color-disc:** a disc without a value shows white ([733ffef](https://github.com/glasshome/ui/commit/733ffef9b5d0312426fa3224f625b9756e301c3d))
+* **dialog:** an anchored panel follows the window, lets go of its clip, and a colour drag ends on cancel ([bff80ba](https://github.com/glasshome/ui/commit/bff80ba8cc91268760371dd249739f5176ccb007))
+* **gallery:** the dashboard preview specimen has nothing to try ([a88aa24](https://github.com/glasshome/ui/commit/a88aa242a5c50fff9679521eee6ac9aad3fb64bf))
+
 ## [1.19.0](https://github.com/glasshome/ui/compare/v1.18.0...v1.19.0) (2026-09-25)
 
 
