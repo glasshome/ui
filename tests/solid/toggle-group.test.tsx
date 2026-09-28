@@ -109,17 +109,17 @@ describe("ToggleGroup", () => {
 
   it("in scroll mode keeps one row and still picks on a tap", async () => {
     let picked: string | null = "left";
-    const { container, getByRole } = render(() => (
+    const view = render(() => (
       <ToggleGroup scroll value="left" onChange={(v: string | null) => (picked = v)}>
         <ToggleGroupItem value="left">Left</ToggleGroupItem>
         <ToggleGroupItem value="right">Right</ToggleGroupItem>
       </ToggleGroup>
     ));
-    const root = container.querySelector<HTMLElement>('[data-slot="toggle-group"]');
+    const root = view.container.querySelector<HTMLElement>('[data-slot="toggle-group"]');
     expect(root?.hasAttribute("data-scroll")).toBe(true);
     expect(root?.className).toContain("overflow-x-auto");
     expect(root?.className).not.toContain("flex-wrap");
-    getByRole("button", { name: "Right" }).click();
+    view.getByRole("button", { name: "Right" }).click();
     await flush();
     expect(picked).toBe("right");
   });
