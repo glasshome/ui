@@ -68,17 +68,19 @@ export function PreviewTile(props: {
       <Show when={props.caption ?? true} fallback={<span class="sr-only">{props.label}</span>}>
         <span
           data-slot="preview-tile-caption"
-          class="text-muted-foreground group-data-[checked]/preview-tile:text-foreground flex items-center justify-center gap-1 text-xs"
+          class="text-foreground flex min-w-0 items-center gap-1 text-xs font-medium"
         >
           <Show when={props.icon}>
-            {(icon) => <Icon icon={icon()} width={12} height={12} aria-hidden="true" />}
+            {(icon) => (
+              <Icon icon={icon()} width={12} height={12} aria-hidden="true" class="shrink-0" />
+            )}
           </Show>
-          {props.label}
+          <span class="truncate">{props.label}</span>
         </span>
         <Show when={props.meta}>
           <span
             data-slot="preview-tile-meta"
-            class="text-muted-foreground/80 -mt-1 text-center text-[11px] leading-tight"
+            class="text-muted-foreground -mt-1 truncate text-[11px] leading-tight"
           >
             {props.meta}
           </span>
