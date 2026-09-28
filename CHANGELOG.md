@@ -18,6 +18,22 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.21.2](https://github.com/glasshome/ui/compare/v1.21.1...v1.21.2) (2026-09-28)
+
+
+### Bug Fixes
+
+* **bottom-sheet:** the focus trap untracks the focus handlers it fires ([50fe6be](https://github.com/glasshome/ui/commit/50fe6be62eea4c5088e99212d3955f57d85b0006))
+* **dock:** measure pages before the first paint, not 100 ms after it ([9335a62](https://github.com/glasshome/ui/commit/9335a6201a212217a0a7ee6da20ba376acdacff2))
+* **icon:** an icon looked up while its batch is out is not requested again ([89b4be4](https://github.com/glasshome/ui/commit/89b4be4beb60efb849acf5906161fd2375aa1337))
+* **sliding-indicator:** only a new active item slides; re-measures land at once ([b444530](https://github.com/glasshome/ui/commit/b4445304d8a9e06ad52af0ca5cfed31767ae2072))
+
+
+### Performance Improvements
+
+* **icon:** a batch landing redraws only the icons it answered ([3e206e1](https://github.com/glasshome/ui/commit/3e206e12682c6b178c382783bff9cd453a697878))
+* **is-mobile:** one width reading and one listener per breakpoint for the page ([b7f762a](https://github.com/glasshome/ui/commit/b7f762aed88fc4e3d3ac12fe3f8bdbc937eba43b))
+
 ## [1.21.1](https://github.com/glasshome/ui/compare/v1.21.0...v1.21.1) (2026-09-27)
 
 
