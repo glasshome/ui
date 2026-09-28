@@ -1,7 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@solidjs/testing-library";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { Button } from "../../src/solid/button.js";
-import { setViewportWidth } from "../viewport.js";
 import {
   ResponsiveDialog,
   ResponsiveDialogBody,
@@ -13,6 +12,7 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "../../src/solid/responsive-dialog.js";
+import { setViewportWidth } from "../viewport.js";
 
 const DESKTOP_WIDTH = 1280;
 const PHONE_WIDTH = 390;
