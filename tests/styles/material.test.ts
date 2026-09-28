@@ -11,73 +11,73 @@ const globals = readFileSync(resolve(here, "../../src/styles/globals.css"), "utf
 const theme = readFileSync(resolve(here, "../../src/styles/theme.css"), "utf8");
 
 const property = (name: string) => {
-	const start = globals.indexOf(`@property ${name} {`);
-	if (start === -1) throw new Error(`${name} is not registered`);
-	return globals.slice(start, globals.indexOf("}", start));
+  const start = globals.indexOf(`@property ${name} {`);
+  if (start === -1) throw new Error(`${name} is not registered`);
+  return globals.slice(start, globals.indexOf("}", start));
 };
 
 describe("the material tier", () => {
-	it.each([
-		["--material-blur", "<length>", "24px"],
-		["--material-clarity", "<percentage>", "60%"],
-		["--material-depth", "<number>", "1"],
-		["--material-tint", "<number>", "1"],
-		["--material-edge-width", "<length>", "1px"],
-		["--material-edge-ink", "<number>", "0"],
-		["--material-edge-accent", "<number>", "0"],
-		["--material-glow", "<length>", "0px"],
-		["--material-ink-level", "<number>", "0"],
-		["--material-ink-lift", "<number>", "0"],
-	])("%s is registered, inheriting, with the Frosted default", (name, syntax, initial) => {
-		const block = property(name);
-		expect(block).toContain(`syntax: "${syntax}"`);
-		expect(block).toContain("inherits: true");
-		expect(block).toContain(`initial-value: ${initial}`);
-	});
+  it.each([
+    ["--material-blur", "<length>", "24px"],
+    ["--material-clarity", "<percentage>", "60%"],
+    ["--material-depth", "<number>", "1"],
+    ["--material-tint", "<number>", "1"],
+    ["--material-edge-width", "<length>", "1px"],
+    ["--material-edge-ink", "<number>", "0"],
+    ["--material-edge-accent", "<number>", "0"],
+    ["--material-glow", "<length>", "0px"],
+    ["--material-ink-level", "<number>", "0"],
+    ["--material-ink-lift", "<number>", "0"],
+  ])("%s is registered, inheriting, with the Frosted default", (name, syntax, initial) => {
+    const block = property(name);
+    expect(block).toContain(`syntax: "${syntax}"`);
+    expect(block).toContain("inherits: true");
+    expect(block).toContain(`initial-value: ${initial}`);
+  });
 
-	it("the theme declares material blur without freezing the optional surface override", () => {
-		expect(theme).toContain("--material-blur: 24px;");
-		expect(theme).not.toMatch(/--glass-blur\s*:/);
-		expect(theme).toContain("--material-clarity: 60%;");
-		expect(theme).toContain("--material-ink-level: 0;");
-	});
+  it("the theme declares material blur without freezing the optional surface override", () => {
+    expect(theme).toContain("--material-blur: 24px;");
+    expect(theme).not.toMatch(/--glass-blur\s*:/);
+    expect(theme).toContain("--material-clarity: 60%;");
+    expect(theme).toContain("--material-ink-level: 0;");
+  });
 
-	it("the preset terms sit in the formula, inert at zero", () => {
-		expect(globals).toContain("border: var(--material-edge-width) solid");
-		expect(globals).toContain("var(--material-ink) calc(var(--material-edge-ink) * 100%)");
-		expect(globals).toContain("--material-reach: calc(0.35 + var(--glass-lift) * 1.45);");
-		expect(globals).toContain("0 0 calc(var(--material-glow) * var(--material-reach))");
-		expect(globals).toContain("var(--material-hue) calc(var(--material-edge-accent) * 100%)");
-		expect(globals).toContain("oklch(from var(--material-hue) l c h / 0.65)");
-	});
+  it("the preset terms sit in the formula, inert at zero", () => {
+    expect(globals).toContain("border: var(--material-edge-width) solid");
+    expect(globals).toContain("var(--material-ink) calc(var(--material-edge-ink) * 100%)");
+    expect(globals).toContain("--material-reach: calc(0.35 + var(--glass-lift) * 1.45);");
+    expect(globals).toContain("0 0 calc(var(--material-glow) * var(--material-reach))");
+    expect(globals).toContain("var(--material-hue) calc(var(--material-edge-accent) * 100%)");
+    expect(globals).toContain("oklch(from var(--material-hue) l c h / 0.65)");
+  });
 
-	it("the Ink body turns on by a style query and draws fill and line on the surface's pseudos", () => {
-		expect(globals).toContain("@container not style(--material-ink-level: 0)");
-		expect(globals).toContain("border: 3px solid var(--ink-line);");
-		expect(globals).toContain("mask-clip: no-clip;");
-		expect(globals).toContain("opacity: var(--material-ink-level)");
-		expect(theme).toMatch(/\.dark \{[\s\S]*--material-ink: oklch\(0\.68 0 0\);/);
-	});
+  it("the Ink body turns on by a style query and draws fill and line on the surface's pseudos", () => {
+    expect(globals).toContain("@container not style(--material-ink-level: 0)");
+    expect(globals).toContain("border: 3px solid var(--ink-line);");
+    expect(globals).toContain("mask-clip: no-clip;");
+    expect(globals).toContain("opacity: var(--material-ink-level)");
+    expect(theme).toMatch(/\.dark \{[\s\S]*--material-ink: oklch\(0\.68 0 0\);/);
+  });
 
-	it("depth scales sheen, shade, rim and lift; tint scales the wash", () => {
-		expect(globals).toContain("oklch(1 0 0 / calc(var(--glass-light) * var(--material-depth)))");
-		expect(globals).toContain("oklch(0 0 0 / calc(var(--glass-shade) * var(--material-depth)))");
-		expect(globals).toContain("calc(0.22 * var(--glass-rim) * var(--material-depth))");
-		expect(globals).toContain("oklch(0 0 0 / calc(var(--glass-lift) * var(--material-depth)))");
-		expect(globals).toContain("var(--glass-tone) calc(var(--glass-wash) * var(--material-tint))");
-		expect(globals).toContain(
-			"var(--glass-tone-2) calc(var(--glass-wash-2) * var(--material-tint))",
-		);
-	});
+  it("depth scales sheen, shade, rim and lift; tint scales the wash", () => {
+    expect(globals).toContain("oklch(1 0 0 / calc(var(--glass-light) * var(--material-depth)))");
+    expect(globals).toContain("oklch(0 0 0 / calc(var(--glass-shade) * var(--material-depth)))");
+    expect(globals).toContain("calc(0.22 * var(--glass-rim) * var(--material-depth))");
+    expect(globals).toContain("oklch(0 0 0 / calc(var(--glass-lift) * var(--material-depth)))");
+    expect(globals).toContain("var(--glass-tone) calc(var(--glass-wash) * var(--material-tint))");
+    expect(globals).toContain(
+      "var(--glass-tone-2) calc(var(--glass-wash-2) * var(--material-tint))",
+    );
+  });
 
-	it("depth and tint morph with the other knobs on a theme switch", () => {
-		expect(globals).toMatch(/--glass-transition:[\s\S]*--material-depth, --material-tint/);
-	});
+  it("depth and tint morph with the other knobs on a theme switch", () => {
+    expect(globals).toMatch(/--glass-transition:[\s\S]*--material-depth, --material-tint/);
+  });
 
-	it("card surfaces take their translucency from clarity", () => {
-		expect(CARD_SURFACE_BASE).toContain(
-			"[--glass-base:color-mix(in_srgb,var(--card)_var(--material-clarity),transparent)]",
-		);
-		expect(SECTION_ROW_SURFACE).toContain("var(--material-clarity)");
-	});
+  it("card surfaces take their translucency from clarity", () => {
+    expect(CARD_SURFACE_BASE).toContain(
+      "[--glass-base:color-mix(in_srgb,var(--card)_var(--material-clarity),transparent)]",
+    );
+    expect(SECTION_ROW_SURFACE).toContain("var(--material-clarity)");
+  });
 });

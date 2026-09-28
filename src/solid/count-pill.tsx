@@ -10,15 +10,15 @@ import { Badge } from "./badge.js";
  * pixel per DPR (measured 1/1.5/2/4).
  */
 export function CountPill(props: { children: JSX.Element; class?: string }) {
-	return (
-		<Badge
-			tone="var(--muted-foreground)"
-			class={cn(
-				"h-[20px] min-w-[20px] justify-center pt-[2px] pr-[6px] pb-0 pl-[7px] font-mono text-[11px] tabular-nums leading-[20px]",
-				props.class,
-			)}
-		>
-			{props.children}
-		</Badge>
-	);
+  return (
+    <Badge
+      tone="var(--muted-foreground)"
+      class={cn(
+        "h-[20px] min-w-[20px] justify-center pt-[2px] pr-[6px] pb-0 pl-[7px] font-mono text-[11px] leading-[20px] tabular-nums",
+        props.class,
+      )}
+    >
+      {props.children}
+    </Badge>
+  );
 }

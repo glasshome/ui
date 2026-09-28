@@ -8,23 +8,23 @@ import { cn } from "../lib/utils.js";
  * the only place the position is readable.
  */
 export function StepIndicator(props: { count: number; index: number; class?: string }) {
-	const steps = () => Array.from({ length: Math.max(props.count, 0) }, (_, step) => step);
+  const steps = () => Array.from({ length: Math.max(props.count, 0) }, (_, step) => step);
 
-	return (
-		<div
-			data-slot="step-indicator"
-			class={cn("flex items-center justify-center gap-1", props.class)}
-		>
-			<span class="sr-only">{`Step ${props.index + 1} of ${props.count}`}</span>
-			<For each={steps()}>
-				{(step) => (
-					<span
-						data-slot="step-indicator-segment"
-						aria-current={step === props.index ? "step" : undefined}
-						class={cn(POSITION_BAR, "w-6", step <= props.index && POSITION_BAR_LIT)}
-					/>
-				)}
-			</For>
-		</div>
-	);
+  return (
+    <div
+      data-slot="step-indicator"
+      class={cn("flex items-center justify-center gap-1", props.class)}
+    >
+      <span class="sr-only">{`Step ${props.index + 1} of ${props.count}`}</span>
+      <For each={steps()}>
+        {(step) => (
+          <span
+            data-slot="step-indicator-segment"
+            aria-current={step === props.index ? "step" : undefined}
+            class={cn(POSITION_BAR, "w-6", step <= props.index && POSITION_BAR_LIT)}
+          />
+        )}
+      </For>
+    </div>
+  );
 }

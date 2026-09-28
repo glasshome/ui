@@ -15,123 +15,123 @@ import { WidgetTrustBadge } from "./widget-trust-badge.js";
  * `WidgetSummary`.
  */
 export interface WidgetSummary {
-	scope: string;
-	name: string;
-	displayName?: string | null;
-	icon?: string | null;
-	description?: string | null;
-	isOfficial?: boolean;
-	isUnlisted?: boolean;
-	/** Newest version never finished publishing (bundle upload never confirmed,
-	 *  or no version row at all), so nothing is installable. Distinct from
-	 *  `isUnlisted`, which is a published widget hidden from search.
-	 *  Owner-facing surfaces set it; public ones leave it off. */
-	isUnpublished?: boolean;
-	downloadCount?: number;
-	latestVersion?: string | null;
-	versionCount?: number;
-	ownerType?: "personal" | "organization";
+  scope: string;
+  name: string;
+  displayName?: string | null;
+  icon?: string | null;
+  description?: string | null;
+  isOfficial?: boolean;
+  isUnlisted?: boolean;
+  /** Newest version never finished publishing (bundle upload never confirmed,
+   *  or no version row at all), so nothing is installable. Distinct from
+   *  `isUnlisted`, which is a published widget hidden from search.
+   *  Owner-facing surfaces set it; public ones leave it off. */
+  isUnpublished?: boolean;
+  downloadCount?: number;
+  latestVersion?: string | null;
+  versionCount?: number;
+  ownerType?: "personal" | "organization";
 }
 
 /** Canonical public detail URL for a widget (`/widgets/@scope/name`). */
 export function widgetHref(w: { scope: string; name: string }): string {
-	return `/widgets/@${w.scope}/${w.name}`;
+  return `/widgets/@${w.scope}/${w.name}`;
 }
 
 /** Compact download/count formatting, shared by every surface. */
 export function formatWidgetCount(n: number | null | undefined): string {
-	const v = n ?? 0;
-	if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
-	if (v >= 1000) return `${(v / 1000).toFixed(1)}k`;
-	return v.toString();
+  const v = n ?? 0;
+  if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
+  if (v >= 1000) return `${(v / 1000).toFixed(1)}k`;
+  return v.toString();
 }
 
 type WidgetIdentityProps = {
-	widget: WidgetSummary;
-	/** Icon pill size. Rows use sm, tiles use md. */
-	iconSize?: "sm" | "md";
-	/** CSS color for the icon pill; neutral when unset. */
-	iconTone?: string;
-	/** Append `v{latestVersion}` next to the name. Default true. */
-	showVersionInline?: boolean;
-	/** Show the (personal/org) scope pill after the @scope/name line. */
-	showScopeIndicator?: boolean;
-	class?: string;
+  widget: WidgetSummary;
+  /** Icon pill size. Rows use sm, tiles use md. */
+  iconSize?: "sm" | "md";
+  /** CSS color for the icon pill; neutral when unset. */
+  iconTone?: string;
+  /** Append `v{latestVersion}` next to the name. Default true. */
+  showVersionInline?: boolean;
+  /** Show the (personal/org) scope pill after the @scope/name line. */
+  showScopeIndicator?: boolean;
+  class?: string;
 };
 
 export function WidgetIdentity(_props: WidgetIdentityProps) {
-	const props = mergeProps({ iconSize: "sm" as const, showVersionInline: true }, _props);
-	return (
-		<div data-slot="widget-identity" class={cn("flex min-w-0 items-center gap-3", props.class)}>
-			<SectionIcon size={props.iconSize} tone={props.iconTone}>
-				<Show when={props.widget.icon} fallback={<Icon icon="lucide:package" />}>
-					{(icon) => <Icon icon={icon()} />}
-				</Show>
-			</SectionIcon>
-			<div data-slot="widget-identity-headings" class="flex min-w-0 flex-1 flex-col gap-0.5">
-				<div data-slot="widget-identity-headline" class="flex items-center gap-2">
-					<SectionSubtitle class="truncate">
-						{props.widget.displayName || props.widget.name}
-					</SectionSubtitle>
-					<Show when={props.showVersionInline && props.widget.latestVersion}>
-						<span class="shrink-0 font-mono text-muted-foreground text-xs tabular-nums">
-							v{props.widget.latestVersion}
-						</span>
-					</Show>
-					<WidgetTrustBadge isOfficial={!!props.widget.isOfficial} />
+  const props = mergeProps({ iconSize: "sm" as const, showVersionInline: true }, _props);
+  return (
+    <div data-slot="widget-identity" class={cn("flex min-w-0 items-center gap-3", props.class)}>
+      <SectionIcon size={props.iconSize} tone={props.iconTone}>
+        <Show when={props.widget.icon} fallback={<Icon icon="lucide:package" />}>
+          {(icon) => <Icon icon={icon()} />}
+        </Show>
+      </SectionIcon>
+      <div data-slot="widget-identity-headings" class="flex min-w-0 flex-1 flex-col gap-0.5">
+        <div data-slot="widget-identity-headline" class="flex items-center gap-2">
+          <SectionSubtitle class="truncate">
+            {props.widget.displayName || props.widget.name}
+          </SectionSubtitle>
+          <Show when={props.showVersionInline && props.widget.latestVersion}>
+            <span class="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
+              v{props.widget.latestVersion}
+            </span>
+          </Show>
+          <WidgetTrustBadge isOfficial={!!props.widget.isOfficial} />
 
-					<Show when={props.widget.isUnlisted}>
-						<Badge tone="var(--warning)">Unlisted</Badge>
-					</Show>
-					<Show when={props.widget.isUnpublished}>
-						<Badge tone="var(--destructive)">Not published</Badge>
-					</Show>
-				</div>
-				<div data-slot="widget-identity-scope" class="flex min-w-0 flex-wrap items-center gap-1.5">
-					<span class="truncate font-mono text-muted-foreground text-xs">
-						@{props.widget.scope}/{props.widget.name}
-					</span>
-					<Show when={props.showScopeIndicator}>
-						<ScopeIndicator
-							scope={props.widget.scope}
-							type={props.widget.ownerType ?? "personal"}
-						/>
-					</Show>
-				</div>
-			</div>
-		</div>
-	);
+          <Show when={props.widget.isUnlisted}>
+            <Badge tone="var(--warning)">Unlisted</Badge>
+          </Show>
+          <Show when={props.widget.isUnpublished}>
+            <Badge tone="var(--destructive)">Not published</Badge>
+          </Show>
+        </div>
+        <div data-slot="widget-identity-scope" class="flex min-w-0 flex-wrap items-center gap-1.5">
+          <span class="text-muted-foreground truncate font-mono text-xs">
+            @{props.widget.scope}/{props.widget.name}
+          </span>
+          <Show when={props.showScopeIndicator}>
+            <ScopeIndicator
+              scope={props.widget.scope}
+              type={props.widget.ownerType ?? "personal"}
+            />
+          </Show>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /** Downloads (+ optional version counts) meta cluster. */
 export function WidgetMeta(props: {
-	widget: WidgetSummary;
-	/** Append `N versions`. */
-	showVersions?: boolean;
-	/** Append `v{latestVersion}` (the tile footer's shape). */
-	showLatestVersion?: boolean;
-	class?: string;
+  widget: WidgetSummary;
+  /** Append `N versions`. */
+  showVersions?: boolean;
+  /** Append `v{latestVersion}` (the tile footer's shape). */
+  showLatestVersion?: boolean;
+  class?: string;
 }): JSX.Element {
-	return (
-		<div
-			data-slot="widget-meta"
-			class={cn("flex items-center gap-4 text-muted-foreground text-xs", props.class)}
-		>
-			<Show when={props.widget.downloadCount != null}>
-				<span class="flex items-center gap-1 tabular-nums">
-					<Icon icon="lucide:arrow-down-to-line" width={12} height={12} class="size-3" />
-					{formatWidgetCount(props.widget.downloadCount)}
-				</span>
-			</Show>
-			<Show when={props.showVersions && props.widget.versionCount != null}>
-				<span class="flex items-center gap-1 tabular-nums">
-					<Icon icon="lucide:layers" width={12} height={12} class="size-3" />
-					{props.widget.versionCount} versions
-				</span>
-			</Show>
-			<Show when={props.showLatestVersion && props.widget.latestVersion}>
-				<span class="tabular-nums">v{props.widget.latestVersion}</span>
-			</Show>
-		</div>
-	);
+  return (
+    <div
+      data-slot="widget-meta"
+      class={cn("text-muted-foreground flex items-center gap-4 text-xs", props.class)}
+    >
+      <Show when={props.widget.downloadCount != null}>
+        <span class="flex items-center gap-1 tabular-nums">
+          <Icon icon="lucide:arrow-down-to-line" width={12} height={12} class="size-3" />
+          {formatWidgetCount(props.widget.downloadCount)}
+        </span>
+      </Show>
+      <Show when={props.showVersions && props.widget.versionCount != null}>
+        <span class="flex items-center gap-1 tabular-nums">
+          <Icon icon="lucide:layers" width={12} height={12} class="size-3" />
+          {props.widget.versionCount} versions
+        </span>
+      </Show>
+      <Show when={props.showLatestVersion && props.widget.latestVersion}>
+        <span class="tabular-nums">v{props.widget.latestVersion}</span>
+      </Show>
+    </div>
+  );
 }

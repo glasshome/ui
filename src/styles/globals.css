@@ -12,19 +12,19 @@
 /* Typed + inherits:false: a knob never leaks into a nested glass element, each
  * element's calc() resolves against its own value, and typed knobs animate. */
 @property --glass-tone {
-	syntax: "<color>";
-	inherits: false;
-	initial-value: transparent;
+  syntax: "<color>";
+  inherits: false;
+  initial-value: transparent;
 }
 @property --glass-wash {
-	syntax: "<percentage>";
-	inherits: false;
-	initial-value: 28%;
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 28%;
 }
 @property --glass-light {
-	syntax: "<number>";
-	inherits: false;
-	initial-value: 0.05;
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.05;
 }
 /* Size of the top-left sheen ellipse, `<x> <y>`. Percentages scale with the
  * element, which is right for cards but leaves an edge-anchored panel (a side
@@ -32,38 +32,38 @@
  * Such surfaces pin absolute lengths so the highlight reads the same as on a
  * dialog. Untyped: two values, so no single @property syntax fits. */
 @property --glass-sheen {
-	syntax: "*";
-	inherits: false;
+  syntax: "*";
+  inherits: false;
 }
 @property --glass-shade {
-	syntax: "<number>";
-	inherits: false;
-	initial-value: 0;
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
 }
 @property --glass-glow {
-	syntax: "<percentage>";
-	inherits: false;
-	initial-value: 16%;
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 16%;
 }
 @property --glass-drop {
-	syntax: "<percentage>";
-	inherits: false;
-	initial-value: 20%;
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 20%;
 }
 @property --glass-lift {
-	syntax: "<number>";
-	inherits: false;
-	initial-value: 0;
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
 }
 @property --glass-text {
-	syntax: "<percentage>";
-	inherits: false;
-	initial-value: 65%;
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 65%;
 }
 @property --glass-rim {
-	syntax: "<number>";
-	inherits: false;
-	initial-value: 1;
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
 }
 /* Frost slot: one full background layer (image + position / size + repeat),
  * host-supplied, composited at the BOTTOM of the formula — the static
@@ -72,75 +72,75 @@
  * back to `none`. inherits:false so a surface's viewport-aligned slice never
  * leaks into nested glass (inputs inside a frosted card). */
 @property --glass-frost {
-	syntax: "*";
-	inherits: false;
+  syntax: "*";
+  inherits: false;
 }
 
 /* Top-most layer: a tiled noise slice over the fill. Untyped for the same
  * reason as --glass-frost. */
 @property --glass-grain {
-	syntax: "*";
-	inherits: false;
+  syntax: "*";
+  inherits: false;
 }
 
 /* Tier 2, the material: inheriting, theme-written, multiplied into every
  * surface's own knobs. A knob is a surface's identity; these scale all of them. */
 @property --material-blur {
-	syntax: "<length>";
-	inherits: true;
-	initial-value: 24px;
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 24px;
 }
 @property --material-clarity {
-	syntax: "<percentage>";
-	inherits: true;
-	initial-value: 60%;
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 60%;
 }
 @property --material-depth {
-	syntax: "<number>";
-	inherits: true;
-	initial-value: 1;
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
 }
 @property --material-tint {
-	syntax: "<number>";
-	inherits: true;
-	initial-value: 1;
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
 }
 /* Preset terms, inert at their defaults: Paper and Neon raise the edge. */
 @property --material-edge-width {
-	syntax: "<length>";
-	inherits: true;
-	initial-value: 1px;
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 1px;
 }
 /* 0..1, how far the edge colour moves toward the foreground ink. */
 @property --material-edge-ink {
-	syntax: "<number>";
-	inherits: true;
-	initial-value: 0;
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
 }
 /* 0..1, how far the edge moves toward the surface's own hue (its tone, else
  * the accent). */
 @property --material-edge-accent {
-	syntax: "<number>";
-	inherits: true;
-	initial-value: 0;
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
 }
 /* An outer bloom in the surface's own hue. */
 @property --material-glow {
-	syntax: "<length>";
-	inherits: true;
-	initial-value: 0px;
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
 }
 /* 0..1, how far the Ink line moves toward the foreground (Chalk 1). */
 @property --material-ink-lift {
-	syntax: "<number>";
-	inherits: true;
-	initial-value: 0;
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
 }
 /* Registered so the Ink body's style query compares a computed number. */
 @property --material-ink-level {
-	syntax: "<number>";
-	inherits: true;
-	initial-value: 0;
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
 }
 
 /* --glass-base and --glass-edge need var() defaults, which @property forbids,
@@ -148,57 +148,57 @@
  * and inline style knobs still win. Rim shadows are declared on .glass (not
  * :root) so calc(var(--glass-rim)) resolves per element, not frozen at :root. */
 :root {
-	/* biome-ignore-start lint/correctness/noMissingVarFunction: transition-property takes property names, and these are the registered knobs */
-	--glass-transition:
-		--glass-tone, --glass-wash, --glass-light, --glass-shade, --glass-rim, --glass-lift,
-		--glass-glow, --glass-drop, --glass-text, --material-depth, --material-tint,
-		--material-edge-width, --material-edge-ink, --material-edge-accent, --material-glow, color,
-		background-color, border-color, box-shadow, opacity, transform, translate, scale, width, height;
-	/* biome-ignore-end lint/correctness/noMissingVarFunction: see above */
+  /* biome-ignore-start lint/correctness/noMissingVarFunction: transition-property takes property names, and these are the registered knobs */
+  --glass-transition:
+    --glass-tone, --glass-wash, --glass-light, --glass-shade, --glass-rim, --glass-lift,
+    --glass-glow, --glass-drop, --glass-text, --material-depth, --material-tint,
+    --material-edge-width, --material-edge-ink, --material-edge-accent, --material-glow, color,
+    background-color, border-color, box-shadow, opacity, transform, translate, scale, width, height;
+  /* biome-ignore-end lint/correctness/noMissingVarFunction: see above */
 }
 
 @layer utilities {
-	.transition-glass {
-		transition-property: var(--glass-transition);
-	}
+  .transition-glass {
+    transition-property: var(--glass-transition);
+  }
 }
 
 @layer base {
-	:where(.glass) {
-		/* State never cuts: the registered knobs interpolate, so a tone, wash or
+  :where(.glass) {
+    /* State never cuts: the registered knobs interpolate, so a tone, wash or
 		 * sheen swap (checked, selected, hover) morphs on the state duration.
 		 * Layered, so a surface that names its own transition keeps it; such a
 		 * surface says transition-glass, never transition-all: Chromium's `all`
 		 * does not cover registered custom properties. */
-		transition-property: var(--glass-transition);
-		transition-duration: var(--duration-state);
-		transition-timing-function: var(--ease-emphasis);
-		--glass-base: var(--card);
-		--glass-edge: color-mix(in srgb, var(--border) 60%, transparent);
-		--glass-rim-raise:
-			inset 0 1px 0 oklch(1 0 0 / calc(0.22 * var(--glass-rim) * var(--material-depth))),
-			inset 2px 2px 5px -3px oklch(1 0 0 / calc(0.5 * var(--glass-rim) * var(--material-depth))),
-			inset -2px -2px 4px -2px oklch(0 0 0 / calc(0.12 * var(--glass-rim) * var(--material-depth)));
-		--glass-rim-sink:
-			inset 0 2px 3px -1px oklch(0 0 0 / calc(0.28 * var(--glass-rim) * var(--material-depth))),
-			inset 2px 2px 5px -3px oklch(0 0 0 / calc(0.22 * var(--glass-rim) * var(--material-depth))),
-			inset 0 -1px 0 oklch(1 0 0 / calc(0.12 * var(--glass-rim) * var(--material-depth)));
-		--glass-rim-shine: var(--glass-rim-raise);
-	}
-	:where(.glass-tint) {
-		--glass-light: 0.16;
-		--glass-edge: oklch(from var(--glass-tone) l c h / 0.45);
-		color: color-mix(in oklab, var(--glass-tone) var(--glass-text), var(--foreground));
-	}
-	:where(.glass-sink) {
-		--glass-rim-shine: var(--glass-rim-sink);
-	}
-	/* Frosted: large translucent panels (dialogs, sheets, menus). A fine grey
+    transition-property: var(--glass-transition);
+    transition-duration: var(--duration-state);
+    transition-timing-function: var(--ease-emphasis);
+    --glass-base: var(--card);
+    --glass-edge: color-mix(in srgb, var(--border) 60%, transparent);
+    --glass-rim-raise:
+      inset 0 1px 0 oklch(1 0 0 / calc(0.22 * var(--glass-rim) * var(--material-depth))),
+      inset 2px 2px 5px -3px oklch(1 0 0 / calc(0.5 * var(--glass-rim) * var(--material-depth))),
+      inset -2px -2px 4px -2px oklch(0 0 0 / calc(0.12 * var(--glass-rim) * var(--material-depth)));
+    --glass-rim-sink:
+      inset 0 2px 3px -1px oklch(0 0 0 / calc(0.28 * var(--glass-rim) * var(--material-depth))),
+      inset 2px 2px 5px -3px oklch(0 0 0 / calc(0.22 * var(--glass-rim) * var(--material-depth))),
+      inset 0 -1px 0 oklch(1 0 0 / calc(0.12 * var(--glass-rim) * var(--material-depth)));
+    --glass-rim-shine: var(--glass-rim-raise);
+  }
+  :where(.glass-tint) {
+    --glass-light: 0.16;
+    --glass-edge: oklch(from var(--glass-tone) l c h / 0.45);
+    color: color-mix(in oklab, var(--glass-tone) var(--glass-text), var(--foreground));
+  }
+  :where(.glass-sink) {
+    --glass-rim-shine: var(--glass-rim-sink);
+  }
+  /* Frosted: large translucent panels (dialogs, sheets, menus). A fine grey
 	 * grain on top breaks the 8-bit banding a wide low-alpha gradient shows,
 	 * and reads as frost instead of a flat plate. */
-	:where(.glass-frost) {
-		--glass-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.7  0 0 0 0 0.7  0 0 0 0 0.7  0 0 0 0.05 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
-	}
+  :where(.glass-frost) {
+    --glass-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.7  0 0 0 0 0.7  0 0 0 0 0.7  0 0 0 0.05 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
+  }
 }
 
 /* The ONE glass formula. Neutral by default (--glass-tone transparent makes
@@ -207,75 +207,75 @@
  * mixed toward transparent-black down to mud on light surfaces. Deliberately
  * unlayered so the material owns border/background/box-shadow; tune via knobs. */
 :where(.glass) {
-	/* Descendant-readable mirror of this surface's tone. The --glass-* knobs are
+  /* Descendant-readable mirror of this surface's tone. The --glass-* knobs are
 	 * @property inherits:false so a nested glass element never picks up an
 	 * ancestor's tint — correct for surfaces, but it also means a plain child
 	 * (an icon, a label) reading var(--glass-tone) silently gets `transparent`
 	 * and paints nothing. --surface-tone is an ordinary inheriting property, so
 	 * children can read it; a nested .glass re-declares it from its own knob,
 	 * which resets the chain and keeps the no-leak guarantee. */
-	--surface-tone: var(--glass-tone);
-	/* Second tint axis. Ordinary (inheriting) properties, so they are re-declared
+  --surface-tone: var(--glass-tone);
+  /* Second tint axis. Ordinary (inheriting) properties, so they are re-declared
 	 * on every .glass to reset the chain at each glass boundary (same no-leak
 	 * trick as --surface-tone). Defaults reproduce the single-tone wash exactly;
 	 * override tone-2/wash-2/angle together for a two-tone tint (slider fills). */
-	--glass-tone-2: var(--glass-tone);
-	--glass-wash-2: calc(var(--glass-wash) / 3);
-	--glass-wash-angle: 135deg;
-	--surface-wash: calc(var(--glass-wash) * var(--material-tint));
-	/* The surface's own hue, opaque: its tone when it has one, the accent otherwise
+  --glass-tone-2: var(--glass-tone);
+  --glass-wash-2: calc(var(--glass-wash) / 3);
+  --glass-wash-angle: 135deg;
+  --surface-wash: calc(var(--glass-wash) * var(--material-tint));
+  /* The surface's own hue, opaque: its tone when it has one, the accent otherwise
 	 * (a transparent tone mixes to the accent at low alpha; the /1 restores it). */
-	--material-hue: oklch(from color-mix(in srgb, var(--glass-tone) 99%, var(--primary)) l c h / 1);
-	border: var(--material-edge-width) solid
-		color-mix(
-			in srgb,
-			var(--material-hue) calc(var(--material-edge-accent) * 100%),
-			color-mix(
-				in srgb,
-				var(--material-ink) calc(var(--material-edge-ink) * 100%),
-				var(--glass-edge)
-			)
-		);
-	/* Base is a gradient layer (not background-color) so the frost slice can sit
+  --material-hue: oklch(from color-mix(in srgb, var(--glass-tone) 99%, var(--primary)) l c h / 1);
+  border: var(--material-edge-width) solid
+    color-mix(
+      in srgb,
+      var(--material-hue) calc(var(--material-edge-accent) * 100%),
+      color-mix(
+        in srgb,
+        var(--material-ink) calc(var(--material-edge-ink) * 100%),
+        var(--glass-edge)
+      )
+    );
+  /* Base is a gradient layer (not background-color) so the frost slice can sit
 	 * BELOW it — background-color always paints under every image layer, which
 	 * would put the frost above the fill. Layer order top→bottom: grain, light,
 	 * shade, tone wash, base fill, frost. */
-	background:
-		var(--glass-grain, none),
-		radial-gradient(
-			var(--glass-sheen, 120% 120%) at 22% 8%,
-			oklch(1 0 0 / calc(var(--glass-light) * var(--material-depth))),
-			transparent 58%
-		),
-		radial-gradient(
-			120% 120% at 82% 100%,
-			oklch(0 0 0 / calc(var(--glass-shade) * var(--material-depth))),
-			transparent 58%
-		),
-		linear-gradient(
-			var(--glass-wash-angle),
-			color-mix(
-				in srgb,
-				var(--glass-tone) calc(var(--glass-wash) * var(--material-tint)),
-				transparent
-			),
-			color-mix(
-				in srgb,
-				var(--glass-tone-2) calc(var(--glass-wash-2) * var(--material-tint)),
-				transparent
-			)
-		),
-		linear-gradient(var(--glass-base), var(--glass-base)), var(--glass-frost, none);
-	/* Glow scales with --glass-lift, the knob that already says how big a surface
+  background:
+    var(--glass-grain, none),
+    radial-gradient(
+      var(--glass-sheen, 120% 120%) at 22% 8%,
+      oklch(1 0 0 / calc(var(--glass-light) * var(--material-depth))),
+      transparent 58%
+    ),
+    radial-gradient(
+      120% 120% at 82% 100%,
+      oklch(0 0 0 / calc(var(--glass-shade) * var(--material-depth))),
+      transparent 58%
+    ),
+    linear-gradient(
+      var(--glass-wash-angle),
+      color-mix(
+        in srgb,
+        var(--glass-tone) calc(var(--glass-wash) * var(--material-tint)),
+        transparent
+      ),
+      color-mix(
+        in srgb,
+        var(--glass-tone-2) calc(var(--glass-wash-2) * var(--material-tint)),
+        transparent
+      )
+    ),
+    linear-gradient(var(--glass-base), var(--glass-base)), var(--glass-frost, none);
+  /* Glow scales with --glass-lift, the knob that already says how big a surface
 	 * floats: a card (0.45) takes the full bloom, a chip or button (0) about a third. */
-	--material-reach: calc(0.35 + var(--glass-lift) * 1.45);
-	box-shadow:
-		var(--glass-rim-shine, 0 0 #0000),
-		inset 0 -2px 4px color-mix(in srgb, var(--glass-tone) var(--glass-glow), transparent),
-		0 1px 3px color-mix(in srgb, var(--glass-tone) var(--glass-drop), transparent),
-		0 10px 30px -16px oklch(0 0 0 / calc(var(--glass-lift) * var(--material-depth))),
-		0 0 calc(var(--material-glow) * var(--material-reach))
-		oklch(from var(--material-hue) l c h / 0.65);
+  --material-reach: calc(0.35 + var(--glass-lift) * 1.45);
+  box-shadow:
+    var(--glass-rim-shine, 0 0 #0000),
+    inset 0 -2px 4px color-mix(in srgb, var(--glass-tone) var(--glass-glow), transparent),
+    0 1px 3px color-mix(in srgb, var(--glass-tone) var(--glass-drop), transparent),
+    0 10px 30px -16px oklch(0 0 0 / calc(var(--glass-lift) * var(--material-depth))),
+    0 0 calc(var(--material-glow) * var(--material-reach))
+      oklch(from var(--material-hue) l c h / 0.65);
 }
 
 /* Two-tone edge: border-color cannot gradient, so the border goes transparent
@@ -284,24 +284,24 @@
  * and must read the inheriting mirrors, not the inherits:false knobs, which
  * resolve to initial on a pseudo. Element must be positioned. */
 :where(.glass-edge-gradient) {
-	border-color: transparent;
+  border-color: transparent;
 }
 :where(.glass-edge-gradient)::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	padding: 1px;
-	background: linear-gradient(
-		var(--glass-wash-angle),
-		oklch(from var(--surface-tone) l c h / 0.45),
-		oklch(from var(--glass-tone-2) l c h / 0.45)
-	);
-	mask:
-		linear-gradient(#fff 0 0) content-box,
-		linear-gradient(#fff 0 0);
-	mask-composite: exclude;
-	pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    var(--glass-wash-angle),
+    oklch(from var(--surface-tone) l c h / 0.45),
+    oklch(from var(--glass-tone-2) l c h / 0.45)
+  );
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 /* Ink: a hand-drawn line over a hand-laid fill that strays over and under it.
@@ -310,99 +310,96 @@
  * paints above its parent's own background and border; contain: layout anchors
  * them and makes the stacking context without repositioning the surface. */
 @container not style(--material-ink-level: 0) {
-	:where(.glass) {
-		--ink-r: var(--radius);
-		--ink-line: color-mix(
-			in oklch,
-			var(--foreground) calc(var(--material-ink-lift) * 100%),
-			var(--material-ink)
-		);
-		contain: layout;
-		background: none;
-		border-color: transparent;
-		box-shadow: none;
-		border-radius:
-			calc(var(--ink-r) * 1.7) calc(var(--ink-r) * 0.5) calc(var(--ink-r) * 1.35)
-			calc(var(--ink-r) * 0.65) / calc(var(--ink-r) * 0.55) calc(var(--ink-r) * 1.45)
-			calc(var(--ink-r) * 0.7) calc(var(--ink-r) * 1.6);
-	}
-	:where(.glass)::before,
-	:where(.glass)::after {
-		content: "";
-		position: absolute;
-		z-index: -1;
-		pointer-events: none;
-	}
-	:where(.glass)::before {
-		inset: -5px -3px -2px -6px;
-		padding: 0;
-		mask: none;
-		translate: 3px 2px;
-		border-radius:
-			calc(var(--ink-r) * 0.6) calc(var(--ink-r) * 1.6) calc(var(--ink-r) * 0.75)
-			calc(var(--ink-r) * 1.5) / calc(var(--ink-r) * 1.4) calc(var(--ink-r) * 0.6)
-			calc(var(--ink-r) * 1.5) calc(var(--ink-r) * 0.65);
-		background:
-			linear-gradient(color-mix(in srgb, var(--surface-tone) var(--surface-wash), transparent) 0 0),
-			linear-gradient(var(--glass-base) 0 0);
-	}
-	/* Above every widget layer (the SDK stacks to 30): full-bleed media would bury the line. */
-	:where(.glass)::after {
-		z-index: 40;
-		inset: 0;
-		border: 3px solid var(--ink-line);
-		border-radius: inherit;
-		rotate: -0.2deg;
-		/* Chalk: grain tiled at 1:1, so no browser stretches it; no-clip keeps the passes. */
-		mask:
-			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='c' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='5' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -3.4 2.55'/></filter><rect width='120' height='120' filter='url(%23c)'/></svg>")
-			0 0 / 120px 120px repeat;
-		mask-clip: no-clip;
-		opacity: var(--material-ink-level);
-		box-shadow:
-			-2px 2px 0 -1.2px color-mix(in srgb, var(--ink-line) 55%, transparent),
-			2px -1.5px 0 -1.4px color-mix(in srgb, var(--ink-line) 45%, transparent);
-	}
+  :where(.glass) {
+    --ink-r: var(--radius);
+    --ink-line: color-mix(
+      in oklch,
+      var(--foreground) calc(var(--material-ink-lift) * 100%),
+      var(--material-ink)
+    );
+    contain: layout;
+    background: none;
+    border-color: transparent;
+    box-shadow: none;
+    border-radius: calc(var(--ink-r) * 1.7) calc(var(--ink-r) * 0.5) calc(var(--ink-r) * 1.35)
+      calc(var(--ink-r) * 0.65) / calc(var(--ink-r) * 0.55) calc(var(--ink-r) * 1.45)
+      calc(var(--ink-r) * 0.7) calc(var(--ink-r) * 1.6);
+  }
+  :where(.glass)::before,
+  :where(.glass)::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+  }
+  :where(.glass)::before {
+    inset: -5px -3px -2px -6px;
+    padding: 0;
+    mask: none;
+    translate: 3px 2px;
+    border-radius: calc(var(--ink-r) * 0.6) calc(var(--ink-r) * 1.6) calc(var(--ink-r) * 0.75)
+      calc(var(--ink-r) * 1.5) / calc(var(--ink-r) * 1.4) calc(var(--ink-r) * 0.6)
+      calc(var(--ink-r) * 1.5) calc(var(--ink-r) * 0.65);
+    background:
+      linear-gradient(color-mix(in srgb, var(--surface-tone) var(--surface-wash), transparent) 0 0),
+      linear-gradient(var(--glass-base) 0 0);
+  }
+  /* Above every widget layer (the SDK stacks to 30): full-bleed media would bury the line. */
+  :where(.glass)::after {
+    z-index: 40;
+    inset: 0;
+    border: 3px solid var(--ink-line);
+    border-radius: inherit;
+    rotate: -0.2deg;
+    /* Chalk: grain tiled at 1:1, so no browser stretches it; no-clip keeps the passes. */
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='c' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='5' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -3.4 2.55'/></filter><rect width='120' height='120' filter='url(%23c)'/></svg>")
+      0 0 / 120px 120px repeat;
+    mask-clip: no-clip;
+    opacity: var(--material-ink-level);
+    box-shadow:
+      -2px 2px 0 -1.2px color-mix(in srgb, var(--ink-line) 55%, transparent),
+      2px -1.5px 0 -1.4px color-mix(in srgb, var(--ink-line) 45%, transparent);
+  }
 }
 
 /* A mode's rim: the masked ring of .glass-edge-gradient, but the gradient orbits,
  * so a surface can say a mode is on for as long as it lasts. The mask sits on the
  * parent and the gradient rotates as a child, or the ring would rotate with it. */
 :where(.glass-edge-orbit) {
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	padding: 1px;
-	overflow: hidden;
-	mask:
-		linear-gradient(#fff 0 0) content-box,
-		linear-gradient(#fff 0 0);
-	mask-composite: exclude;
-	pointer-events: none;
-	/* A conic wedge crosses a wide pill's ends fast and its long edges slowly, so the
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  overflow: hidden;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  /* A conic wedge crosses a wide pill's ends fast and its long edges slowly, so the
 	 * ring keeps a constant floor and the orbit only adds the travelling highlight. */
-	background: color-mix(in oklab, var(--primary) 30%, transparent);
+  background: color-mix(in oklab, var(--primary) 30%, transparent);
 }
 :where(.glass-edge-orbit) > * {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 150%;
-	aspect-ratio: 1;
-	translate: -50% -50%;
-	background: conic-gradient(
-		from 0deg,
-		transparent 0deg,
-		color-mix(in oklab, var(--primary) 95%, transparent) 40deg,
-		transparent 100deg,
-		transparent 360deg
-	);
-	animation: spin-slow 8s linear infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    color-mix(in oklab, var(--primary) 95%, transparent) 40deg,
+    transparent 100deg,
+    transparent 360deg
+  );
+  animation: spin-slow 8s linear infinite;
 }
 @media (prefers-reduced-motion: reduce) {
-	:where(.glass-edge-orbit) > * {
-		animation: none;
-	}
+  :where(.glass-edge-orbit) > * {
+    animation: none;
+  }
 }
 
 /**
@@ -412,46 +409,46 @@
  * scroll surface that isn't a bare page — <ScrollArea>, dialogs, sheets.
  */
 .gh-scroll {
-	/* The width the bar reserves, published so a scroll container can subtract it
+  /* The width the bar reserves, published so a scroll container can subtract it
 	   from its own inset and keep its content column aligned with the panel's
 	   other parts. Blink and Gecko decide that width from scrollbar-width: thin
 	   and ignore the pseudo below; 10px is what they reserve, and the pseudo uses
 	   the same number so a WebKit build without scrollbar-width matches. */
-	--scrollbar-w: 10px;
-	scrollbar-width: thin;
-	scrollbar-color: color-mix(in srgb, var(--foreground) 22%, transparent) transparent;
-	&::-webkit-scrollbar {
-		width: var(--scrollbar-w);
-		height: var(--scrollbar-w);
-	}
-	&::-webkit-scrollbar-track {
-		background: transparent;
-	}
-	&::-webkit-scrollbar-thumb {
-		background: color-mix(in srgb, var(--foreground) 22%, transparent);
-		border-radius: 9999px;
-		border: 2px solid transparent;
-		background-clip: padding-box;
-	}
-	&::-webkit-scrollbar-thumb:hover {
-		background: color-mix(in srgb, var(--foreground) 38%, transparent);
-	}
+  --scrollbar-w: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--foreground) 22%, transparent) transparent;
+  &::-webkit-scrollbar {
+    width: var(--scrollbar-w);
+    height: var(--scrollbar-w);
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--foreground) 22%, transparent);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--foreground) 38%, transparent);
+  }
 }
 
 /* Alert/toast icon chrome + description spacing: structural (same rationale as
  * .carousel-stack below), so real CSS instead of [&>svg]: arbitrary variants.
  * Values mirror the former utilities: size-[18px], size-28, mt-0.5. */
 .gh-alert-icon > svg {
-	width: 18px;
-	height: 18px;
+  width: 18px;
+  height: 18px;
 }
 .gh-alert-icon-bg > svg {
-	width: 7rem;
-	height: 7rem;
-	stroke-width: 2.5px;
+  width: 7rem;
+  height: 7rem;
+  stroke-width: 2.5px;
 }
 .gh-alert-desc:not(:first-child) {
-	margin-top: 0.125rem;
+  margin-top: 0.125rem;
 }
 
 /* Carousel `wipe` puts every slide in one grid cell. This is
@@ -459,11 +456,11 @@
  * package source never reaches a consumer, because Tailwind skips node_modules
  * when scanning for class names. */
 .carousel-stack {
-	display: grid;
+  display: grid;
 }
 .carousel-stack > * {
-	grid-column: 1;
-	grid-row: 1;
+  grid-column: 1;
+  grid-row: 1;
 }
 
 /* Carousel `wipe`: the incoming slide sweeps in diagonally over the previous
@@ -473,36 +470,36 @@
  * Slides are opaque here; embla's fade plugin only stops the track translating,
  * and its opacity would wash out the sweep. */
 .carousel-wipe {
-	/* Content choreography, not a state change: the motion scale's rungs are for
+  /* Content choreography, not a state change: the motion scale's rungs are for
 	 * micro-interactions and are far too quick to read as a sweep. Override per
 	 * instance by setting --carousel-wipe on the carousel. */
-	--carousel-wipe: 1600ms;
-	clip-path: polygon(0 0, 300% 0, 0 300%, 0 0);
-	/* The fade plugin fades AND parks inactive slides off-screen
+  --carousel-wipe: 1600ms;
+  clip-path: polygon(0 0, 300% 0, 0 300%, 0 0);
+  /* The fade plugin fades AND parks inactive slides off-screen
 	 * (transform: translate(containerWidth + 2)), on embla's own short scroll
 	 * duration. Both have to be neutralised or the sweep reveals empty space
 	 * once the outgoing slide leaves: in wipe mode clip-path is the only reveal,
 	 * and z-index alone decides what shows through. Inline styles, hence
 	 * !important. */
-	opacity: 1 !important;
-	transform: none !important;
+  opacity: 1 !important;
+  transform: none !important;
 }
 .carousel-wipe[data-prev] {
-	z-index: 1;
+  z-index: 1;
 }
 .carousel-wipe[data-selected] {
-	z-index: 2;
-	animation: carousel-wipe-in var(--carousel-wipe) ease-in-out;
+  z-index: 2;
+  animation: carousel-wipe-in var(--carousel-wipe) ease-in-out;
 }
 @keyframes carousel-wipe-in {
-	from {
-		clip-path: polygon(0 0, 0 0, 0 0, 0 0);
-	}
+  from {
+    clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-	.carousel-wipe[data-selected] {
-		animation: none;
-	}
+  .carousel-wipe[data-selected] {
+    animation: none;
+  }
 }
 
 /* Children arrive one after another. Mount-only (a CSS animation runs when
@@ -513,44 +510,44 @@
  * rows take slots, it does not. Slots come from --i: nth-child below for a
  * flat list, or written inline by a part that knows its true order. */
 @keyframes stagger-in {
-	from {
-		opacity: 0;
-		/* Upward: a child of a scroll container must not extend its scrollable
+  from {
+    opacity: 0;
+    /* Upward: a child of a scroll container must not extend its scrollable
 		 * height mid-animation, and rows trail a downward-growing edge. */
-		translate: 0 -8px;
-	}
-	to {
-		opacity: 1;
-		translate: 0 0;
-	}
+    translate: 0 -8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
 }
 .gh-stagger > :not([role="group"]),
 .gh-stagger > [role="group"] > * {
-	animation: stagger-in calc(var(--duration-morph) * 0.5) var(--ease-emphasis) both;
-	animation-delay: calc(var(--stagger-base, 80ms) + var(--i, 0) * var(--stagger-step, 60ms));
+  animation: stagger-in calc(var(--duration-morph) * 0.5) var(--ease-emphasis) both;
+  animation-delay: calc(var(--stagger-base, 80ms) + var(--i, 0) * var(--stagger-step, 60ms));
 }
 .gh-stagger > :nth-child(2) {
-	--i: 1;
+  --i: 1;
 }
 .gh-stagger > :nth-child(3) {
-	--i: 2;
+  --i: 2;
 }
 .gh-stagger > :nth-child(4) {
-	--i: 3;
+  --i: 3;
 }
 .gh-stagger > :nth-child(5) {
-	--i: 4;
+  --i: 4;
 }
 .gh-stagger > :nth-child(6) {
-	--i: 5;
+  --i: 5;
 }
 .gh-stagger > :nth-child(n + 7) {
-	--i: 6;
+  --i: 6;
 }
 
 /* Icon: the box a glyph sits in, sized by its width/height attributes. */
 svg[data-slot="icon"] {
-	display: inline-block;
-	vertical-align: 0;
-	flex-shrink: 0;
+  display: inline-block;
+  vertical-align: 0;
+  flex-shrink: 0;
 }

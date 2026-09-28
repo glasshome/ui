@@ -1,24 +1,24 @@
 import { createSignal, For } from "solid-js";
 import {
-	AreaPicker,
-	type Color,
-	ColorDisc,
-	ColorSlider,
-	ColorWheel,
-	DashboardPreview,
-	EntitySelector,
-	IconPicker,
-	ImagePicker,
-	MediaStoreContext,
-	MediaTile,
-	PickerRow,
-	PickerSearch,
-	PickerTrigger,
-	PreviewTile,
-	PreviewTileGroup,
-	parseColor,
-	SwatchPicker,
-	TemperatureBar,
+  AreaPicker,
+  type Color,
+  ColorDisc,
+  ColorSlider,
+  ColorWheel,
+  DashboardPreview,
+  EntitySelector,
+  IconPicker,
+  ImagePicker,
+  MediaStoreContext,
+  MediaTile,
+  PickerRow,
+  PickerSearch,
+  PickerTrigger,
+  PreviewTile,
+  PreviewTileGroup,
+  parseColor,
+  SwatchPicker,
+  TemperatureBar,
 } from "../../src/solid";
 import { Axis, CatalogGroup, Specimen } from "../CatalogKit";
 import { DEMO_MEDIA, DemoHost, demoMediaStore } from "../fixtures";
@@ -33,302 +33,302 @@ import { DEMO_MEDIA, DemoHost, demoMediaStore } from "../fixtures";
  * chrome are all live.
  */
 export function PickersCatalog() {
-	// Color pickers share one Color value across the wheel + channel sliders.
-	const [color, setColor] = createSignal<Color>(parseColor("hsl(220, 90%, 56%)"));
+  // Color pickers share one Color value across the wheel + channel sliders.
+  const [color, setColor] = createSignal<Color>(parseColor("hsl(220, 90%, 56%)"));
 
-	// AreaPicker / EntitySelector selection state.
-	const [icon, setIcon] = createSignal("mdi:lightbulb");
-	const [area, setArea] = createSignal<string>("");
-	const [rooms, setRooms] = createSignal<string[]>([]);
-	const [lightIds, setLightIds] = createSignal<string[]>([]);
-	const [imageId, setImageId] = createSignal("");
-	const [tile, setTile] = createSignal<string | null>("soft");
-	const [swatch, setSwatch] = createSignal<string | null>("var(--primary)");
-	const [presetId, setPresetId] = createSignal("preset:coast");
-	const [disc, setDisc] = createSignal<Color>(parseColor("hsb(330, 60%, 100%)"));
-	const [kelvin, setKelvin] = createSignal(2700);
+  // AreaPicker / EntitySelector selection state.
+  const [icon, setIcon] = createSignal("mdi:lightbulb");
+  const [area, setArea] = createSignal<string>("");
+  const [rooms, setRooms] = createSignal<string[]>([]);
+  const [lightIds, setLightIds] = createSignal<string[]>([]);
+  const [imageId, setImageId] = createSignal("");
+  const [tile, setTile] = createSignal<string | null>("soft");
+  const [swatch, setSwatch] = createSignal<string | null>("var(--primary)");
+  const [presetId, setPresetId] = createSignal("preset:coast");
+  const [disc, setDisc] = createSignal<Color>(parseColor("hsb(330, 60%, 100%)"));
+  const [kelvin, setKelvin] = createSignal(2700);
 
-	return (
-		<DemoHost>
-			<CatalogGroup id="cat-pickers" title="Pickers (smart-home)">
-				<Specimen name="ColorWheel" state={color().toString("hex")} span={2}>
-					<div class="flex items-center gap-4">
-						<ColorWheel value={color()} onChange={setColor} size={160} aria-label="Pick a hue" />
-						<div class="flex flex-col gap-2">
-							<div
-								class="size-12 rounded-lg border border-border/60"
-								style={{ background: color().toString("css") }}
-							/>
-							<code class="font-mono text-[10px] text-muted-foreground">
-								{color().toString("hex")}
-							</code>
-						</div>
-					</div>
-				</Specimen>
+  return (
+    <DemoHost>
+      <CatalogGroup id="cat-pickers" title="Pickers (smart-home)">
+        <Specimen name="ColorWheel" state={color().toString("hex")} span={2}>
+          <div class="flex items-center gap-4">
+            <ColorWheel value={color()} onChange={setColor} size={160} aria-label="Pick a hue" />
+            <div class="flex flex-col gap-2">
+              <div
+                class="border-border/60 size-12 rounded-lg border"
+                style={{ background: color().toString("css") }}
+              />
+              <code class="text-muted-foreground font-mono text-[10px]">
+                {color().toString("hex")}
+              </code>
+            </div>
+          </div>
+        </Specimen>
 
-				<Specimen name="ColorDisc" state={disc().toString("hex")}>
-					<ColorDisc value={disc()} onChange={setDisc} size={220} />
-				</Specimen>
+        <Specimen name="ColorDisc" state={disc().toString("hex")}>
+          <ColorDisc value={disc()} onChange={setDisc} size={220} />
+        </Specimen>
 
-				<Specimen name="TemperatureBar" state={`${kelvin()} K`}>
-					<TemperatureBar value={kelvin()} onChange={setKelvin} />
-				</Specimen>
+        <Specimen name="TemperatureBar" state={`${kelvin()} K`}>
+          <TemperatureBar value={kelvin()} onChange={setKelvin} />
+        </Specimen>
 
-				<Specimen name="ColorSlider">
-					<Axis of="channel">
-						<div class="flex w-full flex-col gap-3">
-							<ColorSlider channel="hue" value={color()} onChange={setColor} aria-label="Hue" />
-							<ColorSlider
-								channel="lightness"
-								value={color()}
-								onChange={setColor}
-								aria-label="Lightness"
-							/>
-						</div>
-					</Axis>
-				</Specimen>
+        <Specimen name="ColorSlider">
+          <Axis of="channel">
+            <div class="flex w-full flex-col gap-3">
+              <ColorSlider channel="hue" value={color()} onChange={setColor} aria-label="Hue" />
+              <ColorSlider
+                channel="lightness"
+                value={color()}
+                onChange={setColor}
+                aria-label="Lightness"
+              />
+            </div>
+          </Axis>
+        </Specimen>
 
-				<Specimen name="IconPicker" try={icon()} span={2}>
-					<div class="w-full max-w-sm">
-						<IconPicker value={icon()} onChange={setIcon} placeholder="mdi:lightbulb" />
-					</div>
-				</Specimen>
+        <Specimen name="IconPicker" try={icon()} span={2}>
+          <div class="w-full max-w-sm">
+            <IconPicker value={icon()} onChange={setIcon} placeholder="mdi:lightbulb" />
+          </div>
+        </Specimen>
 
-				<Specimen name="AreaPicker" try="Choose a room..." span={2}>
-					<Axis of="value">
-						<div class="w-full max-w-sm">
-							<AreaPicker value={area()} onChange={setArea} placeholder="Choose a room..." />
-						</div>
-					</Axis>
-					<Axis of="disabled">
-						<div class="w-full max-w-sm">
-							<AreaPicker value={area()} onChange={setArea} disabled />
-						</div>
-					</Axis>
-					<Axis of="values">
-						<div class="w-full max-w-sm">
-							<AreaPicker values={rooms()} onValuesChange={setRooms} placeholder="Whole home" />
-						</div>
-					</Axis>
-				</Specimen>
+        <Specimen name="AreaPicker" try="Choose a room..." span={2}>
+          <Axis of="value">
+            <div class="w-full max-w-sm">
+              <AreaPicker value={area()} onChange={setArea} placeholder="Choose a room..." />
+            </div>
+          </Axis>
+          <Axis of="disabled">
+            <div class="w-full max-w-sm">
+              <AreaPicker value={area()} onChange={setArea} disabled />
+            </div>
+          </Axis>
+          <Axis of="values">
+            <div class="w-full max-w-sm">
+              <AreaPicker values={rooms()} onValuesChange={setRooms} placeholder="Whole home" />
+            </div>
+          </Axis>
+        </Specimen>
 
-				<Specimen name="EntitySelector" try="Select light entities..." span={2}>
-					<Axis of="domain">
-						<div class="w-full max-w-sm">
-							<EntitySelector
-								domain="light"
-								entityIds={lightIds()}
-								onEntityIdsChange={setLightIds}
-							/>
-						</div>
-					</Axis>
-				</Specimen>
+        <Specimen name="EntitySelector" try="Select light entities..." span={2}>
+          <Axis of="domain">
+            <div class="w-full max-w-sm">
+              <EntitySelector
+                domain="light"
+                entityIds={lightIds()}
+                onEntityIdsChange={setLightIds}
+              />
+            </div>
+          </Axis>
+        </Specimen>
 
-				<Specimen name="ImagePicker" try="Choose image" span={2}>
-					<MediaStoreContext.Provider value={demoMediaStore}>
-						<Axis of="presets">
-							<div class="w-full max-w-sm">
-								<ImagePicker value={imageId()} onChange={setImageId} />
-							</div>
-							<div class="w-full max-w-sm">
-								<ImagePicker
-									value={presetId()}
-									onChange={setPresetId}
-									presets={{
-										meadow: {
-											label: "Meadow",
-											thumb: demoMediaStore.url(DEMO_MEDIA[0].id, "thumb"),
-										},
-										coast: {
-											label: "Coast",
-											thumb: demoMediaStore.url(DEMO_MEDIA[1].id, "thumb"),
-										},
-									}}
-								/>
-							</div>
-						</Axis>
-					</MediaStoreContext.Provider>
-				</Specimen>
+        <Specimen name="ImagePicker" try="Choose image" span={2}>
+          <MediaStoreContext.Provider value={demoMediaStore}>
+            <Axis of="presets">
+              <div class="w-full max-w-sm">
+                <ImagePicker value={imageId()} onChange={setImageId} />
+              </div>
+              <div class="w-full max-w-sm">
+                <ImagePicker
+                  value={presetId()}
+                  onChange={setPresetId}
+                  presets={{
+                    meadow: {
+                      label: "Meadow",
+                      thumb: demoMediaStore.url(DEMO_MEDIA[0].id, "thumb"),
+                    },
+                    coast: {
+                      label: "Coast",
+                      thumb: demoMediaStore.url(DEMO_MEDIA[1].id, "thumb"),
+                    },
+                  }}
+                />
+              </div>
+            </Axis>
+          </MediaStoreContext.Provider>
+        </Specimen>
 
-				<Specimen name="MediaTile" span={2}>
-					<Axis of="selected">
-						<div class="grid w-full max-w-sm grid-cols-3 gap-2">
-							<MediaTile
-								item={DEMO_MEDIA[0]}
-								thumbUrl={demoMediaStore.url(DEMO_MEDIA[0].id, "thumb")}
-								label="Use demo-1"
-								broken={false}
-								markUnused
-								selected
-								onSelect={() => {}}
-								onBroken={() => {}}
-								onDelete={() => {}}
-							/>
-							<MediaTile
-								item={DEMO_MEDIA[1]}
-								thumbUrl={demoMediaStore.url(DEMO_MEDIA[1].id, "thumb")}
-								label="Use demo-2"
-								broken={false}
-								onSelect={() => {}}
-								onBroken={() => {}}
-								onDelete={() => {}}
-							/>
-						</div>
-					</Axis>
-					<Axis of="broken">
-						<div class="grid w-full max-w-sm grid-cols-3 gap-2">
-							<MediaTile
-								item={DEMO_MEDIA[1]}
-								thumbUrl=""
-								label="Use demo-2"
-								broken
-								onSelect={() => {}}
-								onBroken={() => {}}
-							/>
-						</div>
-					</Axis>
-				</Specimen>
+        <Specimen name="MediaTile" span={2}>
+          <Axis of="selected">
+            <div class="grid w-full max-w-sm grid-cols-3 gap-2">
+              <MediaTile
+                item={DEMO_MEDIA[0]}
+                thumbUrl={demoMediaStore.url(DEMO_MEDIA[0].id, "thumb")}
+                label="Use demo-1"
+                broken={false}
+                markUnused
+                selected
+                onSelect={() => {}}
+                onBroken={() => {}}
+                onDelete={() => {}}
+              />
+              <MediaTile
+                item={DEMO_MEDIA[1]}
+                thumbUrl={demoMediaStore.url(DEMO_MEDIA[1].id, "thumb")}
+                label="Use demo-2"
+                broken={false}
+                onSelect={() => {}}
+                onBroken={() => {}}
+                onDelete={() => {}}
+              />
+            </div>
+          </Axis>
+          <Axis of="broken">
+            <div class="grid w-full max-w-sm grid-cols-3 gap-2">
+              <MediaTile
+                item={DEMO_MEDIA[1]}
+                thumbUrl=""
+                label="Use demo-2"
+                broken
+                onSelect={() => {}}
+                onBroken={() => {}}
+              />
+            </div>
+          </Axis>
+        </Specimen>
 
-				<Specimen name="PickerRow" span={2}>
-					<Axis of="multi">
-						<div class="w-full max-w-sm">
-							<PickerRow
-								icon="mdi:lightbulb"
-								title="Ceiling light"
-								subtitle="Living room"
-								selected
-								multi={false}
-							/>
-							<PickerRow
-								icon="mdi:lightbulb"
-								title="Reading lamp"
-								subtitle="Living room"
-								meta="Off"
-								selected
-								multi
-							/>
-						</div>
-					</Axis>
-					<Axis of="dimmed">
-						<div class="w-full max-w-sm">
-							<PickerRow
-								icon="mdi:lightbulb"
-								title="Porch light"
-								subtitle="Unavailable"
-								selected={false}
-								multi
-								dimmed
-							/>
-						</div>
-					</Axis>
-				</Specimen>
+        <Specimen name="PickerRow" span={2}>
+          <Axis of="multi">
+            <div class="w-full max-w-sm">
+              <PickerRow
+                icon="mdi:lightbulb"
+                title="Ceiling light"
+                subtitle="Living room"
+                selected
+                multi={false}
+              />
+              <PickerRow
+                icon="mdi:lightbulb"
+                title="Reading lamp"
+                subtitle="Living room"
+                meta="Off"
+                selected
+                multi
+              />
+            </div>
+          </Axis>
+          <Axis of="dimmed">
+            <div class="w-full max-w-sm">
+              <PickerRow
+                icon="mdi:lightbulb"
+                title="Porch light"
+                subtitle="Unavailable"
+                selected={false}
+                multi
+                dimmed
+              />
+            </div>
+          </Axis>
+        </Specimen>
 
-				<Specimen name="PickerTrigger" span={2}>
-					<Axis of="state">
-						<div class="flex w-full max-w-sm flex-col gap-3">
-							<PickerTrigger slot="demo-trigger" open={false} onToggle={() => {}}>
-								<span class="flex-1 truncate text-left text-muted-foreground">
-									Select entity...
-								</span>
-							</PickerTrigger>
-							<PickerTrigger
-								slot="demo-trigger"
-								open={false}
-								onToggle={() => {}}
-								onClear={() => {}}
-							>
-								<span class="flex-1 truncate text-left">Ceiling light</span>
-							</PickerTrigger>
-							<PickerTrigger slot="demo-trigger" open onToggle={() => {}} onClear={() => {}}>
-								<span class="flex-1 truncate text-left">Ceiling light</span>
-							</PickerTrigger>
-						</div>
-					</Axis>
-				</Specimen>
+        <Specimen name="PickerTrigger" span={2}>
+          <Axis of="state">
+            <div class="flex w-full max-w-sm flex-col gap-3">
+              <PickerTrigger slot="demo-trigger" open={false} onToggle={() => {}}>
+                <span class="text-muted-foreground flex-1 truncate text-left">
+                  Select entity...
+                </span>
+              </PickerTrigger>
+              <PickerTrigger
+                slot="demo-trigger"
+                open={false}
+                onToggle={() => {}}
+                onClear={() => {}}
+              >
+                <span class="flex-1 truncate text-left">Ceiling light</span>
+              </PickerTrigger>
+              <PickerTrigger slot="demo-trigger" open onToggle={() => {}} onClear={() => {}}>
+                <span class="flex-1 truncate text-left">Ceiling light</span>
+              </PickerTrigger>
+            </div>
+          </Axis>
+        </Specimen>
 
-				<Specimen name="PreviewTile" state={`value: ${tile() ?? "none"}`} span={2}>
-					<PreviewTileGroup
-						aria-label="Corners"
-						columns={3}
-						value={tile()}
-						onChange={setTile}
-						class="w-full max-w-sm"
-					>
-						<For
-							each={
-								[
-									["sharp", "Sharp", "2px"],
-									["soft", "Soft", "10px"],
-									["round", "Round", "20px"],
-								] as const
-							}
-						>
-							{([value, label, radius]) => (
-								<PreviewTile value={value} label={label} meta={radius} shape="tile">
-									<div class="absolute inset-0 bg-gradient-to-br from-primary/40 to-accent/40" />
-									<div
-										class="absolute inset-x-2 top-1/3 bottom-2 border border-foreground/20 bg-card/80"
-										style={{ "border-radius": radius }}
-									/>
-								</PreviewTile>
-							)}
-						</For>
-					</PreviewTileGroup>
-				</Specimen>
+        <Specimen name="PreviewTile" state={`value: ${tile() ?? "none"}`} span={2}>
+          <PreviewTileGroup
+            aria-label="Corners"
+            columns={3}
+            value={tile()}
+            onChange={setTile}
+            class="w-full max-w-sm"
+          >
+            <For
+              each={
+                [
+                  ["sharp", "Sharp", "2px"],
+                  ["soft", "Soft", "10px"],
+                  ["round", "Round", "20px"],
+                ] as const
+              }
+            >
+              {([value, label, radius]) => (
+                <PreviewTile value={value} label={label} meta={radius} shape="tile">
+                  <div class="from-primary/40 to-accent/40 absolute inset-0 bg-gradient-to-br" />
+                  <div
+                    class="border-foreground/20 bg-card/80 absolute inset-x-2 top-1/3 bottom-2 border"
+                    style={{ "border-radius": radius }}
+                  />
+                </PreviewTile>
+              )}
+            </For>
+          </PreviewTileGroup>
+        </Specimen>
 
-				<Specimen name="DashboardPreview" span={2}>
-					<DashboardPreview
-						stage
-						columns={12}
-						class="max-w-xl"
-						tiles={[
-							{
-								key: "a",
-								x: 0,
-								y: 0,
-								w: 4,
-								h: 3,
-								icon: "lucide:clock",
-								label: "Clock",
-								description: "The time, big",
-							},
-							{ key: "b", x: 4, y: 0, w: 4, h: 2, icon: "lucide:music", label: "Media player" },
-							{ key: "c", x: 8, y: 0, w: 2, h: 2, icon: "lucide:cloud-sun", label: "Weather" },
-							{ key: "d", x: 10, y: 0, w: 2, h: 1, icon: "lucide:lock", label: "Lock" },
-							{ key: "e", x: 4, y: 2, w: 8, h: 1, icon: "lucide:lightbulb", label: "Lights" },
-						]}
-					/>
-				</Specimen>
+        <Specimen name="DashboardPreview" span={2}>
+          <DashboardPreview
+            stage
+            columns={12}
+            class="max-w-xl"
+            tiles={[
+              {
+                key: "a",
+                x: 0,
+                y: 0,
+                w: 4,
+                h: 3,
+                icon: "lucide:clock",
+                label: "Clock",
+                description: "The time, big",
+              },
+              { key: "b", x: 4, y: 0, w: 4, h: 2, icon: "lucide:music", label: "Media player" },
+              { key: "c", x: 8, y: 0, w: 2, h: 2, icon: "lucide:cloud-sun", label: "Weather" },
+              { key: "d", x: 10, y: 0, w: 2, h: 1, icon: "lucide:lock", label: "Lock" },
+              { key: "e", x: 4, y: 2, w: 8, h: 1, icon: "lucide:lightbulb", label: "Lights" },
+            ]}
+          />
+        </Specimen>
 
-				<Specimen name="SwatchPicker" state={swatch() ?? "none"} span={2}>
-					<SwatchPicker
-						aria-label="Accent"
-						colors={[
-							"var(--primary)",
-							"var(--accent)",
-							"var(--success)",
-							"var(--warning)",
-							"var(--destructive)",
-						]}
-						value={swatch()}
-						onChange={setSwatch}
-						labelOf={(_, i) => ["Primary", "Accent", "Success", "Warning", "Destructive"][i] ?? ""}
-					/>
-				</Specimen>
+        <Specimen name="SwatchPicker" state={swatch() ?? "none"} span={2}>
+          <SwatchPicker
+            aria-label="Accent"
+            colors={[
+              "var(--primary)",
+              "var(--accent)",
+              "var(--success)",
+              "var(--warning)",
+              "var(--destructive)",
+            ]}
+            value={swatch()}
+            onChange={setSwatch}
+            labelOf={(_, i) => ["Primary", "Accent", "Success", "Warning", "Destructive"][i] ?? ""}
+          />
+        </Specimen>
 
-				<Specimen name="PickerSearch" span={2}>
-					<Axis of="size">
-						<div class="flex w-full max-w-sm flex-col gap-3">
-							<PickerSearch
-								placeholder="Search entities"
-								value="kitchen"
-								clearLabel="Clear search"
-							/>
-							<PickerSearch placeholder="Search entities" size="touch" />
-						</div>
-					</Axis>
-				</Specimen>
-			</CatalogGroup>
-		</DemoHost>
-	);
+        <Specimen name="PickerSearch" span={2}>
+          <Axis of="size">
+            <div class="flex w-full max-w-sm flex-col gap-3">
+              <PickerSearch
+                placeholder="Search entities"
+                value="kitchen"
+                clearLabel="Clear search"
+              />
+              <PickerSearch placeholder="Search entities" size="touch" />
+            </div>
+          </Axis>
+        </Specimen>
+      </CatalogGroup>
+    </DemoHost>
+  );
 }

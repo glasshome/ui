@@ -8,7 +8,7 @@
  * overlapping Select listbox). The recess itself is .glass-sink's rim, which is
  * theme independent. */
 export const INPUT_SURFACE =
-	"glass glass-sink [--glass-base:var(--field)] [--glass-edge:var(--field-edge)] [--glass-light:0.04]";
+  "glass glass-sink [--glass-base:var(--field)] [--glass-edge:var(--field-edge)] [--glass-light:0.04]";
 
 /* Toggle-family chrome and rails: checkbox box, radio ring, switch track, slider
  * rail, chart wells. Same concave glass, but keyed to --input in both themes:
@@ -20,16 +20,16 @@ export const FIELD_CHROME = "glass glass-sink [--glass-base:var(--input)] [--gla
 /* Focus on a glass element: border utilities are no-ops there, so the edge
  * moves through the knob and the ring paints outside. */
 export const FOCUS_RING =
-	"outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:[--glass-edge:var(--ring)]";
+  "outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:[--glass-edge:var(--ring)]";
 
 export const INVALID_RING =
-	"aria-invalid:[--glass-edge:var(--destructive)] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40";
+  "aria-invalid:[--glass-edge:var(--destructive)] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40";
 
 /* The three control heights every field, trigger and button shares. */
 export const CONTROL_H = {
-	sm: "h-8",
-	default: "h-9",
-	lg: "h-10",
+  sm: "h-8",
+  default: "h-9",
+  lg: "h-10",
 } as const;
 
 /* Field type: 16px on touch so iOS does not zoom, 14px from md up. */

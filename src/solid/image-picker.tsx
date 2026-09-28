@@ -1,12 +1,12 @@
 import {
-	createEffect,
-	createMemo,
-	createResource,
-	createSignal,
-	For,
-	Match,
-	Show,
-	Switch,
+  createEffect,
+  createMemo,
+  createResource,
+  createSignal,
+  For,
+  Match,
+  Show,
+  Switch,
 } from "solid-js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
@@ -14,47 +14,47 @@ import { SECTION_INNER_RADIUS } from "../lib/section-tokens.js";
 import { cn } from "../lib/utils.js";
 import { Alert } from "./alert.js";
 import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "./alert-dialog.js";
 import { Badge } from "./badge.js";
 import { Button } from "./button.js";
 import { formatBytes } from "./charts.js";
 import {
-	Empty,
-	EmptyContent,
-	EmptyDescription,
-	EmptyHeader,
-	EmptyMedia,
-	EmptyTitle,
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
 } from "./empty.js";
 import { Icon } from "./icon.js";
 import { mediaIndexErrorCopy, mediaStoreErrorCopy, toMediaStoreError } from "./media-copy.js";
 import {
-	createBrokenMedia,
-	type ImagePreset,
-	imagePreset,
-	MEDIA_PAGE_SIZE,
-	type MediaStore,
-	type MediaStoreError,
-	presetValue,
-	type StoredMedia,
-	sortMediaForClearing,
-	useMediaStore,
+  createBrokenMedia,
+  type ImagePreset,
+  imagePreset,
+  MEDIA_PAGE_SIZE,
+  type MediaStore,
+  type MediaStoreError,
+  presetValue,
+  type StoredMedia,
+  sortMediaForClearing,
+  useMediaStore,
 } from "./media-store.js";
 import { MediaTile } from "./media-tile.js";
 import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-	PaginationNext,
-	PaginationPrevious,
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
 } from "./pagination.js";
 import { PickerTrigger } from "./picker-trigger.js";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover.js";
@@ -62,404 +62,406 @@ import { SectionMeta } from "./section-card.js";
 import { Skeleton } from "./skeleton.js";
 
 export interface ImagePickerProps {
-	/** Sits on the trigger so a LabeledField's <Label for> points at a real control. */
-	id?: string;
-	value: string;
-	onChange: (id: string) => void;
-	/** Built-in pictures offered before the uploads; picking one stores `presetValue(key)`. */
-	presets?: Record<string, ImagePreset>;
-	class?: string;
+  /** Sits on the trigger so a LabeledField's <Label for> points at a real control. */
+  id?: string;
+  value: string;
+  onChange: (id: string) => void;
+  /** Built-in pictures offered before the uploads; picking one stores `presetValue(key)`. */
+  presets?: Record<string, ImagePreset>;
+  class?: string;
 }
 
 export function ImagePicker(props: ImagePickerProps) {
-	const store = useMediaStore();
-	return (
-		<Show
-			when={store || props.presets}
-			fallback={
-				<div data-slot="image-picker" class={cn(props.class)}>
-					<Alert tone="info">This dashboard cannot store images.</Alert>
-				</div>
-			}
-		>
-			<ImageGallery {...props} store={store} />
-		</Show>
-	);
+  const store = useMediaStore();
+  return (
+    <Show
+      when={store || props.presets}
+      fallback={
+        <div data-slot="image-picker" class={cn(props.class)}>
+          <Alert tone="info">This dashboard cannot store images.</Alert>
+        </div>
+      }
+    >
+      <ImageGallery {...props} store={store} />
+    </Show>
+  );
 }
 
 type GalleryTile =
-	| { kind: "preset"; key: string; preset: ImagePreset }
-	| { kind: "media"; image: StoredMedia };
+  | { kind: "preset"; key: string; preset: ImagePreset }
+  | { kind: "media"; image: StoredMedia };
 
 function PresetTile(props: { preset: ImagePreset; selected: boolean; onSelect: () => void }) {
-	return (
-		<div data-slot="image-picker-preset" class="relative min-w-0">
-			<button
-				type="button"
-				aria-label={`Use ${props.preset.label}`}
-				aria-pressed={props.selected}
-				onClick={() => props.onSelect()}
-				class={cn(
-					FIELD_CHROME,
-					SECTION_INNER_RADIUS,
-					"relative block aspect-square w-full overflow-hidden",
-					props.selected && "ring-2 ring-primary",
-				)}
-			>
-				<img
-					src={props.preset.thumb}
-					alt={props.preset.label}
-					loading="lazy"
-					decoding="async"
-					class="absolute inset-0 h-full w-full object-cover"
-				/>
-			</button>
-			<Badge
-				tone="var(--muted-foreground)"
-				class="pointer-events-none absolute bottom-1 left-1 backdrop-blur-md"
-			>
-				Built in
-			</Badge>
-		</div>
-	);
+  return (
+    <div data-slot="image-picker-preset" class="relative min-w-0">
+      <button
+        type="button"
+        aria-label={`Use ${props.preset.label}`}
+        aria-pressed={props.selected}
+        onClick={() => props.onSelect()}
+        class={cn(
+          FIELD_CHROME,
+          SECTION_INNER_RADIUS,
+          "relative block aspect-square w-full overflow-hidden",
+          props.selected && "ring-primary ring-2",
+        )}
+      >
+        <img
+          src={props.preset.thumb}
+          alt={props.preset.label}
+          loading="lazy"
+          decoding="async"
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+      </button>
+      <Badge
+        tone="var(--muted-foreground)"
+        class="pointer-events-none absolute bottom-1 left-1 backdrop-blur-md"
+      >
+        Built in
+      </Badge>
+    </div>
+  );
 }
 
 function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined }) {
-	const store = props.store;
+  const store = props.store;
 
-	const [open, setOpen] = createSignal(false);
-	const [everOpened, setEverOpened] = createSignal(false);
-	const [error, setError] = createSignal<MediaStoreError>();
-	const [pendingDelete, setPendingDelete] = createSignal<StoredMedia>();
-	const [thumbBroken, setThumbBroken] = createSignal(false);
-	const [uploading, setUploading] = createSignal(false);
-	const [page, setPage] = createSignal(0);
-	const thumbUrl = (id: string) => store?.url(id, "thumb") ?? "";
-	const brokenTiles = createBrokenMedia(thumbUrl);
-	let fileInput: HTMLInputElement | undefined;
+  const [open, setOpen] = createSignal(false);
+  const [everOpened, setEverOpened] = createSignal(false);
+  const [error, setError] = createSignal<MediaStoreError>();
+  const [pendingDelete, setPendingDelete] = createSignal<StoredMedia>();
+  const [thumbBroken, setThumbBroken] = createSignal(false);
+  const [uploading, setUploading] = createSignal(false);
+  const [page, setPage] = createSignal(0);
+  const thumbUrl = (id: string) => store?.url(id, "thumb") ?? "";
+  const brokenTiles = createBrokenMedia(thumbUrl);
+  let fileInput: HTMLInputElement | undefined;
 
-	const [index, { refetch }] = createResource(
-		() => everOpened() && store !== undefined,
-		() => (store ? store.index() : Promise.reject(new Error("no media store"))),
-	);
-	// Reading index() on a rejected resource rethrows, which crashes the popover's
-	// portal and leaves its overlay swallowing clicks. Every read goes through this.
-	const indexError = createMemo(() =>
-		index.error === undefined ? undefined : toMediaStoreError(index.error),
-	);
-	const loaded = () => (index.error === undefined ? index() : undefined);
-	const sorted = createMemo(() => sortMediaForClearing(loaded()?.media ?? []));
-	// Built-in pictures lead the grid; the household's uploads follow them.
-	const tiles = createMemo<GalleryTile[]>(() => [
-		...Object.entries(props.presets ?? {}).map(
-			([key, preset]): GalleryTile => ({ kind: "preset", key, preset }),
-		),
-		...sorted().map((image): GalleryTile => ({ kind: "media", image })),
-	]);
-	const pageCount = createMemo(() => Math.max(1, Math.ceil(tiles().length / MEDIA_PAGE_SIZE)));
-	const current = createMemo(() => Math.min(page(), pageCount() - 1));
-	const pageTiles = createMemo(() =>
-		tiles().slice(current() * MEDIA_PAGE_SIZE, current() * MEDIA_PAGE_SIZE + MEDIA_PAGE_SIZE),
-	);
-	const deleteDescription = createMemo(() => {
-		const used = pendingDelete()?.usedBy ?? 0;
-		return used === 0
-			? "This image isn't used by any widget."
-			: `This image is used in ${used} widget${used === 1 ? "" : "s"}. Deleting it will leave those widgets without an image.`;
-	});
+  const [index, { refetch }] = createResource(
+    () => everOpened() && store !== undefined,
+    () => (store ? store.index() : Promise.reject(new Error("no media store"))),
+  );
+  // Reading index() on a rejected resource rethrows, which crashes the popover's
+  // portal and leaves its overlay swallowing clicks. Every read goes through this.
+  const indexError = createMemo(() =>
+    index.error === undefined ? undefined : toMediaStoreError(index.error),
+  );
+  const loaded = () => (index.error === undefined ? index() : undefined);
+  const sorted = createMemo(() => sortMediaForClearing(loaded()?.media ?? []));
+  // Built-in pictures lead the grid; the household's uploads follow them.
+  const tiles = createMemo<GalleryTile[]>(() => [
+    ...Object.entries(props.presets ?? {}).map(([key, preset]): GalleryTile => ({
+      kind: "preset",
+      key,
+      preset,
+    })),
+    ...sorted().map((image): GalleryTile => ({ kind: "media", image })),
+  ]);
+  const pageCount = createMemo(() => Math.max(1, Math.ceil(tiles().length / MEDIA_PAGE_SIZE)));
+  const current = createMemo(() => Math.min(page(), pageCount() - 1));
+  const pageTiles = createMemo(() =>
+    tiles().slice(current() * MEDIA_PAGE_SIZE, current() * MEDIA_PAGE_SIZE + MEDIA_PAGE_SIZE),
+  );
+  const deleteDescription = createMemo(() => {
+    const used = pendingDelete()?.usedBy ?? 0;
+    return used === 0
+      ? "This image isn't used by any widget."
+      : `This image is used in ${used} widget${used === 1 ? "" : "s"}. Deleting it will leave those widgets without an image.`;
+  });
 
-	const chosenPreset = () => {
-		const key = imagePreset(props.value);
-		return key === undefined ? undefined : props.presets?.[key];
-	};
+  const chosenPreset = () => {
+    const key = imagePreset(props.value);
+    return key === undefined ? undefined : props.presets?.[key];
+  };
 
-	const pick = (value: string) => {
-		props.onChange(props.value === value ? "" : value);
-		setThumbBroken(false);
-		setOpen(false);
-	};
+  const pick = (value: string) => {
+    props.onChange(props.value === value ? "" : value);
+    setThumbBroken(false);
+    setOpen(false);
+  };
 
-	const clearImage = () => {
-		props.onChange("");
-		setThumbBroken(false);
-	};
+  const clearImage = () => {
+    props.onChange("");
+    setThumbBroken(false);
+  };
 
-	const openGallery = (next: boolean) => {
-		if (next) setEverOpened(true);
-		setOpen(next);
-	};
+  const openGallery = (next: boolean) => {
+    if (next) setEverOpened(true);
+    setOpen(next);
+  };
 
-	// A gallery reopened after a failed upload starts clean; a stale banner reads as a fresh failure.
-	createEffect(() => {
-		if (open()) {
-			setError(undefined);
-			setPage(0);
-		}
-	});
+  // A gallery reopened after a failed upload starts clean; a stale banner reads as a fresh failure.
+  createEffect(() => {
+    if (open()) {
+      setError(undefined);
+      setPage(0);
+    }
+  });
 
-	const step = (delta: number) =>
-		setPage(Math.min(Math.max(current() + delta, 0), pageCount() - 1));
+  const step = (delta: number) =>
+    setPage(Math.min(Math.max(current() + delta, 0), pageCount() - 1));
 
-	// A store rejection is picker state, never an unhandled rejection escaping the tree.
-	const fail = (cause: unknown) => setError(toMediaStoreError(cause));
+  // A store rejection is picker state, never an unhandled rejection escaping the tree.
+  const fail = (cause: unknown) => setError(toMediaStoreError(cause));
 
-	const handleUpload = async (file: File) => {
-		setError(undefined);
-		setUploading(true);
-		try {
-			if (!store) return;
-			const uploaded = await store.upload(file);
-			await refetch();
-			props.onChange(uploaded.id);
-		} catch (cause) {
-			fail(cause);
-		} finally {
-			setUploading(false);
-		}
-	};
+  const handleUpload = async (file: File) => {
+    setError(undefined);
+    setUploading(true);
+    try {
+      if (!store) return;
+      const uploaded = await store.upload(file);
+      await refetch();
+      props.onChange(uploaded.id);
+    } catch (cause) {
+      fail(cause);
+    } finally {
+      setUploading(false);
+    }
+  };
 
-	const confirmDelete = async () => {
-		const target = pendingDelete();
-		if (!target) return;
-		setError(undefined);
-		try {
-			await store?.remove(target.id);
-			await refetch();
-		} catch (cause) {
-			fail(cause);
-		} finally {
-			setPendingDelete(undefined);
-		}
-	};
+  const confirmDelete = async () => {
+    const target = pendingDelete();
+    if (!target) return;
+    setError(undefined);
+    try {
+      await store?.remove(target.id);
+      await refetch();
+    } catch (cause) {
+      fail(cause);
+    } finally {
+      setPendingDelete(undefined);
+    }
+  };
 
-	return (
-		<div data-slot="image-picker" class={cn(props.class)}>
-			<Popover surface="field" open={open()} onOpenChange={openGallery} modal>
-				<PopoverAnchor as="div">
-					<PickerTrigger
-						id={props.id}
-						slot="image-picker-trigger"
-						open={open()}
-						onToggle={() => openGallery(!open())}
-						onClear={props.value ? clearImage : undefined}
-						clearLabel="Clear image"
-					>
-						<Show
-							when={!thumbBroken() && props.value && (chosenPreset() ?? store)}
-							fallback={
-								<>
-									<Icon
-										icon={thumbBroken() ? "lucide:image-off" : "lucide:image"}
-										width={18}
-										height={18}
-										class="shrink-0 text-muted-foreground"
-									/>
-									<span class="flex-1 truncate text-left text-muted-foreground">
-										{thumbBroken() ? "Image unavailable" : "Choose image"}
-									</span>
-								</>
-							}
-						>
-							<img
-								src={chosenPreset()?.thumb ?? store?.url(props.value)}
-								alt=""
-								width={24}
-								height={24}
-								decoding="async"
-								class="size-6 shrink-0 rounded-sm object-cover"
-								onError={() => setThumbBroken(true)}
-							/>
-							<span class="flex-1 truncate text-left">
-								{chosenPreset()?.label ?? "Image selected"}
-							</span>
-						</Show>
-					</PickerTrigger>
-				</PopoverAnchor>
-				<PopoverContent class="min-w-72" onInteractOutside={() => setOpen(false)}>
-					{/* The panel owns no padding: the gallery body owns its own inset. */}
-					<div data-slot="image-picker-body" class="flex flex-col gap-3 p-3">
-						<Show when={error()}>
-							{(err) => (
-								<Alert tone="destructive" role="alert">
-									{mediaStoreErrorCopy(err())}
-								</Alert>
-							)}
-						</Show>
-						<Show when={indexError()}>
-							{(failure) => (
-								// role="status": the gallery is explaining itself, not raising an alarm.
-								<Empty role="status">
-									<EmptyHeader>
-										<EmptyMedia variant="icon">
-											<Icon icon="lucide:image-off" width={24} height={24} />
-										</EmptyMedia>
-										<EmptyTitle>Images unavailable</EmptyTitle>
-										<EmptyDescription>{mediaIndexErrorCopy(failure())}</EmptyDescription>
-									</EmptyHeader>
-									<EmptyContent>
-										<Button
-											type="button"
-											variant="outline"
-											size="sm"
-											data-slot="image-picker-retry"
-											onClick={() => void refetch()}
-										>
-											Try again
-										</Button>
-									</EmptyContent>
-								</Empty>
-							)}
-						</Show>
-						<Show
-							when={tiles().length > 0}
-							fallback={
-								<Switch>
-									<Match when={store && !loaded() && !indexError()}>
-										<div data-slot="image-picker-loading" class="grid grid-cols-3 gap-2">
-											<For each={[0, 1, 2, 3, 4, 5]}>
-												{() => <Skeleton class="aspect-square" />}
-											</For>
-										</div>
-									</Match>
-									<Match when={loaded()}>
-										<Empty>
-											<EmptyHeader>
-												<EmptyMedia variant="icon">
-													<Icon icon="lucide:image" width={24} height={24} />
-												</EmptyMedia>
-												<EmptyTitle>No images yet</EmptyTitle>
-												<EmptyDescription>Upload one to use it here.</EmptyDescription>
-											</EmptyHeader>
-										</Empty>
-									</Match>
-								</Switch>
-							}
-						>
-							<div
-								data-slot="image-picker-gallery"
-								class={cn("grid grid-cols-3 gap-2", PICKER_LIST, "overflow-x-hidden")}
-							>
-								<For each={pageTiles()}>
-									{(tile) =>
-										tile.kind === "preset" ? (
-											<PresetTile
-												preset={tile.preset}
-												selected={props.value === presetValue(tile.key)}
-												onSelect={() => pick(presetValue(tile.key))}
-											/>
-										) : (
-											<MediaTile
-												item={tile.image}
-												thumbUrl={thumbUrl(tile.image.id)}
-												label={`Use ${tile.image.id}`}
-												broken={brokenTiles.isBroken(tile.image)}
-												markUnused
-												selected={props.value === tile.image.id}
-												onSelect={() => pick(tile.image.id)}
-												onBroken={() => brokenTiles.markBroken(tile.image)}
-												onDelete={() => setPendingDelete(tile.image)}
-											/>
-										)
-									}
-								</For>
-							</div>
-							<Show when={pageCount() > 1}>
-								<Pagination>
-									<PaginationContent class="w-full justify-between">
-										<PaginationItem>
-											<PaginationPrevious
-												href="#"
-												aria-disabled={current() === 0}
-												class={current() === 0 ? "pointer-events-none opacity-50" : undefined}
-												onClick={(event) => {
-													event.preventDefault();
-													step(-1);
-												}}
-											/>
-										</PaginationItem>
-										<PaginationItem data-testid="image-picker-page-label">
-											<SectionMeta>
-												Page {current() + 1} of {pageCount()}
-											</SectionMeta>
-										</PaginationItem>
-										<PaginationItem>
-											<PaginationNext
-												href="#"
-												aria-disabled={current() === pageCount() - 1}
-												class={
-													current() === pageCount() - 1
-														? "pointer-events-none opacity-50"
-														: undefined
-												}
-												onClick={(event) => {
-													event.preventDefault();
-													step(1);
-												}}
-											/>
-										</PaginationItem>
-									</PaginationContent>
-								</Pagination>
-							</Show>
-						</Show>
-						<Show when={loaded()?.usage}>
-							{(u) => (
-								<SectionMeta>
-									{formatBytes(u().bytes)} of {formatBytes(u().limitBytes)} · {u().files} of{" "}
-									{u().limitFiles} images
-								</SectionMeta>
-							)}
-						</Show>
-						<Show when={store}>
-							<input
-								ref={fileInput}
-								type="file"
-								accept="image/*"
-								data-testid="image-upload-input"
-								class="hidden"
-								onChange={(e) => {
-									const file = e.currentTarget.files?.[0];
-									e.currentTarget.value = "";
-									if (file) void handleUpload(file);
-								}}
-							/>
-							<Button
-								type="button"
-								variant="outline"
-								size="sm"
-								data-slot="image-picker-upload"
-								disabled={uploading()}
-								onClick={() => fileInput?.click()}
-							>
-								<Icon icon="lucide:upload" width={14} height={14} />
-								{uploading() ? "Uploading..." : "Upload"}
-							</Button>
-						</Show>
-					</div>
-				</PopoverContent>
-			</Popover>
-			<AlertDialog
-				open={pendingDelete() !== undefined}
-				onOpenChange={(next) => {
-					if (!next) setPendingDelete(undefined);
-				}}
-			>
-				<AlertDialogContent>
-					<AlertDialogHeader>
-						<AlertDialogTitle>Delete image?</AlertDialogTitle>
-						<AlertDialogDescription>{deleteDescription()}</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel aria-label="Cancel">Cancel</AlertDialogCancel>
-						<AlertDialogAction
-							variant="destructive"
-							aria-label="Delete"
-							onClick={() => void confirmDelete()}
-						>
-							Delete
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
-		</div>
-	);
+  return (
+    <div data-slot="image-picker" class={cn(props.class)}>
+      <Popover surface="field" open={open()} onOpenChange={openGallery} modal>
+        <PopoverAnchor as="div">
+          <PickerTrigger
+            id={props.id}
+            slot="image-picker-trigger"
+            open={open()}
+            onToggle={() => openGallery(!open())}
+            onClear={props.value ? clearImage : undefined}
+            clearLabel="Clear image"
+          >
+            <Show
+              when={!thumbBroken() && props.value && (chosenPreset() ?? store)}
+              fallback={
+                <>
+                  <Icon
+                    icon={thumbBroken() ? "lucide:image-off" : "lucide:image"}
+                    width={18}
+                    height={18}
+                    class="text-muted-foreground shrink-0"
+                  />
+                  <span class="text-muted-foreground flex-1 truncate text-left">
+                    {thumbBroken() ? "Image unavailable" : "Choose image"}
+                  </span>
+                </>
+              }
+            >
+              <img
+                src={chosenPreset()?.thumb ?? store?.url(props.value)}
+                alt=""
+                width={24}
+                height={24}
+                decoding="async"
+                class="size-6 shrink-0 rounded-sm object-cover"
+                onError={() => setThumbBroken(true)}
+              />
+              <span class="flex-1 truncate text-left">
+                {chosenPreset()?.label ?? "Image selected"}
+              </span>
+            </Show>
+          </PickerTrigger>
+        </PopoverAnchor>
+        <PopoverContent class="min-w-72" onInteractOutside={() => setOpen(false)}>
+          {/* The panel owns no padding: the gallery body owns its own inset. */}
+          <div data-slot="image-picker-body" class="flex flex-col gap-3 p-3">
+            <Show when={error()}>
+              {(err) => (
+                <Alert tone="destructive" role="alert">
+                  {mediaStoreErrorCopy(err())}
+                </Alert>
+              )}
+            </Show>
+            <Show when={indexError()}>
+              {(failure) => (
+                // role="status": the gallery is explaining itself, not raising an alarm.
+                <Empty role="status">
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <Icon icon="lucide:image-off" width={24} height={24} />
+                    </EmptyMedia>
+                    <EmptyTitle>Images unavailable</EmptyTitle>
+                    <EmptyDescription>{mediaIndexErrorCopy(failure())}</EmptyDescription>
+                  </EmptyHeader>
+                  <EmptyContent>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      data-slot="image-picker-retry"
+                      onClick={() => void refetch()}
+                    >
+                      Try again
+                    </Button>
+                  </EmptyContent>
+                </Empty>
+              )}
+            </Show>
+            <Show
+              when={tiles().length > 0}
+              fallback={
+                <Switch>
+                  <Match when={store && !loaded() && !indexError()}>
+                    <div data-slot="image-picker-loading" class="grid grid-cols-3 gap-2">
+                      <For each={[0, 1, 2, 3, 4, 5]}>
+                        {() => <Skeleton class="aspect-square" />}
+                      </For>
+                    </div>
+                  </Match>
+                  <Match when={loaded()}>
+                    <Empty>
+                      <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                          <Icon icon="lucide:image" width={24} height={24} />
+                        </EmptyMedia>
+                        <EmptyTitle>No images yet</EmptyTitle>
+                        <EmptyDescription>Upload one to use it here.</EmptyDescription>
+                      </EmptyHeader>
+                    </Empty>
+                  </Match>
+                </Switch>
+              }
+            >
+              <div
+                data-slot="image-picker-gallery"
+                class={cn("grid grid-cols-3 gap-2", PICKER_LIST, "overflow-x-hidden")}
+              >
+                <For each={pageTiles()}>
+                  {(tile) =>
+                    tile.kind === "preset" ? (
+                      <PresetTile
+                        preset={tile.preset}
+                        selected={props.value === presetValue(tile.key)}
+                        onSelect={() => pick(presetValue(tile.key))}
+                      />
+                    ) : (
+                      <MediaTile
+                        item={tile.image}
+                        thumbUrl={thumbUrl(tile.image.id)}
+                        label={`Use ${tile.image.id}`}
+                        broken={brokenTiles.isBroken(tile.image)}
+                        markUnused
+                        selected={props.value === tile.image.id}
+                        onSelect={() => pick(tile.image.id)}
+                        onBroken={() => brokenTiles.markBroken(tile.image)}
+                        onDelete={() => setPendingDelete(tile.image)}
+                      />
+                    )
+                  }
+                </For>
+              </div>
+              <Show when={pageCount() > 1}>
+                <Pagination>
+                  <PaginationContent class="w-full justify-between">
+                    <PaginationItem>
+                      <PaginationPrevious
+                        href="#"
+                        aria-disabled={current() === 0}
+                        class={current() === 0 ? "pointer-events-none opacity-50" : undefined}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          step(-1);
+                        }}
+                      />
+                    </PaginationItem>
+                    <PaginationItem data-testid="image-picker-page-label">
+                      <SectionMeta>
+                        Page {current() + 1} of {pageCount()}
+                      </SectionMeta>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationNext
+                        href="#"
+                        aria-disabled={current() === pageCount() - 1}
+                        class={
+                          current() === pageCount() - 1
+                            ? "pointer-events-none opacity-50"
+                            : undefined
+                        }
+                        onClick={(event) => {
+                          event.preventDefault();
+                          step(1);
+                        }}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </Show>
+            </Show>
+            <Show when={loaded()?.usage}>
+              {(u) => (
+                <SectionMeta>
+                  {formatBytes(u().bytes)} of {formatBytes(u().limitBytes)} · {u().files} of{" "}
+                  {u().limitFiles} images
+                </SectionMeta>
+              )}
+            </Show>
+            <Show when={store}>
+              <input
+                ref={fileInput}
+                type="file"
+                accept="image/*"
+                data-testid="image-upload-input"
+                class="hidden"
+                onChange={(e) => {
+                  const file = e.currentTarget.files?.[0];
+                  e.currentTarget.value = "";
+                  if (file) void handleUpload(file);
+                }}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                data-slot="image-picker-upload"
+                disabled={uploading()}
+                onClick={() => fileInput?.click()}
+              >
+                <Icon icon="lucide:upload" width={14} height={14} />
+                {uploading() ? "Uploading..." : "Upload"}
+              </Button>
+            </Show>
+          </div>
+        </PopoverContent>
+      </Popover>
+      <AlertDialog
+        open={pendingDelete() !== undefined}
+        onOpenChange={(next) => {
+          if (!next) setPendingDelete(undefined);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete image?</AlertDialogTitle>
+            <AlertDialogDescription>{deleteDescription()}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel aria-label="Cancel">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              aria-label="Delete"
+              onClick={() => void confirmDelete()}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
 }

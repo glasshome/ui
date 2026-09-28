@@ -4,12 +4,12 @@ import { Z_CLASS } from "./layers.js";
  * 13-step grey ramp that bands and washes half the surface, so the glass read
  * comes from the rim line, the blur and the grain instead. */
 const OVERLAY_KNOBS =
-	"glass glass-frost [--glass-rim:0.5] [--glass-lift:0.6] [--glass-light:0] [--glass-edge:color-mix(in_srgb,var(--border)_90%,transparent)]";
+  "glass glass-frost [--glass-rim:0.5] [--glass-lift:0.6] [--glass-light:0] [--glass-edge:color-mix(in_srgb,var(--border)_90%,transparent)]";
 
 /* Split from the surface the way CARD_BLUR is, so a host can gate it off and
  * paint a precomputed frost instead. */
 export const OVERLAY_BLUR =
-	"backdrop-blur-[var(--glass-blur,var(--material-blur,24px))] backdrop-saturate-[1.2]";
+  "backdrop-blur-[var(--glass-blur,var(--material-blur,24px))] backdrop-saturate-[1.2]";
 
 export const OVERLAY_SURFACE_BASE = `${OVERLAY_KNOBS} [--glass-base:color-mix(in_srgb,var(--popover)_92%,transparent)]`;
 
@@ -42,8 +42,8 @@ export const FLOATING_PANEL = `${OVERLAY_SURFACE} relative ${PANEL_TAIL}`;
  * width bound to --kb-popper-anchor-width, the panel covers the trigger and
  * grows downward from it. */
 export const anchorToTriggerTop = (anchor?: HTMLElement) => {
-	const r = anchor?.getBoundingClientRect();
-	return r
-		? { x: r.left, y: r.top, width: r.width, height: 0 }
-		: { x: 0, y: 0, width: 0, height: 0 };
+  const r = anchor?.getBoundingClientRect();
+  return r
+    ? { x: r.left, y: r.top, width: r.width, height: 0 }
+    : { x: 0, y: 0, width: 0, height: 0 };
 };

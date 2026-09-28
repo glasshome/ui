@@ -12,51 +12,49 @@ import { describe, expect, it } from "vitest";
 import { contrastRatio, parseThemeBlock } from "../../src/tokens";
 
 const css = readFileSync(
-	path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../src/styles/theme.css"),
-	"utf8",
+  path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../src/styles/theme.css"),
+  "utf8",
 );
 
 /** Throws rather than silently comparing `undefined`, which reads as pure white. */
 function role(vars: Record<string, string>, name: string): string {
-	const value = vars[name];
-	if (!value?.startsWith("oklch(")) {
-		throw new Error(`theme.css does not declare ${name} as a literal oklch()`);
-	}
-	return value;
+  const value = vars[name];
+  if (!value?.startsWith("oklch(")) {
+    throw new Error(`theme.css does not declare ${name} as a literal oklch()`);
+  }
+  return value;
 }
 
 const TEXT_FLOOR = 4.5;
 const INDICATOR_FLOOR = 3;
 
 describe.each([
-	["light", ":root"],
-	["dark", ".dark"],
+  ["light", ":root"],
+  ["dark", ".dark"],
 ])("%s theme semantic roles", (_mode, block) => {
-	const vars = parseThemeBlock(css, block);
-	const grounds = ["--background", "--card", "--popover", "--muted"] as const;
+  const vars = parseThemeBlock(css, block);
+  const grounds = ["--background", "--card", "--popover", "--muted"] as const;
 
-	it.each([
-		"--success",
-		"--warning",
-		"--destructive",
-		"--muted-foreground",
-	])("%s reads as text on every ground", (name) => {
-		for (const ground of grounds) {
-			expect(
-				contrastRatio(role(vars, name), role(vars, ground)),
-				`${name} on ${ground}`,
-			).toBeGreaterThanOrEqual(TEXT_FLOOR);
-		}
-	});
+  it.each(["--success", "--warning", "--destructive", "--muted-foreground"])(
+    "%s reads as text on every ground",
+    (name) => {
+      for (const ground of grounds) {
+        expect(
+          contrastRatio(role(vars, name), role(vars, ground)),
+          `${name} on ${ground}`,
+        ).toBeGreaterThanOrEqual(TEXT_FLOOR);
+      }
+    },
+  );
 
-	it("--ring clears the focus-indicator floor", () => {
-		for (const ground of grounds) {
-			expect(
-				contrastRatio(role(vars, "--ring"), role(vars, ground)),
-				`--ring on ${ground}`,
-			).toBeGreaterThanOrEqual(INDICATOR_FLOOR);
-		}
-	});
+  it("--ring clears the focus-indicator floor", () => {
+    for (const ground of grounds) {
+      expect(
+        contrastRatio(role(vars, "--ring"), role(vars, ground)),
+        `--ring on ${ground}`,
+      ).toBeGreaterThanOrEqual(INDICATOR_FLOOR);
+    }
+  });
 });
 
 /* Light only: --destructive is also worn as a filled surface with
@@ -65,8 +63,8 @@ describe.each([
  * pairs them that way (the destructive Button is a tinted glass pill with
  * glassToneText), so that pairing is a consumer's own call there. */
 it("white sits on the light-theme destructive fill", () => {
-	const vars = parseThemeBlock(css, ":root");
-	expect(
-		contrastRatio(role(vars, "--destructive-foreground"), role(vars, "--destructive")),
-	).toBeGreaterThanOrEqual(TEXT_FLOOR);
+  const vars = parseThemeBlock(css, ":root");
+  expect(
+    contrastRatio(role(vars, "--destructive-foreground"), role(vars, "--destructive")),
+  ).toBeGreaterThanOrEqual(TEXT_FLOOR);
 });

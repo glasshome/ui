@@ -18,18 +18,18 @@ export const LOGO_DEFAULT_SIZE: LogoSize = "md";
 
 /** Rendered pixel size of the mark per size, for width/height attrs (CLS). */
 export const LOGO_MARK_PX: Record<LogoSize, number> = {
-	sm: 32,
-	md: 48,
-	lg: 64,
+  sm: 32,
+  md: 48,
+  lg: 64,
 };
 
 export const LOGO_SIZES: Record<
-	LogoSize,
-	{ mark: string; name: string; sub: string; gap: string }
+  LogoSize,
+  { mark: string; name: string; sub: string; gap: string }
 > = {
-	sm: { mark: "h-8 w-8", name: "text-xs", sub: "text-base", gap: "gap-1.5" },
-	md: { mark: "h-12 w-12", name: "text-base", sub: "text-2xl", gap: "gap-2" },
-	lg: { mark: "h-16 w-16", name: "text-lg", sub: "text-3xl", gap: "gap-2" },
+  sm: { mark: "h-8 w-8", name: "text-xs", sub: "text-base", gap: "gap-1.5" },
+  md: { mark: "h-12 w-12", name: "text-base", sub: "text-2xl", gap: "gap-2" },
+  lg: { mark: "h-16 w-16", name: "text-lg", sub: "text-3xl", gap: "gap-2" },
 };
 
 /**

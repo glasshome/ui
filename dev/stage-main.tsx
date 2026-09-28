@@ -9,42 +9,42 @@ import "./styles.css";
 provideIcons({ bundled });
 
 interface StageRoute {
-	areaId: string;
-	entryId: string;
-	theme: string | null;
+  areaId: string;
+  entryId: string;
+  theme: string | null;
 }
 
 function readRoute(): StageRoute {
-	const [path = "", query = ""] = window.location.hash.replace(/^#\/?/, "").split("?");
-	const [areaId = "", entryId = ""] = path.split("/").filter(Boolean);
-	return { areaId, entryId, theme: new URLSearchParams(query).get("theme") };
+  const [path = "", query = ""] = window.location.hash.replace(/^#\/?/, "").split("?");
+  const [areaId = "", entryId = ""] = path.split("/").filter(Boolean);
+  return { areaId, entryId, theme: new URLSearchParams(query).get("theme") };
 }
 
 function useStageRoute() {
-	const [route, setRoute] = createSignal(readRoute());
-	const onChange = () => setRoute(readRoute());
-	window.addEventListener("hashchange", onChange);
-	onCleanup(() => window.removeEventListener("hashchange", onChange));
-	return route;
+  const [route, setRoute] = createSignal(readRoute());
+  const onChange = () => setRoute(readRoute());
+  window.addEventListener("hashchange", onChange);
+  onCleanup(() => window.removeEventListener("hashchange", onChange));
+  return route;
 }
 
 function StageEntry() {
-	const route = useStageRoute();
-	const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
-	const entry = () => findEntry(route().areaId, route().entryId);
+  const route = useStageRoute();
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+  const entry = () => findEntry(route().areaId, route().entryId);
 
-	createEffect(() => {
-		const theme = route().theme;
-		const dark = theme === null ? prefersDark.matches : theme === "dark";
-		document.documentElement.classList.toggle("dark", dark);
-	});
+  createEffect(() => {
+    const theme = route().theme;
+    const dark = theme === null ? prefersDark.matches : theme === "dark";
+    document.documentElement.classList.toggle("dark", dark);
+  });
 
-	return (
-		<div class="min-h-screen bg-background text-foreground">
-			<Show when={entry()}>{(e) => <Dynamic component={e().component} />}</Show>
-			<Toaster />
-		</div>
-	);
+  return (
+    <div class="bg-background text-foreground min-h-screen">
+      <Show when={entry()}>{(e) => <Dynamic component={e().component} />}</Show>
+      <Toaster />
+    </div>
+  );
 }
 
 render(() => <StageEntry />, document.getElementById("root") as HTMLElement);

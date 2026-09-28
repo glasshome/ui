@@ -7,4 +7,4 @@ import { FIELD_CHROME } from "./input-classes.js";
 export const POSITION_BAR = `${FIELD_CHROME} h-1.5 rounded-full transition-glass duration-(--duration-morph) ease-(--ease-morph)`;
 
 export const POSITION_BAR_LIT =
-	"glass glass-tint [--glass-tone:var(--primary)] [--glass-wash:70%] [--glass-drop:0%]";
+  "glass glass-tint [--glass-tone:var(--primary)] [--glass-wash:70%] [--glass-drop:0%]";

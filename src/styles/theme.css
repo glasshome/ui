@@ -1,98 +1,98 @@
 @theme inline {
-	--color-background: var(--background);
-	--color-foreground: var(--foreground);
-	--color-card: var(--card);
-	--color-card-foreground: var(--card-foreground);
-	--color-popover: var(--popover);
-	--color-popover-foreground: var(--popover-foreground);
-	--color-primary: var(--primary);
-	--color-primary-foreground: var(--primary-foreground);
-	--color-secondary: var(--secondary);
-	--color-secondary-foreground: var(--secondary-foreground);
-	--color-muted: var(--muted);
-	--color-muted-foreground: var(--muted-foreground);
-	--color-accent: var(--accent);
-	--color-accent-foreground: var(--accent-foreground);
-	--color-destructive: var(--destructive);
-	--color-destructive-foreground: var(--destructive-foreground);
-	--color-border: var(--border);
-	--color-input: var(--input);
-	--color-ring: var(--ring);
-	--color-scrim: var(--scrim);
-	--color-success: var(--success);
-	--color-warning: var(--warning);
-	--color-primary-tint-foreground: var(--primary-tint-foreground);
-	--color-accent-tint-foreground: var(--accent-tint-foreground);
-	--color-warning-tint-foreground: var(--warning-tint-foreground);
-	--color-love: var(--love);
-	--color-chart-1: var(--chart-1);
-	--color-chart-2: var(--chart-2);
-	--color-chart-3: var(--chart-3);
-	--color-chart-4: var(--chart-4);
-	--color-chart-5: var(--chart-5);
-	--font-sans: var(--font-sans);
-	--font-mono: var(--font-mono);
-	--font-serif: var(--font-serif);
-	--font-caveat: var(--font-caveat);
-	--font-bebas: var(--font-bebas);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-scrim: var(--scrim);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-primary-tint-foreground: var(--primary-tint-foreground);
+  --color-accent-tint-foreground: var(--accent-tint-foreground);
+  --color-warning-tint-foreground: var(--warning-tint-foreground);
+  --color-love: var(--love);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-serif: var(--font-serif);
+  --font-caveat: var(--font-caveat);
+  --font-bebas: var(--font-bebas);
 
-	/* Below --radius-sm: a box small enough that the theme's smallest token would
+  /* Below --radius-sm: a box small enough that the theme's smallest token would
 	   round it into a circle (checkbox, OTP slot). Clamped, so a tiny --radius
 	   theme never grows it. */
-	--radius-xs: min(5px, var(--radius-sm));
-	--radius-sm: calc(var(--radius) - 4px);
-	--radius-md: calc(var(--radius) - 2px);
-	--radius-lg: var(--radius);
-	--radius-xl: calc(var(--radius) + 4px);
-	--radius-2xl: calc(var(--radius) + 8px);
-	--radius-3xl: calc(var(--radius) + 16px);
+  --radius-xs: min(5px, var(--radius-sm));
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 16px);
 
-	--shadow-2xs: var(--shadow-2xs);
-	--shadow-xs: var(--shadow-xs);
-	--shadow-sm: var(--shadow-sm);
-	--shadow: var(--shadow);
-	--shadow-md: var(--shadow-md);
-	--shadow-lg: var(--shadow-lg);
-	--shadow-xl: var(--shadow-xl);
-	--shadow-2xl: var(--shadow-2xl);
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
 
-	--animate-collapsible-down: collapsible-down 0.2s ease-out;
-	--animate-collapsible-up: collapsible-up 0.2s ease-out;
+  --animate-collapsible-down: collapsible-down 0.2s ease-out;
+  --animate-collapsible-up: collapsible-up 0.2s ease-out;
 
-	/* Select "native expand": the panel unfolds out of the trigger edge. Kobalte
+  /* Select "native expand": the panel unfolds out of the trigger edge. Kobalte
 	 * exposes no data-side, only --kb-select-content-transform-origin (set to the
 	 * trigger edge per placement), so a scaleY from that origin grows the panel
 	 * down when it opens below and up when above, no direction class needed. */
-	--animate-select-in: select-in var(--duration-expand) var(--ease-expand) both;
-	--animate-select-out: select-out var(--duration-micro) var(--ease-contract) both;
+  --animate-select-in: select-in var(--duration-expand) var(--ease-expand) both;
+  --animate-select-out: select-out var(--duration-micro) var(--ease-contract) both;
 
-	/* Trigger morph: the panel is anchored over the trigger's top edge and starts
+  /* Trigger morph: the panel is anchored over the trigger's top edge and starts
 	 * clipped to the trigger's own box and radius (--morph-w/h/radius, written by
 	 * the content from its trigger; --morph-x/y when the panel had to shift off
 	 * the trigger's corner to stay on screen), then unrolls into its own box. The pill
 	 * becomes the panel; nothing scales, so no row or radius distorts. */
-	--animate-morph-in: morph-in var(--duration-morph) var(--ease-morph) both;
-	--animate-morph-out: morph-out calc(var(--duration-morph) / 2) var(--ease-contract) both;
-	/* Unfilled once done, so the anchored panel's clip lets go and its shadow shows. */
-	--animate-anchored-in: morph-in var(--duration-morph) var(--ease-morph) backwards;
+  --animate-morph-in: morph-in var(--duration-morph) var(--ease-morph) both;
+  --animate-morph-out: morph-out calc(var(--duration-morph) / 2) var(--ease-contract) both;
+  /* Unfilled once done, so the anchored panel's clip lets go and its shadow shows. */
+  --animate-anchored-in: morph-in var(--duration-morph) var(--ease-morph) backwards;
 }
 
 @keyframes collapsible-down {
-	from {
-		height: 0;
-	}
-	to {
-		height: var(--kb-collapsible-content-height);
-	}
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--kb-collapsible-content-height);
+  }
 }
 
 @keyframes collapsible-up {
-	from {
-		height: var(--kb-collapsible-content-height);
-	}
-	to {
-		height: 0;
-	}
+  from {
+    height: var(--kb-collapsible-content-height);
+  }
+  to {
+    height: 0;
+  }
 }
 
 /* The listbox opens overlapping the trigger (overlap + gutter 0), so its top row
@@ -101,552 +101,552 @@
  * expand to the bottom rather than a separate box dropping in. No scale, so the
  * option text never squishes; opacity fades in slightly so it isn't a hard wipe. */
 @keyframes select-in {
-	/* The trigger opens on pointerdown and the panel appears under the cursor, so
+  /* The trigger opens on pointerdown and the panel appears under the cursor, so
 	 * the same click's pointerup would land on an option (press-drag-select) and
 	 * instantly pick/close. Ignore pointer events for the open animation so that
 	 * release passes through and the panel stays open; a fresh click then selects. */
-	from {
-		opacity: 0;
-		clip-path: inset(0 0 100% 0 round var(--radius-md));
-		pointer-events: none;
-	}
-	90% {
-		pointer-events: none;
-	}
-	to {
-		opacity: 1;
-		clip-path: inset(0 0 0 0 round var(--radius-md));
-		pointer-events: auto;
-	}
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0 round var(--radius-md));
+    pointer-events: none;
+  }
+  90% {
+    pointer-events: none;
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0 round var(--radius-md));
+    pointer-events: auto;
+  }
 }
 @keyframes morph-in {
-	from {
-		opacity: 0;
-		clip-path: inset(
-			var(--morph-y, 0px) calc(100% - var(--morph-x, 0px) - var(--morph-w, 100%))
-				calc(100% - var(--morph-y, 0px) - var(--morph-h, 2.5rem)) var(--morph-x, 0px) round
-				var(--morph-radius, 9999px)
-		);
-		pointer-events: none;
-	}
-	35% {
-		opacity: 1;
-	}
-	90% {
-		pointer-events: none;
-	}
-	to {
-		opacity: 1;
-		clip-path: inset(0 0 0 0 round var(--radius-md));
-		pointer-events: auto;
-	}
+  from {
+    opacity: 0;
+    clip-path: inset(
+      var(--morph-y, 0px) calc(100% - var(--morph-x, 0px) - var(--morph-w, 100%))
+        calc(100% - var(--morph-y, 0px) - var(--morph-h, 2.5rem)) var(--morph-x, 0px) round
+        var(--morph-radius, 9999px)
+    );
+    pointer-events: none;
+  }
+  35% {
+    opacity: 1;
+  }
+  90% {
+    pointer-events: none;
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0 round var(--radius-md));
+    pointer-events: auto;
+  }
 }
 @keyframes morph-out {
-	from {
-		opacity: 1;
-		clip-path: inset(0 0 0 0 round var(--radius-md));
-	}
-	to {
-		opacity: 0;
-		clip-path: inset(
-			var(--morph-y, 0px) calc(100% - var(--morph-x, 0px) - var(--morph-w, 100%))
-				calc(100% - var(--morph-y, 0px) - var(--morph-h, 2.5rem)) var(--morph-x, 0px) round
-				var(--morph-radius, 9999px)
-		);
-	}
+  from {
+    opacity: 1;
+    clip-path: inset(0 0 0 0 round var(--radius-md));
+  }
+  to {
+    opacity: 0;
+    clip-path: inset(
+      var(--morph-y, 0px) calc(100% - var(--morph-x, 0px) - var(--morph-w, 100%))
+        calc(100% - var(--morph-y, 0px) - var(--morph-h, 2.5rem)) var(--morph-x, 0px) round
+        var(--morph-radius, 9999px)
+    );
+  }
 }
 @keyframes select-out {
-	from {
-		opacity: 1;
-		clip-path: inset(0 0 0 0 round var(--radius-md));
-	}
-	to {
-		opacity: 0;
-		clip-path: inset(0 0 100% 0 round var(--radius-md));
-	}
+  from {
+    opacity: 1;
+    clip-path: inset(0 0 0 0 round var(--radius-md));
+  }
+  to {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0 round var(--radius-md));
+  }
 }
 
 :root {
-	--background: oklch(0.995 0.003 250);
-	--foreground: oklch(0 0 0);
-	/* Light glass scatters light away from the eye, so a pane sits BELOW its
+  --background: oklch(0.995 0.003 250);
+  --foreground: oklch(0 0 0);
+  /* Light glass scatters light away from the eye, so a pane sits BELOW its
 	 * ground here, the opposite of dark: the page is the lightest thing on
 	 * screen, the card steps down, the popover down again. Ratios 1.11 and 1.07,
 	 * and --popover is the floor the semantic roles below can still sit on. */
-	--card: oklch(0.96 0.005 250);
-	--card-foreground: oklch(0 0 0);
-	--popover: oklch(0.937 0.006 250);
-	--popover-foreground: oklch(0 0 0);
-	--primary: oklch(0.48 0.2 215.221);
-	--primary-foreground: oklch(1 0 0);
-	--secondary: oklch(0.96 0.01 250);
-	--secondary-foreground: oklch(0.25 0.01 250);
-	--muted: oklch(0.9702 0.008 250);
-	--muted-foreground: oklch(0.34 0 0);
-	--accent: oklch(0.6 0.2 195);
-	--accent-foreground: oklch(1 0 0);
-	/* Semantic roles are one value per role, used as fill AND as text, so they
+  --card: oklch(0.96 0.005 250);
+  --card-foreground: oklch(0 0 0);
+  --popover: oklch(0.937 0.006 250);
+  --popover-foreground: oklch(0 0 0);
+  --primary: oklch(0.48 0.2 215.221);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.01 250);
+  --secondary-foreground: oklch(0.25 0.01 250);
+  --muted: oklch(0.9702 0.008 250);
+  --muted-foreground: oklch(0.34 0 0);
+  --accent: oklch(0.6 0.2 195);
+  --accent-foreground: oklch(1 0 0);
+  /* Semantic roles are one value per role, used as fill AND as text, so they
 	 * clear 4.5:1 on every ground they land on. --popover is the darkest of them
 	 * and therefore the binding one: it is what stops the ladder above sinking
 	 * further. Chroma comes down only as far as the sRGB gamut edge needs.
 	 * Measured vs --background / --card / --popover / white-on-fill:
 	 *   success 5.56 / 5.01 / 4.66 / 5.63, warning 5.49 / 4.94 / 4.60 / 5.55,
 	 *   destructive 5.53 / 4.98 / 4.63 / 5.59. */
-	--success: oklch(0.5 0.15 145);
-	--warning: oklch(0.52 0.13 85);
-	--primary-tint-foreground: oklch(0.42 0.2 215.221);
-	--accent-tint-foreground: oklch(0.46 0.16 195);
-	--warning-tint-foreground: oklch(0.52 0.11 70);
-	--love: oklch(0.66 0.22 16);
-	--destructive: oklch(0.54 0.19 23.0704);
-	--destructive-foreground: oklch(1 0 0);
-	--border: oklch(0.855 0.014 250);
-	/* Toggle wells (FIELD_CHROME), not text fields: the whole job is to read as
+  --success: oklch(0.5 0.15 145);
+  --warning: oklch(0.52 0.13 85);
+  --primary-tint-foreground: oklch(0.42 0.2 215.221);
+  --accent-tint-foreground: oklch(0.46 0.16 195);
+  --warning-tint-foreground: oklch(0.52 0.11 70);
+  --love: oklch(0.66 0.22 16);
+  --destructive: oklch(0.54 0.19 23.0704);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.855 0.014 250);
+  /* Toggle wells (FIELD_CHROME), not text fields: the whole job is to read as
 	 * empty, and the off knob has to show against it. 2.50:1 to the off thumb,
 	 * 1.40:1 to the card. */
-	--input: oklch(0.85 0.016 250);
-	/* The focus ring wears --primary, not --accent: the two are different hues,
+  --input: oklch(0.85 0.016 250);
+  /* The focus ring wears --primary, not --accent: the two are different hues,
 	 * so an accent ring landed teal on blue controls. */
-	--ring: oklch(0.48 0.2 215.221);
-	/* Modal scrim: a wash darker than the page. A scrim keyed to --background is
+  --ring: oklch(0.48 0.2 215.221);
+  /* Modal scrim: a wash darker than the page. A scrim keyed to --background is
 	 * the page colour at alpha, which computes to no darkening at all. */
-	--scrim: oklch(0.2 0.012 250 / 0.45);
-	/* Field material (INPUT_SURFACE). The recess is the .glass-sink rim, not a
+  --scrim: oklch(0.2 0.012 250 / 0.45);
+  /* Field material (INPUT_SURFACE). The recess is the .glass-sink rim, not a
 	 * darker fill: on a light ground an --input-deep fill reads as the `disabled`
 	 * cue, so a form of light fields would read switched off. Light fields sit AT
 	 * the card and carry a solid --border edge, 1.39:1, at 1px instead of a slab. */
-	--field: var(--card);
-	--field-edge: var(--border);
-	/* The knob says the state too: on wears --primary's hue, off stays inert
+  --field: var(--card);
+  --field-edge: var(--border);
+  /* The knob says the state too: on wears --primary's hue, off stays inert
 	 * metal in the recessed well. Light reads lit by going darker than its pale
 	 * track, dark by going lighter; the hue is what carries across both. The
 	 * knob derives in its own scope (lib/thumb-classes.ts); --thumb-face-on is
 	 * the same expression at page scope, for anything else that reads it. */
-	--thumb-on-l: 0.55;
-	--thumb-on-c: 0.16;
-	--thumb-face-on: oklch(from var(--primary) var(--thumb-on-l) min(c, var(--thumb-on-c)) h);
-	--thumb-face-off: oklch(0.62 0.015 250);
-	--chart-1: oklch(0.7459 0.1483 156.4499);
-	--chart-2: oklch(0.48 0.2 215.221);
-	--chart-3: oklch(0.7336 0.1758 50.5517);
-	--chart-4: oklch(0.5828 0.1809 259.7276);
-	--chart-5: oklch(0.559 0 0);
-	--font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-	--font-serif: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-	--font-mono: "GeistMono Variable", "JetBrains Mono", "Fira Code", Consolas, monospace;
-	--font-caveat: "Caveat Variable", cursive;
-	--font-bebas: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
-	--radius: 1.4rem;
-	/* The material tier; the studio writes these per theme (Frosted defaults). */
-	--material-blur: 24px;
-	--material-clarity: 60%;
-	--material-depth: 1;
-	--material-tint: 1;
-	--material-edge-width: 1px;
-	--material-edge-ink: 0;
-	--material-edge-accent: 0;
-	--material-glow: 0px;
-	--material-ink-level: 0;
-	--material-ink-lift: 0;
-	--material-ink: oklch(0.16 0 0);
-	--shadow-x: 0px;
-	--shadow-y: 2px;
-	--shadow-blur: 3px;
-	--shadow-spread: 0px;
-	--shadow-opacity: 0.16;
-	--shadow-color: hsl(0 0% 0%);
-	--shadow-2xs: 0px 2px 3px 0px hsl(0 0% 0% / 0.08);
-	--shadow-xs: 0px 2px 3px 0px hsl(0 0% 0% / 0.08);
-	--shadow-sm: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 1px 2px -1px hsl(0 0% 0% / 0.16);
-	--shadow: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 1px 2px -1px hsl(0 0% 0% / 0.16);
-	--shadow-md: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 2px 4px -1px hsl(0 0% 0% / 0.16);
-	--shadow-lg: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 4px 6px -1px hsl(0 0% 0% / 0.16);
-	--shadow-xl: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 8px 10px -1px hsl(0 0% 0% / 0.16);
-	--shadow-2xl: 0px 2px 3px 0px hsl(0 0% 0% / 0.4);
-	--tracking-normal: 0em;
-	--spacing: 0.27rem;
+  --thumb-on-l: 0.55;
+  --thumb-on-c: 0.16;
+  --thumb-face-on: oklch(from var(--primary) var(--thumb-on-l) min(c, var(--thumb-on-c)) h);
+  --thumb-face-off: oklch(0.62 0.015 250);
+  --chart-1: oklch(0.7459 0.1483 156.4499);
+  --chart-2: oklch(0.48 0.2 215.221);
+  --chart-3: oklch(0.7336 0.1758 50.5517);
+  --chart-4: oklch(0.5828 0.1809 259.7276);
+  --chart-5: oklch(0.559 0 0);
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "GeistMono Variable", "JetBrains Mono", "Fira Code", Consolas, monospace;
+  --font-caveat: "Caveat Variable", cursive;
+  --font-bebas: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+  --radius: 1.4rem;
+  /* The material tier; the studio writes these per theme (Frosted defaults). */
+  --material-blur: 24px;
+  --material-clarity: 60%;
+  --material-depth: 1;
+  --material-tint: 1;
+  --material-edge-width: 1px;
+  --material-edge-ink: 0;
+  --material-edge-accent: 0;
+  --material-glow: 0px;
+  --material-ink-level: 0;
+  --material-ink-lift: 0;
+  --material-ink: oklch(0.16 0 0);
+  --shadow-x: 0px;
+  --shadow-y: 2px;
+  --shadow-blur: 3px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.16;
+  --shadow-color: hsl(0 0% 0%);
+  --shadow-2xs: 0px 2px 3px 0px hsl(0 0% 0% / 0.08);
+  --shadow-xs: 0px 2px 3px 0px hsl(0 0% 0% / 0.08);
+  --shadow-sm: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 1px 2px -1px hsl(0 0% 0% / 0.16);
+  --shadow: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 1px 2px -1px hsl(0 0% 0% / 0.16);
+  --shadow-md: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 2px 4px -1px hsl(0 0% 0% / 0.16);
+  --shadow-lg: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 4px 6px -1px hsl(0 0% 0% / 0.16);
+  --shadow-xl: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 8px 10px -1px hsl(0 0% 0% / 0.16);
+  --shadow-2xl: 0px 2px 3px 0px hsl(0 0% 0% / 0.4);
+  --tracking-normal: 0em;
+  --spacing: 0.27rem;
 
-	/* Motion. Durations name the gesture, not the number: micro is a hover or
+  /* Motion. Durations name the gesture, not the number: micro is a hover or
 	 * border change, state a tone or chip swap, expand an open/close. Theme
 	 * independent, so declared once; zeroed under prefers-reduced-motion. */
-	--ease-emphasis: cubic-bezier(0.22, 1, 0.36, 1);
-	/* Arrivals overshoot-free and quick to settle; departures fall away. */
-	--ease-expand: cubic-bezier(0.16, 1, 0.3, 1);
-	--ease-contract: cubic-bezier(0.4, 0, 1, 1);
-	/* A morph is a shape becoming another shape: slower than an arrival, and it
+  --ease-emphasis: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Arrivals overshoot-free and quick to settle; departures fall away. */
+  --ease-expand: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-contract: cubic-bezier(0.4, 0, 1, 1);
+  /* A morph is a shape becoming another shape: slower than an arrival, and it
 	 * leaves the start shape gently instead of snapping out of it. */
-	--duration-morph: 400ms;
-	--ease-morph: cubic-bezier(0.32, 0.72, 0, 1);
-	--duration-micro: 120ms;
-	--duration-state: 160ms;
-	--duration-expand: 200ms;
-	/* Ambient motion is an event (SPEC motion rule 5): 1 while the host holds
+  --duration-morph: 400ms;
+  --ease-morph: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-micro: 120ms;
+  --duration-state: 160ms;
+  --duration-expand: 200ms;
+  /* Ambient motion is an event (SPEC motion rule 5): 1 while the host holds
 	 * html[data-motion="live"], else 0. Inherits into widget shadow roots, so a
 	 * loop multiplies its duration by it: calc(var(--motion-ambient, 0) * 1s).
 	 * --motion-play is its keyword twin for a loop that can only pause. */
-	--motion-ambient: 0;
-	--motion-play: paused;
+  --motion-ambient: 0;
+  --motion-play: paused;
 }
 
 html[data-motion="live"] {
-	--motion-ambient: 1;
-	--motion-play: running;
+  --motion-ambient: 1;
+  --motion-play: running;
 }
 
 .dark {
-	--background: oklch(0.12 0.01 250);
-	--foreground: oklch(0.9551 0 0);
-	--card: oklch(0.17 0.01 250);
-	--card-foreground: oklch(0.9551 0 0);
-	--popover: oklch(0.11 0.005 250);
-	--popover-foreground: oklch(0.9551 0 0);
-	--primary: oklch(0.48 0.2 215.221);
-	--primary-foreground: oklch(1 0 0);
-	--secondary: oklch(0.14 0.01 250);
-	--secondary-foreground: oklch(0.9551 0 0);
-	--muted: oklch(0.22 0.02 250);
-	--muted-foreground: oklch(0.81 0 0);
-	--accent: oklch(0.6 0.2 195);
-	--accent-foreground: oklch(1 0 0);
-	--success: oklch(0.7 0.17 145);
-	--warning: oklch(0.78 0.14 85);
-	--primary-tint-foreground: oklch(0.78 0.16 215.221);
-	--accent-tint-foreground: oklch(0.8 0.14 195);
-	--warning-tint-foreground: oklch(0.82 0.13 85);
-	--love: oklch(0.72 0.19 14);
-	--destructive: oklch(0.7106 0.1661 22.2162);
-	--destructive-foreground: oklch(1 0 0);
-	--border: oklch(0.26 0.012 250);
-	/* On a dark ground a dug-out surface catches more light than the wall around
+  --background: oklch(0.12 0.01 250);
+  --foreground: oklch(0.9551 0 0);
+  --card: oklch(0.17 0.01 250);
+  --card-foreground: oklch(0.9551 0 0);
+  --popover: oklch(0.11 0.005 250);
+  --popover-foreground: oklch(0.9551 0 0);
+  --primary: oklch(0.48 0.2 215.221);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.14 0.01 250);
+  --secondary-foreground: oklch(0.9551 0 0);
+  --muted: oklch(0.22 0.02 250);
+  --muted-foreground: oklch(0.81 0 0);
+  --accent: oklch(0.6 0.2 195);
+  --accent-foreground: oklch(1 0 0);
+  --success: oklch(0.7 0.17 145);
+  --warning: oklch(0.78 0.14 85);
+  --primary-tint-foreground: oklch(0.78 0.16 215.221);
+  --accent-tint-foreground: oklch(0.8 0.14 195);
+  --warning-tint-foreground: oklch(0.82 0.13 85);
+  --love: oklch(0.72 0.19 14);
+  --destructive: oklch(0.7106 0.1661 22.2162);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.26 0.012 250);
+  /* On a dark ground a dug-out surface catches more light than the wall around
 	 * it, so the field sits a touch ABOVE the card (0.17) rather than below, and
 	 * the .glass-sink rim does the rest. A hair of the card's cool tint (chroma
 	 * 0.01) keeps it from going flat gray. Same rail color as the slider track. */
-	--input: oklch(0.19 0.01 250);
-	--ring: oklch(0.6 0.2 195);
-	--scrim: color-mix(in oklab, var(--background) 70%, transparent);
-	/* Dark fields keep the dug-out fill (it reads as depth here, not as disabled)
+  --input: oklch(0.19 0.01 250);
+  --ring: oklch(0.6 0.2 195);
+  --scrim: color-mix(in oklab, var(--background) 70%, transparent);
+  /* Dark fields keep the dug-out fill (it reads as depth here, not as disabled)
 	 * and the glass formula's own soft edge. See the light block. */
-	--field: var(--input);
-	--field-edge: color-mix(in srgb, var(--border) 60%, transparent);
-	/* Lit through hue, not brightness: a neutral knob this light read as the
+  --field: var(--input);
+  --field-edge: color-mix(in srgb, var(--border) 60%, transparent);
+  /* Lit through hue, not brightness: a neutral knob this light read as the
 	 * loudest pixel in the row. Carries --primary's hue, so on ties to the rim. */
-	--thumb-on-l: 0.78;
-	--thumb-on-c: 0.1;
-	--thumb-face-on: oklch(from var(--primary) var(--thumb-on-l) min(c, var(--thumb-on-c)) h);
-	--thumb-face-off: oklch(0.45 0.015 250);
-	--chart-1: oklch(0.8003 0.1821 151.711);
-	--chart-2: oklch(0.48 0.2 215.221);
-	--chart-3: oklch(0.8077 0.1035 19.5706);
-	--chart-4: oklch(0.6691 0.1569 260.1063);
-	--chart-5: oklch(0.7058 0 0);
-	--font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-	--font-serif: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-	--font-mono: "GeistMono Variable", "JetBrains Mono", "Fira Code", Consolas, monospace;
-	--font-caveat: "Caveat Variable", cursive;
-	--font-bebas: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
-	--radius: 1.4rem;
-	--shadow-x: 0px;
-	--shadow-y: 2px;
-	--shadow-blur: 3px;
-	--shadow-spread: 0px;
-	--shadow-opacity: 0.16;
-	--shadow-color: hsl(0 0% 0%);
-	--shadow-2xs: 0px 2px 3px 0px hsl(0 0% 0% / 0.08);
-	--shadow-xs: 0px 2px 3px 0px hsl(0 0% 0% / 0.08);
-	--shadow-sm: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 1px 2px -1px hsl(0 0% 0% / 0.16);
-	--shadow: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 1px 2px -1px hsl(0 0% 0% / 0.16);
-	--shadow-md: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 2px 4px -1px hsl(0 0% 0% / 0.16);
-	--shadow-lg: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 4px 6px -1px hsl(0 0% 0% / 0.16);
-	--shadow-xl: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 8px 10px -1px hsl(0 0% 0% / 0.16);
-	--shadow-2xl: 0px 2px 3px 0px hsl(0 0% 0% / 0.4);
-	--material-ink: oklch(0.68 0 0);
+  --thumb-on-l: 0.78;
+  --thumb-on-c: 0.1;
+  --thumb-face-on: oklch(from var(--primary) var(--thumb-on-l) min(c, var(--thumb-on-c)) h);
+  --thumb-face-off: oklch(0.45 0.015 250);
+  --chart-1: oklch(0.8003 0.1821 151.711);
+  --chart-2: oklch(0.48 0.2 215.221);
+  --chart-3: oklch(0.8077 0.1035 19.5706);
+  --chart-4: oklch(0.6691 0.1569 260.1063);
+  --chart-5: oklch(0.7058 0 0);
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "GeistMono Variable", "JetBrains Mono", "Fira Code", Consolas, monospace;
+  --font-caveat: "Caveat Variable", cursive;
+  --font-bebas: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+  --radius: 1.4rem;
+  --shadow-x: 0px;
+  --shadow-y: 2px;
+  --shadow-blur: 3px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.16;
+  --shadow-color: hsl(0 0% 0%);
+  --shadow-2xs: 0px 2px 3px 0px hsl(0 0% 0% / 0.08);
+  --shadow-xs: 0px 2px 3px 0px hsl(0 0% 0% / 0.08);
+  --shadow-sm: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 1px 2px -1px hsl(0 0% 0% / 0.16);
+  --shadow: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 1px 2px -1px hsl(0 0% 0% / 0.16);
+  --shadow-md: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 2px 4px -1px hsl(0 0% 0% / 0.16);
+  --shadow-lg: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 4px 6px -1px hsl(0 0% 0% / 0.16);
+  --shadow-xl: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 8px 10px -1px hsl(0 0% 0% / 0.16);
+  --shadow-2xl: 0px 2px 3px 0px hsl(0 0% 0% / 0.4);
+  --material-ink: oklch(0.68 0 0);
 }
 
 @layer base {
-	* {
-		@apply border-border outline-ring/50;
-	}
-	body {
-		@apply bg-background text-foreground min-w-[320px] min-h-screen relative m-0;
-	}
-	/* Tailwind v4 Preflight drops the old cursor:pointer default on buttons, so
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground relative m-0 min-h-screen min-w-[320px];
+  }
+  /* Tailwind v4 Preflight drops the old cursor:pointer default on buttons, so
 	 * native interactive elements (raw <button>, role=button, <summary>, control
 	 * labels, <select>) show the arrow. Restore the pointer affordance for every
 	 * clickable, minus disabled ones. Component primitives set their own cursor. */
-	button:not(:disabled),
-	[role="button"]:not([aria-disabled="true"]),
-	summary,
-	select:not(:disabled),
-	label:has(> input:is([type="checkbox"], [type="radio"]):not(:disabled)) {
-		cursor: pointer;
-	}
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  select:not(:disabled),
+  label:has(> input:is([type="checkbox"], [type="radio"]):not(:disabled)) {
+    cursor: pointer;
+  }
 }
 
 /* Utility classes */
 .scrollbar-hide {
-	-ms-overflow-style: none;
-	scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-	display: none;
+  display: none;
 }
 
 /* Weather widget animations */
 @keyframes rainFall {
-	to {
-		transform: translateY(110vh);
-	}
+  to {
+    transform: translateY(110vh);
+  }
 }
 
 @keyframes snowFall {
-	to {
-		transform: translateY(110vh);
-	}
+  to {
+    transform: translateY(110vh);
+  }
 }
 
 @keyframes sway {
-	0%,
-	100% {
-		transform: translateX(0);
-	}
-	50% {
-		transform: translateX(20px);
-	}
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(20px);
+  }
 }
 
 @keyframes windBlow {
-	to {
-		transform: translateX(calc(100vw + 200px));
-	}
+  to {
+    transform: translateX(calc(100vw + 200px));
+  }
 }
 
 @keyframes swirl {
-	0%,
-	100% {
-		transform: translate(0, 0) rotate(0deg);
-	}
-	50% {
-		transform: translate(30px, -20px) rotate(180deg);
-	}
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(30px, -20px) rotate(180deg);
+  }
 }
 
 @keyframes cloudDrift {
-	to {
-		transform: translateX(calc(100vw + 200px));
-	}
+  to {
+    transform: translateX(calc(100vw + 200px));
+  }
 }
 
 @keyframes fogDrift {
-	to {
-		transform: translateX(50vw);
-	}
+  to {
+    transform: translateX(50vw);
+  }
 }
 
 @keyframes shootingStar {
-	0% {
-		transform: translate(0, 0) rotate(-45deg);
-		opacity: 0;
-	}
-	10% {
-		opacity: 1;
-	}
-	100% {
-		transform: translate(-400px, 400px) rotate(-45deg);
-		opacity: 0;
-	}
+  0% {
+    transform: translate(0, 0) rotate(-45deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-400px, 400px) rotate(-45deg);
+    opacity: 0;
+  }
 }
 
 /* Loading and Error screen animations */
 @keyframes float {
-	0%,
-	100% {
-		transform: translateY(0px);
-	}
-	50% {
-		transform: translateY(-10px);
-	}
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes spin-slow {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(360deg);
-	}
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .animate-float {
-	animation: float 3s ease-in-out infinite;
+  animation: float 3s ease-in-out infinite;
 }
 
 .animate-spin-slow {
-	animation: spin-slow 8s linear infinite;
+  animation: spin-slow 8s linear infinite;
 }
 
 /* Line clamp utilities */
 .line-clamp-1 {
-	overflow: hidden;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 }
 
 .line-clamp-2 {
-	overflow: hidden;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 2;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .line-clamp-3 {
-	overflow: hidden;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 /* Widget fade-in and slide animation */
 @keyframes widget-slot-in {
-	from {
-		opacity: 0;
-		transform: translateY(30px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .widget-slot-in {
-	opacity: 0;
-	animation: widget-slot-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+  animation: widget-slot-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* Area title transition animations only */
 ::view-transition-old(area-title),
 ::view-transition-new(area-title) {
-	animation-duration: 0.4s;
-	animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 ::view-transition-old(area-title) {
-	animation-name: fade-out-scale;
+  animation-name: fade-out-scale;
 }
 
 ::view-transition-new(area-title) {
-	animation-name: fade-in-scale;
+  animation-name: fade-in-scale;
 }
 
 @keyframes fade-out-scale {
-	from {
-		opacity: 1;
-		transform: scale(1);
-	}
-	to {
-		opacity: 0;
-		transform: scale(0.95);
-	}
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
 }
 
 @keyframes fade-in-scale {
-	from {
-		opacity: 0;
-		transform: scale(1.05);
-	}
-	to {
-		opacity: 1;
-		transform: scale(1);
-	}
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @media (prefers-reduced-motion) {
-	::view-transition-old(area-title),
-	::view-transition-new(area-title) {
-		animation: none !important;
-	}
+  ::view-transition-old(area-title),
+  ::view-transition-new(area-title) {
+    animation: none !important;
+  }
 
-	/* Anything timed off the motion scale stops moving, no per-component opt-in. */
-	:root {
-		--duration-micro: 0ms;
-		--duration-state: 0ms;
-		--duration-expand: 0ms;
-		--duration-morph: 0ms;
-	}
-	/* tw-animate enter/exit classes carry their own fallback duration. */
-	.animate-in,
-	.animate-out {
-		--tw-animation-duration: 1ms;
-	}
+  /* Anything timed off the motion scale stops moving, no per-component opt-in. */
+  :root {
+    --duration-micro: 0ms;
+    --duration-state: 0ms;
+    --duration-expand: 0ms;
+    --duration-morph: 0ms;
+  }
+  /* tw-animate enter/exit classes carry their own fallback duration. */
+  .animate-in,
+  .animate-out {
+    --tw-animation-duration: 1ms;
+  }
 }
 
 /* Performance: disable all backdrop-filter when reduce-blur is active */
 .reduce-blur,
 .reduce-blur * {
-	--tw-backdrop-blur: initial !important;
-	backdrop-filter: none !important;
-	-webkit-backdrop-filter: none !important;
+  --tw-backdrop-blur: initial !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 /* A control that cannot blur takes the opaque card fill, never bare see-through. */
 .reduce-blur .glass-control {
-	--glass-base: var(--card);
+  --glass-base: var(--card);
 }
 
 /* Accessibility: minimize animations/transitions when reduce-motion is active */
 .reduce-motion,
 .reduce-motion * {
-	animation-duration: 0.01ms !important;
-	animation-iteration-count: 1 !important;
-	transition-duration: 0.01ms !important;
-	scroll-behavior: auto !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
 
 /* Inline SVG background houses: position lives in keyframes, restore static spot. */
 .reduce-motion .house-shape {
-	animation: none !important;
-	transform: translate(var(--tx), var(--ty)) rotate(var(--rot));
+  animation: none !important;
+  transform: translate(var(--tx), var(--ty)) rotate(var(--rot));
 }
 
 /* BottomSheet animations */
 @keyframes bs-slide-up {
-	from {
-		transform: translate3d(0, 100%, 0);
-	}
-	to {
-		transform: translate3d(0, 0, 0);
-	}
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
 }
 @keyframes bs-slide-down {
-	from {
-		transform: translate3d(0, 0, 0);
-	}
-	to {
-		transform: translate3d(0, 100%, 0);
-	}
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 100%, 0);
+  }
 }
 /* --bs-duration and --bs-ease are published inline by BottomSheetContent from
    bottom-sheet/constants.ts; --modal-max-h comes from MODAL_MAX_H, the height
    cap every modal panel shares. */
 .bs-content {
-	transform: translate3d(0, 100%, 0);
-	bottom: var(--bs-keyboard-offset, 0);
+  transform: translate3d(0, 100%, 0);
+  bottom: var(--bs-keyboard-offset, 0);
 }
 .bs-content[data-keyboard-open] {
-	max-height: calc(var(--modal-max-h) - var(--bs-keyboard-offset, 0px));
+  max-height: calc(var(--modal-max-h) - var(--bs-keyboard-offset, 0px));
 }
 .bs-content[data-state="opening"] {
-	animation: bs-slide-up var(--bs-duration) var(--bs-ease) forwards;
+  animation: bs-slide-up var(--bs-duration) var(--bs-ease) forwards;
 }
 .bs-content[data-state="open"],
 .bs-content[data-state="pressing"],
 .bs-content[data-state="dragging"],
 .bs-content[data-state="snapping"] {
-	transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 .bs-content[data-state="closing"] {
-	animation: bs-slide-down var(--bs-duration) var(--bs-ease) forwards;
+  animation: bs-slide-down var(--bs-duration) var(--bs-ease) forwards;
 }
 .bs-content[data-reduced-motion] {
-	animation-duration: 0ms !important;
+  animation-duration: 0ms !important;
 }

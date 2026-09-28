@@ -9,8 +9,8 @@
  * pl-8/pr-2 pair, so both would stay in the class list and the visible result
  * would come down to CSS emit order. Such a row composes MENU_ITEM_BASE. */
 export const MENU_ITEM_BASE =
-	// structural-ok: guards an svg color rule on a sibling data attribute this package always renders, not a class the consumer must also scan
-	"relative flex cursor-default select-none items-center gap-2 rounded-sm py-1.5 text-sm outline-hidden transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&:not([data-tone])_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&>[data-slot=icon]]:shrink-0 [&>[data-slot=icon]]:text-[16px]";
+  // structural-ok: guards an svg color rule on a sibling data attribute this package always renders, not a class the consumer must also scan
+  "relative flex cursor-default select-none items-center gap-2 rounded-sm py-1.5 text-sm outline-hidden transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&:not([data-tone])_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&>[data-slot=icon]]:shrink-0 [&>[data-slot=icon]]:text-[16px]";
 
 export const MENU_ITEM_X = "px-2";
 

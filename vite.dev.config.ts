@@ -12,84 +12,84 @@ import solid from "vite-plugin-solid";
 
 const require = createRequire(import.meta.url);
 const ICON_SETS: Record<string, string> = {
-	lucide: require.resolve("@iconify-json/lucide/icons.json"),
-	mdi: require.resolve("@iconify-json/mdi/icons.json"),
-	"simple-icons": require.resolve("@iconify-json/simple-icons/icons.json"),
+  lucide: require.resolve("@iconify-json/lucide/icons.json"),
+  mdi: require.resolve("@iconify-json/mdi/icons.json"),
+  "simple-icons": require.resolve("@iconify-json/simple-icons/icons.json"),
 };
 const ICON_PREFIXES = Object.keys(ICON_SETS);
 const ICONS_ID = "virtual:gallery-icons";
 const RESOLVED_ICONS_ID = `\0${ICONS_ID}`;
 
 function sources(dir: string): string[] {
-	return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-		const path = join(dir, entry.name);
-		if (entry.isDirectory()) return sources(path);
-		return [".ts", ".tsx"].includes(extname(entry.name)) ? [path] : [];
-	});
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) return sources(path);
+    return [".ts", ".tsx"].includes(extname(entry.name)) ? [path] : [];
+  });
 }
 
 function namedIcons(dirs: string[]): Set<string> {
-	const pattern = new RegExp(`(?:${ICON_PREFIXES.join("|")}):[a-z0-9-]+`, "g");
-	const names = new Set<string>();
-	for (const dir of dirs) {
-		for (const file of sources(dir)) {
-			for (const match of readFileSync(file, "utf-8").matchAll(pattern)) names.add(match[0]);
-		}
-	}
-	return names;
+  const pattern = new RegExp(`(?:${ICON_PREFIXES.join("|")}):[a-z0-9-]+`, "g");
+  const names = new Set<string>();
+  for (const dir of dirs) {
+    for (const file of sources(dir)) {
+      for (const match of readFileSync(file, "utf-8").matchAll(pattern)) names.add(match[0]);
+    }
+  }
+  return names;
 }
 
 function iconModule(dirs: string[], warn: (message: string) => void): string {
-	const sets = new Map<string, IconifyJSON>();
-	const bundled: Record<string, IconifyIcon> = {};
-	for (const name of [...namedIcons(dirs)].sort()) {
-		const [prefix = "", ...rest] = name.split(":");
-		const file = ICON_SETS[prefix];
-		if (file && !sets.has(prefix)) {
-			sets.set(prefix, JSON.parse(readFileSync(file, "utf-8")) as IconifyJSON);
-		}
-		const set = sets.get(prefix);
-		const data = set ? getIconData(set, rest.join(":")) : null;
-		if (!data) {
-			warn(`[gallery-icons] "${name}" is not in @iconify-json/${prefix}`);
-			continue;
-		}
-		bundled[name] = data;
-	}
-	return `export const bundled = ${JSON.stringify(bundled)};\n`;
+  const sets = new Map<string, IconifyJSON>();
+  const bundled: Record<string, IconifyIcon> = {};
+  for (const name of [...namedIcons(dirs)].sort()) {
+    const [prefix = "", ...rest] = name.split(":");
+    const file = ICON_SETS[prefix];
+    if (file && !sets.has(prefix)) {
+      sets.set(prefix, JSON.parse(readFileSync(file, "utf-8")) as IconifyJSON);
+    }
+    const set = sets.get(prefix);
+    const data = set ? getIconData(set, rest.join(":")) : null;
+    if (!data) {
+      warn(`[gallery-icons] "${name}" is not in @iconify-json/${prefix}`);
+      continue;
+    }
+    bundled[name] = data;
+  }
+  return `export const bundled = ${JSON.stringify(bundled)};\n`;
 }
 
 /** `virtual:gallery-icons` carries the icon data for every `prefix:name` the
  *  gallery and the components it renders name, so nothing is fetched at runtime
  *  and no whole set is bundled. */
 function galleryIcons(): Plugin {
-	const dirs = [join(import.meta.dirname, "dev"), join(import.meta.dirname, "src")];
-	return {
-		name: "gallery-icons",
-		resolveId(id) {
-			if (id === ICONS_ID) return RESOLVED_ICONS_ID;
-		},
-		load(id) {
-			if (id === RESOLVED_ICONS_ID) return iconModule(dirs, (message) => this.warn(message));
-		},
-	};
+  const dirs = [join(import.meta.dirname, "dev"), join(import.meta.dirname, "src")];
+  return {
+    name: "gallery-icons",
+    resolveId(id) {
+      if (id === ICONS_ID) return RESOLVED_ICONS_ID;
+    },
+    load(id) {
+      if (id === RESOLVED_ICONS_ID) return iconModule(dirs, (message) => this.warn(message));
+    },
+  };
 }
 
 export default defineConfig({
-	root: "dev",
-	plugins: [solid(), tailwindcss(), galleryIcons()],
-	resolve: {
-		conditions: ["@glasshome/source"],
-	},
-	server: {
-		port: 5199,
-	},
-	build: {
-		rollupOptions: {
-			input: {
-				index: join(import.meta.dirname, "dev", "index.html"),
-				stage: join(import.meta.dirname, "dev", "stage.html"),
-			},
-		},
-	},
+  root: "dev",
+  plugins: [solid(), tailwindcss(), galleryIcons()],
+  resolve: {
+    conditions: ["@glasshome/source"],
+  },
+  server: {
+    port: 5199,
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        index: join(import.meta.dirname, "dev", "index.html"),
+        stage: join(import.meta.dirname, "dev", "stage.html"),
+      },
+    },
+  },
 });

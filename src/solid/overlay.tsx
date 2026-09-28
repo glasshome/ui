@@ -7,10 +7,10 @@ import { cn } from "../lib/utils.js";
  * a Popover/Menu primitive. Radius and motion come from FLOATING_PANEL/
  * OVERLAY_MOTION; caller owns padding and positioning. */
 const Overlay: Component<ComponentProps<"div">> = (props) => {
-	const [local, others] = splitProps(props, ["class"]);
-	return (
-		<div data-slot="overlay" class={cn(FLOATING_PANEL, OVERLAY_MOTION, local.class)} {...others} />
-	);
+  const [local, others] = splitProps(props, ["class"]);
+  return (
+    <div data-slot="overlay" class={cn(FLOATING_PANEL, OVERLAY_MOTION, local.class)} {...others} />
+  );
 };
 
 export { Overlay };

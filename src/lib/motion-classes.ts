@@ -3,9 +3,9 @@
  * prefers-reduced-motion zeroes all of it in one place. */
 
 const ARRIVE =
-	"data-[expanded]:animate-in data-[expanded]:duration-(--duration-expand) data-[expanded]:ease-(--ease-expand)";
+  "data-[expanded]:animate-in data-[expanded]:duration-(--duration-expand) data-[expanded]:ease-(--ease-expand)";
 const LEAVE =
-	"data-[closed]:animate-out data-[closed]:duration-(--duration-micro) data-[closed]:ease-(--ease-contract)";
+  "data-[closed]:animate-out data-[closed]:duration-(--duration-micro) data-[closed]:ease-(--ease-contract)";
 
 /* Anchored panels (menu, popover, tooltip, hover card): unfold from the
  * trigger edge. Kobalte writes the origin per placement. */
@@ -21,12 +21,12 @@ export const FIELD_MOTION = "data-[closed]:animate-select-out data-[expanded]:an
  * trigger's box; the content writes --morph-h/--morph-radius from the
  * trigger it replaces, --morph-w is kobalte's anchor width. */
 export const MORPH_MOTION =
-	"[--morph-w:var(--kb-popper-anchor-width)] min-w-[var(--kb-popper-anchor-width)] data-[expanded]:animate-morph-in data-[closed]:animate-morph-out";
+  "[--morph-w:var(--kb-popper-anchor-width)] min-w-[var(--kb-popper-anchor-width)] data-[expanded]:animate-morph-in data-[closed]:animate-morph-out";
 
 /* A dialog anchored on the element that opened it (a tile): it unrolls out of
  * that element's box and rolls back into it, on MORPH_MOTION's keyframes. */
 export const ANCHORED_MOTION =
-	"data-[expanded]:animate-anchored-in data-[closed]:animate-morph-out";
+  "data-[expanded]:animate-anchored-in data-[closed]:animate-morph-out";
 
 /* Children of a panel arrive staggered through the `gh-stagger` class
  * (globals.css): one door, no per-row index, mount-only. */
@@ -39,7 +39,7 @@ export const SCRIM_MOTION = `${ARRIVE} data-[expanded]:fade-in-0 ${LEAVE} data-[
 
 /* Content that swaps in place (tab panel, a row added to a list). */
 export const SETTLE_MOTION =
-	"animate-in fade-in-0 slide-in-from-bottom-1 duration-(--duration-state) ease-(--ease-expand)";
+  "animate-in fade-in-0 slide-in-from-bottom-1 duration-(--duration-state) ease-(--ease-expand)";
 
 /* Every pressable dips the same amount. */
 export const PRESS_DIP = "active:scale-[0.97]";
@@ -47,15 +47,15 @@ export const PRESS_DIP = "active:scale-[0.97]";
 /* Hold progress: a fill grows out of the touch while held, dissolves once the
  * hold fires, and drains back faster if let go early. The host sets data-hold / data-fired. */
 export const HOLD_MOTION =
-	"scale-0 opacity-0 transition-[scale,opacity] duration-(--duration-state) ease-(--ease-contract) data-[hold]:scale-100 data-[hold]:opacity-100 data-[hold]:duration-(--duration-morph) data-[hold]:ease-linear data-[fired]:scale-100 data-[fired]:opacity-0";
+  "scale-0 opacity-0 transition-[scale,opacity] duration-(--duration-state) ease-(--ease-contract) data-[hold]:scale-100 data-[hold]:opacity-100 data-[hold]:duration-(--duration-morph) data-[hold]:ease-linear data-[fired]:scale-100 data-[fired]:opacity-0";
 
 /* MODAL_MOTION's twin for a surface that stays mounted: it rises out of what
  * opened it, and its closed state is a resting style, since a mount door's exit
  * ends and leaves the element showing. */
 export const RISE_MOTION =
-	"origin-bottom transition-[opacity,scale,translate] data-[expanded]:duration-(--duration-expand) data-[expanded]:ease-(--ease-expand) data-[closed]:duration-(--duration-micro) data-[closed]:ease-(--ease-contract) data-[closed]:pointer-events-none data-[closed]:translate-y-2 data-[closed]:scale-95 data-[closed]:opacity-0";
+  "origin-bottom transition-[opacity,scale,translate] data-[expanded]:duration-(--duration-expand) data-[expanded]:ease-(--ease-expand) data-[closed]:duration-(--duration-micro) data-[closed]:ease-(--ease-contract) data-[closed]:pointer-events-none data-[closed]:translate-y-2 data-[closed]:scale-95 data-[closed]:opacity-0";
 
 /* A mounted surface that follows its subject from place to place (the
  * spotlight's hole and bubble). */
 export const TRAVEL_MOTION =
-	"transition-[translate,clip-path] duration-(--duration-morph) ease-(--ease-expand)";
+  "transition-[translate,clip-path] duration-(--duration-morph) ease-(--ease-expand)";
