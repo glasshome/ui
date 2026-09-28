@@ -238,17 +238,17 @@ const Dock: Component<DockProps> = (props) => {
     goToPage(Math.floor(left / viewportWidth()));
   });
 
+  // Measured in the next frame's callbacks, which run before it paints: the first
+  // dock anyone sees already has its pages, so the dot row never shifts it later.
   onMount(() => {
-    const timeoutId = setTimeout(checkOverflow, 100);
-    let resizeTimeoutId: ReturnType<typeof setTimeout> | undefined;
+    let resizeFrame = 0;
     const onResize = () => {
-      clearTimeout(resizeTimeoutId);
-      resizeTimeoutId = setTimeout(checkOverflow, 50);
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(checkOverflow);
     };
     window.addEventListener("resize", onResize);
     onCleanup(() => {
-      clearTimeout(timeoutId);
-      clearTimeout(resizeTimeoutId);
+      cancelAnimationFrame(resizeFrame);
       window.removeEventListener("resize", onResize);
     });
   });
@@ -256,8 +256,8 @@ const Dock: Component<DockProps> = (props) => {
   // The box pads by mode, so switching it changes the room the strip has.
   createEffect(
     on([() => local.items.length, dockMode], () => {
-      const timeoutId = setTimeout(checkOverflow, 150);
-      onCleanup(() => clearTimeout(timeoutId));
+      const frame = requestAnimationFrame(checkOverflow);
+      onCleanup(() => cancelAnimationFrame(frame));
     }),
   );
 
