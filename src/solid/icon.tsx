@@ -20,18 +20,22 @@ let source: IconSource | undefined;
 const loaded = new Map<string, IconData | null>();
 const [generation, setGeneration] = createSignal(0);
 let pending = new Set<string>();
+// Queued or in flight: a lookup while the batch is out waits for it, never asks again.
+const requested = new Set<string>();
 let flush: Promise<void> | null = null;
 
 /** Host apps call this once at startup; every mounted Icon re-resolves. */
 export function provideIcons(next: IconSource): void {
   source = next;
   loaded.clear();
+  requested.clear();
   setGeneration((g) => g + 1);
 }
 
 function request(name: string): void {
   const load = source?.load;
-  if (!load || pending.has(name)) return;
+  if (!load || requested.has(name)) return;
+  requested.add(name);
   pending.add(name);
   if (flush) return;
   flush = Promise.resolve().then(async () => {
@@ -44,7 +48,11 @@ function request(name: string): void {
     } catch {
       result = {};
     }
-    for (const n of names) loaded.set(n, result[n] ?? null);
+    if (source?.load !== load) return;
+    for (const n of names) {
+      loaded.set(n, result[n] ?? null);
+      requested.delete(n);
+    }
     setGeneration((g) => g + 1);
   });
 }
