@@ -1,128 +1,130 @@
 {
-	"name": "@glasshome/ui",
-	"version": "1.21.1",
-	"description": "SolidJS component library for GlassHome, built on Kobalte",
-	"type": "module",
-	"homepage": "https://github.com/glasshome/ui#readme",
-	"bugs": {
-		"url": "https://github.com/glasshome/ui/issues"
-	},
-	"publishConfig": {
-		"access": "public"
-	},
-	"engines": {
-		"node": ">=20"
-	},
-	"sideEffects": [
-		"**/*.css"
-	],
-	"keywords": [
-		"solidjs",
-		"components",
-		"kobalte",
-		"ui",
-		"home-assistant",
-		"smart-home",
-		"tailwindcss",
-		"glasshome"
-	],
-	"exports": {
-		".": {
-			"@glasshome/source": "./src/index.ts",
-			"solid": "./src/index.ts",
-			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js"
-		},
-		"./solid": {
-			"@glasshome/source": "./src/solid/index.ts",
-			"solid": "./src/solid/index.ts",
-			"types": "./dist/solid/index.d.ts",
-			"import": "./dist/solid/index.js"
-		},
-		"./tokens": {
-			"@glasshome/source": "./src/tokens/index.ts",
-			"types": "./dist/tokens/index.d.ts",
-			"import": "./dist/tokens/index.js"
-		},
-		"./styles": "./src/styles/globals.css",
-		"./package.json": "./package.json",
-		"./styles/theme": "./src/styles/theme.css",
-		"./scripts/*": "./scripts/*",
-		"./backgrounds": {
-			"@glasshome/source": "./src/backgrounds/index.ts",
-			"types": "./dist/backgrounds/index.d.ts",
-			"import": "./dist/backgrounds/index.js"
-		}
-	},
-	"files": [
-		"dist",
-		"src/index.ts",
-		"src/backgrounds",
-		"src/lib",
-		"src/solid",
-		"src/styles",
-		"src/tokens",
-		"scripts",
-		"SPEC.md"
-	],
-	"scripts": {
-		"build": "rm -rf dist && vite build && tsc",
-		"check:structural": "bun scripts/check-structural-classes.ts",
-		"check:dead": "fallow dead-code --fail-on-issues",
-		"check:gallery": "bun scripts/check-gallery.ts",
-		"check:styling": "fallow health --css",
-		"check:tokens": "bun scripts/check-tokens.ts",
-		"check:types": "tsc --noEmit -p tsconfig.test.json",
-		"check:publish": "publint && attw --pack . --profile esm-only --exclude-entrypoints ./styles ./styles/theme && bun scripts/check-pack.ts",
-		"dev": "tsc -b --force && vite build --watch",
-		"lint": "biome check .",
-		"test": "vitest run",
-		"test:watch": "vitest",
-		"dev:gallery": "vite --config vite.dev.config.ts",
-		"gallery:shots": "node dev/shoot.mjs"
-	},
-	"peerDependencies": {
-		"solid-js": "^1.9.9",
-		"tailwindcss": "^4.1.13",
-		"tw-animate-css": "^1.4.0"
-	},
-	"dependencies": {
-		"@iconify/types": "^2.0.0",
-		"@iconify/utils": "^3.1.4",
-		"@kobalte/core": "^0.13.13",
-		"@types/json-schema": "^7.0.15",
-		"clsx": "^2.1.1",
-		"cva": "^1.0.0-beta.4",
-		"embla-carousel": "^8.5.1",
-		"embla-carousel-autoplay": "^8.5.1",
-		"embla-carousel-fade": "^8.5.1",
-		"solid-sonner": "^0.3.1",
-		"tailwind-merge": "^3.4.0"
-	},
-	"devDependencies": {
-		"@arethetypeswrong/cli": "^0.18.5",
-		"@biomejs/biome": "2.4.15",
-		"@iconify-json/lucide": "^1.2.130",
-		"@iconify-json/mdi": "^1.2.3",
-		"@iconify-json/simple-icons": "^1.2.95",
-		"@solidjs/testing-library": "^0.8.10",
-		"@tailwindcss/vite": "^4.1.13",
-		"@types/node": "^25.2.2",
-		"fallow": "3.17.0",
-		"happy-dom": "^20.14.0",
-		"playwright": "^1.60.0",
-		"publint": "^0.3.21",
-		"tailwindcss": "^4.1.13",
-		"tw-animate-css": "^1.4.0",
-		"typescript": "^7.0.2",
-		"vite": "^8.1.0",
-		"vite-plugin-solid": "^2.11.12",
-		"vitest": "^4.1.10"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/glasshome/ui.git"
-	},
-	"author": "GlassHome Labs",
-	"license": "MIT"
+  "name": "@glasshome/ui",
+  "version": "1.21.1",
+  "description": "SolidJS component library for GlassHome, built on Kobalte",
+  "keywords": [
+    "components",
+    "glasshome",
+    "home-assistant",
+    "kobalte",
+    "smart-home",
+    "solidjs",
+    "tailwindcss",
+    "ui"
+  ],
+  "homepage": "https://github.com/glasshome/ui#readme",
+  "bugs": {
+    "url": "https://github.com/glasshome/ui/issues"
+  },
+  "license": "MIT",
+  "author": "GlassHome Labs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/glasshome/ui.git"
+  },
+  "files": [
+    "dist",
+    "src/index.ts",
+    "src/backgrounds",
+    "src/lib",
+    "src/solid",
+    "src/styles",
+    "src/tokens",
+    "scripts",
+    "SPEC.md"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "@glasshome/source": "./src/index.ts",
+      "solid": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./solid": {
+      "@glasshome/source": "./src/solid/index.ts",
+      "solid": "./src/solid/index.ts",
+      "types": "./dist/solid/index.d.ts",
+      "import": "./dist/solid/index.js"
+    },
+    "./tokens": {
+      "@glasshome/source": "./src/tokens/index.ts",
+      "types": "./dist/tokens/index.d.ts",
+      "import": "./dist/tokens/index.js"
+    },
+    "./styles": "./src/styles/globals.css",
+    "./package.json": "./package.json",
+    "./styles/theme": "./src/styles/theme.css",
+    "./scripts/*": "./scripts/*",
+    "./backgrounds": {
+      "@glasshome/source": "./src/backgrounds/index.ts",
+      "types": "./dist/backgrounds/index.d.ts",
+      "import": "./dist/backgrounds/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "rm -rf dist && vite build && tsc",
+    "check:structural": "bun scripts/check-structural-classes.ts",
+    "check:dead": "fallow dead-code --fail-on-issues",
+    "check:gallery": "bun scripts/check-gallery.ts",
+    "check:styling": "fallow health --css",
+    "check:tokens": "bun scripts/check-tokens.ts",
+    "check:types": "tsc --noEmit -p tsconfig.test.json",
+    "check:publish": "publint && attw --pack . --profile esm-only --exclude-entrypoints ./styles ./styles/theme && bun scripts/check-pack.ts",
+    "dev": "tsc -b --force && vite build --watch",
+    "lint": "oxlint --type-aware . && oxfmt --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev:gallery": "vite --config vite.dev.config.ts",
+    "gallery:shots": "node dev/shoot.mjs"
+  },
+  "dependencies": {
+    "@iconify/types": "^2.0.0",
+    "@iconify/utils": "^3.1.4",
+    "@kobalte/core": "^0.13.13",
+    "@types/json-schema": "^7.0.15",
+    "clsx": "^2.1.1",
+    "cva": "^1.0.0-beta.4",
+    "embla-carousel": "^8.5.1",
+    "embla-carousel-autoplay": "^8.5.1",
+    "embla-carousel-fade": "^8.5.1",
+    "solid-sonner": "^0.3.1",
+    "tailwind-merge": "^3.4.0"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@iconify-json/lucide": "^1.2.130",
+    "@iconify-json/mdi": "^1.2.3",
+    "@iconify-json/simple-icons": "^1.2.95",
+    "@solidjs/testing-library": "^0.8.10",
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/node": "^25.2.2",
+    "fallow": "3.17.0",
+    "happy-dom": "^20.14.0",
+    "oxfmt": "0.65.0",
+    "oxlint": "1.81.0",
+    "oxlint-tsgolint": "7.0.2001",
+    "playwright": "^1.60.0",
+    "publint": "^0.3.21",
+    "tailwindcss": "^4.1.13",
+    "tw-animate-css": "^1.4.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.0",
+    "vite-plugin-solid": "^2.11.12",
+    "vitest": "^4.1.10"
+  },
+  "peerDependencies": {
+    "solid-js": "^1.9.9",
+    "tailwindcss": "^4.1.13",
+    "tw-animate-css": "^1.4.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }
