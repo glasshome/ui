@@ -1,6 +1,6 @@
 import type { IconifyIcon } from "@iconify/types";
 import { iconToSVG } from "@iconify/utils";
-import { createMemo, createSignal, type JSX, splitProps } from "solid-js";
+import { batch, createMemo, createSignal, type JSX, type Signal, splitProps } from "solid-js";
 
 export type IconData = IconifyIcon;
 
@@ -18,7 +18,17 @@ export interface IconSource {
  */
 let source: IconSource | undefined;
 const loaded = new Map<string, IconData | null>();
+// A new source re-resolves every icon; a batch landing wakes only the names it answered.
 const [generation, setGeneration] = createSignal(0);
+const arrivals = new Map<string, Signal<number>>();
+const arrivalOf = (name: string) => {
+  let signal = arrivals.get(name);
+  if (!signal) {
+    signal = createSignal(0);
+    arrivals.set(name, signal);
+  }
+  return signal;
+};
 let pending = new Set<string>();
 // Queued or in flight: a lookup while the batch is out waits for it, never asks again.
 const requested = new Set<string>();
@@ -49,11 +59,13 @@ function request(name: string): void {
       result = {};
     }
     if (source?.load !== load) return;
-    for (const n of names) {
-      loaded.set(n, result[n] ?? null);
-      requested.delete(n);
-    }
-    setGeneration((g) => g + 1);
+    batch(() => {
+      for (const n of names) {
+        loaded.set(n, result[n] ?? null);
+        requested.delete(n);
+        arrivals.get(n)?.[1]((v) => v + 1);
+      }
+    });
   });
 }
 
@@ -62,6 +74,7 @@ function lookup(name: string): IconData | undefined {
   const bundled = source?.bundled[name];
   if (bundled) return bundled;
   if (loaded.has(name)) return loaded.get(name) ?? undefined;
+  arrivalOf(name)[0]();
   request(name);
   return undefined;
 }
