@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@solidjs/testing-library";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { Button } from "../../src/solid/button.js";
+import { setViewportWidth } from "../viewport.js";
 import {
   ResponsiveDialog,
   ResponsiveDialogBody,
@@ -15,10 +16,6 @@ import {
 
 const DESKTOP_WIDTH = 1280;
 const PHONE_WIDTH = 390;
-
-function setViewportWidth(width: number) {
-  Object.defineProperty(window, "innerWidth", { value: width, configurable: true, writable: true });
-}
 
 afterEach(() => {
   cleanup();
