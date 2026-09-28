@@ -2,6 +2,7 @@
  * first paint, loaded data when a batch resolves, a 1em placeholder when the
  * name is unknown, and the same node kept throughout (no remount). */
 import { cleanup, render } from "@solidjs/testing-library";
+import { createSignal, Index } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
 import { Icon, provideIcons } from "../../src/solid/icon.js";
 
@@ -58,6 +59,30 @@ describe("Icon", () => {
     expect(container.querySelectorAll("svg")[0]).toBe(first);
     await new Promise((r) => setTimeout(r, 0));
     expect(asked.length).toBe(1);
+  });
+
+  it("asks once for an icon that mounts again while its batch is out", async () => {
+    const asked: string[][] = [];
+    let answer = (_: Record<string, typeof PLUS>) => {};
+    provideIcons({
+      bundled: {},
+      load: (names) => {
+        asked.push(names);
+        return new Promise((resolve) => (answer = resolve));
+      },
+    });
+    const [shown, setShown] = createSignal(1);
+    const { container } = render(() => (
+      <Index each={Array.from({ length: shown() })}>{() => <Icon icon="mdi:check" />}</Index>
+    ));
+    await new Promise((r) => setTimeout(r, 0));
+    setShown(2);
+    await new Promise((r) => setTimeout(r, 0));
+    answer({ "mdi:check": PLUS });
+    await new Promise((r) => setTimeout(r, 0));
+    expect(asked).toEqual([["mdi:check"]]);
+    for (const svg of container.querySelectorAll("svg"))
+      expect(svg.innerHTML).toContain("M5 12h14");
   });
 
   it("re-resolves every mounted icon when a source arrives later", async () => {
