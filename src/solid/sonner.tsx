@@ -176,6 +176,7 @@ const toast = Object.assign(
     warning: show("warning"),
     info: show("info"),
     message: show("message"),
+    /** @deprecated Use `toast.promise`, which ends the loading toast when the promise settles. Removed in 2.0.0. */
     loading: (message: ToastMessage, data: ExternalToast = {}) => {
       const { description, icon, action, ...rest } = data;
       return sonnerToast.custom(
