@@ -13,6 +13,7 @@ import {
   ALERT_DESCRIPTION_CLASS,
   ALERT_ICON_BG_CLASS,
   ALERT_ICON_PATHS,
+  ALERT_SM_CLASS,
   ALERT_TITLE_CLASS,
   ALERT_TONES,
   type AlertTone,
@@ -28,6 +29,8 @@ type AlertProps = ComponentProps<"div"> & {
   icon?: JSX.Element;
   title?: JSX.Element;
   action?: JSX.Element;
+  /** `sm`: a one-line note inside a list, with tighter padding and smaller text. */
+  size?: "default" | "sm";
 };
 
 // Lets `AlertTitle`, used as a child, pick up the same tone colour the
@@ -38,14 +41,28 @@ type AlertProps = ComponentProps<"div"> & {
 const AlertToneContext = createContext<() => string>();
 
 const Alert: Component<AlertProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "tone", "icon", "title", "action", "children"]);
+  const [local, rest] = splitProps(props, [
+    "class",
+    "tone",
+    "icon",
+    "title",
+    "action",
+    "children",
+    "size",
+  ]);
   const toneKey = () => local.tone ?? "info";
   const tone = () => ALERT_TONES[toneKey()];
   return (
     <div
       data-slot="alert"
       role={local.tone === "destructive" ? "alert" : "status"}
-      class={cn(ALERT_CLASS, "glass glass-tint", local.class)}
+      data-size={local.size ?? "default"}
+      class={cn(
+        ALERT_CLASS,
+        "glass glass-tint",
+        local.size === "sm" && ALERT_SM_CLASS,
+        local.class,
+      )}
       style={{ "--glass-tone": tone().color, color: "var(--foreground)" }}
       {...rest}
     >

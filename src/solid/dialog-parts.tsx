@@ -67,7 +67,8 @@ export const ANCHORED_PANEL = `${OVERLAY_SURFACE} ${ANCHORED_MOTION} fixed flex 
 
 export const MODAL_SCRIM = `${SCRIM_MOTION} fixed inset-0 ${Z_CLASS.overlay} ${SCRIM_CLASS}`;
 
-const MODAL_HEADER = "flex shrink-0 items-start gap-4 px-6 pt-6 pb-3";
+const MODAL_HEADER =
+  "flex shrink-0 items-start gap-4 px-6 pt-6 pb-3 in-data-[slot=bottom-sheet-content]:px-4 [[data-slot=bottom-sheet-handle]+&]:pt-1";
 const MODAL_HEADER_MEDIA = "flex shrink-0 items-center";
 /* `grow`, not `flex-1`: a zero basis would make the text column shrink to a
  * word per line beside a wide action instead of pushing it onto the next line
@@ -85,10 +86,10 @@ const MODAL_HEADER_ACTION = "flex shrink-0 items-center gap-2";
  * - The reserved scrollbar lives inside the right inset, so the content column
  *   ends where the Header's and Footer's do. */
 const MODAL_BODY =
-  "gh-scroll gh-stagger flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain [touch-action:pan-y_pinch-zoom] [scrollbar-gutter:stable] pl-6 pr-[calc(var(--spacing)*6-var(--scrollbar-w))] pt-6 pb-6 [[data-slot$='-header']~&]:pt-3 [&:has(~[data-slot$='-footer'])]:pb-3";
+  "gh-scroll gh-stagger flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain [touch-action:pan-y_pinch-zoom] [scrollbar-gutter:stable] pl-6 pr-[calc(var(--spacing)*6-var(--scrollbar-w))] pt-6 pb-6 [[data-slot$='-header']~&]:pt-3 [&:has(~[data-slot$='-footer'])]:pb-3 in-data-[slot=bottom-sheet-content]:pl-4 in-data-[slot=bottom-sheet-content]:pr-[calc(var(--spacing)*4-var(--scrollbar-w))] [[data-slot=bottom-sheet-handle]+&]:pt-1";
 
 const MODAL_FOOTER =
-  "gh-stagger flex shrink-0 flex-col-reverse gap-2 px-6 pt-3 pb-6 sm:flex-row sm:justify-end";
+  "gh-stagger flex shrink-0 flex-col-reverse gap-2 px-6 pt-3 pb-6 sm:flex-row sm:justify-end in-data-[slot=bottom-sheet-content]:px-4";
 
 export const MODAL_TITLE = "font-semibold text-foreground text-lg leading-none tracking-tight";
 export const MODAL_DESCRIPTION = "text-muted-foreground text-sm";
