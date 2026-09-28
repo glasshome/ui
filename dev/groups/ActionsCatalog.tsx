@@ -83,6 +83,21 @@ export function ActionsCatalog() {
             <ToggleGroupItem value="right">Right</ToggleGroupItem>
           </ToggleGroup>
         </Axis>
+        <Axis of="scroll">
+          <div class="w-48">
+            <ToggleGroup
+              scroll
+              size="sm"
+              value={align()}
+              onChange={(v) => v && setAlign(v as string)}
+            >
+              <ToggleGroupItem value="left">Left</ToggleGroupItem>
+              <ToggleGroupItem value="center">Center</ToggleGroupItem>
+              <ToggleGroupItem value="right">Right</ToggleGroupItem>
+              <ToggleGroupItem value="justify">Justify</ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+        </Axis>
         <Axis of="multiple">
           <ToggleGroup multiple value={styles()} onChange={(v) => setStyles(v as string[])}>
             <ToggleGroupItem value="bold">Bold</ToggleGroupItem>

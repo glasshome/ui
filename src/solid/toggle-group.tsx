@@ -31,6 +31,8 @@ const ToggleGroup: ParentComponent<
     VariantProps<typeof toggleVariants> & {
       /** CSS colour for the selected segment's glass. Default `var(--primary)`. */
       tone?: string;
+      /** One row that scrolls sideways when it outgrows its container, instead of wrapping. */
+      scroll?: boolean;
     }
 > = (props) => {
   const [local, rest] = splitProps(props, [
@@ -38,6 +40,7 @@ const ToggleGroup: ParentComponent<
     "variant",
     "size",
     "tone",
+    "scroll",
     "children",
   ] as const);
   // Read `multiple` without splitting it out: Kobalte's root is a single/multiple
@@ -49,8 +52,10 @@ const ToggleGroup: ParentComponent<
       data-slot="toggle-group"
       data-variant={local.variant}
       data-size={local.size}
+      data-scroll={local.scroll ? "" : undefined}
       class={cn(
         `group/toggle-group flex w-fit max-w-full flex-wrap items-center gap-y-1 rounded-lg ${TRACK_SURFACE} p-1 data-[variant=outline]:shadow-xs`,
+        local.scroll && "[scrollbar-width:none] flex-nowrap overflow-x-auto",
         local.class,
       )}
       {...rest}
@@ -65,8 +70,12 @@ const ToggleGroup: ParentComponent<
             activeSelector="[data-pressed]"
             indicatorClass="rounded-md"
             indicatorTone={local.tone}
-            wrapped
-            class="flex w-full flex-wrap items-center gap-y-1"
+            wrapped={!local.scroll}
+            class={
+              local.scroll
+                ? "flex w-max flex-nowrap items-center"
+                : "flex w-full flex-wrap items-center gap-y-1"
+            }
           >
             {local.children}
           </SlidingIndicator>
