@@ -3,7 +3,6 @@ import {
   createEffect,
   createSignal,
   type JSX,
-  on,
   onCleanup,
   onMount,
   Show,
@@ -100,24 +99,34 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
   // speed cue. WAAPI on `scale` composes with the translate transition; it releases
   // back to the base (1) on its own, so nothing can get stuck deformed.
   let indicatorEl: HTMLDivElement | undefined;
-  createEffect(
-    on(
-      pos,
-      (p, prev) => {
-        // pos is a fresh object on every re-measure (the Select's MutationObserver
-        // fires often), so only animate on an actual travel.
-        if (!p || !prev || Math.abs(p.offset - prev.offset) < 1 || !indicatorEl) return;
-        const stretch = 1 + Math.min(DEFORM_MAX, STRETCH_PX / (p.size || 1));
-        const squash = 1 - Math.min(DEFORM_MAX, SQUASH_PX / (p.cross || 1));
-        const peak = horizontal() ? `${stretch} ${squash}` : `${squash} ${stretch}`;
-        indicatorEl.animate([{ scale: "1 1" }, { scale: peak }, { scale: "1 1" }], {
-          duration: SLIDE_MS,
-          easing: "ease-in-out",
-        });
-      },
-      { defer: true },
-    ),
-  );
+  const squash = (p: Pos) => {
+    const stretch = 1 + Math.min(DEFORM_MAX, STRETCH_PX / (p.size || 1));
+    const pinch = 1 - Math.min(DEFORM_MAX, SQUASH_PX / (p.cross || 1));
+    const peak = horizontal() ? `${stretch} ${pinch}` : `${pinch} ${stretch}`;
+    indicatorEl?.animate([{ scale: "1 1" }, { scale: peak }, { scale: "1 1" }], {
+      duration: SLIDE_MS,
+      easing: "ease-in-out",
+    });
+  };
+
+  // Only a new active item slides. Every other re-measure (a resize, a late icon
+  // or font, an opening dialog settling) corrects geometry and lands at once:
+  // a size transition lays the page out on every frame it runs.
+  let measuredEl: HTMLElement | undefined;
+  const [sliding, setSliding] = createSignal(false);
+  let slideTimer: ReturnType<typeof setTimeout> | undefined;
+  const place = (el: HTMLElement, next: Pos) => {
+    const prev = pos();
+    const moved = measuredEl !== undefined && measuredEl !== el && prev !== null;
+    measuredEl = el;
+    if (moved) {
+      clearTimeout(slideTimer);
+      setSliding(true);
+      slideTimer = setTimeout(() => setSliding(false), SLIDE_MS);
+    }
+    setPos(next);
+    if (moved && Math.abs(next.offset - prev.offset) >= 1) squash(next);
+  };
 
   // A zero-size pass is not a resting state, and nothing is guaranteed to fire
   // when it ends: an ancestor dialog's own open animation neither resizes this
@@ -145,6 +154,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
       el = containerRef.querySelectorAll<HTMLElement>(sel)[local.active];
     }
     if (!el) {
+      measuredEl = undefined;
       setPos(null);
       return;
     }
@@ -153,6 +163,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
     const er = el.getBoundingClientRect();
     const cr = containerRef.getBoundingClientRect();
     if (er.width === 0 || er.height === 0 || cr.width === 0 || cr.height === 0) {
+      measuredEl = undefined;
       setPos(null);
       remeasureNextFrame();
       return;
@@ -170,7 +181,8 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
     const sx = containerRef.offsetWidth > 0 ? cr.width / containerRef.offsetWidth : 1;
     const sy = containerRef.offsetHeight > 0 ? cr.height / containerRef.offsetHeight : 1;
     const [tx, ty] = readTranslate(el);
-    setPos(
+    place(
+      el,
       horizontal()
         ? {
             offset:
@@ -264,6 +276,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
     onCleanup(() => {
       disposed = true;
       if (retryFrame !== undefined) cancelAnimationFrame(retryFrame);
+      clearTimeout(slideTimer);
       ro?.disconnect();
       mo.disconnect();
       containerRef?.removeEventListener("focusin", onFocusIn);
@@ -290,7 +303,9 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
               local.indicatorClass ?? "rounded-lg",
             )}
             style={{
-              transition: `transform ${SLIDE_MS}ms ease-in-out, width ${SLIDE_MS}ms ease-in-out, height ${SLIDE_MS}ms ease-in-out`,
+              transition: sliding()
+                ? `transform ${SLIDE_MS}ms ease-in-out, width ${SLIDE_MS}ms ease-in-out, height ${SLIDE_MS}ms ease-in-out`
+                : "none",
               "--glass-tone": local.indicatorTone ?? "var(--primary)",
               ...(local.wrapped && horizontal()
                 ? {
