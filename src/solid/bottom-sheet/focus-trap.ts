@@ -1,3 +1,5 @@
+import { untrack } from "solid-js";
+
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -10,14 +12,16 @@ interface TrapHandle {
 export function trapFocus(root: HTMLElement, initial: InitialFocus = "container"): TrapHandle {
   const previouslyFocused = (document.activeElement as HTMLElement | null) ?? null;
 
-  const focusTarget: HTMLElement | null =
-    initial === "container"
-      ? root
-      : initial === "first"
-        ? (root.querySelector<HTMLElement>(FOCUSABLE_SELECTOR) ?? root)
-        : initial(root);
-
-  focusTarget?.focus({ preventScroll: true });
+  // focus() runs focus and blur handlers synchronously; a caller's effect must not track their reads.
+  untrack(() => {
+    const focusTarget: HTMLElement | null =
+      initial === "container"
+        ? root
+        : initial === "first"
+          ? (root.querySelector<HTMLElement>(FOCUSABLE_SELECTOR) ?? root)
+          : initial(root);
+    focusTarget?.focus({ preventScroll: true });
+  });
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key !== "Tab") return;
@@ -50,7 +54,7 @@ export function trapFocus(root: HTMLElement, initial: InitialFocus = "container"
   return {
     release() {
       document.removeEventListener("keydown", onKeyDown);
-      previouslyFocused?.focus?.({ preventScroll: true });
+      untrack(() => previouslyFocused?.focus?.({ preventScroll: true }));
     },
   };
 }

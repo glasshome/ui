@@ -1,6 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   BottomSheet,
   BottomSheetClose,
@@ -99,5 +99,34 @@ describe("BottomSheet content style", () => {
     const panel = document.querySelector<HTMLElement>('[data-slot="bottom-sheet-content"]');
     expect(panel?.style.getPropertyValue("--glass-tone")).toBe("red");
     expect(panel?.style.getPropertyValue("touch-action")).toBe("pan-y");
+  });
+});
+
+describe("BottomSheet focus trap", () => {
+  it("opens once over a focused control whose focus handlers write state", () => {
+    const [touched, setTouched] = createSignal(0);
+    const [open, setOpen] = createSignal(false);
+    render(() => (
+      <>
+        <button
+          type="button"
+          data-testid="outside"
+          onFocus={() => setTouched(touched() + 1)}
+          onBlur={() => setTouched(touched() + 1)}
+        >
+          {touched()}
+        </button>
+        <BottomSheet open={open()} onOpenChange={setOpen}>
+          <BottomSheetPortal>
+            <BottomSheetContent ariaLabel="Thermostat">Controls</BottomSheetContent>
+          </BottomSheetPortal>
+        </BottomSheet>
+      </>
+    ));
+    document.querySelector<HTMLElement>('[data-testid="outside"]')?.focus();
+    const focus = vi.spyOn(HTMLElement.prototype, "focus");
+    setOpen(true);
+    expect(focus.mock.calls.length).toBeLessThanOrEqual(2);
+    focus.mockRestore();
   });
 });
