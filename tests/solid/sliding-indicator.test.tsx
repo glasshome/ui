@@ -210,24 +210,37 @@ describe("SlidingIndicator", () => {
     expect(indicator?.style.width).toBe("80px");
   });
 
-  it("times the slide from one inline transition", async () => {
+  it("slides when the active item changes and lands at once when the same item re-measures", async () => {
+    const [active, setActive] = createSignal(0);
     const { container } = render(() => (
-      <SlidingIndicator active={0}>
+      <SlidingIndicator active={active()}>
         <button type="button">One</button>
+        <button type="button">Two</button>
       </SlidingIndicator>
     ));
     const root = container.firstElementChild;
-    const button = container.querySelector("button") as HTMLElement;
+    const buttons = container.querySelectorAll("button");
     if (!(root instanceof HTMLElement)) throw new Error("no root");
-    stubRect(root, { left: 0, top: 0, width: 80, height: 32 });
-    stubRect(button, { left: 0, top: 0, width: 80, height: 32 });
-    Object.defineProperty(root, "clientWidth", { value: 80, configurable: true });
-    Object.defineProperty(root, "clientHeight", { value: 32, configurable: true });
+    stubRect(root, { left: 0, top: 0, width: 160, height: 32 });
+    stubRect(buttons[0] as HTMLElement, { left: 0, top: 0, width: 80, height: 32 });
+    stubRect(buttons[1] as HTMLElement, { left: 80, top: 0, width: 80, height: 32 });
+    Object.defineProperty(root, "offsetWidth", { value: 160, configurable: true });
+    Object.defineProperty(root, "offsetHeight", { value: 32, configurable: true });
     await flush();
+    const indicator = () => container.querySelector<HTMLElement>("[data-sliding-indicator]");
+    expect(indicator()?.style.transition).toBe("none");
 
-    const indicator = container.querySelector<HTMLElement>("[data-sliding-indicator]");
-    expect(indicator?.style.transition).toContain("transform 220ms ease-in-out");
-    expect(indicator?.style.transition).toContain("width 220ms ease-in-out");
+    stubRect(buttons[0] as HTMLElement, { left: 0, top: 0, width: 96, height: 32 });
+    FakeResizeObserver.instances[0]?.fire();
+    await flush();
+    expect(indicator()?.style.width).toBe("96px");
+    expect(indicator()?.style.transition).toBe("none");
+
+    setActive(1);
+    await flush();
+    expect(indicator()?.style.transform).toBe("translateX(80px)");
+    expect(indicator()?.style.transition).toContain("transform 220ms ease-in-out");
+    expect(indicator()?.style.transition).toContain("width 220ms ease-in-out");
   });
 
   it("does not re-measure after unmount once document.fonts.ready resolves late", async () => {
