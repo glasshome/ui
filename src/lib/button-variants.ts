@@ -20,9 +20,9 @@ export const buttonVariants = cva({
   base: "transition-glass focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg text-sm font-medium whitespace-nowrap outline-none focus-visible:ring-[3px] active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   variants: {
     variant: {
-      default: `glass glass-tint ${CONTROL_GLASS} [--glass-text:0%] [--glass-tone:var(--primary)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--primary)_60%,transparent)] hover:[--glass-wash:65%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:[--glass-tone:oklch(from_var(--primary)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:hover:[--glass-wash:62%]`,
-      destructive: `glass glass-tint ${CONTROL_GLASS} focus-visible:ring-destructive/30 [--glass-text:0%] [--glass-tone:var(--destructive)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--destructive)_60%,transparent)] hover:[--glass-wash:65%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:[--glass-tone:oklch(from_var(--destructive)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:hover:[--glass-wash:62%]`,
-      secondary: `glass glass-tint ${CONTROL_GLASS} [--glass-text:0%] [--glass-tone:var(--accent)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--accent)_60%,transparent)] hover:[--glass-wash:65%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:[--glass-tone:oklch(from_var(--accent)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:hover:[--glass-wash:62%]`,
+      default: `glass glass-tint ${CONTROL_GLASS} [--glass-text:0%] [--glass-tone:var(--primary)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--primary)_60%,transparent)] hover:[--glass-wash:65%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:[--glass-tone:oklch(from_var(--primary)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:hover:[--glass-wash:70%]`,
+      destructive: `glass glass-tint ${CONTROL_GLASS} focus-visible:ring-destructive/30 [--glass-text:0%] [--glass-tone:var(--destructive)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--destructive)_60%,transparent)] hover:[--glass-wash:65%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:[--glass-tone:oklch(from_var(--destructive)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:hover:[--glass-wash:70%]`,
+      secondary: `glass glass-tint ${CONTROL_GLASS} [--glass-text:0%] [--glass-tone:var(--accent)] [--glass-wash:55%] hover:[--glass-edge:color-mix(in_srgb,var(--accent)_60%,transparent)] hover:[--glass-wash:65%] dark:[color:oklch(from_var(--glass-tone)_calc((0.74_-_l)*100)_0_0)] dark:[--glass-tone:oklch(from_var(--accent)_calc(l_+_clamp(0,(l_-_0.74)*10,0.1))_c_h)] dark:[--glass-wash:62%] dark:hover:[--glass-wash:70%]`,
       outline: OUTLINE_SURFACE,
       ghost: "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",
       link: "text-primary-tint-foreground underline-offset-4 hover:underline",
@@ -32,7 +32,7 @@ export const buttonVariants = cva({
       sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5",
       lg: "h-10 px-6 has-[>svg]:px-4",
       icon: "size-9 p-2",
-      xl: "h-[72px] gap-3.5 rounded-full pr-7 pl-3 text-left text-[17px] font-semibold [&_svg:not([class*='size-'])]:size-5",
+      xl: "h-[72px] gap-3.5 rounded-full pr-7 pl-3 text-left text-[17px] font-semibold [&_svg:not([class*='size-'])]:size-5 [--glass-lift:0.25] hover:-translate-y-0.5 hover:[--glass-lift:0.7] hover:[--glass-light:0.24] active:translate-y-0",
       none: "",
     },
   },
