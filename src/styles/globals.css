@@ -546,6 +546,9 @@
  * paints above its parent's own background and border; contain: layout anchors
  * them and makes the stacking context without repositioning the surface. */
 @container not style(--material-ink-level: 0) {
+  :where(.glass-halo) {
+    box-shadow: none;
+  }
   :where(.glass) {
     --ink-r: var(--radius);
     --ink-line: color-mix(
