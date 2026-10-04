@@ -275,7 +275,7 @@
   --ease-contract: cubic-bezier(0.4, 0, 1, 1);
   /* A morph is a shape becoming another shape: slower than an arrival, and it
 	 * leaves the start shape gently instead of snapping out of it. */
-  --duration-morph: 400ms;
+  --duration-morph: 300ms;
   --ease-morph: cubic-bezier(0.32, 0.72, 0, 1);
   --duration-micro: 120ms;
   --duration-state: 160ms;
