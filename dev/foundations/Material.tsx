@@ -26,6 +26,7 @@ const SAMPLES: [name: string, material: Material][] = [
         darkScale: 0.32,
         innerGlow: 0.92,
         innerGlowHue: 0,
+        grain: 0,
       },
     },
   ],
