@@ -40,7 +40,7 @@ interface SlidingIndicatorProps extends ComponentProps<"div"> {
    *  this can't flatten the indicator; it only tunes it. Default radius: `rounded-lg`. */
   indicatorClass?: string;
   /** Glass tone that drives the `.glass` material (`--glass-tone`). Defaults to
-   *  `var(--primary)` — the one trusted look. Pass another CSS color to re-tint. */
+   *  `var(--material-accent)`, the theme accent unless the material sets its own. Pass another CSS color to re-tint. */
   indicatorTone?: string;
   /** Selector for the measurable items. Default: direct children (minus the indicator). */
   itemSelector?: string;
@@ -306,7 +306,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
               transition: sliding()
                 ? `transform ${SLIDE_MS}ms ease-in-out, width ${SLIDE_MS}ms ease-in-out, height ${SLIDE_MS}ms ease-in-out`
                 : "none",
-              "--glass-tone": local.indicatorTone ?? "var(--primary)",
+              "--glass-tone": local.indicatorTone ?? "var(--material-accent)",
               ...(local.wrapped && horizontal()
                 ? {
                     transform: `translate(${p().offset}px, ${p().crossOffset}px)`,

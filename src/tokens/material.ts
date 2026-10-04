@@ -200,6 +200,21 @@ const RIM: Record<RimPosition, [bottom: number, around: number]> = {
   around: [0, 1],
 };
 
+/** The control palette in the public contract: calm on a flat face, neumorphic on a raised one. */
+const CONTROLS: Record<MaterialFace, Record<`--material-control-${string}`, string>> = {
+  flat: {
+    "--material-control-track": "var(--input)",
+    "--material-control-fill": "var(--material-accent)",
+    "--material-control-knob": "oklch(1 0 0)",
+  },
+  raised: {
+    "--material-control-track": "var(--material-well)",
+    "--material-control-fill":
+      "linear-gradient(90deg, color-mix(in srgb, var(--material-accent), black 50%), var(--material-accent))",
+    "--material-control-knob": "var(--material-face)",
+  },
+};
+
 export function resolveMaterial(
   material: Material,
   blurMode: BlurMode,
@@ -241,6 +256,7 @@ export function resolveMaterial(
     "--material-wash-angle": `${t.washAngle}deg`,
     "--material-two-tone": t.washStyle === "two-tone" ? "1" : "0",
     "--material-face-raised": t.face === "raised" ? "1" : "0",
+    ...CONTROLS[t.face],
     "--material-relief": `${t.relief}`,
     "--material-accent-set": t.accent === "theme" ? "initial" : t.accent,
     "--material-fill": `${t.fill}`,

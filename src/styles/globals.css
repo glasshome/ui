@@ -420,6 +420,57 @@
       calc(var(--material-inset) * 10px) calc(var(--material-inset) * -4px)
       oklch(1 0 0 / calc(var(--material-inset) * 0.35));
 }
+/* A raised face makes the controls neumorphic: wells pressed into the surface,
+ * knobs and keys standing out of it, what is on lit in the accent and glowing. */
+@container style(--material-face-raised: 1) {
+  [data-slot="switch"],
+  [data-slot="slider"],
+  [data-slot="checkbox-box"],
+  [data-slot="toggle-group"] {
+    border-color: transparent;
+    background: var(--material-control-track);
+    box-shadow: var(--material-pressed);
+  }
+  [data-slot="switch"][data-checked],
+  [data-slot="slider-fill"],
+  [data-slot="checkbox-box"]:where(.glass-tint),
+  [data-slot="toggle"][data-pressed],
+  [data-sliding-indicator] {
+    border-color: transparent;
+    background: var(--material-control-fill);
+    box-shadow: 0 0 calc(var(--material-glow) * 0.5)
+      color-mix(in srgb, var(--material-accent) 65%, transparent);
+    color: oklch(1 0 0);
+  }
+  [data-slot="switch-thumb"],
+  [data-slot="slider-thumb"] {
+    --thumb-face-off: var(--material-accent);
+    box-shadow:
+      calc(2px * (var(--material-light-cos) - var(--material-light-sin)) * var(--material-relief))
+        calc(2px * (var(--material-light-sin) + var(--material-light-cos)) * var(--material-relief))
+        calc(5px * var(--material-relief)) var(--material-lo),
+      calc(-2px * (var(--material-light-cos) - var(--material-light-sin)) * var(--material-relief))
+        calc(
+          -2px * (var(--material-light-sin) + var(--material-light-cos)) * var(--material-relief)
+        )
+        calc(5px * var(--material-relief)) var(--material-hi);
+  }
+  [data-slot="button"]:where(.glass-control):not(:where(.glass-tint)) {
+    border-color: transparent;
+    background: var(--material-control-knob);
+    box-shadow: var(--material-raised);
+  }
+  [data-slot="button"]:where(.glass-tint) {
+    border-color: transparent;
+    background: var(--material-control-fill);
+    box-shadow:
+      var(--material-raised),
+      0 0 calc(var(--material-glow) * 0.5)
+        color-mix(in srgb, var(--material-accent) 65%, transparent);
+    color: oklch(1 0 0);
+  }
+}
+
 /* Two-tone wash: the second colour is the surface's own tone turned, so a toneless surface stays clear. */
 @container style(--material-two-tone: 1) {
   :where(.glass) {
