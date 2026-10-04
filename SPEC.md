@@ -70,13 +70,13 @@ Six inheriting variables, the homeowner's dials, declared once in `theme.css` an
 multiplied into every surface's knobs by the formula. A knob is a surface's
 identity; the tier scales all of them at once, chrome and widgets alike.
 
-| Variable | Type | Frosted | Multiplies |
+| Variable | Type | Glass | Multiplies |
 | --- | --- | --- | --- |
 | `--material-blur` | length | 24px | the backdrop radius (`--glass-blur` overrides it when set) |
 | `--material-clarity` | % | 60% | the card fill's share of `--card` (the rest is wallpaper) |
 | `--material-depth` | number | 1 | the default for edge, sheen and shadow below; read by nothing else |
 | `--material-tint` | number | 1 | `--glass-wash`, `--glass-wash-2` |
-| `--material-glow` | length | 0px | an outer bloom in `--material-hue` (Neon 18px) |
+| `--material-glow` | length | 0px | an outer bloom in `--material-hue` (Neon 3px) |
 | `--material-ink-level` | number | 0 | above 0, the Ink body: every surface hand-inked |
 
 Four more are preset terms, inert at their defaults and never a homeowner dial.
@@ -86,10 +86,10 @@ opaque: its tone when it has one, the accent otherwise.
 
 | Variable | Type | Default | Turns on |
 | --- | --- | --- | --- |
-| `--material-edge-width` | length | 1px | the edge weight (Neon 1.5px) |
+| `--material-edge-width` | length | 1px | the edge weight (Neon 1px) |
 | `--material-edge-ink` | number | 0 | the edge's mix toward `--material-ink` (Paper 0.3) |
 | `--material-ink-lift` | number | 0 | the Ink line's mix toward `--foreground` (Chalk 1) |
-| `--material-edge-accent` | number | 0 | the edge's mix toward `--material-hue` (Neon 1) |
+| `--material-edge-accent` | number | 0 | the edge's mix toward `--material-hue` (Neon 0.35) |
 
 `--material-ink` is fixed per mode in theme.css: dark ink in light mode, a mid
 grey in dark mode.
@@ -126,7 +126,7 @@ is on, a white knob, a neutral off knob.
 | `--material-control-track` / `-fill` / `-knob` | the control palette for the material's face |
 | `--surface-tone` / `--surface-wash` | the surface's own tone and wash, readable by children |
 
-A preset is a point in that space (`tokens/material.ts`: Frosted, Paper,
+A preset is a point in that space (`tokens/material.ts`: Glass, Frosted, Paper,
 Neon, Chalk); a theme stores the preset and any term it moved, never the
 resolved values. A look these cannot express adds another inert-by-default term
 here (a ui minor), then, if that is not enough, a body selected by a style query

@@ -27,7 +27,7 @@ const INERT = {
   "--material-glow-in": "0",
   "--material-inner-glow": "0",
   "--material-inner-glow-hue": "1",
-  "--material-grain": expect.stringContaining("0 0 0 0.12 0"),
+  "--material-grain": "none",
   "--material-wash-split": "3",
   "--material-wash-angle": "135deg",
   "--material-two-tone": "0",
@@ -46,7 +46,7 @@ const theme = readFileSync(
 );
 
 describe("material presets", () => {
-  it("Frosted resolves to the theme.css defaults, byte for byte", () => {
+  it("Glass (the frosted id) resolves to the theme.css defaults, byte for byte", () => {
     const frosted = resolveMaterial(FROSTED, "dynamic");
     expect(frosted).toEqual({
       "--material-blur": "24px",
@@ -76,9 +76,9 @@ describe("material presets", () => {
   });
 
   it("depth leads edge, sheen and shadow until each is set on its own", () => {
-    const led = materialTerms({ v: 1, preset: "neon" });
-    expect([led.edge, led.sheen, led.shadow]).toEqual([0.4, 0.4, 0.4]);
-    const split = materialTerms({ v: 1, preset: "neon", dials: { depth: 0.8, sheen: 0.3 } });
+    const led = materialTerms({ v: 1, preset: "chalk" });
+    expect([led.edge, led.sheen, led.shadow]).toEqual([0.3, 0.3, 0.3]);
+    const split = materialTerms({ v: 1, preset: "chalk", dials: { depth: 0.8, sheen: 0.3 } });
     expect([split.edge, split.sheen, split.shadow]).toEqual([0.8, 0.3, 0.8]);
   });
 
@@ -128,14 +128,21 @@ describe("material presets", () => {
     expect(vars["--material-accent"]).toBe("oklch(0.65 0.26 0)");
   });
 
+  it("Frosted is Glass with a frost; Glass stays clear", () => {
+    expect(resolveMaterial({ v: 1, preset: "frost" }, "dynamic")["--material-grain"]).toContain(
+      "0 0 0 0.12 0",
+    );
+    expect(resolveMaterial(FROSTED, "dynamic")["--material-grain"]).toBe("none");
+  });
+
   it("Paper and Neon carry their own terms; a dial never reaches a term", () => {
     const paper = resolveMaterial({ v: 1, preset: "paper", dials: { clarity: 50 } }, "dynamic");
     expect(paper["--material-edge-ink"]).toBe("0.3");
     expect(paper["--material-clarity"]).toBe("50%");
     const neon = resolveMaterial({ v: 1, preset: "neon" }, "dynamic");
-    expect(neon["--material-glow"]).toBe("18px");
-    expect(neon["--material-edge-width"]).toBe("1.5px");
-    expect(neon["--material-edge-accent"]).toBe("1");
+    expect(neon["--material-glow"]).toBe("3px");
+    expect(neon["--material-edge-width"]).toBe("1px");
+    expect(neon["--material-edge-accent"]).toBe("0.35");
   });
 
   it("Chalk inks every surface and lifts the line toward the foreground", () => {

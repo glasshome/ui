@@ -2,7 +2,7 @@ import { clamp } from "./theme-colors.js";
 
 export const MATERIAL_VERSION = 1;
 
-export type MaterialPresetId = "frosted" | "paper" | "neon" | "chalk";
+export type MaterialPresetId = "frosted" | "frost" | "paper" | "neon" | "chalk";
 
 /** Tier 2 of the glass formula: what every surface's knobs are multiplied by. The homeowner's dials. */
 export interface MaterialDials {
@@ -87,8 +87,10 @@ export type BlurMode = "dynamic" | "performant" | "none";
 const PLAIN: MaterialPresetTerms = { edgeWidth: 1, edgeInk: 0, edgeAccent: 0, inkLift: 0 };
 
 export const MATERIAL_PRESETS: Record<MaterialPresetId, MaterialSpec> = {
-  /** Translucent, blurred, lit rim, a fine frost over the fill. */
-  frosted: { blur: 24, clarity: 60, depth: 1, tint: 1, glow: 0, ink: 0, ...PLAIN, grain: 0.4 },
+  /** Glass: clear, blurred, lit rim. The id predates the name and stays for stored themes. */
+  frosted: { blur: 24, clarity: 60, depth: 1, tint: 1, glow: 0, ink: 0, ...PLAIN },
+  /** Frosted: the same glass with a fine frost over each card. */
+  frost: { blur: 24, clarity: 60, depth: 1, tint: 1, glow: 0, ink: 0, ...PLAIN, grain: 0.4 },
   /** Opaque matte stock, a faint inked cut edge, a short contact shadow; the Ink dial draws on it. */
   paper: {
     blur: 0,
@@ -103,18 +105,23 @@ export const MATERIAL_PRESETS: Record<MaterialPresetId, MaterialSpec> = {
     edge: 0.2,
     shadow: 0.7,
   },
-  /** Near-opaque dark tile, thin tube of its own hue at the edge, bloom around it. */
+  /** Smoky glass lit from inside in its own hue, a soft hue edge and a small bloom. */
   neon: {
-    blur: 8,
-    clarity: 92,
+    blur: 9,
+    clarity: 57,
     depth: 0.4,
-    tint: 0.9,
-    edgeWidth: 1.5,
+    tint: 0.6,
+    edgeWidth: 1,
     edgeInk: 0,
-    edgeAccent: 1,
+    edgeAccent: 0.35,
     inkLift: 0,
-    glow: 18,
+    glow: 3,
     ink: 0,
+    vibrancy: 1.3,
+    edge: 0.25,
+    sheen: 0.3,
+    shadow: 1,
+    innerGlow: 0.35,
   },
   /** Matte board, the Ink body drawn in the foreground colour. */
   chalk: { blur: 0, clarity: 100, depth: 0.3, tint: 0.7, glow: 0, ink: 1, ...PLAIN, inkLift: 1 },
