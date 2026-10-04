@@ -87,25 +87,40 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
     "ariaLabel",
     "anchor",
     "style",
+    "ref",
   ]);
   const context = useDialogContext();
   const [viewport, setViewport] = createSignal(0);
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const [height, setHeight] = createSignal<number>();
   createEffect(() => {
     if (!local.anchor || !context.isOpen()) return;
     const measure = () => setViewport((n) => n + 1);
     window.addEventListener("resize", measure);
     onCleanup(() => window.removeEventListener("resize", measure));
   });
+  createEffect(() => {
+    const el = panel();
+    if (!local.anchor || !el) return;
+    setHeight(el.offsetHeight);
+    const observer = new ResizeObserver(() => setHeight(el.offsetHeight));
+    observer.observe(el);
+    onCleanup(() => observer.disconnect());
+  });
   const placement = () => {
     viewport();
     const a = local.anchor;
-    return a ? overAnchor(a, ANCHORED_WIDTH[local.size ?? "lg"]) : undefined;
+    return a ? overAnchor(a, ANCHORED_WIDTH[local.size ?? "lg"], height()) : undefined;
   };
   return (
     <DialogPrimitive.Portal>
       <ModalScrollLock />
       <DialogPrimitive.Overlay data-slot="dialog-overlay" class={MODAL_SCRIM} />
       <DialogPrimitive.Content
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          if (typeof local.ref === "function") local.ref(el);
+        }}
         data-slot="dialog-content"
         role="dialog"
         aria-label={context.titleId() ? undefined : local.ariaLabel}

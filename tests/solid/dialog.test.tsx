@@ -795,10 +795,23 @@ describe("an anchored dialog", () => {
     return el;
   };
 
-  it("grows out of the element that opened it, from its corner", () => {
+  const offsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetHeight");
+  afterEach(() => {
+    if (offsetHeight) Object.defineProperty(HTMLElement.prototype, "offsetHeight", offsetHeight);
+  });
+  const panelHeight = (height: number) =>
+    Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
+      configurable: true,
+      get() {
+        return this.getAttribute("data-slot") === "dialog-content" ? height : 0;
+      },
+    });
+
+  it("grows out of the middle of the element that opened it", () => {
     window.innerWidth = 1440;
     window.innerHeight = 900;
-    const tile = anchorAt(300, 200, 200, 150);
+    panelHeight(400);
+    const tile = anchorAt(500, 300, 200, 150);
     render(() => (
       <Dialog open>
         <DialogContent size="sm" anchor={tile} ariaLabel="Lights">
@@ -807,8 +820,8 @@ describe("an anchored dialog", () => {
       </Dialog>
     ));
 
-    expect(panel().style.left).toBe("300px");
-    expect(panel().style.top).toBe("200px");
+    expect(panel().style.left).toBe(`${500 + (200 - 384) / 2}px`);
+    expect(panel().style.top).toBe(`${300 + (150 - 400) / 2}px`);
     expect(panel().style.width).toBe("384px");
     expect(panel().style.getPropertyValue("--morph-w")).toBe("200px");
     expect(panel().style.getPropertyValue("--morph-h")).toBe("150px");
@@ -818,6 +831,7 @@ describe("an anchored dialog", () => {
   it("shifts only as far as the screen needs, and starts from where the element is", () => {
     window.innerWidth = 1440;
     window.innerHeight = 900;
+    panelHeight(300);
     const tile = anchorAt(1100, 100, 300, 240);
     render(() => (
       <Dialog open>
@@ -829,5 +843,23 @@ describe("an anchored dialog", () => {
 
     expect(panel().style.left).toBe(`${1440 - 16 - 384}px`);
     expect(panel().style.getPropertyValue("--morph-x")).toBe(`${1100 - (1440 - 16 - 384)}px`);
+  });
+
+  it("opens upward from an element near the bottom, keeping its full height", () => {
+    window.innerWidth = 1440;
+    window.innerHeight = 900;
+    panelHeight(600);
+    const tile = anchorAt(300, 760, 200, 120);
+    render(() => (
+      <Dialog open>
+        <DialogContent size="sm" anchor={tile} ariaLabel="Weather">
+          extras
+        </DialogContent>
+      </Dialog>
+    ));
+
+    expect(panel().style.top).toBe(`${900 - 16 - 600}px`);
+    expect(panel().style.maxHeight).toBe(`${900 - 32}px`);
+    expect(panel().style.getPropertyValue("--morph-y")).toBe(`${760 - (900 - 16 - 600)}px`);
   });
 });
