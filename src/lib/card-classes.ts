@@ -8,7 +8,7 @@ export const CARD_SURFACE_BASE = `${CARD_KNOBS} [--glass-base:color-mix(in_srgb,
 /* Split from the surface so dash's performant-blur engine can gate it off and
  * paint a precomputed frost instead. */
 export const CARD_BLUR =
-  "backdrop-blur-[var(--glass-blur,var(--material-blur,24px))] backdrop-saturate-[1.8]";
+  "backdrop-blur-[var(--glass-blur,var(--material-blur,24px))] backdrop-saturate-[calc(1.8*var(--material-vibrancy,1))] backdrop-brightness-[calc(1+(var(--material-vibrancy,1)-1)*0.2)]";
 
 export const CARD_SURFACE = `${CARD_SURFACE_BASE} ${CARD_BLUR}`;
 
