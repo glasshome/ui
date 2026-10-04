@@ -217,14 +217,8 @@
 	 * the card and carry a solid --border edge, 1.39:1, at 1px instead of a slab. */
   --field: var(--card);
   --field-edge: var(--border);
-  /* The knob says the state too: on wears --primary's hue, off stays inert
-	 * metal in the recessed well. Light reads lit by going darker than its pale
-	 * track, dark by going lighter; the hue is what carries across both. The
-	 * knob derives in its own scope (lib/thumb-classes.ts); --thumb-face-on is
-	 * the same expression at page scope, for anything else that reads it. */
-  --thumb-on-l: 0.55;
-  --thumb-on-c: 0.16;
-  --thumb-face-on: oklch(from var(--primary) var(--thumb-on-l) min(c, var(--thumb-on-c)) h);
+  /* The off knob: inert metal in the recessed well, quieter than the lit one
+	 * (--material-control-knob) on its accent track. */
   --thumb-face-off: oklch(0.62 0.015 250);
   --chart-1: oklch(0.7459 0.1483 156.4499);
   --chart-2: oklch(0.48 0.2 215.221);
@@ -237,7 +231,7 @@
   --font-caveat: "Caveat Variable", cursive;
   --font-bebas: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
   --radius: 1.4rem;
-  /* The material tier; the studio writes these per theme (Frosted defaults). */
+  /* The material tier; the studio writes these per theme (Glass defaults). */
   --material-blur: 24px;
   --material-clarity: 60%;
   --material-depth: 1;
@@ -248,6 +242,30 @@
   --material-glow: 0px;
   --material-ink-level: 0;
   --material-ink-lift: 0;
+  --_material-vibrancy: 1;
+  --_material-edge: 1;
+  --_material-sheen: 1;
+  --_material-shadow: 1;
+  --_material-inset: 0;
+  --_material-light-cos: 1;
+  --_material-light-sin: 0;
+  --_material-rim-bottom: 0;
+  --_material-rim-around: 0;
+  --_material-glow-out: 1;
+  --_material-glow-in: 0;
+  --_material-inner-glow: 0;
+  --_material-inner-glow-hue: 1;
+  --_material-grain: none;
+  --_material-wash-split: 3;
+  --_material-wash-angle: 135deg;
+  --_material-two-tone: 0;
+  --_material-face-raised: 0;
+  --material-control-track: var(--input);
+  --material-control-fill: var(--material-accent);
+  --material-control-knob: oklch(1 0 0);
+  --_material-relief: 1;
+  --material-accent: var(--primary);
+  --_material-fill: 0;
   --material-ink: oklch(0.16 0 0);
   --shadow-x: 0px;
   --shadow-y: 2px;
@@ -330,11 +348,6 @@ html[data-motion="live"] {
 	 * and the glass formula's own soft edge. See the light block. */
   --field: var(--input);
   --field-edge: color-mix(in srgb, var(--border) 60%, transparent);
-  /* Lit through hue, not brightness: a neutral knob this light read as the
-	 * loudest pixel in the row. Carries --primary's hue, so on ties to the rim. */
-  --thumb-on-l: 0.78;
-  --thumb-on-c: 0.1;
-  --thumb-face-on: oklch(from var(--primary) var(--thumb-on-l) min(c, var(--thumb-on-c)) h);
   --thumb-face-off: oklch(0.45 0.015 250);
   --chart-1: oklch(0.8003 0.1821 151.711);
   --chart-2: oklch(0.48 0.2 215.221);

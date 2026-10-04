@@ -94,7 +94,7 @@ const Slider: Component<SliderProps> = (props) => {
           class={cn(
             // The fill sits sunk inside the recessed rail: the tinted-surface
             // outer drop shadow would read as a halo leaking out of the groove.
-            "glass glass-tint absolute inset-y-0 rounded-xl [--glass-drop:0%]",
+            "glass glass-tint absolute inset-y-0 rounded-xl [--glass-drop:0%] [--glass-wash:90%]",
             THUMB_RAIL_BLEED,
             Array.isArray(local.fillTone) && "glass-edge-gradient",
           )}
@@ -106,7 +106,7 @@ const Slider: Component<SliderProps> = (props) => {
                   "--glass-wash-2": "var(--glass-wash)",
                   "--glass-wash-angle": "90deg",
                 }
-              : { "--glass-tone": local.fillTone ?? "var(--primary)" }
+              : { "--glass-tone": local.fillTone ?? "var(--material-accent)" }
           }
         />
         <Index each={local.markers ?? []}>
@@ -134,7 +134,9 @@ const Slider: Component<SliderProps> = (props) => {
               )}
               aria-label={local["aria-label"]}
               aria-labelledby={local["aria-labelledby"]}
-              style={{ background: local.thumbColors?.[thumbIndex] ?? "var(--primary)" }}
+              style={{
+                background: local.thumbColors?.[thumbIndex] ?? "var(--material-control-knob)",
+              }}
             >
               <KSlider.Input />
             </KSlider.Thumb>

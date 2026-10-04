@@ -17,6 +17,11 @@ export const INPUT_SURFACE =
  * in the light theme. */
 export const FIELD_CHROME = "glass glass-sink [--glass-base:var(--input)] [--glass-light:0.04]";
 
+/* A control that is on: the material's accent, strong enough to carry the state
+ * on its own, so the knob riding it can stay plain. */
+export const CONTROL_ON =
+  "glass glass-tint [--glass-tone:var(--material-accent)] [--glass-wash:100%] [--glass-text:0%]";
+
 /* Focus on a glass element: border utilities are no-ops there, so the edge
  * moves through the knob and the ring paints outside. */
 export const FOCUS_RING =

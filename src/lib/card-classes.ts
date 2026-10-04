@@ -1,14 +1,14 @@
 import { PRESS_DIP } from "./motion-classes.js";
 
 const CARD_KNOBS =
-  "glass [--glass-wash:20%] [--glass-rim:0.3] [--glass-lift:0.45] [--glass-shade:0.05] dark:[--glass-shade:0]";
+  "glass [--glass-grain:var(--_material-grain)] [--glass-wash:20%] [--glass-rim:0.3] [--glass-lift:0.45] [--glass-shade:0.05] dark:[--glass-shade:0]";
 
 export const CARD_SURFACE_BASE = `${CARD_KNOBS} [--glass-base:color-mix(in_srgb,var(--card)_var(--material-clarity),transparent)]`;
 
 /* Split from the surface so dash's performant-blur engine can gate it off and
  * paint a precomputed frost instead. */
 export const CARD_BLUR =
-  "backdrop-blur-[var(--glass-blur,var(--material-blur,24px))] backdrop-saturate-[1.8]";
+  "backdrop-blur-[var(--glass-blur,var(--material-blur,24px))] backdrop-saturate-[calc(1.8*var(--_material-vibrancy,1))] backdrop-brightness-[calc(1+(var(--_material-vibrancy,1)-1)*0.2)]";
 
 export const CARD_SURFACE = `${CARD_SURFACE_BASE} ${CARD_BLUR}`;
 
