@@ -55,6 +55,12 @@
   inherits: false;
   initial-value: 0;
 }
+/* 1 when a .glass-halo beside the surface draws its outer glow instead. */
+@property --glass-halo {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
 @property --glass-text {
   syntax: "<percentage>";
   inherits: false;
@@ -320,6 +326,28 @@
   }
 }
 
+:where(.glass, .glass-halo) {
+  /* The surface's own hue, opaque: its tone when it has one, the accent otherwise
+	 * (a transparent tone mixes to the accent at low alpha; the /1 restores it). */
+  --material-hue: oklch(
+    from color-mix(in srgb, var(--glass-tone) 99%, var(--material-accent)) l c h / 1
+  );
+  /* Glow scales with --glass-lift, the knob that already says how big a surface
+	 * floats: a card (0.45) takes the full bloom, a chip or button (0) about a third. */
+  --material-reach: calc(0.35 + var(--glass-lift) * 1.45);
+  --_glass-bloom: calc(var(--material-glow) * var(--material-reach) * var(--_material-glow-out));
+}
+/* A surface's outer glow as its own layer, laid over the surface's box with the
+ * same tone and lift. Its z-index lifts the glow over neighbouring surfaces;
+ * the surface itself sets --glass-halo: 1 so the glow is not drawn twice. */
+:where(.glass-halo) {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: 0 0 var(--_glass-bloom) oklch(from var(--material-hue) l c h / 0.65);
+}
+
 /* The ONE glass formula. Neutral by default (--glass-tone transparent makes
  * every tone term inert); add .glass-tint for the tinted badge/alert look and
  * .glass-sink for a recessed field. Tone mixes are srgb: oklch drags a tone
@@ -342,11 +370,6 @@
   --glass-wash-2: calc(var(--glass-wash) / var(--_material-wash-split));
   --glass-wash-angle: var(--_material-wash-angle);
   --surface-wash: calc(var(--glass-wash) * var(--material-tint));
-  /* The surface's own hue, opaque: its tone when it has one, the accent otherwise
-	 * (a transparent tone mixes to the accent at low alpha; the /1 restores it). */
-  --material-hue: oklch(
-    from color-mix(in srgb, var(--glass-tone) 99%, var(--material-accent)) l c h / 1
-  );
   border: var(--material-edge-width) solid
     color-mix(
       in srgb,
@@ -396,16 +419,13 @@
       )
     ),
     linear-gradient(var(--glass-base), var(--glass-base)), var(--glass-frost, none);
-  /* Glow scales with --glass-lift, the knob that already says how big a surface
-	 * floats: a card (0.45) takes the full bloom, a chip or button (0) about a third. */
-  --material-reach: calc(0.35 + var(--glass-lift) * 1.45);
   box-shadow:
     var(--glass-rim-shine, 0 0 #0000),
     inset 0 -2px 4px color-mix(in srgb, var(--glass-tone) var(--glass-glow), transparent),
     0 1px 3px color-mix(in srgb, var(--glass-tone) var(--glass-drop), transparent),
     calc(-10px * var(--_material-light-sin)) calc(10px * var(--_material-light-cos)) 30px -16px
       oklch(0 0 0 / calc(var(--glass-lift) * var(--_material-shadow))),
-    0 0 calc(var(--material-glow) * var(--material-reach) * var(--_material-glow-out))
+    0 0 calc(var(--_glass-bloom) * (1 - var(--glass-halo)))
       oklch(from var(--material-hue) l c h / 0.65),
     inset 0 0 calc(var(--material-glow) * 0.9 * var(--_material-glow-in))
       oklch(from var(--material-hue) l c h / calc(0.65 * var(--_material-glow-in))),
@@ -526,6 +546,9 @@
  * paints above its parent's own background and border; contain: layout anchors
  * them and makes the stacking context without repositioning the surface. */
 @container not style(--material-ink-level: 0) {
+  :where(.glass-halo) {
+    box-shadow: none;
+  }
   :where(.glass) {
     --ink-r: var(--radius);
     --ink-line: color-mix(

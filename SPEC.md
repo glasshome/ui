@@ -15,6 +15,8 @@ implementations. Never hand-roll `backdrop-blur` + translucent `bg-*` panels.
 .glass         neutral pane: card fill, border edge, lit rim, no tint
 .glass-tint    + tinted look driven by --glass-tone (badge/alert/button/chip)
 .glass-sink    rim flipped concave: the surface reads dug-out (fields)
+.glass-halo    the outer glow as its own layer over a sibling surface's box, so it
+               lies over neighbouring surfaces; that surface sets --glass-halo: 1
 ```
 
 Knobs (typed `@property`, `inherits: false` — a knob set on a parent never
