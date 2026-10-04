@@ -46,7 +46,7 @@ const Toggle: Component<
       class={cn(
         toggleVariants({ variant: local.variant, size: local.size }),
         TOGGLE_HOVER[local.variant ?? "default"],
-        "data-[pressed]:glass data-[pressed]:[--glass-tone:var(--material-accent)]",
+        "data-[pressed]:glass data-[pressed]:[--glass-tone:var(--surface-accent)]",
         local.class,
       )}
       {...rest}

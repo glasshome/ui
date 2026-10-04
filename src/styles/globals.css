@@ -174,12 +174,12 @@
   initial-value: 1;
 }
 
-/* The public material contract: the only material names a widget reads. Light
- * comes from --material-light-cos/-sin, a turn of today's top-left light. */
+/* --surface-*: what a widget reads to match the material; --material-* stays the
+ * formula's own. Light comes from --material-light-cos/-sin. */
 :root {
   --material-hi: oklch(1 0 0);
   --material-lo: color-mix(in srgb, var(--card), black 20%);
-  --material-raised:
+  --surface-raised:
     calc(
         (6px * var(--material-light-cos) - 6px * var(--material-light-sin)) * var(--material-relief)
       )
@@ -196,7 +196,7 @@
           var(--material-relief)
       )
       calc(14px * var(--material-relief)) var(--material-hi);
-  --material-pressed:
+  --surface-pressed:
     inset
       calc(
         (3px * var(--material-light-cos) - 3px * var(--material-light-sin)) * var(--material-relief)
@@ -215,12 +215,12 @@
           var(--material-relief)
       )
       calc(6px * var(--material-relief)) var(--material-hi);
-  --material-face: radial-gradient(
+  --surface-face: radial-gradient(
     circle at 50% 38%,
     color-mix(in srgb, var(--card), white 40%),
     var(--card)
   );
-  --material-well: radial-gradient(
+  --surface-well: radial-gradient(
     circle at 50% 38%,
     color-mix(in srgb, var(--card), black 10%),
     color-mix(in srgb, var(--card), black 3%)
@@ -229,12 +229,12 @@
 .dark {
   --material-hi: color-mix(in srgb, var(--card), white 14%);
   --material-lo: color-mix(in srgb, var(--card), black 45%);
-  --material-face: radial-gradient(
+  --surface-face: radial-gradient(
     circle at 50% 38%,
     color-mix(in srgb, var(--card), white 5%),
     var(--card)
   );
-  --material-well: radial-gradient(
+  --surface-well: radial-gradient(
     circle at 50% 38%,
     color-mix(in srgb, var(--card), black 40%),
     color-mix(in srgb, var(--card), black 12%)
@@ -341,7 +341,7 @@
   /* The surface's own hue, opaque: its tone when it has one, the accent otherwise
 	 * (a transparent tone mixes to the accent at low alpha; the /1 restores it). */
   --material-hue: oklch(
-    from color-mix(in srgb, var(--glass-tone) 99%, var(--material-accent)) l c h / 1
+    from color-mix(in srgb, var(--glass-tone) 99%, var(--surface-accent)) l c h / 1
   );
   border: var(--material-edge-width) solid
     color-mix(
@@ -426,8 +426,8 @@
   [data-slot="checkbox-box"],
   [data-slot="toggle-group"] {
     border-color: transparent;
-    background: var(--material-control-track);
-    box-shadow: var(--material-pressed);
+    background: var(--surface-control-track);
+    box-shadow: var(--surface-pressed);
   }
   [data-slot="switch"][data-checked],
   [data-slot="slider-fill"],
@@ -435,9 +435,9 @@
   [data-slot="toggle"][data-pressed],
   [data-sliding-indicator] {
     border-color: transparent;
-    background: var(--material-control-fill);
+    background: var(--surface-control-fill);
     box-shadow: 0 0 calc(var(--material-glow) * 0.5)
-      color-mix(in srgb, var(--material-accent) 65%, transparent);
+      color-mix(in srgb, var(--surface-accent) 65%, transparent);
     color: oklch(1 0 0);
   }
   [data-slot="tabs-trigger"][data-selected],
@@ -446,7 +446,7 @@
   }
   [data-slot="switch-thumb"],
   [data-slot="slider-thumb"] {
-    --thumb-face-off: var(--material-accent);
+    --thumb-face-off: var(--surface-accent);
     box-shadow:
       calc(2px * (var(--material-light-cos) - var(--material-light-sin)) * var(--material-relief))
         calc(2px * (var(--material-light-sin) + var(--material-light-cos)) * var(--material-relief))
@@ -459,16 +459,16 @@
   }
   [data-slot="button"]:where(.glass-control):not(:where(.glass-tint)) {
     border-color: transparent;
-    background: var(--material-control-knob);
-    box-shadow: var(--material-raised);
+    background: var(--surface-control-knob);
+    box-shadow: var(--surface-raised);
   }
   [data-slot="button"]:where(.glass-tint) {
     border-color: transparent;
-    background: var(--material-control-fill);
+    background: var(--surface-control-fill);
     box-shadow:
-      var(--material-raised),
+      var(--surface-raised),
       0 0 calc(var(--material-glow) * 0.5)
-        color-mix(in srgb, var(--material-accent) 65%, transparent);
+        color-mix(in srgb, var(--surface-accent) 65%, transparent);
     color: oklch(1 0 0);
   }
 }

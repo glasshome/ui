@@ -226,18 +226,18 @@ const RIM: Record<RimPosition, [bottom: number, around: number]> = {
   around: [0, 1],
 };
 
-/** The control palette in the public contract: calm on a flat face, neumorphic on a raised one. */
-const CONTROLS: Record<MaterialFace, Record<`--material-control-${string}`, string>> = {
+/** The --surface-control-* palette: calm on a flat face, neumorphic on a raised one. */
+const CONTROLS: Record<MaterialFace, Record<`--surface-control-${string}`, string>> = {
   flat: {
-    "--material-control-track": "var(--input)",
-    "--material-control-fill": "var(--material-accent)",
-    "--material-control-knob": "oklch(1 0 0)",
+    "--surface-control-track": "var(--input)",
+    "--surface-control-fill": "var(--surface-accent)",
+    "--surface-control-knob": "oklch(1 0 0)",
   },
   raised: {
-    "--material-control-track": "var(--material-well)",
-    "--material-control-fill":
-      "linear-gradient(90deg, color-mix(in srgb, var(--material-accent), black 50%), var(--material-accent))",
-    "--material-control-knob": "var(--material-face)",
+    "--surface-control-track": "var(--surface-well)",
+    "--surface-control-fill":
+      "linear-gradient(90deg, color-mix(in srgb, var(--surface-accent), black 50%), var(--surface-accent))",
+    "--surface-control-knob": "var(--surface-face)",
   },
 };
 
@@ -245,7 +245,7 @@ export function resolveMaterial(
   material: Material,
   blurMode: BlurMode,
   mode: "light" | "dark" = "light",
-): Record<`--material-${string}`, string> {
+): Record<`--${string}`, string> {
   const t = materialTerms(material);
   const p = MATERIAL_PRESETS[material.preset];
   const blur = blurMode === "none" ? 0 : t.blur;
@@ -284,7 +284,7 @@ export function resolveMaterial(
     "--material-face-raised": t.face === "raised" ? "1" : "0",
     ...CONTROLS[t.face],
     "--material-relief": `${t.relief}`,
-    "--material-accent": t.accent === "theme" ? "var(--primary)" : t.accent,
+    "--surface-accent": t.accent === "theme" ? "var(--primary)" : t.accent,
     "--material-fill": `${t.fill}`,
   };
 }

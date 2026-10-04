@@ -106,7 +106,7 @@ const Slider: Component<SliderProps> = (props) => {
                   "--glass-wash-2": "var(--glass-wash)",
                   "--glass-wash-angle": "90deg",
                 }
-              : { "--glass-tone": local.fillTone ?? "var(--material-accent)" }
+              : { "--glass-tone": local.fillTone ?? "var(--surface-accent)" }
           }
         />
         <Index each={local.markers ?? []}>
@@ -135,7 +135,7 @@ const Slider: Component<SliderProps> = (props) => {
               aria-label={local["aria-label"]}
               aria-labelledby={local["aria-labelledby"]}
               style={{
-                background: local.thumbColors?.[thumbIndex] ?? "var(--material-control-knob)",
+                background: local.thumbColors?.[thumbIndex] ?? "var(--surface-control-knob)",
               }}
             >
               <KSlider.Input />

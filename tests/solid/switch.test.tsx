@@ -21,7 +21,7 @@ describe("Switch", () => {
     const off = render(() => <Switch checked={false} />);
     const on = render(() => <Switch checked />);
     expect(parts(off.container).thumb.style.background).toBe("var(--thumb-face-off)");
-    expect(parts(on.container).thumb.style.background).toBe("var(--material-control-knob)");
+    expect(parts(on.container).thumb.style.background).toBe("var(--surface-control-knob)");
   });
 
   // The bug this file exists for: an off knob that competes with the on one.
@@ -47,7 +47,7 @@ describe("Switch", () => {
     const on = render(() => <Switch checked />);
     const onClass = parts(on.container).root.className;
     for (const token of CONTROL_ON.split(" ")) expect(onClass, token).toContain(token);
-    expect(CONTROL_ON).toContain("[--glass-tone:var(--material-accent)]");
+    expect(CONTROL_ON).toContain("[--glass-tone:var(--surface-accent)]");
   });
 
   it("moves the thumb and reports state through aria-checked", () => {
@@ -83,6 +83,6 @@ describe("Switch", () => {
     fireEvent.click(parts(container).root);
     expect(checked()).toBe(true);
     expect(parts(container).root.className).toContain("glass-tint");
-    expect(parts(container).thumb.style.background).toBe("var(--material-control-knob)");
+    expect(parts(container).thumb.style.background).toBe("var(--surface-control-knob)");
   });
 });

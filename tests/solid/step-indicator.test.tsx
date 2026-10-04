@@ -13,7 +13,7 @@ function segments(container: HTMLElement) {
   );
 }
 
-const lit = (el: HTMLElement) => el.className.includes("[--glass-tone:var(--material-accent)]");
+const lit = (el: HTMLElement) => el.className.includes("[--glass-tone:var(--surface-accent)]");
 
 describe("StepIndicator", () => {
   it("renders one bar per step and flags the current one", () => {

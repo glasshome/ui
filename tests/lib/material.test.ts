@@ -32,11 +32,11 @@ const INERT = {
   "--material-wash-angle": "135deg",
   "--material-two-tone": "0",
   "--material-face-raised": "0",
-  "--material-control-track": "var(--input)",
-  "--material-control-fill": "var(--material-accent)",
-  "--material-control-knob": "oklch(1 0 0)",
+  "--surface-control-track": "var(--input)",
+  "--surface-control-fill": "var(--surface-accent)",
+  "--surface-control-knob": "oklch(1 0 0)",
   "--material-relief": "1",
-  "--material-accent": "var(--primary)",
+  "--surface-accent": "var(--primary)",
   "--material-fill": "0",
 };
 
@@ -125,7 +125,7 @@ describe("material presets", () => {
       "dynamic",
     );
     expect(vars["--material-grain"]).toContain("0 0 0 0.15 0");
-    expect(vars["--material-accent"]).toBe("oklch(0.65 0.26 0)");
+    expect(vars["--surface-accent"]).toBe("oklch(0.65 0.26 0)");
   });
 
   it("Frosted is Glass with a frost; Glass stays clear", () => {

@@ -114,16 +114,16 @@ controls turn neumorphic (pressed wells, raised knobs and keys, the lit part in
 the accent and glowing). A flat face keeps the calm controls: the accent on what
 is on, a white knob, a neutral off knob.
 
-**Public contract.** The only material names a widget reads. Everything else
-`--glass-*` and `--material-*` is internal; widget-cli warns on a read
+**What widgets read: `--surface-*`.** `--glass-*` and `--material-*` are the
+formula's own names and stay internal; widget-cli warns on a read
 (`internal-material-vars`, removed in SDK 2.0).
 
 | Variable | What it is |
 | --- | --- |
-| `--material-accent` | the material's accent, the theme's `--primary` unless set |
-| `--material-face` / `--material-well` | raised and pressed face backgrounds |
-| `--material-raised` / `--material-pressed` | the matching shadows, scaled by relief and turned by light from |
-| `--material-control-track` / `-fill` / `-knob` | the control palette for the material's face |
+| `--surface-accent` | the material's accent, the theme's `--primary` unless set |
+| `--surface-face` / `--surface-well` | raised and pressed face backgrounds |
+| `--surface-raised` / `--surface-pressed` | the matching shadows, scaled by relief and turned by light from |
+| `--surface-control-track` / `-fill` / `-knob` | the control palette for the material's face |
 | `--surface-tone` / `--surface-wash` | the surface's own tone and wash, readable by children |
 
 A preset is a point in that space (`tokens/material.ts`: Glass, Frosted, Paper,
