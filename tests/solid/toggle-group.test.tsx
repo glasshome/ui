@@ -44,7 +44,7 @@ describe("ToggleGroup", () => {
       // `:not([data-pressed]):hover` (0,3,0) outranks the group's own
       // `hover:bg-transparent` (0,2,0), so the fill must never reach an item.
       expect(item.className).not.toContain("hover:bg-muted");
-      expect(item.className).toContain("hover:text-primary");
+      expect(item.className).toContain("hover:text-(--material-accent)");
     }
   });
 
@@ -59,7 +59,7 @@ describe("ToggleGroup", () => {
     // own fill, and the unpressed ones still have to answer the pointer.
     expect(container.querySelector("[data-sliding-indicator]")).toBeNull();
     for (const item of container.querySelectorAll<HTMLElement>('[data-slot="toggle-group-item"]')) {
-      expect(item.className).toContain("not-data-[pressed]:hover:text-primary");
+      expect(item.className).toContain("not-data-[pressed]:hover:text-(--material-accent)");
       expect(item.className).not.toContain("hover:bg-muted");
       expect(item.className).toContain("data-[pressed]:bg-muted");
     }

@@ -264,7 +264,7 @@
   --material-control-fill: var(--material-accent);
   --material-control-knob: oklch(1 0 0);
   --material-relief: 1;
-  --material-accent-set: initial;
+  --material-accent: var(--primary);
   --material-fill: 0;
   --material-ink: oklch(0.16 0 0);
   --shadow-x: 0px;

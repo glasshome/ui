@@ -177,7 +177,6 @@
 /* The public material contract: the only material names a widget reads. Light
  * comes from --material-light-cos/-sin, a turn of today's top-left light. */
 :root {
-  --material-accent: var(--material-accent-set, var(--primary));
   --material-hi: oklch(1 0 0);
   --material-lo: color-mix(in srgb, var(--card), black 20%);
   --material-raised:
@@ -342,8 +341,7 @@
   /* The surface's own hue, opaque: its tone when it has one, the accent otherwise
 	 * (a transparent tone mixes to the accent at low alpha; the /1 restores it). */
   --material-hue: oklch(
-    from color-mix(in srgb, var(--glass-tone) 99%, var(--material-accent-set, var(--primary))) l c h
-      / 1
+    from color-mix(in srgb, var(--glass-tone) 99%, var(--material-accent)) l c h / 1
   );
   border: var(--material-edge-width) solid
     color-mix(
@@ -440,6 +438,10 @@
     background: var(--material-control-fill);
     box-shadow: 0 0 calc(var(--material-glow) * 0.5)
       color-mix(in srgb, var(--material-accent) 65%, transparent);
+    color: oklch(1 0 0);
+  }
+  [data-slot="tabs-trigger"][data-selected],
+  [data-slot="toggle-group-item"][data-pressed] {
     color: oklch(1 0 0);
   }
   [data-slot="switch-thumb"],

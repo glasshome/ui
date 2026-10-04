@@ -258,7 +258,7 @@ export function resolveMaterial(
     "--material-face-raised": t.face === "raised" ? "1" : "0",
     ...CONTROLS[t.face],
     "--material-relief": `${t.relief}`,
-    "--material-accent-set": t.accent === "theme" ? "initial" : t.accent,
+    "--material-accent": t.accent === "theme" ? "var(--primary)" : t.accent,
     "--material-fill": `${t.fill}`,
   };
 }

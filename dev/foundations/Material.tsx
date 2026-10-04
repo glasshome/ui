@@ -13,6 +13,57 @@ const SAMPLES: [name: string, material: Material][] = [
     "Frosted, tint 1.6, clarity 30%",
     { v: 1, preset: "frosted", dials: { tint: 1.6, clarity: 30 } },
   ],
+  [
+    "Liquid Glass Standard (coasting24)",
+    {
+      v: 1,
+      preset: "frosted",
+      dials: {
+        clarity: 16,
+        vibrancy: 0.72,
+        edge: 1.9,
+        rim: "top-bottom",
+        darkScale: 0.32,
+        innerGlow: 0.92,
+        innerGlowHue: 0,
+      },
+    },
+  ],
+  [
+    "Neon Pink (coasting24)",
+    {
+      v: 1,
+      preset: "frosted",
+      dials: {
+        blur: 8,
+        clarity: 92,
+        depth: 0.4,
+        tint: 0.9,
+        glow: 10,
+        face: "raised",
+        accent: "oklch(0.65 0.26 0)",
+      },
+    },
+  ],
+  [
+    "Neon v2",
+    {
+      v: 1,
+      preset: "neon",
+      dials: {
+        blur: 9,
+        clarity: 57,
+        tint: 0.6,
+        vibrancy: 1.3,
+        edge: 0.25,
+        sheen: 0.3,
+        shadow: 1,
+        glow: 5,
+        innerGlow: 0.35,
+        accent: "oklch(0.68 0.27 340)",
+      },
+    },
+  ],
 ];
 
 const GROUND =
@@ -22,9 +73,9 @@ export default function MaterialFoundation() {
   return (
     <section class="flex flex-col gap-4" data-foundation="material">
       <p class="text-muted-foreground text-sm">
-        One card, one badge, one button, one switch, under the four presets and two dialled
-        Frosteds. The wrapper sets only the four tier variables; every surface inside multiplies
-        them into its own knobs.
+        One card, one badge, one button, one switch, under the presets, two dialled Frosteds and
+        three looks built from terms alone. The wrapper sets only the material variables (light mode
+        readings); every surface and control inside multiplies them into its own knobs.
       </p>
       <div
         class="grid grid-cols-1 gap-6 overflow-hidden rounded-xl p-6 sm:grid-cols-2"
