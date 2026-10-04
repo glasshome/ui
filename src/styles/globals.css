@@ -358,7 +358,7 @@
 	 * would put the frost above the fill. Layer order top→bottom: grain, light,
 	 * shade, tone wash, base fill, frost. */
   background:
-    var(--glass-grain, var(--material-grain)),
+    var(--glass-grain, none),
     radial-gradient(
       var(--glass-sheen, 120% 120%) at
         calc(50% + (-28% * var(--material-light-cos) + 42% * var(--material-light-sin)))

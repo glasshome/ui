@@ -1,7 +1,7 @@
 import { PRESS_DIP } from "./motion-classes.js";
 
 const CARD_KNOBS =
-  "glass [--glass-wash:20%] [--glass-rim:0.3] [--glass-lift:0.45] [--glass-shade:0.05] dark:[--glass-shade:0]";
+  "glass [--glass-grain:var(--material-grain)] [--glass-wash:20%] [--glass-rim:0.3] [--glass-lift:0.45] [--glass-shade:0.05] dark:[--glass-shade:0]";
 
 export const CARD_SURFACE_BASE = `${CARD_KNOBS} [--glass-base:color-mix(in_srgb,var(--card)_var(--material-clarity),transparent)]`;
 
