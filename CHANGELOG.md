@@ -18,6 +18,20 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.24.0](https://github.com/glasshome/ui/compare/v1.23.0...v1.24.0) (2026-10-04)
+
+
+### Features
+
+* one hold length, HOLD_MS and HOLD_GRACE_MS, with --duration-hold for the fill ([198c9f4](https://github.com/glasshome/ui/commit/198c9f46638470550bf09ab73f56ab0d3735e198))
+* one hold length, HOLD_MS and HOLD_GRACE_MS, with --duration-hold for the fill ([85f6e72](https://github.com/glasshome/ui/commit/85f6e72c073c40c653cf820eebd7dbe607dcc11c))
+
+
+### Bug Fixes
+
+* **dialog:** an anchored panel centres on its anchor and keeps its full height near the screen edge ([2a41665](https://github.com/glasshome/ui/commit/2a416654209cbf38ab020511da2245616355d784))
+* **theme:** morph opens in 300ms ([3fd9f16](https://github.com/glasshome/ui/commit/3fd9f1677c4727cabff3e23b2abe32cf0c6dabd4))
+
 ## [1.23.0](https://github.com/glasshome/ui/compare/v1.22.1...v1.23.0) (2026-10-04)
 
 
