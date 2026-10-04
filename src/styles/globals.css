@@ -450,6 +450,14 @@
 .gh-alert-desc:not(:first-child) {
   margin-top: 0.125rem;
 }
+[data-slot="alert"][data-size="sm"] .gh-alert-desc {
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+[data-slot="alert"][data-size="sm"] .gh-alert-icon-bg {
+  transform: scale(0.5);
+  transform-origin: bottom right;
+}
 
 /* Carousel `wipe` puts every slide in one grid cell. This is
  * structural, so it ships as real CSS: a Tailwind arbitrary variant written in

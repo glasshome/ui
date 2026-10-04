@@ -66,8 +66,7 @@ export function alertIconBgStyle(color: string): Record<string, string> {
     opacity: "0.32",
   };
 }
-export const ALERT_SM_CLASS =
-  "items-center gap-2 py-1.5 pr-1.5 pl-3 [&_[data-slot=alert-description]]:text-xs [&_.gh-alert-icon-bg]:scale-50 [&_.gh-alert-icon-bg]:origin-bottom-right";
+export const ALERT_SM_CLASS = "items-center gap-2 py-1.5 pr-1.5 pl-3";
 export const ALERT_CONTENT_CLASS = "relative z-10 min-w-0 flex-1";
 export const ALERT_TITLE_CLASS = "font-semibold text-base leading-snug";
 export const ALERT_DESCRIPTION_CLASS = "gh-alert-desc text-foreground/80 text-sm leading-snug";
