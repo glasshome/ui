@@ -546,9 +546,9 @@
       linear-gradient(color-mix(in srgb, var(--surface-tone) var(--surface-wash), transparent) 0 0),
       linear-gradient(var(--glass-base) 0 0);
   }
-  /* Above every widget layer (the SDK stacks to 30): full-bleed media would bury the line. */
+  /* Under the surface's content (a knob rides over its track's line); the widget shell lifts it. */
   :where(.glass)::after {
-    z-index: 40;
+    z-index: -1;
     inset: 0;
     border: 3px solid var(--ink-line);
     border-radius: inherit;
