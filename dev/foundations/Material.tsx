@@ -71,7 +71,8 @@ const GROUND =
   "radial-gradient(38% 60% at 14% 10%, color-mix(in srgb, var(--accent) 34%, transparent), transparent 70%), radial-gradient(36% 56% at 88% 90%, color-mix(in srgb, var(--primary) 40%, transparent), transparent 70%), radial-gradient(30% 40% at 60% 40%, color-mix(in srgb, var(--love) 26%, transparent), transparent 70%), var(--background)";
 
 function usePageMode() {
-  const read = () => (document.documentElement.classList.contains("dark") ? "dark" : "light");
+  const read = (): "dark" | "light" =>
+    document.documentElement.classList.contains("dark") ? "dark" : "light";
   const [mode, setMode] = createSignal(read());
   const observer = new MutationObserver(() => setMode(read()));
   observer.observe(document.documentElement, { attributeFilter: ["class"] });
