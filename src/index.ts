@@ -43,6 +43,7 @@ export {
 export { glassToneText, toneTextMix } from "./lib/glass-tone.js";
 export {
   CONTROL_H,
+  CONTROL_ON,
   FIELD_CHROME,
   FIELD_CONTROL,
   FIELD_TEXT,
