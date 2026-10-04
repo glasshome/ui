@@ -227,17 +227,17 @@ const RIM: Record<RimPosition, [bottom: number, around: number]> = {
 };
 
 /** The --surface-control-* palette: calm on a flat face, neumorphic on a raised one. */
-const CONTROLS: Record<MaterialFace, Record<`--surface-control-${string}`, string>> = {
+const CONTROLS: Record<MaterialFace, Record<`--material-control-${string}`, string>> = {
   flat: {
-    "--surface-control-track": "var(--input)",
-    "--surface-control-fill": "var(--surface-accent)",
-    "--surface-control-knob": "oklch(1 0 0)",
+    "--material-control-track": "var(--input)",
+    "--material-control-fill": "var(--material-accent)",
+    "--material-control-knob": "oklch(1 0 0)",
   },
   raised: {
-    "--surface-control-track": "var(--surface-well)",
-    "--surface-control-fill":
-      "linear-gradient(90deg, color-mix(in srgb, var(--surface-accent), black 50%), var(--surface-accent))",
-    "--surface-control-knob": "var(--surface-face)",
+    "--material-control-track": "var(--material-well)",
+    "--material-control-fill":
+      "linear-gradient(90deg, color-mix(in srgb, var(--material-accent), black 50%), var(--material-accent))",
+    "--material-control-knob": "var(--material-face)",
   },
 };
 
@@ -264,27 +264,27 @@ export function resolveMaterial(
     "--material-glow": `${t.glow}px`,
     "--material-ink-level": `${t.ink}`,
     "--material-ink-lift": `${p.inkLift}`,
-    "--material-vibrancy": `${t.vibrancy}`,
-    "--material-edge": `${round(t.edge * dim)}`,
-    "--material-sheen": `${round(t.sheen * dim)}`,
-    "--material-shadow": `${t.shadow}`,
-    "--material-inset": `${round(t.inset * dim)}`,
-    "--material-light-cos": `${round(Math.cos(turn))}`,
-    "--material-light-sin": `${round(Math.sin(turn))}`,
-    "--material-rim-bottom": `${rimBottom}`,
-    "--material-rim-around": `${rimAround}`,
-    "--material-glow-out": t.glowAt === "outside" ? "1" : "0",
-    "--material-glow-in": t.glowAt === "inside" ? "1" : "0",
-    "--material-inner-glow": `${round(t.innerGlow * dim)}`,
-    "--material-inner-glow-hue": `${t.innerGlowHue}`,
-    "--material-grain": t.grain > 0 ? frostTile(t.grain) : "none",
-    "--material-wash-split": `${WASH_SPLIT[t.washStyle]}`,
-    "--material-wash-angle": `${t.washAngle}deg`,
-    "--material-two-tone": t.washStyle === "two-tone" ? "1" : "0",
-    "--material-face-raised": t.face === "raised" ? "1" : "0",
+    "--_material-vibrancy": `${t.vibrancy}`,
+    "--_material-edge": `${round(t.edge * dim)}`,
+    "--_material-sheen": `${round(t.sheen * dim)}`,
+    "--_material-shadow": `${t.shadow}`,
+    "--_material-inset": `${round(t.inset * dim)}`,
+    "--_material-light-cos": `${round(Math.cos(turn))}`,
+    "--_material-light-sin": `${round(Math.sin(turn))}`,
+    "--_material-rim-bottom": `${rimBottom}`,
+    "--_material-rim-around": `${rimAround}`,
+    "--_material-glow-out": t.glowAt === "outside" ? "1" : "0",
+    "--_material-glow-in": t.glowAt === "inside" ? "1" : "0",
+    "--_material-inner-glow": `${round(t.innerGlow * dim)}`,
+    "--_material-inner-glow-hue": `${t.innerGlowHue}`,
+    "--_material-grain": t.grain > 0 ? frostTile(t.grain) : "none",
+    "--_material-wash-split": `${WASH_SPLIT[t.washStyle]}`,
+    "--_material-wash-angle": `${t.washAngle}deg`,
+    "--_material-two-tone": t.washStyle === "two-tone" ? "1" : "0",
+    "--_material-face-raised": t.face === "raised" ? "1" : "0",
     ...CONTROLS[t.face],
-    "--material-relief": `${t.relief}`,
-    "--surface-accent": t.accent === "theme" ? "var(--primary)" : t.accent,
-    "--material-fill": `${t.fill}`,
+    "--_material-relief": `${t.relief}`,
+    "--material-accent": t.accent === "theme" ? "var(--primary)" : t.accent,
+    "--_material-fill": `${t.fill}`,
   };
 }

@@ -52,7 +52,7 @@ const Switch: Component<SwitchProps> = (props) => {
         )}
         // Off must read quieter than on: the knob dims with the track.
         style={{
-          background: checked() ? "var(--surface-control-knob)" : "var(--thumb-face-off)",
+          background: checked() ? "var(--material-control-knob)" : "var(--thumb-face-off)",
         }}
       />
       {local.name && <input type="hidden" name={local.name} value={checked() ? "on" : "off"} />}

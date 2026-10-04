@@ -47,7 +47,7 @@ describe("the material tier", () => {
     expect(globals).toContain("var(--material-ink) calc(var(--material-edge-ink) * 100%)");
     expect(globals).toContain("--material-reach: calc(0.35 + var(--glass-lift) * 1.45);");
     expect(globals).toContain(
-      "0 0 calc(var(--material-glow) * var(--material-reach) * var(--material-glow-out))",
+      "0 0 calc(var(--material-glow) * var(--material-reach) * var(--_material-glow-out))",
     );
     expect(globals).toContain("var(--material-hue) calc(var(--material-edge-accent) * 100%)");
     expect(globals).toContain("oklch(from var(--material-hue) l c h / 0.65)");
@@ -62,11 +62,11 @@ describe("the material tier", () => {
   });
 
   it("sheen scales sheen and shade, edge the rim, shadow the lift; tint scales the wash", () => {
-    expect(globals).toContain("oklch(1 0 0 / calc(var(--glass-light) * var(--material-sheen)))");
-    expect(globals).toContain("oklch(0 0 0 / calc(var(--glass-shade) * var(--material-sheen)))");
+    expect(globals).toContain("oklch(1 0 0 / calc(var(--glass-light) * var(--_material-sheen)))");
+    expect(globals).toContain("oklch(0 0 0 / calc(var(--glass-shade) * var(--_material-sheen)))");
     expect(globals).toContain("0.22 * var(--glass-rim) +");
-    expect(globals).toContain("calc(0.5 * var(--glass-rim) * var(--material-edge))");
-    expect(globals).toContain("oklch(0 0 0 / calc(var(--glass-lift) * var(--material-shadow)))");
+    expect(globals).toContain("calc(0.5 * var(--glass-rim) * var(--_material-edge))");
+    expect(globals).toContain("oklch(0 0 0 / calc(var(--glass-lift) * var(--_material-shadow)))");
     expect(globals).toContain("var(--glass-tone) calc(var(--glass-wash) * var(--material-tint))");
     expect(globals).toContain(
       "var(--glass-tone-2) calc(var(--glass-wash-2) * var(--material-tint))",

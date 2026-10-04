@@ -29,7 +29,7 @@ const ToggleGroupContext = createContext<ToggleGroupContextValue>({
 const ToggleGroup: ParentComponent<
   ComponentProps<typeof ToggleGroupPrimitive> &
     VariantProps<typeof toggleVariants> & {
-      /** CSS colour for the selected segment's glass. Default `var(--surface-accent)`. */
+      /** CSS colour for the selected segment's glass. Default `var(--material-accent)`. */
       tone?: string;
       /** One row that scrolls sideways when it outgrows its container, instead of wrapping. */
       scroll?: boolean;
@@ -109,8 +109,8 @@ const ToggleGroupItem: Component<
         // its own neutral fill; hover still tints text only, since a fill there
         // would read as a second, squarer selection.
         context.sliding
-          ? "hover:text-(--surface-accent)"
-          : "data-[pressed]:bg-muted data-[pressed]:text-foreground not-data-[pressed]:hover:text-(--surface-accent)",
+          ? "hover:text-(--material-accent)"
+          : "data-[pressed]:bg-muted data-[pressed]:text-foreground not-data-[pressed]:hover:text-(--material-accent)",
         local.class,
       )}
       {...rest}

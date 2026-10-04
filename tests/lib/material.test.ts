@@ -17,27 +17,27 @@ const INERT = {
   "--material-glow": "0px",
   "--material-ink-level": "0",
   "--material-ink-lift": "0",
-  "--material-vibrancy": "1",
-  "--material-inset": "0",
-  "--material-light-cos": "1",
-  "--material-light-sin": "0",
-  "--material-rim-bottom": "0",
-  "--material-rim-around": "0",
-  "--material-glow-out": "1",
-  "--material-glow-in": "0",
-  "--material-inner-glow": "0",
-  "--material-inner-glow-hue": "1",
-  "--material-grain": "none",
-  "--material-wash-split": "3",
-  "--material-wash-angle": "135deg",
-  "--material-two-tone": "0",
-  "--material-face-raised": "0",
-  "--surface-control-track": "var(--input)",
-  "--surface-control-fill": "var(--surface-accent)",
-  "--surface-control-knob": "oklch(1 0 0)",
-  "--material-relief": "1",
-  "--surface-accent": "var(--primary)",
-  "--material-fill": "0",
+  "--_material-vibrancy": "1",
+  "--_material-inset": "0",
+  "--_material-light-cos": "1",
+  "--_material-light-sin": "0",
+  "--_material-rim-bottom": "0",
+  "--_material-rim-around": "0",
+  "--_material-glow-out": "1",
+  "--_material-glow-in": "0",
+  "--_material-inner-glow": "0",
+  "--_material-inner-glow-hue": "1",
+  "--_material-grain": "none",
+  "--_material-wash-split": "3",
+  "--_material-wash-angle": "135deg",
+  "--_material-two-tone": "0",
+  "--_material-face-raised": "0",
+  "--material-control-track": "var(--input)",
+  "--material-control-fill": "var(--material-accent)",
+  "--material-control-knob": "oklch(1 0 0)",
+  "--_material-relief": "1",
+  "--material-accent": "var(--primary)",
+  "--_material-fill": "0",
 };
 
 const theme = readFileSync(
@@ -53,9 +53,9 @@ describe("material presets", () => {
       "--material-clarity": "60%",
       "--material-depth": "1",
       "--material-tint": "1",
-      "--material-edge": "1",
-      "--material-sheen": "1",
-      "--material-shadow": "1",
+      "--_material-edge": "1",
+      "--_material-sheen": "1",
+      "--_material-shadow": "1",
       ...INERT,
     });
     for (const [name, value] of Object.entries(frosted)) {
@@ -72,7 +72,7 @@ describe("material presets", () => {
   it("Paper is matte, clean stock: no sheen, no grain", () => {
     const paper = { v: 1, preset: "paper" } as const;
     expect(materialTerms(paper).sheen).toBe(0);
-    expect(resolveMaterial(paper, "dynamic", "dark")["--material-grain"]).toBe("none");
+    expect(resolveMaterial(paper, "dynamic", "dark")["--_material-grain"]).toBe("none");
   });
 
   it("depth leads edge, sheen and shadow until each is set on its own", () => {
@@ -89,17 +89,17 @@ describe("material presets", () => {
       dials: { inset: 0.5, darkScale: 0.3 },
     } as const;
     const dark = resolveMaterial(material, "dynamic", "dark");
-    expect(dark["--material-edge"]).toBe("0.3");
-    expect(dark["--material-sheen"]).toBe("0.3");
-    expect(dark["--material-inset"]).toBe("0.15");
-    expect(dark["--material-shadow"]).toBe("1");
-    expect(resolveMaterial(material, "dynamic", "light")["--material-edge"]).toBe("1");
+    expect(dark["--_material-edge"]).toBe("0.3");
+    expect(dark["--_material-sheen"]).toBe("0.3");
+    expect(dark["--_material-inset"]).toBe("0.15");
+    expect(dark["--_material-shadow"]).toBe("1");
+    expect(resolveMaterial(material, "dynamic", "light")["--_material-edge"]).toBe("1");
   });
 
   it("light from turns today's offsets: a quarter turn swaps the axes", () => {
     const vars = resolveMaterial({ v: 1, preset: "frosted", dials: { lightFrom: 45 } }, "dynamic");
-    expect(vars["--material-light-cos"]).toBe("0");
-    expect(vars["--material-light-sin"]).toBe("1");
+    expect(vars["--_material-light-cos"]).toBe("0");
+    expect(vars["--_material-light-sin"]).toBe("1");
   });
 
   it("enum terms resolve to switches the recipe multiplies by", () => {
@@ -111,12 +111,12 @@ describe("material presets", () => {
       },
       "dynamic",
     );
-    expect(vars["--material-rim-bottom"]).toBe("1");
-    expect(vars["--material-glow-out"]).toBe("0");
-    expect(vars["--material-glow-in"]).toBe("1");
-    expect(vars["--material-wash-split"]).toBe("1");
-    expect(vars["--material-two-tone"]).toBe("1");
-    expect(vars["--material-face-raised"]).toBe("1");
+    expect(vars["--_material-rim-bottom"]).toBe("1");
+    expect(vars["--_material-glow-out"]).toBe("0");
+    expect(vars["--_material-glow-in"]).toBe("1");
+    expect(vars["--_material-wash-split"]).toBe("1");
+    expect(vars["--_material-two-tone"]).toBe("1");
+    expect(vars["--_material-face-raised"]).toBe("1");
   });
 
   it("grain bakes its strength into the noise tile; an accent is written as given", () => {
@@ -124,15 +124,15 @@ describe("material presets", () => {
       { v: 1, preset: "frosted", dials: { grain: 0.5, accent: "oklch(0.65 0.26 0)" } },
       "dynamic",
     );
-    expect(vars["--material-grain"]).toContain("0 0 0 0.15 0");
-    expect(vars["--surface-accent"]).toBe("oklch(0.65 0.26 0)");
+    expect(vars["--_material-grain"]).toContain("0 0 0 0.15 0");
+    expect(vars["--material-accent"]).toBe("oklch(0.65 0.26 0)");
   });
 
   it("Frosted is Glass with a frost; Glass stays clear", () => {
-    expect(resolveMaterial({ v: 1, preset: "frost" }, "dynamic")["--material-grain"]).toContain(
+    expect(resolveMaterial({ v: 1, preset: "frost" }, "dynamic")["--_material-grain"]).toContain(
       "0 0 0 0.12 0",
     );
-    expect(resolveMaterial(FROSTED, "dynamic")["--material-grain"]).toBe("none");
+    expect(resolveMaterial(FROSTED, "dynamic")["--_material-grain"]).toBe("none");
   });
 
   it("Paper and Neon carry their own terms; a dial never reaches a term", () => {
@@ -203,9 +203,9 @@ describe("material presets", () => {
       "--material-clarity": "0%",
       "--material-depth": "2",
       "--material-tint": "0",
-      "--material-edge": "2",
-      "--material-sheen": "2",
-      "--material-shadow": "2",
+      "--_material-edge": "2",
+      "--_material-sheen": "2",
+      "--_material-shadow": "2",
       ...INERT,
     });
   });

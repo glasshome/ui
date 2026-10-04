@@ -38,7 +38,7 @@ const Checkbox: Component<ComponentProps<typeof CheckboxPrimitive> & { size?: Ch
               size().box,
               "peer-focus-visible:ring-ring/50 peer-focus-visible:ring-[3px] peer-focus-visible:[--glass-edge:var(--ring)]",
               state.checked()
-                ? "glass glass-tint text-foreground [--glass-tone:var(--surface-accent)]"
+                ? "glass glass-tint text-foreground [--glass-tone:var(--material-accent)]"
                 : FIELD_CHROME,
               props.disabled && "cursor-not-allowed opacity-40",
               local.class,

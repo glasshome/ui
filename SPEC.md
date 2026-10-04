@@ -109,21 +109,25 @@ hue), grain, wash style and angle, face, relief, accent, fill. `resolveMaterial`
 turns enums into numbers the formula multiplies by and applies the dark scale per
 mode; light from is a rotation of today's offsets, exact at 315°.
 
-**Raised face** is the third body, a style query on `--material-face-raised`:
+**Raised face** is the third body, a style query on `--_material-face-raised`:
 controls turn neumorphic (pressed wells, raised knobs and keys, the lit part in
 the accent and glowing). A flat face keeps the calm controls: the accent on what
 is on, a white knob, a neutral off knob.
 
-**What widgets read: `--surface-*`.** `--glass-*` and `--material-*` are the
-formula's own names and stay internal; widget-cli warns on a read
-(`internal-material-vars`, removed in SDK 2.0).
+**What widgets read.** `--material-*` is the material, readable: the parts
+below plus `--material-blur`, `-clarity`, `-tint`, `-glow`. `--_material-*` is
+how it is drawn and private (the `--_` prefix says so); `--glass-*` are knobs to
+set on a `.glass` element, never to read. The pre-1.21 internal names
+(`--material-depth`, `-hue`, `-reach`, `-ink*`, `-edge-*`) still work, retired
+by name; widget-cli warns on those reads (`internal-material-vars`, removed in
+SDK 2.0).
 
 | Variable | What it is |
 | --- | --- |
-| `--surface-accent` | the material's accent, the theme's `--primary` unless set |
-| `--surface-face` / `--surface-well` | raised and pressed face backgrounds |
-| `--surface-raised` / `--surface-pressed` | the matching shadows, scaled by relief and turned by light from |
-| `--surface-control-track` / `-fill` / `-knob` | the control palette for the material's face |
+| `--material-accent` | the material's accent, the theme's `--primary` unless set |
+| `--material-face` / `--material-well` | raised and pressed face backgrounds |
+| `--material-raised` / `--material-pressed` | the matching shadows, scaled by relief and turned by light from |
+| `--material-control-track` / `-fill` / `-knob` | the control palette for the material's face |
 | `--surface-tone` / `--surface-wash` | the surface's own tone and wash, readable by children |
 
 A preset is a point in that space (`tokens/material.ts`: Glass, Frosted, Paper,
