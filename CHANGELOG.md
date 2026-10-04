@@ -18,6 +18,28 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.25.0](https://github.com/glasshome/ui/compare/v1.24.0...v1.25.0) (2026-10-04)
+
+
+### Features
+
+* **material:** --material-* is what widgets read; plumbing is --_material-* ([b73d4e1](https://github.com/glasshome/ui/commit/b73d4e1f91706bf2795d04af5f4f7b67ee4099af))
+* **material:** controls follow the material ([f00b967](https://github.com/glasshome/ui/commit/f00b967fcf5dcf5f882166cd673c62beba658ba9))
+* **material:** Frosted gets a fine frost grain; Paper becomes matte stock with fibre ([097722b](https://github.com/glasshome/ui/commit/097722b1b7fbfa4444daea33077cba0caff82a96))
+* **material:** Glass and Frosted are two presets; Neon is softer ([e06c614](https://github.com/glasshome/ui/commit/e06c6141afe2c9d54a78d6097b17a53a3ce1f18f))
+* **material:** tabs and toggles follow the accent; a material carries its own accent in any scope ([7c73120](https://github.com/glasshome/ui/commit/7c73120bf7efadd0936c3c2ee2ae4f453b6f56ba))
+* **material:** typed material terms and one recipe that reads them ([a4eb20e](https://github.com/glasshome/ui/commit/a4eb20e96026125206eaa129c1d83f00d23f2166))
+* **material:** typed material terms, controls that follow the material, the --material-* variables ([e38f9d4](https://github.com/glasshome/ui/commit/e38f9d408d832686eab707f9c2d5ac4f99ee8d75))
+* **material:** what widgets read is --surface-*; --material-* stays the formula's own ([85339e7](https://github.com/glasshome/ui/commit/85339e797280d933d3b05e20dc06d47bd3a24814))
+* **ui:** export CONTROL_ON, the lit-control recipe ([d10cd26](https://github.com/glasshome/ui/commit/d10cd26d0f5c22efb497daa029caea6210b11c9d))
+
+
+### Bug Fixes
+
+* **material:** an inked control's line sits under its knob ([b6e1031](https://github.com/glasshome/ui/commit/b6e1031fc1c5bec4e3fd7f92e2a49c2f06c23335))
+* **material:** grain belongs to cards, not every glass surface; gallery reads the material for the page's mode ([b4a7a78](https://github.com/glasshome/ui/commit/b4a7a784db6a374137d2abe711a0fc1ee10abcbb))
+* **material:** Paper is clean matte stock; the paper grain and grain style are gone ([55e6da8](https://github.com/glasshome/ui/commit/55e6da8592bb1b39624edec04e9f63e169938be3))
+
 ## [1.24.0](https://github.com/glasshome/ui/compare/v1.23.0...v1.24.0) (2026-10-04)
 
 
