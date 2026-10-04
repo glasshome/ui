@@ -47,7 +47,7 @@ export const PRESS_DIP = "active:scale-[0.97]";
 /* Hold progress: a fill grows out of the touch while held, dissolves once the
  * hold fires, and drains back faster if let go early. The host sets data-hold / data-fired. */
 export const HOLD_MOTION =
-  "scale-0 opacity-0 transition-[scale,opacity] duration-(--duration-state) ease-(--ease-contract) data-[hold]:scale-100 data-[hold]:opacity-100 data-[hold]:duration-(--duration-morph) data-[hold]:ease-linear data-[fired]:scale-100 data-[fired]:opacity-0";
+  "scale-0 opacity-0 transition-[scale,opacity] duration-(--duration-state) ease-(--ease-contract) data-[hold]:scale-100 data-[hold]:opacity-100 data-[hold]:duration-(--duration-hold) data-[hold]:ease-linear data-[fired]:scale-100 data-[fired]:opacity-0";
 
 /* MODAL_MOTION's twin for a surface that stays mounted: it rises out of what
  * opened it, and its closed state is a resting style, since a mount door's exit

@@ -280,6 +280,8 @@
   --duration-micro: 120ms;
   --duration-state: 160ms;
   --duration-expand: 200ms;
+  /* The hold fill: HOLD_MS - HOLD_GRACE_MS (lib/hold.ts), so it completes as the hold fires. */
+  --duration-hold: 250ms;
   /* Ambient motion is an event (SPEC motion rule 5): 1 while the host holds
 	 * html[data-motion="live"], else 0. Inherits into widget shadow roots, so a
 	 * loop multiplies its duration by it: calc(var(--motion-ambient, 0) * 1s).
@@ -573,6 +575,7 @@ html[data-motion="live"] {
     --duration-state: 0ms;
     --duration-expand: 0ms;
     --duration-morph: 0ms;
+    --duration-hold: 0ms;
   }
   /* tw-animate enter/exit classes carry their own fallback duration. */
   .animate-in,
