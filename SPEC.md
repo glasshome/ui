@@ -66,7 +66,7 @@ tone desaturates without swinging yellow — `glassToneText()`).
 
 ### The material tier
 
-Five inheriting variables, the homeowner's dials, declared once in `theme.css` and
+Six inheriting variables, the homeowner's dials, declared once in `theme.css` and
 multiplied into every surface's knobs by the formula. A knob is a surface's
 identity; the tier scales all of them at once, chrome and widgets alike.
 
@@ -74,7 +74,7 @@ identity; the tier scales all of them at once, chrome and widgets alike.
 | --- | --- | --- | --- |
 | `--material-blur` | length | 24px | the backdrop radius (`--glass-blur` overrides it when set) |
 | `--material-clarity` | % | 60% | the card fill's share of `--card` (the rest is wallpaper) |
-| `--material-depth` | number | 1 | `--glass-light`, `--glass-shade`, `--glass-rim`, `--glass-lift` |
+| `--material-depth` | number | 1 | the default for edge, sheen and shadow below; read by nothing else |
 | `--material-tint` | number | 1 | `--glass-wash`, `--glass-wash-2` |
 | `--material-glow` | length | 0px | an outer bloom in `--material-hue` (Neon 18px) |
 | `--material-ink-level` | number | 0 | above 0, the Ink body: every surface hand-inked |
@@ -101,12 +101,36 @@ and a nudge, so it strays over and under the line, and `::after` draws the line
 (opacity = the level) with two faint offset passes. No images or masks: it
 renders the same in every browser with style queries.
 
+**Terms.** Beyond the dials, a material carries creator terms
+(`MaterialTerms` in `tokens/material.ts`, ranges in `MATERIAL_RANGES`), each
+optional, each defaulting to today's glass: vibrancy, edge, sheen, shadow,
+inset, light from, rim position, dark scale, glow position, inner glow (and its
+hue), grain, wash style and angle, face, relief, accent, fill. `resolveMaterial`
+turns enums into numbers the formula multiplies by and applies the dark scale per
+mode; light from is a rotation of today's offsets, exact at 315°.
+
+**Raised face** is the third body, a style query on `--material-face-raised`:
+controls turn neumorphic (pressed wells, raised knobs and keys, the lit part in
+the accent and glowing). A flat face keeps the calm controls: the accent on what
+is on, a white knob, a neutral off knob.
+
+**Public contract.** The only material names a widget reads. Everything else
+`--glass-*` and `--material-*` is internal; widget-cli warns on a read
+(`internal-material-vars`, removed in SDK 2.0).
+
+| Variable | What it is |
+| --- | --- |
+| `--material-accent` | the material's accent, the theme's `--primary` unless set |
+| `--material-face` / `--material-well` | raised and pressed face backgrounds |
+| `--material-raised` / `--material-pressed` | the matching shadows, scaled by relief and turned by light from |
+| `--material-control-track` / `-fill` / `-knob` | the control palette for the material's face |
+| `--surface-tone` / `--surface-wash` | the surface's own tone and wash, readable by children |
+
 A preset is a point in that space (`tokens/material.ts`: Frosted, Paper,
-Neon, Chalk; `resolveMaterial` composes it with the host blur mode); a theme stores the
-preset and any dial it moved, never the resolved values. A look these cannot
-express adds another inert-by-default term here (a ui minor), then, if that is
-not enough, a second formula body selected by a style query on a material
-variable, as Ink is.
+Neon, Chalk); a theme stores the preset and any term it moved, never the
+resolved values. A look these cannot express adds another inert-by-default term
+here (a ui minor), then, if that is not enough, a body selected by a style query
+on a material variable, as Ink and raised are.
 The class name never changes.
 
 ## Surfaces (the only sanctioned recipes)
