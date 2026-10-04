@@ -18,6 +18,21 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.23.0](https://github.com/glasshome/ui/compare/v1.22.1...v1.23.0) (2026-10-04)
+
+
+### Features
+
+* **alert:** size sm for a one-line note; sheets inset 16px and sit close under the handle ([2678140](https://github.com/glasshome/ui/commit/2678140bd311aefbfe073f69457f6a0a5b4270be))
+* **preview-tile:** captions sit on the left edge, name over meta, and truncate ([6aface4](https://github.com/glasshome/ui/commit/6aface4b7867e73a26bc544753d84d8dc56d4a68))
+* scrolling toggle rows, left-aligned preview tiles, small alerts, tighter sheets ([f969775](https://github.com/glasshome/ui/commit/f9697754323dea15c509529d670be358eab6ae65))
+* **toggle-group:** scroll mode keeps one row that scrolls sideways instead of wrapping ([93c4c4c](https://github.com/glasshome/ui/commit/93c4c4c96c7664430875333ca28385b842442a5e))
+
+
+### Bug Fixes
+
+* **alert:** small alert styling lives in globals.css, not an arbitrary variant ([c170da3](https://github.com/glasshome/ui/commit/c170da31807bd723bf4028b5d81a3d784249858b))
+
 ## [1.22.1](https://github.com/glasshome/ui/compare/v1.22.0...v1.22.1) (2026-10-03)
 
 
