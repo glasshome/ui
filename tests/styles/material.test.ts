@@ -47,8 +47,9 @@ describe("the material tier", () => {
     expect(globals).toContain("var(--material-ink) calc(var(--material-edge-ink) * 100%)");
     expect(globals).toContain("--material-reach: calc(0.35 + var(--glass-lift) * 1.45);");
     expect(globals).toContain(
-      "0 0 calc(var(--material-glow) * var(--material-reach) * var(--_material-glow-out))",
+      "--_glass-bloom: calc(var(--material-glow) * var(--material-reach) * var(--_material-glow-out))",
     );
+    expect(globals).toContain("0 0 calc(var(--_glass-bloom) * (1 - var(--glass-halo)))");
     expect(globals).toContain("var(--material-hue) calc(var(--material-edge-accent) * 100%)");
     expect(globals).toContain("oklch(from var(--material-hue) l c h / 0.65)");
   });
