@@ -24,6 +24,7 @@ export type WashStyle = "flat" | "fade" | "two-tone";
 export type RimPosition = "top" | "top-bottom" | "around";
 export type GlowPosition = "outside" | "inside";
 export type MaterialFace = "flat" | "raised";
+export type GrainStyle = "frost" | "paper";
 
 /** The creator's terms. Every one has a default that renders today's glass. */
 export interface MaterialTerms extends MaterialDials {
@@ -49,6 +50,8 @@ export interface MaterialTerms extends MaterialDials {
   innerGlowHue: number;
   /** Still noise over the fill, 0..1. */
   grain: number;
+  /** Frost is a fine even tooth; paper adds cloudy fibre over it. */
+  grainStyle: GrainStyle;
   washStyle: WashStyle;
   /** Angle of the tone wash, degrees. */
   washAngle: number;
@@ -87,10 +90,24 @@ export type BlurMode = "dynamic" | "performant" | "none";
 const PLAIN: MaterialPresetTerms = { edgeWidth: 1, edgeInk: 0, edgeAccent: 0, inkLift: 0 };
 
 export const MATERIAL_PRESETS: Record<MaterialPresetId, MaterialSpec> = {
-  /** Today's glass: translucent, blurred, lit rim. */
-  frosted: { blur: 24, clarity: 60, depth: 1, tint: 1, glow: 0, ink: 0, ...PLAIN },
-  /** Opaque matte stock, a faint inked cut edge, calm tint; the Ink dial draws on it. */
-  paper: { blur: 0, clarity: 100, depth: 0.5, tint: 0.85, glow: 0, ink: 0, ...PLAIN, edgeInk: 0.3 },
+  /** Translucent, blurred, lit rim, a fine frost over the fill. */
+  frosted: { blur: 24, clarity: 60, depth: 1, tint: 1, glow: 0, ink: 0, ...PLAIN, grain: 0.4 },
+  /** Opaque matte stock with fibre in it, a faint inked cut edge, a short contact shadow; the Ink dial draws on it. */
+  paper: {
+    blur: 0,
+    clarity: 100,
+    depth: 0.5,
+    tint: 0.85,
+    glow: 0,
+    ink: 0,
+    ...PLAIN,
+    edgeInk: 0.3,
+    sheen: 0,
+    edge: 0.2,
+    shadow: 0.7,
+    grain: 0.8,
+    grainStyle: "paper",
+  },
   /** Near-opaque dark tile, thin tube of its own hue at the edge, bloom around it. */
   neon: {
     blur: 8,
@@ -148,6 +165,7 @@ const TERM_DEFAULTS: Omit<MaterialTerms, keyof MaterialDials | DepthLed> = {
   innerGlow: 0,
   innerGlowHue: 1,
   grain: 0,
+  grainStyle: "frost",
   washStyle: "fade",
   washAngle: 135,
   face: "flat",
@@ -190,8 +208,35 @@ const LIGHT_HOME = 315;
 
 const round = (n: number) => Math.round(n * 10000) / 10000;
 
-const grainTile = (alpha: number) =>
-  `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.7  0 0 0 0 0.7  0 0 0 0 0.7  0 0 0 ${round(alpha)} 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>")`;
+const svgTile = (size: number, filter: string) =>
+  `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'><filter id='n' x='0' y='0' width='100%' height='100%'>${filter}</filter><rect width='${size}' height='${size}' filter='url(%23n)'/></svg>")`;
+
+const tint = ([r, g, b]: readonly number[], alpha: number) =>
+  `values='0 0 0 0 ${r}  0 0 0 0 ${g}  0 0 0 0 ${b}  0 0 0 ${round(alpha)} 0'`;
+
+/* Fine tooth: one high-frequency octave pair. */
+const tooth = (rgb: readonly number[], alpha: number, seed: number) =>
+  `<feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='${seed}' stitchTiles='stitch'/><feColorMatrix ${tint(rgb, alpha)}/>`;
+
+const GREY = [0.7, 0.7, 0.7] as const;
+
+/* Paper fibre darkens the stock in both modes: light specks on a dark sheet read as asphalt. */
+const PAPER_INK = {
+  light: { cloud: [0.52, 0.45, 0.36], tooth: GREY, scale: 1 },
+  dark: { cloud: [0.04, 0.03, 0.02], tooth: [0.05, 0.05, 0.05], scale: 1.4 },
+} as const;
+
+const GRAIN_TILE: Record<GrainStyle, (strength: number, mode: "light" | "dark") => string> = {
+  frost: (s) => svgTile(160, tooth(GREY, s * 0.3, 0)),
+  /* Cloudy warm fibre under the tooth: low-frequency mottling is what reads as stock. */
+  paper: (s, mode) => {
+    const ink = PAPER_INK[mode];
+    return svgTile(
+      240,
+      `<feTurbulence type='fractalNoise' baseFrequency='0.08' numOctaves='3' seed='7' stitchTiles='stitch' result='cloud'/><feColorMatrix in='cloud' ${tint(ink.cloud, s * 0.16 * ink.scale)} result='fibre'/>${tooth(ink.tooth, s * 0.5 * ink.scale, 3)}<feMerge><feMergeNode in='fibre'/><feMergeNode/></feMerge>`,
+    );
+  },
+};
 
 const WASH_SPLIT: Record<WashStyle, number> = { flat: 1, fade: 3, "two-tone": 1 };
 const RIM: Record<RimPosition, [bottom: number, around: number]> = {
@@ -251,7 +296,7 @@ export function resolveMaterial(
     "--material-glow-in": t.glowAt === "inside" ? "1" : "0",
     "--material-inner-glow": `${round(t.innerGlow * dim)}`,
     "--material-inner-glow-hue": `${t.innerGlowHue}`,
-    "--material-grain": t.grain > 0 ? grainTile(t.grain * 0.3) : "none",
+    "--material-grain": t.grain > 0 ? GRAIN_TILE[t.grainStyle](t.grain, mode) : "none",
     "--material-wash-split": `${WASH_SPLIT[t.washStyle]}`,
     "--material-wash-angle": `${t.washAngle}deg`,
     "--material-two-tone": t.washStyle === "two-tone" ? "1" : "0",

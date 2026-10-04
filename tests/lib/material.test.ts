@@ -27,7 +27,7 @@ const INERT = {
   "--material-glow-in": "0",
   "--material-inner-glow": "0",
   "--material-inner-glow-hue": "1",
-  "--material-grain": "none",
+  "--material-grain": expect.stringContaining("0 0 0 0.12 0"),
   "--material-wash-split": "3",
   "--material-wash-angle": "135deg",
   "--material-two-tone": "0",
@@ -67,6 +67,19 @@ describe("material presets", () => {
     const dials = materialDials({ v: 1, preset: "paper", dials: { depth: 0.8 } });
     const { blur, clarity, tint, glow, ink } = MATERIAL_PRESETS.paper;
     expect(dials).toEqual({ blur, clarity, tint, glow, ink, depth: 0.8 });
+  });
+
+  it("Paper is matte stock with fibre that darkens the sheet in both modes", () => {
+    const paper = { v: 1, preset: "paper" } as const;
+    expect(materialTerms(paper).sheen).toBe(0);
+    const light = resolveMaterial(paper, "dynamic", "light")["--material-grain"];
+    const dark = resolveMaterial(paper, "dynamic", "dark")["--material-grain"];
+    expect(light).toContain("baseFrequency='0.08'");
+    expect(dark).toContain("0 0 0 0 0.04");
+    expect(light).not.toEqual(dark);
+    expect(
+      resolveMaterial({ v: 1, preset: "paper", dials: { grain: 0 } }, "dynamic"),
+    ).toMatchObject({ "--material-grain": "none" });
   });
 
   it("depth leads edge, sheen and shadow until each is set on its own", () => {
