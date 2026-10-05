@@ -209,7 +209,7 @@ export function TableSortHeader(props: {
       data-slot="table-sort-header"
       class={cn(
         "text-muted-foreground hover:text-foreground h-auto gap-1 px-1.5 py-0.5 text-xs font-medium",
-        props.align === "end" && "justify-end",
+        props.align === "end" ? "justify-end" : "justify-start",
         props.class,
       )}
       aria-label={`Sort by ${props.label}`}

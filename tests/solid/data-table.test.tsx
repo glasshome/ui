@@ -12,6 +12,7 @@ import {
   TABLE_SCROLL_CLASS,
   TableEmpty,
   TableSkeleton,
+  TableSortHeader,
 } from "../../src/solid/data-table.js";
 import { TABLE_HEAD_CELL_CLASS } from "../../src/solid/table.js";
 
@@ -130,5 +131,25 @@ describe("DataTableHead", () => {
     cleanup();
     const stuck = render(() => <DataTableHead sticky>{<span>Name</span>}</DataTableHead>);
     expect(stuck.container.firstElementChild?.className).toContain("sticky");
+  });
+});
+
+describe("TableSortHeader", () => {
+  it("sits at the start of a widened column unless aligned to the end", () => {
+    const sort = (align?: "end") =>
+      render(() => (
+        <TableSortHeader
+          class="flex-1"
+          label="Name"
+          active={false}
+          dir="asc"
+          align={align}
+          onClick={() => {}}
+        />
+      )).container.querySelector("button")?.className ?? "";
+    expect(sort()).toContain("justify-start");
+    expect(sort()).not.toContain("justify-center");
+    cleanup();
+    expect(sort("end")).toContain("justify-end");
   });
 });
