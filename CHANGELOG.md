@@ -18,6 +18,13 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.27.0](https://github.com/glasshome/ui/compare/v1.26.2...v1.27.0) (2026-10-05)
+
+
+### Features
+
+* **icon:** icon search comes from the host's provideIcons source ([#65](https://github.com/glasshome/ui/issues/65)) ([080d403](https://github.com/glasshome/ui/commit/080d4038e42fe343cd6c43bd5c20ee22ece4dd4b))
+
 ## [1.26.2](https://github.com/glasshome/ui/compare/v1.26.1...v1.26.2) (2026-10-05)
 
 
