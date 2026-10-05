@@ -27,15 +27,19 @@ export function trackScroll(list: HTMLElement, selected: string, attribute: stri
     list.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });
   };
   const clip = () => writeClip(list);
-  // The track has no width during mount, so the first pass waits for layout.
-  const first = requestAnimationFrame(reveal);
-  const observer = new MutationObserver(reveal);
+  // A frame late: on mount the track has no width yet, and during a press
+  // the focus scroll cancels a smooth scroll started in the same task.
+  let frame = requestAnimationFrame(reveal);
+  const observer = new MutationObserver(() => {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(reveal);
+  });
   observer.observe(list, { attributes: true, attributeFilter: [attribute], subtree: true });
   const resize = new ResizeObserver(clip);
   resize.observe(list);
   list.addEventListener("scroll", clip, { passive: true });
   return () => {
-    cancelAnimationFrame(first);
+    cancelAnimationFrame(frame);
     observer.disconnect();
     resize.disconnect();
     list.removeEventListener("scroll", clip);
