@@ -2,6 +2,7 @@ import { Tabs as TabsPrimitive } from "@kobalte/core/tabs";
 import { type Component, type ComponentProps, onCleanup, onMount, splitProps } from "solid-js";
 import { TRACK_SURFACE } from "../lib/card-classes.js";
 import { PRESS_DIP, SETTLE_MOTION } from "../lib/motion-classes.js";
+import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
 import { SEGMENT_ITEM } from "../lib/segment-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -31,44 +32,18 @@ const Tabs: Component<TabsProps> = (props) => {
   );
 };
 
-/** Keeps the selected trigger centred in the scrolled track, so a deep link to
- *  a tab past the fold does not land on a track scrolled to the first one.
- *  Drives scrollLeft rather than scrollIntoView, which would scroll the page
- *  with it. */
-function followSelection(list: HTMLElement): () => void {
-  const reveal = () => {
-    if (list.scrollWidth <= list.clientWidth) return;
-    const selected = list.querySelector("[data-selected]");
-    if (!selected) return;
-    const track = list.getBoundingClientRect();
-    const item = selected.getBoundingClientRect();
-    const left = list.scrollLeft + (item.left - track.left) - (track.width - item.width) / 2;
-    const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
-    list.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });
-  };
-  // The track has no width during mount, so the first pass has to wait for
-  // layout or it measures a track that cannot scroll yet.
-  const first = requestAnimationFrame(reveal);
-  const observer = new MutationObserver(reveal);
-  observer.observe(list, { attributes: true, attributeFilter: ["data-selected"], subtree: true });
-  return () => {
-    cancelAnimationFrame(first);
-    observer.disconnect();
-  };
-}
-
 const TabsList: Component<ComponentProps<typeof TabsPrimitive.List>> = (props) => {
   const [local, others] = splitProps(props, ["class", "children"]);
   let listRef: HTMLDivElement | undefined;
   onMount(() => {
-    if (listRef) onCleanup(followSelection(listRef));
+    if (listRef) onCleanup(trackScroll(listRef, "[data-selected]", "data-selected"));
   });
   return (
     <TabsPrimitive.List
       ref={listRef}
       data-slot="tabs-list"
       class={cn(
-        `scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto ${TRACK_SURFACE} text-muted-foreground p-1`,
+        `scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto ${TRACK_SURFACE} ${SCROLL_TRACK_FADE} text-muted-foreground p-1`,
         local.class,
       )}
       {...others}
