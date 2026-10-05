@@ -123,4 +123,30 @@ describe("ToggleGroup", () => {
     await flush();
     expect(picked).toBe("right");
   });
+
+  it("in scroll mode brings a pressed item past the edge into view and marks the clipped edge", async () => {
+    const view = render(() => (
+      <ToggleGroup scroll value="far">
+        <ToggleGroupItem value="near">Near</ToggleGroupItem>
+        <ToggleGroupItem value="far">Far</ToggleGroupItem>
+      </ToggleGroup>
+    ));
+    const root = view.container.querySelector<HTMLElement>('[data-slot="toggle-group"]');
+    if (!root) throw new Error("no toggle group");
+    Object.defineProperty(root, "scrollWidth", { value: 400 });
+    Object.defineProperty(root, "clientWidth", { value: 200 });
+    stubRect(root, { left: 0, top: 0, width: 200, height: 40 });
+    const far = view.getByRole("button", { name: "Far" });
+    stubRect(far, { left: 300, top: 0, width: 80, height: 40 });
+    let scrolledTo: number | undefined;
+    root.scrollTo = ((opts: ScrollToOptions) => {
+      scrolledTo = opts.left;
+    }) as typeof root.scrollTo;
+
+    await new Promise((r) => requestAnimationFrame(() => r(null)));
+
+    expect(scrolledTo).toBe(240);
+    expect(root.hasAttribute("data-clip-end")).toBe(true);
+    expect(root.hasAttribute("data-clip-start")).toBe(false);
+  });
 });

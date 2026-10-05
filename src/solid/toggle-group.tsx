@@ -5,11 +5,14 @@ import {
   type ComponentProps,
   createContext,
   type ParentComponent,
+  onCleanup,
+  onMount,
   Show,
   splitProps,
   useContext,
 } from "solid-js";
 import { TRACK_SURFACE } from "../lib/card-classes.js";
+import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
 import { cn } from "../lib/utils.js";
 import { SlidingIndicator } from "./sliding-indicator.js";
 import { toggleVariants } from "./toggle.js";
@@ -47,15 +50,20 @@ const ToggleGroup: ParentComponent<
   // discriminated union, so pulling `multiple` into a separate prop collapses the
   // union and mistypes `value`. Leave it in `rest` and just peek at it here.
   const sliding = () => !(props as { multiple?: boolean }).multiple;
+  let root: HTMLDivElement | undefined;
+  onMount(() => {
+    if (local.scroll && root) onCleanup(trackScroll(root, "[data-pressed]", "data-pressed"));
+  });
   return (
     <ToggleGroupPrimitive
+      ref={root}
       data-slot="toggle-group"
       data-variant={local.variant}
       data-size={local.size}
       data-scroll={local.scroll ? "" : undefined}
       class={cn(
         `group/toggle-group flex w-fit max-w-full flex-wrap items-center gap-y-1 rounded-lg ${TRACK_SURFACE} p-1 data-[variant=outline]:shadow-xs`,
-        local.scroll && "[scrollbar-width:none] flex-nowrap overflow-x-auto",
+        local.scroll && `[scrollbar-width:none] flex-nowrap overflow-x-auto ${SCROLL_TRACK_FADE}`,
         local.class,
       )}
       {...rest}
