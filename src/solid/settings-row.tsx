@@ -72,6 +72,7 @@ export function LabeledIconPicker(props: {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  /** @deprecated Pass `search` to `provideIcons` once; removed in 2.0.0. */
   searchIcons?: IconPickerProps["searchIcons"];
 }) {
   return (

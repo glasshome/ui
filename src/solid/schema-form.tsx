@@ -188,7 +188,7 @@ interface SchemaFormProps {
   data: Record<string, unknown>;
   onChange: (data: Record<string, unknown>) => void;
   errors?: string[];
-  /** Passed through to IconPicker for formType: "icon-picker" fields. */
+  /** @deprecated Pass `search` to `provideIcons` once; removed in 2.0.0. */
   searchIcons?: IconPickerProps["searchIcons"];
   class?: string;
 }

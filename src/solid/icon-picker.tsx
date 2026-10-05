@@ -3,7 +3,7 @@ import { STAGGER } from "../lib/motion-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
 import { CHIP, ICON_PILL_TINT } from "../lib/pill-classes.js";
 import { cn } from "../lib/utils.js";
-import { Icon } from "./icon.js";
+import { Icon, iconSearch } from "./icon.js";
 import { PickerSearch } from "./picker-search.js";
 import { PickerTrigger } from "./picker-trigger.js";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover.js";
@@ -256,12 +256,7 @@ export interface IconPickerProps {
   onChange: (value: string) => void;
   placeholder?: string;
   class?: string;
-  /**
-   * Host-provided icon search. The design system carries no network or CSP
-   * policy of its own: dash proxies the Iconify API same-origin so its
-   * connect-src allowlist stays free of third-party origins. Without this the
-   * picker still works, showing the curated set only.
-   */
+  /** @deprecated Pass `search` to `provideIcons` once; removed in 2.0.0. */
   searchIcons?: (query: string, prefix: string) => Promise<string[]>;
   /** Id of the element naming the trigger, for forms that label it outside. */
   "aria-labelledby"?: string;
@@ -283,12 +278,19 @@ export function IconPicker(props: IconPickerProps) {
       setApiResults([]);
       return;
     }
-    const search = props.searchIcons;
-    if (!search) return;
+    const legacy = props.searchIcons;
+    const hosted = iconSearch();
+    const prefixes = prefix ? [prefix] : ICON_LIBRARIES.map((lib) => lib.prefix).filter(Boolean);
+    const run = legacy
+      ? () => legacy(query, prefix)
+      : hosted
+        ? () => hosted(query, prefixes)
+        : undefined;
+    if (!run) return;
     setLoading(true);
     debounceTimer = setTimeout(async () => {
       try {
-        setApiResults(await search(query, prefix));
+        setApiResults(await run());
       } catch {
         setApiResults([]);
       } finally {
