@@ -18,6 +18,13 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.26.1](https://github.com/glasshome/ui/compare/v1.26.0...v1.26.1) (2026-10-05)
+
+
+### Bug Fixes
+
+* **table:** a sort header sits at the start of its column unless aligned to the end ([#60](https://github.com/glasshome/ui/issues/60)) ([d8e6587](https://github.com/glasshome/ui/commit/d8e6587886173e80349e30fcd72367a723c920eb))
+
 ## [1.26.0](https://github.com/glasshome/ui/compare/v1.25.0...v1.26.0) (2026-10-04)
 
 
