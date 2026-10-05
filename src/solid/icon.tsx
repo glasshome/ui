@@ -9,6 +9,8 @@ export interface IconSource {
   bundled: Record<string, IconData>;
   /** Resolves the rest in one batch; a name the source does not have maps to null. */
   load?: (names: string[]) => Promise<Record<string, IconData | null>>;
+  /** `prefix:name` matches for `query` across `prefixes`; powers every IconPicker. */
+  search?: (query: string, prefixes: string[]) => Promise<string[]>;
 }
 
 /**
@@ -40,6 +42,10 @@ export function provideIcons(next: IconSource): void {
   loaded.clear();
   requested.clear();
   setGeneration((g) => g + 1);
+}
+
+export function iconSearch(): IconSource["search"] {
+  return source?.search;
 }
 
 function request(name: string): void {
