@@ -9,7 +9,7 @@ const OVERLAY_KNOBS =
 /* Split from the surface the way CARD_BLUR is, so a host can gate it off and
  * paint a precomputed frost instead. */
 export const OVERLAY_BLUR =
-  "backdrop-blur-[var(--glass-blur,var(--material-blur,24px))] backdrop-saturate-[calc(1.2*var(--_material-vibrancy,1))] backdrop-brightness-[calc(1+(var(--_material-vibrancy,1)-1)*0.2)]";
+  "backdrop-blur-[var(--glass-blur,var(--material-blur,24px))] backdrop-saturate-[calc(var(--_material-vibrancy,1)*1.2)] backdrop-brightness-[calc(1+(var(--_material-vibrancy,1)-1)*0.2)]";
 
 export const OVERLAY_SURFACE_BASE = `${OVERLAY_KNOBS} [--glass-base:color-mix(in_srgb,var(--popover)_92%,transparent)]`;
 
