@@ -18,6 +18,14 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.26.2](https://github.com/glasshome/ui/compare/v1.26.1...v1.26.2) (2026-10-05)
+
+
+### Bug Fixes
+
+* **glass:** vibrancy saturation compiles under Tailwind ([#64](https://github.com/glasshome/ui/issues/64)) ([4c59a2d](https://github.com/glasshome/ui/commit/4c59a2dcb372e843293b654692181196a3b1e039))
+* **toggle-group:** keep the pressed item in view and fade a clipped edge ([#62](https://github.com/glasshome/ui/issues/62)) ([2e0eef0](https://github.com/glasshome/ui/commit/2e0eef09a9659bd8e0ce1b27f9fae6682a8d7033))
+
 ## [1.26.1](https://github.com/glasshome/ui/compare/v1.26.0...v1.26.1) (2026-10-05)
 
 
