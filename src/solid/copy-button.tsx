@@ -1,5 +1,6 @@
 import { type Component, createSignal, Show } from "solid-js";
 import { ICON_BUTTON_CLASS } from "../lib/button-variants.js";
+import { copyText } from "../lib/copy-text.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { toast } from "./sonner.js";
@@ -13,14 +14,13 @@ const CopyButton: Component<CopyButtonProps> = (props) => {
   const [copied, setCopied] = createSignal(false);
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(props.text);
-      setCopied(true);
-      toast.success("Copied to clipboard");
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
+    if (!(await copyText(props.text))) {
       toast.error("Failed to copy");
+      return;
     }
+    setCopied(true);
+    toast.success("Copied to clipboard");
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (

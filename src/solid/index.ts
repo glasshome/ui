@@ -5,6 +5,7 @@
 export { type Color, parseColor } from "@kobalte/core/colors";
 // Floating glass panel + its shared surface token.
 export { SECTION_ROW_SURFACE } from "../lib/card-classes.js";
+export { copyText } from "../lib/copy-text.js";
 export { HOLD_GRACE_MS, HOLD_MS, spendLongPress } from "../lib/hold.js";
 export { RISE_MOTION, SETTLE_MOTION, TRAVEL_MOTION } from "../lib/motion-classes.js";
 export { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
