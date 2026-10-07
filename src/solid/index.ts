@@ -132,9 +132,11 @@ export {
   TableEmpty,
   TableError,
   TableFilterSelect,
+  TableLoadMore,
   TableSearchInput,
   TableSkeleton,
   TableSortHeader,
+  createTableWindow,
 } from "./data-table.js";
 export {
   Dialog,

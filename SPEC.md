@@ -196,6 +196,7 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | tabs above a stack of toggle groups | `<TabsTrigger icon>` | an `<Icon>` placed inside the trigger by hand |
 | picking one area, or several | `<AreaPicker>` (`values` + `onValuesChange` for multi) | a hand-rolled checkbox list of areas |
 | a field-shaped picker's trigger | `<PickerTrigger>` (chevron, clear button, expanded state) | a `PICKER_TRIGGER` button with its own chevron |
+| a table that can grow past a screenful | `createTableWindow(rows, { resetOn })` + `<TableLoadMore>` at its end | every row rendered at once; an `IntersectionObserver` by hand |
 | position inside a multi-step flow | `<StepIndicator count index>` | a hand-rolled row of dots |
 | tinted text alone | `glassToneText(tone)` | ad-hoc color-mix |
 | a metallic tier chip | `<TierBadge>` | gradients by hand |

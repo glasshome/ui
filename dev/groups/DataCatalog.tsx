@@ -70,6 +70,7 @@ import {
   TableCaption,
   TableCell,
   TableEmpty,
+  TableLoadMore,
   TableFilterSelect,
   TableFooter,
   TableHead,
@@ -346,6 +347,7 @@ export function DataCatalog() {
               </div>
               <div class={cn(TABLE_NUM_CELL_CLASS, "w-16")}>5</div>
             </DataTableRow>
+            <TableLoadMore hasMore onLoadMore={() => {}} />
           </div>
         </Axis>
       </Specimen>

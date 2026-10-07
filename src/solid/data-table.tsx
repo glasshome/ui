@@ -1,4 +1,16 @@
-import { For, type JSX, Show, splitProps } from "solid-js";
+import {
+  type Accessor,
+  createEffect,
+  createMemo,
+  createSignal,
+  For,
+  type JSX,
+  on,
+  onCleanup,
+  onMount,
+  Show,
+  splitProps,
+} from "solid-js";
 import { SECTION_PADDING } from "../lib/section-tokens.js";
 import { cn } from "../lib/utils.js";
 import { Button } from "./button.js";
@@ -269,6 +281,74 @@ export function TableError(props: { message: JSX.Element; onRetry: () => void })
       </Button>
     </div>
   );
+}
+
+/** The end of a long table: asks for the next page as it nears the viewport, or on press. */
+export function TableLoadMore(props: {
+  hasMore: boolean;
+  loading?: boolean;
+  onLoadMore: () => void;
+  label?: string;
+  class?: string;
+}) {
+  let sentinel: HTMLDivElement | undefined;
+  onMount(() => {
+    if (!sentinel || typeof IntersectionObserver === "undefined") return;
+    const target = sentinel;
+    let frame = 0;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting || !props.hasMore || props.loading) return;
+        props.onLoadMore();
+        // A page too short to push the sentinel out of view never fires again on its own.
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => {
+          observer.unobserve(target);
+          observer.observe(target);
+        });
+      },
+      { rootMargin: "400px" },
+    );
+    observer.observe(target);
+    onCleanup(() => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    });
+  });
+  return (
+    <div
+      ref={sentinel}
+      data-slot="table-load-more"
+      class={cn("flex justify-center py-3", props.class)}
+    >
+      <Show when={props.hasMore}>
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={props.loading}
+          onClick={() => props.onLoadMore()}
+        >
+          {props.loading ? "Loading…" : (props.label ?? "Show more")}
+        </Button>
+      </Show>
+    </div>
+  );
+}
+
+/** Draws a long list a page at a time; `resetOn` changing (a filter, a sort) starts over at one page. */
+export function createTableWindow<T>(
+  items: Accessor<T[]>,
+  options: { pageSize?: number; resetOn?: Accessor<unknown> } = {},
+) {
+  const pageSize = options.pageSize ?? 50;
+  const [limit, setLimit] = createSignal(pageSize);
+  const resetOn = options.resetOn;
+  if (resetOn) createEffect(on(resetOn, () => setLimit(pageSize), { defer: true }));
+  return {
+    shown: createMemo(() => items().slice(0, limit())),
+    hasMore: () => items().length > limit(),
+    showMore: () => setLimit((n) => n + pageSize),
+  };
 }
 
 const SKELETON_TITLE_WIDTHS = ["w-2/5", "w-1/3", "w-1/2", "w-2/5", "w-5/12"] as const;

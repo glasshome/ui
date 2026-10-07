@@ -3,14 +3,17 @@
  * that they now compose the package's own Empty/Skeleton, and that the
  * scroll recipe caps no height of its own (real hub call sites pass it bare,
  * inside a page that already scrolls) while keeping the shared scrollbar. */
-import { cleanup, render } from "@solidjs/testing-library";
+import { cleanup, fireEvent, render } from "@solidjs/testing-library";
+import { createSignal, For } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
 import {
+  createTableWindow,
   DataTableHead,
   DataTableRow,
   TABLE_HEAD_LABEL_CLASS,
   TABLE_SCROLL_CLASS,
   TableEmpty,
+  TableLoadMore,
   TableSkeleton,
   TableSortHeader,
 } from "../../src/solid/data-table.js";
@@ -151,5 +154,34 @@ describe("TableSortHeader", () => {
     expect(sort()).not.toContain("justify-center");
     cleanup();
     expect(sort("end")).toContain("justify-end");
+  });
+});
+
+describe("a long table drawn a page at a time", () => {
+  it("draws one page, adds a page on press, and starts over when a filter changes", () => {
+    const items = Array.from({ length: 120 }, (_, i) => `row ${i}`);
+    const [filter, setFilter] = createSignal("");
+    const view = render(() => {
+      const visible = () => items.filter((item) => item.includes(filter()));
+      const table = createTableWindow(visible, { resetOn: filter });
+      return (
+        <div>
+          <For each={table.shown()}>{(item) => <p>{item}</p>}</For>
+          <TableLoadMore hasMore={table.hasMore()} onLoadMore={table.showMore} />
+        </div>
+      );
+    });
+    const rows = () => view.queryAllByText(/^row /).length;
+    const more = () => view.queryByRole("button", { name: "Show more" });
+    expect(rows()).toBe(50);
+    fireEvent.click(view.getByRole("button", { name: "Show more" }));
+    expect(rows()).toBe(100);
+    fireEvent.click(view.getByRole("button", { name: "Show more" }));
+    expect(rows()).toBe(120);
+    expect(more()).toBeNull();
+
+    setFilter("row");
+    expect(rows()).toBe(50);
+    expect(more()).not.toBeNull();
   });
 });
