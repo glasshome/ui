@@ -863,3 +863,45 @@ describe("an anchored dialog", () => {
     expect(panel().style.getPropertyValue("--morph-y")).toBe(`${760 - (900 - 16 - 600)}px`);
   });
 });
+
+describe("Dialog body gutter", () => {
+  const measure = (offset: number, client: number) => {
+    const proto = HTMLElement.prototype;
+    const own = (["offsetWidth", "clientWidth"] as const).map(
+      (key) => [key, Object.getOwnPropertyDescriptor(proto, key)] as const,
+    );
+    Object.defineProperty(proto, "offsetWidth", { configurable: true, get: () => offset });
+    Object.defineProperty(proto, "clientWidth", { configurable: true, get: () => client });
+    return () => {
+      for (const [key, descriptor] of own) {
+        if (descriptor) Object.defineProperty(proto, key, descriptor);
+        else Reflect.deleteProperty(proto, key);
+      }
+    };
+  };
+
+  const gutter = () =>
+    document
+      .querySelector<HTMLElement>('[data-slot="dialog-body"]')
+      ?.style.getPropertyValue("--scrollbar-gutter");
+
+  it.each([
+    ["an overlay scrollbar", 512, 512, "0px"],
+    ["a classic scrollbar", 512, 502, "10px"],
+  ])("subtracts what %s reserves", (_, offset, client, expected) => {
+    const restore = measure(offset, client);
+    try {
+      render(() => (
+        <Dialog open>
+          <DialogContent>
+            <DialogTitle>Title</DialogTitle>
+            <DialogBody>Body</DialogBody>
+          </DialogContent>
+        </Dialog>
+      ));
+      expect(gutter()).toBe(expected);
+    } finally {
+      restore();
+    }
+  });
+});
