@@ -79,6 +79,7 @@ import {
   TableSearchInput,
   TableSkeleton,
   TableSortHeader,
+  SourceMarks,
   TierBadge,
   WidgetIdentity,
   WidgetTrustBadge,
@@ -545,6 +546,14 @@ export function DataCatalog() {
         <Axis of="isOfficial">
           <WidgetTrustBadge isOfficial={true} />
           <WidgetTrustBadge isOfficial={false} />
+        </Axis>
+      </Specimen>
+
+      <Specimen name="SourceMarks">
+        <Axis of="source">
+          <SourceMarks official builtIn />
+          <SourceMarks official />
+          <SourceMarks official={false} />
         </Axis>
       </Specimen>
 
