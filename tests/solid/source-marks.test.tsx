@@ -19,7 +19,7 @@ describe("SourceMarks", () => {
 
   it("sits in a preview tile's caption, after the label", () => {
     render(() => (
-      <PreviewTileGroup aria-label="Themes">
+      <PreviewTileGroup aria-label="Themes" value={null} onChange={() => {}}>
         <PreviewTile value="dusk" label="Dusk" marks={<SourceMarks official builtIn />}>
           <div />
         </PreviewTile>
