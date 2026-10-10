@@ -399,4 +399,5 @@ export {
   type WidgetSummary,
   widgetHref,
 } from "./widget-identity.js";
+export { SourceMarks } from "./source-marks.js";
 export { WidgetTrustBadge } from "./widget-trust-badge.js";

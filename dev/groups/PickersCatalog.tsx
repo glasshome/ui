@@ -17,6 +17,7 @@ import {
   PreviewTile,
   PreviewTileGroup,
   parseColor,
+  SourceMarks,
   SwatchPicker,
   TemperatureBar,
 } from "../../src/solid";
@@ -264,7 +265,13 @@ export function PickersCatalog() {
               }
             >
               {([value, label, radius]) => (
-                <PreviewTile value={value} label={label} meta={radius} shape="tile">
+                <PreviewTile
+                  value={value}
+                  label={label}
+                  meta={radius}
+                  shape="tile"
+                  marks={<SourceMarks official={value !== "round"} builtIn={value === "sharp"} />}
+                >
                   <div class="from-primary/40 to-accent/40 absolute inset-0 bg-gradient-to-br" />
                   <div
                     class="border-foreground/20 bg-card/80 absolute inset-x-2 top-1/3 bottom-2 border"

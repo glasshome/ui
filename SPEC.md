@@ -191,6 +191,7 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | rows that belong to the row above them | `<FieldSubGroup>` | a bare `<Separator>` and a left pad |
 | picking one of a few described choices | `<OptionCardGroup>` + `<OptionCard>` | a hand-rolled `role="radio"` card list |
 | picking one of a few results you can see (pictures, shapes, previews) | `<PreviewTileGroup>` + `<PreviewTile>` | a grid of `aria-pressed` buttons by hand |
+| where a catalog item comes from (official, community, built in) | `<SourceMarks official builtIn>`, in a tile through `<PreviewTile marks>` | a `badge-check` icon or a "Built in" byline by hand |
 | one colour out of a few | `<SwatchPicker>` (+ a picker as its child) | round buttons by hand |
 | an editor that leaves the page live behind it | `<DockedPanel>` + its Header, Body, Footer | a `<Sheet>` with its scrim hidden |
 | tabs above a stack of toggle groups | `<TabsTrigger icon>` | an `<Icon>` placed inside the trigger by hand |

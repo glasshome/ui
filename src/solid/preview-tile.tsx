@@ -43,6 +43,8 @@ export function PreviewTile(props: {
   /** Off for pictures that name themselves; the label still reaches assistive tech. */
   caption?: boolean;
   icon?: string;
+  /** Beside the caption, after the label: provenance like `SourceMarks`. */
+  marks?: JSX.Element;
   shape?: keyof typeof SHAPE;
   disabled?: boolean;
   class?: string;
@@ -58,7 +60,7 @@ export function PreviewTile(props: {
       showControl={false}
       onClick={() => !props.disabled && props.onPick?.()}
       class={cn(
-        "group/preview-tile min-w-0 [&_[data-slot=radio-group-item-content]]:flex [&_[data-slot=radio-group-item-content]]:flex-col [&_[data-slot=radio-group-item-content]]:gap-1.5",
+        "group/preview-tile min-w-0 [&_[data-slot=radio-group-item-content]]:flex [&_[data-slot=radio-group-item-content]]:flex-col [&_[data-slot=radio-group-item-content]]:gap-1.5 [&_[data-slot=radio-group-item-label]]:min-w-0",
         props.class,
       )}
     >
@@ -68,7 +70,7 @@ export function PreviewTile(props: {
       <Show when={props.caption ?? true} fallback={<span class="sr-only">{props.label}</span>}>
         <span
           data-slot="preview-tile-caption"
-          class="text-foreground flex min-w-0 items-center gap-1 text-xs font-medium"
+          class="text-foreground @container/source-marks flex min-w-0 items-center gap-1 text-xs font-medium"
         >
           <Show when={props.icon}>
             {(icon) => (
@@ -76,6 +78,7 @@ export function PreviewTile(props: {
             )}
           </Show>
           <span class="truncate">{props.label}</span>
+          {props.marks}
         </span>
         <Show when={props.meta}>
           <span
