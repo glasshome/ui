@@ -9,9 +9,10 @@ const COLUMNS = { 2: "grid-cols-2", 3: "grid-cols-3", 4: "grid-cols-4" } as cons
 const SHAPE = { wide: "aspect-[16/10]", tile: "aspect-[5/4]" } as const;
 
 /* The face is the affordance: the radio control is suppressed and a ring on
- * the face carries the picked state, the focus ring rides the same edge. */
+ * the face carries the picked state, the focus ring rides the same edge.
+ * Rings are drawn inside the face, above the picture: an outer ring is cut off where a scroll area clips the grid. */
 const TILE_FACE =
-  "relative w-full overflow-hidden rounded-lg border border-border/60 transition-glass duration-200 group-active/preview-tile:scale-[0.97] group-data-[checked]/preview-tile:border-transparent group-data-[checked]/preview-tile:ring-2 group-data-[checked]/preview-tile:ring-primary group-data-[checked]/preview-tile:ring-offset-2 group-data-[checked]/preview-tile:ring-offset-transparent group-has-[:focus-visible]/preview-tile:ring-[3px] group-has-[:focus-visible]/preview-tile:ring-ring/50";
+  "relative w-full overflow-hidden rounded-lg border border-border/60 transition-glass duration-200 group-active/preview-tile:scale-[0.97] group-data-[checked]/preview-tile:border-transparent after:pointer-events-none after:absolute after:inset-0 after:z-10 after:rounded-[inherit] after:ring-inset after:transition-glass group-data-[checked]/preview-tile:after:ring-2 group-data-[checked]/preview-tile:after:ring-primary group-has-[:focus-visible]/preview-tile:after:ring-[3px] group-has-[:focus-visible]/preview-tile:after:ring-ring/50";
 
 export function PreviewTileGroup(props: {
   value: string | null;
