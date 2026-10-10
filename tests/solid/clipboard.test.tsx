@@ -75,6 +75,47 @@ describe("copyText", () => {
   });
 });
 
+describe("copyText with text still loading", () => {
+  class FakeClipboardItem {
+    constructor(readonly items: Record<string, Promise<Blob>>) {}
+  }
+
+  afterEach(() => {
+    Reflect.deleteProperty(globalThis, "ClipboardItem");
+  });
+
+  it("hands the pending text to a ClipboardItem so the write keeps the gesture", async () => {
+    Object.defineProperty(globalThis, "ClipboardItem", {
+      value: FakeClipboardItem,
+      configurable: true,
+    });
+    let written: Blob | undefined;
+    const write = vi.fn(async (items: FakeClipboardItem[]) => {
+      written = await items[0]?.items["text/plain"];
+    });
+    setClipboard({ write });
+
+    expect(await copyText(Promise.resolve("page markdown"))).toBe(true);
+    expect(await written?.text()).toBe("page markdown");
+  });
+
+  it("waits for the text and copies a selection where there is no ClipboardItem", async () => {
+    const exec = vi.fn(() => true);
+    document.execCommand = exec;
+
+    expect(await copyText(Promise.resolve("late"))).toBe(true);
+    expect(exec).toHaveBeenCalledWith("copy");
+  });
+
+  it("reports text that never arrived", async () => {
+    const exec = vi.fn(() => true);
+    document.execCommand = exec;
+
+    expect(await copyText(Promise.reject(new Error("offline")))).toBe(false);
+    expect(exec).not.toHaveBeenCalled();
+  });
+});
+
 describe("copyImage", () => {
   it("says no where there is no image clipboard", async () => {
     expect(await copyImage(Promise.resolve(new Blob()))).toBe(false);

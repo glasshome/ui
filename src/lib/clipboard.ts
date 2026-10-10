@@ -1,7 +1,12 @@
-/** The one door to the clipboard. Call it from inside the click with text
- *  already in hand: Firefox refuses the selection copy once a network round
- *  trip separates it from the gesture. */
-export async function copyText(text: string): Promise<boolean> {
+/** The one door to the clipboard. Call it from inside the click. Text still
+ *  loading goes in as a promise so the write keeps the gesture; the selection
+ *  fallback cannot wait, so plain http needs the text in hand. */
+export async function copyText(text: string | Promise<string>): Promise<boolean> {
+  if (typeof text !== "string") {
+    if (await copyPending(text)) return true;
+    const loaded = await text.catch(() => null);
+    return loaded === null ? false : copyText(loaded);
+  }
   // Dashboards are reached over plain http on the LAN, where navigator.clipboard
   // does not exist; the selection path is the only copy those installs have.
   if (navigator.clipboard?.writeText) {
@@ -19,9 +24,25 @@ export async function copyText(text: string): Promise<boolean> {
  *  so the write keeps the gesture (Safari). False where there is no image
  *  clipboard (plain http, Firefox by default). */
 export async function copyImage(image: Promise<Blob>, type = "image/png"): Promise<boolean> {
-  if (typeof ClipboardItem === "undefined" || !navigator.clipboard?.write) return false;
+  if (!canWriteItems()) return false;
+  return writeItem(type, image);
+}
+
+async function copyPending(text: Promise<string>): Promise<boolean> {
+  if (!canWriteItems()) return false;
+  return writeItem(
+    "text/plain",
+    text.then((t) => new Blob([t], { type: "text/plain" })),
+  );
+}
+
+function canWriteItems(): boolean {
+  return typeof ClipboardItem !== "undefined" && typeof navigator.clipboard?.write === "function";
+}
+
+async function writeItem(type: string, data: Promise<Blob>): Promise<boolean> {
   try {
-    await navigator.clipboard.write([new ClipboardItem({ [type]: image })]);
+    await navigator.clipboard.write([new ClipboardItem({ [type]: data })]);
     return true;
   } catch {
     return false;
