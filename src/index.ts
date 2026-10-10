@@ -32,6 +32,7 @@ export {
   SECTION_ROW_SURFACE,
   TRACK_SURFACE,
 } from "./lib/card-classes.js";
+export { copyImage, copyText } from "./lib/clipboard.js";
 export {
   CAROUSEL_DOTS,
   CAROUSEL_VIEWPORT,
