@@ -1,6 +1,6 @@
-/** The one door to the clipboard. Call it from inside the click. Text still
- *  loading goes in as a promise so the write keeps the gesture; the selection
- *  fallback cannot wait, so plain http needs the text in hand. */
+/** The one door to the clipboard. Call it from the click: browsers refuse a
+ *  copy more than a few seconds after it. Text still loading goes in as a
+ *  promise so a ClipboardItem write keeps the gesture (Safari). */
 export async function copyText(text: string | Promise<string>): Promise<boolean> {
   if (typeof text !== "string") {
     if (await copyPending(text)) return true;
