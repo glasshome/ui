@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { copyImage, copyText } from "../../src/lib/clipboard.js";
 import { CopyButton } from "../../src/solid/copy-button.js";
 import { Dialog, DialogBody, DialogContent, DialogTitle } from "../../src/solid/dialog.js";
@@ -8,9 +8,14 @@ function setClipboard(value: unknown) {
   Object.defineProperty(navigator, "clipboard", { value, configurable: true });
 }
 
+beforeEach(() => {
+  // A plain-http page: no Clipboard API at all.
+  setClipboard(undefined);
+});
+
 afterEach(() => {
   cleanup();
-  setClipboard(undefined);
+  Reflect.deleteProperty(navigator, "clipboard");
   Reflect.deleteProperty(document, "execCommand");
 });
 
