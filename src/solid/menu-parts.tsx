@@ -3,6 +3,7 @@ import { type Component, type ComponentProps, type ParentComponent, splitProps }
 import { glassToneText } from "../lib/glass-tone.js";
 import { MENU_ITEM, MENU_ITEM_BASE, MENU_LABEL, MENU_SEPARATOR } from "../lib/menu-classes.js";
 import { STAGGER } from "../lib/motion-classes.js";
+import { ignoreOpeningRelease } from "../lib/opening-release.js";
 import { FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -26,7 +27,7 @@ export const MENU_CONTENT_CLASS = cn(FLOATING_PANEL, "min-w-[8rem] overflow-hidd
 export const MenuContentIndicator: ParentComponent = (props) => (
   // The one element between role="menu" and its role="menuitem" rows:
   // an unnamed div there breaks the menu's ownership in the a11y tree.
-  <SelectionScope role="none" class={STAGGER} marker="highlighted">
+  <SelectionScope ref={ignoreOpeningRelease} role="none" class={STAGGER} marker="highlighted">
     {props.children}
   </SelectionScope>
 );
