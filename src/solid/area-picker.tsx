@@ -9,7 +9,7 @@ import { PickerRow } from "./picker-row.js";
 import { PickerSearch } from "./picker-search.js";
 import { PickerTrigger } from "./picker-trigger.js";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover.js";
-import { SlidingIndicator } from "./sliding-indicator.js";
+import { SelectionScope } from "./selection.js";
 
 interface AreaPickerBaseProps {
   placeholder?: string;
@@ -87,9 +87,7 @@ export function AreaPicker(props: AreaPickerProps) {
     return only.length === 1 ? areaList().find((a) => a.id === only[0]) : undefined;
   });
 
-  // One glass pill (SlidingIndicator) tracks the highlighted row and animates
-  // between rows, exactly like the Select. Hover wins; otherwise the pill rests
-  // on a selected row, which in multi mode is the first one still listed.
+  // Hover wins; otherwise the highlight rests on a selected row (in multi mode the first still listed).
   const [hovered, setHovered] = createSignal<string | null>(null);
   const restingId = createMemo(() => {
     const list = filtered();
@@ -183,10 +181,8 @@ export function AreaPicker(props: AreaPickerProps) {
             placeholder="Search areas..."
             aria-label="Search areas"
           />
-          <SlidingIndicator
-            activeSelector="[data-highlighted]"
-            orientation="vertical"
-            indicatorClass="rounded-sm"
+          <SelectionScope
+            marker="highlighted"
             class={cn("flex flex-col gap-0.5 p-1", STAGGER, PICKER_LIST)}
             onMouseLeave={() => setHovered(null)}
           >
@@ -222,7 +218,7 @@ export function AreaPicker(props: AreaPickerProps) {
                 />
               )}
             </For>
-          </SlidingIndicator>
+          </SelectionScope>
         </div>
       </PopoverContent>
     </Popover>

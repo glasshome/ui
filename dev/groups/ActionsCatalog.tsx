@@ -9,7 +9,8 @@ import {
   Dock,
   Kbd,
   KbdGroup,
-  SlidingIndicator,
+  SelectionHighlight,
+  SelectionScope,
   Toggle,
   ToggleGroup,
   ToggleGroupItem,
@@ -182,28 +183,29 @@ export function ActionsCatalog() {
         </Axis>
       </Specimen>
 
-      <Specimen name="SlidingIndicator" try="Week" span={2}>
-        <SlidingIndicator
-          active={seg()}
+      <Specimen name="SelectionScope" try="Week" span={2}>
+        <SelectionScope
+          marker="lit"
           class="border-border/50 bg-card/40 inline-flex gap-1 rounded-lg border p-1"
-          indicatorClass="rounded-md"
         >
           <For each={["Day", "Week", "Month"]}>
             {(label, i) => (
               <button
                 type="button"
                 onClick={() => setSeg(i())}
-                class="rounded-md px-3 py-1 text-sm transition-colors"
+                data-lit={seg() === i() ? "" : undefined}
+                class="relative rounded-md px-3 py-1 text-sm transition-colors"
                 classList={{
                   "text-foreground": seg() === i(),
                   "text-muted-foreground hover:text-foreground": seg() !== i(),
                 }}
               >
+                <SelectionHighlight />
                 {label}
               </button>
             )}
           </For>
-        </SlidingIndicator>
+        </SelectionScope>
       </Specimen>
     </CatalogGroup>
   );

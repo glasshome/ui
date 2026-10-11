@@ -367,6 +367,7 @@ export {
 } from "./sheet.js";
 export { Skeleton } from "./skeleton.js";
 export { Slider } from "./slider.js";
+export { SelectionHighlight, type SelectionMarker, SelectionScope } from "./selection.js";
 export { SlidingIndicator } from "./sliding-indicator.js";
 // Wave 4: React-Library Alternatives - Simpler
 export { GlassToast, Toaster, toast } from "./sonner.js";

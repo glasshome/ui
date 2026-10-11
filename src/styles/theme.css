@@ -101,22 +101,13 @@
  * expand to the bottom rather than a separate box dropping in. No scale, so the
  * option text never squishes; opacity fades in slightly so it isn't a hard wipe. */
 @keyframes select-in {
-  /* The trigger opens on pointerdown and the panel appears under the cursor, so
-	 * the same click's pointerup would land on an option (press-drag-select) and
-	 * instantly pick/close. Ignore pointer events for the open animation so that
-	 * release passes through and the panel stays open; a fresh click then selects. */
   from {
     opacity: 0;
     clip-path: inset(0 0 100% 0 round var(--radius-md));
-    pointer-events: none;
-  }
-  90% {
-    pointer-events: none;
   }
   to {
     opacity: 1;
     clip-path: inset(0 0 0 0 round var(--radius-md));
-    pointer-events: auto;
   }
 }
 @keyframes morph-in {
@@ -127,18 +118,13 @@
         calc(100% - var(--morph-y, 0px) - var(--morph-h, 2.5rem)) var(--morph-x, 0px) round
         var(--morph-radius, 9999px)
     );
-    pointer-events: none;
   }
   35% {
     opacity: 1;
   }
-  90% {
-    pointer-events: none;
-  }
   to {
     opacity: 1;
     clip-path: inset(0 0 0 0 round var(--radius-md));
-    pointer-events: auto;
   }
 }
 @keyframes morph-out {
@@ -298,6 +284,7 @@
   --duration-micro: 120ms;
   --duration-state: 160ms;
   --duration-expand: 200ms;
+  --duration-slide: 220ms;
   /* The hold fill: HOLD_MS - HOLD_GRACE_MS (lib/hold.ts), so it completes as the hold fires. */
   --duration-hold: 250ms;
   /* Ambient motion is an event (SPEC motion rule 5): 1 while the host holds
@@ -589,6 +576,7 @@ html[data-motion="live"] {
     --duration-expand: 0ms;
     --duration-morph: 0ms;
     --duration-hold: 0ms;
+    --duration-slide: 0ms;
   }
   /* tw-animate enter/exit classes carry their own fallback duration. */
   .animate-in,
@@ -610,6 +598,15 @@ html[data-motion="live"] {
 }
 
 /* Accessibility: minimize animations/transitions when reduce-motion is active */
+/* The tokens too, so motion timed in JS (Web Animations) stops as well. */
+.reduce-motion {
+  --duration-micro: 0ms;
+  --duration-state: 0ms;
+  --duration-expand: 0ms;
+  --duration-morph: 0ms;
+  --duration-hold: 0ms;
+  --duration-slide: 0ms;
+}
 .reduce-motion,
 .reduce-motion * {
   animation-duration: 0.01ms !important;

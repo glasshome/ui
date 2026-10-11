@@ -26,7 +26,7 @@ const toggleVariants = cva({
 });
 
 /* The hover fill lives here, not in the shared variants: a ToggleGroupItem
- * takes its pressed paint from the group's sliding indicator, and
+ * takes its pressed paint from the group's selection highlight, and
  * `:not([data-pressed]):hover` (0,3,0) outranks any plain `:hover` the group
  * adds to cancel it. Unpressed only, because a background utility is a no-op
  * once `data-[pressed]:glass` engages, so the pressed hover bumps a knob. */

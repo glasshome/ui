@@ -6,7 +6,7 @@ import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
 import { SEGMENT_ITEM } from "../lib/segment-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
-import { SlidingIndicator } from "./sliding-indicator.js";
+import { SelectionHighlight, SelectionScope } from "./selection.js";
 
 /** `split`: the root is `display: contents`, so a host (a modal panel) lays the
  *  list and the content out in its own regions while the tab state still spans
@@ -50,13 +50,9 @@ const TabsList: Component<ComponentProps<typeof TabsPrimitive.List>> = (props) =
     >
       {/* w-max so triggers keep their natural width and the track scrolls;
 			    w-full alone squeezed them past the rounded edge, unreachable. */}
-      <SlidingIndicator
-        activeSelector="[data-selected]"
-        indicatorClass="rounded-md"
-        class="flex h-full w-max min-w-full items-center gap-1"
-      >
+      <SelectionScope marker="selected" class="flex h-full w-max min-w-full items-center gap-1">
         {local.children}
-      </SlidingIndicator>
+      </SelectionScope>
     </TabsPrimitive.List>
   );
 };
@@ -72,12 +68,13 @@ const TabsTrigger: Component<ComponentProps<typeof TabsPrimitive.Trigger> & { ic
       class={cn(
         SEGMENT_ITEM,
         PRESS_DIP,
-        "hover:text-(--material-accent)/80 data-[selected]:text-(--material-accent)",
+        "relative isolate hover:text-(--material-accent)/80 data-[selected]:text-(--material-accent)",
         local.icon && "h-auto flex-1 flex-col gap-1 py-2 text-xs",
         local.class,
       )}
       {...others}
     >
+      <SelectionHighlight />
       {local.icon && (
         <Icon
           data-slot="tabs-trigger-icon"

@@ -4,11 +4,12 @@ import { CONTROL_H, INPUT_SURFACE } from "../lib/input-classes.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { MENU_ITEM, MENU_LABEL, MENU_SEPARATOR } from "../lib/menu-classes.js";
 import { FIELD_MOTION, STAGGER } from "../lib/motion-classes.js";
+import { ignoreOpeningRelease } from "../lib/opening-release.js";
 import { anchorToTriggerTop } from "../lib/overlay-classes.js";
 import { PICKER_LIST, PICKER_TRIGGER } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
-import { SlidingIndicator } from "./sliding-indicator.js";
+import { SelectionHighlight, SelectionScope } from "./selection.js";
 
 const Select = ((props: ComponentProps<typeof SelectPrimitive>) => (
   <SelectPrimitive gutter={0} getAnchorRect={anchorToTriggerTop} flip={false} overlap {...props} />
@@ -65,14 +66,13 @@ const SelectContent: ParentComponent<
         )}
         {...rest}
       >
-        <SlidingIndicator
-          activeSelector="[data-highlighted]"
-          orientation="vertical"
-          indicatorClass="rounded-sm"
+        <SelectionScope
+          ref={ignoreOpeningRelease}
+          marker="highlighted"
           class={cn("w-full", PICKER_LIST)}
         >
           <SelectPrimitive.Listbox class={cn(STAGGER, local.listboxClass)} />
-        </SlidingIndicator>
+        </SelectionScope>
       </SelectPrimitive.Content>
     </SelectPrimitive.Portal>
   );
@@ -101,6 +101,7 @@ const SelectItem: ParentComponent<ComponentProps<typeof SelectPrimitive.Item>> =
       )}
       {...rest}
     >
+      <SelectionHighlight />
       <span class="absolute right-2 flex size-3.5 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
           <Icon icon="lucide:check" width={16} height={16} class="size-4 text-current" />

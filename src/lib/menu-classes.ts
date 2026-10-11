@@ -1,5 +1,5 @@
 /* One menu row, label and separator for every listbox and menu (Select,
- * DropdownMenu, ContextMenu, pickers). Highlight comes from SlidingIndicator,
+ * DropdownMenu, ContextMenu, pickers). Highlight comes from SelectionHighlight,
  * so the row itself paints no background. A toned row (MenuItemPart sets
  * data-tone) guards off the muted svg color so its icon inherits the row's
  * own currentColor instead.

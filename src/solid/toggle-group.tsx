@@ -14,13 +14,10 @@ import {
 import { TRACK_SURFACE } from "../lib/card-classes.js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
 import { cn } from "../lib/utils.js";
-import { SlidingIndicator } from "./sliding-indicator.js";
+import { SelectionHighlight, SelectionScope } from "./selection.js";
 import { toggleVariants } from "./toggle.js";
 
-// The group also tells its items whether a single sliding indicator is in play: in
-// single-select mode the indicator paints the selected segment, so items go
-// transparent when pressed (else they double-paint). Multi-select has no single
-// active item, so items keep their own pressed background and no indicator renders.
+// Single-select paints the pressed segment with the selection highlight; multi-select has none.
 type ToggleGroupContextValue = VariantProps<typeof toggleVariants> & { sliding: boolean };
 
 const ToggleGroupContext = createContext<ToggleGroupContextValue>({
@@ -74,11 +71,9 @@ const ToggleGroup: ParentComponent<
         <Show when={sliding()} fallback={local.children}>
           {/* w-full, not w-fit: a shrink-to-fit root still sizes to content, and a
 					    `class="w-full"` root can finally let its flex-1 items share the width. */}
-          <SlidingIndicator
-            activeSelector="[data-pressed]"
-            indicatorClass="rounded-md"
-            indicatorTone={local.tone}
-            wrapped={!local.scroll}
+          <SelectionScope
+            marker="pressed"
+            tone={local.tone}
             class={
               local.scroll
                 ? "flex w-max flex-nowrap items-center"
@@ -86,7 +81,7 @@ const ToggleGroup: ParentComponent<
             }
           >
             {local.children}
-          </SlidingIndicator>
+          </SelectionScope>
         </Show>
       </ToggleGroupContext.Provider>
     </ToggleGroupPrimitive>
@@ -96,7 +91,7 @@ const ToggleGroup: ParentComponent<
 const ToggleGroupItem: Component<
   ComponentProps<typeof ToggleGroupPrimitive.Item> & VariantProps<typeof toggleVariants>
 > = (props) => {
-  const [local, rest] = splitProps(props, ["class", "variant", "size"] as const);
+  const [local, rest] = splitProps(props, ["class", "variant", "size", "children"] as const);
   const context = useContext(ToggleGroupContext);
 
   return (
@@ -110,19 +105,26 @@ const ToggleGroupItem: Component<
           size: context.size || local.size,
         }),
         // Wrapping is plain CSS: an item never shrinks below its label, so a row that runs out of width breaks.
-        "min-w-max flex-1 shrink-0 rounded-md px-4 shadow-none focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first-of-type:border-l",
-        // Single-select: the sliding indicator paints the active segment, so the
-        // item needs no pressed fill of its own and hover only tints the text.
-        // Multi-select has no single indicator, so each pressed segment carries
-        // its own neutral fill; hover still tints text only, since a fill there
-        // would read as a second, squarer selection.
+        "relative isolate min-w-max flex-1 shrink-0 rounded-md px-4 shadow-none focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first-of-type:border-l",
+        // A hover fill would read as a second, squarer selection, so hover only tints the text.
         context.sliding
           ? "hover:text-(--material-accent)"
           : "data-[pressed]:bg-muted data-[pressed]:text-foreground not-data-[pressed]:hover:text-(--material-accent)",
         local.class,
       )}
       {...rest}
-    />
+    >
+      {(state) => {
+        // Each read of a JSX child getter builds it again.
+        const content = local.children;
+        return (
+          <>
+            <SelectionHighlight />
+            {typeof content === "function" ? content(state) : content}
+          </>
+        );
+      }}
+    </ToggleGroupPrimitive.Item>
   );
 };
 

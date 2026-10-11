@@ -74,6 +74,8 @@ const SKIP: Record<string, string> = {
   RowActions: "no class prop (pre-existing passthrough gap)",
   ScopeIndicator: "no class prop (pre-existing passthrough gap)",
   HeroOption: "deprecated alias of OptionCard",
+  SelectionHighlight:
+    "part of an item inside a SelectionScope, nothing outside one; it takes the item's radius and the scope's tone, never a class",
   OptionChoice: "row of an OptionCard; the card owns the class",
   ScrollBar: "deprecated no-op; gh-scroll's native-styled bar is the bar",
   SectionAddButton: "no class prop (pre-existing passthrough gap)",

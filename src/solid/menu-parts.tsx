@@ -1,20 +1,13 @@
 import { DropdownMenu as MenuPrimitive } from "@kobalte/core/dropdown-menu";
-import {
-  type Component,
-  type ComponentProps,
-  createSignal,
-  onCleanup,
-  onMount,
-  type ParentComponent,
-  splitProps,
-} from "solid-js";
+import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
 import { glassToneText } from "../lib/glass-tone.js";
 import { MENU_ITEM, MENU_ITEM_BASE, MENU_LABEL, MENU_SEPARATOR } from "../lib/menu-classes.js";
 import { STAGGER } from "../lib/motion-classes.js";
+import { ignoreOpeningRelease } from "../lib/opening-release.js";
 import { FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
-import { SlidingIndicator } from "./sliding-indicator.js";
+import { SelectionHighlight, SelectionScope } from "./selection.js";
 
 /*
  * DropdownMenu and ContextMenu are two Root flavors over one Kobalte Menu
@@ -29,52 +22,15 @@ import { SlidingIndicator } from "./sliding-indicator.js";
  * ContextMenu unfolds from the pointer. */
 export const MENU_CONTENT_CLASS = cn(FLOATING_PANEL, "min-w-[8rem] overflow-hidden p-1");
 
-/** Every menu content and sub content wraps its rows in one sliding highlight,
- *  keyed off Kobalte's roving-focus attribute. The highlighted row's own
- *  --glass-tone (set inline by MenuItemPart) is mirrored onto the indicator,
- *  since --glass-tone does not inherit and the indicator is a sibling, not
- *  an ancestor, of the rows it highlights. */
-export const MenuContentIndicator: ParentComponent = (props) => {
-  let containerRef: HTMLDivElement | undefined;
-  const [tone, setTone] = createSignal<string | undefined>(undefined);
-
-  const syncTone = () => {
-    const highlighted = containerRef?.querySelector<HTMLElement>("[data-highlighted]");
-    setTone(highlighted?.style.getPropertyValue("--glass-tone") || undefined);
-  };
-
-  onMount(() => {
-    if (!containerRef) return;
-    const mo = new MutationObserver(syncTone);
-    mo.observe(containerRef, {
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["data-highlighted"],
-    });
-    containerRef.addEventListener("focusin", syncTone);
-    syncTone();
-    onCleanup(() => {
-      mo.disconnect();
-      containerRef?.removeEventListener("focusin", syncTone);
-    });
-  });
-
-  return (
-    <SlidingIndicator
-      ref={containerRef}
-      // The one element between role="menu" and its role="menuitem" rows:
-      // an unnamed div there breaks the menu's ownership in the a11y tree.
-      role="none"
-      class={STAGGER}
-      activeSelector="[data-highlighted]"
-      orientation="vertical"
-      indicatorClass="rounded-sm"
-      indicatorTone={tone()}
-    >
-      {props.children}
-    </SlidingIndicator>
-  );
-};
+/** Every menu content and sub content wraps its rows in one selection scope, keyed off
+ *  Kobalte's highlighted row. */
+export const MenuContentIndicator: ParentComponent = (props) => (
+  // The one element between role="menu" and its role="menuitem" rows:
+  // an unnamed div there breaks the menu's ownership in the a11y tree.
+  <SelectionScope ref={ignoreOpeningRelease} role="none" class={STAGGER} marker="highlighted">
+    {props.children}
+  </SelectionScope>
+);
 
 type ToneProps = {
   tone?: string;
@@ -87,7 +43,7 @@ function resolveTone(local: ToneProps): string | undefined {
 }
 
 function toneStyle(tone: string | undefined) {
-  return tone ? { "--glass-tone": tone, color: glassToneText(tone) } : undefined;
+  return tone ? { "--selection-tone": tone, color: glassToneText(tone) } : undefined;
 }
 
 type MenuItemProps = ComponentProps<typeof MenuPrimitive.Item> &
@@ -113,6 +69,7 @@ export const MenuItemPart: Component<MenuItemProps> = (props) => {
     "variant",
     "slotName",
     "style",
+    "children",
   ]);
   const tone = () => resolveTone(local);
   return (
@@ -125,7 +82,10 @@ export const MenuItemPart: Component<MenuItemProps> = (props) => {
       class={cn(MENU_ITEM, local.inset && "pl-8", local.class)}
       style={{ ...toneStyle(tone()), ...local.style }}
       {...rest}
-    />
+    >
+      <SelectionHighlight />
+      {local.children}
+    </MenuPrimitive.Item>
   );
 };
 
@@ -179,6 +139,7 @@ export const MenuSubTriggerPart: ParentComponent<MenuSubTriggerProps> = (props) 
       class={cn(MENU_ITEM, local.inset && "pl-8", local.class)}
       {...rest}
     >
+      <SelectionHighlight />
       {local.children}
       <Icon icon="lucide:chevron-right" width={16} height={16} class="ml-auto" />
     </MenuPrimitive.SubTrigger>
@@ -214,6 +175,7 @@ export const MenuCheckboxItemPart: ParentComponent<MenuCheckboxItemProps> = (pro
       class={cn(MENU_ITEM_BASE, "py-1.5 pr-2 pl-8", local.class)}
       {...rest}
     >
+      <SelectionHighlight />
       <span class="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
         <MenuPrimitive.ItemIndicator>
           <Icon icon="lucide:check" width={16} height={16} class="size-4" />
@@ -236,6 +198,7 @@ export const MenuRadioItemPart: ParentComponent<MenuRadioItemProps> = (props) =>
       class={cn(MENU_ITEM_BASE, "py-1.5 pr-2 pl-8", local.class)}
       {...rest}
     >
+      <SelectionHighlight />
       <span class="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
         <MenuPrimitive.ItemIndicator>
           {/* mdi:circle is filled; lucide:circle is stroke-only and invisible at 8px. */}
