@@ -232,6 +232,90 @@ describe("SelectionScope", () => {
     expect(flights()).toHaveLength(1);
   });
 
+  it("starts from where the flyer was when the pointer crosses a gap mid-flight", async () => {
+    vi.useFakeTimers({ toFake: ["performance"] });
+    const { items, flyer, select } = renderGroup();
+    await select(1);
+    place(flyer, { left: 40, top: 0, width: 80, height: 40 });
+    items[1]?.removeAttribute("data-pressed");
+    await flush();
+    vi.advanceTimersByTime(20);
+    await select(2);
+
+    // flyer centre 80 to item centre 230, whose box starts at 160
+    expect(translateOf(flights()[1] as FakeAnimation)).toBe("10px 0px");
+  });
+
+  it("leaves no highlight hidden when the flight cannot start", async () => {
+    const { items, flyer, select } = renderGroup();
+    Element.prototype.animate = () => {
+      throw new Error("no animations here");
+    };
+    await select(1);
+
+    expect(flyer.hasAttribute("data-flying")).toBe(false);
+    expect(items[1]?.querySelector("[data-landing]")).toBeNull();
+  });
+
+  it("places the flyer in the content of a scope that scrolls", async () => {
+    const { scope, items, flyer, select } = renderGroup();
+    Object.defineProperty(scope, "scrollLeft", { value: 50, configurable: true });
+    await select(2);
+
+    // item 2 starts 160px into the visible box, 210px into the scrolled content
+    expect(flyer.style.translate).toBe("210px 0px");
+    expect(items[2]).toBeDefined();
+  });
+
+  it("lands in layout pixels while an ancestor is mid-zoom", async () => {
+    const { scope, items, flyer, select } = renderGroup();
+    place(scope, { left: 0, top: 0, width: 270, height: 36 });
+    Object.defineProperty(scope, "offsetWidth", { value: 300, configurable: true });
+    Object.defineProperty(scope, "offsetHeight", { value: 40, configurable: true });
+    place(items[2] as HTMLElement, { left: 144, top: 0, width: 126, height: 36 });
+    Object.defineProperty(items[2], "offsetWidth", { value: 140, configurable: true });
+    Object.defineProperty(items[2], "offsetHeight", { value: 40, configurable: true });
+    await select(2);
+
+    expect(flyer.style.translate).toBe("160px 0px");
+    expect(flyer.style.width).toBe("140px");
+  });
+
+  it("wakes only for its marker", async () => {
+    const Real = globalThis.MutationObserver;
+    let callbacks = 0;
+    globalThis.MutationObserver = class extends Real {
+      constructor(callback: MutationCallback) {
+        super((records, observer) => {
+          callbacks += 1;
+          callback(records, observer);
+        });
+      }
+    };
+    try {
+      const { items } = renderGroup();
+      await flush();
+      items[1]?.setAttribute("aria-label", "renamed");
+      items[1]?.style.setProperty("--glass-tone", "red");
+      await flush();
+    } finally {
+      globalThis.MutationObserver = Real;
+    }
+    expect(callbacks).toBe(0);
+  });
+
+  it("flies to the item when a part inside it carries the marker too", async () => {
+    const { items } = renderGroup();
+    const part = document.createElement("span");
+    items[2]?.append(part);
+    items[0]?.removeAttribute("data-pressed");
+    items[2]?.setAttribute("data-pressed", "");
+    part.setAttribute("data-pressed", "");
+    await flush();
+
+    expect(flights()).toHaveLength(1);
+  });
+
   it("gives the flyer the target's tone and radius", async () => {
     const { container } = render(() => (
       <SelectionScope marker="pressed" style={{ "--duration-slide": "220ms" }}>
@@ -253,7 +337,8 @@ describe("SelectionScope", () => {
 
     const flyer = scope.querySelector<HTMLElement>("[data-selection-flyer]");
     expect(flyer?.style.getPropertyValue("--selection-tone")).toBe("rgb(200, 0, 0)");
-    expect(flyer?.style.borderRadius).toBe("6px");
+    expect(flyer?.style.getPropertyValue("--selection-radius")).toBe("6px");
+    expect(flyer?.style.borderRadius).toBe("");
   });
 
   it("settles on an engine that reports same-value custom property writes", async () => {

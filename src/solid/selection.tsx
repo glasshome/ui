@@ -137,7 +137,7 @@ function createFlight(root: HTMLElement, flyer: HTMLElement) {
     writeStyle(flyer, "width", `${to.width}px`);
     writeStyle(flyer, "height", `${to.height}px`);
     writeStyle(flyer, "translate", rest);
-    writeStyle(flyer, "border-radius", radius);
+    writeStyle(flyer, "--selection-radius", radius);
     writeStyle(flyer, "--selection-tone", tone);
 
     const dx = from.x - to.x;
@@ -158,14 +158,18 @@ function createFlight(root: HTMLElement, flyer: HTMLElement) {
     target.setAttribute("data-landing", "");
     flyer.setAttribute("data-flying", "");
     const timing: KeyframeAnimationOptions = { duration, easing: "ease-in-out" };
-    running = [
-      flyer.animate([{ translate: `${left + dx}px ${top + dy}px` }, { translate: rest }], timing),
-      flyer.animate(
-        [{ scale: `${kx} ${ky}` }, { scale: `${peakX} ${peakY}` }, { scale: "1 1" }],
-        timing,
-      ),
-    ];
     const end = () => settle(current);
+    try {
+      running = [
+        flyer.animate([{ translate: `${left + dx}px ${top + dy}px` }, { translate: rest }], timing),
+        flyer.animate(
+          [{ scale: `${kx} ${ky}` }, { scale: `${peakX} ${peakY}` }, { scale: "1 1" }],
+          timing,
+        ),
+      ];
+    } catch {
+      return end();
+    }
     Promise.all(running.map((animation) => animation.finished)).then(end, end);
   };
 
@@ -200,7 +204,7 @@ export function SelectionScope(props: SelectionScopeProps) {
     const attribute = `data-${local.marker}`;
     const flight = createFlight(scope, travel);
     let active = activeIn(scope, attribute);
-    let left: { item: HTMLElement; at: number } | undefined;
+    let left: { item: HTMLElement; box: Box | undefined; at: number } | undefined;
 
     const observer = new MutationObserver(() => {
       const next = activeIn(scope, attribute);
@@ -208,18 +212,22 @@ export function SelectionScope(props: SelectionScopeProps) {
       const previous = active;
       active = next;
       if (!next) {
-        if (previous) left = { item: previous, at: performance.now() };
+        if (previous) {
+          const box = flight.flying() ? flyerBox(scope, travel) : undefined;
+          left = { item: previous, box, at: performance.now() };
+        }
         flight.settle();
         return;
       }
-      const recent = left && performance.now() - left.at <= GAP_MS ? left.item : undefined;
+      const recent = left && performance.now() - left.at <= GAP_MS ? left : undefined;
       left = undefined;
-      const source = previous ?? recent;
       const from = flight.flying()
         ? flyerBox(scope, travel)
-        : source
-          ? itemBox(scope, source)
-          : undefined;
+        : previous
+          ? itemBox(scope, previous)
+          : recent
+            ? (recent.box ?? itemBox(scope, recent.item))
+            : undefined;
       if (from) flight.start(from, next);
       else flight.settle();
     });

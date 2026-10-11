@@ -114,12 +114,16 @@ const ToggleGroupItem: Component<
       )}
       {...rest}
     >
-      {(state) => (
-        <>
-          <SelectionHighlight />
-          {typeof local.children === "function" ? local.children(state) : local.children}
-        </>
-      )}
+      {(state) => {
+        // Each read of a JSX child getter builds it again.
+        const content = local.children;
+        return (
+          <>
+            <SelectionHighlight />
+            {typeof content === "function" ? content(state) : content}
+          </>
+        );
+      }}
     </ToggleGroupPrimitive.Item>
   );
 };

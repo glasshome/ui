@@ -93,6 +93,22 @@ describe("ToggleGroup", () => {
     expect(scope?.style.getPropertyValue("--selection-tone")).toBe("oklch(0.66 0.2 30)");
   });
 
+  it("builds a segment's content once", () => {
+    let built = 0;
+    const Label = () => {
+      built += 1;
+      return <span>Left</span>;
+    };
+    render(() => (
+      <ToggleGroup value="left">
+        <ToggleGroupItem value="left">
+          <Label />
+        </ToggleGroupItem>
+      </ToggleGroup>
+    ));
+    expect(built).toBe(1);
+  });
+
   it("still renders a segment given as a function of its pressed state", () => {
     const { container } = render(() => (
       <ToggleGroup value="left">

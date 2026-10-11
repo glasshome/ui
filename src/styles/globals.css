@@ -803,8 +803,16 @@
 }
 [data-selection-highlight] {
   inset: var(--selection-inset, 0);
-  border-radius: inherit;
   display: none;
+}
+/* Layered, so a material's own corners (Ink's hand-drawn ones are unlayered) still win. */
+@layer base {
+  [data-selection-highlight] {
+    border-radius: inherit;
+  }
+  [data-selection-flyer] {
+    border-radius: var(--selection-radius);
+  }
 }
 [data-pressed] > [data-selection-highlight][data-on="pressed"],
 [data-selected] > [data-selection-highlight][data-on="selected"],
@@ -819,14 +827,15 @@
 [data-slot="toggle-group-item"] {
   --selection-inset: -1px;
 }
+/* Out of layout at rest: a hidden box at its last place would still stretch a scroller. */
 [data-selection-flyer] {
   top: 0;
   left: 0;
-  visibility: hidden;
+  display: none;
   transition: none;
 }
 [data-selection-flyer][data-flying] {
-  visibility: inherit;
+  display: block;
 }
 
 /* Icon: the box a glyph sits in, sized by its width/height attributes. */
