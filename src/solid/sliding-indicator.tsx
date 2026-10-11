@@ -267,6 +267,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
       syncObservedItems();
       queueMicrotask(measure);
     });
+    // observer-attributes-ok: deprecated; any caller selector must keep working, and style-only batches are skipped
     mo.observe(containerRef, {
       childList: true,
       subtree: !!local.activeSelector,
