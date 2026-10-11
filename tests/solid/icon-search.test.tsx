@@ -3,7 +3,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import { provideIcons } from "../../src/solid/icon.js";
 import { ICON_SEARCH_DEBOUNCE_MS } from "../../src/solid/icon-picker.js";
 import { SchemaForm } from "../../src/solid/schema-form.js";
-import { useFakeTime } from "../harness/fake-time.js";
+import { useFakeTime } from "../../src/testing/index.js";
 
 afterEach(() => {
   cleanup();

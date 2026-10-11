@@ -13,11 +13,13 @@ export default defineConfig({
         "solid/index": "src/solid/index.ts",
         "tokens/index": "src/tokens/index.ts",
         "backgrounds/index": "src/backgrounds/index.ts",
+        "testing/index": "src/testing/index.ts",
       },
       formats: ["es"],
     },
     rollupOptions: {
       external: [
+        "vitest",
         "solid-js",
         "solid-js/web",
         "solid-js/store",

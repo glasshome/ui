@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { spendLongPress } from "../../src/lib/hold.js";
-import { useFakeTime } from "../harness/fake-time";
+import { useFakeTime } from "../../src/testing/index.js";
 
 const fire = (target: EventTarget, type: string) => {
   const e = new Event(type, { bubbles: true, cancelable: true });

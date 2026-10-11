@@ -2,7 +2,7 @@ import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Dock } from "../../src/solid/dock.js";
-import { useFakeTime } from "../harness/fake-time.js";
+import { useFakeTime } from "../../src/testing/index.js";
 
 describe("Dock paging", () => {
   const items = (n: number) =>

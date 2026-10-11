@@ -5,7 +5,7 @@ import { Z_CLASS } from "../../src/lib/layers.js";
 import { TRAVEL_MOTION } from "../../src/lib/motion-classes.js";
 import { OVERLAY_SURFACE_OPAQUE, SCRIM_CLASS } from "../../src/lib/overlay-classes.js";
 import { Spotlight } from "../../src/solid/spotlight.js";
-import { useFakeTime } from "../harness/fake-time";
+import { useFakeTime } from "../../src/testing/index.js";
 
 const TAIL_SIZE = 20;
 const BUBBLE_GAP = 12;

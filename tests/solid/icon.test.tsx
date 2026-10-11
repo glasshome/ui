@@ -5,7 +5,7 @@ import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal, Index } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Icon, provideIcons } from "../../src/solid/icon.js";
-import { useFakeTime } from "../harness/fake-time.js";
+import { useFakeTime } from "../../src/testing/index.js";
 
 const PLUS = { body: '<path d="M5 12h14m-7-7v14"/>', width: 24, height: 24 };
 

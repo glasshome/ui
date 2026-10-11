@@ -11,7 +11,7 @@ Object.assign(globalThis, {
   },
 });
 const { Icon, provideIcons } = await import("../../src/solid/icon.js");
-const { useFakeTime } = await import("../harness/fake-time.js");
+const { useFakeTime } = await import("../../src/testing/index.js");
 
 const PLUS = { body: "<path d='plus'/>", width: 24, height: 24 };
 const CCTV = { body: "<path d='cctv'/>", width: 24, height: 24 };

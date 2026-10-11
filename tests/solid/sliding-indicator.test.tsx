@@ -7,7 +7,7 @@ import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SlidingIndicator } from "../../src/solid/sliding-indicator.js";
-import { useFakeTime } from "../harness/fake-time.js";
+import { useFakeTime } from "../../src/testing/index.js";
 
 type Rect = { left: number; top: number; width: number; height: number };
 

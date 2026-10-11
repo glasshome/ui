@@ -2,7 +2,7 @@ import { cleanup, render } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Toggle } from "../../src/solid/toggle.js";
 import { ToggleGroup, ToggleGroupItem } from "../../src/solid/toggle-group.js";
-import { useFakeTime } from "../harness/fake-time.js";
+import { useFakeTime } from "../../src/testing/index.js";
 
 afterEach(cleanup);
 
