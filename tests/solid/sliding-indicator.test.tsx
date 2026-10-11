@@ -326,6 +326,7 @@ describe("SlidingIndicator with an attribute selector", () => {
   }
 
   it("settles instead of re-measuring on its own style writes", async () => {
+    useFakeTime();
     const callbacks = capObserverCallbacks(500);
     const { indicator } = renderPressedGroup();
     await frames();
@@ -335,6 +336,7 @@ describe("SlidingIndicator with an attribute selector", () => {
   });
 
   it("settles even when every measure lands half a pixel from the last", async () => {
+    useFakeTime();
     const callbacks = capObserverCallbacks(500);
     const { buttons } = renderPressedGroup();
     let width = 80;
