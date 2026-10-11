@@ -5,6 +5,7 @@ import { Z_CLASS } from "../../src/lib/layers.js";
 import { TRAVEL_MOTION } from "../../src/lib/motion-classes.js";
 import { OVERLAY_SURFACE_OPAQUE, SCRIM_CLASS } from "../../src/lib/overlay-classes.js";
 import { Spotlight } from "../../src/solid/spotlight.js";
+import { useFakeTime } from "../harness/fake-time";
 
 const TAIL_SIZE = 20;
 const BUBBLE_GAP = 12;
@@ -19,7 +20,6 @@ function targetAt(x: number, y: number, width: number, height: number) {
 
 afterEach(() => {
   vi.restoreAllMocks();
-  vi.useRealTimers();
   document.body.innerHTML = "";
 });
 
@@ -78,7 +78,7 @@ describe("Spotlight", () => {
   });
 
   it("keeps re-measuring for the full window even when the target's motion starts late", () => {
-    vi.useFakeTimers({ toFake: ["requestAnimationFrame"] });
+    useFakeTime({ toFake: ["requestAnimationFrame"] });
     const rafSpy = vi.spyOn(window, "requestAnimationFrame");
     const el = document.createElement("button");
     document.body.append(el);
@@ -116,7 +116,6 @@ describe("Spotlight", () => {
     expect(rafSpy.mock.calls.length).toBe(callsInWindow);
 
     rafSpy.mockRestore();
-    vi.useRealTimers();
   });
 
   it("follows a new target", () => {
@@ -134,7 +133,7 @@ describe("Spotlight", () => {
   });
 
   it("requests no more frames once the settle window ends", () => {
-    vi.useFakeTimers({ toFake: ["requestAnimationFrame"] });
+    useFakeTime({ toFake: ["requestAnimationFrame"] });
     const rafSpy = vi.spyOn(window, "requestAnimationFrame");
     const el = targetAt(100, 200, 300, 50);
     render(() => (
@@ -147,7 +146,6 @@ describe("Spotlight", () => {
     for (let i = 0; i < 10; i++) vi.advanceTimersToNextFrame();
     expect(rafSpy.mock.calls.length).toBe(settled);
     rafSpy.mockRestore();
-    vi.useRealTimers();
   });
 
   it("calls onSkip on Escape", () => {

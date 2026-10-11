@@ -1,5 +1,6 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { spendLongPress } from "../../src/lib/hold.js";
+import { useFakeTime } from "../harness/fake-time";
 
 const fire = (target: EventTarget, type: string) => {
   const e = new Event(type, { bubbles: true, cancelable: true });
@@ -8,10 +9,9 @@ const fire = (target: EventTarget, type: string) => {
 };
 
 describe("spendLongPress", () => {
-  afterEach(() => vi.useRealTimers());
 
-  it("keeps the browser's long press off what a hold opened until the finger lifts", () => {
-    vi.useFakeTimers();
+  it("keeps the browser's long press off what a hold opened until the finger lifts", async () => {
+    useFakeTime();
     const sheet = document.body.appendChild(document.createElement("div"));
     spendLongPress();
 
@@ -19,16 +19,16 @@ describe("spendLongPress", () => {
     expect(fire(sheet, "selectstart")).toBe(true);
 
     fire(window, "pointerup");
-    vi.runAllTimers();
+    await vi.runAllTimersAsync();
 
     expect(fire(sheet, "contextmenu")).toBe(false);
     expect(fire(sheet, "selectstart")).toBe(false);
   });
 
-  it("lets go on its own when the release never arrives", () => {
-    vi.useFakeTimers();
+  it("lets go on its own when the release never arrives", async () => {
+    useFakeTime();
     spendLongPress();
-    vi.runAllTimers();
+    await vi.runAllTimersAsync();
 
     expect(fire(document.body, "selectstart")).toBe(false);
   });
