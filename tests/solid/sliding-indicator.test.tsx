@@ -280,3 +280,163 @@ describe("SlidingIndicator", () => {
     Object.defineProperty(document, "fonts", { value: originalFonts, configurable: true });
   });
 });
+
+describe("SlidingIndicator with an attribute selector", () => {
+  function renderPressedGroup() {
+    const { container } = render(() => (
+      <SlidingIndicator activeSelector="[data-pressed]">
+        <button type="button" data-pressed="">
+          One
+        </button>
+        <button type="button">Two</button>
+      </SlidingIndicator>
+    ));
+    const root = container.firstElementChild;
+    const buttons = container.querySelectorAll("button");
+    if (!(root instanceof HTMLElement)) throw new Error("no root");
+    stubRect(root, { left: 0, top: 0, width: 160, height: 32 });
+    stubRect(buttons[0] as HTMLElement, { left: 0, top: 0, width: 80, height: 32 });
+    stubRect(buttons[1] as HTMLElement, { left: 80, top: 0, width: 80, height: 32 });
+    Object.defineProperty(root, "offsetWidth", { value: 160, configurable: true });
+    Object.defineProperty(root, "offsetHeight", { value: 32, configurable: true });
+    const indicator = () => container.querySelector<HTMLElement>("[data-sliding-indicator]");
+    return { root, buttons, indicator };
+  }
+
+  const RealMutationObserver = globalThis.MutationObserver;
+  afterEach(() => {
+    globalThis.MutationObserver = RealMutationObserver;
+  });
+
+  // happy-dom, like Chromium up to 131, queues a style mutation for a same-value
+  // custom property write; a loop would never yield, so stop delivering at a cap.
+  function capObserverCallbacks(cap: number) {
+    let callbacks = 0;
+    globalThis.MutationObserver = class extends RealMutationObserver {
+      constructor(callback: MutationCallback) {
+        super((records, observer) => {
+          if (++callbacks <= cap) callback(records, observer);
+        });
+      }
+    };
+    return () => callbacks;
+  }
+
+  it("settles instead of re-measuring on its own style writes", async () => {
+    const callbacks = capObserverCallbacks(500);
+    const { indicator } = renderPressedGroup();
+    await frames();
+
+    expect(indicator()?.style.width).toBe("80px");
+    expect(callbacks()).toBeLessThan(10);
+  });
+
+  it("settles even when every measure lands half a pixel from the last", async () => {
+    const callbacks = capObserverCallbacks(500);
+    const { buttons } = renderPressedGroup();
+    let width = 80;
+    const first = buttons[0] as HTMLElement;
+    first.getBoundingClientRect = () => {
+      width = width === 80 ? 80.5 : 80;
+      return {
+        left: 0,
+        top: 0,
+        width,
+        height: 32,
+        right: width,
+        bottom: 32,
+        x: 0,
+        y: 0,
+      } as DOMRect;
+    };
+    await frames();
+
+    expect(callbacks()).toBeLessThan(10);
+  });
+
+  it("follows an id-based selector when the id moves", async () => {
+    const { container } = render(() => (
+      <SlidingIndicator activeSelector="#current">
+        <button type="button" id="current">
+          One
+        </button>
+        <button type="button">Two</button>
+      </SlidingIndicator>
+    ));
+    const root = container.firstElementChild;
+    const buttons = container.querySelectorAll("button");
+    if (!(root instanceof HTMLElement)) throw new Error("no root");
+    stubRect(root, { left: 0, top: 0, width: 160, height: 32 });
+    stubRect(buttons[0] as HTMLElement, { left: 0, top: 0, width: 80, height: 32 });
+    stubRect(buttons[1] as HTMLElement, { left: 80, top: 0, width: 80, height: 32 });
+    Object.defineProperty(root, "offsetWidth", { value: 160, configurable: true });
+    Object.defineProperty(root, "offsetHeight", { value: 32, configurable: true });
+    await flush();
+
+    buttons[0]?.removeAttribute("id");
+    buttons[1]?.setAttribute("id", "current");
+    await flush();
+
+    expect(container.querySelector<HTMLElement>("[data-sliding-indicator]")?.style.transform).toBe(
+      "translateX(80px)",
+    );
+  });
+
+  it("re-measures when the marker moves, not when an item's style changes", async () => {
+    const { buttons, indicator } = renderPressedGroup();
+    await flush();
+    const first = buttons[0] as HTMLElement;
+    const second = buttons[1] as HTMLElement;
+    const measures = vi.spyOn(first, "getBoundingClientRect");
+
+    first.style.setProperty("--i", "3");
+    await flush();
+    expect(measures).not.toHaveBeenCalled();
+
+    first.removeAttribute("data-pressed");
+    second.setAttribute("data-pressed", "");
+    await flush();
+    expect(indicator()?.style.transform).toBe("translateX(80px)");
+  });
+
+  it("follows a class-based selector when the class moves", async () => {
+    const { container } = render(() => (
+      <SlidingIndicator activeSelector=".is-active">
+        <button type="button" class="is-active">
+          One
+        </button>
+        <button type="button">Two</button>
+      </SlidingIndicator>
+    ));
+    const root = container.firstElementChild;
+    const buttons = container.querySelectorAll("button");
+    if (!(root instanceof HTMLElement)) throw new Error("no root");
+    stubRect(root, { left: 0, top: 0, width: 160, height: 32 });
+    stubRect(buttons[0] as HTMLElement, { left: 0, top: 0, width: 80, height: 32 });
+    stubRect(buttons[1] as HTMLElement, { left: 80, top: 0, width: 80, height: 32 });
+    Object.defineProperty(root, "offsetWidth", { value: 160, configurable: true });
+    Object.defineProperty(root, "offsetHeight", { value: 32, configurable: true });
+    await flush();
+
+    buttons[0]?.classList.remove("is-active");
+    buttons[1]?.classList.add("is-active");
+    await flush();
+
+    expect(container.querySelector<HTMLElement>("[data-sliding-indicator]")?.style.transform).toBe(
+      "translateX(80px)",
+    );
+  });
+
+  it("writes nothing when a re-measure finds the same place", async () => {
+    const { indicator } = renderPressedGroup();
+    await flush();
+    const el = indicator();
+    if (!el) throw new Error("no indicator");
+    const writes = vi.spyOn(el.style, "setProperty");
+
+    FakeResizeObserver.instances[0]?.fire();
+    await flush();
+
+    expect(writes).not.toHaveBeenCalled();
+  });
+});

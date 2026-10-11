@@ -10,6 +10,15 @@ import {
 } from "solid-js";
 import { cn } from "../lib/utils.js";
 
+function samePos(a: Pos, b: Pos): boolean {
+  return (
+    a.offset === b.offset &&
+    a.size === b.size &&
+    a.cross === b.cross &&
+    a.crossOffset === b.crossOffset
+  );
+}
+
 function readTranslate(el: HTMLElement): [number, number] {
   const t = getComputedStyle(el).translate;
   if (!t || t === "none") return [0, 0];
@@ -117,6 +126,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
   let slideTimer: ReturnType<typeof setTimeout> | undefined;
   const place = (el: HTMLElement, next: Pos) => {
     const prev = pos();
+    if (prev !== null && measuredEl === el && samePos(prev, next)) return;
     const moved = measuredEl !== undefined && measuredEl !== el && prev !== null;
     measuredEl = el;
     if (moved) {
@@ -250,7 +260,9 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
     // Attribute-based selection (e.g. Kobalte's [data-selected]/[data-highlighted]):
     // re-slide when the active child's marker attribute moves, or when items are
     // added/removed, so newly-mounted items land under the same observer.
-    const mo = new MutationObserver(() => {
+    const mo = new MutationObserver((records) => {
+      // Own style writes land in this subtree; Chromium up to 131 reports same-value custom property writes.
+      if (records.every((record) => record.attributeName === "style")) return;
       syncObservedItems();
       queueMicrotask(measure);
     });
