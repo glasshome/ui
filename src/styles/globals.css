@@ -801,9 +801,10 @@
   pointer-events: none;
   --glass-tone: var(--selection-tone, var(--material-accent));
 }
+/* Hidden, not removed: a display swap would lay out on every selection change. */
 [data-selection-highlight] {
   inset: var(--selection-inset, 0);
-  display: none;
+  visibility: hidden;
 }
 /* Layered, so a material's own corners (Ink's hand-drawn ones are unlayered) still win. */
 @layer base {
@@ -818,9 +819,9 @@
 [data-selected] > [data-selection-highlight][data-on="selected"],
 [data-highlighted] > [data-selection-highlight][data-on="highlighted"],
 [data-lit] > [data-selection-highlight][data-on="lit"] {
-  display: block;
+  visibility: inherit;
 }
-[data-selection-highlight][data-landing] {
+[data-on][data-selection-highlight][data-landing] {
   visibility: hidden;
 }
 /* Its transparent border is part of the segment the old indicator covered. */
