@@ -18,6 +18,20 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.33.0](https://github.com/glasshome/ui/compare/v1.32.0...v1.33.0) (2026-10-11)
+
+
+### Features
+
+* **testing:** deny unstubbed fetch in DOM tests ([30be630](https://github.com/glasshome/ui/commit/30be630f74d9fd76efeb0a49cb44d0a8becdadac))
+* **testing:** one fake-time door and settled animations for DOM tests ([72a1ecd](https://github.com/glasshome/ui/commit/72a1ecd9aecc4eec49d47c7a0b675c48b2d088bc))
+* **testing:** useSystemTime pins Date without faking timers ([ae06666](https://github.com/glasshome/ui/commit/ae066663c9d3f2f84da4363916b14c7ce481f364))
+
+
+### Bug Fixes
+
+* **testing:** useFakeTime restores real timers per test, also when the module graph is shared across files ([5d87e50](https://github.com/glasshome/ui/commit/5d87e5042862bf1b10a85e6ffeb7071005057e35))
+
 ## [1.32.0](https://github.com/glasshome/ui/compare/v1.31.1...v1.32.0) (2026-10-11)
 
 
