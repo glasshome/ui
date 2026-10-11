@@ -8,6 +8,8 @@ import { PickerSearch } from "./picker-search.js";
 import { PickerTrigger } from "./picker-trigger.js";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover.js";
 
+export const ICON_SEARCH_DEBOUNCE_MS = 300;
+
 const ICON_LIBRARIES = [
   { prefix: "", label: "All" },
   { prefix: "mdi", label: "MDI" },
@@ -296,7 +298,7 @@ export function IconPicker(props: IconPickerProps) {
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, ICON_SEARCH_DEBOUNCE_MS);
   };
 
   const defaultIcons = createMemo(() => {

@@ -18,6 +18,7 @@ import { Dynamic, Portal } from "solid-js/web";
 import { Z } from "../../lib/layers.js";
 import { OVERLAY_SURFACE_OPAQUE } from "../../lib/overlay-classes.js";
 import { cn } from "../../lib/utils.js";
+import { whenAnimationsSettle } from "../../lib/when-animations-settle.js";
 import {
   callEventHandler,
   createModalLabels,
@@ -216,25 +217,22 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     el.style.transform = "";
   };
 
-  const onAnimationEnd = (e: AnimationEvent) => {
-    if (e.target !== el) return;
+  createEffect(() => {
     const s = ctx.state();
-    if (s === "opening" && e.animationName === "bs-slide-up") ctx.setState("open");
-    else if (s === "closing" && e.animationName === "bs-slide-down") ctx.setState("closed");
-  };
-
-  const onTransitionEnd = (e: TransitionEvent) => {
-    if (e.target !== el) return;
-    if (e.propertyName !== "transform") return;
-    const s = ctx.state();
-    if (s === "snapping") {
-      ctx.setState("open");
-      clearAnimInline();
-    } else if (s === "closing") {
-      ctx.setState("closed");
-      clearAnimInline();
-    }
-  };
+    if (s !== "opening" && s !== "closing" && s !== "snapping") return;
+    const node = el;
+    if (!node) return;
+    let stale = false;
+    onCleanup(() => (stale = true));
+    void whenAnimationsSettle(node).then(() => {
+      if (stale) return;
+      if (s === "opening") ctx.setState("open");
+      else {
+        ctx.setState(s === "snapping" ? "open" : "closed");
+        clearAnimInline();
+      }
+    });
+  });
 
   createEffect(() => {
     const node = ctx.contentRef();
@@ -352,8 +350,6 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
         data-sheet-content=""
         data-state={ctx.state()}
         data-reduced-motion={prefersReducedMotion() ? "" : undefined}
-        onAnimationEnd={onAnimationEnd}
-        onTransitionEnd={onTransitionEnd}
         style={{
           ...(typeof local.style === "object" ? local.style : {}),
           "z-index": Z.sheet,

@@ -1,7 +1,8 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { Toggle } from "../../src/solid/toggle.js";
 import { ToggleGroup, ToggleGroupItem } from "../../src/solid/toggle-group.js";
+import { useFakeTime } from "../harness/fake-time.js";
 
 afterEach(cleanup);
 
@@ -140,6 +141,7 @@ describe("ToggleGroup", () => {
   });
 
   it("in scroll mode brings a pressed item past the edge into view and marks the clipped edge", async () => {
+    useFakeTime();
     const view = render(() => (
       <ToggleGroup scroll value="far">
         <ToggleGroupItem value="near">Near</ToggleGroupItem>
@@ -158,7 +160,7 @@ describe("ToggleGroup", () => {
       scrolledTo = opts.left;
     }) as typeof root.scrollTo;
 
-    await new Promise((r) => requestAnimationFrame(() => r(null)));
+    vi.advanceTimersToNextFrame();
 
     expect(scrolledTo).toBe(240);
     expect(root.hasAttribute("data-clip-end")).toBe(true);

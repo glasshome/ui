@@ -130,3 +130,20 @@ describe("BottomSheet focus trap", () => {
     focus.mockRestore();
   });
 });
+
+describe("BottomSheet motion", () => {
+  it("settles from opening to open once nothing animates", async () => {
+    render(() => (
+      <BottomSheet open>
+        <BottomSheetPortal>
+          <BottomSheetContent ariaLabel="Sheet">body</BottomSheetContent>
+        </BottomSheetPortal>
+      </BottomSheet>
+    ));
+    const panel = document.querySelector<HTMLElement>('[data-slot="bottom-sheet-content"]');
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(panel?.getAttribute("data-state")).toBe("open");
+  });
+});

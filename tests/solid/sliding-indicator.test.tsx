@@ -7,6 +7,7 @@ import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SlidingIndicator } from "../../src/solid/sliding-indicator.js";
+import { useFakeTime } from "../harness/fake-time.js";
 
 type Rect = { left: number; top: number; width: number; height: number };
 
@@ -64,7 +65,8 @@ async function flush() {
 
 async function frames(count = 3) {
   for (let i = 0; i < count; i++) {
-    await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+    vi.advanceTimersToNextFrame();
+    await flush();
   }
   await flush();
 }
@@ -144,6 +146,7 @@ describe("SlidingIndicator", () => {
   });
 
   it("retries after a zero-size pass instead of resting on it", async () => {
+    useFakeTime();
     const { container } = render(() => (
       <SlidingIndicator active={0}>
         <button type="button">One</button>

@@ -1,7 +1,8 @@
 import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { Dock } from "../../src/solid/dock.js";
+import { useFakeTime } from "../harness/fake-time.js";
 
 describe("Dock paging", () => {
   const items = (n: number) =>
@@ -35,14 +36,16 @@ describe("Dock paging", () => {
   });
 
   it("shows no page dots while every item fits", async () => {
+    useFakeTime();
     measured(300, 400);
     const { container } = render(() => <Dock items={items(3)} />);
-    await new Promise((r) => setTimeout(r, 150));
+    vi.advanceTimersToNextFrame();
 
     expect(container.querySelector('[data-slot="dock-pages"]')).toBeNull();
   });
 
   it("takes the room it has from the box the app gave it, not from its own surface", async () => {
+    useFakeTime();
     // The surface hugs the strip; only the outer box knows what the app allowed.
     Object.defineProperty(HTMLElement.prototype, "scrollWidth", {
       configurable: true,
@@ -60,16 +63,17 @@ describe("Dock paging", () => {
       },
     });
     const { container } = render(() => <Dock items={items(10)} />);
-    await new Promise((r) => setTimeout(r, 150));
+    vi.advanceTimersToNextFrame();
 
     expect(container.querySelector('[data-slot="dock-pages"]')).toBeNull();
     expect(container.querySelector<HTMLElement>('[data-slot="dock-bar"]')?.style.width).toBe("");
   });
 
   it("shows a dot per page once the strip overflows, the first one current", async () => {
+    useFakeTime();
     measured(1000, 400);
     const { container } = render(() => <Dock items={items(12)} />);
-    await new Promise((r) => setTimeout(r, 150));
+    vi.advanceTimersToNextFrame();
 
     const dots = container.querySelectorAll('[data-slot="dock-pages"] button');
     expect(dots).toHaveLength(3);
@@ -78,9 +82,10 @@ describe("Dock paging", () => {
   });
 
   it("snaps the strip instead of free-scrolling it", async () => {
+    useFakeTime();
     measured(1000, 400);
     const { container } = render(() => <Dock items={items(12)} />);
-    await new Promise((r) => setTimeout(r, 150));
+    vi.advanceTimersToNextFrame();
 
     const bar = container.querySelector('[data-slot="dock-bar"]');
     expect(bar?.className).toContain("snap-x");

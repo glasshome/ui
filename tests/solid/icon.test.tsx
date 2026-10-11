@@ -3,8 +3,9 @@
  * name is unknown, and the same node kept throughout (no remount). */
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal, Index } from "solid-js";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { Icon, provideIcons } from "../../src/solid/icon.js";
+import { useFakeTime } from "../harness/fake-time.js";
 
 const PLUS = { body: '<path d="M5 12h14m-7-7v14"/>', width: 24, height: 24 };
 
@@ -35,6 +36,7 @@ describe("Icon", () => {
   });
 
   it("holds a 1em placeholder for an unknown icon and fills it when the batch resolves", async () => {
+    useFakeTime();
     const asked: string[][] = [];
     provideIcons({
       bundled: {},
@@ -52,16 +54,17 @@ describe("Icon", () => {
     const [first, second] = [...container.querySelectorAll("svg")];
     expect(first?.innerHTML).toBe("");
     expect(first?.getAttribute("width")).toBe("16");
-    await new Promise((r) => setTimeout(r, 0));
+    await vi.advanceTimersByTimeAsync(0);
     expect(asked).toEqual([["mdi:cctv", "mdi:nope"]]);
     expect(first?.innerHTML).toContain("M5 12h14");
     expect(second?.innerHTML).toBe("");
     expect(container.querySelectorAll("svg")[0]).toBe(first);
-    await new Promise((r) => setTimeout(r, 0));
+    await vi.advanceTimersByTimeAsync(0);
     expect(asked.length).toBe(1);
   });
 
   it("asks once for an icon that mounts again while its batch is out", async () => {
+    useFakeTime();
     const asked: string[][] = [];
     let answer = (_: Record<string, typeof PLUS>) => {};
     provideIcons({
@@ -75,11 +78,11 @@ describe("Icon", () => {
     const { container } = render(() => (
       <Index each={Array.from({ length: shown() })}>{() => <Icon icon="mdi:check" />}</Index>
     ));
-    await new Promise((r) => setTimeout(r, 0));
+    await vi.advanceTimersByTimeAsync(0);
     setShown(2);
-    await new Promise((r) => setTimeout(r, 0));
+    await vi.advanceTimersByTimeAsync(0);
     answer({ "mdi:check": PLUS });
-    await new Promise((r) => setTimeout(r, 0));
+    await vi.advanceTimersByTimeAsync(0);
     expect(asked).toEqual([["mdi:check"]]);
     for (const svg of container.querySelectorAll("svg"))
       expect(svg.innerHTML).toContain("M5 12h14");

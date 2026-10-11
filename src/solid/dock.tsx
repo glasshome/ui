@@ -53,6 +53,8 @@ interface DockIconButtonProps extends ComponentProps<"button"> {
   badge?: number;
 }
 
+export const DOCK_PAGE_MS = 300;
+
 const DockIconButton: Component<DockIconButtonProps> = (props) => {
   // Kobalte's button root narrows `type`; Solid's ComponentProps<"button"> also
   // admits "menu", so it is split off rather than spread.
@@ -221,7 +223,7 @@ const Dock: Component<DockProps> = (props) => {
       Math.floor(((point.x - surface.left) / surface.width) * pages()),
     );
     if (target === page()) return;
-    const timer = setTimeout(() => goToPage(target), 300);
+    const timer = setTimeout(() => goToPage(target), DOCK_PAGE_MS);
     onCleanup(() => clearTimeout(timer));
   });
 
