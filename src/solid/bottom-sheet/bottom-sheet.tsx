@@ -19,6 +19,7 @@ import { Z } from "../../lib/layers.js";
 import { OVERLAY_SURFACE_OPAQUE } from "../../lib/overlay-classes.js";
 import { cn } from "../../lib/utils.js";
 import { whenAnimationsSettle } from "../../lib/when-animations-settle.js";
+import { isSheetMotion } from "./sheet-motion.js";
 import {
   callEventHandler,
   createModalLabels,
@@ -187,11 +188,6 @@ interface BottomSheetContentProps extends ComponentProps<"div"> {
   /** Names a sheet that has no `BottomSheetTitle`. A registered Title wins. */
   ariaLabel?: string;
 }
-
-const isSheetMotion = (a: Animation) =>
-  "animationName" in a
-    ? a.animationName === "bs-slide-up" || a.animationName === "bs-slide-down"
-    : "transitionProperty" in a && a.transitionProperty === "transform";
 
 const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => {
   const [local, rest] = splitProps(props, [
