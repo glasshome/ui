@@ -9,7 +9,6 @@ import {
   splitProps,
 } from "solid-js";
 import { cn } from "../lib/utils.js";
-import { whenAnimationsSettle } from "../lib/when-animations-settle.js";
 
 function samePos(a: Pos, b: Pos): boolean {
   return (
@@ -257,9 +256,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
   onMount(() => {
     if (!containerRef) return;
     ro = new ResizeObserver(() => measure());
-    void whenAnimationsSettle(containerRef, { subtree: true }).then(() => {
-      if (!disposed) measure();
-    });
+    containerRef?.addEventListener("animationend", measure);
     ro.observe(containerRef);
     // Attribute-based selection (e.g. Kobalte's [data-selected]/[data-highlighted]):
     // re-slide when the active child's marker attribute moves, or when items are
@@ -297,6 +294,7 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
       ro?.disconnect();
       mo.disconnect();
       containerRef?.removeEventListener("focusin", onFocusIn);
+      containerRef?.removeEventListener("animationend", measure);
     });
   });
 

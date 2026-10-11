@@ -30,3 +30,13 @@ it("waits for every running animation, and survives a cancelled one", async () =
   await done;
   expect(settled).toBe(true);
 });
+
+it("ignores animations the filter rejects", async () => {
+  const el = withAnimations([
+    { finished: new Promise<void>(() => {}), id: "ambient" } as never,
+    { finished: Promise.resolve(), id: "slide" } as never,
+  ]);
+  await whenAnimationsSettle(el, {
+    filter: (a) => (a as unknown as { id: string }).id === "slide",
+  });
+});

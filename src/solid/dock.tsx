@@ -53,7 +53,7 @@ interface DockIconButtonProps extends ComponentProps<"button"> {
   badge?: number;
 }
 
-export const DOCK_PAGE_MS = 300;
+const DOCK_PAGE_MS = 300;
 
 const DockIconButton: Component<DockIconButtonProps> = (props) => {
   // Kobalte's button root narrows `type`; Solid's ComponentProps<"button"> also

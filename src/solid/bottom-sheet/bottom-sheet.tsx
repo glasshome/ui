@@ -188,6 +188,11 @@ interface BottomSheetContentProps extends ComponentProps<"div"> {
   ariaLabel?: string;
 }
 
+const isSheetMotion = (a: Animation) =>
+  "animationName" in a
+    ? a.animationName === "bs-slide-up" || a.animationName === "bs-slide-down"
+    : "transitionProperty" in a && a.transitionProperty === "transform";
+
 const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => {
   const [local, rest] = splitProps(props, [
     "class",
@@ -224,7 +229,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     if (!node) return;
     let stale = false;
     onCleanup(() => (stale = true));
-    void whenAnimationsSettle(node).then(() => {
+    void whenAnimationsSettle(node, { filter: isSheetMotion }).then(() => {
       if (stale) return;
       if (s === "opening") ctx.setState("open");
       else {
