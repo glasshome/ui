@@ -9,7 +9,6 @@ const fire = (target: EventTarget, type: string) => {
 };
 
 describe("spendLongPress", () => {
-
   it("keeps the browser's long press off what a hold opened until the finger lifts", async () => {
     useFakeTime();
     const sheet = document.body.appendChild(document.createElement("div"));
