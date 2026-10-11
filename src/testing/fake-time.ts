@@ -8,3 +8,11 @@ export function useFakeTime(config?: {
     vi.useRealTimers();
   });
 }
+
+export function useSystemTime(at: number | Date): void {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(at);
+  onTestFinished(() => {
+    vi.useRealTimers();
+  });
+}
