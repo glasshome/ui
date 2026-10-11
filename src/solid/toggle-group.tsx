@@ -105,7 +105,7 @@ const ToggleGroupItem: Component<
           size: context.size || local.size,
         }),
         // Wrapping is plain CSS: an item never shrinks below its label, so a row that runs out of width breaks.
-        "relative min-w-max flex-1 shrink-0 rounded-md px-4 shadow-none focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first-of-type:border-l",
+        "relative isolate min-w-max flex-1 shrink-0 rounded-md px-4 shadow-none focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first-of-type:border-l",
         // A hover fill would read as a second, squarer selection, so hover only tints the text.
         context.sliding
           ? "hover:text-(--material-accent)"

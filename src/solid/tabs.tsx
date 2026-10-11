@@ -68,7 +68,7 @@ const TabsTrigger: Component<ComponentProps<typeof TabsPrimitive.Trigger> & { ic
       class={cn(
         SEGMENT_ITEM,
         PRESS_DIP,
-        "relative hover:text-(--material-accent)/80 data-[selected]:text-(--material-accent)",
+        "relative isolate hover:text-(--material-accent)/80 data-[selected]:text-(--material-accent)",
         local.icon && "h-auto flex-1 flex-col gap-1 py-2 text-xs",
         local.class,
       )}

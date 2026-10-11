@@ -73,7 +73,7 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
         type="button"
         data-slot="dock-item"
         class={cn(
-          "group relative flex size-11 touch-manipulation items-center justify-center rounded-lg transition-transform duration-(--duration-micro) sm:size-12",
+          "group relative isolate flex size-11 touch-manipulation items-center justify-center rounded-lg transition-transform duration-(--duration-micro) sm:size-12",
           PRESS_DIP,
           local.class,
         )}
