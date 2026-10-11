@@ -2,6 +2,7 @@ import { cleanup, render } from "@solidjs/testing-library";
 import type { JSX } from "solid-js";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SelectionHighlight, SelectionScope } from "../../src/solid/selection.js";
+import { useFakeTime } from "../../src/testing/index.js";
 
 type Box = { left: number; top: number; width: number; height: number };
 
@@ -217,29 +218,29 @@ describe("SelectionScope", () => {
   });
 
   it("flies across a short empty gap, not a long one", async () => {
-    vi.useFakeTimers({ toFake: ["performance"] });
+    useFakeTime({ toFake: ["performance"] });
     const { items, select } = renderGroup();
     items[0]?.removeAttribute("data-pressed");
     await flush();
-    vi.advanceTimersByTime(50);
+    await vi.advanceTimersByTimeAsync(50);
     await select(1);
     expect(flights()).toHaveLength(1);
 
     items[1]?.removeAttribute("data-pressed");
     await flush();
-    vi.advanceTimersByTime(500);
+    await vi.advanceTimersByTimeAsync(500);
     await select(2);
     expect(flights()).toHaveLength(1);
   });
 
   it("starts from where the flyer was when the pointer crosses a gap mid-flight", async () => {
-    vi.useFakeTimers({ toFake: ["performance"] });
+    useFakeTime({ toFake: ["performance"] });
     const { items, flyer, select } = renderGroup();
     await select(1);
     place(flyer, { left: 40, top: 0, width: 80, height: 40 });
     items[1]?.removeAttribute("data-pressed");
     await flush();
-    vi.advanceTimersByTime(20);
+    await vi.advanceTimersByTimeAsync(20);
     await select(2);
 
     // flyer centre 80 to item centre 230, whose box starts at 160
