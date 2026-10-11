@@ -75,6 +75,7 @@ const STRETCH_PX = 6; // grow along travel
 const SQUASH_PX = 6; // pinch perpendicular
 const DEFORM_MAX = 0.14;
 
+/** @deprecated Use `SelectionScope` with a `SelectionHighlight` in each item; removed in 2.0. */
 export function SlidingIndicator(props: SlidingIndicatorProps) {
   const [local, rest] = splitProps(props, [
     "active",

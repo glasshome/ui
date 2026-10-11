@@ -254,7 +254,7 @@ Motion is one system, not per-component flair. Four rules, all held by
    opened it: a picker or menu panel unrolls out of its trigger's box
    (`MORPH_MOTION`, `FIELD_MOTION`), a dialog rises into place (`MODAL_MOTION`),
    a card with sub-options grows to reveal them (OptionCard's drawer), an
-   indicator slides and stretches (SlidingIndicator, position bars). Nothing is
+   indicator slides and stretches (SelectionScope, position bars). Nothing is
    swapped in below or beside its origin.
 3. **Children arrive one after another.** The rows behind a growing edge stagger
    in (`STAGGER` = `.gh-stagger`, base 80ms, 60ms per row, capped), so a panel is

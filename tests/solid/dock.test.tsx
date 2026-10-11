@@ -151,4 +151,28 @@ describe("Dock drop target", () => {
     // Unmounting clears the dock's overflow timer, which would otherwise fire after teardown.
     unmount();
   });
+
+  it("lights the active item, and lends the light to a drop target while a drag is over it", () => {
+    const [target, setTarget] = createSignal<string | null>(null);
+    const { container, unmount } = render(() => (
+      <Dock
+        items={["a", "b"].map((id) => ({
+          id,
+          icon: <span />,
+          label: id,
+          isActive: id === "a",
+          isDropTarget: id === target(),
+        }))}
+      />
+    ));
+    const lit = () =>
+      [...container.querySelectorAll("[data-lit]")].map((e) => e.getAttribute("data-dock-id"));
+    for (const item of container.querySelectorAll('[data-slot="dock-item"]')) {
+      expect(item.firstElementChild?.getAttribute("data-on")).toBe("lit");
+    }
+    expect(lit()).toEqual(["a"]);
+    setTarget("b");
+    expect(lit()).toEqual(["b"]);
+    unmount();
+  });
 });

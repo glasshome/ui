@@ -1,5 +1,3 @@
-/* Every MENU_ITEM row is rounded-sm, so the one sliding highlight behind it
- * must be too: a rounded-lg default pill overhangs the row's corners. */
 import { cleanup, fireEvent, render, waitFor } from "@solidjs/testing-library";
 import type { JSX } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
@@ -45,54 +43,23 @@ afterEach(() => {
   document.body.innerHTML = "";
 });
 
-// The indicator only paints once it measures real geometry; happy-dom reports
-// zeros, so the whole assertion runs under a faked layout.
-async function withMeasurableLayout<T>(fn: () => Promise<T>): Promise<T> {
-  const rect = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "getBoundingClientRect");
-  const width = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "clientWidth");
-  const height = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "clientHeight");
-  HTMLElement.prototype.getBoundingClientRect = () =>
-    ({ x: 0, y: 0, top: 0, left: 0, right: 200, bottom: 34, width: 200, height: 34 }) as DOMRect;
-  Object.defineProperty(HTMLElement.prototype, "clientWidth", {
-    configurable: true,
-    get: () => 200,
+/** The row's own highlight, inside a selection scope: it inherits the row's radius and box. */
+async function rowHighlight(open: () => void, rowSelector: string) {
+  open();
+  const row = await waitFor(() => {
+    const el = document.querySelector<HTMLElement>(rowSelector);
+    if (!el) throw new Error(`no row for ${rowSelector}`);
+    return el;
   });
-  Object.defineProperty(HTMLElement.prototype, "clientHeight", {
-    configurable: true,
-    get: () => 34,
-  });
-  try {
-    return await fn();
-  } finally {
-    if (rect) Object.defineProperty(HTMLElement.prototype, "getBoundingClientRect", rect);
-    if (width) Object.defineProperty(HTMLElement.prototype, "clientWidth", width);
-    if (height) Object.defineProperty(HTMLElement.prototype, "clientHeight", height);
-  }
-}
-
-async function highlightRadius(open: () => void, rowSelector: string) {
-  return withMeasurableLayout(async () => {
-    open();
-    const row = await waitFor(() => {
-      const el = document.querySelector<HTMLElement>(rowSelector);
-      if (!el) throw new Error(`no row for ${rowSelector}`);
-      return el;
-    });
-    row.setAttribute("data-highlighted", "");
-    await waitFor(() => {
-      const indicator = document.querySelector("[data-sliding-indicator]");
-      if (!indicator) throw new Error("indicator never painted");
-      return indicator;
-    });
-    return document.querySelector<HTMLElement>("[data-sliding-indicator]")?.className ?? "";
-  });
+  expect(row.closest("[data-selection-scope]")).not.toBeNull();
+  return row.firstElementChild;
 }
 
 const withData = (ui: () => JSX.Element) =>
   render(() => <EntityDataContext.Provider value={adapter}>{ui()}</EntityDataContext.Provider>);
 
-describe("picker highlight radius", () => {
-  it("Select highlights an item at the row radius", async () => {
+describe("picker highlight", () => {
+  it("Select rows carry their own highlight", async () => {
     render(() => (
       <Select
         options={["Apple", "Banana"]}
@@ -103,26 +70,31 @@ describe("picker highlight radius", () => {
         <SelectContent />
       </Select>
     ));
-    expect(await highlightRadius(() => {}, '[data-slot="select-item"]')).toContain("rounded-sm");
+    const highlight = await rowHighlight(() => {}, '[data-slot="select-item"]');
+    expect(highlight?.getAttribute("data-on")).toBe("highlighted");
   });
 
-  it("AreaPicker highlights a row at the row radius", async () => {
+  it("AreaPicker rows carry their own highlight", async () => {
     const { container } = withData(() => <AreaPicker value="" onChange={() => {}} />);
     const trigger = container.querySelector("button");
     if (!trigger) throw new Error("no trigger");
-    expect(
-      await highlightRadius(() => fireEvent.click(trigger), '[data-slot="area-picker-row"]'),
-    ).toContain("rounded-sm");
+    const highlight = await rowHighlight(
+      () => fireEvent.click(trigger),
+      '[data-slot="area-picker-row"]',
+    );
+    expect(highlight?.getAttribute("data-on")).toBe("highlighted");
   });
 
-  it("EntitySelector highlights a row at the row radius", async () => {
+  it("EntitySelector rows carry their own highlight", async () => {
     const { container } = withData(() => (
       <EntitySelector domain="light" entityIds={[]} onEntityIdsChange={() => {}} />
     ));
     const trigger = container.querySelector("button");
     if (!trigger) throw new Error("no trigger");
-    expect(
-      await highlightRadius(() => fireEvent.click(trigger), '[data-slot="entity-selector-row"]'),
-    ).toContain("rounded-sm");
+    const highlight = await rowHighlight(
+      () => fireEvent.click(trigger),
+      '[data-slot="entity-selector-row"]',
+    );
+    expect(highlight?.getAttribute("data-on")).toBe("highlighted");
   });
 });

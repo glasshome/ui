@@ -5,6 +5,7 @@ import { ICON_PILL, ICON_PILL_TINT } from "../lib/pill-classes.js";
 import { cn } from "../lib/utils.js";
 import { Checkbox } from "./checkbox.js";
 import { Icon } from "./icon.js";
+import { SelectionHighlight } from "./selection.js";
 
 /* One row for every picker that lists things with an icon (entities, areas):
  * icon well, title over a muted line, optional meta, and the selection
@@ -47,6 +48,7 @@ export function PickerRow(props: PickerRowProps) {
       style={{ "min-height": `${PICKER_ROW_HEIGHT}px` }}
       {...rest}
     >
+      <SelectionHighlight />
       <Show when={local.icon}>
         {(icon) => (
           <div

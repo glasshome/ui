@@ -18,7 +18,7 @@ import { HOLD_MOTION, PRESS_DIP } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 import { Badge } from "./badge.js";
 import { pageCount, pageOf, pageOffset, stripWidth } from "./dock-paging.js";
-import { SlidingIndicator } from "./sliding-indicator.js";
+import { SelectionHighlight, SelectionScope } from "./selection.js";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js";
 
 interface DockItem {
@@ -48,7 +48,7 @@ interface DockIconButtonProps extends ComponentProps<"button"> {
   icon: Component<{ class?: string }> | JSX.Element;
   label: string;
   isActive?: boolean;
-  /** Sits on the sliding pill: the active item, or the one a drag would land on. */
+  /** Wears the selection highlight: the active item, or the one a drag would land on. */
   lit?: boolean;
   badge?: number;
 }
@@ -79,8 +79,10 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
         )}
         aria-label={local.label}
         aria-current={local.isActive ? "page" : undefined}
+        data-lit={local.lit ? "" : undefined}
         {...rest}
       >
+        <SelectionHighlight />
         <div
           data-slot="dock-item-icon"
           class={cn(
@@ -146,7 +148,6 @@ const Dock: Component<DockProps> = (props) => {
   const [page, setPage] = createSignal(0);
   const [viewportWidth, setViewportWidth] = createSignal(0);
 
-  // The moving background: the shared SlidingIndicator tracks the active item.
   // A memo: the items list is rebuilt on every hover change, and only a new active item may scroll the strip.
   const activeIndex = createMemo(() => {
     const i = local.items.findIndex((it) => it.isActive);
@@ -331,7 +332,7 @@ const Dock: Component<DockProps> = (props) => {
             "min-width": needsScroll() ? "auto" : "fit-content",
           }}
         >
-          <SlidingIndicator active={pillIndex()} class="flex items-center gap-0.5 sm:gap-1">
+          <SelectionScope marker="lit" class="flex items-center gap-0.5 sm:gap-1">
             <Index each={local.items}>
               {(item, i) => (
                 <DockIconButton
@@ -347,7 +348,7 @@ const Dock: Component<DockProps> = (props) => {
                 />
               )}
             </Index>
-          </SlidingIndicator>
+          </SelectionScope>
         </div>
         <Show when={pages() > 1}>
           <div

@@ -298,6 +298,7 @@
   --duration-micro: 120ms;
   --duration-state: 160ms;
   --duration-expand: 200ms;
+  --duration-slide: 220ms;
   /* The hold fill: HOLD_MS - HOLD_GRACE_MS (lib/hold.ts), so it completes as the hold fires. */
   --duration-hold: 250ms;
   /* Ambient motion is an event (SPEC motion rule 5): 1 while the host holds
@@ -589,6 +590,7 @@ html[data-motion="live"] {
     --duration-expand: 0ms;
     --duration-morph: 0ms;
     --duration-hold: 0ms;
+    --duration-slide: 0ms;
   }
   /* tw-animate enter/exit classes carry their own fallback duration. */
   .animate-in,
@@ -610,6 +612,15 @@ html[data-motion="live"] {
 }
 
 /* Accessibility: minimize animations/transitions when reduce-motion is active */
+/* The tokens too, so motion timed in JS (Web Animations) stops as well. */
+.reduce-motion {
+  --duration-micro: 0ms;
+  --duration-state: 0ms;
+  --duration-expand: 0ms;
+  --duration-morph: 0ms;
+  --duration-hold: 0ms;
+  --duration-slide: 0ms;
+}
 .reduce-motion,
 .reduce-motion * {
   animation-duration: 0.01ms !important;

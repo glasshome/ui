@@ -768,7 +768,7 @@
     translate: 0 0;
   }
 }
-.gh-stagger > :not([role="group"]),
+.gh-stagger > :not([role="group"], [data-selection-flyer]),
 .gh-stagger > [role="group"] > * {
   animation: stagger-in calc(var(--duration-morph) * 0.5) var(--ease-emphasis) both;
   animation-delay: calc(var(--stagger-base, 80ms) + var(--i, 0) * var(--stagger-step, 60ms));
@@ -790,6 +790,43 @@
 }
 .gh-stagger > :nth-child(n + 7) {
   --i: 6;
+}
+
+/* Selection (solid/selection.tsx). Plain CSS on data attributes: a published widget compiles its
+ * utilities from the ui source it was built against, so a new utility here would be missing there. */
+[data-selection-highlight],
+[data-selection-flyer] {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  --glass-tone: var(--selection-tone, var(--material-accent));
+}
+[data-selection-highlight] {
+  inset: var(--selection-inset, 0);
+  border-radius: inherit;
+  display: none;
+}
+[data-pressed] > [data-selection-highlight][data-on="pressed"],
+[data-selected] > [data-selection-highlight][data-on="selected"],
+[data-highlighted] > [data-selection-highlight][data-on="highlighted"],
+[data-lit] > [data-selection-highlight][data-on="lit"] {
+  display: block;
+}
+[data-selection-highlight][data-landing] {
+  visibility: hidden;
+}
+/* Its transparent border is part of the segment the old indicator covered. */
+[data-slot="toggle-group-item"] {
+  --selection-inset: -1px;
+}
+[data-selection-flyer] {
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  transition: none;
+}
+[data-selection-flyer][data-flying] {
+  visibility: inherit;
 }
 
 /* Icon: the box a glyph sits in, sized by its width/height attributes. */

@@ -38,10 +38,16 @@ describe("Tabs", () => {
     expect(content?.className).not.toMatch(/(^|\s)mt-/);
   });
 
-  it("gives the trigger and the sliding indicator the same corner radius", () => {
+  it("gives every trigger its own highlight, shown by Kobalte's selected marker", () => {
     const { container } = renderTabs();
-    const trigger = container.querySelector<HTMLElement>('[data-slot="tabs-trigger"]');
-    expect(trigger?.className).toContain("rounded-md");
+    const triggers = container.querySelectorAll<HTMLElement>('[data-slot="tabs-trigger"]');
+    expect(triggers.length).toBeGreaterThan(0);
+    for (const trigger of triggers) {
+      const highlight = trigger.firstElementChild;
+      expect(highlight?.hasAttribute("data-selection-highlight")).toBe(true);
+      expect(highlight?.getAttribute("data-on")).toBe("selected");
+    }
+    expect(container.querySelector("[data-selection-scope]")).not.toBeNull();
   });
 
   it("routes the class prop through to the tabs list and trigger", () => {

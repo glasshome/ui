@@ -26,7 +26,7 @@ import { PICKER_ROW_HEIGHT, PickerRow } from "./picker-row.js";
 import { PickerSearch } from "./picker-search.js";
 import { PickerTrigger } from "./picker-trigger.js";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover.js";
-import { SlidingIndicator } from "./sliding-indicator.js";
+import { SelectionScope } from "./selection.js";
 
 interface EntitySelectorProps {
   entityIds: string[];
@@ -529,10 +529,8 @@ export function EntitySelector(props: EntitySelectorProps) {
             </div>
           }
         >
-          <SlidingIndicator
-            activeSelector="[data-highlighted]"
-            orientation="vertical"
-            indicatorClass="rounded-sm"
+          <SelectionScope
+            marker="highlighted"
             role="presentation"
             style={{ height: `${totalHeight()}px` }}
           >
@@ -554,7 +552,7 @@ export function EntitySelector(props: EntitySelectorProps) {
                 )
               }
             </For>
-          </SlidingIndicator>
+          </SelectionScope>
         </Show>
       </div>
       <Show when={diagnosticCount() > 0 || props.deviceClass}>

@@ -5,6 +5,10 @@ export const ALLOW: Array<[name: string, reason: string]> = [
     "Its mark loads /assets/glasshome_logo.png, which dev/ does not serve, so a specimen 404s and gallery:shots fails on the console error (GALLERY-PLAN.md gap 4).",
   ],
   [
+    "SlidingIndicator",
+    "Deprecated: it measures the active item and keeps a copy of layout. The SelectionScope specimen is what replaces it. Goes at the next major.",
+  ],
+  [
     "HeroOption",
     "Deprecated alias of OptionCard, the same function; the OptionCard specimen is its pixels. Goes at the next major.",
   ],

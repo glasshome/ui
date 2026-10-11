@@ -55,9 +55,10 @@ describe("ToggleGroup", () => {
         <ToggleGroupItem value="right">Right</ToggleGroupItem>
       </ToggleGroup>
     ));
-    // No sliding indicator paints this group, so each pressed segment keeps its
+    // No selection highlight paints this group, so each pressed segment keeps its
     // own fill, and the unpressed ones still have to answer the pointer.
-    expect(container.querySelector("[data-sliding-indicator]")).toBeNull();
+    expect(container.querySelector("[data-selection-highlight]")).toBeNull();
+    expect(container.querySelector("[data-selection-scope]")).toBeNull();
     for (const item of container.querySelectorAll<HTMLElement>('[data-slot="toggle-group-item"]')) {
       expect(item.className).toContain("not-data-[pressed]:hover:text-(--material-accent)");
       expect(item.className).not.toContain("hover:bg-muted");
@@ -65,26 +66,7 @@ describe("ToggleGroup", () => {
     }
   });
 
-  it("paints the sliding indicator in the group's tone", async () => {
-    const { container } = render(() => (
-      <ToggleGroup value="left" tone="oklch(0.66 0.2 30)">
-        <ToggleGroupItem value="left">Left</ToggleGroupItem>
-        <ToggleGroupItem value="right">Right</ToggleGroupItem>
-      </ToggleGroup>
-    ));
-    const items = container.querySelectorAll<HTMLElement>('[data-slot="toggle-group-item"]');
-    const root = items[0]?.parentElement;
-    if (!root) throw new Error("no root");
-    stubRect(root, { left: 0, top: 0, width: 160, height: 32 });
-    stubRect(items[0] as HTMLElement, { left: 0, top: 0, width: 80, height: 32 });
-    stubRect(items[1] as HTMLElement, { left: 80, top: 0, width: 80, height: 32 });
-    await flush();
-
-    const indicator = container.querySelector<HTMLElement>("[data-sliding-indicator]");
-    expect(indicator?.style.getPropertyValue("--glass-tone")).toBe("oklch(0.66 0.2 30)");
-  });
-
-  it("matches the item radius on the sliding indicator", async () => {
+  it("gives every segment its own highlight, shown by Kobalte's pressed marker", () => {
     const { container } = render(() => (
       <ToggleGroup value="left">
         <ToggleGroupItem value="left">Left</ToggleGroupItem>
@@ -92,19 +74,36 @@ describe("ToggleGroup", () => {
       </ToggleGroup>
     ));
     const items = container.querySelectorAll<HTMLElement>('[data-slot="toggle-group-item"]');
-    // The sliding indicator measures against its OWN wrapper div, one level
-    // inside the ToggleGroupPrimitive root, not the root itself.
-    const root = items[0]?.parentElement;
-    if (!root) throw new Error("no root");
-    stubRect(root, { left: 0, top: 0, width: 160, height: 32 });
-    stubRect(items[0] as HTMLElement, { left: 0, top: 0, width: 80, height: 32 });
-    stubRect(items[1] as HTMLElement, { left: 80, top: 0, width: 80, height: 32 });
-    Object.defineProperty(root, "clientWidth", { value: 160, configurable: true });
-    Object.defineProperty(root, "clientHeight", { value: 32, configurable: true });
-    await flush();
+    for (const item of items) {
+      const highlight = item.firstElementChild;
+      expect(highlight?.getAttribute("data-on")).toBe("pressed");
+      expect(highlight?.hasAttribute("data-selection-highlight")).toBe(true);
+    }
+    expect(items[0]?.hasAttribute("data-pressed")).toBe(true);
+  });
 
-    const indicator = container.querySelector<HTMLElement>("[data-sliding-indicator]");
-    expect(indicator?.className).toContain("rounded-md");
+  it("paints the highlight in the group's tone", () => {
+    const { container } = render(() => (
+      <ToggleGroup value="left" tone="oklch(0.66 0.2 30)">
+        <ToggleGroupItem value="left">Left</ToggleGroupItem>
+        <ToggleGroupItem value="right">Right</ToggleGroupItem>
+      </ToggleGroup>
+    ));
+    const scope = container.querySelector<HTMLElement>("[data-selection-scope]");
+    expect(scope?.style.getPropertyValue("--selection-tone")).toBe("oklch(0.66 0.2 30)");
+  });
+
+  it("still renders a segment given as a function of its pressed state", () => {
+    const { container } = render(() => (
+      <ToggleGroup value="left">
+        <ToggleGroupItem value="left">
+          {(state) => (state.pressed() ? "On" : "Off")}
+        </ToggleGroupItem>
+      </ToggleGroup>
+    ));
+    const item = container.querySelector<HTMLElement>('[data-slot="toggle-group-item"]');
+    expect(item?.textContent).toBe("On");
+    expect(item?.firstElementChild?.hasAttribute("data-selection-highlight")).toBe(true);
   });
 
   it("in scroll mode keeps one row and still picks on a tap", async () => {
