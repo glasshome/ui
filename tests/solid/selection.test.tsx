@@ -132,10 +132,12 @@ describe("SelectionScope", () => {
 
     expect(flights()).toHaveLength(1);
     expect(flyer.hasAttribute("data-flying")).toBe(true);
-    // centres: 40 to 230, sizes 80 to 140
-    expect(translateOf(flights()[0] as FakeAnimation)).toBe("-190px 0px");
+    // centres: 40 to 230, sizes 80 to 140; placed by translate, which lays nothing out
+    expect(translateOf(flights()[0] as FakeAnimation)).toBe("-30px 0px");
+    expect(flights()[0]?.keyframes[1]?.translate).toBe("160px 0px");
+    expect(flyer.style.translate).toBe("160px 0px");
     expect(flyer.style.width).toBe("140px");
-    expect(flyer.style.left).toBe("160px");
+    expect(flyer.style.left).toBe("");
     const landing = items[2]?.querySelector("[data-selection-highlight]");
     expect(landing?.hasAttribute("data-landing")).toBe(true);
   });
@@ -148,8 +150,8 @@ describe("SelectionScope", () => {
     await select(1);
 
     expect(flights()).toHaveLength(2);
-    // flyer centre 155 to item centre 120
-    expect(translateOf(flights()[1] as FakeAnimation)).toBe("35px 0px");
+    // flyer centre 155 to item centre 120, whose box starts at 80
+    expect(translateOf(flights()[1] as FakeAnimation)).toBe("115px 0px");
   });
 
   it("hands off to the resting highlight when the flight finishes", async () => {

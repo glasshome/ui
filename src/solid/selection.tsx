@@ -127,13 +127,18 @@ function createFlight(root: HTMLElement, flyer: HTMLElement) {
     const duration = durationMs(root);
     if (!target || !to || duration <= 0) return settle(current);
 
+    // Read before any write: a computed border-radius after a size write forces a second layout.
     const look = getComputedStyle(item);
+    const radius = look.borderRadius;
+    const tone = look.getPropertyValue("--selection-tone").trim();
+    const left = to.x - to.width / 2;
+    const top = to.y - to.height / 2;
+    const rest = `${left}px ${top}px`;
     writeStyle(flyer, "width", `${to.width}px`);
     writeStyle(flyer, "height", `${to.height}px`);
-    writeStyle(flyer, "left", `${to.x - to.width / 2}px`);
-    writeStyle(flyer, "top", `${to.y - to.height / 2}px`);
-    writeStyle(flyer, "border-radius", look.borderRadius);
-    writeStyle(flyer, "--selection-tone", look.getPropertyValue("--selection-tone").trim());
+    writeStyle(flyer, "translate", rest);
+    writeStyle(flyer, "border-radius", radius);
+    writeStyle(flyer, "--selection-tone", tone);
 
     const dx = from.x - to.x;
     const dy = from.y - to.y;
@@ -154,7 +159,7 @@ function createFlight(root: HTMLElement, flyer: HTMLElement) {
     flyer.setAttribute("data-flying", "");
     const timing: KeyframeAnimationOptions = { duration, easing: "ease-in-out" };
     running = [
-      flyer.animate([{ translate: `${dx}px ${dy}px` }, { translate: "0px 0px" }], timing),
+      flyer.animate([{ translate: `${left + dx}px ${top + dy}px` }, { translate: rest }], timing),
       flyer.animate(
         [{ scale: `${kx} ${ky}` }, { scale: `${peakX} ${peakY}` }, { scale: "1 1" }],
         timing,
