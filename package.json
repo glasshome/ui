@@ -83,7 +83,7 @@
     "check:tokens": "bun scripts/check-tokens.ts",
     "check:types": "tsc --noEmit",
     "check:publish": "publint && attw --pack . --profile esm-only --exclude-entrypoints ./styles ./styles/theme && bun scripts/check-pack.ts",
-    "dev": "tsc -b --force && vite build --watch",
+    "dev": "tsc -b tsconfig.build.json --force && vite build --watch",
     "lint": "oxlint --type-aware . && oxfmt --check .",
     "test": "vitest run",
     "test:watch": "vitest",
