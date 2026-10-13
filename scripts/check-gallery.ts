@@ -22,7 +22,7 @@ import {
 import { ALLOW } from "../dev/coverage-allow";
 
 const pkg = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const CONFIG = join(pkg, "tsconfig.test.json");
+const CONFIG = join(pkg, "tsconfig.json");
 const ENTRY = join(pkg, "src/solid/index.ts");
 const GROUPS = join(pkg, "dev/groups");
 const SCREAMING_CASE = /^[A-Z][A-Z0-9_]*$/;

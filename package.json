@@ -75,13 +75,13 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rm -rf dist && vite build && tsc",
+    "build": "rm -rf dist && vite build && tsc -p tsconfig.build.json",
     "check:structural": "bun scripts/check-structural-classes.ts",
     "check:dead": "fallow dead-code --fail-on-issues",
     "check:gallery": "bun scripts/check-gallery.ts",
     "check:styling": "fallow health --css",
     "check:tokens": "bun scripts/check-tokens.ts",
-    "check:types": "tsc --noEmit -p tsconfig.test.json",
+    "check:types": "tsc --noEmit",
     "check:publish": "publint && attw --pack . --profile esm-only --exclude-entrypoints ./styles ./styles/theme && bun scripts/check-pack.ts",
     "dev": "tsc -b --force && vite build --watch",
     "lint": "oxlint --type-aware . && oxfmt --check .",
@@ -110,6 +110,7 @@
     "@iconify-json/simple-icons": "^1.2.95",
     "@solidjs/testing-library": "^0.8.10",
     "@tailwindcss/vite": "^4.1.13",
+    "@types/bun": "^1.4.0",
     "@types/node": "^25.2.2",
     "fallow": "3.17.0",
     "happy-dom": "^20.14.0",

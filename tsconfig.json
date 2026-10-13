@@ -5,6 +5,8 @@
     "moduleResolution": "bundler",
     "customConditions": ["@glasshome/source"],
     "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "allowJs": true,
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
@@ -18,14 +20,9 @@
     "noFallthroughCasesInSwitch": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "declaration": true,
-    "declarationDir": "dist",
-    "emitDeclarationOnly": true,
-    "outDir": "dist",
-    "rootDir": "src",
-    "types": ["node", "vite/client"],
+    "types": ["node", "bun", "vite/client"],
     "lib": ["ESNext", "DOM"]
   },
-  "include": ["src/**/*"],
+  "include": ["**/*"],
   "exclude": ["node_modules", "dist"]
 }
