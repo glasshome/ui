@@ -181,6 +181,9 @@ export const MenuSubContentPart: ParentComponent<MenuSubContentProps> = (props) 
       }}
       onInteractOutside={layer.onInteractOutside}
       onCloseAutoFocus={layer.onCloseAutoFocus}
+      // Kobalte's submenu closes on any focus outside it, past preventDefault; in a shadow root every
+      // focus inside reaches the page as one on the host, so the host is excluded instead.
+      excludedElements={[() => menu.triggerRef(), layer.host]}
       data-slot={local.slotName}
       class={cn(MENU_CONTENT_CLASS, local.class)}
       {...rest}

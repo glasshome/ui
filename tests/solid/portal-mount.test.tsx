@@ -8,6 +8,15 @@ import {
 } from "../../src/solid/bottom-sheet/index.js";
 import { Button } from "../../src/solid/button.js";
 import { Dialog, DialogContent, DialogTitle } from "../../src/solid/dialog.js";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "../../src/solid/dropdown-menu.js";
 import { Popover, PopoverContent, PopoverTrigger } from "../../src/solid/popover.js";
 import { PortalMountContext } from "../../src/solid/portal-mount.js";
 import { useFakeTime } from "../../src/testing/fake-time.js";
@@ -422,5 +431,117 @@ describe("focus in a dialog inside a closed shadow root", () => {
     });
     outside.dispatchEvent(tab);
     expect(tab.defaultPrevented).toBe(false);
+  });
+});
+
+describe("the rest of the shadow-root review's cases", () => {
+  it("a press inside an open submenu keeps the menu and the submenu open", async () => {
+    const { holder, root, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const [menu, setMenu] = createSignal(true);
+    const [sub, setSub] = createSignal(false);
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <DropdownMenu open={menu()} onOpenChange={setMenu}>
+            <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuSub onOpenChange={setSub}>
+                <DropdownMenuSubTrigger>More</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem data-testid="nested" closeOnSelect={false}>
+                    Nested
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    root.querySelector<HTMLElement>('[data-slot="dropdown-menu-sub-trigger"]')?.click();
+    await layersListening();
+    const nested = root.querySelector<HTMLElement>('[data-testid="nested"]');
+    if (!nested) throw new Error("no submenu item");
+    nested.focus();
+    press(nested);
+    await layersListening();
+    expect([menu(), sub()]).toEqual([true, true]);
+  });
+
+  it("a touch that starts outside a popover closes it on its click, never on the touch alone", async () => {
+    const { holder, root, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const outside = document.createElement("div");
+    root.appendChild(outside);
+    const [open, setOpen] = createSignal(true);
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <Popover open={open()} onOpenChange={setOpen}>
+            <PopoverTrigger>Open</PopoverTrigger>
+            <PopoverContent>Hello</PopoverContent>
+          </Popover>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    await layersListening();
+    outside.dispatchEvent(
+      new PointerEvent("pointerdown", { bubbles: true, composed: true, pointerType: "touch" }),
+    );
+    expect(open()).toBe(true);
+    outside.dispatchEvent(new MouseEvent("click", { bubbles: true, composed: true }));
+    expect(open()).toBe(false);
+  });
+
+  it("a popover the caller holds a ref to still counts a press inside it as inside", async () => {
+    const { holder, root, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const [open, setOpen] = createSignal(true);
+    let held: HTMLElement | undefined;
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <Popover open={open()} onOpenChange={setOpen}>
+            <PopoverTrigger>Open</PopoverTrigger>
+            <PopoverContent ref={(el: HTMLElement) => (held = el)}>
+              <Button data-testid="in-popover">Pick</Button>
+            </PopoverContent>
+          </Popover>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    await layersListening();
+    const inside = root.querySelector<HTMLElement>('[data-testid="in-popover"]');
+    if (!inside) throw new Error("no popover content");
+    press(inside);
+    expect(open()).toBe(true);
+    expect(held?.contains(inside)).toBe(true);
+  });
+
+  it("a bottom sheet in a shadow root closes on a press on the page outside the root's host", async () => {
+    const { holder, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const page = document.createElement("button");
+    document.body.appendChild(page);
+    const [open, setOpen] = createSignal(true);
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <BottomSheet open={open()} onOpenChange={setOpen}>
+            <BottomSheetContent>
+              <BottomSheetTitle>Sheet</BottomSheetTitle>
+            </BottomSheetContent>
+          </BottomSheet>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    await layersListening();
+    press(page);
+    expect(open()).toBe(false);
   });
 });

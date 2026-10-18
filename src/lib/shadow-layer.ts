@@ -15,6 +15,8 @@ export interface LayerHandlers {
   onInteractOutside: (e: OutsideEvent) => void;
   onCloseAutoFocus: (e: AutoFocusEvent) => void;
   onOpenAutoFocus: (e: AutoFocusEvent) => void;
+  /** The shadow root's host while the layer is in one: what the page sees as the target of anything inside. */
+  host: () => Element | undefined;
 }
 
 interface ShadowLayerOptions {
@@ -84,6 +86,7 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
     return typeof ShadowRoot !== "undefined" && root instanceof ShadowRoot ? root.host : undefined;
   };
   return {
+    host: shadowHost,
     onInteractOutside: (e) => {
       const host = shadowHost();
       if (host && e.target === host) e.preventDefault();
