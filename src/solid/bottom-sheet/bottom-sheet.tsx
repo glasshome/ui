@@ -289,43 +289,51 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
 
     const PORTAL_LAYER_SELECTOR =
       '[data-kb-top-layer], [role="dialog"], [role="menu"], [role="listbox"], [role="combobox"], [role="tooltip"]';
-    const isOutside = (target: EventTarget | null): boolean => {
-      if (!(target instanceof Element) || !el) return false;
-      if (el.contains(target)) return false;
-      if (target.closest("[data-sheet-content]")) return false;
-      if (target.closest(PORTAL_LAYER_SELECTOR)) return false;
-      return true;
+    // Judged along the composed path: a press inside an icon's own shadow root is still inside the sheet.
+    const isOutside = (e: Event): boolean => {
+      if (!el || !(e.target instanceof Element)) return false;
+      const path = e.composedPath();
+      if (path.includes(el)) return false;
+      return !path.some(
+        (node) =>
+          node instanceof Element &&
+          (node.matches("[data-sheet-content]") || node.matches(PORTAL_LAYER_SELECTOR)),
+      );
     };
 
-    // Inside a shadow root the page sees every press as one on the root's host, so the sheet
-    // listens on its own root, where the press's origin is visible.
+    // Inside a shadow root the page sees every press there as one on the root's host, so the
+    // sheet judges those from its own root and only the page's other presses from the document.
     const scope = (el?.getRootNode() ?? document) as Document | ShadowRoot;
+    const scopes: (Document | ShadowRoot)[] = scope === document ? [document] : [scope, document];
+    const host = scope instanceof ShadowRoot ? scope.host : undefined;
     const onPointerDown = (e: Event) => {
-      if (!isOutside(e.composedPath()[0] ?? e.target)) return;
+      if (e.currentTarget === document && host && e.target === host) return;
+      if (!isOutside(e)) return;
       const dismiss = () => {
         if (ctx.state() === "open") ctx.setOpen(false);
       };
       if ((e as PointerEvent).pointerType === "touch") {
-        if (pendingClick) scope.removeEventListener("click", pendingClick);
+        if (pendingClick) document.removeEventListener("click", pendingClick);
         pendingClick = () => {
           dismiss();
           pendingClick = null;
         };
-        scope.addEventListener("click", pendingClick, { once: true });
+        document.addEventListener("click", pendingClick, { once: true });
       } else {
         dismiss();
       }
     };
 
     const timer = window.setTimeout(() => {
-      scope.addEventListener("pointerdown", onPointerDown, true);
+      for (const s of scopes) s.addEventListener("pointerdown", onPointerDown, true);
       attached = true;
     }, 0);
 
     onCleanup(() => {
       window.clearTimeout(timer);
-      if (attached) scope.removeEventListener("pointerdown", onPointerDown, true);
-      if (pendingClick) scope.removeEventListener("click", pendingClick);
+      if (attached)
+        for (const s of scopes) s.removeEventListener("pointerdown", onPointerDown, true);
+      if (pendingClick) document.removeEventListener("click", pendingClick);
     });
   });
 

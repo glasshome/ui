@@ -65,10 +65,16 @@ const SelectContent: ParentComponent<
     "listboxClass",
     "ref",
     "onInteractOutside",
+    "onCloseAutoFocus",
   ]);
   const select = useSelectContext();
   const [panel, setPanel] = createSignal<HTMLElement>();
-  const onInteractOutside = shadowLayer(panel, () => select.close(), local.onInteractOutside);
+  const layer = shadowLayer({
+    content: panel,
+    open: () => select.isOpen(),
+    dismiss: () => select.close(),
+    consumer: local,
+  });
   return (
     <SelectPrimitive.Portal mount={usePortalMount()}>
       <SelectPrimitive.Content
@@ -76,7 +82,8 @@ const SelectContent: ParentComponent<
           setPanel(el);
           if (typeof local.ref === "function") local.ref(el);
         }}
-        onInteractOutside={onInteractOutside}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
         data-slot="select-content"
         class={cn(
           // Same concave surface as the trigger: opening reads as the input

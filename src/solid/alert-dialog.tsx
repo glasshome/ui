@@ -9,7 +9,7 @@ import {
   type ParentComponent,
   splitProps,
 } from "solid-js";
-import { inShadowRoot, shadowFocus, shadowLayer } from "../lib/shadow-layer.js";
+import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -62,11 +62,18 @@ const AlertDialogContent: ParentComponent<AlertDialogContentProps> = (props) => 
     "ariaLabel",
     "ref",
     "onInteractOutside",
+    "onCloseAutoFocus",
+    "onOpenAutoFocus",
   ]);
   const context = useDialogContext();
   const [panel, setPanel] = createSignal<HTMLElement>();
-  const onInteractOutside = shadowLayer(panel, () => context.close(), local.onInteractOutside);
-  shadowFocus(panel);
+  const layer = shadowLayer({
+    content: panel,
+    open: () => context.isOpen(),
+    dismiss: () => context.close(),
+    trapsFocus: true,
+    consumer: local,
+  });
   return (
     <AlertDialogPrimitive.Portal mount={usePortalMount()}>
       <ModalScrollLock />
@@ -76,7 +83,9 @@ const AlertDialogContent: ParentComponent<AlertDialogContentProps> = (props) => 
           setPanel(el);
           if (typeof local.ref === "function") local.ref(el);
         }}
-        onInteractOutside={onInteractOutside}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
+        onOpenAutoFocus={layer.onOpenAutoFocus}
         data-slot="alert-dialog-content"
         role="alertdialog"
         aria-label={context.titleId() ? undefined : local.ariaLabel}

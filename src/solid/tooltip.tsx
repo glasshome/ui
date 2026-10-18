@@ -23,7 +23,7 @@ const TooltipContent: Component<ComponentProps<typeof TooltipPrimitive.Content>>
   const [local, others] = splitProps(props, ["class", "ref", "onInteractOutside"]);
   const [panel, setPanel] = createSignal<HTMLElement>();
   // A tooltip closes as the pointer leaves; inside a shadow root it only must not close on its own presses.
-  const onInteractOutside = shadowLayer(panel, () => {}, local.onInteractOutside);
+  const { onInteractOutside } = shadowLayer({ content: panel, open: () => true, consumer: local });
   return (
     <TooltipPrimitive.Portal mount={usePortalMount()}>
       <TooltipPrimitive.Content

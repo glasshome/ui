@@ -16,7 +16,7 @@ const HoverCardContent: Component<ComponentProps<typeof HoverCardPrimitive.Conte
   const [local, rest] = splitProps(props, ["class", "ref", "onInteractOutside"]);
   const [panel, setPanel] = createSignal<HTMLElement>();
   // A hover card closes as the pointer leaves; inside a shadow root it only must not close on its own presses.
-  const onInteractOutside = shadowLayer(panel, () => {}, local.onInteractOutside);
+  const { onInteractOutside } = shadowLayer({ content: panel, open: () => true, consumer: local });
   return (
     <HoverCardPrimitive.Portal data-slot="hover-card-portal" mount={usePortalMount()}>
       <HoverCardPrimitive.Content

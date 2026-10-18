@@ -46,10 +46,21 @@ const DropdownMenuTrigger: Component<ComponentProps<typeof DropdownMenuPrimitive
 const DropdownMenuContent: Component<ComponentProps<typeof DropdownMenuPrimitive.Content>> = (
   props,
 ) => {
-  const [local, others] = splitProps(props, ["class", "children", "onInteractOutside"]);
+  const [local, others] = splitProps(props, [
+    "class",
+    "children",
+    "ref",
+    "onInteractOutside",
+    "onCloseAutoFocus",
+  ]);
   const menu = useMenuContext();
   const [panel, setPanel] = createSignal<HTMLElement>();
-  const onInteractOutside = shadowLayer(panel, () => menu.close(true), local.onInteractOutside);
+  const layer = shadowLayer({
+    content: panel,
+    open: () => menu.isOpen(),
+    dismiss: () => menu.close(true),
+    consumer: local,
+  });
   // The morph starts as the trigger's box: its height and radius are read
   // from the trigger itself, its width is kobalte's anchor width.
   const writeMorphStart = (el: HTMLElement) => {
@@ -70,8 +81,10 @@ const DropdownMenuContent: Component<ComponentProps<typeof DropdownMenuPrimitive
         ref={(el: HTMLElement) => {
           setPanel(el);
           writeMorphStart(el);
+          if (typeof local.ref === "function") local.ref(el);
         }}
-        onInteractOutside={onInteractOutside}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
         data-slot="dropdown-menu-content"
         class={cn(MENU_CONTENT_CLASS, MORPH_MOTION, local.class)}
         {...others}

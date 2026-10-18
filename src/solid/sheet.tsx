@@ -11,7 +11,7 @@ import {
   splitProps,
 } from "solid-js";
 import { buttonVariants } from "../lib/button-variants.js";
-import { inShadowRoot, shadowFocus, shadowLayer } from "../lib/shadow-layer.js";
+import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { SCRIM_MOTION } from "../lib/motion-classes.js";
 import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
@@ -114,11 +114,18 @@ const SheetContent: ParentComponent<SheetContentProps> = (props) => {
     "ariaLabel",
     "ref",
     "onInteractOutside",
+    "onCloseAutoFocus",
   ]);
   const context = useDialogContext();
   const [panel, setPanel] = createSignal<HTMLElement>();
-  const onInteractOutside = shadowLayer(panel, () => context.close(), local.onInteractOutside);
-  shadowFocus(panel);
+  const layer = shadowLayer({
+    content: panel,
+    open: () => context.isOpen(),
+    dismiss: () => context.close(),
+    trapsFocus: true,
+    initialFocus: "container",
+    consumer: local,
+  });
 
   return (
     <DialogPrimitive.Portal mount={usePortalMount()}>
@@ -129,7 +136,8 @@ const SheetContent: ParentComponent<SheetContentProps> = (props) => {
           setPanel(el);
           if (typeof local.ref === "function") local.ref(el);
         }}
-        onInteractOutside={onInteractOutside}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
         data-slot="sheet-content"
         role="dialog"
         aria-label={context.titleId() ? undefined : local.ariaLabel}

@@ -11,6 +11,20 @@ import { Dialog, DialogContent, DialogTitle } from "../../src/solid/dialog.js";
 import { Popover, PopoverContent, PopoverTrigger } from "../../src/solid/popover.js";
 import { PortalMountContext } from "../../src/solid/portal-mount.js";
 import { useFakeTime } from "../../src/testing/fake-time.js";
+import { inShadowRoot } from "../../src/lib/shadow-layer.js";
+
+/* happy-dom runs no animations, so Kobalte's exit presence is ended by hand. */
+function endExitAnimations() {
+  for (const root of [document, ...shadowRoots]) {
+    for (const el of root.querySelectorAll('[data-slot$="-content"], [data-slot$="-overlay"]')) {
+      const event = new Event("animationend");
+      Object.defineProperty(event, "animationName", { value: "" });
+      el.dispatchEvent(event);
+    }
+  }
+}
+
+const shadowRoots: ShadowRoot[] = [];
 
 beforeEach(() => useFakeTime());
 
@@ -25,6 +39,7 @@ function closedRoot() {
   document.body.appendChild(holder);
   const root = holder.attachShadow({ mode: "closed" });
   holderRoots.set(holder, root);
+  shadowRoots.push(root);
   const mount = document.createElement("div");
   root.appendChild(mount);
   return { holder, root, mount };
@@ -246,5 +261,166 @@ describe("a portal mount inside a closed shadow root", () => {
     await layersListening();
     if (inside) press(inside);
     expect(open()).toBe(true);
+  });
+});
+
+/** An element with an open shadow root of its own, as `<iconify-icon>` is. */
+function iconLike(): HTMLElement {
+  const icon = document.createElement("span");
+  icon.setAttribute("data-testid", "icon");
+  const inner = icon.attachShadow({ mode: "open" });
+  inner.appendChild(document.createElement("svg"));
+  return icon;
+}
+
+describe("on the page, with no portal mount", () => {
+  it("a bottom sheet stays open through a press inside an icon's own shadow root", async () => {
+    const [open, setOpen] = createSignal(true);
+    const icon = iconLike();
+    render(() => (
+      <BottomSheet open={open()} onOpenChange={setOpen}>
+        <BottomSheetContent>
+          <BottomSheetTitle>Sheet</BottomSheetTitle>
+          {icon}
+        </BottomSheetContent>
+      </BottomSheet>
+    ));
+    await layersListening();
+    const svg = icon.shadowRoot?.firstElementChild;
+    if (!svg) throw new Error("no icon content");
+    press(svg);
+    expect(open()).toBe(true);
+  });
+
+  it("inShadowRoot answers false where there is no ShadowRoot at all, as on a server", () => {
+    const saved = globalThis.ShadowRoot;
+    // @ts-expect-error a server has no ShadowRoot
+    delete globalThis.ShadowRoot;
+    try {
+      expect(inShadowRoot(document.body)).toBe(false);
+    } finally {
+      globalThis.ShadowRoot = saved;
+    }
+  });
+});
+
+describe("layers stacked inside a closed shadow root", () => {
+  function dialogWithPopover() {
+    const { holder, root, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const [dialog, setDialog] = createSignal(true);
+    const [popover, setPopover] = createSignal(true);
+    const icon = iconLike();
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <Dialog open={dialog()} onOpenChange={setDialog}>
+            <DialogContent>
+              <DialogTitle>Edit</DialogTitle>
+              <input data-testid="field" />
+              {icon}
+              <Popover open={popover()} onOpenChange={setPopover}>
+                <PopoverTrigger>Open</PopoverTrigger>
+                <PopoverContent>
+                  <Button data-testid="in-popover">Pick</Button>
+                </PopoverContent>
+              </Popover>
+            </DialogContent>
+          </Dialog>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    const q = (id: string) => {
+      const el = root.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+      if (!el) throw new Error(`no ${id}`);
+      return el;
+    };
+    return { root, dialog, popover, q, icon };
+  }
+
+  it("a press inside the newer layer closes neither", async () => {
+    const { dialog, popover, q } = dialogWithPopover();
+    await layersListening();
+    press(q("in-popover"));
+    expect([dialog(), popover()]).toEqual([true, true]);
+  });
+
+  it("a press on the dialog body closes only the popover, and focus stays where it went", async () => {
+    const { root, dialog, popover, q } = dialogWithPopover();
+    await layersListening();
+    const field = q("field");
+    field.focus();
+    press(field);
+    await layersListening();
+    expect([dialog(), popover()]).toEqual([true, false]);
+    expect(root.activeElement).toBe(field);
+  });
+
+  it("a press on the scrim closes only the newest layer", async () => {
+    const { root, dialog, popover } = dialogWithPopover();
+    await layersListening();
+    const scrim = root.querySelector('[data-slot="dialog-overlay"]');
+    if (!scrim) throw new Error("no scrim");
+    press(scrim);
+    expect([dialog(), popover()]).toEqual([true, false]);
+  });
+
+  it("a press inside an icon's own shadow root in the dialog is inside it", async () => {
+    const { dialog, icon } = dialogWithPopover();
+    await layersListening();
+    const svg = icon.shadowRoot?.firstElementChild;
+    if (!svg) throw new Error("no icon content");
+    press(svg);
+    expect(dialog()).toBe(true);
+  });
+});
+
+describe("focus in a dialog inside a closed shadow root", () => {
+  function editDialog() {
+    const { holder, root, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const [open, setOpen] = createSignal(true);
+    const outside = document.createElement("button");
+    root.appendChild(outside);
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <Dialog open={open()} onOpenChange={setOpen}>
+            <DialogContent>
+              <DialogTitle>Edit</DialogTitle>
+              <Button data-testid="first">One</Button>
+              <Button data-testid="last">Two</Button>
+            </DialogContent>
+          </Dialog>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    return { root, setOpen, outside };
+  }
+
+  it("starts on the first control once the open settles", async () => {
+    const { root } = editDialog();
+    await layersListening();
+    expect(root.activeElement).toBe(root.querySelector('[data-testid="first"]'));
+  });
+
+  it("leaves Tab alone once the dialog has closed", async () => {
+    const { setOpen, outside } = editDialog();
+    await layersListening();
+    setOpen(false);
+    endExitAnimations();
+    await layersListening();
+    outside.focus();
+    const tab = new KeyboardEvent("keydown", {
+      key: "Tab",
+      shiftKey: true,
+      bubbles: true,
+      composed: true,
+      cancelable: true,
+    });
+    outside.dispatchEvent(tab);
+    expect(tab.defaultPrevented).toBe(false);
   });
 });

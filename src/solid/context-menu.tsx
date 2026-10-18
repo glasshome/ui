@@ -45,10 +45,21 @@ const ContextMenuSubContent: Component<ComponentProps<typeof ContextMenuPrimitiv
 const ContextMenuContent: Component<ComponentProps<typeof ContextMenuPrimitive.Content>> = (
   props,
 ) => {
-  const [local, rest] = splitProps(props, ["class", "children", "ref", "onInteractOutside"]);
+  const [local, rest] = splitProps(props, [
+    "class",
+    "children",
+    "ref",
+    "onInteractOutside",
+    "onCloseAutoFocus",
+  ]);
   const menu = useMenuContext();
   const [panel, setPanel] = createSignal<HTMLElement>();
-  const onInteractOutside = shadowLayer(panel, () => menu.close(true), local.onInteractOutside);
+  const layer = shadowLayer({
+    content: panel,
+    open: () => menu.isOpen(),
+    dismiss: () => menu.close(true),
+    consumer: local,
+  });
   return (
     <ContextMenuPrimitive.Portal mount={usePortalMount()}>
       <ContextMenuPrimitive.Content
@@ -56,7 +67,8 @@ const ContextMenuContent: Component<ComponentProps<typeof ContextMenuPrimitive.C
           setPanel(el);
           if (typeof local.ref === "function") local.ref(el);
         }}
-        onInteractOutside={onInteractOutside}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
         data-slot="context-menu-content"
         class={cn(
           MENU_CONTENT_CLASS,

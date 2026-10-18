@@ -11,7 +11,7 @@ import {
   splitProps,
 } from "solid-js";
 import { overAnchor } from "../lib/anchor-placement.js";
-import { inShadowRoot, shadowFocus, shadowLayer } from "../lib/shadow-layer.js";
+import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -92,12 +92,19 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
     "style",
     "ref",
     "onInteractOutside",
+    "onCloseAutoFocus",
+    "onOpenAutoFocus",
   ]);
   const context = useDialogContext();
   const [viewport, setViewport] = createSignal(0);
   const [panel, setPanel] = createSignal<HTMLElement>();
-  const onInteractOutside = shadowLayer(panel, () => context.close(), local.onInteractOutside);
-  shadowFocus(panel);
+  const layer = shadowLayer({
+    content: panel,
+    open: () => context.isOpen(),
+    dismiss: () => context.close(),
+    trapsFocus: true,
+    consumer: local,
+  });
   const [height, setHeight] = createSignal<number>();
   createEffect(() => {
     if (!local.anchor || !context.isOpen()) return;
@@ -137,7 +144,9 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
           local.class,
         )}
         style={{ ...(typeof local.style === "object" ? local.style : {}), ...placement() }}
-        onInteractOutside={onInteractOutside}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
+        onOpenAutoFocus={layer.onOpenAutoFocus}
         {...others}
       >
         {local.children}

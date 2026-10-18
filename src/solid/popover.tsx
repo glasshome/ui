@@ -69,12 +69,23 @@ type PopoverContentProps = ComponentProps<typeof PopoverPrimitive.Content> & {
 };
 
 const PopoverContent: Component<PopoverContentProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "surface", "onInteractOutside"]);
+  const [local, rest] = splitProps(props, [
+    "class",
+    "surface",
+    "ref",
+    "onInteractOutside",
+    "onCloseAutoFocus",
+  ]);
   const fromRoot = useContext(PopoverSurfaceContext);
   const surface = () => local.surface ?? fromRoot();
   const popover = usePopoverContext();
   const [panel, setPanel] = createSignal<HTMLElement>();
-  const onInteractOutside = shadowLayer(panel, () => popover.close(), local.onInteractOutside);
+  const layer = shadowLayer({
+    content: panel,
+    open: () => popover.isOpen(),
+    dismiss: () => popover.close(),
+    consumer: local,
+  });
   // The morph starts as the trigger's box (pill radius clamped to h/2). A
   // field picker has an Anchor, not a Trigger, and keeps its clip reveal.
   const writeMorphStart = (el: HTMLElement) => {
@@ -94,8 +105,10 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
         ref={(el: HTMLElement) => {
           setPanel(el);
           writeMorphStart(el);
+          if (typeof local.ref === "function") local.ref(el);
         }}
-        onInteractOutside={onInteractOutside}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
         data-slot="popover-content"
         data-surface={surface()}
         class={cn(surface() === "field" ? FIELD_PANEL : OVERLAY_PANEL, local.class)}
