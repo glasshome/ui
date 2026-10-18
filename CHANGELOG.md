@@ -18,6 +18,22 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.34.0](https://github.com/glasshome/ui/compare/v1.33.2...v1.34.0) (2026-10-18)
+
+
+### Features
+
+* **ui:** overlays portal where the host says and work inside closed shadow roots ([fd132a5](https://github.com/glasshome/ui/commit/fd132a5fef1a4a47a971a42a2e83316ce5cdb0c3))
+* **ui:** overlays work inside closed shadow roots ([816bfb4](https://github.com/glasshome/ui/commit/816bfb42795950b3fa8498402ea294097af22d83))
+
+
+### Bug Fixes
+
+* **ui:** a submenu in a shadow root stays open while focus moves inside it ([946ba6c](https://github.com/glasshome/ui/commit/946ba6c819ce2600568a7810def4aa02ce18319b))
+* **ui:** focus stays inside a dialog rendered in a shadow root ([2f36b0d](https://github.com/glasshome/ui/commit/2f36b0d20186938372f442a521769dcccf3cd1d1))
+* **ui:** shadow-root layers judge presses by the composed path and stack like Kobalte's ([73960df](https://github.com/glasshome/ui/commit/73960df0ed9a36c19e306174ab76148242f92960))
+* **ui:** shadow-root layers per root, menu trees, trigger presses and kept focus ([a138346](https://github.com/glasshome/ui/commit/a1383465a7ed8e49ebf929683082b102d6276ca3))
+
 ## [1.33.2](https://github.com/glasshome/ui/compare/v1.33.1...v1.33.2) (2026-10-14)
 
 
