@@ -1,12 +1,15 @@
 import { Popover as PopoverPrimitive, usePopoverContext } from "@kobalte/core/popover";
+import { usePortalMount } from "./portal-mount.js";
 import {
   type Component,
   type ComponentProps,
   createContext,
+  createSignal,
   splitProps,
   useContext,
 } from "solid-js";
 import { INPUT_SURFACE } from "../lib/input-classes.js";
+import { shadowLayer } from "../lib/shadow-layer.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { FIELD_MOTION, MORPH_MOTION, STAGGER } from "../lib/motion-classes.js";
 import { anchorToTriggerTop, FLOATING_PANEL } from "../lib/overlay-classes.js";
@@ -66,10 +69,12 @@ type PopoverContentProps = ComponentProps<typeof PopoverPrimitive.Content> & {
 };
 
 const PopoverContent: Component<PopoverContentProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "surface"]);
+  const [local, rest] = splitProps(props, ["class", "surface", "onInteractOutside"]);
   const fromRoot = useContext(PopoverSurfaceContext);
   const surface = () => local.surface ?? fromRoot();
   const popover = usePopoverContext();
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const onInteractOutside = shadowLayer(panel, () => popover.close(), local.onInteractOutside);
   // The morph starts as the trigger's box (pill radius clamped to h/2). A
   // field picker has an Anchor, not a Trigger, and keeps its clip reveal.
   const writeMorphStart = (el: HTMLElement) => {
@@ -84,9 +89,13 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
     el.style.setProperty("--morph-radius", `${radius}px`);
   };
   return (
-    <PopoverPrimitive.Portal>
+    <PopoverPrimitive.Portal mount={usePortalMount()}>
       <PopoverPrimitive.Content
-        ref={writeMorphStart}
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          writeMorphStart(el);
+        }}
+        onInteractOutside={onInteractOutside}
         data-slot="popover-content"
         data-surface={surface()}
         class={cn(surface() === "field" ? FIELD_PANEL : OVERLAY_PANEL, local.class)}

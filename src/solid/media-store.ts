@@ -56,7 +56,8 @@ export interface MediaStore {
   url(id: string, variant?: MediaVariant): string;
 }
 
-export const MediaStoreContext = createContext<MediaStore>();
+/** `null` withholds the store from a tree, even where the host registered one. */
+export const MediaStoreContext = createContext<MediaStore | null>();
 
 let defaultStore: MediaStore | undefined;
 
@@ -66,7 +67,8 @@ export function provideMediaStore(store: MediaStore): void {
 }
 
 export function useMediaStore(): MediaStore | undefined {
-  return useContext(MediaStoreContext) ?? defaultStore;
+  const scoped = useContext(MediaStoreContext);
+  return scoped === null ? undefined : (scoped ?? defaultStore);
 }
 
 /** One grid page. The picker and the library both slice by this, so neither can

@@ -15,6 +15,7 @@ import {
   type ValidComponent,
 } from "solid-js";
 import { Dynamic, Portal } from "solid-js/web";
+import { usePortalMount } from "../portal-mount.js";
 import { Z } from "../../lib/layers.js";
 import { OVERLAY_SURFACE_OPAQUE } from "../../lib/overlay-classes.js";
 import { cn } from "../../lib/utils.js";
@@ -147,10 +148,11 @@ interface BottomSheetPortalProps {
 
 const BottomSheetPortal: Component<BottomSheetPortalProps> = (props) => {
   const ctx = useBottomSheetContext();
+  const portalMount = usePortalMount();
   const mounted = () => ctx.state() !== "closed";
   return (
     <Show when={mounted()}>
-      <Portal mount={props.mount}>{props.children}</Portal>
+      <Portal mount={props.mount ?? portalMount}>{props.children}</Portal>
     </Show>
   );
 };
@@ -283,7 +285,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     if (!ctx.dismissible()) return;
 
     let attached = false;
-    let pendingClick: ((e: MouseEvent) => void) | null = null;
+    let pendingClick: (() => void) | null = null;
 
     const PORTAL_LAYER_SELECTOR =
       '[data-kb-top-layer], [role="dialog"], [role="menu"], [role="listbox"], [role="combobox"], [role="tooltip"]';
@@ -295,32 +297,35 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
       return true;
     };
 
-    const onPointerDown = (e: PointerEvent) => {
-      if (!isOutside(e.target)) return;
+    // Inside a shadow root the page sees every press as one on the root's host, so the sheet
+    // listens on its own root, where the press's origin is visible.
+    const scope = (el?.getRootNode() ?? document) as Document | ShadowRoot;
+    const onPointerDown = (e: Event) => {
+      if (!isOutside(e.composedPath()[0] ?? e.target)) return;
       const dismiss = () => {
         if (ctx.state() === "open") ctx.setOpen(false);
       };
-      if (e.pointerType === "touch") {
-        if (pendingClick) document.removeEventListener("click", pendingClick);
+      if ((e as PointerEvent).pointerType === "touch") {
+        if (pendingClick) scope.removeEventListener("click", pendingClick);
         pendingClick = () => {
           dismiss();
           pendingClick = null;
         };
-        document.addEventListener("click", pendingClick, { once: true });
+        scope.addEventListener("click", pendingClick, { once: true });
       } else {
         dismiss();
       }
     };
 
     const timer = window.setTimeout(() => {
-      document.addEventListener("pointerdown", onPointerDown, true);
+      scope.addEventListener("pointerdown", onPointerDown, true);
       attached = true;
     }, 0);
 
     onCleanup(() => {
       window.clearTimeout(timer);
-      if (attached) document.removeEventListener("pointerdown", onPointerDown, true);
-      if (pendingClick) document.removeEventListener("click", pendingClick);
+      if (attached) scope.removeEventListener("pointerdown", onPointerDown, true);
+      if (pendingClick) scope.removeEventListener("click", pendingClick);
     });
   });
 

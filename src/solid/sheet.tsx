@@ -1,4 +1,5 @@
 import { Dialog as DialogPrimitive, useDialogContext } from "@kobalte/core/dialog";
+import { usePortalMount } from "./portal-mount.js";
 import type { VariantProps } from "cva";
 import {
   type Component,
@@ -6,9 +7,11 @@ import {
   type JSX,
   type ParentComponent,
   Show,
+  createSignal,
   splitProps,
 } from "solid-js";
 import { buttonVariants } from "../lib/button-variants.js";
+import { shadowLayer } from "../lib/shadow-layer.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { SCRIM_MOTION } from "../lib/motion-classes.js";
 import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
@@ -102,14 +105,29 @@ const SheetAbove: Component<{ above?: JSX.Element }> = (props) => (
 );
 
 const SheetContent: ParentComponent<SheetContentProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "children", "side", "above", "ariaLabel"]);
+  const [local, rest] = splitProps(props, [
+    "class",
+    "children",
+    "side",
+    "above",
+    "ariaLabel",
+    "ref",
+    "onInteractOutside",
+  ]);
   const context = useDialogContext();
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const onInteractOutside = shadowLayer(panel, () => context.close(), local.onInteractOutside);
 
   return (
-    <DialogPrimitive.Portal>
+    <DialogPrimitive.Portal mount={usePortalMount()}>
       <ModalScrollLock />
       <SheetOverlay />
       <DialogPrimitive.Content
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          if (typeof local.ref === "function") local.ref(el);
+        }}
+        onInteractOutside={onInteractOutside}
         data-slot="sheet-content"
         role="dialog"
         aria-label={context.titleId() ? undefined : local.ariaLabel}

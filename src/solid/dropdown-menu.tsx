@@ -1,7 +1,15 @@
 import { DropdownMenu as DropdownMenuPrimitive } from "@kobalte/core/dropdown-menu";
+import { usePortalMount } from "./portal-mount.js";
 import { useMenuContext } from "@kobalte/core/menu";
-import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import {
+  type Component,
+  type ComponentProps,
+  createSignal,
+  type ParentComponent,
+  splitProps,
+} from "solid-js";
 import { MORPH_MOTION } from "../lib/motion-classes.js";
+import { shadowLayer } from "../lib/shadow-layer.js";
 import { anchorToTriggerTop } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -38,8 +46,10 @@ const DropdownMenuTrigger: Component<ComponentProps<typeof DropdownMenuPrimitive
 const DropdownMenuContent: Component<ComponentProps<typeof DropdownMenuPrimitive.Content>> = (
   props,
 ) => {
-  const [local, others] = splitProps(props, ["class", "children"]);
+  const [local, others] = splitProps(props, ["class", "children", "onInteractOutside"]);
   const menu = useMenuContext();
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const onInteractOutside = shadowLayer(panel, () => menu.close(true), local.onInteractOutside);
   // The morph starts as the trigger's box: its height and radius are read
   // from the trigger itself, its width is kobalte's anchor width.
   const writeMorphStart = (el: HTMLElement) => {
@@ -55,9 +65,13 @@ const DropdownMenuContent: Component<ComponentProps<typeof DropdownMenuPrimitive
     el.style.setProperty("--morph-radius", `${radius}px`);
   };
   return (
-    <DropdownMenuPrimitive.Portal>
+    <DropdownMenuPrimitive.Portal mount={usePortalMount()}>
       <DropdownMenuPrimitive.Content
-        ref={writeMorphStart}
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          writeMorphStart(el);
+        }}
+        onInteractOutside={onInteractOutside}
         data-slot="dropdown-menu-content"
         class={cn(MENU_CONTENT_CLASS, MORPH_MOTION, local.class)}
         {...others}

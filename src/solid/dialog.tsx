@@ -1,4 +1,5 @@
 import { Dialog as DialogPrimitive, useDialogContext } from "@kobalte/core/dialog";
+import { usePortalMount } from "./portal-mount.js";
 import type { VariantProps } from "cva";
 import {
   type Component,
@@ -10,6 +11,7 @@ import {
   splitProps,
 } from "solid-js";
 import { overAnchor } from "../lib/anchor-placement.js";
+import { shadowLayer } from "../lib/shadow-layer.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -88,10 +90,12 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
     "anchor",
     "style",
     "ref",
+    "onInteractOutside",
   ]);
   const context = useDialogContext();
   const [viewport, setViewport] = createSignal(0);
   const [panel, setPanel] = createSignal<HTMLElement>();
+  const onInteractOutside = shadowLayer(panel, () => context.close(), local.onInteractOutside);
   const [height, setHeight] = createSignal<number>();
   createEffect(() => {
     if (!local.anchor || !context.isOpen()) return;
@@ -113,7 +117,7 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
     return a ? overAnchor(a, ANCHORED_WIDTH[local.size ?? "lg"], height()) : undefined;
   };
   return (
-    <DialogPrimitive.Portal>
+    <DialogPrimitive.Portal mount={usePortalMount()}>
       <ModalScrollLock />
       <DialogPrimitive.Overlay data-slot="dialog-overlay" class={MODAL_SCRIM} />
       <DialogPrimitive.Content
@@ -131,6 +135,7 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
           local.class,
         )}
         style={{ ...(typeof local.style === "object" ? local.style : {}), ...placement() }}
+        onInteractOutside={onInteractOutside}
         {...others}
       >
         {local.children}

@@ -1,7 +1,15 @@
 import { AlertDialog as AlertDialogPrimitive } from "@kobalte/core/alert-dialog";
+import { usePortalMount } from "./portal-mount.js";
 import { useDialogContext } from "@kobalte/core/dialog";
 import type { VariantProps } from "cva";
-import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import {
+  type Component,
+  type ComponentProps,
+  createSignal,
+  type ParentComponent,
+  splitProps,
+} from "solid-js";
+import { shadowLayer } from "../lib/shadow-layer.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -46,13 +54,27 @@ type AlertDialogContentProps = ComponentProps<typeof AlertDialogPrimitive.Conten
 };
 
 const AlertDialogContent: ParentComponent<AlertDialogContentProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "children", "size", "ariaLabel"]);
+  const [local, rest] = splitProps(props, [
+    "class",
+    "children",
+    "size",
+    "ariaLabel",
+    "ref",
+    "onInteractOutside",
+  ]);
   const context = useDialogContext();
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const onInteractOutside = shadowLayer(panel, () => context.close(), local.onInteractOutside);
   return (
-    <AlertDialogPrimitive.Portal>
+    <AlertDialogPrimitive.Portal mount={usePortalMount()}>
       <ModalScrollLock />
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Content
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          if (typeof local.ref === "function") local.ref(el);
+        }}
+        onInteractOutside={onInteractOutside}
         data-slot="alert-dialog-content"
         role="alertdialog"
         aria-label={context.titleId() ? undefined : local.ariaLabel}

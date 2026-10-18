@@ -8,6 +8,7 @@ import {
   Show,
 } from "solid-js";
 import { Portal } from "solid-js/web";
+import { usePortalMount } from "./portal-mount.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { SCRIM_MOTION, TRAVEL_MOTION } from "../lib/motion-classes.js";
 import { OVERLAY_SURFACE_OPAQUE, PANEL_TAIL, SCRIM_CLASS } from "../lib/overlay-classes.js";
@@ -121,7 +122,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
     placeBubble(viewport(), anchorBox(), bubbleSize(), BUBBLE_GAP_WITH_TAIL, VIEWPORT_MARGIN);
 
   return (
-    <Portal>
+    <Portal mount={usePortalMount()}>
       <Show when={props.scrim}>
         <div
           data-slot="spotlight-scrim"

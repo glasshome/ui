@@ -1,6 +1,15 @@
 import { ContextMenu as ContextMenuPrimitive } from "@kobalte/core/context-menu";
-import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import { usePortalMount } from "./portal-mount.js";
+import { useMenuContext } from "@kobalte/core/menu";
+import {
+  type Component,
+  type ComponentProps,
+  createSignal,
+  type ParentComponent,
+  splitProps,
+} from "solid-js";
 import { OVERLAY_MOTION } from "../lib/motion-classes.js";
+import { shadowLayer } from "../lib/shadow-layer.js";
 import { cn } from "../lib/utils.js";
 import {
   MENU_CONTENT_CLASS,
@@ -36,10 +45,18 @@ const ContextMenuSubContent: Component<ComponentProps<typeof ContextMenuPrimitiv
 const ContextMenuContent: Component<ComponentProps<typeof ContextMenuPrimitive.Content>> = (
   props,
 ) => {
-  const [local, rest] = splitProps(props, ["class", "children"]);
+  const [local, rest] = splitProps(props, ["class", "children", "ref", "onInteractOutside"]);
+  const menu = useMenuContext();
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const onInteractOutside = shadowLayer(panel, () => menu.close(true), local.onInteractOutside);
   return (
-    <ContextMenuPrimitive.Portal>
+    <ContextMenuPrimitive.Portal mount={usePortalMount()}>
       <ContextMenuPrimitive.Content
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          if (typeof local.ref === "function") local.ref(el);
+        }}
+        onInteractOutside={onInteractOutside}
         data-slot="context-menu-content"
         class={cn(
           MENU_CONTENT_CLASS,

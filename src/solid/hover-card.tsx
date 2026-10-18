@@ -1,6 +1,8 @@
 import { HoverCard as HoverCardPrimitive } from "@kobalte/core/hover-card";
-import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { usePortalMount } from "./portal-mount.js";
+import { type Component, type ComponentProps, createSignal, splitProps } from "solid-js";
 import { OVERLAY_MOTION } from "../lib/motion-classes.js";
+import { shadowLayer } from "../lib/shadow-layer.js";
 import { FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 
@@ -11,10 +13,18 @@ const HoverCardTrigger: Component<ComponentProps<typeof HoverCardPrimitive.Trigg
 };
 
 const HoverCardContent: Component<ComponentProps<typeof HoverCardPrimitive.Content>> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const [local, rest] = splitProps(props, ["class", "ref", "onInteractOutside"]);
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  // A hover card closes as the pointer leaves; inside a shadow root it only must not close on its own presses.
+  const onInteractOutside = shadowLayer(panel, () => {}, local.onInteractOutside);
   return (
-    <HoverCardPrimitive.Portal data-slot="hover-card-portal">
+    <HoverCardPrimitive.Portal data-slot="hover-card-portal" mount={usePortalMount()}>
       <HoverCardPrimitive.Content
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          if (typeof local.ref === "function") local.ref(el);
+        }}
+        onInteractOutside={onInteractOutside}
         data-slot="hover-card-content"
         class={cn(FLOATING_PANEL, OVERLAY_MOTION, "w-64 p-4", local.class)}
         {...rest}

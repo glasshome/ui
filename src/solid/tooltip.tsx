@@ -1,6 +1,8 @@
 import { Tooltip as TooltipPrimitive } from "@kobalte/core/tooltip";
-import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { usePortalMount } from "./portal-mount.js";
+import { type Component, type ComponentProps, createSignal, splitProps } from "solid-js";
 import { OVERLAY_MOTION } from "../lib/motion-classes.js";
+import { shadowLayer } from "../lib/shadow-layer.js";
 import { FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 
@@ -18,10 +20,18 @@ const Tooltip = Object.assign(TooltipRoot, TooltipPrimitive);
 const TooltipTrigger = TooltipPrimitive.Trigger;
 
 const TooltipContent: Component<ComponentProps<typeof TooltipPrimitive.Content>> = (props) => {
-  const [local, others] = splitProps(props, ["class"]);
+  const [local, others] = splitProps(props, ["class", "ref", "onInteractOutside"]);
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  // A tooltip closes as the pointer leaves; inside a shadow root it only must not close on its own presses.
+  const onInteractOutside = shadowLayer(panel, () => {}, local.onInteractOutside);
   return (
-    <TooltipPrimitive.Portal>
+    <TooltipPrimitive.Portal mount={usePortalMount()}>
       <TooltipPrimitive.Content
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          if (typeof local.ref === "function") local.ref(el);
+        }}
+        onInteractOutside={onInteractOutside}
         data-slot="tooltip-content"
         class={cn(
           FLOATING_PANEL,
