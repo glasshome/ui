@@ -9,7 +9,7 @@ import {
   useContext,
 } from "solid-js";
 import { INPUT_SURFACE } from "../lib/input-classes.js";
-import { shadowLayer } from "../lib/shadow-layer.js";
+import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { FIELD_MOTION, MORPH_MOTION, STAGGER } from "../lib/motion-classes.js";
 import { anchorToTriggerTop, FLOATING_PANEL } from "../lib/overlay-classes.js";
@@ -37,6 +37,8 @@ type PopoverProps = ComponentProps<typeof PopoverPrimitive> & {
 const PopoverRoot: Component<PopoverProps> = (props) => {
   const [local, rest] = splitProps(props, ["surface", "gutter", "getAnchorRect"]);
   const surface = () => local.surface ?? "overlay";
+  // Modal in a shadow root, Kobalte would aria-hide the realm's host, popover included.
+  const inShadow = inShadowRoot(usePortalMount());
   return (
     <PopoverSurfaceContext.Provider value={surface}>
       <PopoverPrimitive
@@ -45,6 +47,7 @@ const PopoverRoot: Component<PopoverProps> = (props) => {
         flip={false}
         overlap
         {...rest}
+        modal={inShadow ? false : rest.modal}
       />
     </PopoverSurfaceContext.Provider>
   );
@@ -84,6 +87,7 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
     content: panel,
     open: () => popover.isOpen(),
     dismiss: () => popover.close(),
+    trigger: () => popover.triggerRef(),
     consumer: local,
   });
   // The morph starts as the trigger's box (pill radius clamped to h/2). A

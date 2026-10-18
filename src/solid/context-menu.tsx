@@ -9,7 +9,7 @@ import {
   splitProps,
 } from "solid-js";
 import { OVERLAY_MOTION } from "../lib/motion-classes.js";
-import { shadowLayer } from "../lib/shadow-layer.js";
+import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { cn } from "../lib/utils.js";
 import {
   MENU_CONTENT_CLASS,
@@ -23,7 +23,15 @@ import {
   MenuSubTriggerPart,
 } from "./menu-parts.js";
 
-const ContextMenu = ContextMenuPrimitive;
+const ContextMenuRoot: Component<ComponentProps<typeof ContextMenuPrimitive>> = (props) => {
+  // Modal in a shadow root, Kobalte would aria-hide the realm's host, menu included.
+  const inShadow = inShadowRoot(usePortalMount());
+  return <ContextMenuPrimitive {...props} modal={inShadow ? false : props.modal} />;
+};
+const ContextMenu = Object.assign(ContextMenuRoot, ContextMenuPrimitive) as Component<
+  ComponentProps<typeof ContextMenuPrimitive>
+> &
+  typeof ContextMenuPrimitive;
 const ContextMenuGroup = ContextMenuPrimitive.Group;
 const ContextMenuSub = ContextMenuPrimitive.Sub;
 const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
@@ -58,6 +66,7 @@ const ContextMenuContent: Component<ComponentProps<typeof ContextMenuPrimitive.C
     content: panel,
     open: () => menu.isOpen(),
     dismiss: () => menu.close(true),
+    tree: true,
     consumer: local,
   });
   return (

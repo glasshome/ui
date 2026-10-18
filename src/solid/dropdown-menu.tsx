@@ -9,7 +9,7 @@ import {
   splitProps,
 } from "solid-js";
 import { MORPH_MOTION } from "../lib/motion-classes.js";
-import { shadowLayer } from "../lib/shadow-layer.js";
+import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { anchorToTriggerTop } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -26,9 +26,18 @@ import {
 
 /* The panel covers the trigger (see MORPH_MOTION); statics carried across so
  * `DropdownMenu.Portal` keeps resolving. */
-const DropdownMenuRoot: Component<ComponentProps<typeof DropdownMenuPrimitive>> = (props) => (
-  <DropdownMenuPrimitive gutter={0} getAnchorRect={anchorToTriggerTop} {...props} />
-);
+const DropdownMenuRoot: Component<ComponentProps<typeof DropdownMenuPrimitive>> = (props) => {
+  // Modal in a shadow root, Kobalte would aria-hide the realm's host, menu included.
+  const inShadow = inShadowRoot(usePortalMount());
+  return (
+    <DropdownMenuPrimitive
+      gutter={0}
+      getAnchorRect={anchorToTriggerTop}
+      {...props}
+      modal={inShadow ? false : props.modal}
+    />
+  );
+};
 const DropdownMenu = Object.assign(DropdownMenuRoot, DropdownMenuPrimitive) as Component<
   ComponentProps<typeof DropdownMenuPrimitive>
 > &
@@ -59,6 +68,8 @@ const DropdownMenuContent: Component<ComponentProps<typeof DropdownMenuPrimitive
     content: panel,
     open: () => menu.isOpen(),
     dismiss: () => menu.close(true),
+    trigger: () => menu.triggerRef(),
+    tree: true,
     consumer: local,
   });
   // The morph starts as the trigger's box: its height and radius are read

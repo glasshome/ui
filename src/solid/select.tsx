@@ -73,6 +73,7 @@ const SelectContent: ParentComponent<
     content: panel,
     open: () => select.isOpen(),
     dismiss: () => select.close(),
+    trigger: () => select.triggerRef(),
     consumer: local,
   });
   return (

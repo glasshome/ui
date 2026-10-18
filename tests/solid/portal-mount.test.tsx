@@ -545,3 +545,219 @@ describe("the rest of the shadow-root review's cases", () => {
     expect(open()).toBe(false);
   });
 });
+
+describe("the second shadow-root review's cases", () => {
+  const touchDown = (target: Element) =>
+    target.dispatchEvent(
+      new PointerEvent("pointerdown", { bubbles: true, composed: true, pointerType: "touch" }),
+    );
+
+  function popoverIn(mount: HTMLElement, props: { onCloseAutoFocus?: (e: Event) => void } = {}) {
+    const [open, setOpen] = createSignal(true);
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <Popover open={open()} onOpenChange={setOpen}>
+            <PopoverTrigger data-testid="trigger">Open</PopoverTrigger>
+            <PopoverContent onCloseAutoFocus={props.onCloseAutoFocus}>
+              <Button data-testid="in-popover">Pick</Button>
+            </PopoverContent>
+          </Popover>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    return { open, setOpen };
+  }
+
+  it("a touch outside that became a scroll never closes the popover on a later tap inside it", async () => {
+    const { holder, root, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const outside = document.createElement("div");
+    root.appendChild(outside);
+    const { open } = popoverIn(mount);
+    await layersListening();
+    touchDown(outside);
+    const inside = root.querySelector<HTMLElement>('[data-testid="in-popover"]');
+    if (!inside) throw new Error("no popover content");
+    press(inside);
+    expect(open()).toBe(true);
+  });
+
+  it("a press on an open popover's own trigger closes it and leaves it closed", async () => {
+    const { holder, root, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const { open } = popoverIn(mount);
+    await layersListening();
+    const trigger = root.querySelector<HTMLElement>('[data-testid="trigger"]');
+    if (!trigger) throw new Error("no trigger");
+    press(trigger);
+    await layersListening();
+    expect(open()).toBe(false);
+  });
+
+  it("a dropdown menu closed by a press on a field leaves focus on that field", async () => {
+    const { holder, root, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const field = document.createElement("input");
+    root.appendChild(field);
+    const [open, setOpen] = createSignal(true);
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <DropdownMenu open={open()} onOpenChange={setOpen}>
+            <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>One</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    await layersListening();
+    field.focus();
+    press(field);
+    endExitAnimations();
+    await layersListening();
+    expect(open()).toBe(false);
+    expect(root.activeElement).toBe(field);
+  });
+
+  it("a dropdown menu in a shadow root never hides the realm's host from assistive tech", async () => {
+    const { holder, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <DropdownMenu open>
+            <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>One</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    await layersListening();
+    expect(holder.getAttribute("aria-hidden")).toBeNull();
+  });
+
+  it("one press outside a menu and its open submenu closes both", async () => {
+    const { holder, root, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const outside = document.createElement("div");
+    root.appendChild(outside);
+    const [menu, setMenu] = createSignal(true);
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <DropdownMenu open={menu()} onOpenChange={setMenu}>
+            <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>More</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem>Nested</DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    root.querySelector<HTMLElement>('[data-slot="dropdown-menu-sub-trigger"]')?.click();
+    await layersListening();
+    expect(root.querySelector('[data-slot="dropdown-menu-sub-content"]')).not.toBeNull();
+    press(outside);
+    expect(menu()).toBe(false);
+  });
+
+  it("a bottom sheet in a realm that sits inside a page dialog still closes on a press elsewhere in the realm", async () => {
+    const pageDialog = document.createElement("div");
+    pageDialog.setAttribute("role", "dialog");
+    document.body.appendChild(pageDialog);
+    const holder = document.createElement("div");
+    pageDialog.appendChild(holder);
+    const root = holder.attachShadow({ mode: "closed" });
+    holderRoots.set(holder, root);
+    shadowRoots.push(root);
+    const mount = document.createElement("div");
+    root.appendChild(mount);
+    const elsewhere = document.createElement("div");
+    root.appendChild(elsewhere);
+    onTestFinished(retargetAtPage(holder));
+    const [open, setOpen] = createSignal(true);
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <BottomSheet open={open()} onOpenChange={setOpen}>
+            <BottomSheetContent>
+              <BottomSheetTitle>Sheet</BottomSheetTitle>
+            </BottomSheetContent>
+          </BottomSheet>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    await layersListening();
+    press(elsewhere);
+    expect(open()).toBe(false);
+  });
+
+  it("a close the caller refused leaves no trace on the next close's focus", async () => {
+    const { holder, root, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const outside = document.createElement("div");
+    root.appendChild(outside);
+    const prevented: boolean[] = [];
+    const [open, setOpen] = createSignal(true);
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <Popover open={open()} onOpenChange={() => {}}>
+            <PopoverTrigger>Open</PopoverTrigger>
+            <PopoverContent onCloseAutoFocus={(e: Event) => prevented.push(e.defaultPrevented)}>
+              Hello
+            </PopoverContent>
+          </Popover>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    await layersListening();
+    press(outside);
+    expect(open()).toBe(true);
+    setOpen(false);
+    endExitAnimations();
+    await layersListening();
+    expect(prevented).toEqual([false]);
+  });
+
+  it("an open layer in one realm never stops a press closing another realm's layer", async () => {
+    const a = closedRoot();
+    const b = closedRoot();
+    onTestFinished(retargetAtPage(b.holder));
+    const elsewhereInB = document.createElement("div");
+    b.root.appendChild(elsewhereInB);
+    const inB = popoverIn(b.mount);
+    await layersListening();
+    // The other realm's layer stays open on presses outside it, as one whose caller refuses the close does.
+    render(
+      () => (
+        <PortalMountContext.Provider value={a.mount}>
+          <Popover open onOpenChange={() => {}}>
+            <PopoverTrigger>Open</PopoverTrigger>
+            <PopoverContent>Stays</PopoverContent>
+          </Popover>
+        </PortalMountContext.Provider>
+      ),
+      { container: a.mount },
+    );
+    await layersListening();
+    press(elsewhereInB);
+    expect(inB.open()).toBe(false);
+  });
+});

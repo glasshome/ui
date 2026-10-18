@@ -5,8 +5,8 @@ import { type InitialFocus, trapFocus } from "../solid/bottom-sheet/focus-trap.j
 export const inShadowRoot = (node: Node | undefined): boolean =>
   typeof ShadowRoot !== "undefined" && node?.getRootNode() instanceof ShadowRoot;
 
-/** Layers open inside shadow roots, oldest first: only the newest dismisses on a press, as Kobalte's own stack does. */
-const stack: Element[] = [];
+/** Layers open in each shadow root, oldest first: only the newest dismisses on a press, as Kobalte's own stack does. */
+const stacks = new WeakMap<ShadowRoot, Element[]>();
 
 type OutsideEvent = { target: EventTarget | null; preventDefault(): void };
 type AutoFocusEvent = { preventDefault(): void };
@@ -24,6 +24,10 @@ interface ShadowLayerOptions {
   open: Accessor<boolean>;
   /** Absent for layers that close on pointer leave (tooltips, hover cards): they never join the stack. */
   dismiss?: () => void;
+  /** A press on it is the trigger's own toggle, never an outside press. */
+  trigger?: Accessor<Element | undefined>;
+  /** Menus: any press outside the layer and the layers above it dismisses it, newest or not, as Kobalte's menus do. */
+  tree?: boolean;
   /** The layer keeps Tab inside itself (dialogs); its initial focus is then ui's, not Kobalte's. */
   trapsFocus?: boolean;
   initialFocus?: InitialFocus;
@@ -42,26 +46,42 @@ interface ShadowLayerOptions {
  * handlers only pass the consumer's own through.
  */
 export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
-  let dismissedHere = false;
+  let dismissedIn: ShadowRoot | undefined;
   createEffect(() => {
     const el = options.content();
     const dismiss = options.dismiss;
+    if (options.open()) dismissedIn = undefined;
     if (!el || !dismiss || !options.open() || !inShadowRoot(el)) return;
     const root = el.getRootNode() as ShadowRoot;
+    const stack = stacks.get(root) ?? [];
+    stacks.set(root, stack);
     stack.push(el);
-    let pendingClick: (() => void) | undefined;
+    const inside = (e: Event) => {
+      const path = e.composedPath();
+      const trigger = options.trigger?.();
+      if (path.includes(el) || (trigger && path.includes(trigger))) return true;
+      return stack.slice(stack.indexOf(el) + 1).some((above) => path.includes(above));
+    };
+    const dismisses = (e: Event) => (options.tree || stack[stack.length - 1] === el) && !inside(e);
+    const close = () => {
+      dismissedIn = root;
+      dismiss();
+      // The caller refused the close (a controlled `open`): the next close is not this one.
+      if (options.open()) dismissedIn = undefined;
+    };
+    let pendingClick: ((e: Event) => void) | undefined;
+    const dropPendingClick = () => {
+      if (pendingClick) root.removeEventListener("click", pendingClick);
+      pendingClick = undefined;
+    };
     const onDown = (e: Event) => {
-      if (stack[stack.length - 1] !== el || e.composedPath().includes(el)) return;
-      const close = () => {
-        dismissedHere = true;
-        dismiss();
-      };
-      // A touch dismisses on its click, so a scroll that starts outside never closes the layer.
+      dropPendingClick();
+      if (!dismisses(e)) return;
+      // A touch dismisses on its own click, judged again then: a scroll never clicks.
       if ((e as PointerEvent).pointerType === "touch") {
-        if (pendingClick) root.removeEventListener("click", pendingClick);
-        pendingClick = () => {
+        pendingClick = (click) => {
           pendingClick = undefined;
-          close();
+          if (dismisses(click)) close();
         };
         root.addEventListener("click", pendingClick, { once: true });
       } else {
@@ -77,7 +97,7 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
     onCleanup(() => {
       clearTimeout(timer);
       root.removeEventListener("pointerdown", onDown, true);
-      if (pendingClick) root.removeEventListener("click", pendingClick);
+      dropPendingClick();
       stack.splice(stack.indexOf(el), 1);
     });
   });
@@ -93,9 +113,19 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
       options.consumer.onInteractOutside?.(e as never);
     },
     onCloseAutoFocus: (e) => {
-      // Dismissed by a press elsewhere in the root: focus stays where that press put it.
-      if (dismissedHere) e.preventDefault();
-      dismissedHere = false;
+      const root = dismissedIn;
+      dismissedIn = undefined;
+      if (root) {
+        // Dismissed by a press elsewhere in the root: focus stays where that press put it, even
+        // for the Kobalte layers that focus their trigger past preventDefault.
+        e.preventDefault();
+        const kept = root.activeElement;
+        queueMicrotask(() => {
+          if (kept instanceof HTMLElement && kept.isConnected && root.activeElement !== kept) {
+            kept.focus();
+          }
+        });
+      }
       options.consumer.onCloseAutoFocus?.(e as never);
     },
     onOpenAutoFocus: (e) => {
