@@ -36,6 +36,20 @@ describe("media store singleton", () => {
     expect(mediaUrl("abc")).toBe("/api/images/abc");
   });
 
+  it("a null context store means no store, even with a singleton registered", () => {
+    provideMediaStore(stubStore("/singleton"));
+    let seen: MediaStore | undefined = stubStore("/unset");
+    render(() => (
+      <MediaStoreContext.Provider value={null}>
+        {(() => {
+          seen = useMediaStore();
+          return null;
+        })()}
+      </MediaStoreContext.Provider>
+    ));
+    expect(seen).toBeUndefined();
+  });
+
   it("prefers a context store over the singleton", () => {
     provideMediaStore(stubStore("/singleton"));
     let seen: string | undefined;

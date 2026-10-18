@@ -1,12 +1,15 @@
 import { Popover as PopoverPrimitive, usePopoverContext } from "@kobalte/core/popover";
+import { usePortalMount } from "./portal-mount.js";
 import {
   type Component,
   type ComponentProps,
   createContext,
+  createSignal,
   splitProps,
   useContext,
 } from "solid-js";
 import { INPUT_SURFACE } from "../lib/input-classes.js";
+import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { FIELD_MOTION, MORPH_MOTION, STAGGER } from "../lib/motion-classes.js";
 import { anchorToTriggerTop, FLOATING_PANEL } from "../lib/overlay-classes.js";
@@ -34,6 +37,8 @@ type PopoverProps = ComponentProps<typeof PopoverPrimitive> & {
 const PopoverRoot: Component<PopoverProps> = (props) => {
   const [local, rest] = splitProps(props, ["surface", "gutter", "getAnchorRect"]);
   const surface = () => local.surface ?? "overlay";
+  // Modal in a shadow root, Kobalte would aria-hide the realm's host, popover included.
+  const inShadow = inShadowRoot(usePortalMount());
   return (
     <PopoverSurfaceContext.Provider value={surface}>
       <PopoverPrimitive
@@ -42,6 +47,7 @@ const PopoverRoot: Component<PopoverProps> = (props) => {
         flip={false}
         overlap
         {...rest}
+        modal={inShadow ? false : rest.modal}
       />
     </PopoverSurfaceContext.Provider>
   );
@@ -66,10 +72,24 @@ type PopoverContentProps = ComponentProps<typeof PopoverPrimitive.Content> & {
 };
 
 const PopoverContent: Component<PopoverContentProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "surface"]);
+  const [local, rest] = splitProps(props, [
+    "class",
+    "surface",
+    "ref",
+    "onInteractOutside",
+    "onCloseAutoFocus",
+  ]);
   const fromRoot = useContext(PopoverSurfaceContext);
   const surface = () => local.surface ?? fromRoot();
   const popover = usePopoverContext();
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const layer = shadowLayer({
+    content: panel,
+    open: () => popover.isOpen(),
+    dismiss: () => popover.close(),
+    trigger: () => popover.triggerRef(),
+    consumer: local,
+  });
   // The morph starts as the trigger's box (pill radius clamped to h/2). A
   // field picker has an Anchor, not a Trigger, and keeps its clip reveal.
   const writeMorphStart = (el: HTMLElement) => {
@@ -84,9 +104,15 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
     el.style.setProperty("--morph-radius", `${radius}px`);
   };
   return (
-    <PopoverPrimitive.Portal>
+    <PopoverPrimitive.Portal mount={usePortalMount()}>
       <PopoverPrimitive.Content
-        ref={writeMorphStart}
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          writeMorphStart(el);
+          if (typeof local.ref === "function") local.ref(el);
+        }}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
         data-slot="popover-content"
         data-surface={surface()}
         class={cn(surface() === "field" ? FIELD_PANEL : OVERLAY_PANEL, local.class)}

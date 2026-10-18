@@ -1,7 +1,15 @@
 import { AlertDialog as AlertDialogPrimitive } from "@kobalte/core/alert-dialog";
+import { usePortalMount } from "./portal-mount.js";
 import { useDialogContext } from "@kobalte/core/dialog";
 import type { VariantProps } from "cva";
-import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import {
+  type Component,
+  type ComponentProps,
+  createSignal,
+  type ParentComponent,
+  splitProps,
+} from "solid-js";
+import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -18,9 +26,10 @@ import {
   type ModalSize,
 } from "./dialog-parts.js";
 
-const AlertDialog: ParentComponent<ComponentProps<typeof AlertDialogPrimitive>> = (props) => (
-  <AlertDialogPrimitive {...props} preventScroll={false} />
-);
+const AlertDialog: ParentComponent<ComponentProps<typeof AlertDialogPrimitive>> = (props) => {
+  const mount = usePortalMount();
+  return <AlertDialogPrimitive modal={!inShadowRoot(mount)} {...props} preventScroll={false} />;
+};
 
 const AlertDialogTrigger: Component<ComponentProps<typeof AlertDialogPrimitive.Trigger>> = (
   props,
@@ -46,13 +55,37 @@ type AlertDialogContentProps = ComponentProps<typeof AlertDialogPrimitive.Conten
 };
 
 const AlertDialogContent: ParentComponent<AlertDialogContentProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "children", "size", "ariaLabel"]);
+  const [local, rest] = splitProps(props, [
+    "class",
+    "children",
+    "size",
+    "ariaLabel",
+    "ref",
+    "onInteractOutside",
+    "onCloseAutoFocus",
+    "onOpenAutoFocus",
+  ]);
   const context = useDialogContext();
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const layer = shadowLayer({
+    content: panel,
+    open: () => context.isOpen(),
+    dismiss: () => context.close(),
+    trapsFocus: true,
+    consumer: local,
+  });
   return (
-    <AlertDialogPrimitive.Portal>
+    <AlertDialogPrimitive.Portal mount={usePortalMount()}>
       <ModalScrollLock />
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Content
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          if (typeof local.ref === "function") local.ref(el);
+        }}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
+        onOpenAutoFocus={layer.onOpenAutoFocus}
         data-slot="alert-dialog-content"
         role="alertdialog"
         aria-label={context.titleId() ? undefined : local.ariaLabel}

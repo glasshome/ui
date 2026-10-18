@@ -1,4 +1,5 @@
 import { Dialog as DialogPrimitive, useDialogContext } from "@kobalte/core/dialog";
+import { usePortalMount } from "./portal-mount.js";
 import type { VariantProps } from "cva";
 import {
   type Component,
@@ -10,6 +11,7 @@ import {
   splitProps,
 } from "solid-js";
 import { overAnchor } from "../lib/anchor-placement.js";
+import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -30,9 +32,10 @@ import {
 /* Kobalte's own scroll lock is off everywhere: one refcounted lock
  * (bottom-sheet/scroll-lock.ts) serves every modal family, so a nested modal
  * cannot release the page early. */
-const Dialog: ParentComponent<ComponentProps<typeof DialogPrimitive>> = (props) => (
-  <DialogPrimitive {...props} preventScroll={false} />
-);
+const Dialog: ParentComponent<ComponentProps<typeof DialogPrimitive>> = (props) => {
+  const mount = usePortalMount();
+  return <DialogPrimitive modal={!inShadowRoot(mount)} {...props} preventScroll={false} />;
+};
 
 const DialogTrigger: Component<ComponentProps<typeof DialogPrimitive.Trigger>> = (props) => (
   <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
@@ -88,10 +91,20 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
     "anchor",
     "style",
     "ref",
+    "onInteractOutside",
+    "onCloseAutoFocus",
+    "onOpenAutoFocus",
   ]);
   const context = useDialogContext();
   const [viewport, setViewport] = createSignal(0);
   const [panel, setPanel] = createSignal<HTMLElement>();
+  const layer = shadowLayer({
+    content: panel,
+    open: () => context.isOpen(),
+    dismiss: () => context.close(),
+    trapsFocus: true,
+    consumer: local,
+  });
   const [height, setHeight] = createSignal<number>();
   createEffect(() => {
     if (!local.anchor || !context.isOpen()) return;
@@ -113,7 +126,7 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
     return a ? overAnchor(a, ANCHORED_WIDTH[local.size ?? "lg"], height()) : undefined;
   };
   return (
-    <DialogPrimitive.Portal>
+    <DialogPrimitive.Portal mount={usePortalMount()}>
       <ModalScrollLock />
       <DialogPrimitive.Overlay data-slot="dialog-overlay" class={MODAL_SCRIM} />
       <DialogPrimitive.Content
@@ -131,6 +144,9 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
           local.class,
         )}
         style={{ ...(typeof local.style === "object" ? local.style : {}), ...placement() }}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
+        onOpenAutoFocus={layer.onOpenAutoFocus}
         {...others}
       >
         {local.children}

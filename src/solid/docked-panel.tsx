@@ -1,6 +1,7 @@
 import type { JSX } from "solid-js";
 import { Show } from "solid-js";
 import { Portal } from "solid-js/web";
+import { usePortalMount } from "./portal-mount.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { OVERLAY_SURFACE_OPAQUE } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
@@ -21,7 +22,7 @@ export function DockedPanel(props: {
 }) {
   return (
     <Show when={props.open}>
-      <Portal>
+      <Portal mount={usePortalMount()}>
         <aside
           data-slot="docked-panel"
           aria-label={props.ariaLabel}

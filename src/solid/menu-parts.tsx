@@ -1,6 +1,14 @@
 import { DropdownMenu as MenuPrimitive } from "@kobalte/core/dropdown-menu";
-import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import { useMenuContext } from "@kobalte/core/menu";
+import {
+  type Component,
+  type ComponentProps,
+  createSignal,
+  type ParentComponent,
+  splitProps,
+} from "solid-js";
 import { glassToneText } from "../lib/glass-tone.js";
+import { shadowLayer } from "../lib/shadow-layer.js";
 import { MENU_ITEM, MENU_ITEM_BASE, MENU_LABEL, MENU_SEPARATOR } from "../lib/menu-classes.js";
 import { STAGGER } from "../lib/motion-classes.js";
 import { ignoreOpeningRelease } from "../lib/opening-release.js";
@@ -149,9 +157,39 @@ export const MenuSubTriggerPart: ParentComponent<MenuSubTriggerProps> = (props) 
 type MenuSubContentProps = ComponentProps<typeof MenuPrimitive.SubContent> & { slotName: string };
 
 export const MenuSubContentPart: ParentComponent<MenuSubContentProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "children", "slotName"]);
+  const [local, rest] = splitProps(props, [
+    "class",
+    "children",
+    "slotName",
+    "ref",
+    "onInteractOutside",
+    "onCloseAutoFocus",
+  ]);
+  const menu = useMenuContext();
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const layer = shadowLayer({
+    content: panel,
+    open: () => menu.isOpen(),
+    dismiss: () => menu.close(),
+    trigger: () => menu.triggerRef(),
+    tree: true,
+    consumer: local,
+  });
   return (
     <MenuPrimitive.SubContent
+      ref={(el: HTMLElement) => {
+        setPanel(el);
+        if (typeof local.ref === "function") local.ref(el);
+      }}
+      onInteractOutside={layer.onInteractOutside}
+      onCloseAutoFocus={(e: Event) => {
+        layer.onCloseAutoFocus(e);
+        // As Kobalte's own submenu: closing one never moves focus.
+        e.preventDefault();
+      }}
+      // Kobalte's submenu closes on any focus outside it, past preventDefault; in a shadow root every
+      // focus inside reaches the page as one on the host, so the host is excluded instead.
+      excludedElements={[() => menu.triggerRef(), layer.host]}
       data-slot={local.slotName}
       class={cn(MENU_CONTENT_CLASS, local.class)}
       {...rest}

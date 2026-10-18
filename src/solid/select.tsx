@@ -1,5 +1,13 @@
-import { Select as SelectPrimitive } from "@kobalte/core/select";
-import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import { Select as SelectPrimitive, useSelectContext } from "@kobalte/core/select";
+import { usePortalMount } from "./portal-mount.js";
+import {
+  type Component,
+  type ComponentProps,
+  createSignal,
+  type ParentComponent,
+  splitProps,
+} from "solid-js";
+import { shadowLayer } from "../lib/shadow-layer.js";
 import { CONTROL_H, INPUT_SURFACE } from "../lib/input-classes.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { MENU_ITEM, MENU_LABEL, MENU_SEPARATOR } from "../lib/menu-classes.js";
@@ -51,10 +59,32 @@ const SelectTrigger: ParentComponent<
 const SelectContent: ParentComponent<
   ComponentProps<typeof SelectPrimitive.Content> & { listboxClass?: string }
 > = (props) => {
-  const [local, rest] = splitProps(props, ["class", "children", "listboxClass"]);
+  const [local, rest] = splitProps(props, [
+    "class",
+    "children",
+    "listboxClass",
+    "ref",
+    "onInteractOutside",
+    "onCloseAutoFocus",
+  ]);
+  const select = useSelectContext();
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const layer = shadowLayer({
+    content: panel,
+    open: () => select.isOpen(),
+    dismiss: () => select.close(),
+    trigger: () => select.triggerRef(),
+    consumer: local,
+  });
   return (
-    <SelectPrimitive.Portal>
+    <SelectPrimitive.Portal mount={usePortalMount()}>
       <SelectPrimitive.Content
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          if (typeof local.ref === "function") local.ref(el);
+        }}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
         data-slot="select-content"
         class={cn(
           // Same concave surface as the trigger: opening reads as the input

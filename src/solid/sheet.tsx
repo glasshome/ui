@@ -1,4 +1,5 @@
 import { Dialog as DialogPrimitive, useDialogContext } from "@kobalte/core/dialog";
+import { usePortalMount } from "./portal-mount.js";
 import type { VariantProps } from "cva";
 import {
   type Component,
@@ -6,9 +7,11 @@ import {
   type JSX,
   type ParentComponent,
   Show,
+  createSignal,
   splitProps,
 } from "solid-js";
 import { buttonVariants } from "../lib/button-variants.js";
+import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { SCRIM_MOTION } from "../lib/motion-classes.js";
 import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
@@ -25,9 +28,10 @@ import {
 
 /* Kobalte's own scroll lock is off here too: ModalScrollLock is the one
  * refcounted page lock every modal family shares. */
-const Sheet: ParentComponent<ComponentProps<typeof DialogPrimitive>> = (props) => (
-  <DialogPrimitive {...props} preventScroll={false} />
-);
+const Sheet: ParentComponent<ComponentProps<typeof DialogPrimitive>> = (props) => {
+  const mount = usePortalMount();
+  return <DialogPrimitive modal={!inShadowRoot(mount)} {...props} preventScroll={false} />;
+};
 
 const SheetTrigger: Component<ComponentProps<typeof DialogPrimitive.Trigger>> = (props) => (
   <DialogPrimitive.Trigger data-slot="sheet-trigger" {...props} />
@@ -102,14 +106,38 @@ const SheetAbove: Component<{ above?: JSX.Element }> = (props) => (
 );
 
 const SheetContent: ParentComponent<SheetContentProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "children", "side", "above", "ariaLabel"]);
+  const [local, rest] = splitProps(props, [
+    "class",
+    "children",
+    "side",
+    "above",
+    "ariaLabel",
+    "ref",
+    "onInteractOutside",
+    "onCloseAutoFocus",
+  ]);
   const context = useDialogContext();
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const layer = shadowLayer({
+    content: panel,
+    open: () => context.isOpen(),
+    dismiss: () => context.close(),
+    trapsFocus: true,
+    initialFocus: "container",
+    consumer: local,
+  });
 
   return (
-    <DialogPrimitive.Portal>
+    <DialogPrimitive.Portal mount={usePortalMount()}>
       <ModalScrollLock />
       <SheetOverlay />
       <DialogPrimitive.Content
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          if (typeof local.ref === "function") local.ref(el);
+        }}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
         data-slot="sheet-content"
         role="dialog"
         aria-label={context.titleId() ? undefined : local.ariaLabel}

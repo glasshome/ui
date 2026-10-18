@@ -1,6 +1,15 @@
 import { ContextMenu as ContextMenuPrimitive } from "@kobalte/core/context-menu";
-import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import { usePortalMount } from "./portal-mount.js";
+import { useMenuContext } from "@kobalte/core/menu";
+import {
+  type Component,
+  type ComponentProps,
+  createSignal,
+  type ParentComponent,
+  splitProps,
+} from "solid-js";
 import { OVERLAY_MOTION } from "../lib/motion-classes.js";
+import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { cn } from "../lib/utils.js";
 import {
   MENU_CONTENT_CLASS,
@@ -14,7 +23,15 @@ import {
   MenuSubTriggerPart,
 } from "./menu-parts.js";
 
-const ContextMenu = ContextMenuPrimitive;
+const ContextMenuRoot: Component<ComponentProps<typeof ContextMenuPrimitive>> = (props) => {
+  // Modal in a shadow root, Kobalte would aria-hide the realm's host, menu included.
+  const inShadow = inShadowRoot(usePortalMount());
+  return <ContextMenuPrimitive {...props} modal={inShadow ? false : props.modal} />;
+};
+const ContextMenu = Object.assign(ContextMenuRoot, ContextMenuPrimitive) as Component<
+  ComponentProps<typeof ContextMenuPrimitive>
+> &
+  typeof ContextMenuPrimitive;
 const ContextMenuGroup = ContextMenuPrimitive.Group;
 const ContextMenuSub = ContextMenuPrimitive.Sub;
 const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
@@ -36,10 +53,31 @@ const ContextMenuSubContent: Component<ComponentProps<typeof ContextMenuPrimitiv
 const ContextMenuContent: Component<ComponentProps<typeof ContextMenuPrimitive.Content>> = (
   props,
 ) => {
-  const [local, rest] = splitProps(props, ["class", "children"]);
+  const [local, rest] = splitProps(props, [
+    "class",
+    "children",
+    "ref",
+    "onInteractOutside",
+    "onCloseAutoFocus",
+  ]);
+  const menu = useMenuContext();
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const layer = shadowLayer({
+    content: panel,
+    open: () => menu.isOpen(),
+    dismiss: () => menu.close(true),
+    tree: true,
+    consumer: local,
+  });
   return (
-    <ContextMenuPrimitive.Portal>
+    <ContextMenuPrimitive.Portal mount={usePortalMount()}>
       <ContextMenuPrimitive.Content
+        ref={(el: HTMLElement) => {
+          setPanel(el);
+          if (typeof local.ref === "function") local.ref(el);
+        }}
+        onInteractOutside={layer.onInteractOutside}
+        onCloseAutoFocus={layer.onCloseAutoFocus}
         data-slot="context-menu-content"
         class={cn(
           MENU_CONTENT_CLASS,

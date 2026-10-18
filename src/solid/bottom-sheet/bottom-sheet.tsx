@@ -15,6 +15,7 @@ import {
   type ValidComponent,
 } from "solid-js";
 import { Dynamic, Portal } from "solid-js/web";
+import { usePortalMount } from "../portal-mount.js";
 import { Z } from "../../lib/layers.js";
 import { OVERLAY_SURFACE_OPAQUE } from "../../lib/overlay-classes.js";
 import { cn } from "../../lib/utils.js";
@@ -147,10 +148,11 @@ interface BottomSheetPortalProps {
 
 const BottomSheetPortal: Component<BottomSheetPortalProps> = (props) => {
   const ctx = useBottomSheetContext();
+  const portalMount = usePortalMount();
   const mounted = () => ctx.state() !== "closed";
   return (
     <Show when={mounted()}>
-      <Portal mount={props.mount}>{props.children}</Portal>
+      <Portal mount={props.mount ?? portalMount}>{props.children}</Portal>
     </Show>
   );
 };
@@ -283,28 +285,46 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     if (!ctx.dismissible()) return;
 
     let attached = false;
-    let pendingClick: ((e: MouseEvent) => void) | null = null;
+    let pendingClick: ((click: Event) => void) | null = null;
 
     const PORTAL_LAYER_SELECTOR =
       '[data-kb-top-layer], [role="dialog"], [role="menu"], [role="listbox"], [role="combobox"], [role="tooltip"]';
-    const isOutside = (target: EventTarget | null): boolean => {
-      if (!(target instanceof Element) || !el) return false;
-      if (el.contains(target)) return false;
-      if (target.closest("[data-sheet-content]")) return false;
-      if (target.closest(PORTAL_LAYER_SELECTOR)) return false;
-      return true;
+    // Judged along the composed path: a press inside an icon's own shadow root is still inside the
+    // sheet. Only the part below the listening root counts: a realm's host inside a page dialog
+    // must not make every press in the realm look like one inside a layer.
+    const isOutside = (e: Event): boolean => {
+      if (!el || !(e.target instanceof Element)) return false;
+      const full = e.composedPath();
+      const listener = e.currentTarget;
+      const end = listener && listener !== document ? full.indexOf(listener) : -1;
+      const path = end >= 0 ? full.slice(0, end) : full;
+      if (path.includes(el)) return false;
+      return !path.some(
+        (node) =>
+          node instanceof Element &&
+          (node.matches("[data-sheet-content]") || node.matches(PORTAL_LAYER_SELECTOR)),
+      );
     };
 
-    const onPointerDown = (e: PointerEvent) => {
-      if (!isOutside(e.target)) return;
+    // Inside a shadow root the page sees every press there as one on the root's host, so the
+    // sheet judges those from its own root and only the page's other presses from the document.
+    const scope = (el?.getRootNode() ?? document) as Document | ShadowRoot;
+    const scopes: (Document | ShadowRoot)[] = scope === document ? [document] : [scope, document];
+    const host = scope instanceof ShadowRoot ? scope.host : undefined;
+    const onPointerDown = (e: Event) => {
+      if (e.currentTarget === document && host && e.target === host) return;
+      // Every press starts over: a touch that scrolled never clicked, and its close must not wait for the next tap.
+      if (pendingClick) document.removeEventListener("click", pendingClick);
+      pendingClick = null;
+      if (!isOutside(e)) return;
       const dismiss = () => {
         if (ctx.state() === "open") ctx.setOpen(false);
       };
-      if (e.pointerType === "touch") {
-        if (pendingClick) document.removeEventListener("click", pendingClick);
-        pendingClick = () => {
-          dismiss();
+      if ((e as PointerEvent).pointerType === "touch") {
+        pendingClick = (click: Event) => {
           pendingClick = null;
+          // The click lands where the touch ended; it closes only if that is still outside.
+          if (el && !click.composedPath().includes(el)) dismiss();
         };
         document.addEventListener("click", pendingClick, { once: true });
       } else {
@@ -313,13 +333,14 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     };
 
     const timer = window.setTimeout(() => {
-      document.addEventListener("pointerdown", onPointerDown, true);
+      for (const s of scopes) s.addEventListener("pointerdown", onPointerDown, true);
       attached = true;
     }, 0);
 
     onCleanup(() => {
       window.clearTimeout(timer);
-      if (attached) document.removeEventListener("pointerdown", onPointerDown, true);
+      if (attached)
+        for (const s of scopes) s.removeEventListener("pointerdown", onPointerDown, true);
       if (pendingClick) document.removeEventListener("click", pendingClick);
     });
   });

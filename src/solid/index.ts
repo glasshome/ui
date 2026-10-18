@@ -298,6 +298,7 @@ export { PICKER_ROW_HEIGHT, PickerRow } from "./picker-row.js";
 export { PickerSearch, type PickerSearchProps } from "./picker-search.js";
 export { PickerTrigger, type PickerTriggerProps } from "./picker-trigger.js";
 export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popover.js";
+export { PortalMountContext, usePortalMount } from "./portal-mount.js";
 export { PreviewTile, PreviewTileGroup } from "./preview-tile.js";
 export { Progress } from "./progress.js";
 export { RadioGroup, RadioGroupItem } from "./radio-group.js";
