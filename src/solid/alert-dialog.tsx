@@ -9,7 +9,7 @@ import {
   type ParentComponent,
   splitProps,
 } from "solid-js";
-import { shadowLayer } from "../lib/shadow-layer.js";
+import { inShadowRoot, shadowFocus, shadowLayer } from "../lib/shadow-layer.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -26,9 +26,10 @@ import {
   type ModalSize,
 } from "./dialog-parts.js";
 
-const AlertDialog: ParentComponent<ComponentProps<typeof AlertDialogPrimitive>> = (props) => (
-  <AlertDialogPrimitive {...props} preventScroll={false} />
-);
+const AlertDialog: ParentComponent<ComponentProps<typeof AlertDialogPrimitive>> = (props) => {
+  const mount = usePortalMount();
+  return <AlertDialogPrimitive modal={!inShadowRoot(mount)} {...props} preventScroll={false} />;
+};
 
 const AlertDialogTrigger: Component<ComponentProps<typeof AlertDialogPrimitive.Trigger>> = (
   props,
@@ -65,6 +66,7 @@ const AlertDialogContent: ParentComponent<AlertDialogContentProps> = (props) => 
   const context = useDialogContext();
   const [panel, setPanel] = createSignal<HTMLElement>();
   const onInteractOutside = shadowLayer(panel, () => context.close(), local.onInteractOutside);
+  shadowFocus(panel);
   return (
     <AlertDialogPrimitive.Portal mount={usePortalMount()}>
       <ModalScrollLock />

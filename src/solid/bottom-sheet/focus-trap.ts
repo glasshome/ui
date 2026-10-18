@@ -10,7 +10,9 @@ interface TrapHandle {
 }
 
 export function trapFocus(root: HTMLElement, initial: InitialFocus = "container"): TrapHandle {
-  const previouslyFocused = (document.activeElement as HTMLElement | null) ?? null;
+  // Inside a shadow root the document's active element is the root's host; the root knows which node has focus.
+  const scope = root.getRootNode() as Document | ShadowRoot;
+  const previouslyFocused = (scope.activeElement as HTMLElement | null) ?? null;
 
   // focus() runs focus and blur handlers synchronously; a caller's effect must not track their reads.
   untrack(() => {
@@ -23,7 +25,8 @@ export function trapFocus(root: HTMLElement, initial: InitialFocus = "container"
     focusTarget?.focus({ preventScroll: true });
   });
 
-  const onKeyDown = (e: KeyboardEvent) => {
+  const onKeyDown = (event: Event) => {
+    const e = event as KeyboardEvent;
     if (e.key !== "Tab") return;
     const focusable = Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
       (el) => !el.hasAttribute("disabled") && el.offsetParent !== null,
@@ -35,7 +38,7 @@ export function trapFocus(root: HTMLElement, initial: InitialFocus = "container"
     }
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
-    const active = document.activeElement as HTMLElement | null;
+    const active = scope.activeElement as HTMLElement | null;
     if (e.shiftKey) {
       if (active === first || active === root || !root.contains(active)) {
         e.preventDefault();
@@ -49,11 +52,11 @@ export function trapFocus(root: HTMLElement, initial: InitialFocus = "container"
     }
   };
 
-  document.addEventListener("keydown", onKeyDown);
+  scope.addEventListener("keydown", onKeyDown);
 
   return {
     release() {
-      document.removeEventListener("keydown", onKeyDown);
+      scope.removeEventListener("keydown", onKeyDown);
       untrack(() => previouslyFocused?.focus?.({ preventScroll: true }));
     },
   };

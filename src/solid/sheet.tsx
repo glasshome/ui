@@ -11,7 +11,7 @@ import {
   splitProps,
 } from "solid-js";
 import { buttonVariants } from "../lib/button-variants.js";
-import { shadowLayer } from "../lib/shadow-layer.js";
+import { inShadowRoot, shadowFocus, shadowLayer } from "../lib/shadow-layer.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { SCRIM_MOTION } from "../lib/motion-classes.js";
 import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
@@ -28,9 +28,10 @@ import {
 
 /* Kobalte's own scroll lock is off here too: ModalScrollLock is the one
  * refcounted page lock every modal family shares. */
-const Sheet: ParentComponent<ComponentProps<typeof DialogPrimitive>> = (props) => (
-  <DialogPrimitive {...props} preventScroll={false} />
-);
+const Sheet: ParentComponent<ComponentProps<typeof DialogPrimitive>> = (props) => {
+  const mount = usePortalMount();
+  return <DialogPrimitive modal={!inShadowRoot(mount)} {...props} preventScroll={false} />;
+};
 
 const SheetTrigger: Component<ComponentProps<typeof DialogPrimitive.Trigger>> = (props) => (
   <DialogPrimitive.Trigger data-slot="sheet-trigger" {...props} />
@@ -117,6 +118,7 @@ const SheetContent: ParentComponent<SheetContentProps> = (props) => {
   const context = useDialogContext();
   const [panel, setPanel] = createSignal<HTMLElement>();
   const onInteractOutside = shadowLayer(panel, () => context.close(), local.onInteractOutside);
+  shadowFocus(panel);
 
   return (
     <DialogPrimitive.Portal mount={usePortalMount()}>

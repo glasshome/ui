@@ -1,4 +1,23 @@
 import { type Accessor, createEffect, onCleanup } from "solid-js";
+import { trapFocus } from "../solid/bottom-sheet/focus-trap.js";
+
+/** True for a node inside a shadow root, where page-level layer logic sees only the root's host. */
+export const inShadowRoot = (node: Node | undefined): boolean =>
+  node?.getRootNode() instanceof ShadowRoot;
+
+/**
+ * Kobalte's modal focus scope contains focus from the document, where every focus inside a shadow
+ * root lands on the root's host, so a modal in a shadow root would pull focus back on every move.
+ * There the dialog is not modal to Kobalte, and this keeps Tab inside it from the root instead.
+ */
+export function shadowFocus(content: Accessor<HTMLElement | undefined>): void {
+  createEffect(() => {
+    const el = content();
+    if (!el || !inShadowRoot(el)) return;
+    const trap = trapFocus(el, "first");
+    onCleanup(() => trap.release());
+  });
+}
 
 const NESTED_LAYER =
   '[data-kb-top-layer], [role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"], [role="tooltip"]';

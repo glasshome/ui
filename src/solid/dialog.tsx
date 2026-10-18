@@ -11,7 +11,7 @@ import {
   splitProps,
 } from "solid-js";
 import { overAnchor } from "../lib/anchor-placement.js";
-import { shadowLayer } from "../lib/shadow-layer.js";
+import { inShadowRoot, shadowFocus, shadowLayer } from "../lib/shadow-layer.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -32,9 +32,10 @@ import {
 /* Kobalte's own scroll lock is off everywhere: one refcounted lock
  * (bottom-sheet/scroll-lock.ts) serves every modal family, so a nested modal
  * cannot release the page early. */
-const Dialog: ParentComponent<ComponentProps<typeof DialogPrimitive>> = (props) => (
-  <DialogPrimitive {...props} preventScroll={false} />
-);
+const Dialog: ParentComponent<ComponentProps<typeof DialogPrimitive>> = (props) => {
+  const mount = usePortalMount();
+  return <DialogPrimitive modal={!inShadowRoot(mount)} {...props} preventScroll={false} />;
+};
 
 const DialogTrigger: Component<ComponentProps<typeof DialogPrimitive.Trigger>> = (props) => (
   <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
@@ -96,6 +97,7 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
   const [viewport, setViewport] = createSignal(0);
   const [panel, setPanel] = createSignal<HTMLElement>();
   const onInteractOutside = shadowLayer(panel, () => context.close(), local.onInteractOutside);
+  shadowFocus(panel);
   const [height, setHeight] = createSignal<number>();
   createEffect(() => {
     if (!local.anchor || !context.isOpen()) return;

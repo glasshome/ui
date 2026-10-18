@@ -155,6 +155,32 @@ describe("a portal mount inside a closed shadow root", () => {
     }
   });
 
+  it("closes the dialog on Escape", async () => {
+    const { holder, root, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const [open, setOpen] = createSignal(true);
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <Dialog open={open()} onOpenChange={setOpen}>
+            <DialogContent>
+              <DialogTitle>Edit</DialogTitle>
+              <Button data-testid="inside">Save</Button>
+            </DialogContent>
+          </Dialog>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    await layersListening();
+    const inside = root.querySelector<HTMLElement>('[data-testid="inside"]');
+    inside?.focus();
+    inside?.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, composed: true }),
+    );
+    expect(open()).toBe(false);
+  });
+
   it("wraps Tab inside the dialog", () => {
     const { holder, root, mount } = closedRoot();
     onTestFinished(retargetAtPage(holder));
@@ -178,7 +204,7 @@ describe("a portal mount inside a closed shadow root", () => {
     last?.dispatchEvent(
       new KeyboardEvent("keydown", { key: "Tab", bubbles: true, composed: true }),
     );
-    expect(root.contains(root.activeElement)).toBe(true);
+    expect(root.activeElement).toBe(root.querySelector('[data-testid="first"]'));
   });
 
   it("keeps popover content in the shadow root", () => {
