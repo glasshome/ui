@@ -195,7 +195,7 @@ function OptionIconWell(props: { icon?: string; image?: string }) {
       <span
         data-slot="option-card-icon"
         aria-hidden="true"
-        class="color-calc:[color:oklch(from_var(--surface-tone)_calc((0.75_-_l)*100)_0_0)] grid size-10 shrink-0 place-items-center rounded-[14px] bg-[color-mix(in_oklab,var(--surface-tone)_80%,black)] text-white"
+        class="color-calc:[color:oklch(from_var(--surface-tone)_calc((0.75_-_l)*100)_0_0)] text-primary-foreground grid size-10 shrink-0 place-items-center rounded-[14px] bg-[color-mix(in_oklab,var(--surface-tone)_80%,black)]"
       >
         <Show
           when={props.image}

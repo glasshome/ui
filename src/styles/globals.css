@@ -428,10 +428,10 @@
     0 0 calc(var(--_glass-bloom) * (1 - var(--glass-halo)))
       oklch(from var(--material-hue) l c h / 0.65),
     inset 0 0 calc(var(--material-glow) * 0.9 * var(--_material-glow-in))
-      color-mix(in srgb, var(--material-hue) calc(65% * var(--_material-glow-in)), transparent),
+      color-mix(in oklab, var(--material-hue) calc(65% * var(--_material-glow-in)), transparent),
     inset 0 28px 36px -16px
       color-mix(
-        in srgb,
+        in oklab,
         color-mix(in srgb, var(--material-hue) calc(var(--_material-inner-glow-hue) * 100%), white)
           calc(var(--_material-inner-glow) * 60%),
         transparent
