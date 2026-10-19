@@ -1,5 +1,13 @@
 import { Checkbox as CheckboxPrimitive } from "@kobalte/core/checkbox";
-import { type Component, type ComponentProps, type JSX, splitProps } from "solid-js";
+import {
+  children,
+  type Component,
+  type ComponentProps,
+  type JSX,
+  type ParentComponent,
+  Show,
+  splitProps,
+} from "solid-js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -13,11 +21,22 @@ const CHECKBOX_SIZE = {
 
 type CheckboxSize = keyof typeof CHECKBOX_SIZE;
 
+// Its own component so the label resolves once, under the checkbox's Kobalte context.
+const CheckboxText: ParentComponent = (props) => {
+  const label = children(() => props.children);
+  return (
+    <Show when={label()}>
+      <span data-slot="checkbox-text" class="text-sm leading-none">
+        {label()}
+      </span>
+    </Show>
+  );
+};
+
 const Checkbox: Component<ComponentProps<typeof CheckboxPrimitive> & { size?: CheckboxSize }> = (
   props,
 ) => {
   const [local, others] = splitProps(props, ["class", "children", "size"]);
-  const label = () => local.children as JSX.Element;
   const size = () => CHECKBOX_SIZE[local.size ?? "default"];
   return (
     <CheckboxPrimitive data-slot="checkbox" {...others}>
@@ -56,11 +75,7 @@ const Checkbox: Component<ComponentProps<typeof CheckboxPrimitive> & { size?: Ch
               )}
             />
           </span>
-          {local.children && (
-            <span data-slot="checkbox-text" class="text-sm leading-none">
-              {label()}
-            </span>
-          )}
+          <CheckboxText>{local.children as JSX.Element}</CheckboxText>
         </CheckboxPrimitive.Label>
       )}
     </CheckboxPrimitive>

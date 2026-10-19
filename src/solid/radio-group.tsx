@@ -1,5 +1,12 @@
 import { RadioGroup as RadioGroupPrimitive } from "@kobalte/core/radio-group";
-import { type Component, type ComponentProps, Show, splitProps } from "solid-js";
+import {
+  children,
+  type Component,
+  type ComponentProps,
+  type ParentComponent,
+  Show,
+  splitProps,
+} from "solid-js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 
@@ -11,6 +18,18 @@ const RadioGroup: Component<ComponentProps<typeof RadioGroupPrimitive>> = (props
       class={cn("flex flex-col gap-3", local.class)}
       {...rest}
     />
+  );
+};
+
+// Its own component so the children resolve once, under the item's Kobalte context.
+const RadioGroupItemContent: ParentComponent = (props) => {
+  const content = children(() => props.children);
+  return (
+    <Show when={content()}>
+      <div data-slot="radio-group-item-content" class="min-w-0 flex-1 text-sm">
+        {content()}
+      </div>
+    </Show>
   );
 };
 
@@ -52,11 +71,7 @@ const RadioGroupItem: Component<
             </RadioGroupPrimitive.ItemIndicator>
           </RadioGroupPrimitive.ItemControl>
         </Show>
-        {local.children && (
-          <div data-slot="radio-group-item-content" class="min-w-0 flex-1 text-sm">
-            {local.children}
-          </div>
-        )}
+        <RadioGroupItemContent>{local.children}</RadioGroupItemContent>
       </RadioGroupPrimitive.ItemLabel>
     </RadioGroupPrimitive.Item>
   );

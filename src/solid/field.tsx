@@ -199,10 +199,12 @@ const FieldError: Component<
   }
 > = (props) => {
   const [local, rest] = splitProps(props, ["class", "children", "errors"] as const);
+  const body = children(() => local.children);
 
   const content = createMemo(() => {
-    if (local.children) {
-      return local.children;
+    const given = body();
+    if (given) {
+      return given;
     }
 
     if (!local.errors?.length) {
