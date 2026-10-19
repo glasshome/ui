@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from "cva";
 import {
+  children,
   type Component,
   type ComponentProps,
   createMemo,
@@ -171,20 +172,21 @@ const FieldSubGroup: Component<ComponentProps<"div">> = (props) => {
 
 const FieldSeparator: ParentComponent<ComponentProps<"div">> = (props) => {
   const [local, rest] = splitProps(props, ["children", "class"]);
+  const content = children(() => local.children);
   return (
     <div
       data-slot="field-separator"
-      data-content={!!local.children}
+      data-content={!!content()}
       class={cn("relative h-5 text-sm", local.class)}
       {...rest}
     >
       <Separator class="absolute inset-0 top-1/2" />
-      <Show when={local.children}>
+      <Show when={content()}>
         <span
           class="bg-card text-muted-foreground relative mx-auto block w-fit px-2"
           data-slot="field-separator-content"
         >
-          {local.children}
+          {content()}
         </span>
       </Show>
     </div>

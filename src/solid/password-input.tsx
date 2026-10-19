@@ -1,4 +1,5 @@
 import {
+  children,
   type Component,
   type ComponentProps,
   createSignal,
@@ -26,10 +27,11 @@ const PasswordInput: Component<
 > = (props) => {
   const [local, rest] = splitProps(props, ["class", "leading", "showLabel", "hideLabel"]);
   const [visible, setVisible] = createSignal(false);
+  const leading = children(() => local.leading);
 
   return (
     <div data-slot="password-input" class="relative">
-      <Show when={local.leading}>
+      <Show when={leading()}>
         <span
           data-slot="password-input-leading"
           class={cn(
@@ -38,14 +40,14 @@ const PasswordInput: Component<
           )}
           aria-hidden="true"
         >
-          {local.leading}
+          {leading()}
         </span>
       </Show>
       <Input
         type={visible() ? "text" : "password"}
         // Caller class first, affordance padding last: a caller-supplied px-*
         // must never win the merge and reclaim a button's space.
-        class={cn(local.class, local.leading && LEADING_RESERVE, TOGGLE_RESERVE)}
+        class={cn(local.class, leading() && LEADING_RESERVE, TOGGLE_RESERVE)}
         {...rest}
       />
       <button

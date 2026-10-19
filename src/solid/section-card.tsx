@@ -47,10 +47,13 @@ type SectionCardProps = {
 export function SectionCard(props: SectionCardProps) {
   const glass = () => props.glass ?? NOOP_GLASS;
   const active = () => glass().active?.() ?? false;
+  const title = children(() => props.title);
+  const subtitle = children(() => props.subtitle);
+  const action = children(() => props.action);
+  const toolbar = children(() => props.toolbar);
   const hasHeader = () =>
-    props.icon != null || props.title != null || props.action != null || props.count != null;
-  // Resolved once: a header-only card must not pay the section gap for an
-  // empty body slot, and reading props.children twice would build it twice.
+    props.icon != null || title() != null || action() != null || props.count != null;
+  // A header-only card must not pay the section gap for an empty body slot.
   const body = children(() => props.children);
   const hasBody = () => body.toArray().some((child) => child != null && child !== false);
 
@@ -78,30 +81,30 @@ export function SectionCard(props: SectionCardProps) {
           </Show>
           <div data-slot="section-card-headings" class="flex min-w-0 flex-1 flex-col gap-0.5">
             <div data-slot="section-card-headline" class="flex min-w-0 items-center gap-2 sm:gap-3">
-              <Show when={props.title}>
-                <SectionTitle>{props.title}</SectionTitle>
+              <Show when={title()}>
+                <SectionTitle>{title()}</SectionTitle>
               </Show>
               <Show when={props.count != null}>
                 <CountPill>{props.count}</CountPill>
               </Show>
             </div>
-            <Show when={props.subtitle}>
-              <SectionMeta class={props.subtitleClass}>{props.subtitle}</SectionMeta>
+            <Show when={subtitle()}>
+              <SectionMeta class={props.subtitleClass}>{subtitle()}</SectionMeta>
             </Show>
           </div>
-          <Show when={props.action}>
+          <Show when={action()}>
             <div data-slot="section-card-actions" class="flex shrink-0 items-center gap-2">
-              {props.action}
+              {action()}
             </div>
           </Show>
         </header>
       </Show>
-      <Show when={props.toolbar}>
+      <Show when={toolbar()}>
         <div
           data-slot="section-card-toolbar"
           class={cn(hasHeader() && "border-border/50 border-t pt-3")}
         >
-          {props.toolbar}
+          {toolbar()}
         </div>
       </Show>
       <Show when={hasBody()}>
@@ -171,6 +174,10 @@ export function FactRow(props: { label: JSX.Element; children: JSX.Element; clas
  */
 export function ListRow(props: ListRowProps) {
   const opens = () => props.onOpen !== undefined || props.href !== undefined;
+  const leading = children(() => props.leading);
+  const subtitle = children(() => props.subtitle);
+  const meta = children(() => props.meta);
+  const actions = children(() => props.actions);
   return (
     <SectionRow
       interactive={opens()}
@@ -191,8 +198,8 @@ export function ListRow(props: ListRowProps) {
           onClick={() => props.onOpen?.()}
         />
       </Show>
-      <Show when={props.leading}>
-        <span class="flex shrink-0 items-center gap-2">{props.leading}</span>
+      <Show when={leading()}>
+        <span class="flex shrink-0 items-center gap-2">{leading()}</span>
       </Show>
       {/* Identity column. The floor is what gives the name priority: without
 			    it this is the only shrinkable child, so flex crushes it to an
@@ -203,21 +210,21 @@ export function ListRow(props: ListRowProps) {
           <p class="truncate text-sm leading-tight font-semibold">{props.title}</p>
           {props.badges}
         </div>
-        <Show when={props.subtitle}>
-          <p class="text-muted-foreground mt-1 truncate text-xs">{props.subtitle}</p>
+        <Show when={subtitle()}>
+          <p class="text-muted-foreground mt-1 truncate text-xs">{subtitle()}</p>
         </Show>
       </div>
       {/* Trailing meta, centred across both identity lines. shrink-0, because
 			    a squeeze-driven wrap fires off whichever meta happens to be widest
 			    while the flex-1 identity column still holds unused slack. Meta that
 			    wants to reflow reads @container/list-row and says so itself. */}
-      <Show when={props.meta}>
-        <div class="text-muted-foreground shrink-0 text-xs">{props.meta}</div>
+      <Show when={meta()}>
+        <div class="text-muted-foreground shrink-0 text-xs">{meta()}</div>
       </Show>
-      <Show when={props.actions}>
-        <div class="relative flex shrink-0 items-center gap-1">{props.actions}</div>
+      <Show when={actions()}>
+        <div class="relative flex shrink-0 items-center gap-1">{actions()}</div>
       </Show>
-      <Show when={opens() && props.actions === undefined}>
+      <Show when={opens() && actions() === undefined}>
         <Icon
           icon="lucide:chevron-right"
           width={16}
@@ -257,6 +264,7 @@ export function SectionIcon(props: {
     if (t == null) return undefined;
     return t in LEGACY_TONES ? LEGACY_TONES[t] : t;
   };
+  const glyph = children(() => props.children);
   return (
     <span
       data-slot="section-icon"
@@ -268,8 +276,8 @@ export function SectionIcon(props: {
       )}
       style={tone() ? { "--glass-tone": tone() } : undefined}
     >
-      <Show when={props.children} fallback={props.icon ? <Icon icon={props.icon} /> : null}>
-        {props.children}
+      <Show when={glyph()} fallback={props.icon ? <Icon icon={props.icon} /> : null}>
+        {glyph()}
       </Show>
     </span>
   );

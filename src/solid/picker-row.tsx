@@ -1,4 +1,11 @@
-import { type ComponentProps, type JSX, Show, splitProps, type ValidComponent } from "solid-js";
+import {
+  children,
+  type ComponentProps,
+  type JSX,
+  Show,
+  splitProps,
+  type ValidComponent,
+} from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { MENU_ITEM } from "../lib/menu-classes.js";
 import { ICON_PILL, ICON_PILL_TINT } from "../lib/pill-classes.js";
@@ -36,6 +43,8 @@ export function PickerRow(props: PickerRowProps) {
     "dimmed",
     "class",
   ]);
+  const subtitle = children(() => local.subtitle);
+  const meta = children(() => local.meta);
   return (
     <Dynamic
       component={local.as ?? "div"}
@@ -66,18 +75,18 @@ export function PickerRow(props: PickerRowProps) {
       </Show>
       <div class={cn("min-w-0 flex-1", local.dimmed && "opacity-60")}>
         <div class="truncate font-medium">{local.title}</div>
-        <Show when={local.subtitle}>
-          <div class="text-muted-foreground truncate text-xs">{local.subtitle}</div>
+        <Show when={subtitle()}>
+          <div class="text-muted-foreground truncate text-xs">{subtitle()}</div>
         </Show>
       </div>
-      <Show when={local.meta}>
+      <Show when={meta()}>
         <span
           class={cn(
             "text-muted-foreground max-w-24 shrink-0 truncate text-xs",
             local.dimmed && "italic",
           )}
         >
-          {local.meta}
+          {meta()}
         </span>
       </Show>
       <Show

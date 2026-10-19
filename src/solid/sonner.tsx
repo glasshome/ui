@@ -1,4 +1,11 @@
-import { type Component, type ComponentProps, type JSX, mergeProps, Show } from "solid-js";
+import {
+  children,
+  type Component,
+  type ComponentProps,
+  type JSX,
+  mergeProps,
+  Show,
+} from "solid-js";
 import { type ExternalToast, Toaster as SolidSonner, toast as sonnerToast } from "solid-sonner";
 import {
   ALERT_CLASS,
@@ -59,6 +66,9 @@ const GlassToast: Component<GlassToastProps> = (props) => {
   const toneIcon = KIND_ICON[props.kind];
   const watermarkGlyph: JSX.Element | null =
     props.icon ?? (toneIcon ? <Icon icon={toneIcon} width={112} height={112} /> : null);
+  const title = children(() => props.title);
+  const description = children(() => props.description);
+  const action = children(() => props.action);
 
   return (
     <div
@@ -92,17 +102,17 @@ const GlassToast: Component<GlassToastProps> = (props) => {
         </span>
       </Show>
       <div class={ALERT_CONTENT_CLASS}>
-        <Show when={props.title}>
+        <Show when={title()}>
           <p class={ALERT_TITLE_CLASS} style={tone ? { color: glassToneText(tone) } : undefined}>
-            {props.title}
+            {title()}
           </p>
         </Show>
-        <Show when={props.description}>
-          <div class={ALERT_DESCRIPTION_CLASS}>{props.description}</div>
+        <Show when={description()}>
+          <div class={ALERT_DESCRIPTION_CLASS}>{description()}</div>
         </Show>
       </div>
-      <Show when={props.action}>
-        <div class="flex shrink-0 items-center">{props.action}</div>
+      <Show when={action()}>
+        <div class="flex shrink-0 items-center">{action()}</div>
       </Show>
     </div>
   );

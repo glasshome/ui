@@ -2,6 +2,7 @@ import { Button as KobalteButton } from "@kobalte/core/button";
 import { useDialogContext } from "@kobalte/core/dialog";
 import {
   type Accessor,
+  children,
   type Component,
   type ComponentProps,
   createContext,
@@ -116,23 +117,25 @@ export interface ModalParts {
 export function createModalParts(slot: string): ModalParts {
   const Header: Component<ModalHeaderProps> = (props) => {
     const [local, rest] = splitProps(props, ["class", "media", "action", "wrap", "children"]);
+    const media = children(() => local.media);
+    const action = children(() => local.action);
     return (
       <div
         data-slot={`${slot}-header`}
         class={cn(MODAL_HEADER, local.wrap && "flex-wrap", local.class)}
         {...rest}
       >
-        <Show when={local.media}>
+        <Show when={media()}>
           <div data-slot={`${slot}-header-media`} class={MODAL_HEADER_MEDIA}>
-            {local.media}
+            {media()}
           </div>
         </Show>
         <div data-slot={`${slot}-header-text`} class={MODAL_HEADER_TEXT}>
           {local.children}
         </div>
-        <Show when={local.action}>
+        <Show when={action()}>
           <div data-slot={`${slot}-header-action`} class={MODAL_HEADER_ACTION}>
-            {local.action}
+            {action()}
           </div>
         </Show>
       </div>

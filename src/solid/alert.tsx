@@ -1,4 +1,5 @@
 import {
+  children,
   type Component,
   type ComponentProps,
   createContext,
@@ -52,6 +53,10 @@ const Alert: Component<AlertProps> = (props) => {
   ]);
   const toneKey = () => local.tone ?? "info";
   const tone = () => ALERT_TONES[toneKey()];
+  const icon = children(() => local.icon);
+  const title = children(() => local.title);
+  const body = children(() => local.children);
+  const action = children(() => local.action);
   return (
     <div
       data-slot="alert"
@@ -68,7 +73,7 @@ const Alert: Component<AlertProps> = (props) => {
     >
       <span class={ALERT_ICON_BG_CLASS} style={alertIconBgStyle(tone().color)} aria-hidden="true">
         <Show
-          when={local.icon}
+          when={icon()}
           fallback={
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -82,31 +87,31 @@ const Alert: Component<AlertProps> = (props) => {
             />
           }
         >
-          {local.icon}
+          {icon()}
         </Show>
       </span>
       <div class={ALERT_CONTENT_CLASS}>
         <AlertToneContext.Provider value={() => tone().color}>
-          <Show when={local.title}>
+          <Show when={title()}>
             <p
               data-slot="alert-title"
               class={ALERT_TITLE_CLASS}
               style={{ color: glassToneText(tone().color) }}
             >
-              {local.title}
+              {title()}
             </p>
           </Show>
-          <Show when={local.children}>
+          <Show when={body()}>
             <div data-slot="alert-description" class={ALERT_DESCRIPTION_CLASS}>
-              {local.children}
+              {body()}
             </div>
           </Show>
         </AlertToneContext.Provider>
       </div>
-      <Show when={local.action}>
+      <Show when={action()}>
         {/* self-center: the row is items-start for the icon, which would strand
 				    the action at the top of a multi-line body. */}
-        <div class="flex shrink-0 items-center self-center">{local.action}</div>
+        <div class="flex shrink-0 items-center self-center">{action()}</div>
       </Show>
     </div>
   );
