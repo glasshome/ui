@@ -148,6 +148,8 @@ type ListRowProps = {
   href?: string;
   /** Accessible name for the whole-row activation; required with href or onOpen. */
   openLabel?: string;
+  /** Title and subtitle wrap to show a whole sentence instead of truncating. */
+  wrap?: boolean;
   class?: string;
 };
 
@@ -207,11 +209,20 @@ export function ListRow(props: ListRowProps) {
 			    plus its badge. */}
       <div class="min-w-[9rem] flex-1">
         <div class="flex min-w-0 items-center gap-2">
-          <p class="truncate text-sm leading-tight font-semibold">{props.title}</p>
+          <p
+            class={cn(
+              "text-sm font-semibold",
+              props.wrap ? "leading-snug text-pretty" : "truncate leading-tight",
+            )}
+          >
+            {props.title}
+          </p>
           {props.badges}
         </div>
         <Show when={subtitle()}>
-          <p class="text-muted-foreground mt-1 truncate text-xs">{subtitle()}</p>
+          <p class={cn("text-muted-foreground mt-1 text-xs", !props.wrap && "truncate")}>
+            {subtitle()}
+          </p>
         </Show>
       </div>
       {/* Trailing meta, centred across both identity lines. shrink-0, because

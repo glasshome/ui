@@ -32,6 +32,17 @@ describe("ListRow", () => {
     expect(row(container)).toBeTruthy();
   });
 
+  it("truncates title and subtitle by default and wraps them with wrap", () => {
+    const truncated = render(() => <ListRow title="A long sentence" subtitle="More" />);
+    expect(screen.getByText("A long sentence").className).toContain("truncate");
+    expect(screen.getByText("More").className).toContain("truncate");
+    truncated.unmount();
+
+    render(() => <ListRow wrap title="A long sentence" subtitle="More" />);
+    expect(screen.getByText("A long sentence").className).not.toContain("truncate");
+    expect(screen.getByText("More").className).not.toContain("truncate");
+  });
+
   it("stays inert without onOpen: no overlay button, no interactive surface", () => {
     const { container } = render(() => <ListRow title="Pulse" />);
 
