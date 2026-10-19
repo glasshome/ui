@@ -1,4 +1,5 @@
 import { cleanup, render } from "@solidjs/testing-library";
+import { Show } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { CARD_INTERACTIVE, CARD_SURFACE_BASE } from "../../src/lib/card-classes.js";
@@ -67,6 +68,15 @@ describe("SectionCard spacing owner", () => {
 
     const headerOnly = render(() => <SectionCard title="t" />);
     expect(headerOnly.container.querySelector('[data-slot="section-card-body"]')).toBeNull();
+  });
+
+  it("renders no header when its title and action slots render nothing", () => {
+    const { container } = render(() => (
+      <SectionCard title={<Show when={false}>t</Show>} action={<Show when={false}>a</Show>}>
+        rows
+      </SectionCard>
+    ));
+    expect(container.querySelector('[data-slot="section-card-header"]')).toBeNull();
   });
 
   it("keeps the toolbar rule only when a header sits above it", () => {

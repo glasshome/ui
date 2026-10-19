@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@solidjs/testing-library";
+import { Show } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { SECTION_ROW_INTERACTIVE } from "../../src/lib/card-classes.js";
@@ -75,6 +76,13 @@ describe("ListRow", () => {
       />
     ));
     expect(withActions.container.querySelector('[data-icon="lucide:chevron-right"]')).toBeNull();
+  });
+
+  it("treats an actions slot that renders nothing as no actions: the chevron shows", () => {
+    const { container } = render(() => (
+      <ListRow title="A" onOpen={() => {}} openLabel="A" actions={<Show when={false}>x</Show>} />
+    ));
+    expect(container.querySelector('[data-icon="lucide:chevron-right"]')).toBeTruthy();
   });
 
   it("keeps actions clickable above the open overlay", () => {
