@@ -133,6 +133,9 @@ export function Icon(props: IconProps) {
     if (!data) return { ...EMPTY, attributes: { ...EMPTY.attributes, ...sizeOrDefault(size) } };
     return iconToSVG(data, size);
   });
+  const body = createMemo(() => built().body);
+  // A TrustedHTML is a fresh object per call, which the spread would write as a new innerHTML.
+  const html = createMemo(() => trusted(body()));
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -144,7 +147,7 @@ export function Icon(props: IconProps) {
       viewBox={built().attributes.viewBox}
       width={built().attributes.width}
       height={built().attributes.height}
-      innerHTML={trusted(built().body)}
+      innerHTML={html()}
     />
   );
 }
