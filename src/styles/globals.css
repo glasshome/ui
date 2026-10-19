@@ -428,16 +428,13 @@
     0 0 calc(var(--_glass-bloom) * (1 - var(--glass-halo)))
       oklch(from var(--material-hue) l c h / 0.65),
     inset 0 0 calc(var(--material-glow) * 0.9 * var(--_material-glow-in))
-      oklch(from var(--material-hue) l c h / calc(0.65 * var(--_material-glow-in))),
+      color-mix(in srgb, var(--material-hue) calc(65% * var(--_material-glow-in)), transparent),
     inset 0 28px 36px -16px
-      oklch(
-        from
-          color-mix(
-            in srgb,
-            var(--material-hue) calc(var(--_material-inner-glow-hue) * 100%),
-            white
-          )
-          l c h / calc(var(--_material-inner-glow) * 0.6)
+      color-mix(
+        in srgb,
+        color-mix(in srgb, var(--material-hue) calc(var(--_material-inner-glow-hue) * 100%), white)
+          calc(var(--_material-inner-glow) * 60%),
+        transparent
       ),
     inset 0 0 calc(var(--_material-inset) * 28px) oklch(0 0 0 / calc(var(--_material-inset) * 0.55)),
     inset
@@ -508,9 +505,11 @@
 }
 
 /* Two-tone wash: the second colour is the surface's own tone turned, so a toneless surface stays clear. */
-@container style(--_material-two-tone: 1) {
-  :where(.glass) {
-    --glass-tone-2: oklch(from var(--glass-tone) l c calc(h + 60));
+@supports (color: light-dark(red, red)) {
+  @container style(--_material-two-tone: 1) {
+    :where(.glass) {
+      --glass-tone-2: oklch(from var(--glass-tone) l c calc(h + 60));
+    }
   }
 }
 

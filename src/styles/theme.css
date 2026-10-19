@@ -1,3 +1,10 @@
+/* Relative colors that calc() on a channel hang WebKit before 17.4; light-dark() arrived after, so it gates them. */
+@custom-variant color-calc {
+  @supports (color: light-dark(red, red)) {
+    @slot;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

@@ -47,7 +47,7 @@ const RadioGroupItem: Component<
             >
               <span
                 data-slot="radio-group-item-dot"
-                class="size-[36%] rounded-full [background:oklch(from_var(--primary)_calc((0.42_-_l)*100)_0_0)] dark:[background:oklch(from_var(--primary)_calc((0.6_-_l)*100)_0_0)]"
+                class="color-calc:[background:oklch(from_var(--primary)_calc((0.42_-_l)*100)_0_0)] dark:color-calc:[background:oklch(from_var(--primary)_calc((0.6_-_l)*100)_0_0)] size-[36%] rounded-full bg-white"
               />
             </RadioGroupPrimitive.ItemIndicator>
           </RadioGroupPrimitive.ItemControl>
