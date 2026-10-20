@@ -2,7 +2,7 @@
  * with class="probe" and the class reaches the DOM. Exports are enumerated
  * programmatically, so a future export either renders through the DEFAULT
  * probe, gets a CASES entry (required props / parent wrappers), or is added
- * to SKIP with a written reason; an unhandled one fails CI here. */
+ * to NOT_PROBED with a written reason; an unhandled one fails CI here. */
 import { cleanup, fireEvent, render } from "@solidjs/testing-library";
 import type { JSX } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
@@ -36,13 +36,8 @@ const widgetSummary: solid.WidgetSummary = {
 
 const noop = () => {};
 
-/* Exports exempt from the probe, each with the reason. Two kinds:
- * - "renderless": context/portal roots that render no DOM element of their
- *   own, so a class can never reach the DOM by design.
- * - "no class prop": pre-existing passthrough gaps (the very thing this gate
- *   guards against for FUTURE exports). Listed explicitly so closing one is a
- *   one-line skip removal; reported in the design-system backlog. */
-const SKIP: Record<string, string> = {
+/* Exports a class can never reach by design, each with the reason. */
+const NOT_PROBED: Record<string, string> = {
   // Renderless roots / portals
   AlertDialog: "renderless context root (kobalte Dialog), no DOM element of its own",
   BottomSheet: "renderless context root (state machine provider), no DOM element of its own",
@@ -62,36 +57,61 @@ const SKIP: Record<string, string> = {
   AvatarImage:
     "kobalte Image renders the img element only after a successful load; happy-dom never loads images",
   MediaStoreError: "error class, not a component: no class prop to pass through",
-  // Pre-existing passthrough gaps (no class prop today; close by adding one)
-  BarList: "no class prop (pre-existing passthrough gap)",
-  EntitySelector: "no class prop (pre-existing passthrough gap)",
-  GlassToast: "no class prop (pre-existing passthrough gap); toast card rendered by Toaster",
-  LabeledField: "no class prop (pre-existing passthrough gap)",
-  LabeledIconPicker: "no class prop (pre-existing passthrough gap)",
-  LabeledInput: "no class prop (pre-existing passthrough gap)",
-  PageHeader: "no class prop (pre-existing passthrough gap)",
-  RangeToggle: "no class prop (pre-existing passthrough gap)",
-  RowActions: "no class prop (pre-existing passthrough gap)",
-  ScopeIndicator: "no class prop (pre-existing passthrough gap)",
   HeroOption: "deprecated alias of OptionCard",
   SelectionHighlight:
     "part of an item inside a SelectionScope, nothing outside one; it takes the item's radius and the scope's tone, never a class",
   OptionChoice: "row of an OptionCard; the card owns the class",
   ScrollBar: "deprecated no-op; gh-scroll's native-styled bar is the bar",
-  SectionAddButton: "no class prop (pre-existing passthrough gap)",
-  SectionEmpty: "no class prop (pre-existing passthrough gap)",
-  SectionRowSkeletons: "no class prop (pre-existing passthrough gap)",
-  StackedBar: "no class prop (pre-existing passthrough gap)",
-  SwitchRow: "no class prop (pre-existing passthrough gap)",
-  TableEmpty: "no class prop (pre-existing passthrough gap)",
-  TableError: "no class prop (pre-existing passthrough gap)",
   Toaster: "third-party toast outlet (solid-sonner), no class contract of its own",
-  WidgetTrustBadge: "no class prop (pre-existing passthrough gap)",
 };
+
+/* Known defects: these drop the class today. Each test fails once the
+ * component forwards it, so the fix deletes its line. */
+const PASSTHROUGH_GAPS_ITEM = "docs/work/2026-10-20-ui-components-drop-their-class";
+const PASSTHROUGH_GAPS = [
+  "BarList",
+  "EntitySelector",
+  "GlassToast",
+  "LabeledField",
+  "LabeledIconPicker",
+  "LabeledInput",
+  "PageHeader",
+  "RangeToggle",
+  "RowActions",
+  "ScopeIndicator",
+  "SectionAddButton",
+  "SectionEmpty",
+  "SectionRowSkeletons",
+  "StackedBar",
+  "SwitchRow",
+  "TableEmpty",
+  "TableError",
+  "WidgetTrustBadge",
+];
 
 /* Bespoke renders for components with required props or parent contexts.
  * The component under test carries class="probe". */
+// The gap components declare no class prop, so their cases hand one over untyped.
+const withClass = <P,>(component: (props: P) => JSX.Element) =>
+  component as (props: P & { class: string }) => JSX.Element;
+const BarList = withClass(solid.BarList);
+const EntitySelector = withClass(solid.EntitySelector);
+const LabeledIconPicker = withClass(solid.LabeledIconPicker);
+const RangeToggle = withClass(solid.RangeToggle);
+const StackedBar = withClass(solid.StackedBar);
+
 const CASES: Record<string, () => JSX.Element> = {
+  BarList: () => <BarList class="probe" items={[{ label: "Lamp", value: 2 }]} />,
+  EntitySelector: () => (
+    <solid.EntityDataContext.Provider value={stubEntityData}>
+      <EntitySelector class="probe" entityIds={[]} onEntityIdsChange={noop} domain="light" />
+    </solid.EntityDataContext.Provider>
+  ),
+  LabeledIconPicker: () => (
+    <LabeledIconPicker class="probe" label="Icon" value="mdi:lamp" onChange={noop} />
+  ),
+  RangeToggle: () => <RangeToggle class="probe" value={7} onChange={noop} />,
+  StackedBar: () => <StackedBar class="probe" segments={[{ label: "Solar", value: 3 }]} />,
   AccordionItem: () => (
     <solid.Accordion collapsible>
       <solid.AccordionItem value="a" class="probe">
@@ -753,34 +773,41 @@ describe("class passthrough (gate B1)", () => {
     expect(componentNames.length).toBeGreaterThan(100);
   });
 
-  for (const name of componentNames) {
-    if (name in SKIP) {
-      it.skip(`${name} — ${SKIP[name]}`, () => {});
-      continue;
-    }
-    it(name, async () => {
-      // Leak guard: a stale probe from an earlier render would make this
-      // assertion pass vacuously.
-      expect(document.querySelector(".probe")).toBeNull();
-      const renderCase = CASES[name];
-      if (renderCase) {
-        render(renderCase);
-      } else {
-        const Comp = (solid as Record<string, unknown>)[name] as (p: {
-          class: string;
-          children: string;
-        }) => JSX.Element;
-        render(() => <Comp class="probe">probe</Comp>);
-      }
-      // Context menus mount their content only after a pointer-positioned
-      // open; cases mark the trigger and we fire the real event.
-      const cmTrigger = document.querySelector("[data-cm-trigger]");
-      if (cmTrigger) {
-        fireEvent.contextMenu(cmTrigger);
-        await Promise.resolve();
-      }
-      // document-wide: portalled content (dialogs, menus) mounts on body.
-      expect(document.querySelector(".probe")).toBeTruthy();
-    });
-  }
+  it("lists only real exports as not probed or as gaps", () => {
+    const listed = [...Object.keys(NOT_PROBED), ...PASSTHROUGH_GAPS];
+    expect(listed.filter((name) => !componentNames.includes(name))).toEqual([]);
+  });
+
+  const probed = componentNames.filter(
+    (name) => !(name in NOT_PROBED) && !PASSTHROUGH_GAPS.includes(name),
+  );
+
+  it.each(probed)("%s passes its class through", async (name) => {
+    // Leak guard: a stale probe from an earlier render would make this
+    // assertion pass vacuously.
+    expect(document.querySelector(".probe")).toBeNull();
+    await renderProbe(name);
+    // document-wide: portalled content (dialogs, menus) mounts on body.
+    expect(document.querySelector(".probe")).toBeTruthy();
+  });
+
+  it.each(PASSTHROUGH_GAPS)(`%s still drops its class (${PASSTHROUGH_GAPS_ITEM})`, async (name) => {
+    expect(document.querySelector(".probe")).toBeNull();
+    await renderProbe(name);
+    expect(document.querySelector(".probe")).toBeNull();
+  });
 });
+
+async function renderProbe(name: string) {
+  const renderCase = CASES[name];
+  const Comp = (solid as Record<string, unknown>)[name] as (p: {
+    class: string;
+    children: string;
+  }) => JSX.Element;
+  render(renderCase ?? (() => <Comp class="probe">probe</Comp>));
+  // Context menus mount their content only after a pointer-positioned
+  // open; cases mark the trigger and we fire the real event.
+  const cmTrigger = document.querySelector("[data-cm-trigger]");
+  if (cmTrigger) fireEvent.contextMenu(cmTrigger);
+  await Promise.resolve();
+}

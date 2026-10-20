@@ -8,8 +8,8 @@ function withAnimations(animations: { finished: Promise<unknown> }[]): Element {
 }
 
 it("resolves at once when nothing runs or the environment cannot animate", async () => {
-  await whenAnimationsSettle(document.createElement("div"));
-  await whenAnimationsSettle(withAnimations([]));
+  await expect(whenAnimationsSettle(document.createElement("div"))).resolves.toBeUndefined();
+  await expect(whenAnimationsSettle(withAnimations([]))).resolves.toBeUndefined();
 });
 
 it("waits for every running animation, and survives a cancelled one", async () => {
@@ -36,7 +36,9 @@ it("ignores animations the filter rejects", async () => {
     { finished: new Promise<void>(() => {}), id: "ambient" } as never,
     { finished: Promise.resolve(), id: "slide" } as never,
   ]);
-  await whenAnimationsSettle(el, {
-    filter: (a) => (a as unknown as { id: string }).id === "slide",
-  });
+  await expect(
+    whenAnimationsSettle(el, {
+      filter: (a) => (a as unknown as { id: string }).id === "slide",
+    }),
+  ).resolves.toBeUndefined();
 });
