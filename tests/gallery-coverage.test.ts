@@ -62,5 +62,5 @@ describe("gallery coverage", () => {
       emptyReasons: [],
       staleAllows: [],
     });
-  }, 60_000);
+  });
 });
