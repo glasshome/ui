@@ -109,7 +109,10 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
     host: shadowHost,
     onInteractOutside: (e) => {
       const host = shadowHost();
-      if (host && e.target === host) e.preventDefault();
+      if (host && e.target === host) {
+        e.preventDefault();
+        return;
+      }
       options.consumer.onInteractOutside?.(e as never);
     },
     onCloseAutoFocus: (e) => {

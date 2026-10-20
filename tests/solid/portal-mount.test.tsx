@@ -522,6 +522,31 @@ describe("the rest of the shadow-root review's cases", () => {
     expect(held?.contains(inside)).toBe(true);
   });
 
+  it("a popover whose caller closes it on an outside interaction stays open through a press inside it", async () => {
+    const { holder, root, mount } = closedRoot();
+    onTestFinished(retargetAtPage(holder));
+    const [open, setOpen] = createSignal(true);
+    render(
+      () => (
+        <PortalMountContext.Provider value={mount}>
+          <Popover open={open()} onOpenChange={setOpen}>
+            <PopoverTrigger>Open</PopoverTrigger>
+            <PopoverContent onInteractOutside={() => setOpen(false)}>
+              <Button data-testid="in-popover">Pick</Button>
+            </PopoverContent>
+          </Popover>
+        </PortalMountContext.Provider>
+      ),
+      { container: mount },
+    );
+    await layersListening();
+    expect(open()).toBe(true);
+    const inside = root.querySelector<HTMLElement>('[data-testid="in-popover"]');
+    if (!inside) throw new Error("no popover content");
+    press(inside);
+    expect(open()).toBe(true);
+  });
+
   it("a bottom sheet in a shadow root closes on a press on the page outside the root's host", async () => {
     const { holder, mount } = closedRoot();
     onTestFinished(retargetAtPage(holder));
