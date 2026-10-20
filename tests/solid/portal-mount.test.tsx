@@ -1,6 +1,7 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
+import { DelegatedEvents, delegateEvents } from "solid-js/web";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   BottomSheet,
   BottomSheetContent,
@@ -42,73 +43,36 @@ afterEach(() => {
   document.body.innerHTML = "";
 });
 
+const unpin = (e: Event) => {
+  Reflect.deleteProperty(e, "target");
+  Reflect.deleteProperty(e, "currentTarget");
+};
+delegateEvents([...DelegatedEvents]);
+for (const name of DelegatedEvents) document.addEventListener(name, unpin);
+
+/** The realm's wiring (widget-sdk's `delegateInside`): the document cannot see into a closed root, so Solid listens on it. */
+function delegateInside(root: ShadowRoot) {
+  const target = {
+    addEventListener: (type: string, listener: EventListener) =>
+      root.addEventListener(type, listener),
+    removeEventListener: (type: string, listener: EventListener) =>
+      root.removeEventListener(type, listener),
+  } as unknown as Document;
+  delegateEvents([...DelegatedEvents], target);
+  for (const name of DelegatedEvents) root.addEventListener(name, unpin);
+}
+
 /** A closed shadow root on the page, as a sealed realm's overlay is. */
 function closedRoot() {
   const holder = document.createElement("div");
   document.body.appendChild(holder);
   const root = holder.attachShadow({ mode: "closed" });
-  holderRoots.set(holder, root);
+  delegateInside(root);
   shadowRoots.push(root);
   const mount = document.createElement("div");
   root.appendChild(mount);
   return { holder, root, mount };
 }
-
-/**
- * What a browser does and happy-dom does not: outside the shadow root, an event's target and
- * the document's active element are the shadow host, never a node inside it.
- */
-function retargetAtPage(holder: Element): () => void {
-  const root = holder.shadowRoot ?? holderRoots.get(holder);
-  const add = document.addEventListener.bind(document);
-  const remove = document.removeEventListener.bind(document);
-  const wrapped = new WeakMap<object, EventListener>();
-  const view = (e: Event): Event => {
-    const t = e.target;
-    if (!(t instanceof Node) || t.getRootNode() !== root) return e;
-    return new Proxy(e, {
-      get: (event, key) => {
-        if (key === "target") return holder;
-        const value = Reflect.get(event, key, event) as unknown;
-        return typeof value === "function" ? value.bind(event) : value;
-      },
-    });
-  };
-  document.addEventListener = function (
-    this: Document,
-    type: string,
-    listener: unknown,
-    options?: unknown,
-  ) {
-    if (typeof listener !== "function") {
-      add.call(this, type, listener as never, options as never);
-      return;
-    }
-    let w = wrapped.get(listener);
-    if (!w) {
-      w = (e: Event) => (listener as EventListener).call(document, view(e));
-      wrapped.set(listener, w);
-    }
-    add.call(this, type, w, options as never);
-  } as typeof document.addEventListener;
-  document.removeEventListener = function (
-    this: Document,
-    type: string,
-    listener: unknown,
-    options?: unknown,
-  ) {
-    const w = typeof listener === "function" ? wrapped.get(listener) : undefined;
-    remove.call(this, type, (w ?? listener) as never, options as never);
-  } as typeof document.removeEventListener;
-  Object.defineProperty(document, "activeElement", { configurable: true, get: () => holder });
-  return () => {
-    delete (document as { addEventListener?: unknown }).addEventListener;
-    delete (document as { removeEventListener?: unknown }).removeEventListener;
-    delete (document as { activeElement?: unknown }).activeElement;
-  };
-}
-
-const holderRoots = new WeakMap<Element, ShadowRoot>();
 
 /** Dismissable layers start listening for outside presses a timer after they open. */
 const layersListening = async () => {
@@ -125,8 +89,7 @@ const press = (target: Element) => {
 
 describe("a portal mount inside a closed shadow root", () => {
   it("keeps dialog content in the shadow root, open through a press inside it", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const [open, setOpen] = createSignal(true);
     render(
       () => (
@@ -152,8 +115,7 @@ describe("a portal mount inside a closed shadow root", () => {
   });
 
   it("still closes the dialog on a press on its scrim or on the page", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const page = document.createElement("button");
     document.body.appendChild(page);
     for (const target of ["scrim", "page"] as const) {
@@ -180,8 +142,7 @@ describe("a portal mount inside a closed shadow root", () => {
   });
 
   it("closes the dialog on Escape", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const [open, setOpen] = createSignal(true);
     render(
       () => (
@@ -206,8 +167,7 @@ describe("a portal mount inside a closed shadow root", () => {
   });
 
   it("wraps Tab inside the dialog", () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     render(
       () => (
         <PortalMountContext.Provider value={mount}>
@@ -249,8 +209,7 @@ describe("a portal mount inside a closed shadow root", () => {
   });
 
   it("keeps a bottom sheet open through a press inside it", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const [open, setOpen] = createSignal(true);
     render(
       () => (
@@ -315,8 +274,7 @@ describe("on the page, with no portal mount", () => {
 
 describe("layers stacked inside a closed shadow root", () => {
   function dialogWithPopover() {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const [dialog, setDialog] = createSignal(true);
     const [popover, setPopover] = createSignal(true);
     const icon = iconLike();
@@ -387,8 +345,7 @@ describe("layers stacked inside a closed shadow root", () => {
 
 describe("focus in a dialog inside a closed shadow root", () => {
   function editDialog() {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const [open, setOpen] = createSignal(true);
     const outside = document.createElement("button");
     root.appendChild(outside);
@@ -436,8 +393,7 @@ describe("focus in a dialog inside a closed shadow root", () => {
 
 describe("the rest of the shadow-root review's cases", () => {
   it("a press inside an open submenu keeps the menu and the submenu open", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const [menu, setMenu] = createSignal(true);
     const [sub, setSub] = createSignal(false);
     render(
@@ -471,8 +427,7 @@ describe("the rest of the shadow-root review's cases", () => {
   });
 
   it("a touch that starts outside a popover closes it on its click, never on the touch alone", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const outside = document.createElement("div");
     root.appendChild(outside);
     const [open, setOpen] = createSignal(true);
@@ -497,8 +452,7 @@ describe("the rest of the shadow-root review's cases", () => {
   });
 
   it("a popover the caller holds a ref to still counts a press inside it as inside", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const [open, setOpen] = createSignal(true);
     let held: HTMLElement | undefined;
     render(
@@ -523,8 +477,7 @@ describe("the rest of the shadow-root review's cases", () => {
   });
 
   it("a popover whose caller closes it on an outside interaction stays open through a press inside it", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const [open, setOpen] = createSignal(true);
     render(
       () => (
@@ -548,8 +501,7 @@ describe("the rest of the shadow-root review's cases", () => {
   });
 
   it("a bottom sheet in a shadow root closes on a press on the page outside the root's host", async () => {
-    const { holder, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { mount } = closedRoot();
     const page = document.createElement("button");
     document.body.appendChild(page);
     const [open, setOpen] = createSignal(true);
@@ -596,8 +548,7 @@ describe("the second shadow-root review's cases", () => {
   }
 
   it("a touch outside that became a scroll never closes the popover on a later tap inside it", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const outside = document.createElement("div");
     root.appendChild(outside);
     const { open } = popoverIn(mount);
@@ -610,8 +561,7 @@ describe("the second shadow-root review's cases", () => {
   });
 
   it("a press on an open popover's own trigger closes it and leaves it closed", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const { open } = popoverIn(mount);
     await layersListening();
     const trigger = root.querySelector<HTMLElement>('[data-testid="trigger"]');
@@ -622,8 +572,7 @@ describe("the second shadow-root review's cases", () => {
   });
 
   it("a dropdown menu closed by a press on a field leaves focus on that field", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const field = document.createElement("input");
     root.appendChild(field);
     const [open, setOpen] = createSignal(true);
@@ -651,7 +600,6 @@ describe("the second shadow-root review's cases", () => {
 
   it("a dropdown menu in a shadow root never hides the realm's host from assistive tech", async () => {
     const { holder, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
     render(
       () => (
         <PortalMountContext.Provider value={mount}>
@@ -670,8 +618,7 @@ describe("the second shadow-root review's cases", () => {
   });
 
   it("one press outside a menu and its open submenu closes both", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const outside = document.createElement("div");
     root.appendChild(outside);
     const [menu, setMenu] = createSignal(true);
@@ -707,13 +654,12 @@ describe("the second shadow-root review's cases", () => {
     const holder = document.createElement("div");
     pageDialog.appendChild(holder);
     const root = holder.attachShadow({ mode: "closed" });
-    holderRoots.set(holder, root);
+    delegateInside(root);
     shadowRoots.push(root);
     const mount = document.createElement("div");
     root.appendChild(mount);
     const elsewhere = document.createElement("div");
     root.appendChild(elsewhere);
-    onTestFinished(retargetAtPage(holder));
     const [open, setOpen] = createSignal(true);
     render(
       () => (
@@ -733,8 +679,7 @@ describe("the second shadow-root review's cases", () => {
   });
 
   it("a close the caller refused leaves no trace on the next close's focus", async () => {
-    const { holder, root, mount } = closedRoot();
-    onTestFinished(retargetAtPage(holder));
+    const { root, mount } = closedRoot();
     const outside = document.createElement("div");
     root.appendChild(outside);
     const prevented: boolean[] = [];
@@ -764,7 +709,6 @@ describe("the second shadow-root review's cases", () => {
   it("an open layer in one realm never stops a press closing another realm's layer", async () => {
     const a = closedRoot();
     const b = closedRoot();
-    onTestFinished(retargetAtPage(b.holder));
     const elsewhereInB = document.createElement("div");
     b.root.appendChild(elsewhereInB);
     const inB = popoverIn(b.mount);
