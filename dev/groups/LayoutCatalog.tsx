@@ -94,6 +94,15 @@ export function LayoutCatalog() {
             />
           </div>
         </Axis>
+        <Axis of="wrap">
+          <div class="w-full">
+            <ListRow
+              wrap
+              leading={<SectionIcon icon="lucide:user" size="sm" />}
+              title="See your name, username, PRO status, beta tester status and account role"
+            />
+          </div>
+        </Axis>
       </Specimen>
 
       <Specimen name="SectionLabel">

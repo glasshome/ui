@@ -1,4 +1,4 @@
-import { type JSX, mergeProps, Show } from "solid-js";
+import { children, type JSX, mergeProps, Show } from "solid-js";
 import { cn } from "../lib/utils.js";
 import { Card } from "./card.js";
 import { Icon } from "./icon.js";
@@ -52,7 +52,8 @@ type InternalProps = WidgetCardProps & { interactive: boolean };
 function WidgetCardRow(props: InternalProps) {
   const hasMeta = () =>
     props.widget.downloadCount != null || (props.showVersions && props.widget.versionCount != null);
-  const showTrailing = () => props.trailing !== undefined || props.interactive;
+  const trailing = children(() => props.trailing);
+  const showTrailing = () => trailing() !== undefined || props.interactive;
 
   return (
     <Card
@@ -74,7 +75,7 @@ function WidgetCardRow(props: InternalProps) {
       </Show>
       <Show when={showTrailing()} fallback={null}>
         <Show
-          when={props.trailing !== undefined}
+          when={trailing() !== undefined}
           fallback={
             <Icon
               icon="lucide:chevron-right"
@@ -84,7 +85,7 @@ function WidgetCardRow(props: InternalProps) {
             />
           }
         >
-          {props.trailing}
+          {trailing()}
         </Show>
       </Show>
     </Card>

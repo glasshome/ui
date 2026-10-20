@@ -2,6 +2,7 @@ import { Dialog as DialogPrimitive, useDialogContext } from "@kobalte/core/dialo
 import { usePortalMount } from "./portal-mount.js";
 import type { VariantProps } from "cva";
 import {
+  children,
   type Component,
   type ComponentProps,
   type JSX,
@@ -97,13 +98,16 @@ type SheetContentProps = ComponentProps<typeof DialogPrimitive.Content> & {
   ariaLabel?: string;
 };
 
-const SheetAbove: Component<{ above?: JSX.Element }> = (props) => (
-  <Show when={props.above}>
-    <div data-slot="sheet-content-above" class="flex w-full shrink-0 items-end justify-center">
-      {props.above}
-    </div>
-  </Show>
-);
+const SheetAbove: Component<{ above?: JSX.Element }> = (props) => {
+  const above = children(() => props.above);
+  return (
+    <Show when={above()}>
+      <div data-slot="sheet-content-above" class="flex w-full shrink-0 items-end justify-center">
+        {above()}
+      </div>
+    </Show>
+  );
+};
 
 const SheetContent: ParentComponent<SheetContentProps> = (props) => {
   const [local, rest] = splitProps(props, [

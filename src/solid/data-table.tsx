@@ -1,5 +1,6 @@
 import {
   type Accessor,
+  children,
   createEffect,
   createMemo,
   createSignal,
@@ -151,6 +152,7 @@ export function DataTableRow(props: {
   class?: string;
 }) {
   const opens = () => props.onOpen !== undefined || props.href !== undefined;
+  const actions = children(() => props.actions);
   return (
     <div
       data-slot="data-table-row"
@@ -180,8 +182,8 @@ export function DataTableRow(props: {
         />
       </Show>
       {props.children}
-      <Show when={props.actions}>
-        <div class="relative flex shrink-0 items-center gap-1">{props.actions}</div>
+      <Show when={actions()}>
+        <div class="relative flex shrink-0 items-center gap-1">{actions()}</div>
       </Show>
     </div>
   );
@@ -250,22 +252,26 @@ export function TableEmpty(props: {
   message: JSX.Element;
   action?: JSX.Element;
 }) {
+  const icon = children(() => props.icon);
+  const iconName = () => {
+    const glyph = icon();
+    return typeof glyph === "string" ? glyph : undefined;
+  };
+  const action = children(() => props.action);
   return (
     <Empty class="gap-3 rounded-none py-12">
       <EmptyHeader>
-        <Show when={props.icon}>
+        <Show when={icon()}>
           <EmptyMedia media="icon">
-            {typeof props.icon === "string" ? (
-              <Icon icon={props.icon} width={24} height={24} />
-            ) : (
-              props.icon
-            )}
+            <Show when={iconName()} fallback={icon()}>
+              {(name) => <Icon icon={name()} width={24} height={24} />}
+            </Show>
           </EmptyMedia>
         </Show>
         <EmptyDescription>{props.message}</EmptyDescription>
       </EmptyHeader>
-      <Show when={props.action}>
-        <EmptyContent>{props.action}</EmptyContent>
+      <Show when={action()}>
+        <EmptyContent>{action()}</EmptyContent>
       </Show>
     </Empty>
   );

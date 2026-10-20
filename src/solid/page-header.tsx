@@ -1,4 +1,4 @@
-import { type JSX, Show } from "solid-js";
+import { children, type JSX, Show } from "solid-js";
 import { CARD_BLUR, CARD_SURFACE_BASE } from "../lib/card-classes.js";
 import { SECTION_OUTER_RADIUS } from "../lib/section-tokens.js";
 import { cn } from "../lib/utils.js";
@@ -32,6 +32,9 @@ export function PageHeader(props: {
   glass?: GlassSurface;
 }) {
   const glass = () => props.glass ?? NOOP_GLASS;
+  const iconNode = children(() => props.iconNode);
+  const subtitle = children(() => props.subtitle);
+  const actions = children(() => props.actions);
   return (
     <div
       data-slot="page-header"
@@ -52,7 +55,7 @@ export function PageHeader(props: {
       </Show>
       <div data-slot="page-header-row" class="relative flex items-center gap-3 p-4 sm:gap-5 sm:p-6">
         <Show
-          when={props.iconNode}
+          when={iconNode()}
           fallback={
             <Show when={props.icon}>
               {(icon) => (
@@ -61,7 +64,7 @@ export function PageHeader(props: {
             </Show>
           }
         >
-          {props.iconNode}
+          {iconNode()}
         </Show>
         <div data-slot="page-header-headings" class="flex min-w-0 flex-1 flex-col gap-1.5 sm:gap-2">
           <div data-slot="page-header-headline" class="flex min-w-0 items-center gap-2 sm:gap-3">
@@ -75,18 +78,18 @@ export function PageHeader(props: {
               <CountPill>{props.count}</CountPill>
             </Show>
           </div>
-          <Show when={props.subtitle}>
+          <Show when={subtitle()}>
             <div
               data-slot="page-header-subtitle"
               class="text-muted-foreground flex items-center gap-2 text-sm"
             >
-              {props.subtitle}
+              {subtitle()}
             </div>
           </Show>
         </div>
-        <Show when={props.actions}>
+        <Show when={actions()}>
           <div data-slot="page-header-actions" class="flex shrink-0 items-center gap-2">
-            {props.actions}
+            {actions()}
           </div>
         </Show>
       </div>

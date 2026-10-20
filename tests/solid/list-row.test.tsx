@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@solidjs/testing-library";
+import { Show } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { SECTION_ROW_INTERACTIVE } from "../../src/lib/card-classes.js";
@@ -30,6 +31,17 @@ describe("ListRow", () => {
     expect(screen.getByTestId("badge")).toBeTruthy();
     expect(screen.getByTestId("meta")).toBeTruthy();
     expect(row(container)).toBeTruthy();
+  });
+
+  it("truncates title and subtitle by default and wraps them with wrap", () => {
+    const truncated = render(() => <ListRow title="A long sentence" subtitle="More" />);
+    expect(screen.getByText("A long sentence").className).toContain("truncate");
+    expect(screen.getByText("More").className).toContain("truncate");
+    truncated.unmount();
+
+    render(() => <ListRow wrap title="A long sentence" subtitle="More" />);
+    expect(screen.getByText("A long sentence").className).not.toContain("truncate");
+    expect(screen.getByText("More").className).not.toContain("truncate");
   });
 
   it("stays inert without onOpen: no overlay button, no interactive surface", () => {
@@ -64,6 +76,13 @@ describe("ListRow", () => {
       />
     ));
     expect(withActions.container.querySelector('[data-icon="lucide:chevron-right"]')).toBeNull();
+  });
+
+  it("treats an actions slot that renders nothing as no actions: the chevron shows", () => {
+    const { container } = render(() => (
+      <ListRow title="A" onOpen={() => {}} openLabel="A" actions={<Show when={false}>x</Show>} />
+    ));
+    expect(container.querySelector('[data-icon="lucide:chevron-right"]')).toBeTruthy();
   });
 
   it("keeps actions clickable above the open overlay", () => {
