@@ -36,6 +36,7 @@ export function PickerSearch(props: PickerSearchProps) {
     "inputRef",
     "size",
   ]);
+  let input: HTMLInputElement | undefined;
   return (
     <div
       data-slot="picker-search"
@@ -53,7 +54,10 @@ export function PickerSearch(props: PickerSearchProps) {
         aria-hidden="true"
       />
       <input
-        ref={local.inputRef}
+        ref={(el) => {
+          input = el;
+          local.inputRef?.(el);
+        }}
         data-slot="picker-search-input"
         type="text"
         value={local.value ?? ""}
@@ -70,7 +74,10 @@ export function PickerSearch(props: PickerSearchProps) {
           data-slot="picker-search-clear"
           aria-label={local.clearLabel}
           class="text-muted-foreground hover:text-foreground shrink-0 rounded-sm p-1 transition-colors"
-          onClick={() => local.onValueChange?.("")}
+          onClick={() => {
+            local.onValueChange?.("");
+            input?.focus();
+          }}
         >
           <Icon icon="mdi:close-circle" width={16} height={16} />
         </button>

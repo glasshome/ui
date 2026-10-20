@@ -130,6 +130,21 @@ describe("PickerSearch", () => {
       expect(el.className).not.toMatch(/(^|\s)glass(\s|$)/);
     }
   });
+
+  it("clear empties the query and keeps typing in the input", () => {
+    const [value, setValue] = createSignal("lamp");
+    const view = render(() => (
+      <PickerSearch
+        value={value()}
+        onValueChange={setValue}
+        clearLabel="Clear search"
+        aria-label="Search"
+      />
+    ));
+    fireEvent.click(view.getByLabelText("Clear search"));
+    expect(value()).toBe("");
+    expect(document.activeElement).toBe(view.getByRole("textbox"));
+  });
 });
 
 describe("picker triggers", () => {
