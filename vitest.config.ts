@@ -1,6 +1,9 @@
 import solid from "vite-plugin-solid";
 import { defineConfig } from "vitest/config";
 
+// Forked workers inherit it, so a direct run matches the gate; bun test is UTC already.
+process.env.TZ = "UTC";
+
 export default defineConfig({
   plugins: [solid()],
   resolve: {
