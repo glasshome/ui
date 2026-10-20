@@ -18,6 +18,24 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.35.0](https://github.com/glasshome/ui/compare/v1.34.2...v1.35.0) (2026-10-20)
+
+
+### Features
+
+* **ui:** ListRow wrap lets a row show its whole sentence ([d9c1cfb](https://github.com/glasshome/ui/commit/d9c1cfb9793511e5045a9e537af70504751411a8))
+
+
+### Bug Fixes
+
+* **icon:** an icon re-read with the same name keeps its svg under Trusted Types ([c4d3a41](https://github.com/glasshome/ui/commit/c4d3a41327f95694df5d22cce31c889736611dc5))
+* icons keep their svg under Trusted Types; no blur turns backdrop filters off in Chromium ([8e01916](https://github.com/glasshome/ui/commit/8e019163d283aa1a35ba8a04d647e281d0424fdc))
+* **theme:** no blur turns backdrop filters off in Chromium too ([2b2fefe](https://github.com/glasshome/ui/commit/2b2fefee1addba7a42765fd9f7b87d3b4f3bb56c))
+* **ui:** a child AlertTitle keeps its tone again ([f712309](https://github.com/glasshome/ui/commit/f7123091983a7e1e6ac0f182486de174a9ef1e27))
+* **ui:** Checkbox, RadioGroupItem, FieldError and WidgetCard build their slots once ([ce329e7](https://github.com/glasshome/ui/commit/ce329e7269b7a6dcca9422bfcb6cb34cc10e5549))
+* **ui:** slot props build once, so SSR-hydrated islands stop throwing ([6393843](https://github.com/glasshome/ui/commit/6393843658033cde2ae12fc2c7e1f0bb9dc7f3ba))
+* **ui:** slots build once so SSR-hydrated islands stop throwing; ListRow wrap ([4003cc2](https://github.com/glasshome/ui/commit/4003cc2f4b52f0d51ac3692de247c319dcecabf8))
+
 ## [1.34.2](https://github.com/glasshome/ui/compare/v1.34.1...v1.34.2) (2026-10-20)
 
 
