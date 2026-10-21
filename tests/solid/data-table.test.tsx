@@ -3,9 +3,11 @@
  * that they now compose the package's own Empty/Skeleton, and that the
  * scroll recipe caps no height of its own (real hub call sites pass it bare,
  * inside a page that already scrolls) while keeping the shared scrollbar. */
-import { cleanup, fireEvent, render } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal, For } from "solid-js";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
+import { press } from "../press.js";
 import {
   createTableWindow,
   DataTableHead,
@@ -70,7 +72,7 @@ describe("TABLE_HEAD_LABEL_CLASS", () => {
 });
 
 describe("DataTableRow", () => {
-  it("activates the whole row from the keyboard, not just the pointer", () => {
+  it("activates the whole row from the keyboard, not just the pointer", async () => {
     let opened = 0;
     const view = render(() => (
       <DataTableRow onOpen={() => opened++} openLabel="Open Clock">
@@ -80,7 +82,7 @@ describe("DataTableRow", () => {
     const opener = view.getByRole("button", { name: "Open Clock" });
     opener.focus();
     expect(document.activeElement).toBe(opener);
-    opener.click();
+    await userEvent.keyboard("{Enter}");
     expect(opened).toBe(1);
   });
 
@@ -105,7 +107,7 @@ describe("DataTableRow", () => {
     );
   });
 
-  it("stacks actions above the row opener so their own click still lands", () => {
+  it("stacks actions above the row opener so their own click still lands", async () => {
     let opened = 0;
     let retried = 0;
     const view = render(() => (
@@ -121,7 +123,7 @@ describe("DataTableRow", () => {
         <span>Aurora</span>
       </DataTableRow>
     ));
-    view.getByRole("button", { name: "Retry" }).click();
+    await press(view.getByRole("button", { name: "Retry" }));
     expect(retried).toBe(1);
     expect(opened).toBe(0);
   });
@@ -158,7 +160,7 @@ describe("TableSortHeader", () => {
 });
 
 describe("a long table drawn a page at a time", () => {
-  it("draws one page, adds a page on press, and starts over when a filter changes", () => {
+  it("draws one page, adds a page as its end comes into view, and starts over when a filter changes", async () => {
     const items = Array.from({ length: 120 }, (_, i) => `row ${i}`);
     const [filter, setFilter] = createSignal("");
     const view = render(() => {
@@ -174,10 +176,10 @@ describe("a long table drawn a page at a time", () => {
     const rows = () => view.queryAllByText(/^row /).length;
     const more = () => view.queryByRole("button", { name: "Show more" });
     expect(rows()).toBe(50);
-    fireEvent.click(view.getByRole("button", { name: "Show more" }));
-    expect(rows()).toBe(100);
-    fireEvent.click(view.getByRole("button", { name: "Show more" }));
-    expect(rows()).toBe(120);
+    more()?.scrollIntoView();
+    await vi.waitFor(() => expect(rows()).toBe(100));
+    more()?.scrollIntoView();
+    await vi.waitFor(() => expect(rows()).toBe(120));
     expect(more()).toBeNull();
 
     setFilter("row");

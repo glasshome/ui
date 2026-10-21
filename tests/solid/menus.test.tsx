@@ -3,9 +3,10 @@
  * These tests pin the shared surface (FLOATING_PANEL classes, one selection
  * scope per content) and the destructive tone (no `!`, tone flows through
  * --selection-tone instead of a variant color axis). */
-import { cleanup, fireEvent, render } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
+import { press } from "../press.js";
 
 import { FLOATING_PANEL } from "../../src/lib/overlay-classes.js";
 import { Button } from "../../src/solid/button.js";
@@ -45,7 +46,7 @@ function selectionScopeOf(el: Element | null) {
 }
 
 describe("DropdownMenuContent", () => {
-  it("wears FLOATING_PANEL and wraps its items in one selection scope", () => {
+  it("wears FLOATING_PANEL and wraps its items in one selection scope", async () => {
     const { container } = render(() => (
       <DropdownMenu>
         <DropdownMenuTrigger as={Button}>Open</DropdownMenuTrigger>
@@ -56,10 +57,7 @@ describe("DropdownMenuContent", () => {
       </DropdownMenu>
     ));
 
-    fireEvent.pointerDown(container.querySelector("button") as HTMLElement, {
-      pointerType: "mouse",
-      button: 0,
-    });
+    await press(container.querySelector("button") as HTMLElement);
 
     const content = document.querySelector('[data-slot="dropdown-menu-content"]');
     expectFloatingPanel(content);
@@ -68,7 +66,7 @@ describe("DropdownMenuContent", () => {
     expect(indicator?.querySelectorAll('[data-slot="dropdown-menu-item"]')).toHaveLength(2);
   });
 
-  it("keeps every wrapper between the menu and its items out of the a11y tree", () => {
+  it("keeps every wrapper between the menu and its items out of the a11y tree", async () => {
     const { container } = render(() => (
       <DropdownMenu>
         <DropdownMenuTrigger as={Button}>Open</DropdownMenuTrigger>
@@ -79,10 +77,7 @@ describe("DropdownMenuContent", () => {
       </DropdownMenu>
     ));
 
-    fireEvent.pointerDown(container.querySelector("button") as HTMLElement, {
-      pointerType: "mouse",
-      button: 0,
-    });
+    await press(container.querySelector("button") as HTMLElement);
 
     const menu = document.querySelector<HTMLElement>('[role="menu"]');
     const item = menu?.querySelector<HTMLElement>('[role="menuitem"]');
@@ -94,7 +89,7 @@ describe("DropdownMenuContent", () => {
     }
   });
 
-  it("gives DropdownMenuSub a SubContent that wraps its items in a selection scope", () => {
+  it("gives DropdownMenuSub a SubContent that wraps its items in a selection scope", async () => {
     const { container } = render(() => (
       <DropdownMenu>
         <DropdownMenuTrigger as={Button}>Open</DropdownMenuTrigger>
@@ -109,15 +104,12 @@ describe("DropdownMenuContent", () => {
       </DropdownMenu>
     ));
 
-    fireEvent.pointerDown(container.querySelector("button") as HTMLElement, {
-      pointerType: "mouse",
-      button: 0,
-    });
+    await press(container.querySelector("button") as HTMLElement);
     const subTrigger = document.querySelector<HTMLElement>(
       '[data-slot="dropdown-menu-sub-trigger"]',
     );
     if (!subTrigger) throw new Error("no sub trigger rendered");
-    fireEvent.click(subTrigger);
+    await press(subTrigger);
 
     const subContent = document.querySelector('[data-slot="dropdown-menu-sub-content"]');
     expectFloatingPanel(subContent);
@@ -128,7 +120,7 @@ describe("DropdownMenuContent", () => {
     );
   });
 
-  it("renders a checkbox item with a data-slot and a toggleable indicator", () => {
+  it("renders a checkbox item with a data-slot and a toggleable indicator", async () => {
     const [checked, setChecked] = createSignal(false);
     const { container } = render(() => (
       <DropdownMenu>
@@ -141,20 +133,16 @@ describe("DropdownMenuContent", () => {
       </DropdownMenu>
     ));
 
-    fireEvent.pointerDown(container.querySelector("button") as HTMLElement, {
-      pointerType: "mouse",
-      button: 0,
-    });
+    await press(container.querySelector("button") as HTMLElement);
     const item = document.querySelector<HTMLElement>('[data-slot="dropdown-menu-checkbox-item"]');
     if (!item) throw new Error("no checkbox item rendered");
-    fireEvent.pointerDown(item, { pointerType: "mouse", button: 0 });
-    fireEvent.pointerUp(item, { pointerType: "mouse", button: 0 });
+    await press(item);
     expect(checked()).toBe(true);
   });
 });
 
 describe("ContextMenuContent", () => {
-  it("wears FLOATING_PANEL and wraps its items in one selection scope", () => {
+  it("wears FLOATING_PANEL and wraps its items in one selection scope", async () => {
     const { container } = render(() => (
       <ContextMenu>
         <ContextMenuTrigger class="block h-8 w-8">Right-click</ContextMenuTrigger>
@@ -164,14 +152,16 @@ describe("ContextMenuContent", () => {
       </ContextMenu>
     ));
 
-    fireEvent.contextMenu(container.querySelector('[data-slot="context-menu-trigger"]') as Element);
+    await press(container.querySelector('[data-slot="context-menu-trigger"]') as Element, {
+      button: "right",
+    });
 
     const content = document.querySelector('[data-slot="context-menu-content"]');
     expectFloatingPanel(content);
     expect(selectionScopeOf(content)).not.toBeNull();
   });
 
-  it("gives a destructive item its tone through --selection-tone, not a color variant", () => {
+  it("gives a destructive item its tone through --selection-tone, not a color variant", async () => {
     const { container } = render(() => (
       <ContextMenu>
         <ContextMenuTrigger class="block h-8 w-8">Right-click</ContextMenuTrigger>
@@ -181,7 +171,9 @@ describe("ContextMenuContent", () => {
       </ContextMenu>
     ));
 
-    fireEvent.contextMenu(container.querySelector('[data-slot="context-menu-trigger"]') as Element);
+    await press(container.querySelector('[data-slot="context-menu-trigger"]') as Element, {
+      button: "right",
+    });
 
     const item = document.querySelector<HTMLElement>('[data-slot="context-menu-item"]');
     if (!item) throw new Error("no item rendered");
@@ -191,7 +183,7 @@ describe("ContextMenuContent", () => {
     expect(item.dataset.tone).toBe("");
   });
 
-  it("lets a toned item's real svg child inherit the tone instead of muted-foreground", () => {
+  it("lets a toned item's real svg child inherit the tone instead of muted-foreground", async () => {
     // No Icon mock here: MENU_ITEM's guard targets a real <svg>, and a
     // stubbed <span> would pass by construction without proving anything.
     const { container } = render(() => (
@@ -206,7 +198,9 @@ describe("ContextMenuContent", () => {
       </ContextMenu>
     ));
 
-    fireEvent.contextMenu(container.querySelector('[data-slot="context-menu-trigger"]') as Element);
+    await press(container.querySelector('[data-slot="context-menu-trigger"]') as Element, {
+      button: "right",
+    });
 
     const item = document.querySelector<HTMLElement>('[data-slot="context-menu-item"]');
     if (!item) throw new Error("no item rendered");
@@ -219,7 +213,7 @@ describe("ContextMenuContent", () => {
     expect(tokens).not.toContain("[&_svg:not([class*='text-'])]:text-muted-foreground");
   });
 
-  it("gives every row its own highlight, checkbox and radio rows included", () => {
+  it("gives every row its own highlight, checkbox and radio rows included", async () => {
     const { container } = render(() => (
       <DropdownMenu>
         <DropdownMenuTrigger as={Button}>Open</DropdownMenuTrigger>
@@ -232,10 +226,7 @@ describe("ContextMenuContent", () => {
         </DropdownMenuContent>
       </DropdownMenu>
     ));
-    fireEvent.pointerDown(container.querySelector("button") as HTMLElement, {
-      pointerType: "mouse",
-      button: 0,
-    });
+    await press(container.querySelector("button") as HTMLElement);
 
     const rows = document.querySelectorAll<HTMLElement>(
       '[data-slot="dropdown-menu-item"], [data-slot="dropdown-menu-checkbox-item"], [data-slot="dropdown-menu-sub-trigger"]',

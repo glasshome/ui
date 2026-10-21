@@ -88,6 +88,8 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         if: ${{ steps.gate.outputs.go == 'true' }}
+        with:
+          bun-version: 1.4.0
       - run: |
           set -euo pipefail
           for attempt in 1 2 3; do
@@ -106,6 +108,8 @@ jobs:
       - run: bun run check:structural
         if: ${{ steps.gate.outputs.go == 'true' }}
       - run: bun run check:types
+        if: ${{ steps.gate.outputs.go == 'true' }}
+      - run: bunx playwright install --with-deps chromium
         if: ${{ steps.gate.outputs.go == 'true' }}
       - run: bun run test
         if: ${{ steps.gate.outputs.go == 'true' }}

@@ -1,5 +1,6 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@solidjs/testing-library";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen, waitFor } from "@solidjs/testing-library";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
 import { copyImage, copyText } from "../../src/lib/clipboard.js";
 import { CopyButton } from "../../src/solid/copy-button.js";
 import { Dialog, DialogBody, DialogContent, DialogTitle } from "../../src/solid/dialog.js";
@@ -8,10 +9,21 @@ function setClipboard(value: unknown) {
   Object.defineProperty(navigator, "clipboard", { value, configurable: true });
 }
 
-beforeEach(() => {
-  // A plain-http page: no Clipboard API at all.
+// A plain-http page: no Clipboard API at all. Chromium serves the test page from localhost, a secure context.
+function onPlainHttp() {
   setClipboard(undefined);
-});
+}
+
+async function fromClick<T>(act: () => Promise<T>): Promise<T> {
+  const button = document.body.appendChild(document.createElement("button"));
+  button.textContent = "Copy";
+  let result: Promise<T> | undefined;
+  button.addEventListener("click", () => (result = act()), { once: true });
+  await userEvent.click(button);
+  button.remove();
+  if (!result) throw new Error("the click never reached the button");
+  return result;
+}
 
 afterEach(() => {
   cleanup();
@@ -21,14 +33,12 @@ afterEach(() => {
 
 describe("copyText", () => {
   it("writes through the Clipboard API where there is one", async () => {
-    const writeText = vi.fn(async () => {});
-    setClipboard({ writeText });
-
-    expect(await copyText("hello")).toBe(true);
-    expect(writeText).toHaveBeenCalledWith("hello");
+    expect(await fromClick(() => copyText("hello"))).toBe(true);
+    expect(await navigator.clipboard.readText()).toBe("hello");
   });
 
   it("copies a selection on plain http, where the API is missing", async () => {
+    onPlainHttp();
     let selected = "";
     document.execCommand = vi.fn(() => {
       const area = document.activeElement as HTMLTextAreaElement;
@@ -42,6 +52,7 @@ describe("copyText", () => {
   });
 
   it("falls back to the selection when the API refuses", async () => {
+    onPlainHttp();
     setClipboard({ writeText: vi.fn(async () => Promise.reject(new Error("denied"))) });
     const exec = vi.fn(() => true);
     document.execCommand = exec;
@@ -51,11 +62,13 @@ describe("copyText", () => {
   });
 
   it("reports a failed selection copy", async () => {
+    onPlainHttp();
     document.execCommand = vi.fn(() => false);
     expect(await copyText("x")).toBe(false);
   });
 
   it("copies from inside an open dialog and gives focus back", async () => {
+    onPlainHttp();
     let focusedInDialog = false;
     document.execCommand = vi.fn(() => {
       focusedInDialog = Boolean(document.activeElement?.closest('[data-slot="dialog-content"]'));
@@ -81,30 +94,13 @@ describe("copyText", () => {
 });
 
 describe("copyText with text still loading", () => {
-  class FakeClipboardItem {
-    constructor(readonly items: Record<string, Promise<Blob>>) {}
-  }
-
-  afterEach(() => {
-    Reflect.deleteProperty(globalThis, "ClipboardItem");
-  });
-
   it("hands the pending text to a ClipboardItem so the write keeps the gesture", async () => {
-    Object.defineProperty(globalThis, "ClipboardItem", {
-      value: FakeClipboardItem,
-      configurable: true,
-    });
-    let written: Blob | undefined;
-    const write = vi.fn(async (items: FakeClipboardItem[]) => {
-      written = await items[0]?.items["text/plain"];
-    });
-    setClipboard({ write });
-
-    expect(await copyText(Promise.resolve("page markdown"))).toBe(true);
-    expect(await written?.text()).toBe("page markdown");
+    expect(await fromClick(() => copyText(Promise.resolve("page markdown")))).toBe(true);
+    expect(await navigator.clipboard.readText()).toBe("page markdown");
   });
 
   it("waits for the text and copies a selection where there is no ClipboardItem", async () => {
+    onPlainHttp();
     const exec = vi.fn(() => true);
     document.execCommand = exec;
 
@@ -113,36 +109,37 @@ describe("copyText with text still loading", () => {
   });
 
   it("reports text that never arrived", async () => {
-    const exec = vi.fn(() => true);
-    document.execCommand = exec;
+    const exec = vi.spyOn(document, "execCommand");
 
-    expect(await copyText(Promise.reject(new Error("offline")))).toBe(false);
+    expect(await fromClick(() => copyText(Promise.reject(new Error("offline"))))).toBe(false);
     expect(exec).not.toHaveBeenCalled();
   });
 });
 
 describe("copyImage", () => {
   it("says no where there is no image clipboard", async () => {
+    onPlainHttp();
     expect(await copyImage(Promise.resolve(new Blob()))).toBe(false);
   });
 });
 
 describe("CopyButton", () => {
   it("shows the check only once the copy landed", async () => {
-    document.execCommand = vi.fn(() => true);
     render(() => <CopyButton text="code" />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Copy to clipboard" }));
+    await userEvent.click(screen.getByRole("button", { name: "Copy to clipboard" }));
 
     await waitFor(() => expect(screen.getByRole("button", { name: "Copied!" })).toBeTruthy());
+    expect(await navigator.clipboard.readText()).toBe("code");
   });
 
   it("stays a copy button when the copy failed", async () => {
+    onPlainHttp();
     const exec = vi.fn(() => false);
     document.execCommand = exec;
     render(() => <CopyButton text="code" />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Copy to clipboard" }));
+    await userEvent.click(screen.getByRole("button", { name: "Copy to clipboard" }));
 
     await waitFor(() => expect(exec).toHaveBeenCalled());
     expect(screen.getByRole("button", { name: "Copy to clipboard" })).toBeTruthy();

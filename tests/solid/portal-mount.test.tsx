@@ -2,6 +2,7 @@ import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { DelegatedEvents, delegateEvents } from "solid-js/web";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
 import {
   BottomSheet,
   BottomSheetContent,
@@ -22,21 +23,23 @@ import { Popover, PopoverContent, PopoverTrigger } from "../../src/solid/popover
 import { PortalMountContext } from "../../src/solid/portal-mount.js";
 import { useFakeTime } from "../../src/testing/fake-time.js";
 import { inShadowRoot } from "../../src/lib/shadow-layer.js";
+import uiCss from "../../src/styles/globals.css?inline";
 
-/* happy-dom runs no animations, so Kobalte's exit presence is ended by hand. */
-function endExitAnimations() {
+// Fake time holds no CSS clock, so the enter and exit animations layers wait on are finished here.
+function finishAnimations() {
   for (const root of [document, ...shadowRoots]) {
-    for (const el of root.querySelectorAll('[data-slot$="-content"], [data-slot$="-overlay"]')) {
-      const event = new Event("animationend");
-      Object.defineProperty(event, "animationName", { value: "" });
-      el.dispatchEvent(event);
+    for (const animation of root.getAnimations()) {
+      if (animation.effect?.getComputedTiming().endTime !== Infinity) animation.finish();
     }
   }
 }
 
 const shadowRoots: ShadowRoot[] = [];
 
-beforeEach(() => useFakeTime());
+// Frames stay real: animation events are dispatched on them.
+beforeEach(() =>
+  useFakeTime({ toFake: ["setTimeout", "clearTimeout", "setInterval", "clearInterval", "Date"] }),
+);
 
 afterEach(() => {
   cleanup();
@@ -60,7 +63,12 @@ function delegateInside(root: ShadowRoot) {
   } as unknown as Document;
   delegateEvents([...DelegatedEvents], target);
   for (const name of DelegatedEvents) root.addEventListener(name, unpin);
+  root.adoptedStyleSheets = [uiSheet];
 }
+
+/** The realm adopts the widget's compiled stylesheet; page styles never reach into a shadow root. */
+const uiSheet = new CSSStyleSheet();
+uiSheet.replaceSync(uiCss);
 
 /** A closed shadow root on the page, as a sealed realm's overlay is. */
 function closedRoot() {
@@ -74,12 +82,40 @@ function closedRoot() {
   return { holder, root, mount };
 }
 
-/** Dismissable layers start listening for outside presses a timer after they open. */
+/** Layers open and close through CSS animations, whose events land on the next frame, and listen for outside presses a timer after they open. */
 const layersListening = async () => {
+  finishAnimations();
+  await new Promise(requestAnimationFrame);
   await vi.advanceTimersByTimeAsync(20);
 };
 
-const press = (target: Element) => {
+/** A real press on the target (its centre unless a spot inside it is given), aimed at the page: no locator reaches into a closed root. */
+async function press(target: Element, spot?: { x: number; y: number }) {
+  const box = target.getBoundingClientRect();
+  const page = document.documentElement.getBoundingClientRect();
+  const { x, y } = spot ?? { x: box.width / 2, y: box.height / 2 };
+  await userEvent.click(document.documentElement, {
+    position: { x: box.x - page.x + x, y: box.y - page.y + y },
+  });
+}
+
+// The scrim's centre sits under the dialog itself.
+const SCRIM_EDGE = { x: 4, y: 4 };
+
+/** Something to press away from every layer, in the viewport's top-right corner. */
+function corner<K extends keyof HTMLElementTagNameMap>(tag: K): HTMLElementTagNameMap[K] {
+  const el = document.createElement(tag);
+  el.style.cssText = "position: fixed; top: 0; right: 0; width: 40px; height: 40px;";
+  return el;
+}
+
+function subTriggerIn(root: ShadowRoot): Element {
+  const trigger = root.querySelector('[data-slot="dropdown-menu-sub-trigger"]');
+  if (!trigger) throw new Error("no submenu trigger");
+  return trigger;
+}
+
+const dispatchPress = (target: Element) => {
   for (const type of ["pointerdown", "pointerup", "click"]) {
     target.dispatchEvent(
       new (type === "click" ? MouseEvent : PointerEvent)(type, { bubbles: true, composed: true }),
@@ -110,13 +146,13 @@ describe("a portal mount inside a closed shadow root", () => {
     const inside = root.querySelector('[data-testid="inside"]');
     if (!inside) throw new Error("no button");
     await layersListening();
-    press(inside);
+    await press(inside);
     expect(open()).toBe(true);
   });
 
   it("still closes the dialog on a press on its scrim or on the page", async () => {
     const { root, mount } = closedRoot();
-    const page = document.createElement("button");
+    const page = corner("button");
     document.body.appendChild(page);
     for (const target of ["scrim", "page"] as const) {
       const [open, setOpen] = createSignal(true);
@@ -135,7 +171,7 @@ describe("a portal mount inside a closed shadow root", () => {
       await layersListening();
       const scrim = root.querySelector('[data-slot="dialog-overlay"]');
       if (!scrim) throw new Error("no scrim");
-      press(target === "scrim" ? scrim : page);
+      await (target === "scrim" ? press(scrim, SCRIM_EDGE) : press(page));
       expect(open(), target).toBe(false);
       dispose.unmount();
     }
@@ -160,13 +196,11 @@ describe("a portal mount inside a closed shadow root", () => {
     await layersListening();
     const inside = root.querySelector<HTMLElement>('[data-testid="inside"]');
     inside?.focus();
-    inside?.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, composed: true }),
-    );
+    await userEvent.keyboard("{Escape}");
     expect(open()).toBe(false);
   });
 
-  it("wraps Tab inside the dialog", () => {
+  it("wraps Tab inside the dialog", async () => {
     const { root, mount } = closedRoot();
     render(
       () => (
@@ -185,9 +219,7 @@ describe("a portal mount inside a closed shadow root", () => {
     const last = root.querySelector<HTMLElement>('[data-testid="last"]');
     last?.focus();
     expect(root.activeElement).toBe(last);
-    last?.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "Tab", bubbles: true, composed: true }),
-    );
+    await userEvent.keyboard("{Tab}");
     expect(root.activeElement).toBe(root.querySelector('[data-testid="first"]'));
   });
 
@@ -227,7 +259,7 @@ describe("a portal mount inside a closed shadow root", () => {
     const inside = root.querySelector('[data-testid="inside"]');
     expect(inside).toBeTruthy();
     await layersListening();
-    if (inside) press(inside);
+    if (inside) await press(inside);
     expect(open()).toBe(true);
   });
 });
@@ -237,7 +269,8 @@ function iconLike(): HTMLElement {
   const icon = document.createElement("span");
   icon.setAttribute("data-testid", "icon");
   const inner = icon.attachShadow({ mode: "open" });
-  inner.appendChild(document.createElement("svg"));
+  const glyph = inner.appendChild(document.createElement("svg"));
+  glyph.style.cssText = "display: block; width: 24px; height: 24px;";
   return icon;
 }
 
@@ -256,7 +289,7 @@ describe("on the page, with no portal mount", () => {
     await layersListening();
     const svg = icon.shadowRoot?.firstElementChild;
     if (!svg) throw new Error("no icon content");
-    press(svg);
+    await press(svg);
     expect(open()).toBe(true);
   });
 
@@ -309,7 +342,7 @@ describe("layers stacked inside a closed shadow root", () => {
   it("a press inside the newer layer closes neither", async () => {
     const { dialog, popover, q } = dialogWithPopover();
     await layersListening();
-    press(q("in-popover"));
+    await press(q("in-popover"));
     expect([dialog(), popover()]).toEqual([true, true]);
   });
 
@@ -318,7 +351,7 @@ describe("layers stacked inside a closed shadow root", () => {
     await layersListening();
     const field = q("field");
     field.focus();
-    press(field);
+    await press(field);
     await layersListening();
     expect([dialog(), popover()]).toEqual([true, false]);
     expect(root.activeElement).toBe(field);
@@ -329,7 +362,7 @@ describe("layers stacked inside a closed shadow root", () => {
     await layersListening();
     const scrim = root.querySelector('[data-slot="dialog-overlay"]');
     if (!scrim) throw new Error("no scrim");
-    press(scrim);
+    await press(scrim, SCRIM_EDGE);
     expect([dialog(), popover()]).toEqual([true, false]);
   });
 
@@ -338,7 +371,7 @@ describe("layers stacked inside a closed shadow root", () => {
     await layersListening();
     const svg = icon.shadowRoot?.firstElementChild;
     if (!svg) throw new Error("no icon content");
-    press(svg);
+    await press(svg);
     expect(dialog()).toBe(true);
   });
 });
@@ -376,18 +409,14 @@ describe("focus in a dialog inside a closed shadow root", () => {
     const { setOpen, outside } = editDialog();
     await layersListening();
     setOpen(false);
-    endExitAnimations();
     await layersListening();
     outside.focus();
-    const tab = new KeyboardEvent("keydown", {
-      key: "Tab",
-      shiftKey: true,
-      bubbles: true,
-      composed: true,
-      cancelable: true,
-    });
-    outside.dispatchEvent(tab);
-    expect(tab.defaultPrevented).toBe(false);
+    const tabs: KeyboardEvent[] = [];
+    const seen = (e: KeyboardEvent) => e.key === "Tab" && tabs.push(e);
+    window.addEventListener("keydown", seen);
+    await userEvent.keyboard("{Shift>}{Tab}{/Shift}");
+    window.removeEventListener("keydown", seen);
+    expect(tabs[0]?.defaultPrevented).toBe(false);
   });
 });
 
@@ -416,12 +445,12 @@ describe("the rest of the shadow-root review's cases", () => {
       ),
       { container: mount },
     );
-    root.querySelector<HTMLElement>('[data-slot="dropdown-menu-sub-trigger"]')?.click();
+    await press(subTriggerIn(root));
     await layersListening();
     const nested = root.querySelector<HTMLElement>('[data-testid="nested"]');
     if (!nested) throw new Error("no submenu item");
     nested.focus();
-    press(nested);
+    await press(nested);
     await layersListening();
     expect([menu(), sub()]).toEqual([true, true]);
   });
@@ -471,7 +500,7 @@ describe("the rest of the shadow-root review's cases", () => {
     await layersListening();
     const inside = root.querySelector<HTMLElement>('[data-testid="in-popover"]');
     if (!inside) throw new Error("no popover content");
-    press(inside);
+    await press(inside);
     expect(open()).toBe(true);
     expect(held?.contains(inside)).toBe(true);
   });
@@ -496,13 +525,13 @@ describe("the rest of the shadow-root review's cases", () => {
     expect(open()).toBe(true);
     const inside = root.querySelector<HTMLElement>('[data-testid="in-popover"]');
     if (!inside) throw new Error("no popover content");
-    press(inside);
+    await press(inside);
     expect(open()).toBe(true);
   });
 
   it("a bottom sheet in a shadow root closes on a press on the page outside the root's host", async () => {
     const { mount } = closedRoot();
-    const page = document.createElement("button");
+    const page = corner("button");
     document.body.appendChild(page);
     const [open, setOpen] = createSignal(true);
     render(
@@ -518,7 +547,7 @@ describe("the rest of the shadow-root review's cases", () => {
       { container: mount },
     );
     await layersListening();
-    press(page);
+    await press(page);
     expect(open()).toBe(false);
   });
 });
@@ -556,7 +585,7 @@ describe("the second shadow-root review's cases", () => {
     touchDown(outside);
     const inside = root.querySelector<HTMLElement>('[data-testid="in-popover"]');
     if (!inside) throw new Error("no popover content");
-    press(inside);
+    dispatchPress(inside);
     expect(open()).toBe(true);
   });
 
@@ -566,14 +595,14 @@ describe("the second shadow-root review's cases", () => {
     await layersListening();
     const trigger = root.querySelector<HTMLElement>('[data-testid="trigger"]');
     if (!trigger) throw new Error("no trigger");
-    press(trigger);
+    dispatchPress(trigger);
     await layersListening();
     expect(open()).toBe(false);
   });
 
   it("a dropdown menu closed by a press on a field leaves focus on that field", async () => {
     const { root, mount } = closedRoot();
-    const field = document.createElement("input");
+    const field = corner("input");
     root.appendChild(field);
     const [open, setOpen] = createSignal(true);
     render(
@@ -591,8 +620,7 @@ describe("the second shadow-root review's cases", () => {
     );
     await layersListening();
     field.focus();
-    press(field);
-    endExitAnimations();
+    await press(field);
     await layersListening();
     expect(open()).toBe(false);
     expect(root.activeElement).toBe(field);
@@ -619,7 +647,7 @@ describe("the second shadow-root review's cases", () => {
 
   it("one press outside a menu and its open submenu closes both", async () => {
     const { root, mount } = closedRoot();
-    const outside = document.createElement("div");
+    const outside = corner("div");
     root.appendChild(outside);
     const [menu, setMenu] = createSignal(true);
     render(
@@ -640,10 +668,10 @@ describe("the second shadow-root review's cases", () => {
       ),
       { container: mount },
     );
-    root.querySelector<HTMLElement>('[data-slot="dropdown-menu-sub-trigger"]')?.click();
+    await press(subTriggerIn(root));
     await layersListening();
     expect(root.querySelector('[data-slot="dropdown-menu-sub-content"]')).not.toBeNull();
-    press(outside);
+    await press(outside);
     expect(menu()).toBe(false);
   });
 
@@ -658,7 +686,7 @@ describe("the second shadow-root review's cases", () => {
     shadowRoots.push(root);
     const mount = document.createElement("div");
     root.appendChild(mount);
-    const elsewhere = document.createElement("div");
+    const elsewhere = corner("div");
     root.appendChild(elsewhere);
     const [open, setOpen] = createSignal(true);
     render(
@@ -674,13 +702,13 @@ describe("the second shadow-root review's cases", () => {
       { container: mount },
     );
     await layersListening();
-    press(elsewhere);
+    await press(elsewhere);
     expect(open()).toBe(false);
   });
 
   it("a close the caller refused leaves no trace on the next close's focus", async () => {
     const { root, mount } = closedRoot();
-    const outside = document.createElement("div");
+    const outside = corner("div");
     root.appendChild(outside);
     const prevented: boolean[] = [];
     const [open, setOpen] = createSignal(true);
@@ -698,10 +726,9 @@ describe("the second shadow-root review's cases", () => {
       { container: mount },
     );
     await layersListening();
-    press(outside);
+    await press(outside);
     expect(open()).toBe(true);
     setOpen(false);
-    endExitAnimations();
     await layersListening();
     expect(prevented).toEqual([false]);
   });
@@ -709,7 +736,7 @@ describe("the second shadow-root review's cases", () => {
   it("an open layer in one realm never stops a press closing another realm's layer", async () => {
     const a = closedRoot();
     const b = closedRoot();
-    const elsewhereInB = document.createElement("div");
+    const elsewhereInB = corner("div");
     b.root.appendChild(elsewhereInB);
     const inB = popoverIn(b.mount);
     await layersListening();
@@ -726,7 +753,7 @@ describe("the second shadow-root review's cases", () => {
       { container: a.mount },
     );
     await layersListening();
-    press(elsewhereInB);
+    await press(elsewhereInB);
     expect(inB.open()).toBe(false);
   });
 });

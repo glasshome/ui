@@ -1,9 +1,11 @@
-import { cleanup, fireEvent, render } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
 
 import { CARD_SURFACE } from "../../src/lib/card-classes.js";
 import { OptionCard, OptionCardGroup, OptionChoice } from "../../src/solid/option-card.js";
+import { press } from "../press.js";
 
 afterEach(cleanup);
 
@@ -34,7 +36,7 @@ describe("OptionCard", () => {
     expect(view.getByLabelText("Share a code")).toBe(radios(view.container)[1]);
   });
 
-  it("reports the picked value once per click and marks the card checked", () => {
+  it("reports the picked value once per click and marks the card checked", async () => {
     const onChange = vi.fn();
     const [value, setValue] = createSignal<string | null>(null);
     const { container } = render(() => (
@@ -50,7 +52,7 @@ describe("OptionCard", () => {
       </OptionCardGroup>
     ));
 
-    fireEvent.click(radioAt(container, 1));
+    await press(radioAt(container, 1));
 
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith("code");
@@ -59,12 +61,10 @@ describe("OptionCard", () => {
     expect(items[0]?.hasAttribute("data-checked")).toBe(false);
   });
 
-  // Arrow-key roving is the browser's own native radio-group behaviour, which
-  // happy-dom does not implement; what the cards owe it is one shared input
-  // name, so that is what is asserted here.
-  it("keeps every card on one native radio name, so arrow keys rove", () => {
+  it("keeps every card on one native radio name, so arrow keys rove", async () => {
+    const [value, setValue] = createSignal<string | null>("invite");
     const { container } = render(() => (
-      <OptionCardGroup value="invite" onChange={() => {}}>
+      <OptionCardGroup value={value()} onChange={setValue}>
         <OptionCard value="invite" title="Send an invite" />
         <OptionCard value="code" title="Share a code" />
       </OptionCardGroup>
@@ -74,9 +74,14 @@ describe("OptionCard", () => {
     expect(names.size).toBe(1);
     expect([...names][0]).toBeTruthy();
     expect(radios(container).every((radio) => radio.tabIndex >= 0)).toBe(true);
+
+    radioAt(container, 0).focus();
+    await userEvent.keyboard("{ArrowDown}");
+    expect(value()).toBe("code");
+    expect(document.activeElement).toBe(radioAt(container, 1));
   });
 
-  it("does not pick a disabled card", () => {
+  it("does not pick a disabled card", async () => {
     const [value, setValue] = createSignal<string | null>(null);
     const { container } = render(() => (
       <OptionCardGroup value={value()} onChange={setValue}>
@@ -86,7 +91,8 @@ describe("OptionCard", () => {
 
     expect(radioAt(container, 0).disabled).toBe(true);
 
-    fireEvent.click(radioAt(container, 0));
+    // Playwright waits for a disabled target to enable; a person presses it anyway.
+    await press(radioAt(container, 0), { force: true });
 
     expect(value()).toBeNull();
   });
@@ -190,7 +196,7 @@ describe("OptionCard", () => {
     expect(items.length).toBeGreaterThan(0);
   });
 
-  it("keeps an accented card on its own tone and reports every pick, re-picks included", () => {
+  it("keeps an accented card on its own tone and reports every pick, re-picks included", async () => {
     let picks = 0;
     const { container } = render(() => (
       <OptionCardGroup value="a" onChange={() => {}}>
@@ -200,12 +206,12 @@ describe("OptionCard", () => {
     const card = container.querySelector<HTMLElement>('[data-slot="option-card"][data-checked]');
     expect(card?.style.getPropertyValue("--glass-tone")).toBe("var(--success)");
     const item = card?.querySelector<HTMLElement>('[data-slot="radio-group-item"]');
-    fireEvent.click(item as HTMLElement);
-    fireEvent.click(item as HTMLElement);
+    await press(item as HTMLElement);
+    await press(item as HTMLElement);
     expect(picks).toBe(2);
   });
 
-  it("offers sub-options as rows of the card, chosen in place", () => {
+  it("offers sub-options as rows of the card, chosen in place", async () => {
     const [len, setLen] = createSignal<string | undefined>("6");
     const { container } = render(() => (
       <OptionCardGroup value="code" onChange={() => {}}>
@@ -222,7 +228,7 @@ describe("OptionCard", () => {
     ).not.toBeNull();
     expect(rows[0]?.getAttribute("aria-checked")).toBe("true");
     expect(container.querySelector("select, [data-slot='select-trigger']")).toBeNull();
-    fireEvent.click(rows[1] as HTMLElement);
+    await press(rows[1] as HTMLElement);
     expect(len()).toBe("8");
     expect(rows[1]?.getAttribute("aria-checked")).toBe("true");
   });

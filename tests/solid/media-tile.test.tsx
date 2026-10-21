@@ -1,5 +1,6 @@
-import { cleanup, fireEvent, render, screen } from "@solidjs/testing-library";
+import { cleanup, render, screen } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { press } from "../press.js";
 
 import type { StoredMedia } from "../../src/solid/media-store.js";
 import { MediaTile } from "../../src/solid/media-tile.jsx";
@@ -63,7 +64,7 @@ describe("MediaTile", () => {
     expect(screen.getByTestId("media-tile").getAttribute("aria-label")).toBe("View a");
   });
 
-  it("reports the click and the image failing to load", () => {
+  it("reports the click and the image failing to load", async () => {
     const onSelect = vi.fn();
     const onBroken = vi.fn();
     render(() => (
@@ -76,10 +77,9 @@ describe("MediaTile", () => {
         onBroken={onBroken}
       />
     ));
-    fireEvent.error(screen.getByTestId("media-tile").querySelector("img") as HTMLImageElement);
-    expect(onBroken).toHaveBeenCalledTimes(1);
+    await vi.waitFor(() => expect(onBroken).toHaveBeenCalledTimes(1));
 
-    fireEvent.click(screen.getByTestId("media-tile"));
+    await press(screen.getByTestId("media-tile"));
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
 
@@ -98,7 +98,7 @@ describe("MediaTile", () => {
     expect(screen.getByTestId("media-tile-broken")).toBeTruthy();
   });
 
-  it("shows a delete control only when the caller can delete, outside the tile button", () => {
+  it("shows a delete control only when the caller can delete, outside the tile button", async () => {
     const onDelete = vi.fn();
     const { unmount } = render(() => (
       <MediaTile
@@ -126,9 +126,8 @@ describe("MediaTile", () => {
     ));
     const del = document.querySelector('[data-slot="media-tile-delete"]') as HTMLButtonElement;
     expect(screen.getByTestId("media-tile").contains(del)).toBe(false);
-    fireEvent.click(del);
+    await press(del);
     expect(onDelete).toHaveBeenCalledTimes(1);
-    // jsdom lays nothing out, so this only pins the touch-target expansion, not its size.
     expect(del.className).toContain("after:-inset-1.5");
     expect(del.className).toContain("size-8");
   });

@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { shadowOf } from "../src/testing/index.js";
+import { installHappyDomFidelity, shadowOf } from "../src/testing/index.js";
+
+installHappyDomFidelity();
 
 afterEach(() => {
   document.body.replaceChildren();

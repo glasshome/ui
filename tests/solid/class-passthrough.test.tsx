@@ -3,9 +3,10 @@
  * programmatically, so a future export either renders through the DEFAULT
  * probe, gets a CASES entry (required props / parent wrappers), or is added
  * to NOT_PROBED with a written reason; an unhandled one fails CI here. */
-import { cleanup, fireEvent, render } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
 import type { JSX } from "solid-js";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
 
 import type { EntityDataAdapter } from "../../src/solid/entity-data.js";
 import * as solid from "../../src/solid/index.js";
@@ -55,7 +56,7 @@ const NOT_PROBED: Record<string, string> = {
   Sheet: "renderless context root (kobalte Dialog), no DOM element of its own",
   Tooltip: "renderless context root (kobalte Tooltip), no DOM element of its own",
   AvatarImage:
-    "kobalte Image renders the img element only after a successful load; happy-dom never loads images",
+    "kobalte Image renders the img element only after a successful load, which the default probe has no source for",
   MediaStoreError: "error class, not a component: no class prop to pass through",
   HeroOption: "deprecated alias of OptionCard",
   SelectionHighlight:
@@ -362,7 +363,7 @@ const CASES: Record<string, () => JSX.Element> = {
       <solid.ContextMenuTrigger data-cm-trigger="">t</solid.ContextMenuTrigger>
       <solid.ContextMenuContent>
         <solid.ContextMenuSub defaultOpen>
-          <solid.ContextMenuSubTrigger>s</solid.ContextMenuSubTrigger>
+          <solid.ContextMenuSubTrigger data-cm-sub-trigger="">s</solid.ContextMenuSubTrigger>
           <solid.ContextMenuSubContent class="probe">
             <solid.ContextMenuItem>i</solid.ContextMenuItem>
           </solid.ContextMenuSubContent>
@@ -805,9 +806,17 @@ async function renderProbe(name: string) {
     children: string;
   }) => JSX.Element;
   render(renderCase ?? (() => <Comp class="probe">probe</Comp>));
-  // Context menus mount their content only after a pointer-positioned
-  // open; cases mark the trigger and we fire the real event.
+  // Context menus mount their content only after a pointer-positioned open.
   const cmTrigger = document.querySelector("[data-cm-trigger]");
-  if (cmTrigger) fireEvent.contextMenu(cmTrigger);
+  if (cmTrigger) await userEvent.click(cmTrigger, { button: "right" });
+  // The menu takes focus as it opens, which closes a defaultOpen sub; a person hovers it open.
+  const subTrigger = document.querySelector("[data-cm-sub-trigger]");
+  if (subTrigger) {
+    await userEvent.hover(subTrigger);
+    await vi.waitFor(() => {
+      if (subTrigger.getAttribute("aria-expanded") !== "true")
+        throw new Error("submenu still shut");
+    });
+  }
   await Promise.resolve();
 }

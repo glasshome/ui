@@ -2,16 +2,8 @@
  * redraw rewrites the svg body, so an icon woken for nothing costs a DOM write. */
 import { cleanup, render } from "@solidjs/testing-library";
 import { afterEach, expect, it, vi } from "vitest";
-
-Object.assign(globalThis, {
-  trustedTypes: {
-    createPolicy: (_: string, rules: { createHTML: (s: string) => string }) => ({
-      createHTML: (s: string) => ({ toString: () => rules.createHTML(s) }),
-    }),
-  },
-});
-const { Icon, provideIcons } = await import("../../src/solid/icon.js");
-const { useFakeTime } = await import("../../src/testing/index.js");
+import { Icon, provideIcons } from "../../src/solid/icon.js";
+import { useFakeTime } from "../../src/testing/index.js";
 
 const PLUS = { body: "<path d='plus'/>", width: 24, height: 24 };
 const CCTV = { body: "<path d='cctv'/>", width: 24, height: 24 };

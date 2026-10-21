@@ -1,10 +1,11 @@
 /* One picker panel: every field-shaped picker opens the same way, an opaque
  * panel anchored over the trigger, one trigger recipe, one search row, and the
  * package's own controls inside the rows. */
-import { cleanup, fireEvent, render, waitFor } from "@solidjs/testing-library";
+import { cleanup, render, waitFor } from "@solidjs/testing-library";
 import type { JSX } from "solid-js";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
+import { press } from "../press.js";
 
 import { AreaPicker } from "../../src/solid/area-picker.js";
 import {
@@ -181,7 +182,7 @@ describe("picker triggers", () => {
       const { container } = withData(ui);
       const trigger = firstButton(container);
       expect(trigger.hasAttribute("data-expanded")).toBe(false);
-      fireEvent.click(trigger);
+      await press(trigger);
       await waitFor(() => expect(trigger.hasAttribute("data-expanded")).toBe(true));
     });
   }
@@ -189,7 +190,7 @@ describe("picker triggers", () => {
   for (const [name, ui] of cases.filter(([n]) => n !== "ImagePicker")) {
     it(`${name} opens with its search focused, so a keyboard can search and reach a row`, async () => {
       const { container } = withData(ui);
-      fireEvent.click(firstButton(container));
+      await press(firstButton(container));
       await waitFor(() =>
         expect(document.activeElement?.getAttribute("data-slot")).toBe("picker-search-input"),
       );
@@ -202,7 +203,7 @@ describe("EntitySelector rows", () => {
     const { container } = withData(() => (
       <EntitySelector domain="light" entityIds={[]} onEntityIdsChange={() => {}} />
     ));
-    fireEvent.click(firstButton(container));
+    await press(firstButton(container));
     await waitFor(() => expect(document.querySelector('[data-slot="checkbox"]')).not.toBeNull());
   });
 
@@ -210,35 +211,35 @@ describe("EntitySelector rows", () => {
     const { container } = withData(() => (
       <EntitySelector domain="light" entityIds={[]} onEntityIdsChange={() => {}} multiple={false} />
     ));
-    fireEvent.click(firstButton(container));
+    await press(firstButton(container));
     await waitFor(() => expect(document.querySelector('[role="option"]')).not.toBeNull());
     expect(document.querySelector('[data-slot="checkbox"]')).toBeNull();
   });
 });
 
 describe("AreaPicker indicator", () => {
-  it("rests on a selected row in multi mode", () => {
+  it("rests on a selected row in multi mode", async () => {
     const [values, setValues] = createSignal<string[]>(["bedroom"]);
     const { container } = render(() => (
       <EntityDataContext.Provider value={adapter}>
         <AreaPicker values={values()} onValuesChange={setValues} />
       </EntityDataContext.Provider>
     ));
-    fireEvent.click(firstButton(container));
+    await press(firstButton(container));
     const highlighted = document.querySelector<HTMLElement>(
       '[data-slot="area-picker-row"][data-highlighted]',
     );
     expect(highlighted?.textContent).toContain("Bedroom");
   });
 
-  it("rests on the selected row in single mode", () => {
+  it("rests on the selected row in single mode", async () => {
     const [value, setValue] = createSignal("kitchen");
     const { container } = render(() => (
       <EntityDataContext.Provider value={adapter}>
         <AreaPicker value={value()} onChange={setValue} />
       </EntityDataContext.Provider>
     ));
-    fireEvent.click(firstButton(container));
+    await press(firstButton(container));
     const highlighted = document.querySelector<HTMLElement>(
       '[data-slot="area-picker-row"][data-highlighted]',
     );
@@ -251,7 +252,7 @@ describe("EntitySelector listbox wiring", () => {
     const { container } = withData(() => (
       <EntitySelector domain="light" entityIds={["light.counter"]} onEntityIdsChange={() => {}} />
     ));
-    fireEvent.click(firstButton(container));
+    await press(firstButton(container));
     await waitFor(() => expect(document.querySelector('[role="option"]')).not.toBeNull());
 
     const highlighted = document.querySelector<HTMLElement>("[role=option][data-highlighted]");
@@ -269,7 +270,7 @@ describe("EntitySelector listbox wiring", () => {
     const { container } = withData(() => (
       <EntitySelector domain="light" entityIds={[]} onEntityIdsChange={() => {}} />
     ));
-    fireEvent.click(firstButton(container));
+    await press(firstButton(container));
     await waitFor(() => expect(document.querySelector('[role="option"]')).not.toBeNull());
     const option = document.querySelector<HTMLElement>('[role="option"]');
     // Everything between the listbox and its options is layout, so nothing in

@@ -1,29 +1,11 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
 import { Toggle } from "../../src/solid/toggle.js";
 import { ToggleGroup, ToggleGroupItem } from "../../src/solid/toggle-group.js";
 import { useFakeTime } from "../../src/testing/index.js";
 
 afterEach(cleanup);
-
-type Rect = { left: number; top: number; width: number; height: number };
-
-function stubRect(el: HTMLElement, rect: Rect) {
-  el.getBoundingClientRect = () =>
-    ({
-      ...rect,
-      right: rect.left + rect.width,
-      bottom: rect.top + rect.height,
-      x: rect.left,
-      y: rect.top,
-      toJSON: () => rect,
-    }) as DOMRect;
-}
-
-async function flush() {
-  await Promise.resolve();
-  await Promise.resolve();
-}
 
 describe("ToggleGroup", () => {
   it("leaves the hover fill to the standalone Toggle, so no square paints behind the indicator", () => {
@@ -135,33 +117,29 @@ describe("ToggleGroup", () => {
     expect(root?.hasAttribute("data-scroll")).toBe(true);
     expect(root?.className).toContain("overflow-x-auto");
     expect(root?.className).not.toContain("flex-wrap");
-    view.getByRole("button", { name: "Right" }).click();
-    await flush();
+    await userEvent.click(view.getByRole("button", { name: "Right" }));
     expect(picked).toBe("right");
   });
 
   it("in scroll mode brings a pressed item past the edge into view and marks the clipped edge", async () => {
     useFakeTime();
     const view = render(() => (
-      <ToggleGroup scroll value="far">
-        <ToggleGroupItem value="near">Near</ToggleGroupItem>
-        <ToggleGroupItem value="far">Far</ToggleGroupItem>
+      <ToggleGroup scroll value="far" style={{ width: "200px", padding: "0", "border-width": "0" }}>
+        <ToggleGroupItem value="near" style={{ flex: "none", width: "300px" }}>
+          Near
+        </ToggleGroupItem>
+        <ToggleGroupItem value="far" style={{ flex: "none", width: "80px" }}>
+          Far
+        </ToggleGroupItem>
       </ToggleGroup>
     ));
     const root = view.container.querySelector<HTMLElement>('[data-slot="toggle-group"]');
     if (!root) throw new Error("no toggle group");
-    Object.defineProperty(root, "scrollWidth", { value: 400 });
-    Object.defineProperty(root, "clientWidth", { value: 200 });
-    stubRect(root, { left: 0, top: 0, width: 200, height: 40 });
-    const far = view.getByRole("button", { name: "Far" });
-    stubRect(far, { left: 300, top: 0, width: 80, height: 40 });
-    let scrolledTo: number | undefined;
-    root.scrollTo = ((opts: ScrollToOptions) => {
-      scrolledTo = opts.left;
-    }) as typeof root.scrollTo;
+    const scrollTo = vi.spyOn(root, "scrollTo");
 
     vi.advanceTimersToNextFrame();
 
+    const scrolledTo = (scrollTo.mock.calls[0]?.[0] as ScrollToOptions | undefined)?.left;
     expect(scrolledTo).toBe(240);
     expect(root.hasAttribute("data-clip-end")).toBe(true);
     expect(root.hasAttribute("data-clip-start")).toBe(false);

@@ -1,6 +1,7 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@solidjs/testing-library";
+import { cleanup, render, screen, waitFor } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
 
 import { ImagePicker } from "../../src/solid/image-picker.jsx";
 import {
@@ -11,6 +12,11 @@ import {
   MediaStoreError,
   type StoredMedia,
 } from "../../src/solid/media-store.js";
+import { press } from "../press.js";
+
+const PIXEL = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+// A tile whose picture fails drops its <img>; this source loads and still names its path.
+const loads = (path: string) => `${PIXEL}#${path}`;
 
 const image = (id: string, usedBy = 0): StoredMedia => ({
   id,
@@ -46,14 +52,22 @@ const trigger = () =>
 
 const gallery = () => document.querySelector('[data-slot="popover-content"][data-expanded]');
 
-const openGallery = () => fireEvent.click(trigger());
+// The trigger renames itself once its picture loads or fails, and a click finds its target by name.
+async function triggerSettled() {
+  await waitFor(() => {
+    const img = trigger().querySelector("img");
+    expect(!img || img.naturalWidth > 0).toBe(true);
+  });
+  return trigger();
+}
 
-/** Kobalte dismisses on a capture-phase pointerdown, so a press is not just a click. */
-const press = (el: Element) => {
-  fireEvent.pointerDown(el);
-  fireEvent.pointerUp(el);
-  fireEvent.click(el);
-};
+const openGallery = async () => userEvent.click(await triggerSettled());
+
+// The open gallery covers its trigger and turns pointer events off on the page, so a dismissing press lands on <html>.
+const pressOutside = () =>
+  userEvent.click(document.documentElement, {
+    position: { x: window.innerWidth - 4, y: window.innerHeight - 4 },
+  });
 
 function first<T>(items: T[], label: string): T {
   const item = items[0];
@@ -66,13 +80,11 @@ const firstMediaTile = () => first(screen.getAllByTestId("media-tile"), "media t
 const uploadButton = () =>
   document.querySelector('[data-slot="image-picker-upload"]') as HTMLButtonElement;
 
-const uploadFile = () => {
-  const input = screen.getByTestId("image-upload-input") as HTMLInputElement;
-  Object.defineProperty(input, "files", {
-    value: [new File(["x"], "x.png", { type: "image/png" })],
-  });
-  fireEvent.change(input);
-};
+const uploadFile = () =>
+  userEvent.upload(
+    screen.getByTestId("image-upload-input"),
+    new File(["x"], "x.png", { type: "image/png" }),
+  );
 
 afterEach(cleanup);
 
@@ -91,15 +103,15 @@ describe("ImagePicker", () => {
   it("opens, closes, and opens again", async () => {
     withStore(storeWith(), () => <ImagePicker value="" onChange={() => {}} />);
 
-    press(trigger());
+    await press(trigger());
     await waitFor(() => expect(gallery()).not.toBeNull());
     // Modal is what keeps the press that dismisses from also re-firing the trigger's toggle.
     expect(document.body.style.pointerEvents).toBe("none");
 
-    press(trigger());
+    await pressOutside();
     await waitFor(() => expect(gallery()).toBeNull());
 
-    press(trigger());
+    await press(trigger());
     await waitFor(() => expect(gallery()).not.toBeNull());
   });
 
@@ -111,12 +123,16 @@ describe("ImagePicker", () => {
   });
 
   it("marks a broken tile with a glyph, not a grey fill a loading tile shares", async () => {
-    withStore(storeWith(), () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    const [gone, setGone] = createSignal<string>();
+    withStore(
+      storeWith({ url: (id) => (id === gone() ? `/api/images/${id}/thumb` : PIXEL) }),
+      () => <ImagePicker value="" onChange={() => {}} />,
+    );
+    await openGallery();
     await waitFor(() => screen.getAllByTestId("media-tile"));
     expect(screen.queryByTestId("media-tile-broken")).toBeNull();
 
-    fireEvent.error(firstMediaTile().querySelector("img") as HTMLImageElement);
+    setGone("b");
     await waitFor(() => expect(screen.getAllByTestId("media-tile-broken").length).toBe(1));
   });
 
@@ -125,14 +141,14 @@ describe("ImagePicker", () => {
     withStore(storeWith({ index }), () => <ImagePicker value="" onChange={() => {}} />);
     expect(index).not.toHaveBeenCalled();
 
-    openGallery();
+    await openGallery();
     await waitFor(() => expect(screen.getAllByTestId("media-tile").length).toBe(2));
     expect(index).toHaveBeenCalledTimes(1);
   });
 
   it("lists images once opened, unused first and badged", async () => {
     withStore(storeWith(), () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => expect(screen.getAllByTestId("media-tile").length).toBe(2));
     expect(screen.getAllByTestId("media-tile-unused").length).toBe(1);
     expect(screen.getByTestId("media-tile-unused").textContent).toBe("Unused");
@@ -148,7 +164,7 @@ describe("ImagePicker", () => {
     withStore(storeWith({ index: async () => indexOf([image("a", 2), mimeless]) }), () => (
       <ImagePicker value="" onChange={() => {}} />
     ));
-    openGallery();
+    await openGallery();
     await waitFor(() => expect(screen.getAllByTestId("media-tile").length).toBe(1));
     expect(gallery()).not.toBeNull();
   });
@@ -157,20 +173,26 @@ describe("ImagePicker", () => {
     withStore(
       storeWith({
         url: (id, variant) =>
-          `http://host:3123/api/images/${id}${variant === "thumb" ? "/thumb" : ""}`,
+          loads(`http://host:3123/api/images/${id}${variant === "thumb" ? "/thumb" : ""}`),
       }),
       () => <ImagePicker value="" onChange={() => {}} />,
     );
-    openGallery();
+    await openGallery();
     await waitFor(() => screen.getAllByTestId("media-tile"));
     const tile = firstMediaTile().querySelector("img");
-    expect(tile?.getAttribute("src")).toBe("http://host:3123/api/images/b/thumb");
+    expect(tile?.getAttribute("src")).toBe(loads("http://host:3123/api/images/b/thumb"));
   });
 
   it("draws gallery tiles from the thumbnail and the trigger from the original", async () => {
-    withStore(storeWith(), () => <ImagePicker value="a" onChange={() => {}} />);
+    withStore(
+      storeWith({
+        url: (id, variant) =>
+          variant === "thumb" ? loads(`/api/images/${id}/thumb`) : `/api/images/${id}`,
+      }),
+      () => <ImagePicker value="a" onChange={() => {}} />,
+    );
     expect(trigger().querySelector("img")?.getAttribute("src")).toBe("/api/images/a");
-    openGallery();
+    await openGallery();
     await waitFor(() => screen.getAllByTestId("media-tile"));
     for (const tile of screen.getAllByTestId("media-tile")) {
       const img = tile.querySelector("img") as HTMLImageElement;
@@ -182,21 +204,18 @@ describe("ImagePicker", () => {
 
   it("falls back when a tile's file is gone", async () => {
     withStore(storeWith(), () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => screen.getAllByTestId("media-tile"));
     const tile = firstMediaTile();
-    const img = tile.querySelector("img") as HTMLImageElement;
-    fireEvent.error(img);
     await waitFor(() => expect(tile.querySelector("img")).toBeNull());
   });
 
   it("recovers a tile once its resolved src changes", async () => {
     const [src, setSrc] = createSignal("data:image/gif;base64,placeholder");
     withStore(storeWith({ url: () => src() }), () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => screen.getAllByTestId("media-tile"));
     const tile = firstMediaTile();
-    fireEvent.error(tile.querySelector("img") as HTMLImageElement);
     await waitFor(() => expect(tile.querySelector("img")).toBeNull());
 
     setSrc("blob:resolved");
@@ -206,9 +225,9 @@ describe("ImagePicker", () => {
   it("reports the chosen id", async () => {
     const onChange = vi.fn();
     withStore(storeWith(), () => <ImagePicker value="" onChange={onChange} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => screen.getAllByTestId("media-tile"));
-    fireEvent.click(firstMediaTile());
+    await userEvent.click(firstMediaTile());
     expect(onChange).toHaveBeenCalledWith("b");
   });
 
@@ -224,9 +243,9 @@ describe("ImagePicker", () => {
       },
     });
     withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => screen.getByTestId("image-upload-input"));
-    uploadFile();
+    await uploadFile();
     await waitFor(() => expect(screen.getByRole("alert").textContent).toMatch(/238 MB of 250 MB/i));
     // The upload surface stays an Alert; only the gallery-load failure is an empty state.
     expect(screen.getByRole("alert").dataset.slot).toBe("alert");
@@ -240,9 +259,9 @@ describe("ImagePicker", () => {
       },
     });
     withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => screen.getByTestId("image-upload-input"));
-    uploadFile();
+    await uploadFile();
     await waitFor(() => expect(screen.getByRole("alert").textContent).toMatch(/sign in again/i));
     expect(screen.getByRole("alert").textContent).not.toMatch(/too large to upload/i);
   });
@@ -260,9 +279,9 @@ describe("ImagePicker", () => {
       },
     });
     withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => expect(screen.getByText(/100 MB of 500 MB/i)).toBeTruthy());
-    uploadFile();
+    await uploadFile();
     await waitFor(() => expect(screen.getByText(/200 MB of 500 MB/i)).toBeTruthy());
   });
 
@@ -270,16 +289,18 @@ describe("ImagePicker", () => {
     const index = vi.fn(async () => indexOf([image("a")]));
     const store = storeWith({ index, remove: async () => {} });
     withStore(store, () => <ImagePicker value="a" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => screen.getAllByTestId("media-tile"));
-    fireEvent.click(first(screen.getAllByRole("button", { name: /^delete a$/i }), "delete button"));
-    fireEvent.click(screen.getByRole("button", { name: /^delete$/i }));
+    await userEvent.click(
+      first(screen.getAllByRole("button", { name: /^delete a$/i }), "delete button"),
+    );
+    await userEvent.click(await waitFor(() => screen.getByRole("button", { name: /^delete$/i })));
     await waitFor(() => expect(index.mock.calls.length).toBeGreaterThan(1));
   });
 
   it("opens as the field expanding, not a raised floating panel", async () => {
     withStore(storeWith(), () => <ImagePicker value="" onChange={() => {}} />);
-    press(trigger());
+    await press(trigger());
     await waitFor(() => expect(gallery()).not.toBeNull());
     const content = gallery() as HTMLElement;
     expect(content.dataset.surface).toBe("field");
@@ -295,11 +316,11 @@ describe("ImagePicker", () => {
         }),
     });
     withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => screen.getByTestId("image-upload-input"));
     expect(uploadButton().disabled).toBe(false);
 
-    uploadFile();
+    await uploadFile();
     await waitFor(() => expect(uploadButton().disabled).toBe(true));
     expect(uploadButton().textContent).toMatch(/uploading/i);
 
@@ -315,14 +336,14 @@ describe("ImagePicker", () => {
       },
     });
     withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
-    press(trigger());
+    await press(trigger());
     await waitFor(() => expect(gallery()).not.toBeNull());
-    uploadFile();
+    await uploadFile();
     await waitFor(() => expect(screen.getByRole("alert")).toBeTruthy());
 
-    press(trigger());
+    await pressOutside();
     await waitFor(() => expect(gallery()).toBeNull());
-    press(trigger());
+    await press(trigger());
     await waitFor(() => expect(gallery()).not.toBeNull());
     expect(screen.queryByRole("alert")).toBeNull();
   });
@@ -339,17 +360,17 @@ describe("ImagePicker", () => {
     withStore(storeWith({ index: async () => indexOf(many) }), () => (
       <ImagePicker value="" onChange={() => {}} />
     ));
-    openGallery();
+    await openGallery();
     await waitFor(() => expect(screen.getAllByTestId("media-tile").length).toBe(MEDIA_PAGE_SIZE));
     expect(screen.getByTestId("image-picker-page-label").textContent).toMatch(/page 1 of 2/i);
 
-    fireEvent.click(screen.getByRole("link", { name: /next/i }));
+    await userEvent.click(screen.getByRole("link", { name: /next/i }));
     await waitFor(() => expect(screen.getAllByTestId("media-tile").length).toBe(6));
   });
 
   it("keeps the gallery scrollable inside a bounded height", async () => {
     withStore(storeWith(), () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => screen.getAllByTestId("media-tile"));
     const grid = document.querySelector('[data-slot="image-picker-gallery"]') as HTMLElement;
     expect(grid.className).toContain("overflow-y-auto");
@@ -363,7 +384,7 @@ describe("ImagePicker", () => {
       },
     });
     withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
 
     await waitFor(() => expect(screen.getByText(/your photos couldn't be listed/i)).toBeTruthy());
     expect(document.querySelector('[data-slot="image-picker-loading"]')).toBeNull();
@@ -378,7 +399,7 @@ describe("ImagePicker", () => {
       },
     });
     withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
 
     const failure = await waitFor(() => screen.getByRole("status"));
     expect(failure.dataset.slot).toBe("empty");
@@ -403,7 +424,7 @@ describe("ImagePicker", () => {
       },
     });
     withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
 
     await waitFor(() => expect(screen.getByRole("status")).toBeTruthy());
     expect(
@@ -419,11 +440,11 @@ describe("ImagePicker", () => {
       return indexOf([image("a")]);
     });
     withStore(storeWith({ index }), () => <ImagePicker value="" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => screen.getByRole("button", { name: /try again/i }));
 
     failing = false;
-    fireEvent.click(screen.getByRole("button", { name: /try again/i }));
+    await userEvent.click(screen.getByRole("button", { name: /try again/i }));
     await waitFor(() => expect(screen.getAllByTestId("media-tile").length).toBe(1));
     expect(index.mock.calls.length).toBeGreaterThan(1);
   });
@@ -435,12 +456,12 @@ describe("ImagePicker", () => {
       },
     });
     withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
-    press(trigger());
+    await press(trigger());
     await waitFor(() => expect(screen.getByRole("button", { name: /try again/i })).toBeTruthy());
 
-    press(trigger());
+    await pressOutside();
     await waitFor(() => expect(gallery()).toBeNull());
-    press(trigger());
+    await press(trigger());
     await waitFor(() => expect(gallery()).not.toBeNull());
   });
 
@@ -451,10 +472,12 @@ describe("ImagePicker", () => {
       },
     });
     withStore(store, () => <ImagePicker value="a" onChange={() => {}} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => screen.getAllByTestId("media-tile"));
-    fireEvent.click(first(screen.getAllByRole("button", { name: /^delete a$/i }), "delete button"));
-    fireEvent.click(screen.getByRole("button", { name: /^delete$/i }));
+    await userEvent.click(
+      first(screen.getAllByRole("button", { name: /^delete a$/i }), "delete button"),
+    );
+    await userEvent.click(await waitFor(() => screen.getByRole("button", { name: /^delete$/i })));
 
     await waitFor(() => expect(screen.getByRole("alert").textContent).toMatch(/didn't work/i));
     // Kobalte keeps the closed dialog mounted for its exit animation, so presence isn't the signal.
@@ -482,7 +505,7 @@ describe("ImagePicker built-in pictures", () => {
 
   it("puts the built-in pictures first in the one grid, each tagged, before the uploads", async () => {
     withStore(storeWith(), () => <ImagePicker value="" onChange={() => {}} presets={presets} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => expect(galleryTiles()).toHaveLength(4));
     expect(galleryTiles()).toEqual([
       "image-picker-preset",
@@ -496,9 +519,9 @@ describe("ImagePicker built-in pictures", () => {
   it("picking a built-in picture stores its preset value", async () => {
     const onChange = vi.fn();
     withStore(storeWith(), () => <ImagePicker value="" onChange={onChange} presets={presets} />);
-    openGallery();
+    await openGallery();
     await waitFor(() => expect(presetTiles()).toHaveLength(2));
-    press(first(presetTiles(), "preset tile"));
+    await press(first(presetTiles(), "preset tile"));
     expect(onChange).toHaveBeenLastCalledWith("preset:living");
   });
 
@@ -513,7 +536,7 @@ describe("ImagePicker built-in pictures", () => {
   it("still offers them where the dashboard cannot store images", async () => {
     render(() => <ImagePicker value="" onChange={() => {}} presets={presets} />);
     expect(screen.queryByText(/dashboard cannot store images/i)).toBeNull();
-    openGallery();
+    await openGallery();
     await waitFor(() => expect(presetTiles()).toHaveLength(2));
     expect(document.querySelector('[data-slot="image-picker-upload"]')).toBeNull();
   });

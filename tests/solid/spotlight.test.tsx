@@ -1,6 +1,7 @@
 import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { cdp, userEvent } from "vitest/browser";
 import { Z_CLASS } from "../../src/lib/layers.js";
 import { TRAVEL_MOTION } from "../../src/lib/motion-classes.js";
 import { OVERLAY_SURFACE_OPAQUE, SCRIM_CLASS } from "../../src/lib/overlay-classes.js";
@@ -12,14 +13,70 @@ const BUBBLE_GAP = 12;
 
 function targetAt(x: number, y: number, width: number, height: number) {
   const el = document.createElement("button");
-  el.getBoundingClientRect = () =>
-    ({ x, y, width, height, left: x, top: y, right: x + width, bottom: y + height }) as DOMRect;
+  el.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:${width}px;height:${height}px`;
   document.body.append(el);
   return el;
 }
 
+const nextFrame = () => new Promise(requestAnimationFrame);
+
+/* What the browser serialises for these path commands, e.g. "M104 192" as "M 104 192". */
+function pathCommands(d: string): string {
+  const probe = document.createElement("div");
+  probe.style.clipPath = `path("${d}")`;
+  return probe.style.clipPath.slice('path("'.length, -'")'.length);
+}
+
+/* What the browser serialises for a translate's y, which it rounds. */
+function translateY(y: number): string | undefined {
+  const probe = document.createElement("div");
+  probe.style.translate = `0px ${y}px`;
+  return probe.style.translate.split(" ")[1];
+}
+
+/* CDP evaluates in the top frame; resolving our document lands in this test frame's realm. */
+async function inThisFrame(expression: string): Promise<string> {
+  const { result: frame } = await cdp().send("Runtime.evaluate", {
+    expression: `[...document.querySelectorAll("iframe")].find((f) => f.contentWindow.location.href === ${JSON.stringify(location.href)})`,
+  });
+  const { node } = await cdp().send("DOM.describeNode", {
+    objectId: frame.objectId,
+    depth: 1,
+    pierce: true,
+  });
+  const { object } = await cdp().send("DOM.resolveNode", {
+    backendNodeId: node.contentDocument?.backendNodeId,
+  });
+  const { result } = await cdp().send("Runtime.callFunctionOn", {
+    objectId: object.objectId,
+    functionDeclaration: `function () { return this.defaultView.${expression}; }`,
+  });
+  if (!result.objectId) throw new Error(`no object for ${expression}`);
+  return result.objectId;
+}
+
+async function listenerTypes(target: "window" | "document"): Promise<string[]> {
+  const objectId = await inThisFrame(target);
+  const { listeners } = await cdp().send("DOMDebugger.getEventListeners", { objectId });
+  return listeners.map((l) => l.type);
+}
+
+async function liveResizeObservers(): Promise<number> {
+  await cdp().send("HeapProfiler.collectGarbage");
+  const prototypeObjectId = await inThisFrame("ResizeObserver.prototype");
+  const objectGroup = "live-resize-observers";
+  const { objects } = await cdp().send("Runtime.queryObjects", { prototypeObjectId, objectGroup });
+  const { result } = await cdp().send("Runtime.callFunctionOn", {
+    objectId: objects.objectId,
+    functionDeclaration: "function () { return this.length; }",
+    returnByValue: true,
+  });
+  /* The inspector holds what it returned until the group is released. */
+  await cdp().send("Runtime.releaseObjectGroup", { objectGroup });
+  return result.value as number;
+}
+
 afterEach(() => {
-  vi.restoreAllMocks();
   document.body.innerHTML = "";
 });
 
@@ -32,7 +89,7 @@ describe("Spotlight", () => {
       </Spotlight>
     ));
     const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
-    expect(scrim?.style.clipPath).toContain("M104 192");
+    expect(scrim?.style.clipPath).toContain(pathCommands("M104 192"));
   });
 
   it("draws no scrim when scrim is off, and still draws the bubble", () => {
@@ -48,74 +105,58 @@ describe("Spotlight", () => {
     );
   });
 
-  it("re-measures the bubble one frame later, so content that grows after the target changes is placed from the grown height", () => {
-    let rafCallback: FrameRequestCallback | undefined;
-    const rafSpy = vi.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
-      rafCallback = cb;
-      return 0;
-    });
+  it("re-measures the bubble one frame later, so content that grows after the target changes is placed from the grown height", async () => {
     const a = targetAt(100, 200, 300, 50);
     const b = targetAt(500, 600, 100, 40);
     const [target, setTarget] = createSignal<Element>(a);
+    const [grow, setGrow] = createSignal(0);
     render(() => (
       <Spotlight target={target()} scrim={false}>
         Step
+        <div style={{ height: `${grow()}px` }} />
       </Spotlight>
     ));
     const bubble = document.querySelector<HTMLElement>('[data-slot="spotlight-bubble"]');
-    let height = 116;
-    Object.defineProperty(bubble, "offsetHeight", { get: () => height, configurable: true });
-    Object.defineProperty(bubble, "offsetWidth", { get: () => 288, configurable: true });
+    const width = bubble?.offsetWidth ?? 0;
+    const chrome = bubble?.offsetHeight ?? 0;
+    setGrow(116 - chrome);
+    await nextFrame();
     setTarget(b);
-    height = 137;
-    rafCallback?.(0);
+    setGrow(137 - chrome);
+    await nextFrame();
     /* The tail's half-diagonal (8√2) grows the gap below BUBBLE_GAP=12. */
     const gap = BUBBLE_GAP + (TAIL_SIZE * Math.SQRT2) / 2;
     const [x, y] = (bubble?.style.translate ?? "").split(" ");
-    expect(x).toBe("406px");
-    expect(Number.parseFloat(y ?? "")).toBeCloseTo(600 - gap - 137, 5);
-    rafSpy.mockRestore();
+    expect(x).toBe(`${500 + 100 / 2 - width / 2}px`);
+    expect(y).toBe(translateY(600 - gap - 137));
   });
 
   it("keeps re-measuring for the full window even when the target's motion starts late", () => {
     useFakeTime({ toFake: ["requestAnimationFrame"] });
-    const rafSpy = vi.spyOn(window, "requestAnimationFrame");
-    const el = document.createElement("button");
-    document.body.append(el);
-    const before = { x: 100, y: 220, width: 300, height: 50 };
-    const after = { x: 100, y: 200, width: 300, height: 50 };
-    /* Mimics a grid tile whose transition starts a few frames after mount: rect
-     * only starts moving on frame 5, and has landed by frame 12. */
-    let call = 0;
-    el.getBoundingClientRect = () => {
-      const r = call < 5 ? before : call < 12 ? { ...before, y: before.y - (call - 4) * 3 } : after;
-      call++;
-      return {
-        ...r,
-        left: r.x,
-        top: r.y,
-        right: r.x + r.width,
-        bottom: r.y + r.height,
-      } as DOMRect;
-    };
+    const el = targetAt(100, 220, 300, 50);
     render(() => (
       <Spotlight target={el} scrim>
         Step
       </Spotlight>
     ));
     const scrim = () => document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
-    expect(scrim()?.style.clipPath).toContain("M104 212");
+    expect(scrim()?.style.clipPath).toContain(pathCommands("M104 212"));
 
-    for (let i = 0; i < 40; i++) vi.advanceTimersToNextFrame();
-    expect(scrim()?.style.clipPath).toContain("M104 192");
+    /* A grid tile whose transition starts a few frames after mount: it only starts
+     * moving on frame 5, and has landed by frame 12. */
+    let callsInWindow = vi.getTimerCount();
+    for (let frame = 1; frame <= 40; frame++) {
+      const top = frame < 5 ? 220 : frame < 12 ? 220 - (frame - 4) * 3 : 200;
+      el.style.top = `${top}px`;
+      vi.advanceTimersToNextFrame();
+      callsInWindow += vi.getTimerCount();
+    }
+    expect(scrim()?.style.clipPath).toContain(pathCommands("M104 192"));
 
-    const callsInWindow = rafSpy.mock.calls.length;
     expect(callsInWindow).toBeGreaterThan(20);
 
     vi.advanceTimersToNextFrame();
-    expect(rafSpy.mock.calls.length).toBe(callsInWindow);
-
-    rafSpy.mockRestore();
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   it("follows a new target", () => {
@@ -129,12 +170,11 @@ describe("Spotlight", () => {
     ));
     setTarget(b);
     const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
-    expect(scrim?.style.clipPath).toContain("M504 592");
+    expect(scrim?.style.clipPath).toContain(pathCommands("M504 592"));
   });
 
   it("requests no more frames once the settle window ends", () => {
     useFakeTime({ toFake: ["requestAnimationFrame"] });
-    const rafSpy = vi.spyOn(window, "requestAnimationFrame");
     const el = targetAt(100, 200, 300, 50);
     render(() => (
       <Spotlight target={el} scrim>
@@ -142,20 +182,22 @@ describe("Spotlight", () => {
       </Spotlight>
     ));
     for (let i = 0; i < 45; i++) vi.advanceTimersToNextFrame();
-    const settled = rafSpy.mock.calls.length;
-    for (let i = 0; i < 10; i++) vi.advanceTimersToNextFrame();
-    expect(rafSpy.mock.calls.length).toBe(settled);
-    rafSpy.mockRestore();
+    let requested = 0;
+    for (let i = 0; i < 10; i++) {
+      vi.advanceTimersToNextFrame();
+      requested += vi.getTimerCount();
+    }
+    expect(requested).toBe(0);
   });
 
-  it("calls onSkip on Escape", () => {
+  it("calls onSkip on Escape", async () => {
     const onSkip = vi.fn();
     render(() => (
       <Spotlight target={undefined} scrim onSkip={onSkip}>
         Step
       </Spotlight>
     ));
-    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    await userEvent.keyboard("{Escape}");
     expect(onSkip).toHaveBeenCalledOnce();
   });
 
@@ -211,37 +253,53 @@ describe("Spotlight", () => {
     expect(scrim?.classList.contains("pointer-events-none")).toBe(false);
   });
 
-  it("observes the bubble element too, so its own size change re-places it", () => {
-    const observe = vi.fn();
-    const Original = globalThis.ResizeObserver;
-    globalThis.ResizeObserver = class {
-      observe = observe;
-      unobserve() {}
-      disconnect() {}
-    } as unknown as typeof ResizeObserver;
-    const el = targetAt(100, 200, 300, 50);
+  it("observes the bubble element too, so its own size change re-places it", async () => {
+    const raf = window.requestAnimationFrame.bind(window);
+    const realFrame = () => new Promise(raf);
+    /* Frozen frames, so only the ResizeObserver can re-place the bubble. */
+    useFakeTime({ toFake: ["requestAnimationFrame"] });
+    const el = targetAt(500, 600, 100, 40);
+    const [grow, setGrow] = createSignal(0);
     render(() => (
       <Spotlight target={el} scrim>
         Step
+        <div style={{ height: `${grow()}px` }} />
       </Spotlight>
     ));
-    const bubble = document.querySelector('[data-slot="spotlight-bubble"]');
-    expect(observe.mock.calls.map((c) => c[0])).toContain(bubble);
-    globalThis.ResizeObserver = Original;
+    await realFrame();
+    await realFrame();
+    const bubble = document.querySelector<HTMLElement>('[data-slot="spotlight-bubble"]');
+    const gap = BUBBLE_GAP + (TAIL_SIZE * Math.SQRT2) / 2;
+    setGrow(100);
+    const grown = bubble?.offsetHeight ?? 0;
+    await realFrame();
+    await realFrame();
+    const [, y] = (bubble?.style.translate ?? "").split(" ");
+    expect(y).toBe(translateY(600 - gap - grown));
   });
 
-  it("skips the scrim style write when a remeasure finds the same rect", () => {
+  it("skips the scrim style write when a remeasure finds the same rect", async () => {
     const el = targetAt(100, 200, 300, 50);
     render(() => (
       <Spotlight target={el} scrim>
         Step
       </Spotlight>
     ));
-    const setProperty = vi.spyOn(CSSStyleDeclaration.prototype, "setProperty");
-    setProperty.mockClear();
-    window.dispatchEvent(new Event("scroll"));
-    expect(setProperty).not.toHaveBeenCalled();
-    setProperty.mockRestore();
+    await nextFrame();
+    await nextFrame();
+    const scroller = document.createElement("div");
+    scroller.style.cssText = "position:fixed;left:0;top:0;width:50px;height:50px;overflow:auto";
+    scroller.innerHTML = '<div style="height:200px"></div>';
+    document.body.append(scroller);
+    const writes = new MutationObserver(() => {});
+    writes.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["style"] });
+    const scrolled = new Promise((resolve) =>
+      scroller.addEventListener("scroll", resolve, { once: true }),
+    );
+    scroller.scrollTop = 40;
+    await scrolled;
+    expect(writes.takeRecords()).toEqual([]);
+    writes.disconnect();
   });
 
   it("wears the modal scrim recipe", () => {
@@ -278,30 +336,30 @@ describe("Spotlight", () => {
       </Spotlight>
     ));
     const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
-    expect(scrim?.style.clipPath).toContain("M112 200");
+    expect(scrim?.style.clipPath).toContain(pathCommands("M112 200"));
   });
 
-  it("leaves no listener or observer behind", () => {
-    const disconnect = vi.fn();
-    const Original = globalThis.ResizeObserver;
-    globalThis.ResizeObserver = class {
-      observe() {}
-      unobserve() {}
-      disconnect = disconnect;
-    } as unknown as typeof ResizeObserver;
-    const remove = vi.spyOn(window, "removeEventListener");
+  it("leaves no listener or observer behind", async () => {
+    const count = (types: string[], type: string) => types.filter((t) => t === type).length;
+    const windowBefore = await listenerTypes("window");
+    const documentBefore = await listenerTypes("document");
+    const observersBefore = await liveResizeObservers();
     const el = targetAt(0, 0, 10, 10);
     const { unmount } = render(() => (
       <Spotlight target={el} scrim>
         Step
       </Spotlight>
     ));
+    expect(await liveResizeObservers()).toBe(observersBefore + 1);
     unmount();
-    expect(disconnect).toHaveBeenCalled();
-    expect(remove.mock.calls.map((c) => c[0])).toEqual(
-      expect.arrayContaining(["resize", "scroll"]),
+    expect(await liveResizeObservers()).toBe(observersBefore);
+    const windowAfter = await listenerTypes("window");
+    for (const type of ["resize", "scroll"]) {
+      expect(count(windowAfter, type)).toBe(count(windowBefore, type));
+    }
+    expect(count(await listenerTypes("document"), "keydown")).toBe(
+      count(documentBefore, "keydown"),
     );
-    globalThis.ResizeObserver = Original;
   });
 
   it("points the tail at the target on a below-placed bubble", () => {
@@ -314,8 +372,10 @@ describe("Spotlight", () => {
     expect(bubbleSide()).toBe("below");
     const tail = document.querySelector<HTMLElement>('[data-slot="spotlight-tail"]');
     expect(tail?.getAttribute("data-side")).toBe("below");
-    /* Bubble defaults to 384px wide (fallback for an unmeasured 0-width bubble in jsdom). */
-    const rawX = 100 + 300 / 2 - 384 / 2;
+    const width = document.querySelector<HTMLElement>(
+      '[data-slot="spotlight-bubble"]',
+    )?.offsetWidth;
+    const rawX = 100 + 300 / 2 - (width ?? 0) / 2;
     const anchorCentre = 100 + 300 / 2;
     expect(tail?.style.left).toBe(`${anchorCentre - rawX - TAIL_SIZE / 2}px`);
   });
@@ -410,14 +470,13 @@ describe("Spotlight", () => {
       </Spotlight>
     ));
     const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
-    expect(scrim?.style.clipPath).toContain("M104 192");
+    expect(scrim?.style.clipPath).toContain(pathCommands("M104 192"));
     const bubble = document.querySelector<HTMLElement>('[data-slot="spotlight-bubble"]');
     const gap = BUBBLE_GAP + (TAIL_SIZE * Math.SQRT2) / 2;
-    /* Bubble defaults to 384px wide (fallback for an unmeasured 0-width bubble in jsdom). */
-    const rawX = 500 + 60 / 2 - 384 / 2;
+    const rawX = 500 + 60 / 2 - (bubble?.offsetWidth ?? 0) / 2;
     const [x, y] = (bubble?.style.translate ?? "").split(" ");
     expect(x).toBe(`${rawX}px`);
-    expect(Number.parseFloat(y ?? "")).toBeCloseTo(200 + 30 + gap, 5);
+    expect(y).toBe(translateY(200 + 30 + gap));
   });
 });
 

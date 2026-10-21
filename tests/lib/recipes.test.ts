@@ -85,10 +85,10 @@ describe("motion vocabulary", () => {
 
   it("anchorToTriggerTop returns a zero-height rect on the trigger's top edge", () => {
     expect(anchorToTriggerTop(undefined)).toEqual({ x: 0, y: 0, width: 0, height: 0 });
-    const fake = {
-      getBoundingClientRect: () => ({ left: 10, top: 20, width: 200, height: 36 }),
-    } as unknown as HTMLElement;
-    expect(anchorToTriggerTop(fake)).toEqual({ x: 10, y: 20, width: 200, height: 0 });
+    const trigger = document.body.appendChild(document.createElement("button"));
+    trigger.style.cssText = "position: fixed; left: 10px; top: 20px; width: 200px; height: 36px;";
+    expect(anchorToTriggerTop(trigger)).toEqual({ x: 10, y: 20, width: 200, height: 0 });
+    trigger.remove();
   });
 });
 

@@ -1,9 +1,10 @@
 /* Every field-shaped picker drops its value two ways: a clear button on the
  * trigger, and a re-tap on the row or tile already picked. One test file so a
  * picker that grows a third door, or loses one, shows up beside its siblings. */
-import { cleanup, fireEvent, render, screen, waitFor } from "@solidjs/testing-library";
+import { cleanup, render, screen, waitFor } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
+import { press } from "../press.js";
 
 import { AreaPicker } from "../../src/solid/area-picker.js";
 import {
@@ -99,16 +100,16 @@ describe("picker deselect", () => {
       return value;
     };
 
-    it("clears from the trigger", () => {
+    it("clears from the trigger", async () => {
       const value = mount("kitchen");
-      fireEvent.click(clearButton() as HTMLButtonElement);
+      await press(clearButton() as HTMLButtonElement);
       expect(value()).toBe("");
     });
 
-    it("clears on a re-tap of the picked row", () => {
+    it("clears on a re-tap of the picked row", async () => {
       const value = mount("kitchen");
-      fireEvent.click(triggerOf("area-picker-trigger"));
-      fireEvent.click(row("area-picker-row", "Kitchen"));
+      await press(triggerOf("area-picker-trigger"));
+      await press(row("area-picker-row", "Kitchen"));
       expect(value()).toBe("");
     });
 
@@ -144,27 +145,27 @@ describe("picker deselect", () => {
       return ids;
     };
 
-    it("clears from the trigger", () => {
+    it("clears from the trigger", async () => {
       const ids = mount([ENTITY.id]);
-      fireEvent.click(clearButton() as HTMLButtonElement);
+      await press(clearButton() as HTMLButtonElement);
       expect(ids()).toEqual([]);
     });
 
-    it("clears on a re-tap of the picked row", () => {
+    it("clears on a re-tap of the picked row", async () => {
       const ids = mount([ENTITY.id]);
-      fireEvent.click(triggerOf("entity-selector-trigger"));
-      fireEvent.click(row("entity-selector-row", "Counter"));
+      await press(triggerOf("entity-selector-trigger"));
+      await press(row("entity-selector-row", "Counter"));
       expect(ids()).toEqual([]);
     });
 
-    it("wears a clear button in multi mode too", () => {
+    it("wears a clear button in multi mode too", async () => {
       const [ids, setIds] = createSignal([ENTITY.id]);
       render(() => (
         <EntityDataContext.Provider value={adapter}>
           <EntitySelector domain="light" entityIds={ids()} onEntityIdsChange={setIds} />
         </EntityDataContext.Provider>
       ));
-      fireEvent.click(clearButton() as HTMLButtonElement);
+      await press(clearButton() as HTMLButtonElement);
       expect(ids()).toEqual([]);
     });
   });
@@ -176,18 +177,18 @@ describe("picker deselect", () => {
       return value;
     };
 
-    it("clears from the trigger", () => {
+    it("clears from the trigger", async () => {
       const value = mount("mdi:home");
-      fireEvent.click(clearButton() as HTMLButtonElement);
+      await press(clearButton() as HTMLButtonElement);
       expect(value()).toBe("");
     });
 
-    it("clears on a re-tap of the picked icon", () => {
+    it("clears on a re-tap of the picked icon", async () => {
       const value = mount("mdi:home");
-      fireEvent.click(triggerOf("icon-picker-trigger"));
+      await press(triggerOf("icon-picker-trigger"));
       // aria-pressed alone also matches the library tabs; the grid keys its buttons by title.
       const picked = document.querySelector('button[title="mdi:home"]');
-      fireEvent.click(picked as HTMLButtonElement);
+      await press(picked as HTMLButtonElement);
       expect(value()).toBe("");
     });
 
@@ -208,17 +209,17 @@ describe("picker deselect", () => {
       return value;
     };
 
-    it("clears from the trigger", () => {
+    it("clears from the trigger", async () => {
       const value = mount("a");
-      fireEvent.click(clearButton() as HTMLButtonElement);
+      await press(clearButton() as HTMLButtonElement);
       expect(value()).toBe("");
     });
 
     it("clears on a re-tap of the picked tile", async () => {
       const value = mount("a");
-      fireEvent.click(triggerOf("image-picker-trigger"));
+      await press(triggerOf("image-picker-trigger"));
       await waitFor(() => screen.getAllByTestId("media-tile"));
-      fireEvent.click(screen.getByRole("button", { name: /^use a$/i }));
+      await press(screen.getByRole("button", { name: /^use a$/i }));
       expect(value()).toBe("");
     });
 

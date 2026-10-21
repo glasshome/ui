@@ -1,6 +1,7 @@
-import type { Window } from "happy-dom";
+import { page } from "vitest/browser";
 
-/** Resizes the test window the way a browser does: width, resize event, media query changes. */
-export function setViewportWidth(width: number): void {
-  (window as unknown as Window).happyDOM.setViewport({ width });
+/** Resizes the test frame and waits for the frame that reports the media query changes. */
+export async function setViewportWidth(width: number): Promise<void> {
+  await page.viewport(width, window.innerHeight);
+  await new Promise(requestAnimationFrame);
 }

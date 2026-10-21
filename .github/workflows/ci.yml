@@ -12,6 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
       - run: bun install --frozen-lockfile
       - run: bun run lint
       - run: bun run check:tokens
@@ -24,8 +26,8 @@ jobs:
       - run: bun run check:styling
         continue-on-error: true
       - run: bun run check:types
-      - run: bun run test
       - run: bunx playwright install --with-deps chromium
+      - run: bun run test
       - run: bun run gallery:shots --verify-triggers
       - run: bun run build
       - run: bun run check:publish

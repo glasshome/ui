@@ -4,58 +4,13 @@
  * the active item itself is observed, and a fonts.ready re-measure recovers
  * from a zero-size first pass. */
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createSignal, type JSX } from "solid-js";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { SlidingIndicator } from "../../src/solid/sliding-indicator.js";
 import { useFakeTime } from "../../src/testing/index.js";
 
-type Rect = { left: number; top: number; width: number; height: number };
-
-function stubRect(el: HTMLElement, rect: Rect) {
-  el.getBoundingClientRect = () =>
-    ({
-      ...rect,
-      right: rect.left + rect.width,
-      bottom: rect.top + rect.height,
-      x: rect.left,
-      y: rect.top,
-      toJSON: () => rect,
-    }) as DOMRect;
-}
-
-class FakeResizeObserver {
-  static instances: FakeResizeObserver[] = [];
-  elements = new Set<Element>();
-  callback: ResizeObserverCallback;
-  constructor(callback: ResizeObserverCallback) {
-    this.callback = callback;
-    FakeResizeObserver.instances.push(this);
-  }
-  observe(el: Element) {
-    this.elements.add(el);
-  }
-  unobserve(el: Element) {
-    this.elements.delete(el);
-  }
-  disconnect() {
-    this.elements.clear();
-  }
-  fire() {
-    this.callback([], this as unknown as ResizeObserver);
-  }
-}
-
-let realResizeObserver: typeof ResizeObserver;
-
-beforeEach(() => {
-  FakeResizeObserver.instances = [];
-  realResizeObserver = globalThis.ResizeObserver;
-  globalThis.ResizeObserver = FakeResizeObserver as unknown as typeof ResizeObserver;
-});
-
 afterEach(() => {
   cleanup();
-  globalThis.ResizeObserver = realResizeObserver;
 });
 
 async function flush() {
@@ -71,102 +26,120 @@ async function frames(count = 3) {
   await flush();
 }
 
+async function resizeDelivered() {
+  await new Promise(requestAnimationFrame);
+  await new Promise(requestAnimationFrame);
+}
+
+const box = (width: number, height = 32): JSX.CSSProperties => ({
+  flex: "none",
+  width: `${width}px`,
+  height: `${height}px`,
+  padding: "0",
+  border: "0",
+  margin: "0",
+  "box-sizing": "border-box",
+});
+
+const row = (width: number, height = 32): JSX.CSSProperties => ({
+  display: "flex",
+  width: `${width}px`,
+  height: `${height}px`,
+});
+
+function loadingFont() {
+  const face = new FontFace("Late", "url(data:font/woff2;base64,AAAA)");
+  document.fonts.add(face);
+  face.load().catch(() => {});
+  expect(document.fonts.status).toBe("loading");
+  return () => document.fonts.delete(face);
+}
+
+function countWakes(target: Node) {
+  let callbacks = 0;
+  const observer = new MutationObserver(() => {
+    callbacks += 1;
+  });
+  observer.observe(target, { subtree: true, childList: true, attributes: true });
+  return () => callbacks;
+}
+
 describe("SlidingIndicator", () => {
   it("observes the active item, not just the container, and follows it when it resizes", async () => {
     const { container } = render(() => (
-      <SlidingIndicator active={0}>
-        <button type="button">Overview</button>
-        <button type="button">Activity</button>
+      <SlidingIndicator active={0} style={row(200)}>
+        <button type="button" style={box(80)}>
+          Overview
+        </button>
+        <button type="button" style={box(80)}>
+          Activity
+        </button>
       </SlidingIndicator>
     ));
     const root = container.querySelector("[data-slot], .relative") ?? container.firstElementChild;
     const buttons = container.querySelectorAll("button");
     const active = buttons[0] as HTMLElement;
     if (!(root instanceof HTMLElement)) throw new Error("no root");
-    stubRect(root, { left: 0, top: 0, width: 200, height: 32 });
-    stubRect(active, { left: 0, top: 0, width: 80, height: 32 });
-    stubRect(buttons[1] as HTMLElement, { left: 80, top: 0, width: 80, height: 32 });
-    Object.defineProperty(root, "clientWidth", { value: 200, configurable: true });
-    Object.defineProperty(root, "clientHeight", { value: 32, configurable: true });
 
-    await flush();
-    const ro = FakeResizeObserver.instances[0];
-    if (!ro) throw new Error("no ResizeObserver constructed");
-    expect(ro.elements.has(active)).toBe(true);
+    await resizeDelivered();
+    const indicator = () => container.querySelector<HTMLElement>("[data-sliding-indicator]");
+    expect(indicator()?.style.width).toBe("80px");
 
-    // Simulate the icon/webfont growing the active trigger after first paint.
-    stubRect(active, { left: 0, top: 0, width: 140, height: 32 });
-    ro.fire();
-    await flush();
+    // The icon/webfont grows the active trigger after first paint; the container keeps its size.
+    active.style.width = "140px";
+    await resizeDelivered();
 
-    const indicator = container.querySelector<HTMLElement>("[data-sliding-indicator]");
-    expect(indicator?.style.width).toBe("140px");
+    expect(root.getBoundingClientRect().width).toBe(200);
+    expect(indicator()?.style.width).toBe("140px");
   });
 
   it("re-measures once document.fonts.ready resolves", async () => {
-    let ready: () => void = () => {};
-    const readyPromise = new Promise<FontFaceSet>((resolve) => {
-      ready = () => resolve({} as FontFaceSet);
-    });
-    const originalFonts = document.fonts;
-    Object.defineProperty(document, "fonts", {
-      value: { ready: readyPromise },
-      configurable: true,
-    });
-
+    const unloadFont = loadingFont();
+    let zoom: HTMLElement | undefined;
+    // The font finishes loading: real geometry, then fonts.ready resolves.
+    void document.fonts.ready.then(() => zoom?.style.setProperty("scale", "1"));
     const [active] = createSignal(0);
     const { container } = render(() => (
-      <SlidingIndicator active={active()}>
-        <button type="button">One</button>
-      </SlidingIndicator>
+      <div style={{ scale: "0" }}>
+        <SlidingIndicator active={active()} style={row(100)}>
+          <button type="button" style={box(100)}>
+            One
+          </button>
+        </SlidingIndicator>
+      </div>
     ));
-    const root = container.firstElementChild;
-    const button = container.querySelector("button") as HTMLElement;
-    if (!(root instanceof HTMLElement)) throw new Error("no root");
+    zoom = container.firstElementChild as HTMLElement;
     // Zero size on the first pass: geometry not settled yet (pre-fonts-ready).
-    stubRect(root, { left: 0, top: 0, width: 0, height: 0 });
-    stubRect(button, { left: 0, top: 0, width: 0, height: 0 });
-    Object.defineProperty(root, "clientWidth", { value: 0, configurable: true });
-    Object.defineProperty(root, "clientHeight", { value: 0, configurable: true });
     await flush();
     expect(container.querySelector("[data-sliding-indicator]")).toBeNull();
 
-    // The font finishes loading: real geometry, then fonts.ready resolves.
-    stubRect(root, { left: 0, top: 0, width: 100, height: 32 });
-    stubRect(button, { left: 0, top: 0, width: 100, height: 32 });
-    Object.defineProperty(root, "clientWidth", { value: 100, configurable: true });
-    Object.defineProperty(root, "clientHeight", { value: 32, configurable: true });
-    ready();
-    await flush();
+    await document.fonts.ready;
 
     expect(container.querySelector<HTMLElement>("[data-sliding-indicator]")?.style.width).toBe(
       "100px",
     );
-    Object.defineProperty(document, "fonts", { value: originalFonts, configurable: true });
+    unloadFont();
   });
 
   it("retries after a zero-size pass instead of resting on it", async () => {
     useFakeTime();
     const { container } = render(() => (
-      <SlidingIndicator active={0}>
-        <button type="button">One</button>
-      </SlidingIndicator>
+      <div style={{ scale: "0" }}>
+        <SlidingIndicator active={0} style={row(100)}>
+          <button type="button" style={box(100)}>
+            One
+          </button>
+        </SlidingIndicator>
+      </div>
     ));
-    const root = container.firstElementChild;
-    const button = container.querySelector("button") as HTMLElement;
-    if (!(root instanceof HTMLElement)) throw new Error("no root");
+    const zoom = container.firstElementChild as HTMLElement;
     // A dialog still running its open transform: layout size is intact, the
     // rects are not, and nothing here observes the ancestor's animation.
-    stubRect(root, { left: 0, top: 0, width: 0, height: 0 });
-    stubRect(button, { left: 0, top: 0, width: 0, height: 0 });
-    Object.defineProperty(root, "clientWidth", { value: 100, configurable: true });
-    Object.defineProperty(root, "clientHeight", { value: 32, configurable: true });
     await flush();
     expect(container.querySelector("[data-sliding-indicator]")).toBeNull();
 
     // The transform settles. No resize, no animationend, no mutation.
-    stubRect(root, { left: 0, top: 0, width: 100, height: 32 });
-    stubRect(button, { left: 0, top: 0, width: 100, height: 32 });
+    zoom.style.scale = "1";
     await frames();
 
     expect(container.querySelector<HTMLElement>("[data-sliding-indicator]")?.style.width).toBe(
@@ -176,17 +149,12 @@ describe("SlidingIndicator", () => {
 
   it("treats one zero dimension as unmeasured, not as a zero-width item", async () => {
     const { container } = render(() => (
-      <SlidingIndicator active={0}>
-        <button type="button">One</button>
+      <SlidingIndicator active={0} style={row(200)}>
+        <button type="button" style={box(0)}>
+          One
+        </button>
       </SlidingIndicator>
     ));
-    const root = container.firstElementChild;
-    const button = container.querySelector("button") as HTMLElement;
-    if (!(root instanceof HTMLElement)) throw new Error("no root");
-    stubRect(root, { left: 0, top: 0, width: 200, height: 32 });
-    stubRect(button, { left: 0, top: 0, width: 0, height: 32 });
-    Object.defineProperty(root, "clientWidth", { value: 200, configurable: true });
-    Object.defineProperty(root, "clientHeight", { value: 32, configurable: true });
     await flush();
 
     expect(container.querySelector("[data-sliding-indicator]")).toBeNull();
@@ -194,18 +162,17 @@ describe("SlidingIndicator", () => {
 
   it("lands in layout pixels while an ancestor is mid-zoom", async () => {
     const { container } = render(() => (
-      <SlidingIndicator active={1}>
-        <button type="button">Edit</button>
-        <button type="button">Debug</button>
-      </SlidingIndicator>
+      <div style={{ scale: "0.94" }}>
+        <SlidingIndicator active={1} style={row(200)}>
+          <button type="button" style={box(100)}>
+            Edit
+          </button>
+          <button type="button" style={box(80)}>
+            Debug
+          </button>
+        </SlidingIndicator>
+      </div>
     ));
-    const root = container.firstElementChild;
-    const buttons = container.querySelectorAll("button");
-    if (!(root instanceof HTMLElement)) throw new Error("no root");
-    stubRect(root, { left: 6, top: 1, width: 188, height: 30.08 });
-    stubRect(buttons[1] as HTMLElement, { left: 100, top: 1, width: 75.2, height: 30.08 });
-    Object.defineProperty(root, "offsetWidth", { value: 200, configurable: true });
-    Object.defineProperty(root, "offsetHeight", { value: 32, configurable: true });
     await flush();
 
     const indicator = container.querySelector<HTMLElement>("[data-sliding-indicator]");
@@ -216,26 +183,30 @@ describe("SlidingIndicator", () => {
   it("slides when the active item changes and lands at once when the same item re-measures", async () => {
     const [active, setActive] = createSignal(0);
     const { container } = render(() => (
-      <SlidingIndicator active={active()}>
-        <button type="button">One</button>
-        <button type="button">Two</button>
+      <SlidingIndicator
+        active={active()}
+        style={{
+          display: "grid",
+          "grid-template-columns": "80px 80px",
+          width: "160px",
+          height: "32px",
+        }}
+      >
+        <button type="button" style={box(80)}>
+          One
+        </button>
+        <button type="button" style={box(80)}>
+          Two
+        </button>
       </SlidingIndicator>
     ));
-    const root = container.firstElementChild;
     const buttons = container.querySelectorAll("button");
-    if (!(root instanceof HTMLElement)) throw new Error("no root");
-    stubRect(root, { left: 0, top: 0, width: 160, height: 32 });
-    stubRect(buttons[0] as HTMLElement, { left: 0, top: 0, width: 80, height: 32 });
-    stubRect(buttons[1] as HTMLElement, { left: 80, top: 0, width: 80, height: 32 });
-    Object.defineProperty(root, "offsetWidth", { value: 160, configurable: true });
-    Object.defineProperty(root, "offsetHeight", { value: 32, configurable: true });
     await flush();
     const indicator = () => container.querySelector<HTMLElement>("[data-sliding-indicator]");
     expect(indicator()?.style.transition).toBe("none");
 
-    stubRect(buttons[0] as HTMLElement, { left: 0, top: 0, width: 96, height: 32 });
-    FakeResizeObserver.instances[0]?.fire();
-    await flush();
+    (buttons[0] as HTMLElement).style.width = "96px";
+    await resizeDelivered();
     expect(indicator()?.style.width).toBe("96px");
     expect(indicator()?.style.transition).toBe("none");
 
@@ -247,28 +218,16 @@ describe("SlidingIndicator", () => {
   });
 
   it("does not re-measure after unmount once document.fonts.ready resolves late", async () => {
-    let ready: () => void = () => {};
-    const readyPromise = new Promise<FontFaceSet>((resolve) => {
-      ready = () => resolve({} as FontFaceSet);
-    });
-    const originalFonts = document.fonts;
-    Object.defineProperty(document, "fonts", {
-      value: { ready: readyPromise },
-      configurable: true,
-    });
-
+    const unloadFont = loadingFont();
     const { container, unmount } = render(() => (
-      <SlidingIndicator active={0}>
-        <button type="button">One</button>
+      <SlidingIndicator active={0} style={row(80)}>
+        <button type="button" style={box(80)}>
+          One
+        </button>
       </SlidingIndicator>
     ));
     const root = container.firstElementChild;
-    const button = container.querySelector("button") as HTMLElement;
     if (!(root instanceof HTMLElement)) throw new Error("no root");
-    stubRect(root, { left: 0, top: 0, width: 80, height: 32 });
-    stubRect(button, { left: 0, top: 0, width: 80, height: 32 });
-    Object.defineProperty(root, "clientWidth", { value: 80, configurable: true });
-    Object.defineProperty(root, "clientHeight", { value: 32, configurable: true });
     await flush();
 
     // containerRef itself isn't nulled on unmount, so measure() would still
@@ -276,59 +235,37 @@ describe("SlidingIndicator", () => {
     const rectSpy = vi.spyOn(root, "getBoundingClientRect");
     unmount();
     const callsAtUnmount = rectSpy.mock.calls.length;
-    ready();
+    await document.fonts.ready;
     await flush();
 
     expect(rectSpy.mock.calls.length).toBe(callsAtUnmount);
-    Object.defineProperty(document, "fonts", { value: originalFonts, configurable: true });
+    unloadFont();
   });
 });
 
 describe("SlidingIndicator with an attribute selector", () => {
   function renderPressedGroup() {
     const { container } = render(() => (
-      <SlidingIndicator activeSelector="[data-pressed]">
-        <button type="button" data-pressed="">
+      <SlidingIndicator activeSelector="[data-pressed]" style={row(160)}>
+        <button type="button" data-pressed="" style={box(80)}>
           One
         </button>
-        <button type="button">Two</button>
+        <button type="button" style={box(80)}>
+          Two
+        </button>
       </SlidingIndicator>
     ));
     const root = container.firstElementChild;
     const buttons = container.querySelectorAll("button");
     if (!(root instanceof HTMLElement)) throw new Error("no root");
-    stubRect(root, { left: 0, top: 0, width: 160, height: 32 });
-    stubRect(buttons[0] as HTMLElement, { left: 0, top: 0, width: 80, height: 32 });
-    stubRect(buttons[1] as HTMLElement, { left: 80, top: 0, width: 80, height: 32 });
-    Object.defineProperty(root, "offsetWidth", { value: 160, configurable: true });
-    Object.defineProperty(root, "offsetHeight", { value: 32, configurable: true });
     const indicator = () => container.querySelector<HTMLElement>("[data-sliding-indicator]");
     return { root, buttons, indicator };
   }
 
-  const RealMutationObserver = globalThis.MutationObserver;
-  afterEach(() => {
-    globalThis.MutationObserver = RealMutationObserver;
-  });
-
-  // happy-dom, like Chromium up to 131, queues a style mutation for a same-value
-  // custom property write; a loop would never yield, so stop delivering at a cap.
-  function capObserverCallbacks(cap: number) {
-    let callbacks = 0;
-    globalThis.MutationObserver = class extends RealMutationObserver {
-      constructor(callback: MutationCallback) {
-        super((records, observer) => {
-          if (++callbacks <= cap) callback(records, observer);
-        });
-      }
-    };
-    return () => callbacks;
-  }
-
   it("settles instead of re-measuring on its own style writes", async () => {
     useFakeTime();
-    const callbacks = capObserverCallbacks(500);
-    const { indicator } = renderPressedGroup();
+    const { root, indicator } = renderPressedGroup();
+    const callbacks = countWakes(root);
     await frames();
 
     expect(indicator()?.style.width).toBe("80px");
@@ -337,45 +274,34 @@ describe("SlidingIndicator with an attribute selector", () => {
 
   it("settles even when every measure lands half a pixel from the last", async () => {
     useFakeTime();
-    const callbacks = capObserverCallbacks(500);
-    const { buttons } = renderPressedGroup();
-    let width = 80;
+    const { root, buttons } = renderPressedGroup();
     const first = buttons[0] as HTMLElement;
-    first.getBoundingClientRect = () => {
-      width = width === 80 ? 80.5 : 80;
-      return {
-        left: 0,
-        top: 0,
-        width,
-        height: 32,
-        right: width,
-        bottom: 32,
-        x: 0,
-        y: 0,
-      } as DOMRect;
-    };
+    let callbacks = 0;
+    // Each indicator write moves the item half a pixel, so the next measure differs.
+    const jitter = new MutationObserver((records) => {
+      if (records.every((r) => r.target === first) || ++callbacks > 500) return;
+      first.style.width = first.style.width === "80px" ? "80.5px" : "80px";
+    });
+    jitter.observe(root, { subtree: true, childList: true, attributes: true });
     await frames();
+    jitter.disconnect();
 
-    expect(callbacks()).toBeLessThan(10);
+    expect(callbacks).toBeGreaterThan(0);
+    expect(callbacks).toBeLessThan(10);
   });
 
   it("follows an id-based selector when the id moves", async () => {
     const { container } = render(() => (
-      <SlidingIndicator activeSelector="#current">
-        <button type="button" id="current">
+      <SlidingIndicator activeSelector="#current" style={row(160)}>
+        <button type="button" id="current" style={box(80)}>
           One
         </button>
-        <button type="button">Two</button>
+        <button type="button" style={box(80)}>
+          Two
+        </button>
       </SlidingIndicator>
     ));
-    const root = container.firstElementChild;
     const buttons = container.querySelectorAll("button");
-    if (!(root instanceof HTMLElement)) throw new Error("no root");
-    stubRect(root, { left: 0, top: 0, width: 160, height: 32 });
-    stubRect(buttons[0] as HTMLElement, { left: 0, top: 0, width: 80, height: 32 });
-    stubRect(buttons[1] as HTMLElement, { left: 80, top: 0, width: 80, height: 32 });
-    Object.defineProperty(root, "offsetWidth", { value: 160, configurable: true });
-    Object.defineProperty(root, "offsetHeight", { value: 32, configurable: true });
     await flush();
 
     buttons[0]?.removeAttribute("id");
@@ -392,12 +318,13 @@ describe("SlidingIndicator with an attribute selector", () => {
     await flush();
     const first = buttons[0] as HTMLElement;
     const second = buttons[1] as HTMLElement;
-    const measures = vi.spyOn(first, "getBoundingClientRect");
 
     first.style.setProperty("--i", "3");
+    first.style.width = "96px";
     await flush();
-    expect(measures).not.toHaveBeenCalled();
+    expect(indicator()?.style.width).toBe("80px");
 
+    first.style.width = "80px";
     first.removeAttribute("data-pressed");
     second.setAttribute("data-pressed", "");
     await flush();
@@ -406,21 +333,16 @@ describe("SlidingIndicator with an attribute selector", () => {
 
   it("follows a class-based selector when the class moves", async () => {
     const { container } = render(() => (
-      <SlidingIndicator activeSelector=".is-active">
-        <button type="button" class="is-active">
+      <SlidingIndicator activeSelector=".is-active" style={row(160)}>
+        <button type="button" class="is-active" style={box(80)}>
           One
         </button>
-        <button type="button">Two</button>
+        <button type="button" style={box(80)}>
+          Two
+        </button>
       </SlidingIndicator>
     ));
-    const root = container.firstElementChild;
     const buttons = container.querySelectorAll("button");
-    if (!(root instanceof HTMLElement)) throw new Error("no root");
-    stubRect(root, { left: 0, top: 0, width: 160, height: 32 });
-    stubRect(buttons[0] as HTMLElement, { left: 0, top: 0, width: 80, height: 32 });
-    stubRect(buttons[1] as HTMLElement, { left: 80, top: 0, width: 80, height: 32 });
-    Object.defineProperty(root, "offsetWidth", { value: 160, configurable: true });
-    Object.defineProperty(root, "offsetHeight", { value: 32, configurable: true });
     await flush();
 
     buttons[0]?.classList.remove("is-active");
@@ -433,15 +355,18 @@ describe("SlidingIndicator with an attribute selector", () => {
   });
 
   it("writes nothing when a re-measure finds the same place", async () => {
-    const { indicator } = renderPressedGroup();
-    await flush();
+    const { root, indicator } = renderPressedGroup();
+    await resizeDelivered();
     const el = indicator();
     if (!el) throw new Error("no indicator");
-    const writes = vi.spyOn(el.style, "setProperty");
+    const writes: MutationRecord[] = [];
+    const watch = new MutationObserver((records) => writes.push(...records));
+    watch.observe(el, { attributes: true });
 
-    FakeResizeObserver.instances[0]?.fire();
-    await flush();
+    root.style.width = "200px";
+    await resizeDelivered();
+    watch.disconnect();
 
-    expect(writes).not.toHaveBeenCalled();
+    expect(writes).toEqual([]);
   });
 });

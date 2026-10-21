@@ -1,13 +1,13 @@
 /* The switch's whole job is to say on or off at a glance, and the track surface
  * carries all of it from state rather than from a stylesheet a caller can
  * inspect, so it gets asserted here along with the knob staying one material. */
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import { fireEvent, render } from "@solidjs/testing-library";
+import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { describe, expect, it } from "vitest";
 import { CONTROL_ON, FIELD_CHROME } from "../../src/lib/input-classes.js";
 import { Switch } from "../../src/solid/switch.js";
+import css from "../../src/styles/theme.css?raw";
+import { press } from "../press.js";
 
 function parts(container: HTMLElement) {
   const root = container.querySelector<HTMLElement>('[data-slot="switch"]');
@@ -27,10 +27,6 @@ describe("Switch", () => {
   // The bug this file exists for: an off knob that competes with the on one.
   // The accent track carries "on", so the off knob stays neutral metal.
   it("keeps the off knob neutral in both themes", () => {
-    const css = readFileSync(
-      path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../src/styles/theme.css"),
-      "utf-8",
-    );
     const chromas = [...css.matchAll(/--thumb-face-off:\s*oklch\([0-9.]+\s+([0-9.]+)/g)].map((m) =>
       Number.parseFloat(m[1] ?? ""),
     );
@@ -72,7 +68,7 @@ describe("Switch", () => {
     expect(parts(described.container).root.getAttribute("aria-labelledby")).toBe("away-mode-title");
   });
 
-  it("repaints track and knob together when the controlled value flips", () => {
+  it("repaints track and knob together when the controlled value flips", async () => {
     const [checked, setChecked] = createSignal(false);
     const { container } = render(() => (
       <Switch checked={checked()} onChange={(next) => setChecked(next)} />
@@ -80,7 +76,7 @@ describe("Switch", () => {
     expect(parts(container).thumb.style.background).toBe("var(--thumb-face-off)");
     expect(parts(container).root.className).not.toContain("glass-tint");
 
-    fireEvent.click(parts(container).root);
+    await press(parts(container).root);
     expect(checked()).toBe(true);
     expect(parts(container).root.className).toContain("glass-tint");
     expect(parts(container).thumb.style.background).toBe("var(--material-control-knob)");

@@ -47,7 +47,8 @@ it("places a tile at its lattice position and sizes the board to the rows it sho
   const board = container.querySelector<HTMLElement>('[data-slot="dashboard-preview"]');
   const placed = container.querySelector<HTMLElement>('[data-slot="dashboard-preview-tile"]');
   expect(board?.style.aspectRatio).toBe("1256 / 156");
-  expect(placed?.style.left).toBe(`${((6 * 106) / 1256) * 100}%`);
+  expect(placed?.style.left).toMatch(/%$/);
+  expect(Number.parseFloat(placed?.style.left ?? "")).toBeCloseTo(((6 * 106) / 1256) * 100, 3);
 });
 
 it("wraps the board in a well only when staged", () => {

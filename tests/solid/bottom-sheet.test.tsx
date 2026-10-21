@@ -141,9 +141,7 @@ describe("BottomSheet motion", () => {
       </BottomSheet>
     ));
     const panel = document.querySelector<HTMLElement>('[data-slot="bottom-sheet-content"]');
-    await Promise.resolve();
-    await Promise.resolve();
-    await Promise.resolve();
-    expect(panel?.getAttribute("data-state")).toBe("open");
+    expect(panel?.getAttribute("data-state")).toBe("opening");
+    await vi.waitFor(() => expect(panel?.getAttribute("data-state")).toBe("open"));
   });
 });

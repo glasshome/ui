@@ -11,7 +11,7 @@ afterEach(cleanup);
 function maskInnerStop(container: HTMLElement) {
   const track = container.querySelector<HTMLElement>('[data-slot="color-wheel-track"]');
   if (!track) throw new Error("color wheel track did not render");
-  const mask = track.getAttribute("style")?.match(/mask:\s*radial-gradient\(#0000\s+(-?[\d.]+)%/);
+  const mask = track.style.getPropertyValue("mask").match(/^radial-gradient\([^%]*?\s(-?[\d.]+)%/);
   if (!mask?.[1]) throw new Error(`no mask radius in: ${track.getAttribute("style")}`);
   return Number(mask[1]);
 }

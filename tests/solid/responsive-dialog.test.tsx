@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@solidjs/testing-library";
+import { cleanup, render, screen } from "@solidjs/testing-library";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { Button } from "../../src/solid/button.js";
 import {
@@ -12,14 +12,15 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "../../src/solid/responsive-dialog.js";
+import { press } from "../press.js";
 import { setViewportWidth } from "../viewport.js";
 
 const DESKTOP_WIDTH = 1280;
 const PHONE_WIDTH = 390;
 
-afterEach(() => {
+afterEach(async () => {
   cleanup();
-  setViewportWidth(DESKTOP_WIDTH);
+  await setViewportWidth(DESKTOP_WIDTH);
 });
 
 beforeEach(() => setViewportWidth(DESKTOP_WIDTH));
@@ -130,7 +131,7 @@ describe("ResponsiveDialog mobile branch", () => {
 });
 
 describe("ResponsiveDialog trigger", () => {
-  it("renders one button for Trigger as={Button} and opens on click", () => {
+  it("renders one button for Trigger as={Button} and opens on click", async () => {
     render(() => (
       <ResponsiveDialog>
         <ResponsiveDialogTrigger as={Button}>Open</ResponsiveDialogTrigger>
@@ -142,15 +143,15 @@ describe("ResponsiveDialog trigger", () => {
 
     const buttons = document.querySelectorAll("button");
     expect(buttons).toHaveLength(1);
-    fireEvent.click(buttons[0] as HTMLButtonElement);
+    await press(buttons[0] as HTMLButtonElement);
     expect(document.querySelector('[role="dialog"]')).not.toBeNull();
   });
 });
 
 describe("ResponsiveDialogClose", () => {
-  it("is named by its visible text, on both branches", () => {
+  it("is named by its visible text, on both branches", async () => {
     for (const width of [DESKTOP_WIDTH, PHONE_WIDTH]) {
-      setViewportWidth(width);
+      await setViewportWidth(width);
       render(() => (
         <ResponsiveDialog open>
           <ResponsiveDialogContent>

@@ -1,6 +1,7 @@
-import { fireEvent, render } from "@solidjs/testing-library";
+import { render } from "@solidjs/testing-library";
 import { describe, expect, it } from "vitest";
 import { PasswordInput } from "../../src/solid/password-input.js";
+import { press } from "../press.js";
 
 function parts(container: HTMLElement) {
   const input = container.querySelector<HTMLInputElement>("input");
@@ -10,18 +11,18 @@ function parts(container: HTMLElement) {
 }
 
 describe("PasswordInput", () => {
-  it("starts masked and reveals on toggle without swapping the button for something else", () => {
+  it("starts masked and reveals on toggle without swapping the button for something else", async () => {
     const { container } = render(() => <PasswordInput aria-label="Password" />);
     const { input, toggle } = parts(container);
 
     expect(input.type).toBe("password");
     expect(toggle.getAttribute("aria-label")).toBe("Show password");
 
-    fireEvent.click(toggle);
+    await press(toggle);
     expect(input.type).toBe("text");
     expect(toggle.getAttribute("aria-label")).toBe("Hide password");
 
-    fireEvent.click(toggle);
+    await press(toggle);
     expect(input.type).toBe("password");
     expect(toggle.getAttribute("aria-label")).toBe("Show password");
   });
@@ -31,11 +32,11 @@ describe("PasswordInput", () => {
     expect(parts(container).toggle.type).toBe("button");
   });
 
-  it("reserves right padding for the toggle regardless of visibility state", () => {
+  it("reserves right padding for the toggle regardless of visibility state", async () => {
     const { container } = render(() => <PasswordInput aria-label="Password" />);
     const { input, toggle } = parts(container);
     expect(input.className).toContain("pr-10");
-    fireEvent.click(toggle);
+    await press(toggle);
     expect(input.className).toContain("pr-10");
   });
 
@@ -50,13 +51,13 @@ describe("PasswordInput", () => {
     expect(withLeading.getByTestId("lock")).toBeTruthy();
   });
 
-  it("accepts custom reveal labels", () => {
+  it("accepts custom reveal labels", async () => {
     const { container } = render(() => (
       <PasswordInput aria-label="Password" showLabel="Reveal" hideLabel="Conceal" />
     ));
     const { toggle } = parts(container);
     expect(toggle.getAttribute("aria-label")).toBe("Reveal");
-    fireEvent.click(toggle);
+    await press(toggle);
     expect(toggle.getAttribute("aria-label")).toBe("Conceal");
   });
 });

@@ -1,7 +1,8 @@
-import { cleanup, fireEvent, render } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
 import { SwitchRow } from "../../src/solid/settings-row.js";
+import { press } from "../press.js";
 
 afterEach(cleanup);
 
@@ -57,7 +58,7 @@ describe("SwitchRow", () => {
     expect(toggle(container).getAttribute("aria-label")).toBe("Show in Dock");
   });
 
-  it("toggles when the label text is clicked", () => {
+  it("toggles when the label text is clicked", async () => {
     const [checked, setChecked] = createSignal(false);
     const { container } = render(() => (
       <SwitchRow
@@ -70,11 +71,11 @@ describe("SwitchRow", () => {
 
     const label = container.querySelector<HTMLLabelElement>("label");
     expect(label?.getAttribute("for")).toBe(toggle(container).id);
-    fireEvent.click(label as HTMLLabelElement);
+    await press(label as HTMLLabelElement);
     expect(checked()).toBe(true);
   });
 
-  it("marks the row disabled and blocks the toggle", () => {
+  it("marks the row disabled and blocks the toggle", async () => {
     const [checked, setChecked] = createSignal(true);
     const { container } = render(() => (
       <SwitchRow label="Away mode" disabled checked={checked()} onChange={setChecked} />
@@ -84,7 +85,8 @@ describe("SwitchRow", () => {
     expect(row?.getAttribute("data-disabled")).toBe("true");
     expect(toggle(container).hasAttribute("disabled")).toBe(true);
 
-    fireEvent.click(toggle(container));
+    // Playwright waits for a disabled target to enable; a person presses it anyway.
+    await press(toggle(container), { force: true });
     expect(checked()).toBe(true);
   });
 });

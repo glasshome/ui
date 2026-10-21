@@ -1,6 +1,7 @@
-import { cleanup, fireEvent, render, waitFor } from "@solidjs/testing-library";
+import { cleanup, render, waitFor } from "@solidjs/testing-library";
 import type { JSX } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
+import { press } from "../press.js";
 
 import { AreaPicker } from "../../src/solid/area-picker.js";
 import {
@@ -44,8 +45,8 @@ afterEach(() => {
 });
 
 /** The row's own highlight, inside a selection scope: it inherits the row's radius and box. */
-async function rowHighlight(open: () => void, rowSelector: string) {
-  open();
+async function rowHighlight(open: () => void | Promise<void>, rowSelector: string) {
+  await open();
   const row = await waitFor(() => {
     const el = document.querySelector<HTMLElement>(rowSelector);
     if (!el) throw new Error(`no row for ${rowSelector}`);
@@ -78,10 +79,7 @@ describe("picker highlight", () => {
     const { container } = withData(() => <AreaPicker value="" onChange={() => {}} />);
     const trigger = container.querySelector("button");
     if (!trigger) throw new Error("no trigger");
-    const highlight = await rowHighlight(
-      () => fireEvent.click(trigger),
-      '[data-slot="area-picker-row"]',
-    );
+    const highlight = await rowHighlight(() => press(trigger), '[data-slot="area-picker-row"]');
     expect(highlight?.getAttribute("data-on")).toBe("highlighted");
   });
 
@@ -91,10 +89,7 @@ describe("picker highlight", () => {
     ));
     const trigger = container.querySelector("button");
     if (!trigger) throw new Error("no trigger");
-    const highlight = await rowHighlight(
-      () => fireEvent.click(trigger),
-      '[data-slot="entity-selector-row"]',
-    );
+    const highlight = await rowHighlight(() => press(trigger), '[data-slot="entity-selector-row"]');
     expect(highlight?.getAttribute("data-on")).toBe("highlighted");
   });
 });

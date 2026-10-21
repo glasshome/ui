@@ -1,10 +1,3 @@
-/* Carousel contract, as far as a DOM without layout can see it:
- * - fade lays out as embla's standard flex track (the fade plugin stacks the
- *   slides itself); only wipe stacks in CSS,
- * - the engine is rebuilt when `autoplay` changes.
- * happy-dom measures nothing, so embla derives no scroll snaps here and no test
- * in this file can prove fade advances or drags. That needs a browser:
- * `bun run dev:gallery` → Layout → "Carousel fade". */
 import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { describe, expect, it } from "vitest";

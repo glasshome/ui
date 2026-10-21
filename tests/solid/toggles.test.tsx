@@ -3,13 +3,10 @@
  * draggable thumb and one focus ring. Both are asserted from the recipe
  * constants, so a control that retypes either fails here. */
 import { parseColor } from "@kobalte/core/colors";
-import { cleanup, fireEvent, render } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
 import type { JSX } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
-
-// The real custom element fetches icon data from the Iconify API; the request
-// is still in flight when happy-dom tears the window down, which surfaces as an
-// unhandled AbortError at teardown. Nothing here asserts icon internals.
+import { userEvent } from "vitest/browser";
 import { FIELD_CHROME, FOCUS_RING } from "../../src/lib/input-classes.js";
 import { THUMB_CLASS, THUMB_COLOR_RING } from "../../src/lib/thumb-classes.js";
 import { Checkbox } from "../../src/solid/checkbox.js";
@@ -127,19 +124,19 @@ describe("Switch", () => {
     );
   });
 
-  it("toggles itself when uncontrolled", () => {
+  it("toggles itself when uncontrolled", async () => {
     const { container } = render(() => <Switch defaultChecked />);
     const root = container.querySelector<HTMLElement>('[data-slot="switch"]');
     if (!root) throw new Error("no switch");
-    fireEvent.click(root);
+    await userEvent.click(root);
     expect(root.getAttribute("aria-checked")).toBe("false");
   });
 
-  it("stays controlled when checked is passed", () => {
+  it("stays controlled when checked is passed", async () => {
     const { container } = render(() => <Switch checked={false} />);
     const root = container.querySelector<HTMLElement>('[data-slot="switch"]');
     if (!root) throw new Error("no switch");
-    fireEvent.click(root);
+    await userEvent.click(root);
     expect(root.getAttribute("aria-checked")).toBe("false");
   });
 

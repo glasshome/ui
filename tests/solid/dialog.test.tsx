@@ -1,6 +1,7 @@
-import { cleanup, fireEvent, render, screen } from "@solidjs/testing-library";
+import { cleanup, render, screen } from "@solidjs/testing-library";
 import { createSignal, Show } from "solid-js";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { cdp, page, userEvent } from "vitest/browser";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,21 +45,6 @@ const scrollers = (root: HTMLElement) =>
 
 const pageLocked = () =>
   document.body.style.overflow === "hidden" || document.body.style.position === "fixed";
-
-/* happy-dom runs no animations, so kobalte's exit presence never resolves on its
- * own; the browser's animationend is supplied by hand. Both the panel and the
- * scrim have to finish, because kobalte keeps the portal (and everything in it)
- * mounted until the last of the two is gone. */
-function endExitAnimations() {
-  const nodes = Array.from(
-    document.querySelectorAll('[data-slot$="-content"], [data-slot$="-overlay"]'),
-  );
-  for (const el of nodes) {
-    const event = new Event("animationend");
-    Object.defineProperty(event, "animationName", { value: "" });
-    el.dispatchEvent(event);
-  }
-}
 
 describe("Dialog scroll contract", () => {
   it("scrolls in Body only; the panel clips", () => {
@@ -295,7 +281,7 @@ describe("modal role", () => {
 });
 
 describe("Dialog trigger", () => {
-  it("renders one button for Trigger as={Button} and opens on click", () => {
+  it("renders one button for Trigger as={Button} and opens on click", async () => {
     render(() => (
       <Dialog>
         <DialogTrigger as={Button}>Open</DialogTrigger>
@@ -307,7 +293,7 @@ describe("Dialog trigger", () => {
 
     const buttons = document.querySelectorAll("button");
     expect(buttons).toHaveLength(1);
-    fireEvent.click(buttons[0] as HTMLButtonElement);
+    await userEvent.click(buttons[0] as HTMLButtonElement);
     expect(document.querySelector('[data-slot="dialog-content"]')).not.toBeNull();
   });
 });
@@ -366,7 +352,7 @@ describe("one page-scroll lock", () => {
     expect(pageLocked()).toBe(false);
   });
 
-  it("releases the lock when a Dialog closes", () => {
+  it("releases the lock when a Dialog closes", async () => {
     const [open, setOpen] = createSignal(true);
     render(() => (
       <Dialog open={open()} onOpenChange={setOpen}>
@@ -376,12 +362,13 @@ describe("one page-scroll lock", () => {
 
     expect(pageLocked()).toBe(true);
     setOpen(false);
-    endExitAnimations();
-    expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull();
+    await vi.waitFor(() =>
+      expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull(),
+    );
     expect(pageLocked()).toBe(false);
   });
 
-  it("releases the lock when an AlertDialog closes", () => {
+  it("releases the lock when an AlertDialog closes", async () => {
     const [open, setOpen] = createSignal(true);
     render(() => (
       <AlertDialog open={open()} onOpenChange={setOpen}>
@@ -391,12 +378,13 @@ describe("one page-scroll lock", () => {
 
     expect(pageLocked()).toBe(true);
     setOpen(false);
-    endExitAnimations();
-    expect(document.querySelector('[data-slot="alert-dialog-content"]')).toBeNull();
+    await vi.waitFor(() =>
+      expect(document.querySelector('[data-slot="alert-dialog-content"]')).toBeNull(),
+    );
     expect(pageLocked()).toBe(false);
   });
 
-  it("releases the lock when a Sheet closes", () => {
+  it("releases the lock when a Sheet closes", async () => {
     const [open, setOpen] = createSignal(true);
     render(() => (
       <Sheet open={open()} onOpenChange={setOpen}>
@@ -406,8 +394,9 @@ describe("one page-scroll lock", () => {
 
     expect(pageLocked()).toBe(true);
     setOpen(false);
-    endExitAnimations();
-    expect(document.querySelector('[data-slot="sheet-content"]')).toBeNull();
+    await vi.waitFor(() =>
+      expect(document.querySelector('[data-slot="sheet-content"]')).toBeNull(),
+    );
     expect(pageLocked()).toBe(false);
   });
 
@@ -529,7 +518,7 @@ describe("modal close buttons", () => {
     );
   });
 
-  it("runs the bound `[handler, data]` form, then closes", () => {
+  it("runs the bound `[handler, data]` form, then closes", async () => {
     const calls: Array<[string, string]> = [];
     render(() => (
       <Dialog defaultOpen>
@@ -546,13 +535,14 @@ describe("modal close buttons", () => {
       </Dialog>
     ));
 
-    fireEvent.click(screen.getByRole("button", { name: "Not now" }));
+    await userEvent.click(screen.getByRole("button", { name: "Not now" }));
     expect(calls).toEqual([["widget-7", "click"]]);
-    endExitAnimations();
-    expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull();
+    await vi.waitFor(() =>
+      expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull(),
+    );
   });
 
-  it("still closes the modal it belongs to", () => {
+  it("still closes the modal it belongs to", async () => {
     render(() => (
       <Dialog defaultOpen>
         <DialogContent ariaLabel="d">
@@ -561,9 +551,10 @@ describe("modal close buttons", () => {
       </Dialog>
     ));
 
-    fireEvent.click(screen.getByRole("button", { name: "Not now" }));
-    endExitAnimations();
-    expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull();
+    await userEvent.click(screen.getByRole("button", { name: "Not now" }));
+    await vi.waitFor(() =>
+      expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull(),
+    );
   });
 });
 
@@ -688,7 +679,7 @@ describe("modal header media", () => {
 });
 
 describe("modal parts as", () => {
-  it("renders the Body as a form that keeps the scroll contract and submits", () => {
+  it("renders the Body as a form that keeps the scroll contract and submits", async () => {
     let submitted = false;
     render(() => (
       <Dialog open>
@@ -702,6 +693,7 @@ describe("modal parts as", () => {
             }}
           >
             fields
+            <button type="submit">Save</button>
           </DialogBody>
         </DialogContent>
       </Dialog>
@@ -711,7 +703,7 @@ describe("modal parts as", () => {
     expect(body?.tagName).toBe("FORM");
     expect(body?.getAttribute("id")).toBe("edit-widget");
     expect(body?.className).toContain("overflow-y-auto");
-    fireEvent.submit(body as HTMLElement);
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
     expect(submitted).toBe(true);
   });
 
@@ -780,41 +772,22 @@ describe("a tab row hosted by the modal Header", () => {
 describe("an anchored dialog", () => {
   const anchorAt = (left: number, top: number, width: number, height: number) => {
     const el = document.createElement("div");
+    el.style.cssText = `position:fixed;left:${left}px;top:${top}px;width:${width}px;height:${height}px`;
     document.body.appendChild(el);
-    el.getBoundingClientRect = () =>
-      ({
-        left,
-        top,
-        width,
-        height,
-        right: left + width,
-        bottom: top + height,
-        x: left,
-        y: top,
-      }) as DOMRect;
     return el;
   };
 
-  const offsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetHeight");
-  afterEach(() => {
-    if (offsetHeight) Object.defineProperty(HTMLElement.prototype, "offsetHeight", offsetHeight);
+  beforeEach(() => page.viewport(1440, 900));
+  afterEach(async () => {
+    document.body.innerHTML = "";
+    await page.viewport(1024, 768);
   });
-  const panelHeight = (height: number) =>
-    Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
-      configurable: true,
-      get() {
-        return this.getAttribute("data-slot") === "dialog-content" ? height : 0;
-      },
-    });
 
   it("grows out of the middle of the element that opened it", () => {
-    window.innerWidth = 1440;
-    window.innerHeight = 900;
-    panelHeight(400);
     const tile = anchorAt(500, 300, 200, 150);
     render(() => (
       <Dialog open>
-        <DialogContent size="sm" anchor={tile} ariaLabel="Lights">
+        <DialogContent size="sm" anchor={tile} ariaLabel="Lights" style={{ height: "400px" }}>
           extras
         </DialogContent>
       </Dialog>
@@ -829,13 +802,10 @@ describe("an anchored dialog", () => {
   });
 
   it("shifts only as far as the screen needs, and starts from where the element is", () => {
-    window.innerWidth = 1440;
-    window.innerHeight = 900;
-    panelHeight(300);
     const tile = anchorAt(1100, 100, 300, 240);
     render(() => (
       <Dialog open>
-        <DialogContent size="sm" anchor={tile} ariaLabel="Living Room">
+        <DialogContent size="sm" anchor={tile} ariaLabel="Living Room" style={{ height: "300px" }}>
           extras
         </DialogContent>
       </Dialog>
@@ -846,13 +816,10 @@ describe("an anchored dialog", () => {
   });
 
   it("opens upward from an element near the bottom, keeping its full height", () => {
-    window.innerWidth = 1440;
-    window.innerHeight = 900;
-    panelHeight(600);
     const tile = anchorAt(300, 760, 200, 120);
     render(() => (
       <Dialog open>
-        <DialogContent size="sm" anchor={tile} ariaLabel="Weather">
+        <DialogContent size="sm" anchor={tile} ariaLabel="Weather" style={{ height: "600px" }}>
           extras
         </DialogContent>
       </Dialog>
@@ -865,31 +832,27 @@ describe("an anchored dialog", () => {
 });
 
 describe("Dialog body gutter", () => {
-  const measure = (offset: number, client: number) => {
-    const proto = HTMLElement.prototype;
-    const own = (["offsetWidth", "clientWidth"] as const).map(
-      (key) => [key, Object.getOwnPropertyDescriptor(proto, key)] as const,
-    );
-    Object.defineProperty(proto, "offsetWidth", { configurable: true, get: () => offset });
-    Object.defineProperty(proto, "clientWidth", { configurable: true, get: () => client });
-    return () => {
-      for (const [key, descriptor] of own) {
-        if (descriptor) Object.defineProperty(proto, key, descriptor);
-        else Reflect.deleteProperty(proto, key);
-      }
-    };
-  };
-
   const gutter = () =>
     document
       .querySelector<HTMLElement>('[data-slot="dialog-body"]')
       ?.style.getPropertyValue("--scrollbar-gutter");
 
+  /* The platform's scrollbar kind, emulated the way a viewport is: overlay bars take no room. */
+  const overlayScrollbars = (overlay: boolean) =>
+    overlay
+      ? cdp().send("Emulation.setDeviceMetricsOverride", {
+          width: 0,
+          height: 0,
+          deviceScaleFactor: 0,
+          mobile: true,
+        })
+      : cdp().send("Emulation.clearDeviceMetricsOverride");
+
   it.each([
-    ["an overlay scrollbar", 512, 512, "0px"],
-    ["a classic scrollbar", 512, 502, "10px"],
-  ])("subtracts what %s reserves", (_, offset, client, expected) => {
-    const restore = measure(offset, client);
+    ["an overlay scrollbar", true, "0px"],
+    ["a classic scrollbar", false, "10px"],
+  ])("subtracts what %s reserves", async (_, overlay, expected) => {
+    await overlayScrollbars(overlay);
     try {
       render(() => (
         <Dialog open>
@@ -901,7 +864,7 @@ describe("Dialog body gutter", () => {
       ));
       expect(gutter()).toBe(expected);
     } finally {
-      restore();
+      await overlayScrollbars(false);
     }
   });
 });

@@ -17,12 +17,18 @@ function sheet(inner = ""): { root: HTMLElement; target: (sel: string) => Elemen
 
 function makeScrollable(
   el: Element,
-  opts: { scrollTop: number; scrollHeight: number; clientHeight: number },
+  opts: { scrollTop: number; scrollHeight: number; clientHeight: number; overflowY?: string },
 ) {
-  (el as HTMLElement).style.overflowY = "auto";
-  Object.defineProperty(el, "scrollTop", { value: opts.scrollTop, configurable: true });
-  Object.defineProperty(el, "scrollHeight", { value: opts.scrollHeight, configurable: true });
-  Object.defineProperty(el, "clientHeight", { value: opts.clientHeight, configurable: true });
+  const list = el as HTMLElement;
+  list.style.cssText = `overflow-y: ${opts.overflowY ?? "auto"}; height: ${opts.clientHeight}px;`;
+  const content = list.firstElementChild as HTMLElement;
+  content.style.cssText = `display: block; height: ${opts.scrollHeight}px;`;
+  list.scrollTop = opts.scrollTop;
+  expect([list.scrollTop, list.scrollHeight, list.clientHeight]).toEqual([
+    opts.scrollTop,
+    opts.scrollHeight,
+    opts.clientHeight,
+  ]);
 }
 
 describe("hasNoDragAncestor", () => {
@@ -84,7 +90,12 @@ describe("shouldDrag", () => {
 
   it("treats data-sheet-scroll as scrollable regardless of computed style", () => {
     const { root, target } = sheet(`<div data-sheet-scroll id="list"><span id="x"></span></div>`);
-    Object.defineProperty(target("#list"), "scrollTop", { value: 50, configurable: true });
+    makeScrollable(target("#list"), {
+      scrollTop: 50,
+      scrollHeight: 300,
+      clientHeight: 100,
+      overflowY: "hidden",
+    });
     expect(shouldDrag(target("#x"), root, 20, 0)).toBe(false);
   });
 });

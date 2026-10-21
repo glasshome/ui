@@ -1,6 +1,7 @@
-import { cleanup, fireEvent, render, screen } from "@solidjs/testing-library";
+import { cleanup, render, screen } from "@solidjs/testing-library";
 import { Show } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { press } from "../press.js";
 
 import { SECTION_ROW_INTERACTIVE } from "../../src/lib/card-classes.js";
 import { ListRow } from "../../src/solid/section-card.js";
@@ -51,14 +52,14 @@ describe("ListRow", () => {
     expect(row(container).className).not.toContain(INTERACTIVE_MARKER);
   });
 
-  it("activates from the whole row and carries the interactive surface", () => {
+  it("activates from the whole row and carries the interactive surface", async () => {
     const onOpen = vi.fn();
     const { container } = render(() => (
       <ListRow title="Ihsen" onOpen={onOpen} openLabel="Open Ihsen" />
     ));
 
     expect(row(container).className).toContain(INTERACTIVE_MARKER);
-    fireEvent.click(screen.getByLabelText("Open Ihsen"));
+    await press(screen.getByLabelText("Open Ihsen"));
     expect(onOpen).toHaveBeenCalledTimes(1);
   });
 
@@ -85,7 +86,7 @@ describe("ListRow", () => {
     expect(container.querySelector('[data-icon="lucide:chevron-right"]')).toBeTruthy();
   });
 
-  it("keeps actions clickable above the open overlay", () => {
+  it("keeps actions clickable above the open overlay", async () => {
     const onOpen = vi.fn();
     const onAction = vi.fn();
     render(() => (
@@ -101,7 +102,7 @@ describe("ListRow", () => {
       />
     ));
 
-    fireEvent.click(screen.getByText("Delete"));
+    await press(screen.getByText("Delete"));
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onOpen).not.toHaveBeenCalled();
   });

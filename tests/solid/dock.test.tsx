@@ -1,8 +1,9 @@
 import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { Dock } from "../../src/solid/dock.js";
 import { useFakeTime } from "../../src/testing/index.js";
+import { setViewportWidth } from "../viewport.js";
 
 describe("Dock paging", () => {
   const items = (n: number) =>
@@ -13,57 +14,37 @@ describe("Dock paging", () => {
       onClick: () => {},
     }));
 
-  function measured(scrollWidth: number, clientWidth: number) {
-    Object.defineProperty(HTMLElement.prototype, "scrollWidth", {
-      configurable: true,
-      get() {
-        return this.getAttribute("data-slot") === "dock-bar" ? scrollWidth : 0;
-      },
-    });
-    Object.defineProperty(HTMLElement.prototype, "clientWidth", {
-      configurable: true,
-      get() {
-        return this.getAttribute("data-slot") === "dock-bar" ? clientWidth : 400;
-      },
-    });
-  }
-
-  afterEach(() => {
-    // @ts-expect-error restoring the prototype the measurement stub replaced
-    delete HTMLElement.prototype.scrollWidth;
-    // @ts-expect-error restoring the prototype the measurement stub replaced
-    delete HTMLElement.prototype.clientWidth;
-  });
+  /* Room for five of twelve items at the sm sizes, so three pages. */
+  const OVERFLOWING_BOX = 340;
 
   it("shows no page dots while every item fits", async () => {
     useFakeTime();
-    measured(300, 400);
-    const { container } = render(() => <Dock items={items(3)} />);
+    const { container } = render(() => (
+      <div style={{ width: "400px" }}>
+        <Dock items={items(3)} />
+      </div>
+    ));
     vi.advanceTimersToNextFrame();
 
     expect(container.querySelector('[data-slot="dock-pages"]')).toBeNull();
   });
 
   it("takes the room it has from the box the app gave it, not from its own surface", async () => {
-    useFakeTime();
+    onTestFinished(() => setViewportWidth(1024));
     // The surface hugs the strip; only the outer box knows what the app allowed.
-    Object.defineProperty(HTMLElement.prototype, "scrollWidth", {
-      configurable: true,
-      get() {
-        return this.getAttribute("data-slot") === "dock-bar" ? 900 : 0;
-      },
-    });
-    Object.defineProperty(HTMLElement.prototype, "clientWidth", {
-      configurable: true,
-      get() {
-        const slot = this.getAttribute("data-slot");
-        if (slot === "dock") return 1200;
-        if (slot === "dock-surface") return 600;
-        return 900;
-      },
-    });
-    const { container } = render(() => <Dock items={items(10)} />);
-    vi.advanceTimersToNextFrame();
+    const [box, setBox] = createSignal(OVERFLOWING_BOX);
+    const { container } = render(() => (
+      <div style={{ width: `${box()}px` }}>
+        <Dock items={items(10)} />
+      </div>
+    ));
+    await new Promise(requestAnimationFrame);
+    expect(container.querySelector<HTMLElement>('[data-slot="dock-bar"]')?.style.width).not.toBe(
+      "",
+    );
+    setBox(1200);
+    await setViewportWidth(1000);
+    await new Promise(requestAnimationFrame);
 
     expect(container.querySelector('[data-slot="dock-pages"]')).toBeNull();
     expect(container.querySelector<HTMLElement>('[data-slot="dock-bar"]')?.style.width).toBe("");
@@ -71,8 +52,11 @@ describe("Dock paging", () => {
 
   it("shows a dot per page once the strip overflows, the first one current", async () => {
     useFakeTime();
-    measured(1000, 400);
-    const { container } = render(() => <Dock items={items(12)} />);
+    const { container } = render(() => (
+      <div style={{ width: `${OVERFLOWING_BOX}px` }}>
+        <Dock items={items(12)} />
+      </div>
+    ));
     vi.advanceTimersToNextFrame();
 
     const dots = container.querySelectorAll('[data-slot="dock-pages"] button');
@@ -83,8 +67,11 @@ describe("Dock paging", () => {
 
   it("snaps the strip instead of free-scrolling it", async () => {
     useFakeTime();
-    measured(1000, 400);
-    const { container } = render(() => <Dock items={items(12)} />);
+    const { container } = render(() => (
+      <div style={{ width: `${OVERFLOWING_BOX}px` }}>
+        <Dock items={items(12)} />
+      </div>
+    ));
     vi.advanceTimersToNextFrame();
 
     const bar = container.querySelector('[data-slot="dock-bar"]');

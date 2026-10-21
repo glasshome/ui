@@ -26,8 +26,8 @@ import { setViewportWidth } from "../viewport.js";
 
 afterEach(cleanup);
 
-function positionAt(width: number) {
-  setViewportWidth(width);
+async function positionAt(width: number) {
+  await setViewportWidth(width);
   const { container } = render(() => <Toaster />);
   const outlet = container.querySelector<HTMLElement>("[data-position]");
   if (!outlet) throw new Error("toast outlet did not render");
@@ -35,10 +35,10 @@ function positionAt(width: number) {
 }
 
 describe("Toaster position", () => {
-  it("flips to the top on the one shared mobile breakpoint, not a second one", () => {
+  it("flips to the top on the one shared mobile breakpoint, not a second one", async () => {
     // 700px read as mobile while sonner kept its own 768 copy of the detector.
-    expect(positionAt(MOBILE_BREAKPOINT + 60)).toBe("bottom-right");
+    expect(await positionAt(MOBILE_BREAKPOINT + 60)).toBe("bottom-right");
     cleanup();
-    expect(positionAt(MOBILE_BREAKPOINT - 1)).toBe("top-center");
+    expect(await positionAt(MOBILE_BREAKPOINT - 1)).toBe("top-center");
   });
 });

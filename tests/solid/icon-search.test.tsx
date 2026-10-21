@@ -1,5 +1,7 @@
-import { cleanup, fireEvent, render } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
 import { afterEach, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
+import { press } from "../press.js";
 import { provideIcons } from "../../src/solid/icon.js";
 import { ICON_SEARCH_DEBOUNCE_MS } from "../../src/solid/icon-picker.js";
 import { SchemaForm } from "../../src/solid/schema-form.js";
@@ -27,9 +29,9 @@ it("a schema icon field searches through the host's icon source", async () => {
       onChange={() => {}}
     />
   ));
-  fireEvent.click(document.querySelector('[data-slot="icon-picker-trigger"]') as HTMLElement);
+  await press(document.querySelector('[data-slot="icon-picker-trigger"]') as HTMLElement);
   const input = document.querySelector('input[aria-label="Search icons"]') as HTMLInputElement;
-  fireEvent.input(input, { target: { value: "transmi" } });
+  await userEvent.fill(input, "transmi");
   await vi.advanceTimersByTimeAsync(ICON_SEARCH_DEBOUNCE_MS);
   expect(queries).toEqual([["transmi", ["mdi", "lucide", "solar", "tabler", "ph", "fluent"]]]);
   expect(document.querySelector('button[title="mdi:transmission-tower"]')).not.toBeNull();

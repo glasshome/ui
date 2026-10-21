@@ -5,9 +5,11 @@
  *   real pickers instead of downgrading to text inputs,
  * - unknown formType renders a read-only notice, never a broken control,
  * - formType "list" and "variants" branches per sdk-2.md D.3. */
-import { fireEvent, render } from "@solidjs/testing-library";
+import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { describe, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
+import { press } from "../press.js";
 
 import { type EntityDataAdapter, EntityDataContext } from "../../src/solid/entity-data.js";
 import { dragTargetIndex } from "../../src/solid/list-reorder.js";
@@ -99,7 +101,7 @@ describe("SchemaForm is controlled", () => {
     expect(input.value).toBe("Beta");
   });
 
-  it("edits lift through onChange without local state", () => {
+  it("edits lift through onChange without local state", async () => {
     const onChange = vi.fn();
     const view = render(() => (
       <SchemaForm
@@ -108,7 +110,7 @@ describe("SchemaForm is controlled", () => {
         onChange={onChange}
       />
     ));
-    fireEvent.input(view.getByLabelText("Name"), { target: { value: "Gamma" } });
+    await userEvent.fill(view.getByLabelText("Name"), "Gamma");
     expect(onChange).toHaveBeenCalledWith({ name: "Gamma" });
   });
 
@@ -143,7 +145,7 @@ describe("recursive dispatch", () => {
         <SchemaForm schema={schema} data={{}} onChange={() => {}} />
       </EntityDataContext.Provider>
     ));
-    expect(container.querySelector('input[id="group.entities"]')).toBeNull();
+    expect(container.querySelector('input[id$="-group.entities"]')).toBeNull();
     const combobox = container.querySelector('[role="combobox"]');
     expect(combobox?.textContent).toContain("Select sensor entities");
   });
@@ -185,14 +187,14 @@ describe("formType list", () => {
     expect(rows[2]?.textContent).toContain("Item 3");
   });
 
-  it("add appends the item defaults and is disabled at maxItems", () => {
+  it("add appends the item defaults and is disabled at maxItems", async () => {
     const onChange = vi.fn();
     const view = render(() => (
       <SchemaForm schema={listSchema} data={{ nodes: twoNodes }} onChange={onChange} />
     ));
     const add = view.getByRole("button", { name: "Add node" }) as HTMLButtonElement;
     expect(add.disabled).toBe(false);
-    fireEvent.click(add);
+    await press(add);
     expect(onChange).toHaveBeenCalledWith({
       nodes: [...twoNodes, { kind: "input", entities: [] }],
     });
@@ -210,13 +212,13 @@ describe("formType list", () => {
     );
   });
 
-  it("remove drops the item but is disabled at minItems", () => {
+  it("remove drops the item but is disabled at minItems", async () => {
     const onChange = vi.fn();
     const three = [...twoNodes, { kind: "input", label: "Grid", entities: [] }];
     const view = render(() => (
       <SchemaForm schema={listSchema} data={{ nodes: three }} onChange={onChange} />
     ));
-    fireEvent.click(view.getByRole("button", { name: "Remove Solar" }));
+    await press(view.getByRole("button", { name: "Remove Solar" }));
     expect(onChange).toHaveBeenCalledWith({ nodes: three.slice(1) });
     view.unmount();
 
@@ -228,17 +230,19 @@ describe("formType list", () => {
     ).toBe(true);
   });
 
-  it("reorders items from the grip handle via arrow keys", () => {
+  it("reorders items from the grip handle via arrow keys", async () => {
     const onChange = vi.fn();
     const view = render(() => (
       <SchemaForm schema={listSchema} data={{ nodes: twoNodes }} onChange={onChange} />
     ));
     const handles = view.getAllByRole("button", { name: /^Reorder / }) as HTMLButtonElement[];
     expect(handles).toHaveLength(2);
-    fireEvent.keyDown(handles[0] as HTMLButtonElement, { key: "ArrowDown" });
+    handles[0]?.focus();
+    await userEvent.keyboard("{ArrowDown}");
     expect(onChange).toHaveBeenCalledWith({ nodes: [twoNodes[1], twoNodes[0]] });
     onChange.mockClear();
-    fireEvent.keyDown(handles[0] as HTMLButtonElement, { key: "ArrowUp" });
+    handles[0]?.focus();
+    await userEvent.keyboard("{ArrowUp}");
     expect(onChange).not.toHaveBeenCalled();
   });
 
@@ -254,14 +258,14 @@ describe("formType list", () => {
     expect(dragTargetIndex(heights, 3, 999)).toBe(3);
   });
 
-  it("expands a row to the recursive item editor", () => {
+  it("expands a row to the recursive item editor", async () => {
     const view = render(() => (
       <EntityDataContext.Provider value={stubEntityData}>
         <SchemaForm schema={listSchema} data={{ nodes: twoNodes }} onChange={() => {}} />
       </EntityDataContext.Provider>
     ));
     expect(view.container.querySelector('[data-slot="schema-form-variants"]')).toBeNull();
-    fireEvent.click(view.getByRole("button", { name: "Solar", expanded: false }));
+    await press(view.getByRole("button", { name: "Solar", expanded: false }));
     expect(view.container.querySelector('[data-slot="schema-form-variants"]')).toBeTruthy();
   });
 
@@ -292,11 +296,11 @@ describe("formType list", () => {
     properties: { pictures: groupPictures },
   };
 
-  it("an item's group root drops its own box and title, a group below it keeps them", () => {
+  it("an item's group root drops its own box and title, a group below it keeps them", async () => {
     const view = render(() => (
       <SchemaForm schema={groupList} data={{ pictures: [{}] }} onChange={() => {}} />
     ));
-    fireEvent.click(view.getByRole("button", { name: "Item 1", expanded: false }));
+    await press(view.getByRole("button", { name: "Item 1", expanded: false }));
     const item = view.container.querySelector('[data-slot="schema-form-list-item"]');
     const groups = Array.from(item?.querySelectorAll('[data-slot="schema-form-object"]') ?? []);
     expect(groups).toHaveLength(2);
@@ -466,15 +470,32 @@ describe("list rows preview their picture", () => {
     );
   });
 
-  it("falls back to the broken-image glyph when the file is gone", () => {
+  it("falls back to the broken-image glyph when the file is gone", async () => {
     const { container } = renderList(oneImage, { pictures: [{ image: "gone" }] });
     const img = thumb(container)?.querySelector("img");
     expect(img).toBeTruthy();
-    if (img) fireEvent.error(img);
-    expect(thumb(container)?.querySelector("img")).toBeNull();
+    await vi.waitFor(() => expect(thumb(container)?.querySelector("img")).toBeNull());
     expect(
       thumb(container)?.querySelector('svg[data-slot="icon"]')?.getAttribute("data-icon"),
     ).toBe("lucide:image-off");
+  });
+
+  it("drops a picture swapped out while its file was still failing", async () => {
+    const [data, setData] = createSignal<Record<string, unknown>>({
+      pictures: [{ image: "slow-gone" }],
+    });
+    const { container } = render(() => (
+      <MediaStoreContext.Provider value={store}>
+        <SchemaForm schema={oneImage} data={data()} onChange={() => {}} />
+      </MediaStoreContext.Provider>
+    ));
+    const img = thumb(container)?.querySelector("img");
+    expect(img).toBeTruthy();
+    setData({ pictures: [{}] });
+    await new Promise<void>((resolve) => img?.addEventListener("error", () => resolve()));
+    expect(
+      thumb(container)?.querySelector('svg[data-slot="icon"]')?.getAttribute("data-icon"),
+    ).toBe("lucide:image");
   });
 
   it("stays a text row with no image field, and with two of them", () => {
@@ -610,9 +631,10 @@ describe("field stack", () => {
     const row = container.querySelector<HTMLElement>('[data-slot="schema-form-list-row"]');
     expect(row?.className).toContain("gap-1.5");
     for (const child of Array.from(row?.children ?? [])) {
-      expect(child.className, `${child.getAttribute("data-slot") ?? child.tagName}`).not.toMatch(
-        /(^|\s)-?m[trblxy]?-/,
-      );
+      expect(
+        child.getAttribute("class") ?? "",
+        `${child.getAttribute("data-slot") ?? child.tagName}`,
+      ).not.toMatch(/(^|\s)-?m[trblxy]?-/);
     }
   });
 });
@@ -636,6 +658,21 @@ const WIRING: Record<string, string> = {
 };
 
 describe("SchemaForm labelling", () => {
+  it("labels each form's own field when two forms share a page", () => {
+    const schema: ExtendedJSONSchema = {
+      type: "object",
+      properties: { name: { type: "string", title: "Name" } },
+    };
+    const first = render(() => (
+      <SchemaForm schema={schema} data={{ name: "First" }} onChange={() => {}} />
+    ));
+    const second = render(() => (
+      <SchemaForm schema={schema} data={{ name: "Second" }} onChange={() => {}} />
+    ));
+    expect((first.getByLabelText("Name") as HTMLInputElement).value).toBe("First");
+    expect((second.getByLabelText("Name") as HTMLInputElement).value).toBe("Second");
+  });
+
   const labelStore: MediaStore = {
     index: async () => ({
       media: [],
@@ -716,7 +753,7 @@ describe("SchemaForm labelling", () => {
 });
 
 describe("multi-choice arrays", () => {
-  it("renders an array of enum as a multiple toggle group and lifts toggles", () => {
+  it("renders an array of enum as a multiple toggle group and lifts toggles", async () => {
     const onChange = vi.fn();
     const view = render(() => (
       <SchemaForm
@@ -737,7 +774,7 @@ describe("multi-choice arrays", () => {
     ));
     const locks = view.getByRole("button", { name: "Locks" });
     expect(view.getByRole("button", { name: "Lights" }).getAttribute("aria-pressed")).toBe("true");
-    fireEvent.click(locks);
+    await press(locks);
     expect(onChange).toHaveBeenCalledWith({ chips: ["lights", "locks"] });
   });
 });
@@ -794,12 +831,12 @@ describe("choices with icons", () => {
     expect(checked?.textContent).toContain("Floor lamp");
   });
 
-  it("picking a card writes its value", () => {
+  it("picking a card writes its value", async () => {
     const onChange = vi.fn();
     const view = render(() => (
       <SchemaForm schema={lampSchema} data={{ lamp: "floor" }} onChange={onChange} />
     ));
-    fireEvent.click(view.getByText("Table lamp"));
+    await press(view.getByText("Table lamp"));
     expect(onChange).toHaveBeenLastCalledWith({ lamp: "table" });
   });
 
