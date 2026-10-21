@@ -8,6 +8,9 @@ import {
   AlertDialogBody,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
   AlertDialogTitle,
 } from "../../src/solid/alert-dialog.js";
 import {
@@ -235,6 +238,25 @@ describe("Dialog labelling", () => {
     expect(labelId).toBeTruthy();
     expect(document.getElementById(String(labelId))?.textContent).toBe("Rename dashboard");
     expect(document.getElementById(String(describeId))?.textContent).toBe("Pick a new name.");
+  });
+
+  it("names an AlertDialog by its Title", () => {
+    render(() => (
+      <AlertDialog open>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Add clock</AlertDialogTitle>
+            <AlertDialogDescription>Appears on every screen size.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction>Add</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    ));
+
+    expect(screen.getByRole("alertdialog", { name: "Add clock" })).toBeTruthy();
   });
 
   it("falls back to ariaLabel when there is no Title", () => {

@@ -1,6 +1,7 @@
 import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
+import { Dialog, DialogContent } from "../../src/solid/dialog.js";
 import { Dock } from "../../src/solid/dock.js";
 import { useFakeTime } from "../../src/testing/index.js";
 import { setViewportWidth } from "../viewport.js";
@@ -117,6 +118,27 @@ describe("Dock mode rim", () => {
     expect(container.querySelector('[data-slot="dock-glow"]')).toBeNull();
     setOn(true);
     expect(container.querySelector('[data-slot="dock-glow"]')).not.toBeNull();
+  });
+
+  it("holds the orbit still while a dialog covers the page", async () => {
+    const [open, setOpen] = createSignal(false);
+    const { container } = render(() => (
+      <>
+        <Dock items={two} glow />
+        <Dialog open={open()} onOpenChange={setOpen}>
+          <DialogContent ariaLabel="Add widget">library</DialogContent>
+        </Dialog>
+      </>
+    ));
+    const orbit = container.querySelector('[data-slot="dock-glow"] > div');
+    if (!orbit) throw new Error("no orbit");
+    const playState = () => orbit.getAnimations().map((a) => a.playState);
+
+    expect(playState()).toEqual(["running"]);
+    setOpen(true);
+    expect(playState()).toEqual(["paused"]);
+    setOpen(false);
+    await vi.waitFor(() => expect(playState()).toEqual(["running"]));
   });
 });
 
