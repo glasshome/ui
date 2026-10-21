@@ -68,12 +68,13 @@ export function RowActions(props: {
 
 export function LabeledField(props: { label: string; children: JSX.Element }) {
   return (
-    <div data-slot="labeled-field" class="flex flex-col gap-1">
-      <p data-slot="labeled-field-label" class="text-sm font-medium">
+    // A wrapping label names the field's control, which the placeholder otherwise did.
+    <label data-slot="labeled-field" class="flex flex-col gap-1">
+      <span data-slot="labeled-field-label" class="text-sm font-medium">
         {props.label}
-      </p>
+      </span>
       {props.children}
-    </div>
+    </label>
   );
 }
 
