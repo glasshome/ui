@@ -42,6 +42,7 @@ export function AreaPicker(props: AreaPickerProps) {
   const data = useEntityData();
   const [open, setOpen] = createSignal(false);
   const [search, setSearch] = createSignal("");
+  let searchRef: HTMLInputElement | undefined;
 
   const areas = data.useAreas();
 
@@ -171,11 +172,18 @@ export function AreaPicker(props: AreaPickerProps) {
         </PickerTrigger>
       </PopoverAnchor>
       <PopoverContent
-        onOpenAutoFocus={(e) => e.preventDefault()}
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+          // preventScroll: the panel is portalled at (0,0) until the popper places it.
+          searchRef?.focus({ preventScroll: true });
+        }}
         onInteractOutside={() => setOpen(false)}
       >
         <div class="flex flex-col">
           <PickerSearch
+            inputRef={(el) => {
+              searchRef = el;
+            }}
             value={search()}
             onValueChange={setSearch}
             placeholder="Search areas..."
