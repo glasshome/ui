@@ -277,7 +277,14 @@ function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined 
             </Show>
           </PickerTrigger>
         </PopoverAnchor>
-        <PopoverContent class="min-w-72" onInteractOutside={() => setOpen(false)}>
+        <PopoverContent
+          class="min-w-72"
+          onInteractOutside={(event) => {
+            // The delete confirmation takes focus; the gallery stays open to show the result.
+            if (pendingDelete()) event.preventDefault();
+            else setOpen(false);
+          }}
+        >
           {/* The panel owns no padding: the gallery body owns its own inset. */}
           <div data-slot="image-picker-body" class="flex flex-col gap-3 p-3">
             <Show when={error()}>
