@@ -20,6 +20,7 @@ export function acquireScrollLock(): void {
   if (refcount > 1) return;
   if (typeof document === "undefined") return;
 
+  document.documentElement.setAttribute("data-page-covered", "");
   const body = document.body;
   savedBodyStyles = {
     position: body.style.position,
@@ -47,6 +48,7 @@ export function releaseScrollLock(): void {
   if (refcount > 0) return;
   if (typeof document === "undefined" || !savedBodyStyles) return;
 
+  document.documentElement.removeAttribute("data-page-covered");
   const body = document.body;
   const wasIOS = body.style.position === "fixed";
 

@@ -639,6 +639,10 @@
     animation: none;
   }
 }
+/* Ambient loops under a modal's blurred scrim would make the browser re-blur the whole page every frame. */
+:root[data-page-covered] :is(:where(.glass-edge-orbit) > *, .animate-spin-slow, .animate-float) {
+  animation-play-state: paused;
+}
 
 /**
  * Consistent, theme-aware overlay scrollbar across browsers. Firefox uses
