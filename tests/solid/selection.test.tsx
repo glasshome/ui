@@ -14,7 +14,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.useRealTimers();
-  // Undoes the one test that needs a platform whose animate() throws.
+  // test-change-ok puts back the real animate after the one test that needs it to throw
   if (realAnimate) Object.defineProperty(Element.prototype, "animate", realAnimate);
 });
 
