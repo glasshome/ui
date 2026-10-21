@@ -1,5 +1,14 @@
 import type { JSONSchema7 } from "json-schema";
-import { createMemo, createSignal, For, Index, Match, Show, Switch as SwitchFlow } from "solid-js";
+import {
+  createMemo,
+  createSignal,
+  createUniqueId,
+  For,
+  Index,
+  Match,
+  Show,
+  Switch as SwitchFlow,
+} from "solid-js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { SETTLE_MOTION } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
@@ -205,13 +214,14 @@ export function SchemaForm(props: SchemaFormProps) {
   const updateField = (key: string, value: unknown) => {
     props.onChange({ ...props.data, [key]: value });
   };
+  const formId = createUniqueId();
 
   return (
     <div class={cn("flex w-full min-w-0 flex-col gap-6", props.class)} data-slot="schema-form">
       <For each={properties()}>
         {([key, prop]) => (
           <LabeledField
-            id={key}
+            id={`${formId}-${key}`}
             name={key}
             prop={prop}
             value={props.data[key]}
@@ -671,7 +681,10 @@ function ListControl(props: FieldProps) {
                           alt=""
                           decoding="async"
                           class="absolute inset-0 h-full w-full object-cover"
-                          onError={() => setBrokenThumbs((broken) => new Set(broken).add(url()))}
+                          onError={(event) => {
+                            const failed = event.currentTarget.getAttribute("src");
+                            if (failed) setBrokenThumbs((broken) => new Set(broken).add(failed));
+                          }}
                         />
                       )}
                     </Show>
