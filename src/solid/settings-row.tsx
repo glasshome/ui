@@ -66,15 +66,16 @@ export function RowActions(props: {
   );
 }
 
-export function LabeledField(props: { label: string; children: JSX.Element }) {
+/** `for` names one control by the label; without it the label names the group of controls. */
+export function LabeledField(props: { label: string; for?: string; children: JSX.Element }) {
+  const id = createUniqueId();
   return (
-    // A wrapping label names the field's control, which the placeholder otherwise did.
-    <label data-slot="labeled-field" class="flex flex-col gap-1">
-      <span data-slot="labeled-field-label" class="text-sm font-medium">
+    <div data-slot="labeled-field" role="group" aria-labelledby={id} class="flex flex-col gap-1">
+      <label id={id} for={props.for} data-slot="labeled-field-label" class="text-sm font-medium">
         {props.label}
-      </span>
+      </label>
       {props.children}
-    </label>
+    </div>
   );
 }
 
@@ -104,9 +105,11 @@ export function LabeledInput(props: {
   onInput: (value: string) => void;
   placeholder?: string;
 }) {
+  const id = createUniqueId();
   return (
-    <LabeledField label={props.label}>
+    <LabeledField label={props.label} for={id}>
       <Input
+        id={id}
         value={props.value}
         onInput={(e) => props.onInput(e.currentTarget.value)}
         placeholder={props.placeholder}
