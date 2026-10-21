@@ -185,6 +185,16 @@ describe("picker triggers", () => {
       await waitFor(() => expect(trigger.hasAttribute("data-expanded")).toBe(true));
     });
   }
+
+  for (const [name, ui] of cases.filter(([n]) => n !== "ImagePicker")) {
+    it(`${name} opens with its search focused, so a keyboard can search and reach a row`, async () => {
+      const { container } = withData(ui);
+      fireEvent.click(firstButton(container));
+      await waitFor(() =>
+        expect(document.activeElement?.getAttribute("data-slot")).toBe("picker-search-input"),
+      );
+    });
+  }
 });
 
 describe("EntitySelector rows", () => {
