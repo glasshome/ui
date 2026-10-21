@@ -19,6 +19,7 @@ import {
   BottomSheetTitle,
 } from "../../src/solid/bottom-sheet/index.js";
 import { Button } from "../../src/solid/button.js";
+import { Dock } from "../../src/solid/dock.js";
 import {
   Dialog,
   DialogBody,
@@ -321,6 +322,28 @@ describe("Dialog trigger", () => {
 });
 
 describe("one page-scroll lock", () => {
+  it("holds the dock's mode rim still while a dialog covers the page", async () => {
+    const [open, setOpen] = createSignal(false);
+    const two = ["a", "b"].map((id) => ({ id, icon: <span />, label: id, onClick: () => {} }));
+    const { container } = render(() => (
+      <>
+        <Dock items={two} glow />
+        <Dialog open={open()} onOpenChange={setOpen}>
+          <DialogContent ariaLabel="Add widget">library</DialogContent>
+        </Dialog>
+      </>
+    ));
+    const orbit = container.querySelector('[data-slot="dock-glow"] > div');
+    if (!orbit) throw new Error("no orbit");
+    const playState = () => orbit.getAnimations().map((a) => a.playState);
+
+    expect(playState()).toEqual(["running"]);
+    setOpen(true);
+    expect(playState()).toEqual(["paused"]);
+    setOpen(false);
+    await vi.waitFor(() => expect(playState()).toEqual(["running"]));
+  });
+
   it("holds the lock until the last nested modal is gone", () => {
     const [inner, setInner] = createSignal(false);
 
