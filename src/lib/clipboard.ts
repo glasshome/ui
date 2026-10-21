@@ -41,6 +41,8 @@ function canWriteItems(): boolean {
 }
 
 async function writeItem(type: string, data: Promise<Blob>): Promise<boolean> {
+  // A write refused before it reads the data leaves a rejecting data promise unhandled.
+  data.catch(() => {});
   try {
     await navigator.clipboard.write([new ClipboardItem({ [type]: data })]);
     return true;
