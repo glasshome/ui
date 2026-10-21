@@ -77,4 +77,9 @@ const RadioGroupItem: Component<
   );
 };
 
-export { RadioGroup, RadioGroupItem };
+// A press on the label reaches the item twice: once itself, once as the input click it forwards.
+function isItemActivation(event: MouseEvent): boolean {
+  return event.target instanceof HTMLInputElement;
+}
+
+export { isItemActivation, RadioGroup, RadioGroupItem };

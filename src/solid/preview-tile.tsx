@@ -2,7 +2,7 @@ import type { JSX } from "solid-js";
 import { Show } from "solid-js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
-import { RadioGroup, RadioGroupItem } from "./radio-group.js";
+import { isItemActivation, RadioGroup, RadioGroupItem } from "./radio-group.js";
 
 const COLUMNS = { 2: "grid-cols-2", 3: "grid-cols-3", 4: "grid-cols-4" } as const;
 
@@ -59,7 +59,9 @@ export function PreviewTile(props: {
       value={props.value}
       disabled={props.disabled}
       showControl={false}
-      onClick={() => !props.disabled && props.onPick?.()}
+      onClick={(event: MouseEvent) =>
+        !props.disabled && isItemActivation(event) && props.onPick?.()
+      }
       class={cn(
         "group/preview-tile min-w-0 [&_[data-slot=radio-group-item-content]]:flex [&_[data-slot=radio-group-item-content]]:flex-col [&_[data-slot=radio-group-item-content]]:gap-1.5 [&_[data-slot=radio-group-item-label]]:min-w-0",
         props.class,
