@@ -34,10 +34,19 @@ export function RowActions(props: {
   deleteDisabled?: boolean;
   deleteTitle?: string;
   showDelete?: boolean;
+  /** What the row is, so each button is named for it: "Edit Kitchen", "Delete Kitchen". */
+  name?: string;
 }) {
+  const named = (verb: string) => (props.name ? `${verb} ${props.name}` : verb);
   return (
     <div data-slot="row-actions" class="flex items-center gap-1">
-      <Button variant="ghost" size="icon" class="size-8" onClick={props.onEdit}>
+      <Button
+        variant="ghost"
+        size="icon"
+        class="size-8"
+        onClick={props.onEdit}
+        aria-label={named("Edit")}
+      >
         <Icon icon="lucide:pencil" width={14} height={14} />
       </Button>
       <Show when={props.showDelete ?? true}>
@@ -48,6 +57,7 @@ export function RowActions(props: {
           onClick={props.onDelete}
           disabled={props.deleteDisabled}
           title={props.deleteTitle}
+          aria-label={named("Delete")}
         >
           <Icon icon="lucide:trash-2" width={14} height={14} />
         </Button>
