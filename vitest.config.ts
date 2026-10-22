@@ -38,6 +38,8 @@ export default defineConfig({
     ],
   },
   test: {
+    // Unset, vite-plugin-solid asks for jsdom, which a clean install does not have.
+    environment: "node",
     maxWorkers: 4,
     projects: [
       {
