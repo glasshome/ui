@@ -62,11 +62,13 @@ const mediaIndex: MediaIndex = {
   usage: { bytes: 1234, limitBytes: 524_288_000, files: 1, limitFiles: 50 },
 };
 
+const PIXEL = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
 const store: MediaStore = {
   index: async () => mediaIndex,
   upload: async () => media,
   remove: async () => {},
-  url: (id, variant) => (variant === "thumb" ? `/api/images/${id}/thumb` : `/api/images/${id}`),
+  url: () => PIXEL,
 };
 
 const clearButton = () =>
