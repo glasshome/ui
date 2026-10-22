@@ -5,21 +5,6 @@ import { createSignal } from "solid-js";
 import { afterEach, expect, it } from "vitest";
 import { Icon, provideIcons } from "../../src/solid/icon.js";
 
-class FakeTrustedHTML {
-  constructor(private readonly html: string) {}
-  toString() {
-    return this.html;
-  }
-}
-
-Object.assign(globalThis, {
-  trustedTypes: {
-    createPolicy: (_name: string, rules: { createHTML: (s: string) => string }) => ({
-      createHTML: (s: string) => new FakeTrustedHTML(rules.createHTML(s)),
-    }),
-  },
-});
-
 afterEach(() => {
   cleanup();
   provideIcons({ bundled: {} });

@@ -1,7 +1,5 @@
 import { parseColor } from "@kobalte/core/colors";
 import { cleanup, render } from "@solidjs/testing-library";
-import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
 import type { JSX } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -13,17 +11,22 @@ afterEach(cleanup);
 // A slot read twice builds its JSX twice; under SSR hydration the first build claims
 // keys the server never emitted, and a Dynamic inside it throws.
 
-const SRC = path.resolve(import.meta.dirname, "../../src/solid");
-const read = (file: string) => readFileSync(path.join(SRC, file), "utf8");
+const SOURCES = import.meta.glob<string>("../../src/solid/**/*.{ts,tsx}", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
+const sourceKey = (file: string) => `../../src/solid/${file}`;
+const read = (file: string) => SOURCES[sourceKey(file)] ?? "";
 const moduleFile = (base: string) =>
-  [`${base}.tsx`, `${base}.ts`].find((file) => existsSync(path.join(SRC, file))) ?? `${base}.tsx`;
+  [`${base}.tsx`, `${base}.ts`].find((file) => sourceKey(file) in SOURCES) ?? `${base}.tsx`;
 
 /** A module's source with every barrel it re-exports from inlined. */
 function sourceOf(file: string): string {
   const source = read(file);
-  const dir = path.dirname(file);
+  const dir = file.includes("/") ? file.slice(0, file.lastIndexOf("/")) : ".";
   const reexported = [...source.matchAll(/from\s*"\.\/([^"]+)\.js"/g)].map(([, base]) =>
-    sourceOf(moduleFile(path.join(dir, base ?? ""))),
+    sourceOf(moduleFile(dir === "." ? (base ?? "") : `${dir}/${base ?? ""}`)),
   );
   return [source, ...reexported].join("\n");
 }

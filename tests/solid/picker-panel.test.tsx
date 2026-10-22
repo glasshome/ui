@@ -132,7 +132,7 @@ describe("PickerSearch", () => {
     }
   });
 
-  it("clear empties the query and keeps typing in the input", () => {
+  it("clear empties the query and keeps typing in the input", async () => {
     const [value, setValue] = createSignal("lamp");
     const view = render(() => (
       <PickerSearch
@@ -142,7 +142,7 @@ describe("PickerSearch", () => {
         aria-label="Search"
       />
     ));
-    fireEvent.click(view.getByLabelText("Clear search"));
+    await press(view.getByLabelText("Clear search"));
     expect(value()).toBe("");
     expect(document.activeElement).toBe(view.getByRole("textbox"));
   });
