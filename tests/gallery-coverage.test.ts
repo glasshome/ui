@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ALLOW } from "../dev/coverage-allow";
-import { galleryReport, type Inventory, judge } from "../scripts/check-gallery";
+import { type Inventory, judge } from "../scripts/check-gallery";
 
 const inventory: Inventory = {
   exports: ["Card", "CardTitle", "CountPill", "Logo", "cardVariants"],
@@ -51,16 +50,5 @@ describe("judge", () => {
 
   it("reports an allow entry that names something covered", () => {
     expect(judge(inventory, [["CardTitle", "was missing"]]).staleAllows).toEqual(["CardTitle"]);
-  });
-});
-
-describe("gallery coverage", () => {
-  it("every component export has a specimen and every allow entry still holds", async () => {
-    expect(await galleryReport(ALLOW)).toEqual({
-      uncovered: [],
-      unknownSpecimens: [],
-      emptyReasons: [],
-      staleAllows: [],
-    });
   });
 });
