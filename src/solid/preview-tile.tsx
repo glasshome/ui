@@ -67,7 +67,11 @@ export function PreviewTile(props: {
         props.class,
       )}
     >
-      <div data-slot="preview-tile-face" class={cn(TILE_FACE, SHAPE[props.shape ?? "wide"])}>
+      <div
+        data-slot="preview-tile-face"
+        aria-hidden="true"
+        class={cn(TILE_FACE, SHAPE[props.shape ?? "wide"])}
+      >
         {props.children}
       </div>
       <Show when={props.caption ?? true} fallback={<span class="sr-only">{props.label}</span>}>
