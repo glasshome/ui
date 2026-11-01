@@ -83,7 +83,7 @@
   inherits: false;
   initial-value: 0;
 }
-/* 1 when a .glass-halo beside the surface draws its outer glow instead. */
+/* 1 when a .glass-halo beside the surface draws its outer glow and lift shadow instead. */
 @property --glass-halo {
   syntax: "<number>";
   inherits: false;
@@ -365,15 +365,18 @@
   --material-reach: calc(0.35 + var(--glass-lift) * 1.45);
   --_glass-bloom: calc(var(--material-glow) * var(--material-reach) * var(--_material-glow-out));
 }
-/* A surface's outer glow as its own layer, laid over the surface's box with the
- * same tone and lift. Its z-index lifts the glow over neighbouring surfaces;
- * the surface itself sets --glass-halo: 1 so the glow is not drawn twice. */
+/* A surface's outer glow and lift shadow as their own layer, laid over the surface's
+ * box with the same tone and lift. Its z-index lifts the glow over neighbouring surfaces;
+ * the surface itself sets --glass-halo: 1 so neither is drawn twice. */
 :where(.glass-halo) {
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  box-shadow: 0 0 var(--_glass-bloom) oklch(from var(--material-hue) l c h / 0.65);
+  box-shadow:
+    calc(-10px * var(--_material-light-sin)) calc(10px * var(--_material-light-cos)) 30px -16px
+      oklch(0 0 0 / calc(var(--glass-lift) * var(--_material-shadow))),
+    0 0 var(--_glass-bloom) oklch(from var(--material-hue) l c h / 0.65);
 }
 
 /* The ONE glass formula. Neutral by default (--glass-tone transparent makes
@@ -452,7 +455,7 @@
     inset 0 -2px 4px color-mix(in srgb, var(--glass-tone) var(--glass-glow), transparent),
     0 1px 3px color-mix(in srgb, var(--glass-tone) var(--glass-drop), transparent),
     calc(-10px * var(--_material-light-sin)) calc(10px * var(--_material-light-cos)) 30px -16px
-      oklch(0 0 0 / calc(var(--glass-lift) * var(--_material-shadow))),
+      oklch(0 0 0 / calc(var(--glass-lift) * var(--_material-shadow) * (1 - var(--glass-halo)))),
     0 0 calc(var(--_glass-bloom) * (1 - var(--glass-halo)))
       oklch(from var(--material-hue) l c h / 0.65),
     inset 0 0 calc(var(--material-glow) * 0.9 * var(--_material-glow-in))
