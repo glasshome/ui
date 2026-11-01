@@ -18,6 +18,14 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.35.4](https://github.com/glasshome/ui/compare/v1.35.3...v1.35.4) (2026-11-01)
+
+
+### Bug Fixes
+
+* **glass:** .glass-halo draws the lift shadow with the glow, so a host that clips the surface can draw both beside it ([d58c969](https://github.com/glasshome/ui/commit/d58c969f6bb78c80e578d5df06b8df3b81b42820))
+* **preview-tile:** the face is hidden from assistive tech, so a tile is named by its label alone ([0c7d06d](https://github.com/glasshome/ui/commit/0c7d06dc279127a1da3d17db64a48f5a7bc501a3))
+
 ## [1.35.3](https://github.com/glasshome/ui/compare/v1.35.2...v1.35.3) (2026-10-23)
 
 
