@@ -14,7 +14,7 @@ import {
 } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { CARD_SURFACE } from "../lib/card-classes.js";
-import { HOLD_MOTION, PRESS_DIP } from "../lib/motion-classes.js";
+import { DOCK_ARRIVE_MOTION, HOLD_MOTION, PRESS_DIP } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 import { Badge } from "./badge.js";
 import { pageCount, pageOf, pageOffset, stripWidth } from "./dock-paging.js";
@@ -33,9 +33,15 @@ interface DockItem {
   isDropTarget?: boolean;
 }
 
+type DockPlacement = "bottom" | "left" | "right";
+
 interface DockProps extends ComponentProps<"div"> {
   items: DockItem[];
   dockMode?: "floating" | "docked";
+  /** The viewport edge the dock sits on; a side edge pages its strip vertically. */
+  placement?: DockPlacement;
+  /** Items that just landed: each glows once, and the dock turns to the first one's page. */
+  arrivedIds?: string[];
   /** Where a hold started, relative to the surface; `fired` once it has triggered. */
   hold?: { x: number; y: number; fired: boolean } | null;
   /** A rim light that orbits for as long as a mode is on. */
@@ -51,6 +57,8 @@ interface DockIconButtonProps extends ComponentProps<"button"> {
   /** Wears the selection highlight: the active item, or the one a drag would land on. */
   lit?: boolean;
   badge?: number;
+  /** Plays the arrival glow once. */
+  arrived?: boolean;
 }
 
 const DOCK_PAGE_MS = 300;
@@ -66,6 +74,7 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
     "badge",
     "type",
     "lit",
+    "arrived",
   ]);
   const isElement = () => typeof local.icon !== "function";
 
@@ -82,9 +91,13 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
         aria-label={local.label}
         aria-current={local.isActive ? "page" : undefined}
         data-lit={local.lit ? "" : undefined}
+        data-arrived={local.arrived ? "" : undefined}
         {...rest}
       >
         <SelectionHighlight />
+        <Show when={local.arrived}>
+          <span data-slot="dock-item-arrival" aria-hidden="true" class={DOCK_ARRIVE_MOTION} />
+        </Show>
         <div
           data-slot="dock-item-icon"
           class={cn(
@@ -127,7 +140,11 @@ const Dock: Component<DockProps> = (props) => {
     "hold",
     "glow",
     "dragPoint",
+    "placement",
+    "arrivedIds",
   ]);
+  const placement = () => local.placement ?? "bottom";
+  const vertical = () => placement() !== "bottom";
   // The drain plays where the fill grew, so the point outlives the hold.
   const [holdPoint, setHoldPoint] = createSignal({ x: 0, y: 0, r: 0 });
   let surfaceRef: HTMLDivElement | undefined;
@@ -148,7 +165,8 @@ const Dock: Component<DockProps> = (props) => {
   const [needsScroll, setNeedsScroll] = createSignal(false);
   const [pages, setPages] = createSignal(1);
   const [page, setPage] = createSignal(0);
-  const [viewportWidth, setViewportWidth] = createSignal(0);
+  // The strip's length along the dock's axis: width at the bottom, height on a side edge.
+  const [viewportSpan, setViewportSpan] = createSignal(0);
 
   // A memo: the items list is rebuilt on every hover change, and only a new active item may scroll the strip.
   const activeIndex = createMemo(() => {
@@ -160,50 +178,77 @@ const Dock: Component<DockProps> = (props) => {
     const i = local.items.findIndex((it) => it.isDropTarget);
     return i < 0 ? activeIndex() : i;
   });
+  const arrivedSet = createMemo(() => new Set(local.arrivedIds ?? []));
 
-  const gapWidth = () =>
-    containerRef ? Number.parseFloat(getComputedStyle(containerRef).columnGap) || 0 : 0;
-  const itemWidth = () =>
-    containerRef?.querySelector('[data-slot="dock-item"]')?.getBoundingClientRect().width ?? 0;
+  const scrollSize = (el: HTMLElement) => (vertical() ? el.scrollHeight : el.scrollWidth);
+  const viewSize = (el: HTMLElement) => (vertical() ? el.clientHeight : el.clientWidth);
+  const scrollPos = (el: HTMLElement) => (vertical() ? el.scrollTop : el.scrollLeft);
+  const edgeStart = (rect: DOMRect) => (vertical() ? rect.top : rect.left);
 
-  const padX = (el: Element) => {
-    const style = getComputedStyle(el);
-    return (
-      (Number.parseFloat(style.paddingLeft) || 0) + (Number.parseFloat(style.paddingRight) || 0)
-    );
+  const gapSize = () => {
+    if (!containerRef) return 0;
+    const style = getComputedStyle(containerRef);
+    return Number.parseFloat(vertical() ? style.rowGap : style.columnGap) || 0;
+  };
+  const itemSize = () => {
+    const rect = containerRef?.querySelector('[data-slot="dock-item"]')?.getBoundingClientRect();
+    return (vertical() ? rect?.height : rect?.width) ?? 0;
   };
 
-  // The width the app gave the dock. Never the surface: it shrink-wraps this strip,
-  // so measuring it asks the strip how wide the strip is.
-  const availableWidth = () => {
+  const padAlong = (el: Element) => {
+    const style = getComputedStyle(el);
+    const [a, b] = vertical()
+      ? [style.paddingTop, style.paddingBottom]
+      : [style.paddingLeft, style.paddingRight];
+    return (Number.parseFloat(a) || 0) + (Number.parseFloat(b) || 0);
+  };
+
+  // The room the app gave the dock. Never the surface: it shrink-wraps this strip,
+  // so measuring it asks the strip how big the strip is.
+  const availableSpan = () => {
     const box = containerRef?.closest<HTMLElement>('[data-slot="dock"]');
     if (!box || !surfaceRef) return 0;
-    return box.clientWidth - padX(box) - padX(surfaceRef);
+    return viewSize(box) - padAlong(box) - padAlong(surfaceRef);
   };
 
   const checkOverflow = () => {
     if (!containerRef) return;
-    const available = availableWidth();
-    const overflowing = available > 0 && containerRef.scrollWidth > available + 1;
+    const side = vertical() ? "height" : "width";
+    const other = vertical() ? "width" : "height";
+    containerRef.style.removeProperty(other);
+    const available = availableSpan();
+    const overflowing = available > 0 && scrollSize(containerRef) > available + 1;
     if (overflowing) {
-      const trimmed = stripWidth(available, itemWidth(), gapWidth());
-      if (trimmed > 0) containerRef.style.width = `${trimmed}px`;
-    } else if (containerRef.style.width) {
-      containerRef.style.width = "";
+      const trimmed = stripWidth(available, itemSize(), gapSize());
+      if (trimmed > 0) containerRef.style[side] = `${trimmed}px`;
+    } else if (containerRef.style[side]) {
+      containerRef.style[side] = "";
     }
     setNeedsScroll(overflowing);
-    const viewport = containerRef.clientWidth;
-    setViewportWidth(viewport);
-    setPages(pageCount(containerRef.scrollWidth, viewport));
-    setPage(pageOf(containerRef.scrollLeft, viewport));
+    const viewport = viewSize(containerRef);
+    setViewportSpan(viewport);
+    setPages(pageCount(scrollSize(containerRef), viewport));
+    setPage(pageOf(scrollPos(containerRef), viewport));
   };
 
   const goToPage = (next: number) => {
     if (!containerRef) return;
-    containerRef.scrollTo({
-      left: pageOffset(next, viewportWidth(), containerRef.scrollWidth),
-      behavior: "smooth",
-    });
+    const to = pageOffset(next, viewportSpan(), scrollSize(containerRef));
+    containerRef.scrollTo(
+      vertical() ? { top: to, behavior: "smooth" } : { left: to, behavior: "smooth" },
+    );
+  };
+
+  const turnToItem = (index: number) => {
+    if (!containerRef || !needsScroll() || viewportSpan() <= 0) return;
+    const item = containerRef.querySelectorAll('[data-slot="dock-item"]')[index];
+    if (!item) return;
+    // The strip only: scrollIntoView would also scroll the page and any frame embedding it.
+    const offset =
+      edgeStart(item.getBoundingClientRect()) -
+      edgeStart(containerRef.getBoundingClientRect()) +
+      scrollPos(containerRef);
+    goToPage(Math.floor(offset / viewportSpan()));
   };
 
   // A drag cannot click a page dot, so resting on the dot row turns to the page under it.
@@ -212,16 +257,21 @@ const Dock: Component<DockProps> = (props) => {
     if (!point || pages() < 2 || !surfaceRef || !containerRef) return;
     const strip = containerRef.getBoundingClientRect();
     const surface = surfaceRef.getBoundingClientRect();
-    const onDotRow =
-      point.y > strip.bottom &&
-      point.y <= surface.bottom &&
-      point.x >= surface.left &&
-      point.x <= surface.right;
-    if (!onDotRow) return;
-    const target = Math.min(
-      pages() - 1,
-      Math.floor(((point.x - surface.left) / surface.width) * pages()),
-    );
+    const place = placement();
+    const inSurfaceAlong = vertical()
+      ? point.y >= surface.top && point.y <= surface.bottom
+      : point.x >= surface.left && point.x <= surface.right;
+    const pastStrip =
+      place === "left"
+        ? point.x > strip.right && point.x <= surface.right
+        : place === "right"
+          ? point.x < strip.left && point.x >= surface.left
+          : point.y > strip.bottom && point.y <= surface.bottom;
+    if (!pastStrip || !inSurfaceAlong) return;
+    const ratio = vertical()
+      ? (point.y - surface.top) / surface.height
+      : (point.x - surface.left) / surface.width;
+    const target = Math.min(pages() - 1, Math.floor(ratio * pages()));
     if (target === page()) return;
     const timer = setTimeout(() => goToPage(target), DOCK_PAGE_MS);
     onCleanup(() => clearTimeout(timer));
@@ -230,16 +280,20 @@ const Dock: Component<DockProps> = (props) => {
   // The active dashboard may sit on another page after a switch elsewhere.
   createEffect(() => {
     const i = activeIndex();
-    if (i === null || !containerRef || !needsScroll()) return;
-    const item = containerRef.querySelectorAll('[data-slot="dock-item"]')[i];
-    if (!item || viewportWidth() <= 0) return;
-    // The strip only: scrollIntoView would also scroll the page and any frame embedding it.
-    const left =
-      item.getBoundingClientRect().left -
-      containerRef.getBoundingClientRect().left +
-      containerRef.scrollLeft;
-    goToPage(Math.floor(left / viewportWidth()));
+    if (i !== null) turnToItem(i);
   });
+
+  // A newcomer may land on a page nobody is looking at; turn there once.
+  createEffect(
+    on(
+      () => local.arrivedIds?.join("\n") ?? "",
+      () => {
+        const first = local.items.findIndex((it) => arrivedSet().has(it.id));
+        if (first >= 0) requestAnimationFrame(() => turnToItem(first));
+      },
+      { defer: true },
+    ),
+  );
 
   // Measured in the next frame's callbacks, which run before it paints: the first
   // dock anyone sees already has its pages, so the dot row never shifts it later.
@@ -256,9 +310,9 @@ const Dock: Component<DockProps> = (props) => {
     });
   });
 
-  // The box pads by mode, so switching it changes the room the strip has.
+  // The box pads by mode and the strip runs along the edge, so either switching changes the room it has.
   createEffect(
-    on([() => local.items.length, dockMode], () => {
+    on([() => local.items.length, dockMode, vertical], () => {
       const frame = requestAnimationFrame(checkOverflow);
       onCleanup(() => cancelAnimationFrame(frame));
     }),
@@ -267,8 +321,10 @@ const Dock: Component<DockProps> = (props) => {
   return (
     <div
       data-slot="dock"
+      data-placement={placement()}
       class={cn(
         "flex max-w-full items-center justify-center",
+        vertical() && "h-full max-h-full",
         dockMode() === "floating" ? "p-1 sm:p-2" : "",
         local.class,
       )}
@@ -280,12 +336,22 @@ const Dock: Component<DockProps> = (props) => {
         class={cn(
           // isolate: the layers behind the icons stay inside the dock even with blur off.
           "pointer-events-auto relative isolate flex max-w-full items-center justify-center p-1.5 sm:p-2",
+          vertical() && "max-h-full flex-col",
+          // A flush side dock runs the whole edge.
+          vertical() && dockMode() === "docked" && "h-full",
           // Room for the page dots inside the glass; outside it they sit on
           // the screen edge and get clipped.
-          pages() > 1 && "pb-4 sm:pb-5",
+          pages() > 1 &&
+            {
+              bottom: "pb-4 sm:pb-5",
+              left: "pr-4 sm:pr-5",
+              right: "pl-4 sm:pl-5",
+            }[placement()],
           CARD_SURFACE,
           "[--glass-lift:0.55]",
-          dockMode() === "floating" ? "rounded-xl" : "rounded-t-xl",
+          dockMode() === "floating"
+            ? "rounded-xl"
+            : { bottom: "rounded-t-xl", left: "rounded-r-xl", right: "rounded-l-xl" }[placement()],
         )}
       >
         <div
@@ -321,20 +387,26 @@ const Dock: Component<DockProps> = (props) => {
           ref={containerRef}
           data-slot="dock-bar"
           onScroll={() => {
-            if (containerRef) setPage(pageOf(containerRef.scrollLeft, viewportWidth()));
+            if (containerRef) setPage(pageOf(scrollPos(containerRef), viewportSpan()));
           }}
           class={cn(
             "flex items-center gap-0.5 sm:gap-1",
+            vertical() && "flex-col",
             needsScroll()
-              ? "scrollbar-hide snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth"
+              ? vertical()
+                ? "scrollbar-hide snap-y snap-mandatory overflow-y-auto overscroll-y-contain scroll-smooth"
+                : "scrollbar-hide snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth"
               : "overflow-visible",
             !needsScroll() && "justify-center",
           )}
           style={{
-            "min-width": needsScroll() ? "auto" : "fit-content",
+            [vertical() ? "min-height" : "min-width"]: needsScroll() ? "auto" : "fit-content",
           }}
         >
-          <SelectionScope marker="lit" class="flex items-center gap-0.5 sm:gap-1">
+          <SelectionScope
+            marker="lit"
+            class={cn("flex items-center gap-0.5 sm:gap-1", vertical() && "flex-col")}
+          >
             <Index each={local.items}>
               {(item, i) => (
                 <DockIconButton
@@ -345,6 +417,7 @@ const Dock: Component<DockProps> = (props) => {
                   isActive={item().isActive}
                   lit={i === pillIndex()}
                   badge={item().badge}
+                  arrived={arrivedSet().has(item().id)}
                   data-drop-target={item().isDropTarget ? "" : undefined}
                   data-dock-id={item().id}
                 />
@@ -355,7 +428,14 @@ const Dock: Component<DockProps> = (props) => {
         <Show when={pages() > 1}>
           <div
             data-slot="dock-pages"
-            class="pointer-events-auto absolute inset-x-0 bottom-1.5 flex justify-center gap-1.5"
+            class={cn(
+              "pointer-events-auto absolute flex justify-center gap-1.5",
+              {
+                bottom: "inset-x-0 bottom-1.5",
+                left: "inset-y-0 right-1.5 flex-col items-center",
+                right: "inset-y-0 left-1.5 flex-col items-center",
+              }[placement()],
+            )}
           >
             <Index each={Array.from({ length: pages() })}>
               {(_, i) => (
@@ -365,8 +445,11 @@ const Dock: Component<DockProps> = (props) => {
                   aria-current={page() === i ? "true" : undefined}
                   onClick={() => goToPage(i)}
                   class={cn(
-                    "transition-glass h-1.5 rounded-full",
-                    page() === i ? "bg-foreground/70 w-4" : "bg-foreground/25 w-1.5",
+                    "transition-glass rounded-full",
+                    vertical() ? "w-1.5" : "h-1.5",
+                    page() === i
+                      ? cn("bg-foreground/70", vertical() ? "h-4" : "w-4")
+                      : cn("bg-foreground/25", vertical() ? "h-1.5" : "w-1.5"),
                   )}
                 />
               )}
@@ -378,5 +461,5 @@ const Dock: Component<DockProps> = (props) => {
   );
 };
 
-export type { DockIconButtonProps, DockItem, DockProps };
+export type { DockIconButtonProps, DockItem, DockPlacement, DockProps };
 export { Dock };

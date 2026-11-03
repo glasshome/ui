@@ -152,7 +152,7 @@ export {
   DialogTrigger,
 } from "./dialog.js";
 export type { ModalSize } from "./dialog-parts.js";
-export type { DockIconButtonProps, DockItem, DockProps } from "./dock.js";
+export type { DockIconButtonProps, DockItem, DockPlacement, DockProps } from "./dock.js";
 export { Dock } from "./dock.js";
 export {
   DockedPanel,
