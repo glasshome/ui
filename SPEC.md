@@ -205,6 +205,7 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | copying text or an image | `<CopyButton>`, `useCopyText()`, `copyText()` / `copyImage()` (from the click; text still loading goes in as a promise) | `navigator.clipboard`, `document.execCommand("copy")` |
 | a built-in wallpaper | `GEOMETRIC_HOUSES_SVG` from `@glasshome/ui/backgrounds` | an app's own copy of the SVG |
 | the app's navigation dock on any viewport edge, with paging and an arrival glow for newcomers | `<Dock placement="bottom\|left\|right" arrivedIds>`; a side edge pages vertically with the dots on the inner edge | a second dock component for the side, a glow keyframe in the app |
+| editing the dock in place: remove badges, an add slot, drag to reorder, carry the dock to another edge | `<Dock editing onRemove onAdd onReorder onMovePlacement>` and `DockItem.removable`; reorder reports the full id order once on release (Alt+arrows move the focused item) | a separate edit screen, drag handlers or a jiggle keyframe in the app |
 | pointing at a control while the user operates it | `<Spotlight>` (`blocking` on a targetless veil so the action inside the bubble is the only press that lands; a target taller than half the viewport places the bubble inside it, near the top, instead of above or below; the bubble carries a tail toward its `anchor`, which defaults to `target` and may point at a different element than the hole) | a hand-rolled fixed overlay with a cutout |
 
 Server-run `.astro` markup imports `@glasshome/ui/solid` too: the `solid`
@@ -278,6 +279,8 @@ Motion is one system, not per-component flair. Four rules, all held by
 `HOLD_MOTION`: hold progress. A fill grows out of the touch while held, dissolves once the hold fires, and drains back faster if let go early (holding the dock to change modes).
 
 `DOCK_ARRIVE_MOTION`: a newcomer in the dock glows in the accent once and leaves nothing behind (`--duration-arrive`, zeroed under reduced motion).
+
+`DOCK_EDIT_MOTION`: in dock edit mode every item sways a hair, neighbours out of step, rotate only; the item under a finger stands still (`--duration-jiggle`, zeroed under reduced motion, where the remove badges and the dashed add slot still mark the mode).
 
 `RISE_MOTION`: `MODAL_MOTION`'s twin for a surface that stays mounted; its closed state is a resting style, since a mount door's exit ends and leaves the element showing.
 

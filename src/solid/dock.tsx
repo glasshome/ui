@@ -14,10 +14,17 @@ import {
 } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { CARD_SURFACE } from "../lib/card-classes.js";
-import { DOCK_ARRIVE_MOTION, HOLD_MOTION, PRESS_DIP } from "../lib/motion-classes.js";
+import {
+  DOCK_ARRIVE_MOTION,
+  DOCK_EDIT_MOTION,
+  HOLD_MOTION,
+  PRESS_DIP,
+} from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 import { Badge } from "./badge.js";
+import { createDockReorder, DockMoveGrip } from "./dock-edit.js";
 import { pageCount, pageOf, pageOffset, stripWidth } from "./dock-paging.js";
+import { Icon } from "./icon.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js";
 
@@ -31,6 +38,8 @@ interface DockItem {
   badge?: number;
   /** Something dragged is held over this item and will land here on release. */
   isDropTarget?: boolean;
+  /** Shows the remove badge while editing; false for an item that cannot leave (default true). */
+  removable?: boolean;
 }
 
 type DockPlacement = "bottom" | "left" | "right";
@@ -48,6 +57,14 @@ interface DockProps extends ComponentProps<"div"> {
   glow?: boolean;
   /** Where a drag from outside the dock is pointing, in client coordinates. */
   dragPoint?: { x: number; y: number } | null;
+  /** Edit mode: items sway and carry a remove badge, a dashed add slot ends the strip, items drag to reorder. */
+  editing?: boolean;
+  onRemove?: (id: string) => void;
+  onAdd?: () => void;
+  /** The full id order after a drag or an Alt+arrow move. */
+  onReorder?: (ids: string[]) => void;
+  /** While editing, a grip on the outer edge carries the whole dock to a screen edge; fires once on release over one. */
+  onMovePlacement?: (placement: DockPlacement) => void;
 }
 
 interface DockIconButtonProps extends ComponentProps<"button"> {
@@ -142,6 +159,11 @@ const Dock: Component<DockProps> = (props) => {
     "dragPoint",
     "placement",
     "arrivedIds",
+    "editing",
+    "onRemove",
+    "onAdd",
+    "onReorder",
+    "onMovePlacement",
   ]);
   const placement = () => local.placement ?? "bottom";
   const vertical = () => placement() !== "bottom";
@@ -179,6 +201,28 @@ const Dock: Component<DockProps> = (props) => {
     return i < 0 ? activeIndex() : i;
   });
   const arrivedSet = createMemo(() => new Set(local.arrivedIds ?? []));
+  const reorder = createDockReorder({
+    bar: () => containerRef,
+    vertical,
+    ids: () => local.items.map((it) => it.id),
+    enabled: () => Boolean(local.editing && local.onReorder),
+    onReorder: (ids) => local.onReorder?.(ids),
+  });
+  const cellStyle = (id: string): JSX.CSSProperties => {
+    const slots = reorder.preview();
+    const style: JSX.CSSProperties = {};
+    if (slots) style.order = Math.max(0, slots.indexOf(id));
+    if (reorder.dragId() === id)
+      style.translate = vertical() ? `0 ${reorder.lift()}px` : `${reorder.lift()}px 0`;
+    return style;
+  };
+  const onItemKeyDown = (e: KeyboardEvent, id: string) => {
+    if (!local.editing || !e.altKey) return;
+    const step = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 }[e.key];
+    if (step !== -1 && step !== 1) return;
+    e.preventDefault();
+    reorder.nudge(id, step);
+  };
 
   const scrollSize = (el: HTMLElement) => (vertical() ? el.scrollHeight : el.scrollWidth);
   const viewSize = (el: HTMLElement) => (vertical() ? el.clientHeight : el.clientWidth);
@@ -253,7 +297,7 @@ const Dock: Component<DockProps> = (props) => {
 
   // A drag cannot click a page dot, so resting on the dot row turns to the page under it.
   createEffect(() => {
-    const point = local.dragPoint;
+    const point = local.dragPoint ?? reorder.point();
     if (!point || pages() < 2 || !surfaceRef || !containerRef) return;
     const strip = containerRef.getBoundingClientRect();
     const surface = surfaceRef.getBoundingClientRect();
@@ -386,11 +430,13 @@ const Dock: Component<DockProps> = (props) => {
         <div
           ref={containerRef}
           data-slot="dock-bar"
+          data-reordering={reorder.dragId() ? "" : undefined}
           onScroll={() => {
             if (containerRef) setPage(pageOf(scrollPos(containerRef), viewportSpan()));
           }}
           class={cn(
-            "flex items-center gap-0.5 sm:gap-1",
+            // A carried item moves its snap point, and the strip would chase it.
+            "flex items-center gap-0.5 data-[reordering]:snap-none sm:gap-1",
             vertical() && "flex-col",
             needsScroll()
               ? vertical()
@@ -409,22 +455,71 @@ const Dock: Component<DockProps> = (props) => {
           >
             <Index each={local.items}>
               {(item, i) => (
-                <DockIconButton
-                  class={needsScroll() ? "snap-start" : undefined}
-                  icon={item().icon}
-                  label={item().label}
-                  onClick={item().onClick}
-                  isActive={item().isActive}
-                  lit={i === pillIndex()}
-                  badge={item().badge}
-                  arrived={arrivedSet().has(item().id)}
-                  data-drop-target={item().isDropTarget ? "" : undefined}
-                  data-dock-id={item().id}
-                />
+                <div
+                  data-slot="dock-cell"
+                  data-editing={local.editing ? "" : undefined}
+                  data-dragging={reorder.dragId() === item().id ? "" : undefined}
+                  class={cn(
+                    "relative",
+                    DOCK_EDIT_MOTION,
+                    local.editing && "touch-none select-none",
+                  )}
+                  style={cellStyle(item().id)}
+                  onPointerDown={(e) => reorder.begin(item().id, e)}
+                  onMouseDown={reorder.onMouseDown}
+                  on:click={{ handleEvent: reorder.onClickCapture, capture: true }}
+                >
+                  <DockIconButton
+                    class={needsScroll() ? "snap-start" : undefined}
+                    icon={item().icon}
+                    label={item().label}
+                    onClick={item().onClick}
+                    onKeyDown={(e: KeyboardEvent) => onItemKeyDown(e, item().id)}
+                    isActive={item().isActive}
+                    lit={i === pillIndex()}
+                    badge={item().badge}
+                    arrived={arrivedSet().has(item().id)}
+                    data-drop-target={item().isDropTarget ? "" : undefined}
+                    data-dock-id={item().id}
+                  />
+                  <Show when={local.editing && local.onRemove && item().removable !== false}>
+                    <button
+                      type="button"
+                      data-slot="dock-item-remove"
+                      aria-label={`Remove ${item().label}`}
+                      onClick={() => local.onRemove?.(item().id)}
+                      class={cn(
+                        "bg-destructive text-destructive-foreground absolute top-0 left-0 z-10 flex size-5 items-center justify-center rounded-full shadow-sm",
+                        "before:absolute before:-inset-2",
+                      )}
+                    >
+                      <Icon icon="lucide:minus" width={12} height={12} />
+                    </button>
+                  </Show>
+                </div>
               )}
             </Index>
+            <Show when={local.editing && local.onAdd}>
+              <button
+                type="button"
+                data-slot="dock-add"
+                aria-label="Add to dock"
+                onClick={() => local.onAdd?.()}
+                style={{ order: local.items.length }}
+                class={cn(
+                  "text-muted-foreground border-foreground/30 hover:text-foreground hover:border-foreground/60 flex size-11 shrink-0 touch-manipulation items-center justify-center rounded-lg border-2 border-dashed transition-colors duration-(--duration-state) sm:size-12",
+                  PRESS_DIP,
+                  needsScroll() && "snap-start",
+                )}
+              >
+                <Icon icon="lucide:plus" width={20} height={20} />
+              </button>
+            </Show>
           </SelectionScope>
         </div>
+        <Show when={local.editing && local.onMovePlacement}>
+          <DockMoveGrip placement={placement()} onMove={(next) => local.onMovePlacement?.(next)} />
+        </Show>
         <Show when={pages() > 1}>
           <div
             data-slot="dock-pages"
