@@ -97,6 +97,17 @@ describe("Dock edit chrome", () => {
     expect(container.querySelector('[data-slot="dock-grip"]')).toBeNull();
   });
 
+  it("leaves the middle of an item to the item, so a tap there is not a removal", () => {
+    const { container } = still(() => (
+      <Dock items={items(2)} editing onRemove={() => {}} onReorder={() => {}} />
+    ));
+    const item = byId(container, "d0");
+    const box = item.getBoundingClientRect();
+    const hit = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+    expect(hit?.closest('[data-slot="dock-item-remove"]')).toBeNull();
+    expect(item.contains(hit)).toBe(true);
+  });
+
   it("removes through the badge and leaves the item's own press alone", async () => {
     const onClick = vi.fn();
     const onRemove = vi.fn();

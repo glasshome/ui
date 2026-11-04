@@ -490,7 +490,7 @@ const Dock: Component<DockProps> = (props) => {
                       onClick={() => local.onRemove?.(item().id)}
                       class={cn(
                         "bg-destructive text-destructive-foreground absolute top-0 left-0 z-10 flex size-5 items-center justify-center rounded-full shadow-sm",
-                        "before:absolute before:-inset-2",
+                        "before:absolute before:-top-2 before:right-0 before:bottom-0 before:-left-2",
                       )}
                     >
                       <Icon icon="lucide:minus" width={12} height={12} />
