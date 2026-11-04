@@ -260,8 +260,10 @@ describe("Dock edit chrome", () => {
     await new Promise(requestAnimationFrame);
     const cellOf = (box: string) =>
       container.querySelector(`[data-testid="${box}"] [data-slot="dock-cell"]`) as HTMLElement;
+    const seconds = (box: string) => parseFloat(getComputedStyle(cellOf(box)).animationDuration);
     expect(cellOf("normal").getAnimations().length).toBe(1);
-    expect(cellOf("calm").getAnimations().length).toBe(0);
+    expect(seconds("normal")).toBeGreaterThan(0.1);
+    expect(seconds("calm")).toBeLessThan(0.001);
   });
 });
 
