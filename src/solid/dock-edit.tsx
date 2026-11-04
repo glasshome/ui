@@ -92,7 +92,14 @@ export function createDockReorder(options: ReorderOptions) {
       const next = preview();
       const moved = dragging;
       stopDrag?.();
-      if (moved) swallowClick = true;
+      if (moved) {
+        swallowClick = true;
+        // The release click lands on the dock bar when the item moved under the pointer, so no item ever sees it; the next press ends the claim.
+        window.addEventListener("pointerdown", () => (swallowClick = false), {
+          once: true,
+          capture: true,
+        });
+      }
       if (commit && moved && next && next.join("\n") !== ids.join("\n")) options.onReorder(next);
     };
     const onUp = (up: PointerEvent) => {

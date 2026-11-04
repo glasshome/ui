@@ -190,6 +190,17 @@ describe("Dock edit chrome", () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
+  it("lets the first tap after a drag through to a remove badge", async () => {
+    const onRemove = vi.fn();
+    const { container } = still(
+      () => <Dock items={items(3)} editing onRemove={onRemove} onReorder={() => {}} />,
+      { width: "400px" },
+    );
+    await hand.drag(byId(container, "d0"), byId(container, "d2"));
+    await userEvent.click(screen.getByRole("button", { name: "Remove Dashboard 1" }));
+    expect(onRemove).toHaveBeenCalledExactlyOnceWith("d1");
+  });
+
   it("does not drag when not editing", async () => {
     const onReorder = vi.fn();
     const { container } = render(() => (
