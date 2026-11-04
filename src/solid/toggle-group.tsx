@@ -11,6 +11,7 @@ import {
   splitProps,
   useContext,
 } from "solid-js";
+import { BALANCED_ROWS, balanceRows } from "../lib/balance-rows.js";
 import { TRACK_SURFACE } from "../lib/card-classes.js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
 import { cn } from "../lib/utils.js";
@@ -48,8 +49,11 @@ const ToggleGroup: ParentComponent<
   // union and mistypes `value`. Leave it in `rest` and just peek at it here.
   const sliding = () => !(props as { multiple?: boolean }).multiple;
   let root: HTMLDivElement | undefined;
+  let scope: HTMLDivElement | undefined;
   onMount(() => {
-    if (local.scroll && root) onCleanup(trackScroll(root, "[data-pressed]", "data-pressed"));
+    if (!root) return;
+    if (local.scroll) onCleanup(trackScroll(root, "[data-pressed]", "data-pressed"));
+    else onCleanup(balanceRows(root, scope ?? root, '[data-slot="toggle-group-item"]'));
   });
   return (
     <ToggleGroupPrimitive
@@ -59,8 +63,12 @@ const ToggleGroup: ParentComponent<
       data-size={local.size}
       data-scroll={local.scroll ? "" : undefined}
       class={cn(
-        `group/toggle-group flex w-fit max-w-full flex-wrap items-center gap-y-1 rounded-lg ${TRACK_SURFACE} p-1 data-[variant=outline]:shadow-xs`,
-        local.scroll && `[scrollbar-width:none] flex-nowrap overflow-x-auto ${SCROLL_TRACK_FADE}`,
+        `group/toggle-group w-fit max-w-full items-center gap-y-1 rounded-lg data-[wrapped]:w-full ${TRACK_SURFACE} p-1 data-[variant=outline]:shadow-xs`,
+        local.scroll
+          ? `flex [scrollbar-width:none] flex-nowrap overflow-x-auto ${SCROLL_TRACK_FADE}`
+          : sliding()
+            ? "flex"
+            : BALANCED_ROWS,
         local.class,
       )}
       {...rest}
@@ -70,14 +78,15 @@ const ToggleGroup: ParentComponent<
       >
         <Show when={sliding()} fallback={local.children}>
           {/* w-full, not w-fit: a shrink-to-fit root still sizes to content, and a
-					    `class="w-full"` root can finally let its flex-1 items share the width. */}
+					    `class="w-full"` root can finally let its items share the width. */}
           <SelectionScope
+            ref={scope}
             marker="pressed"
             tone={local.tone}
             class={
               local.scroll
                 ? "flex w-max flex-nowrap items-center"
-                : "flex w-full flex-wrap items-center gap-y-1"
+                : `w-full items-center gap-y-1 ${BALANCED_ROWS}`
             }
           >
             {local.children}
@@ -104,7 +113,6 @@ const ToggleGroupItem: Component<
           variant: context.variant || local.variant,
           size: context.size || local.size,
         }),
-        // Wrapping is plain CSS: an item never shrinks below its label, so a row that runs out of width breaks.
         "relative isolate min-w-max flex-1 shrink-0 rounded-md px-4 shadow-none focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first-of-type:border-l",
         // A hover fill would read as a second, squarer selection, so hover only tints the text.
         context.sliding
