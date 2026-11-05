@@ -205,6 +205,7 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | tinted text alone | `glassToneText(tone)` | ad-hoc color-mix |
 | a metallic tier chip | `<TierBadge>` | gradients by hand |
 | the ambient motion window | `startMotionWindow()` | an app-local timer writing `data-motion` |
+| a press-and-hold | `createHold({ onHold, onArm, onDisarm })`, its `down`, `move`, `up`, `cancel` on the pointer handlers (it spends the press and its release) | a `setTimeout` beside a `pointerdown`; `HOLD_MS` or `spendLongPress` by hand |
 | copying text or an image | `<CopyButton>`, `useCopyText()`, `copyText()` / `copyImage()` (from the click; text still loading goes in as a promise) | `navigator.clipboard`, `document.execCommand("copy")` |
 | a built-in wallpaper | `GEOMETRIC_HOUSES_SVG` from `@glasshome/ui/backgrounds` | an app's own copy of the SVG |
 | the app's navigation dock on any viewport edge, with paging and an arrival glow for newcomers | `<Dock placement="bottom\|left\|right" arrivedIds>`; a side edge pages vertically with the dots on the inner edge | a second dock component for the side, a glow keyframe in the app |
