@@ -91,7 +91,16 @@ afterEach(cleanup);
 describe("ImagePicker", () => {
   it("renders a notice when no store is available", () => {
     render(() => <ImagePicker value="" onChange={() => {}} />);
-    expect(screen.getByText(/dashboard cannot store images/i)).toBeTruthy();
+    expect(screen.getByText("Uploading images isn't available here.")).toBeTruthy();
+  });
+
+  it("says nothing about uploading where a store exists", async () => {
+    withStore(storeWith(), () => <ImagePicker value="" onChange={() => {}} />);
+    await openGallery();
+    await waitFor(() =>
+      expect(document.querySelector('[data-slot="image-picker-upload"]')).not.toBeNull(),
+    );
+    expect(screen.queryByText("Uploading images isn't available here.")).toBeNull();
   });
 
   it("wears a full-width recessed field, not a raised auto-width button", () => {
@@ -533,11 +542,12 @@ describe("ImagePicker built-in pictures", () => {
     expect(trigger().querySelector("img")?.getAttribute("src")).toBe(presets.kitchen.thumb);
   });
 
-  it("still offers them where the dashboard cannot store images", async () => {
+  it("still offers them where uploading is unavailable", async () => {
     render(() => <ImagePicker value="" onChange={() => {}} presets={presets} />);
-    expect(screen.queryByText(/dashboard cannot store images/i)).toBeNull();
+    expect(screen.queryByText("Uploading images isn't available here.")).toBeNull();
     await openGallery();
     await waitFor(() => expect(presetTiles()).toHaveLength(2));
+    expect(screen.getByText("Uploading images isn't available here.")).toBeTruthy();
     expect(document.querySelector('[data-slot="image-picker-upload"]')).toBeNull();
   });
 });
