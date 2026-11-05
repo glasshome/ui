@@ -18,6 +18,22 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.36.0](https://github.com/glasshome/ui/compare/v1.35.4...v1.36.0) (2026-11-05)
+
+
+### Features
+
+* **image-picker:** a store can withhold deletion, and the gallery opens with focus on itself ([9a5f918](https://github.com/glasshome/ui/commit/9a5f91818683ec339584eb29403dd9e3887f5566))
+* **image-picker:** own photos in sealed widgets ([70ee27b](https://github.com/glasshome/ui/commit/70ee27b600b52c8348101783c4c7a58e0d513308))
+* **image-picker:** resolve media urls without a store, read a store accessor, and say when uploading is unavailable ([70bb623](https://github.com/glasshome/ui/commit/70bb6237db46809763c5df6742b46cf0a24cf58e))
+
+
+### Bug Fixes
+
+* **image-picker:** a gallery tile keeps its focus across reloads, a tree can scope its own url source, and an empty url shows no image ([70c5e34](https://github.com/glasshome/ui/commit/70c5e34a17cc0bd5bdbba2746e79ba85690dac2a))
+* **toggle-group:** a group that runs out of width wraps into balanced rows ([f8bb770](https://github.com/glasshome/ui/commit/f8bb77067a5e5b9a86c83bf96513eaa392651db2))
+* **toggle-group:** a group that runs out of width wraps into balanced rows ([4ba0eca](https://github.com/glasshome/ui/commit/4ba0eca147e8da4185e77b646f56f88b050a707e))
+
 ## [1.35.4](https://github.com/glasshome/ui/compare/v1.35.3...v1.35.4) (2026-11-01)
 
 
