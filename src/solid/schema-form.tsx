@@ -25,7 +25,7 @@ import { IconPicker, type IconPickerProps } from "./icon-picker.js";
 import { ImagePicker } from "./image-picker.js";
 import { Input } from "./input.js";
 import { createListReorder } from "./list-reorder.js";
-import { type ImagePreset, imagePreset, useMediaStore } from "./media-store.js";
+import { type ImagePreset, imagePreset, useMediaUrls } from "./media-store.js";
 import { NumberField } from "./number-field.js";
 import { OptionCard, OptionCardGroup } from "./option-card.js";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select.js";
@@ -506,7 +506,7 @@ const LIST_GAP = { class: "gap-2", px: 8 } as const;
 
 function ListControl(props: FieldProps) {
   const itemSchema = () => itemsOf(props.prop);
-  const mediaStore = useMediaStore();
+  const mediaUrls = useMediaUrls();
   const [brokenThumbs, setBrokenThumbs] = createSignal<ReadonlySet<string>>(new Set());
 
   // One image field is unambiguously the row's picture. Two would need the
@@ -524,10 +524,8 @@ function ListControl(props: FieldProps) {
     const preset = imagePreset(id);
     if (preset !== undefined)
       return propertiesOf(itemSchema()).find(([k]) => k === key)?.[1].presets?.[preset]?.thumb;
-    const store = mediaStore;
-    if (!store) return undefined;
     // A 32px row chip: the thumb variant, never the original.
-    return store.url(id, "thumb");
+    return mediaUrls?.url(id, "thumb");
   };
 
   const liveThumbUrl = (item: unknown) => {
@@ -654,7 +652,7 @@ function ListControl(props: FieldProps) {
                   )}
                   aria-hidden="true"
                 />
-                <Show when={imageKey() !== undefined && mediaStore !== undefined}>
+                <Show when={imageKey() !== undefined && mediaUrls !== undefined}>
                   <span
                     class={cn(
                       FIELD_CHROME,

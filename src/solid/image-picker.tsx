@@ -43,10 +43,12 @@ import {
   MEDIA_PAGE_SIZE,
   type MediaStore,
   type MediaStoreError,
+  type MediaUrls,
   presetValue,
   type StoredMedia,
   sortMediaForClearing,
   useMediaStore,
+  useMediaUrls,
 } from "./media-store.js";
 import { MediaTile } from "./media-tile.js";
 import {
@@ -71,18 +73,21 @@ export interface ImagePickerProps {
   class?: string;
 }
 
+const UNAVAILABLE = "Uploading images isn't available here.";
+
 export function ImagePicker(props: ImagePickerProps) {
   const store = useMediaStore();
+  const urls = useMediaUrls();
   return (
     <Show
       when={store || props.presets}
       fallback={
         <div data-slot="image-picker" class={cn(props.class)}>
-          <Alert tone="info">This dashboard cannot store images.</Alert>
+          <Alert tone="info">{UNAVAILABLE}</Alert>
         </div>
       }
     >
-      <ImageGallery {...props} store={store} />
+      <ImageGallery {...props} store={store} urls={urls} />
     </Show>
   );
 }
@@ -124,8 +129,11 @@ function PresetTile(props: { preset: ImagePreset; selected: boolean; onSelect: (
   );
 }
 
-function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined }) {
+function ImageGallery(
+  props: ImagePickerProps & { store: MediaStore | undefined; urls: MediaUrls | undefined },
+) {
   const store = props.store;
+  const uploadedUrl = () => props.urls?.url(props.value);
 
   const [open, setOpen] = createSignal(false);
   const [everOpened, setEverOpened] = createSignal(false);
@@ -247,7 +255,9 @@ function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined 
             clearLabel="Clear image"
           >
             <Show
-              when={!thumbBroken() && props.value && (chosenPreset() ?? store)}
+              when={
+                !thumbBroken() && props.value && (chosenPreset() ?? uploadedUrl() !== undefined)
+              }
               fallback={
                 <>
                   <Icon
@@ -263,7 +273,7 @@ function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined 
               }
             >
               <img
-                src={chosenPreset()?.thumb ?? store?.url(props.value)}
+                src={chosenPreset()?.thumb ?? uploadedUrl()}
                 alt=""
                 width={24}
                 height={24}
@@ -418,7 +428,7 @@ function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined 
                 </SectionMeta>
               )}
             </Show>
-            <Show when={store}>
+            <Show when={store} fallback={<SectionMeta>{UNAVAILABLE}</SectionMeta>}>
               <input
                 ref={fileInput}
                 type="file"
