@@ -58,6 +58,8 @@ export interface MediaStore extends MediaUrls {
   upload(file: File): Promise<StoredMedia>;
   remove(id: string): Promise<void>;
   url(id: string, variant?: MediaVariant): string;
+  /** false: this holder may not delete, so a gallery offers no Delete. */
+  readonly canRemove?: boolean;
 }
 
 /** `null` withholds the store from a tree, even where the host registered one. */

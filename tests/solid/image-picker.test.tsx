@@ -583,4 +583,32 @@ describe("focus in the gallery", () => {
     await waitFor(() => expect(calls).toBe(2));
     expect(await screen.findByRole("button", { name: "Use a" })).toBe(tile);
   });
+
+  it("opens on the gallery itself, so a key pressed as it opens picks nothing", async () => {
+    const onChange = vi.fn();
+    withStore(storeWith({ index: async () => indexOf([image("a")]) }), () => (
+      <ImagePicker value="" onChange={onChange} />
+    ));
+    await userEvent.click(trigger());
+    await screen.findByRole("button", { name: "Use a" });
+    expect(document.activeElement).toBe(gallery());
+    await userEvent.keyboard("{Enter}");
+    expect(onChange).not.toHaveBeenCalled();
+  });
+});
+
+describe("a store that may not delete", () => {
+  it("lists, uploads and picks, and offers no Delete", async () => {
+    const onChange = vi.fn();
+    withStore(storeWith({ canRemove: false, index: async () => indexOf([image("a")]) }), () => (
+      <ImagePicker value="" onChange={onChange} />
+    ));
+    await userEvent.click(trigger());
+    await userEvent.click(await screen.findByRole("button", { name: "Use a" }));
+    expect(onChange).toHaveBeenCalledWith("a");
+    await userEvent.click(trigger());
+    await screen.findByRole("button", { name: "Use a" });
+    expect(screen.queryByRole("button", { name: "Delete a" })).toBeNull();
+    expect(uploadButton()).not.toBeNull();
+  });
 });

@@ -144,6 +144,7 @@ function ImageGallery(
   const thumbUrl = (id: string) => store?.url(id, "thumb") ?? "";
   const brokenTiles = createBrokenMedia(thumbUrl);
   let fileInput: HTMLInputElement | undefined;
+  let panel: HTMLElement | undefined;
 
   const [index, { refetch }] = createResource(
     () => everOpened() && store !== undefined,
@@ -290,7 +291,14 @@ function ImageGallery(
           </PickerTrigger>
         </PopoverAnchor>
         <PopoverContent
+          ref={(el: HTMLElement) => (panel = el)}
+          tabIndex={-1}
           class="min-w-72"
+          // A key pressed as the gallery opens lands on the panel, never on a tile it would pick.
+          onOpenAutoFocus={(event: Event) => {
+            event.preventDefault();
+            panel?.focus({ preventScroll: true });
+          }}
           onInteractOutside={(event) => {
             // The delete confirmation takes focus; the gallery stays open to show the result.
             if (pendingDelete()) event.preventDefault();
@@ -378,7 +386,11 @@ function ImageGallery(
                         selected={props.value === tile.image.id}
                         onSelect={() => pick(tile.image.id)}
                         onBroken={() => brokenTiles.markBroken(tile.image)}
-                        onDelete={() => setPendingDelete(tile.image)}
+                        onDelete={
+                          store?.canRemove === false
+                            ? undefined
+                            : () => setPendingDelete(tile.image)
+                        }
                       />
                     )
                   }
