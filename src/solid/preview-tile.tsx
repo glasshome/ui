@@ -1,5 +1,6 @@
 import type { JSX } from "solid-js";
-import { createEffect, on, Show } from "solid-js";
+import { onCleanup, onMount, Show } from "solid-js";
+import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { isItemActivation, RadioGroup, RadioGroupItem } from "./radio-group.js";
@@ -16,10 +17,9 @@ const TILE_FACE =
 
 const SM_COLUMNS = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-3", 4: "sm:grid-cols-4" } as const;
 
-/* A row of fixed-width tiles below `sm`, faded at both edges; a grid from `sm` up.
+/* A row of fixed-width tiles below `sm`, faded where it is clipped; a grid from `sm` up.
  * The caller bleeds the row to its container's edge with a negative margin and matching padding. */
-const SCROLL_ROW =
-  "flex flex-row overflow-x-auto overscroll-x-contain snap-x snap-proximity py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(90deg,transparent_0,#000_20px,#000_calc(100%-20px),transparent)] sm:grid sm:overflow-visible sm:[mask-image:none] [&>*]:w-39 [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto";
+const SCROLL_ROW = `flex flex-row overflow-x-auto overscroll-x-contain snap-x snap-proximity py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${SCROLL_TRACK_FADE} sm:grid sm:overflow-visible [&>*]:w-39 [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto`;
 
 export function PreviewTileGroup(props: {
   value: string | null;
@@ -32,19 +32,9 @@ export function PreviewTileGroup(props: {
   children: JSX.Element;
 }) {
   let group: HTMLElement | undefined;
-  createEffect(
-    on(
-      () => props.value,
-      (value) => {
-        if (!props.scroll || value === null) return;
-        group
-          ?.querySelector(`input[type="radio"][value="${CSS.escape(value)}"]`)
-          ?.closest('[data-slot="preview-tile"]')
-          ?.scrollIntoView({ inline: "nearest", block: "nearest" });
-      },
-      { defer: true },
-    ),
-  );
+  onMount(() => {
+    if (props.scroll && group) onCleanup(trackScroll(group, "[data-checked]", "data-checked"));
+  });
   return (
     <RadioGroup
       ref={(el: HTMLElement) => {
