@@ -105,7 +105,7 @@ export function PickersCatalog() {
           </div>
         </Specimen>
 
-        <Specimen name="SlotButton" try={icon()} span={2}>
+        <Specimen name="SlotButton" span={2}>
           <Axis of="shape">
             <div class="flex items-start gap-4">
               <IconPicker variant="slot" aria-label="Icon" value={icon()} onChange={setIcon} />
