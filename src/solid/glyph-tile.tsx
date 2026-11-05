@@ -49,7 +49,7 @@ export function GlyphTile(props: {
       data-slot="glyph-tile"
       class={cn(
         FIELD_CHROME,
-        "transition-glass group/glyph-tile focus-visible:ring-ring/50 data-[pressed]:ring-primary relative flex h-17 w-19 shrink-0 touch-manipulation snap-start flex-col items-center justify-center gap-1.5 rounded-2xl px-1 text-xs font-medium duration-200 outline-none focus-visible:ring-[3px] active:scale-[0.97] data-[pressed]:ring-2 data-[pressed]:[--glass-edge:var(--primary)]",
+        "transition-glass group/glyph-tile focus-visible:ring-ring/50 data-[pressed]:ring-primary relative flex h-17 w-22 shrink-0 touch-manipulation snap-start flex-col items-center justify-center gap-1.5 rounded-2xl px-1 text-xs font-medium duration-200 outline-none focus-visible:ring-[3px] active:scale-[0.97] data-[pressed]:ring-2 data-[pressed]:[--glass-edge:var(--primary)]",
         props.class,
       )}
     >
