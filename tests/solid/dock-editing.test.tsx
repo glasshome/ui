@@ -78,7 +78,10 @@ afterEach(async () => {
 
 describe("Dock edit chrome", () => {
   it("shows a remove button only on items that can leave", () => {
-    const list: DockItem[] = [...items(2), { ...items(1)[0], id: "settings", removable: false }];
+    const list: DockItem[] = [
+      ...items(2),
+      { id: "settings", icon: <span />, label: "Settings", removable: false },
+    ];
     const { container } = render(() => (
       <Dock items={list} editing onRemove={() => {}} onReorder={() => {}} />
     ));
