@@ -370,11 +370,13 @@ export {
   SheetTrigger,
 } from "./sheet.js";
 export { Skeleton } from "./skeleton.js";
+export { SlotButton, type SlotButtonProps } from "./slot-button.js";
 export { Slider } from "./slider.js";
 export { SelectionHighlight, type SelectionMarker, SelectionScope } from "./selection.js";
 export { SlidingIndicator } from "./sliding-indicator.js";
 // Wave 4: React-Library Alternatives - Simpler
 export { GlassToast, Toaster, toast } from "./sonner.js";
+export { GlyphTile, GlyphTileGroup } from "./glyph-tile.js";
 export { Spinner } from "./spinner.js";
 export { Spotlight } from "./spotlight.js";
 export { StepIndicator } from "./step-indicator.js";

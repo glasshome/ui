@@ -551,6 +551,12 @@ const CASES: Record<string, () => JSX.Element> = {
       </solid.PreviewTile>
     </solid.PreviewTileGroup>
   ),
+  SlotButton: () => <solid.SlotButton class="probe" aria-label="Slot" />,
+  GlyphTile: () => (
+    <solid.GlyphTileGroup aria-label="Tiles" value={null} onChange={noop}>
+      <solid.GlyphTile class="probe" value="a" icon="lucide:plus" label="A" />
+    </solid.GlyphTileGroup>
+  ),
   PreviewTileAction: () => (
     <solid.PreviewTileAction class="probe" label="More" icon="lucide:plus" />
   ),

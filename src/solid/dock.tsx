@@ -14,6 +14,7 @@ import {
 } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { CARD_SURFACE } from "../lib/card-classes.js";
+import { DOCK_SLOT_SHAPE } from "../lib/dock-slot-classes.js";
 import {
   DOCK_ARRIVE_MOTION,
   DOCK_EDIT_MOTION,
@@ -101,7 +102,8 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
         type="button"
         data-slot="dock-item"
         class={cn(
-          "group relative isolate flex size-11 touch-manipulation items-center justify-center rounded-lg transition-transform duration-(--duration-micro) sm:size-12",
+          "group relative isolate transition-transform duration-(--duration-micro)",
+          DOCK_SLOT_SHAPE,
           PRESS_DIP,
           local.class,
         )}
@@ -507,7 +509,8 @@ const Dock: Component<DockProps> = (props) => {
                 onClick={() => local.onAdd?.()}
                 style={{ order: local.items.length }}
                 class={cn(
-                  "text-muted-foreground border-foreground/30 hover:text-foreground hover:border-foreground/60 flex size-11 shrink-0 touch-manipulation items-center justify-center rounded-lg border-2 border-dashed transition-colors duration-(--duration-state) sm:size-12",
+                  "text-muted-foreground border-foreground/30 hover:text-foreground hover:border-foreground/60 shrink-0 border-2 border-dashed transition-colors duration-(--duration-state)",
+                  DOCK_SLOT_SHAPE,
                   PRESS_DIP,
                   needsScroll() && "snap-start",
                 )}

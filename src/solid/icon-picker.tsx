@@ -6,7 +6,8 @@ import { cn } from "../lib/utils.js";
 import { Icon, iconSearch } from "./icon.js";
 import { PickerSearch } from "./picker-search.js";
 import { PickerTrigger } from "./picker-trigger.js";
-import { Popover, PopoverAnchor, PopoverContent } from "./popover.js";
+import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popover.js";
+import { SlotButton } from "./slot-button.js";
 
 export const ICON_SEARCH_DEBOUNCE_MS = 300;
 
@@ -257,7 +258,11 @@ export interface IconPickerProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  /** `slot` is a dock-shaped button showing the icon, for a form that is picking what a dock item will wear. */
+  variant?: "field" | "slot";
   class?: string;
+  /** Names a `slot` trigger, which shows no text of its own. */
+  "aria-label"?: string;
   /** @deprecated Pass `search` to `provideIcons` once; removed in 2.0.0. */
   searchIcons?: (query: string, prefix: string) => Promise<string[]>;
   /** Id of the element naming the trigger, for forms that label it outside. */
@@ -265,6 +270,7 @@ export interface IconPickerProps {
 }
 
 export function IconPicker(props: IconPickerProps) {
+  const slot = () => props.variant === "slot";
   const [open, setOpen] = createSignal(false);
   const [search, setSearch] = createSignal("");
   const [activeLib, setActiveLib] = createSignal("");
@@ -334,30 +340,43 @@ export function IconPicker(props: IconPickerProps) {
   };
 
   return (
-    <Popover surface="field" open={open()} onOpenChange={setOpen} modal>
-      <PopoverAnchor as="div" class={props.class}>
-        <PickerTrigger
-          slot="icon-picker-trigger"
-          open={open()}
-          onToggle={() => setOpen(!open())}
+    <Popover surface={slot() ? "overlay" : "field"} open={open()} onOpenChange={setOpen} modal>
+      <Show when={slot()}>
+        <PopoverTrigger
+          as={SlotButton}
+          aria-label={props["aria-label"] ?? "Icon"}
           aria-labelledby={props["aria-labelledby"]}
-          onClear={props.value.trim() ? clearIcon : undefined}
-          clearLabel="Clear icon"
+          class={props.class}
         >
-          <Show
-            when={props.value.trim()}
-            fallback={
-              <span class="text-muted-foreground flex-1 text-left">
-                {props.placeholder ?? "mdi:home"}
-              </span>
-            }
+          <Icon icon={props.value.trim() || "lucide:smile-plus"} width={22} height={22} />
+        </PopoverTrigger>
+      </Show>
+      <Show when={!slot()}>
+        <PopoverAnchor as="div" class={props.class}>
+          <PickerTrigger
+            slot="icon-picker-trigger"
+            open={open()}
+            onToggle={() => setOpen(!open())}
+            aria-labelledby={props["aria-labelledby"]}
+            onClear={props.value.trim() ? clearIcon : undefined}
+            clearLabel="Clear icon"
           >
-            <Icon icon={props.value.trim()} width={18} height={18} class="shrink-0" />
-            <span class="flex-1 truncate text-left">{props.value}</span>
-          </Show>
-        </PickerTrigger>
-      </PopoverAnchor>
+            <Show
+              when={props.value.trim()}
+              fallback={
+                <span class="text-muted-foreground flex-1 text-left">
+                  {props.placeholder ?? "mdi:home"}
+                </span>
+              }
+            >
+              <Icon icon={props.value.trim()} width={18} height={18} class="shrink-0" />
+              <span class="flex-1 truncate text-left">{props.value}</span>
+            </Show>
+          </PickerTrigger>
+        </PopoverAnchor>
+      </Show>
       <PopoverContent
+        class={slot() ? "w-[min(22rem,calc(100vw-2rem))] p-0" : undefined}
         onOpenAutoFocus={(e) => {
           e.preventDefault();
           // preventScroll: the panel is portalled at (0,0) until the popper places it,
