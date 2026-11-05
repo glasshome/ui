@@ -376,6 +376,7 @@ export { SelectionHighlight, type SelectionMarker, SelectionScope } from "./sele
 export { SlidingIndicator } from "./sliding-indicator.js";
 // Wave 4: React-Library Alternatives - Simpler
 export { GlassToast, Toaster, toast } from "./sonner.js";
+export { FaceToggle, FaceToggleGroup } from "./face-toggle.js";
 export { GlyphTile, GlyphTileGroup } from "./glyph-tile.js";
 export { Spinner } from "./spinner.js";
 export { Spotlight } from "./spotlight.js";

@@ -194,6 +194,7 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | where a catalog item comes from (official, community, built in) | `<SourceMarks official builtIn>`, in a tile through `<PreviewTile marks>` | a `badge-check` icon or a "Built in" byline by hand |
 | the icon a dock item will wear, or an empty place in the dock | `<IconPicker variant="slot">`, `<SlotButton dashed label>`: the dock's own slot shape (`DOCK_SLOT_SHAPE`) | a round or square button sized by hand beside an input |
 | picking one of a short row of places or kinds, a glyph over a name, tap again to clear | `<GlyphTileGroup>` + `<GlyphTile badge>`: a row on a phone, wrapping from `sm`. `<AreaPicker>` stays the searchable popover for a long list | a `ToggleGroup` of chips with an icon inside each segment |
+| turning people and screens on or off, some always on (who sees it) | `<FaceToggleGroup lockedIds>` + `<FaceToggle kind>`: an avatar over a name, a locked face reads on and says it always sees it | a `Switch` per person in a list |
 | one colour out of a few | `<SwatchPicker>` (+ a picker as its child) | round buttons by hand |
 | an editor that leaves the page live behind it | `<DockedPanel>` + its Header, Body, Footer | a `<Sheet>` with its scrim hidden |
 | tabs above a stack of toggle groups | `<TabsTrigger icon>` | an `<Icon>` placed inside the trigger by hand |

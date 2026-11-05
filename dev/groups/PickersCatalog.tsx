@@ -7,6 +7,8 @@ import {
   ColorWheel,
   DashboardPreview,
   EntitySelector,
+  FaceToggle,
+  FaceToggleGroup,
   GlyphTile,
   GlyphTileGroup,
   Icon,
@@ -51,6 +53,7 @@ export function PickersCatalog() {
   const [tile, setTile] = createSignal<string | null>("soft");
   const [layout, setLayout] = createSignal<string | null>("empty");
   const [room, setRoom] = createSignal<string | null>("Kitchen");
+  const [faces, setFaces] = createSignal<string[]>(["leo"]);
   const [swatch, setSwatch] = createSignal<string | null>("var(--primary)");
   const [presetId, setPresetId] = createSignal("preset:coast");
   const [disc, setDisc] = createSignal<Color>(parseColor("hsb(330, 60%, 100%)"));
@@ -129,6 +132,19 @@ export function PickersCatalog() {
               )}
             </For>
           </GlyphTileGroup>
+        </Specimen>
+
+        <Specimen name="FaceToggle" state={`on: ${faces().join(", ") || "none"}`} span={2}>
+          <FaceToggleGroup
+            aria-label="Who sees it"
+            value={faces()}
+            lockedIds={["maya"]}
+            onChange={setFaces}
+          >
+            <FaceToggle id="maya" name="Maya" kind="person" />
+            <FaceToggle id="leo" name="Leo" kind="person" />
+            <FaceToggle id="tablet" name="Kitchen tablet" kind="screen" />
+          </FaceToggleGroup>
         </Specimen>
 
         <Specimen name="AreaPicker" try="Choose a room..." span={2}>
