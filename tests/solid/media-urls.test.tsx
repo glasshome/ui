@@ -6,6 +6,7 @@ import { ImagePicker } from "../../src/solid/image-picker.jsx";
 import {
   type MediaStore,
   MediaStoreContext,
+  MediaUrlsContext,
   mediaUrl,
   provideMediaStore,
   provideMediaUrls,
@@ -66,4 +67,29 @@ it("reads a store accessor each time a picker mounts", async () => {
     expect(document.querySelector('[data-slot="image-picker-upload"]')).not.toBeNull(),
   );
   expect(screen.queryByText("Uploading images isn't available here.")).toBeNull();
+});
+
+it("a tree's own url source wins over the one the host provided", () => {
+  provideMediaStore(() => null);
+  provideMediaUrls({ url: (id) => `${PIXEL}#host-${id}` });
+  let resolved: string | undefined;
+  render(() => (
+    <MediaUrlsContext.Provider value={{ url: (id) => `${PIXEL}#tree-${id}` }}>
+      {(() => {
+        resolved = mediaUrl("abc");
+        return null;
+      })()}
+    </MediaUrlsContext.Provider>
+  ));
+  expect(resolved).toBe(`${PIXEL}#tree-abc`);
+});
+
+it("an upload the store gives no url for reads as no image, never a broken one", () => {
+  render(() => (
+    <MediaStoreContext.Provider value={{ ...store, url: () => "" }}>
+      <ImagePicker value="abc" onChange={() => {}} presets={presets} />
+    </MediaStoreContext.Provider>
+  ));
+  expect(trigger().querySelector("img")).toBeNull();
+  expect(trigger().textContent).toContain("Choose image");
 });

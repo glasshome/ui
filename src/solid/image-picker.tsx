@@ -92,9 +92,8 @@ export function ImagePicker(props: ImagePickerProps) {
   );
 }
 
-type GalleryTile =
-  | { kind: "preset"; key: string; preset: ImagePreset }
-  | { kind: "media"; image: StoredMedia };
+type MediaGalleryTile = { kind: "media"; image: StoredMedia };
+type GalleryTile = { kind: "preset"; key: string; preset: ImagePreset } | MediaGalleryTile;
 
 function PresetTile(props: { preset: ImagePreset; selected: boolean; onSelect: () => void }) {
   return (
@@ -157,15 +156,20 @@ function ImageGallery(
   );
   const loaded = () => (index.error === undefined ? index() : undefined);
   const sorted = createMemo(() => sortMediaForClearing(loaded()?.media ?? []));
-  // Built-in pictures lead the grid; the household's uploads follow them.
-  const tiles = createMemo<GalleryTile[]>(() => [
-    ...Object.entries(props.presets ?? {}).map(([key, preset]): GalleryTile => ({
+  const presetTiles = createMemo(() =>
+    Object.entries(props.presets ?? {}).map(([key, preset]): GalleryTile => ({
       kind: "preset",
       key,
       preset,
     })),
-    ...sorted().map((image): GalleryTile => ({ kind: "media", image })),
-  ]);
+  );
+  // A reload hands back fresh objects; an unchanged upload keeps its tile, and the focus on it.
+  const mediaTiles = createMemo<MediaGalleryTile[]>((before) => {
+    const kept = new Map(before.map((tile) => [JSON.stringify(tile.image), tile]));
+    return sorted().map((image) => kept.get(JSON.stringify(image)) ?? { kind: "media", image });
+  }, []);
+  // Built-in pictures lead the grid; the household's uploads follow them.
+  const tiles = createMemo<GalleryTile[]>(() => [...presetTiles(), ...mediaTiles()]);
   const pageCount = createMemo(() => Math.max(1, Math.ceil(tiles().length / MEDIA_PAGE_SIZE)));
   const current = createMemo(() => Math.min(page(), pageCount() - 1));
   const pageTiles = createMemo(() =>
@@ -255,9 +259,7 @@ function ImageGallery(
             clearLabel="Clear image"
           >
             <Show
-              when={
-                !thumbBroken() && props.value && (chosenPreset() ?? uploadedUrl() !== undefined)
-              }
+              when={!thumbBroken() && props.value && (chosenPreset() ?? uploadedUrl())}
               fallback={
                 <>
                   <Icon

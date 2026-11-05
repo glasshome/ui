@@ -551,3 +551,36 @@ describe("ImagePicker built-in pictures", () => {
     expect(document.querySelector('[data-slot="image-picker-upload"]')).toBeNull();
   });
 });
+
+describe("focus in the gallery", () => {
+  it("stays on a built-in picture while the household's uploads load", async () => {
+    let arrive: (index: MediaIndex) => void = () => {};
+    const store = storeWith({ index: () => new Promise((done) => (arrive = done)) });
+    withStore(store, () => (
+      <ImagePicker
+        value=""
+        onChange={() => {}}
+        presets={{ garden: { label: "Garden", thumb: loads("garden") } }}
+      />
+    ));
+    await userEvent.click(trigger());
+    const tile = await screen.findByRole("button", { name: "Use Garden" });
+    tile.focus();
+    arrive(indexOf([image("a"), image("b")]));
+    await screen.findByRole("button", { name: "Use a" });
+    expect(document.activeElement).toBe(tile);
+  });
+
+  it("stays on an upload when the gallery reloads the same uploads", async () => {
+    let calls = 0;
+    const store = storeWith({ index: async () => (calls++, indexOf([image("a"), image("b")])) });
+    withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
+    await userEvent.click(trigger());
+    const tile = await screen.findByRole("button", { name: "Use a" });
+    tile.focus();
+    await userEvent.click(screen.getByRole("button", { name: "Delete b" }));
+    await userEvent.click(await screen.findByRole("button", { name: "Delete" }));
+    await waitFor(() => expect(calls).toBe(2));
+    expect(await screen.findByRole("button", { name: "Use a" })).toBe(tile);
+  });
+});

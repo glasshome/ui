@@ -63,6 +63,9 @@ export interface MediaStore extends MediaUrls {
 /** `null` withholds the store from a tree, even where the host registered one. */
 export const MediaStoreContext = createContext<MediaStore | null>();
 
+/** A tree's own url source, over the one the host provided. */
+export const MediaUrlsContext = createContext<MediaUrls>();
+
 let defaultStore: Accessor<MediaStore | null> = () => null;
 let defaultUrls: MediaUrls | undefined;
 
@@ -83,7 +86,7 @@ export function useMediaStore(): MediaStore | undefined {
 }
 
 export function useMediaUrls(): MediaUrls | undefined {
-  return useMediaStore() ?? defaultUrls;
+  return useMediaStore() ?? useContext(MediaUrlsContext) ?? defaultUrls;
 }
 
 /** One grid page. The picker and the library both slice by this, so neither can
