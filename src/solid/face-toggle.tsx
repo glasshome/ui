@@ -60,16 +60,29 @@ export function FaceToggle(props: {
             </Show>
           </AvatarFallback>
         </Avatar>
-        <Show when={isLocked()}>
+        <Show
+          when={isLocked()}
+          fallback={
+            <span
+              data-slot="face-toggle-check"
+              class="bg-primary text-primary-foreground border-background absolute -right-1 -bottom-1 hidden size-4 items-center justify-center rounded-full border-2 group-data-[pressed]/face-toggle:flex"
+            >
+              <Icon icon="lucide:check" width={10} height={10} />
+            </span>
+          }
+        >
           <span
             data-slot="face-toggle-lock"
-            class="bg-background text-muted-foreground absolute -right-1 -bottom-1 flex size-4 items-center justify-center rounded-full"
+            class="bg-muted text-foreground border-background absolute -right-1 -bottom-1 flex size-4 items-center justify-center rounded-full border-2"
           >
             <Icon icon="lucide:lock" width={10} height={10} />
           </span>
         </Show>
       </span>
-      <span data-slot="face-toggle-name" class="text-foreground max-w-full truncate">
+      <span
+        data-slot="face-toggle-name"
+        class="text-muted-foreground group-data-[pressed]/face-toggle:text-foreground max-w-full truncate transition-colors duration-200"
+      >
         {props.name}
       </span>
       <Show when={isLocked()}>

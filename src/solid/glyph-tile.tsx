@@ -49,10 +49,15 @@ export function GlyphTile(props: {
       data-slot="glyph-tile"
       class={cn(
         FIELD_CHROME,
-        "transition-glass group/glyph-tile focus-visible:ring-ring/50 data-[pressed]:ring-primary relative flex h-17 w-22 shrink-0 touch-manipulation snap-start flex-col items-center justify-center gap-1.5 rounded-2xl px-1 text-xs font-medium duration-200 outline-none focus-visible:ring-[3px] active:scale-[0.97] data-[pressed]:ring-2 data-[pressed]:[--glass-edge:var(--primary)]",
+        "transition-glass group/glyph-tile focus-visible:ring-ring/50 relative flex h-17 w-22 shrink-0 touch-manipulation snap-start flex-col items-center justify-center gap-1.5 rounded-2xl px-1 text-xs font-medium duration-200 outline-none focus-visible:ring-[3px] active:scale-[0.97] data-[pressed]:[--glass-base:color-mix(in_oklab,var(--primary)_16%,var(--input))] data-[pressed]:[--glass-edge:var(--primary)]",
         props.class,
       )}
     >
+      <span
+        aria-hidden="true"
+        data-slot="glyph-tile-ring"
+        class="ring-primary transition-glass pointer-events-none absolute inset-0 rounded-[inherit] ring-inset group-data-[pressed]/glyph-tile:ring-2"
+      />
       <Icon icon={props.icon} width={22} height={22} class="text-foreground shrink-0" />
       <span data-slot="glyph-tile-label" class="text-foreground max-w-full truncate">
         {props.label}
@@ -61,7 +66,7 @@ export function GlyphTile(props: {
         {(badge) => (
           <span
             data-slot="glyph-tile-badge"
-            class="bg-primary text-primary-foreground absolute -top-1 -right-1 hidden size-5 items-center justify-center rounded-full group-data-[pressed]/glyph-tile:flex"
+            class="bg-primary text-primary-foreground absolute top-1 right-1 z-10 hidden size-[18px] items-center justify-center rounded-full group-data-[pressed]/glyph-tile:flex"
           >
             <Icon icon={badge()} width={12} height={12} />
           </span>

@@ -64,6 +64,25 @@ describe("FaceToggleGroup", () => {
   });
 });
 
+describe("the badge on a face", () => {
+  const shown = (el: Element) => getComputedStyle(el).display !== "none";
+
+  it("is a check while a face is on and hidden while it is off", async () => {
+    render(() => <Faces />);
+    const check = () => face("Leo").querySelector('[data-slot="face-toggle-check"]');
+    expect(check()).not.toBeNull();
+    expect(shown(check() as Element)).toBe(false);
+    await press(face("Leo"));
+    expect(shown(check() as Element)).toBe(true);
+  });
+
+  it("is a lock, not a check, on a face that is always on", () => {
+    render(() => <Faces locked={["m1"]} />);
+    expect(face(/Maya/).querySelector('[data-slot="face-toggle-lock"]')).not.toBeNull();
+    expect(face(/Maya/).querySelector('[data-slot="face-toggle-check"]')).toBeNull();
+  });
+});
+
 describe("a locked face", () => {
   it("starts on, says it always sees it, and stays on when tapped", async () => {
     render(() => <Faces locked={["m1"]} />);
