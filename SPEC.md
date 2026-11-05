@@ -190,8 +190,11 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | a titled group of form rows | `<FieldSet>` + `<FieldLegend>` (+ `<FieldDescription>`) | a tracked uppercase `SectionLabel` eyebrow |
 | rows that belong to the row above them | `<FieldSubGroup>` | a bare `<Separator>` and a left pad |
 | picking one of a few described choices | `<OptionCardGroup>` + `<OptionCard>` | a hand-rolled `role="radio"` card list |
-| picking one of a few results you can see (pictures, shapes, previews) | `<PreviewTileGroup>` + `<PreviewTile>` | a grid of `aria-pressed` buttons by hand |
+| picking one of a few results you can see (pictures, shapes, previews) | `<PreviewTileGroup>` + `<PreviewTile>`; `scroll` makes a phone row that is a grid from `sm`, `dashed` is the empty choice, `<PreviewTileAction>` the way to more (a glyph on a dashed face, or children as a picture on a solid one) | a grid of `aria-pressed` buttons by hand, a "More" tile that is a radio |
 | where a catalog item comes from (official, community, built in) | `<SourceMarks official builtIn>`, in a tile through `<PreviewTile marks>` | a `badge-check` icon or a "Built in" byline by hand |
+| the icon a dock item will wear, or an empty place in the dock | `<IconPicker variant="slot">`, `<SlotButton dashed label>`: the dock's own slot shape (`DOCK_SLOT_SHAPE`) | a round or square button sized by hand beside an input |
+| picking one of a short row of places or kinds, a glyph over a name, tap again to clear | `<GlyphTileGroup>` + `<GlyphTile badge>`: a row on a phone, wrapping from `sm`. `<AreaPicker>` stays the searchable popover for a long list | a `ToggleGroup` of chips with an icon inside each segment |
+| turning people and screens on or off, some always on (who sees it) | `<FaceToggleGroup lockedIds>` + `<FaceToggle kind>`: an avatar over a name, a locked face reads on and says it always sees it | a `Switch` per person in a list |
 | one colour out of a few | `<SwatchPicker>` (+ a picker as its child) | round buttons by hand |
 | an editor that leaves the page live behind it | `<DockedPanel>` + its Header, Body, Footer | a `<Sheet>` with its scrim hidden |
 | tabs above a stack of toggle groups | `<TabsTrigger icon>` | an `<Icon>` placed inside the trigger by hand |
@@ -204,6 +207,8 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | the ambient motion window | `startMotionWindow()` | an app-local timer writing `data-motion` |
 | copying text or an image | `<CopyButton>`, `useCopyText()`, `copyText()` / `copyImage()` (from the click; text still loading goes in as a promise) | `navigator.clipboard`, `document.execCommand("copy")` |
 | a built-in wallpaper | `GEOMETRIC_HOUSES_SVG` from `@glasshome/ui/backgrounds` | an app's own copy of the SVG |
+| the app's navigation dock on any viewport edge, with paging and an arrival glow for newcomers | `<Dock placement="bottom\|left\|right" arrivedIds>`; a side edge pages vertically with the dots on the inner edge | a second dock component for the side, a glow keyframe in the app |
+| editing the dock in place: remove badges, an add slot, drag to reorder, carry the dock to another edge | `<Dock editing onRemove onAdd onReorder onMovePlacement>` and `DockItem.removable`; reorder reports the full id order once on release (Alt+arrows move the focused item) | a separate edit screen, drag handlers or a jiggle keyframe in the app |
 | pointing at a control while the user operates it | `<Spotlight>` (`blocking` on a targetless veil so the action inside the bubble is the only press that lands; a target taller than half the viewport places the bubble inside it, near the top, instead of above or below; the bubble carries a tail toward its `anchor`, which defaults to `target` and may point at a different element than the hole) | a hand-rolled fixed overlay with a cutout |
 
 Server-run `.astro` markup imports `@glasshome/ui/solid` too: the `solid`
@@ -275,6 +280,10 @@ Motion is one system, not per-component flair. Four rules, all held by
    after three idle minutes). `.glass-edge-orbit` is that rim.
 
 `HOLD_MOTION`: hold progress. A fill grows out of the touch while held, dissolves once the hold fires, and drains back faster if let go early (holding the dock to change modes).
+
+`DOCK_ARRIVE_MOTION`: a newcomer in the dock glows in the accent once and leaves nothing behind (`--duration-arrive`, zeroed under reduced motion).
+
+`DOCK_EDIT_MOTION`: in dock edit mode every item sways a hair, neighbours out of step, rotate only; the item under a finger stands still (`--duration-jiggle`, zeroed under reduced motion, where the remove badges and the dashed add slot still mark the mode).
 
 `RISE_MOTION`: `MODAL_MOTION`'s twin for a surface that stays mounted; its closed state is a resting style, since a mount door's exit ends and leaves the element showing.
 

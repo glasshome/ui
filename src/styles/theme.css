@@ -82,6 +82,29 @@
   --animate-morph-out: morph-out calc(var(--duration-morph) / 2) var(--ease-contract) both;
   /* Unfilled once done, so the anchored panel's clip lets go and its shadow shows. */
   --animate-anchored-in: morph-in var(--duration-morph) var(--ease-morph) backwards;
+
+  /* A newcomer's glow: shown at once, gone by the end, nothing left behind. */
+  --animate-dock-arrive: dock-arrive var(--duration-arrive) var(--ease-emphasis) both;
+  /* Edit mode's sway: a loop that lasts exactly as long as the mode. */
+  --animate-dock-jiggle: dock-jiggle var(--duration-jiggle) ease-in-out infinite alternate;
+}
+
+@keyframes dock-jiggle {
+  from {
+    rotate: -1.4deg;
+  }
+  to {
+    rotate: 1.4deg;
+  }
+}
+
+@keyframes dock-arrive {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes collapsible-down {
@@ -294,6 +317,10 @@
   --duration-slide: 220ms;
   /* The hold fill: HOLD_MS - HOLD_GRACE_MS (lib/hold.ts), so it completes as the hold fires. */
   --duration-hold: 250ms;
+  /* How long a newcomer in the dock glows (DOCK_ARRIVE_MOTION). */
+  --duration-arrive: 2400ms;
+  /* One sway of the dock's edit mode (DOCK_EDIT_MOTION). */
+  --duration-jiggle: 140ms;
   /* Ambient motion is an event (SPEC motion rule 5): 1 while the host holds
 	 * html[data-motion="live"], else 0. Inherits into widget shadow roots, so a
 	 * loop multiplies its duration by it: calc(var(--motion-ambient, 0) * 1s).
@@ -583,6 +610,8 @@ html[data-motion="live"] {
     --duration-expand: 0ms;
     --duration-morph: 0ms;
     --duration-hold: 0ms;
+    --duration-arrive: 0ms;
+    --duration-jiggle: 0ms;
     --duration-slide: 0ms;
   }
   /* tw-animate enter/exit classes carry their own fallback duration. */
@@ -612,6 +641,8 @@ html[data-motion="live"] {
   --duration-expand: 0ms;
   --duration-morph: 0ms;
   --duration-hold: 0ms;
+  --duration-arrive: 0ms;
+  --duration-jiggle: 0ms;
   --duration-slide: 0ms;
 }
 .reduce-motion,

@@ -152,7 +152,7 @@ export {
   DialogTrigger,
 } from "./dialog.js";
 export type { ModalSize } from "./dialog-parts.js";
-export type { DockIconButtonProps, DockItem, DockProps } from "./dock.js";
+export type { DockIconButtonProps, DockItem, DockPlacement, DockProps } from "./dock.js";
 export { Dock } from "./dock.js";
 export {
   DockedPanel,
@@ -302,7 +302,7 @@ export { PickerSearch, type PickerSearchProps } from "./picker-search.js";
 export { PickerTrigger, type PickerTriggerProps } from "./picker-trigger.js";
 export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popover.js";
 export { PortalMountContext, usePortalMount } from "./portal-mount.js";
-export { PreviewTile, PreviewTileGroup } from "./preview-tile.js";
+export { PreviewTile, PreviewTileAction, PreviewTileGroup } from "./preview-tile.js";
 export { Progress } from "./progress.js";
 export { RadioGroup, RadioGroupItem } from "./radio-group.js";
 export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "./resizable.js";
@@ -370,11 +370,14 @@ export {
   SheetTrigger,
 } from "./sheet.js";
 export { Skeleton } from "./skeleton.js";
+export { SlotButton, type SlotButtonProps } from "./slot-button.js";
 export { Slider } from "./slider.js";
 export { SelectionHighlight, type SelectionMarker, SelectionScope } from "./selection.js";
 export { SlidingIndicator } from "./sliding-indicator.js";
 // Wave 4: React-Library Alternatives - Simpler
 export { GlassToast, Toaster, toast } from "./sonner.js";
+export { FaceToggle, FaceToggleGroup } from "./face-toggle.js";
+export { GlyphTile, GlyphTileGroup } from "./glyph-tile.js";
 export { Spinner } from "./spinner.js";
 export { Spotlight } from "./spotlight.js";
 export { StepIndicator } from "./step-indicator.js";

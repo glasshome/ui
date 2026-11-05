@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { pageCount, pageOf, pageOffset, stripWidth } from "../../src/solid/dock-paging.js";
+import {
+  edgeZone,
+  moveId,
+  pageCount,
+  pageOf,
+  pageOffset,
+  slotAt,
+  stripWidth,
+} from "../../src/solid/dock-paging.js";
 
 describe("dock paging", () => {
   it("one page while everything fits", () => {
@@ -48,5 +56,37 @@ describe("dock paging", () => {
   it("leaves an unmeasured strip alone", () => {
     expect(stripWidth(222, 0, 2)).toBe(222);
     expect(stripWidth(0, 40, 2)).toBe(0);
+  });
+});
+
+describe("dock reorder", () => {
+  it("lands a dragged item in the slot nearest the pointer", () => {
+    expect(slotAt([20, 70, 120], 10)).toBe(0);
+    expect(slotAt([20, 70, 120], 80)).toBe(1);
+    expect(slotAt([20, 70, 120], 400)).toBe(2);
+  });
+
+  it("moves one id and keeps the rest in order", () => {
+    expect(moveId(["a", "b", "c", "d"], "a", 2)).toEqual(["b", "c", "a", "d"]);
+    expect(moveId(["a", "b", "c", "d"], "d", 0)).toEqual(["d", "a", "b", "c"]);
+    expect(moveId(["a", "b"], "z", 0)).toEqual(["a", "b"]);
+  });
+});
+
+describe("dock edge zones", () => {
+  const viewport = { width: 1000, height: 800 };
+
+  it("names the side an outer quarter points at", () => {
+    expect(edgeZone({ x: 100, y: 300 }, viewport)).toBe("left");
+    expect(edgeZone({ x: 900, y: 300 }, viewport)).toBe("right");
+  });
+
+  it("names the bottom for the lower middle and nothing for the upper middle", () => {
+    expect(edgeZone({ x: 500, y: 700 }, viewport)).toBe("bottom");
+    expect(edgeZone({ x: 500, y: 200 }, viewport)).toBeNull();
+  });
+
+  it("names nothing before the viewport is measured", () => {
+    expect(edgeZone({ x: 0, y: 0 }, { width: 0, height: 0 })).toBeNull();
   });
 });

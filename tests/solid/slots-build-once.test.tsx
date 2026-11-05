@@ -95,6 +95,16 @@ const inTabs = inside(ui.Tabs as never, { value: "a" });
 const inToggleGroup = inside(ui.ToggleGroup as never, { value: "a" });
 const inRadioGroup = inside(ui.RadioGroup as never, { value: "a" });
 const inOptionGroup = inside(ui.OptionCardGroup as never, { value: "a", onChange: noop });
+const inGlyphGroup = inside(ui.GlyphTileGroup as never, {
+  value: null,
+  onChange: noop,
+  "aria-label": "Tiles",
+});
+const inFaceGroup = inside(ui.FaceToggleGroup as never, {
+  value: [],
+  onChange: noop,
+  "aria-label": "Faces",
+});
 const inEntityData = (child: () => JSX.Element) => (
   <EntityDataContext.Provider value={adapter}>{child()}</EntityDataContext.Provider>
 );
@@ -234,6 +244,12 @@ const FIXTURES: Record<string, Fixture> = {
   PopoverContent: { wrap: inPopover },
   PopoverTrigger: { wrap: inPopover },
   PreviewTile: { wrap: inRadioGroup, props: { value: "a", label: "l" } },
+  PreviewTileAction: { props: { label: "More", icon: "lucide:plus" } },
+  SlotButton: { props: { "aria-label": "Slot" } },
+  FaceToggle: { wrap: inFaceGroup, props: { id: "a", name: "A", kind: "person" } },
+  FaceToggleGroup: { props: { value: [], onChange: noop, "aria-label": "Faces" } },
+  GlyphTile: { wrap: inGlyphGroup, props: { value: "a", icon: "lucide:plus", label: "A" } },
+  GlyphTileGroup: { props: { value: null, onChange: noop, "aria-label": "Tiles" } },
   RadioGroupItem: { wrap: inRadioGroup, props: { value: "a" } },
   RangeToggle: { props: { value: 7, onChange: noop } },
   ResponsiveDialogClose: { wrap: inResponsive },

@@ -551,6 +551,25 @@ const CASES: Record<string, () => JSX.Element> = {
       </solid.PreviewTile>
     </solid.PreviewTileGroup>
   ),
+  SlotButton: () => <solid.SlotButton class="probe" aria-label="Slot" />,
+  FaceToggleGroup: () => (
+    <solid.FaceToggleGroup class="probe" aria-label="Faces" value={[]} onChange={noop}>
+      <solid.FaceToggle id="a" name="A" kind="person" />
+    </solid.FaceToggleGroup>
+  ),
+  FaceToggle: () => (
+    <solid.FaceToggleGroup aria-label="Faces" value={[]} onChange={noop}>
+      <solid.FaceToggle class="probe" id="a" name="A" kind="person" />
+    </solid.FaceToggleGroup>
+  ),
+  GlyphTile: () => (
+    <solid.GlyphTileGroup aria-label="Tiles" value={null} onChange={noop}>
+      <solid.GlyphTile class="probe" value="a" icon="lucide:plus" label="A" />
+    </solid.GlyphTileGroup>
+  ),
+  PreviewTileAction: () => (
+    <solid.PreviewTileAction class="probe" label="More" icon="lucide:plus" />
+  ),
   OptionCard: () => (
     <solid.OptionCardGroup value={null} onChange={noop}>
       <solid.OptionCard class="probe" value="a" title="A" />

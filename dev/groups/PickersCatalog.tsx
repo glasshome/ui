@@ -7,6 +7,11 @@ import {
   ColorWheel,
   DashboardPreview,
   EntitySelector,
+  FaceToggle,
+  FaceToggleGroup,
+  GlyphTile,
+  GlyphTileGroup,
+  Icon,
   IconPicker,
   ImagePicker,
   MediaStoreContext,
@@ -15,8 +20,10 @@ import {
   PickerSearch,
   PickerTrigger,
   PreviewTile,
+  PreviewTileAction,
   PreviewTileGroup,
   parseColor,
+  SlotButton,
   SourceMarks,
   SwatchPicker,
   TemperatureBar,
@@ -44,6 +51,9 @@ export function PickersCatalog() {
   const [lightIds, setLightIds] = createSignal<string[]>([]);
   const [imageId, setImageId] = createSignal("");
   const [tile, setTile] = createSignal<string | null>("soft");
+  const [layout, setLayout] = createSignal<string | null>("empty");
+  const [room, setRoom] = createSignal<string | null>("Kitchen");
+  const [faces, setFaces] = createSignal<string[]>(["leo"]);
   const [swatch, setSwatch] = createSignal<string | null>("var(--primary)");
   const [presetId, setPresetId] = createSignal("preset:coast");
   const [disc, setDisc] = createSignal<Color>(parseColor("hsb(330, 60%, 100%)"));
@@ -93,6 +103,48 @@ export function PickersCatalog() {
           <div class="w-full max-w-sm">
             <IconPicker value={icon()} onChange={setIcon} placeholder="mdi:lightbulb" />
           </div>
+        </Specimen>
+
+        <Specimen name="SlotButton" span={2}>
+          <Axis of="shape">
+            <div class="flex items-start gap-4">
+              <IconPicker variant="slot" aria-label="Icon" value={icon()} onChange={setIcon} />
+              <SlotButton aria-label="Add" dashed>
+                <Icon icon="lucide:plus" width={20} height={20} />
+              </SlotButton>
+              <SlotButton label="Garage">
+                <Icon icon="mdi:garage" width={22} height={22} />
+              </SlotButton>
+            </div>
+          </Axis>
+        </Specimen>
+
+        <Specimen name="GlyphTile" state={`room: ${room() ?? "none"}`} span={2}>
+          <GlyphTileGroup
+            aria-label="Rooms"
+            value={room()}
+            onChange={setRoom}
+            class="w-full max-w-md"
+          >
+            <For each={["Kitchen", "Bedroom", "Garage", "Office", "Garden", "Hallway"]}>
+              {(name) => (
+                <GlyphTile value={name} icon="mdi:home-outline" label={name} badge="lucide:link" />
+              )}
+            </For>
+          </GlyphTileGroup>
+        </Specimen>
+
+        <Specimen name="FaceToggle" state={`on: ${faces().join(", ") || "none"}`} span={2}>
+          <FaceToggleGroup
+            aria-label="Who sees it"
+            value={faces()}
+            lockedIds={["maya"]}
+            onChange={setFaces}
+          >
+            <FaceToggle id="maya" name="Maya" kind="person" />
+            <FaceToggle id="leo" name="Leo" kind="person" />
+            <FaceToggle id="tablet" name="Kitchen tablet" kind="screen" />
+          </FaceToggleGroup>
         </Specimen>
 
         <Specimen name="AreaPicker" try="Choose a room..." span={2}>
@@ -280,6 +332,29 @@ export function PickersCatalog() {
                 </PreviewTile>
               )}
             </For>
+          </PreviewTileGroup>
+        </Specimen>
+
+        <Specimen name="PreviewTileAction" state={`layout: ${layout() ?? "none"}`} span={2}>
+          <PreviewTileGroup
+            scroll
+            columns={3}
+            aria-label="Layouts"
+            value={layout()}
+            onChange={setLayout}
+            class="w-full max-w-md"
+          >
+            <PreviewTile value="empty" label="Empty" dashed>
+              <Icon icon="lucide:plus" width={20} height={20} />
+            </PreviewTile>
+            <For each={["Living room", "Kitchen", "Bedroom"]}>
+              {(name) => (
+                <PreviewTile value={name} label={name}>
+                  <div class="from-primary/30 to-accent/30 absolute inset-0 bg-gradient-to-br" />
+                </PreviewTile>
+              )}
+            </For>
+            <PreviewTileAction label="More" icon="lucide:layout-template" />
           </PreviewTileGroup>
         </Specimen>
 

@@ -49,6 +49,17 @@ export const PRESS_DIP = "active:scale-[0.97]";
 export const HOLD_MOTION =
   "scale-0 opacity-0 transition-[scale,opacity] duration-(--duration-state) ease-(--ease-contract) data-[hold]:scale-100 data-[hold]:opacity-100 data-[hold]:duration-(--duration-hold) data-[hold]:ease-linear data-[fired]:scale-100 data-[fired]:opacity-0";
 
+/* A newcomer in the dock: a ring of the accent that fades once and leaves
+ * nothing behind. The host sets data-arrived on the item. */
+export const DOCK_ARRIVE_MOTION =
+  "pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 ring-2 ring-primary shadow-[0_0_14px_var(--primary)] group-data-[arrived]:animate-dock-arrive";
+
+/* Edit mode on the dock: every item sways a hair, neighbours out of step. The
+ * host sets data-editing; the item under a finger stands still (data-dragging).
+ * Rotate only, so it stays on the compositor. */
+export const DOCK_EDIT_MOTION =
+  "data-[editing]:animate-dock-jiggle data-[editing]:nth-even:[animation-direction:alternate-reverse] data-[dragging]:animate-none";
+
 /* MODAL_MOTION's twin for a surface that stays mounted: it rises out of what
  * opened it, and its closed state is a resting style, since a mount door's exit
  * ends and leaves the element showing. */
