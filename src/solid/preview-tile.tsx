@@ -7,7 +7,7 @@ import { isItemActivation, RadioGroup, RadioGroupItem } from "./radio-group.js";
 
 const COLUMNS = { 2: "grid-cols-2", 3: "grid-cols-3", 4: "grid-cols-4" } as const;
 
-const SHAPE = { wide: "aspect-[16/10]", tile: "aspect-[5/4]" } as const;
+const SHAPE = { film: "aspect-video", wide: "aspect-[16/10]", tile: "aspect-[5/4]" } as const;
 
 /* The face is the affordance: the radio control is suppressed and a ring on
  * the face carries the picked state, the focus ring rides the same edge.

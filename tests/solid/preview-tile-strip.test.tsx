@@ -105,6 +105,33 @@ describe("PreviewTile dashed", () => {
   });
 });
 
+describe("PreviewTile shape", () => {
+  it("draws a film face shorter than the default wide one", () => {
+    render(() => (
+      <div style={{ width: "320px" }}>
+        <PreviewTileGroup aria-label="Shapes" value="wide" onChange={() => {}}>
+          <PreviewTile value="wide" label="Wide">
+            <div />
+          </PreviewTile>
+          <PreviewTile value="film" label="Film" shape="film">
+            <div />
+          </PreviewTile>
+        </PreviewTileGroup>
+      </div>
+    ));
+    const ratio = (name: string) => {
+      const face = screen
+        .getByRole("radio", { name })
+        .closest("[data-slot=preview-tile]")
+        ?.querySelector("[data-slot=preview-tile-face]");
+      const box = (face as Element).getBoundingClientRect();
+      return box.width / box.height;
+    };
+    expect(ratio("Wide")).toBeCloseTo(16 / 10, 1);
+    expect(ratio("Film")).toBeCloseTo(16 / 9, 1);
+  });
+});
+
 describe("PreviewTileAction", () => {
   it("is a button among the pictures that picks nothing", async () => {
     let opened = 0;
