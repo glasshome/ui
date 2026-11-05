@@ -58,3 +58,29 @@ it("wraps the board in a well only when staged", () => {
   const bare = render(() => <DashboardPreview columns={4} tiles={[tile({})]} />);
   expect(bare.container.querySelector('[data-slot="dashboard-preview-stage"]')).toBeNull();
 });
+
+const glyphPx = (host: HTMLElement) => {
+  const icon = host.querySelector('[data-slot="dashboard-preview-icon-tile"] [data-slot="icon"]');
+  return Number.parseFloat(getComputedStyle(icon as Element).fontSize);
+};
+const labelShown = (host: HTMLElement) => {
+  const name = host.querySelector('[data-slot="dashboard-preview-icon-tile-label"]');
+  return getComputedStyle(name as Element).display !== "none";
+};
+const iconBoard = (width: number) => (
+  <div style={{ width: `${width}px` }}>
+    <DashboardPreview columns={12} tiles={[tile({ w: 3, h: 3 })]} />
+  </div>
+);
+
+it("fills a small picture's icon tile with its glyph and leaves the name out", () => {
+  const { container } = render(() => iconBoard(200));
+  expect(labelShown(container)).toBe(false);
+  expect(glyphPx(container)).toBeGreaterThan(12);
+});
+
+it("keeps a large picture's glyph and name as they were", () => {
+  const { container } = render(() => iconBoard(800));
+  expect(labelShown(container)).toBe(true);
+  expect(glyphPx(container)).toBeCloseTo(32 * (800 / 1256), 0);
+});

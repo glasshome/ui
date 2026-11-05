@@ -94,8 +94,16 @@ export function DashboardPreview(props: {
 
 const u = (n: number) => `calc(var(--dp-unit) * ${n})`;
 
+/** The share of a small icon tile's shorter side its glyph fills. */
+const GLYPH_SHARE = 0.42;
+
+/** Below this board width a name would be a smudge, so the glyph takes the tile instead. */
+const NAMED_FROM = "@max-[520px]:hidden";
+
 function IconTile(props: { tile: DashboardPreviewTile }) {
   const roomy = () => props.tile.w >= 2 && props.tile.h >= 2;
+  const fitted = () =>
+    Math.min(span(props.tile.w, CELL.w), span(props.tile.h, CELL.h)) * GLYPH_SHARE;
   return (
     <div
       data-slot="dashboard-preview-icon-tile"
@@ -104,16 +112,25 @@ function IconTile(props: { tile: DashboardPreviewTile }) {
         "text-muted-foreground flex h-full w-full items-center overflow-hidden",
         roomy() ? "flex-col justify-center text-center" : "justify-center",
       )}
-      style={{ "border-radius": u(20), gap: u(roomy() ? 8 : 10), padding: u(12) }}
+      style={{
+        "border-radius": u(20),
+        gap: u(roomy() ? 8 : 10),
+        padding: u(12),
+        "--dp-glyph": u(roomy() ? 32 : 22),
+        "--dp-glyph-fit": u(fitted()),
+      }}
     >
       <Icon
         icon={props.tile.icon}
         width="1em"
         height="1em"
-        style={{ "font-size": u(roomy() ? 32 : 22) }}
-        class="text-foreground/80 shrink-0"
+        class="text-foreground/80 shrink-0 text-[length:var(--dp-glyph)] @max-[520px]:text-[length:var(--dp-glyph-fit)]"
       />
-      <div class="flex min-w-0 flex-col" style={{ gap: u(4) }}>
+      <div
+        data-slot="dashboard-preview-icon-tile-label"
+        class={cn("flex min-w-0 flex-col", NAMED_FROM)}
+        style={{ gap: u(4) }}
+      >
         <span class="text-foreground/90 truncate font-medium" style={{ "font-size": u(13) }}>
           {props.tile.label}
         </span>
