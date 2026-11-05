@@ -7,6 +7,7 @@ import {
   ColorWheel,
   DashboardPreview,
   EntitySelector,
+  Icon,
   IconPicker,
   ImagePicker,
   MediaStoreContext,
@@ -15,6 +16,7 @@ import {
   PickerSearch,
   PickerTrigger,
   PreviewTile,
+  PreviewTileAction,
   PreviewTileGroup,
   parseColor,
   SourceMarks,
@@ -44,6 +46,7 @@ export function PickersCatalog() {
   const [lightIds, setLightIds] = createSignal<string[]>([]);
   const [imageId, setImageId] = createSignal("");
   const [tile, setTile] = createSignal<string | null>("soft");
+  const [layout, setLayout] = createSignal<string | null>("empty");
   const [swatch, setSwatch] = createSignal<string | null>("var(--primary)");
   const [presetId, setPresetId] = createSignal("preset:coast");
   const [disc, setDisc] = createSignal<Color>(parseColor("hsb(330, 60%, 100%)"));
@@ -280,6 +283,29 @@ export function PickersCatalog() {
                 </PreviewTile>
               )}
             </For>
+          </PreviewTileGroup>
+        </Specimen>
+
+        <Specimen name="PreviewTileAction" state={`layout: ${layout() ?? "none"}`} span={2}>
+          <PreviewTileGroup
+            scroll
+            columns={3}
+            aria-label="Layouts"
+            value={layout()}
+            onChange={setLayout}
+            class="w-full max-w-md"
+          >
+            <PreviewTile value="empty" label="Empty" dashed>
+              <Icon icon="lucide:plus" width={20} height={20} />
+            </PreviewTile>
+            <For each={["Living room", "Kitchen", "Bedroom"]}>
+              {(name) => (
+                <PreviewTile value={name} label={name}>
+                  <div class="from-primary/30 to-accent/30 absolute inset-0 bg-gradient-to-br" />
+                </PreviewTile>
+              )}
+            </For>
+            <PreviewTileAction label="More" icon="lucide:layout-template" />
           </PreviewTileGroup>
         </Specimen>
 

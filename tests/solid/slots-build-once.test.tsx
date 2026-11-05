@@ -234,6 +234,7 @@ const FIXTURES: Record<string, Fixture> = {
   PopoverContent: { wrap: inPopover },
   PopoverTrigger: { wrap: inPopover },
   PreviewTile: { wrap: inRadioGroup, props: { value: "a", label: "l" } },
+  PreviewTileAction: { props: { label: "More", icon: "lucide:plus" } },
   RadioGroupItem: { wrap: inRadioGroup, props: { value: "a" } },
   RangeToggle: { props: { value: 7, onChange: noop } },
   ResponsiveDialogClose: { wrap: inResponsive },

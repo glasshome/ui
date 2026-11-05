@@ -551,6 +551,9 @@ const CASES: Record<string, () => JSX.Element> = {
       </solid.PreviewTile>
     </solid.PreviewTileGroup>
   ),
+  PreviewTileAction: () => (
+    <solid.PreviewTileAction class="probe" label="More" icon="lucide:plus" />
+  ),
   OptionCard: () => (
     <solid.OptionCardGroup value={null} onChange={noop}>
       <solid.OptionCard class="probe" value="a" title="A" />

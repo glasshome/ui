@@ -190,7 +190,7 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | a titled group of form rows | `<FieldSet>` + `<FieldLegend>` (+ `<FieldDescription>`) | a tracked uppercase `SectionLabel` eyebrow |
 | rows that belong to the row above them | `<FieldSubGroup>` | a bare `<Separator>` and a left pad |
 | picking one of a few described choices | `<OptionCardGroup>` + `<OptionCard>` | a hand-rolled `role="radio"` card list |
-| picking one of a few results you can see (pictures, shapes, previews) | `<PreviewTileGroup>` + `<PreviewTile>` | a grid of `aria-pressed` buttons by hand |
+| picking one of a few results you can see (pictures, shapes, previews) | `<PreviewTileGroup>` + `<PreviewTile>`; `scroll` makes a phone row that is a grid from `sm`, `dashed` is the empty choice, `<PreviewTileAction>` the way to more | a grid of `aria-pressed` buttons by hand, a "More" tile that is a radio |
 | where a catalog item comes from (official, community, built in) | `<SourceMarks official builtIn>`, in a tile through `<PreviewTile marks>` | a `badge-check` icon or a "Built in" byline by hand |
 | one colour out of a few | `<SwatchPicker>` (+ a picker as its child) | round buttons by hand |
 | an editor that leaves the page live behind it | `<DockedPanel>` + its Header, Body, Footer | a `<Sheet>` with its scrim hidden |
