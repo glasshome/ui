@@ -19,7 +19,7 @@ const SM_COLUMNS = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-3", 4: "sm:grid-cols-
 
 /* A row of fixed-width tiles below `sm`, faded where it is clipped; a grid from `sm` up.
  * The caller bleeds the row to its container's edge with a negative margin and matching padding. */
-const SCROLL_ROW = `flex flex-row overflow-x-auto overscroll-x-contain snap-x snap-proximity py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${SCROLL_TRACK_FADE} sm:grid sm:overflow-visible [&>*]:w-39 [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto`;
+const SCROLL_ROW = `relative flex flex-row overflow-x-auto overscroll-x-contain snap-x snap-proximity py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${SCROLL_TRACK_FADE} sm:grid sm:overflow-visible [&>*]:w-39 [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto`;
 
 export function PreviewTileGroup(props: {
   value: string | null;

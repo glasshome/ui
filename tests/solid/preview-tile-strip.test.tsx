@@ -42,6 +42,18 @@ describe("PreviewTileGroup scroll", () => {
     expect(strip().scrollWidth).toBeGreaterThan(strip().clientWidth);
   });
 
+  it("keeps its hidden radio inputs inside the row, so a sheet around it never scrolls sideways", async () => {
+    await setViewportWidth(390);
+    onTestFinished(() => setViewportWidth(1024));
+    render(() => (
+      <div data-testid="sheet" style={{ position: "relative", width: "300px", overflow: "auto" }}>
+        <Strip />
+      </div>
+    ));
+    const sheet = screen.getByTestId("sheet");
+    expect(sheet.scrollWidth).toBeLessThanOrEqual(sheet.clientWidth);
+  });
+
   it("is a grid of its columns from sm up", async () => {
     await setViewportWidth(800);
     onTestFinished(() => setViewportWidth(1024));
