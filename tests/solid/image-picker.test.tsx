@@ -91,7 +91,16 @@ afterEach(cleanup);
 describe("ImagePicker", () => {
   it("renders a notice when no store is available", () => {
     render(() => <ImagePicker value="" onChange={() => {}} />);
-    expect(screen.getByText(/dashboard cannot store images/i)).toBeTruthy();
+    expect(screen.getByText("Uploading images isn't available here.")).toBeTruthy();
+  });
+
+  it("says nothing about uploading where a store exists", async () => {
+    withStore(storeWith(), () => <ImagePicker value="" onChange={() => {}} />);
+    await openGallery();
+    await waitFor(() =>
+      expect(document.querySelector('[data-slot="image-picker-upload"]')).not.toBeNull(),
+    );
+    expect(screen.queryByText("Uploading images isn't available here.")).toBeNull();
   });
 
   it("wears a full-width recessed field, not a raised auto-width button", () => {
@@ -533,11 +542,73 @@ describe("ImagePicker built-in pictures", () => {
     expect(trigger().querySelector("img")?.getAttribute("src")).toBe(presets.kitchen.thumb);
   });
 
-  it("still offers them where the dashboard cannot store images", async () => {
+  it("still offers them where uploading is unavailable", async () => {
     render(() => <ImagePicker value="" onChange={() => {}} presets={presets} />);
-    expect(screen.queryByText(/dashboard cannot store images/i)).toBeNull();
+    expect(screen.queryByText("Uploading images isn't available here.")).toBeNull();
     await openGallery();
     await waitFor(() => expect(presetTiles()).toHaveLength(2));
+    expect(screen.getByText("Uploading images isn't available here.")).toBeTruthy();
     expect(document.querySelector('[data-slot="image-picker-upload"]')).toBeNull();
+  });
+});
+
+describe("focus in the gallery", () => {
+  it("stays on a built-in picture while the household's uploads load", async () => {
+    let arrive: (index: MediaIndex) => void = () => {};
+    const store = storeWith({ index: () => new Promise((done) => (arrive = done)) });
+    withStore(store, () => (
+      <ImagePicker
+        value=""
+        onChange={() => {}}
+        presets={{ garden: { label: "Garden", thumb: loads("garden") } }}
+      />
+    ));
+    await userEvent.click(trigger());
+    const tile = await screen.findByRole("button", { name: "Use Garden" });
+    tile.focus();
+    arrive(indexOf([image("a"), image("b")]));
+    await screen.findByRole("button", { name: "Use a" });
+    expect(document.activeElement).toBe(tile);
+  });
+
+  it("stays on an upload when the gallery reloads the same uploads", async () => {
+    let calls = 0;
+    const store = storeWith({ index: async () => (calls++, indexOf([image("a"), image("b")])) });
+    withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
+    await userEvent.click(trigger());
+    const tile = await screen.findByRole("button", { name: "Use a" });
+    tile.focus();
+    await userEvent.click(screen.getByRole("button", { name: "Delete b" }));
+    await userEvent.click(await screen.findByRole("button", { name: "Delete" }));
+    await waitFor(() => expect(calls).toBe(2));
+    expect(await screen.findByRole("button", { name: "Use a" })).toBe(tile);
+  });
+
+  it("opens on the gallery itself, so a key pressed as it opens picks nothing", async () => {
+    const onChange = vi.fn();
+    withStore(storeWith({ index: async () => indexOf([image("a")]) }), () => (
+      <ImagePicker value="" onChange={onChange} />
+    ));
+    await userEvent.click(trigger());
+    await screen.findByRole("button", { name: "Use a" });
+    expect(document.activeElement).toBe(gallery());
+    await userEvent.keyboard("{Enter}");
+    expect(onChange).not.toHaveBeenCalled();
+  });
+});
+
+describe("a store that may not delete", () => {
+  it("lists, uploads and picks, and offers no Delete", async () => {
+    const onChange = vi.fn();
+    withStore(storeWith({ canRemove: false, index: async () => indexOf([image("a")]) }), () => (
+      <ImagePicker value="" onChange={onChange} />
+    ));
+    await userEvent.click(trigger());
+    await userEvent.click(await screen.findByRole("button", { name: "Use a" }));
+    expect(onChange).toHaveBeenCalledWith("a");
+    await userEvent.click(trigger());
+    await screen.findByRole("button", { name: "Use a" });
+    expect(screen.queryByRole("button", { name: "Delete a" })).toBeNull();
+    expect(uploadButton()).not.toBeNull();
   });
 });

@@ -43,10 +43,12 @@ import {
   MEDIA_PAGE_SIZE,
   type MediaStore,
   type MediaStoreError,
+  type MediaUrls,
   presetValue,
   type StoredMedia,
   sortMediaForClearing,
   useMediaStore,
+  useMediaUrls,
 } from "./media-store.js";
 import { MediaTile } from "./media-tile.js";
 import {
@@ -71,25 +73,27 @@ export interface ImagePickerProps {
   class?: string;
 }
 
+const UNAVAILABLE = "Uploading images isn't available here.";
+
 export function ImagePicker(props: ImagePickerProps) {
   const store = useMediaStore();
+  const urls = useMediaUrls();
   return (
     <Show
       when={store || props.presets}
       fallback={
         <div data-slot="image-picker" class={cn(props.class)}>
-          <Alert tone="info">This dashboard cannot store images.</Alert>
+          <Alert tone="info">{UNAVAILABLE}</Alert>
         </div>
       }
     >
-      <ImageGallery {...props} store={store} />
+      <ImageGallery {...props} store={store} urls={urls} />
     </Show>
   );
 }
 
-type GalleryTile =
-  | { kind: "preset"; key: string; preset: ImagePreset }
-  | { kind: "media"; image: StoredMedia };
+type MediaGalleryTile = { kind: "media"; image: StoredMedia };
+type GalleryTile = { kind: "preset"; key: string; preset: ImagePreset } | MediaGalleryTile;
 
 function PresetTile(props: { preset: ImagePreset; selected: boolean; onSelect: () => void }) {
   return (
@@ -124,8 +128,11 @@ function PresetTile(props: { preset: ImagePreset; selected: boolean; onSelect: (
   );
 }
 
-function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined }) {
+function ImageGallery(
+  props: ImagePickerProps & { store: MediaStore | undefined; urls: MediaUrls | undefined },
+) {
   const store = props.store;
+  const uploadedUrl = () => props.urls?.url(props.value);
 
   const [open, setOpen] = createSignal(false);
   const [everOpened, setEverOpened] = createSignal(false);
@@ -137,6 +144,7 @@ function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined 
   const thumbUrl = (id: string) => store?.url(id, "thumb") ?? "";
   const brokenTiles = createBrokenMedia(thumbUrl);
   let fileInput: HTMLInputElement | undefined;
+  let panel: HTMLElement | undefined;
 
   const [index, { refetch }] = createResource(
     () => everOpened() && store !== undefined,
@@ -149,15 +157,20 @@ function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined 
   );
   const loaded = () => (index.error === undefined ? index() : undefined);
   const sorted = createMemo(() => sortMediaForClearing(loaded()?.media ?? []));
-  // Built-in pictures lead the grid; the household's uploads follow them.
-  const tiles = createMemo<GalleryTile[]>(() => [
-    ...Object.entries(props.presets ?? {}).map(([key, preset]): GalleryTile => ({
+  const presetTiles = createMemo(() =>
+    Object.entries(props.presets ?? {}).map(([key, preset]): GalleryTile => ({
       kind: "preset",
       key,
       preset,
     })),
-    ...sorted().map((image): GalleryTile => ({ kind: "media", image })),
-  ]);
+  );
+  // A reload hands back fresh objects; an unchanged upload keeps its tile, and the focus on it.
+  const mediaTiles = createMemo<MediaGalleryTile[]>((before) => {
+    const kept = new Map(before.map((tile) => [JSON.stringify(tile.image), tile]));
+    return sorted().map((image) => kept.get(JSON.stringify(image)) ?? { kind: "media", image });
+  }, []);
+  // Built-in pictures lead the grid; the household's uploads follow them.
+  const tiles = createMemo<GalleryTile[]>(() => [...presetTiles(), ...mediaTiles()]);
   const pageCount = createMemo(() => Math.max(1, Math.ceil(tiles().length / MEDIA_PAGE_SIZE)));
   const current = createMemo(() => Math.min(page(), pageCount() - 1));
   const pageTiles = createMemo(() =>
@@ -247,7 +260,7 @@ function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined 
             clearLabel="Clear image"
           >
             <Show
-              when={!thumbBroken() && props.value && (chosenPreset() ?? store)}
+              when={!thumbBroken() && props.value && (chosenPreset() ?? uploadedUrl())}
               fallback={
                 <>
                   <Icon
@@ -263,7 +276,7 @@ function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined 
               }
             >
               <img
-                src={chosenPreset()?.thumb ?? store?.url(props.value)}
+                src={chosenPreset()?.thumb ?? uploadedUrl()}
                 alt=""
                 width={24}
                 height={24}
@@ -278,7 +291,14 @@ function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined 
           </PickerTrigger>
         </PopoverAnchor>
         <PopoverContent
+          ref={(el: HTMLElement) => (panel = el)}
+          tabIndex={-1}
           class="min-w-72"
+          // A key pressed as the gallery opens lands on the panel, never on a tile it would pick.
+          onOpenAutoFocus={(event: Event) => {
+            event.preventDefault();
+            panel?.focus({ preventScroll: true });
+          }}
           onInteractOutside={(event) => {
             // The delete confirmation takes focus; the gallery stays open to show the result.
             if (pendingDelete()) event.preventDefault();
@@ -366,7 +386,11 @@ function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined 
                         selected={props.value === tile.image.id}
                         onSelect={() => pick(tile.image.id)}
                         onBroken={() => brokenTiles.markBroken(tile.image)}
-                        onDelete={() => setPendingDelete(tile.image)}
+                        onDelete={
+                          store?.canRemove === false
+                            ? undefined
+                            : () => setPendingDelete(tile.image)
+                        }
                       />
                     )
                   }
@@ -418,7 +442,7 @@ function ImageGallery(props: ImagePickerProps & { store: MediaStore | undefined 
                 </SectionMeta>
               )}
             </Show>
-            <Show when={store}>
+            <Show when={store} fallback={<SectionMeta>{UNAVAILABLE}</SectionMeta>}>
               <input
                 ref={fileInput}
                 type="file"

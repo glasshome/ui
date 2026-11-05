@@ -1,4 +1,4 @@
-import { createContext, createSignal, useContext } from "solid-js";
+import { type Accessor, createContext, createSignal, useContext } from "solid-js";
 
 export type StoredMedia = {
   id: string;
@@ -49,26 +49,46 @@ export type MediaIndex = {
 /** "thumb" is a server-side derivative, longest edge ~400px, for grids. */
 export type MediaVariant = "original" | "thumb";
 
-export interface MediaStore {
+export interface MediaUrls {
+  url(id: string, variant?: MediaVariant): string | undefined;
+}
+
+export interface MediaStore extends MediaUrls {
   index(): Promise<MediaIndex>;
   upload(file: File): Promise<StoredMedia>;
   remove(id: string): Promise<void>;
   url(id: string, variant?: MediaVariant): string;
+  /** false: this holder may not delete, so a gallery offers no Delete. */
+  readonly canRemove?: boolean;
 }
 
 /** `null` withholds the store from a tree, even where the host registered one. */
 export const MediaStoreContext = createContext<MediaStore | null>();
 
-let defaultStore: MediaStore | undefined;
+/** A tree's own url source, over the one the host provided. */
+export const MediaUrlsContext = createContext<MediaUrls>();
 
-/** Host apps call this once at startup; MediaStoreContext overrides it per-tree. */
-export function provideMediaStore(store: MediaStore): void {
-  defaultStore = store;
+let defaultStore: Accessor<MediaStore | null> = () => null;
+let defaultUrls: MediaUrls | undefined;
+
+/** Host apps call this once at startup; MediaStoreContext overrides it per-tree. An accessor is read each time a picker mounts. */
+export function provideMediaStore(store: MediaStore | Accessor<MediaStore | null>): void {
+  defaultStore = typeof store === "function" ? store : () => store;
+}
+
+/** Resolves stored ids to image urls in a tree that shows images but cannot manage them. */
+export function provideMediaUrls(urls: MediaUrls): void {
+  defaultUrls = urls;
 }
 
 export function useMediaStore(): MediaStore | undefined {
   const scoped = useContext(MediaStoreContext);
-  return scoped === null ? undefined : (scoped ?? defaultStore);
+  if (scoped === null) return undefined;
+  return scoped ?? defaultStore() ?? undefined;
+}
+
+export function useMediaUrls(): MediaUrls | undefined {
+  return useMediaStore() ?? useContext(MediaUrlsContext) ?? defaultUrls;
 }
 
 /** One grid page. The picker and the library both slice by this, so neither can
@@ -124,7 +144,7 @@ export function imagePreset(value: string | null | undefined): string | undefine
 
 export function mediaUrl(id: string | null | undefined): string | undefined {
   if (!id || imagePreset(id) !== undefined) return undefined;
-  return useMediaStore()?.url(id);
+  return useMediaUrls()?.url(id);
 }
 
 /**
