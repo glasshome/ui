@@ -133,4 +133,25 @@ describe("PreviewTileAction", () => {
     await userEvent.keyboard("{Enter}");
     expect(opened).toBe(1);
   });
+
+  it("draws a picture on a solid face when given one, and a glyph on a dashed face when not", () => {
+    render(() => (
+      <>
+        <PreviewTileAction label="Browse" icon="lucide:layout-grid" />
+        <PreviewTileAction label="Deck">
+          <span data-testid="deck" />
+        </PreviewTileAction>
+      </>
+    ));
+    const face = (name: string) =>
+      getComputedStyle(
+        screen
+          .getByRole("button", { name })
+          .querySelector("[data-slot=preview-tile-face]") as Element,
+      );
+    expect(face("Browse").borderTopStyle).toBe("dashed");
+    expect(face("Deck").borderTopStyle).toBe("solid");
+    expect(screen.getByRole("button", { name: "Deck" }).querySelector("[data-icon]")).toBeNull();
+    expect(screen.getByTestId("deck")).toBeTruthy();
+  });
 });

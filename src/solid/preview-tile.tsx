@@ -1,5 +1,5 @@
 import type { JSX } from "solid-js";
-import { onCleanup, onMount, Show } from "solid-js";
+import { children, onCleanup, onMount, Show } from "solid-js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -56,14 +56,16 @@ export function PreviewTileGroup(props: {
   );
 }
 
-/** A button among the tiles that picks nothing: the way to a larger set. */
+/** A button among the tiles that picks nothing: the way to a larger set. A glyph draws a dashed face; children draw a picture on a solid one. */
 export function PreviewTileAction(props: {
   label: string;
-  icon: string;
+  icon?: string;
   onClick?: () => void;
   shape?: keyof typeof SHAPE;
   class?: string;
+  children?: JSX.Element;
 }) {
+  const picture = children(() => props.children);
   return (
     <button
       type="button"
@@ -75,11 +77,21 @@ export function PreviewTileAction(props: {
         data-slot="preview-tile-face"
         aria-hidden="true"
         class={cn(
-          "text-muted-foreground border-border transition-glass group-hover/preview-tile-action:text-foreground after:transition-glass group-focus-visible/preview-tile-action:after:ring-ring/50 relative grid w-full place-items-center overflow-hidden rounded-lg border border-dashed duration-200 group-active/preview-tile-action:scale-[0.97] after:pointer-events-none after:absolute after:inset-0 after:z-10 after:rounded-[inherit] after:ring-inset group-focus-visible/preview-tile-action:after:ring-[3px]",
+          "border-border transition-glass after:transition-glass group-focus-visible/preview-tile-action:after:ring-ring/50 relative w-full overflow-hidden rounded-lg border duration-200 group-active/preview-tile-action:scale-[0.97] after:pointer-events-none after:absolute after:inset-0 after:z-10 after:rounded-[inherit] after:ring-inset group-focus-visible/preview-tile-action:after:ring-[3px]",
+          picture()
+            ? "border-border/60 group-hover/preview-tile-action:border-border"
+            : "text-muted-foreground group-hover/preview-tile-action:text-foreground grid place-items-center border-dashed",
           SHAPE[props.shape ?? "wide"],
         )}
       >
-        <Icon icon={props.icon} width={20} height={20} />
+        <Show
+          when={picture()}
+          fallback={
+            <Show when={props.icon}>{(icon) => <Icon icon={icon()} width={20} height={20} />}</Show>
+          }
+        >
+          {picture()}
+        </Show>
       </div>
       <span data-slot="preview-tile-caption" class="text-foreground truncate text-xs font-medium">
         {props.label}
