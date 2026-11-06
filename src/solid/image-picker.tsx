@@ -236,7 +236,6 @@ function ImageGallery(
 
   const handleUpload = async (file: File) => {
     setError(undefined);
-    holdFocus();
     setUploading(true);
     try {
       if (!store) return;
@@ -247,7 +246,6 @@ function ImageGallery(
       fail(cause);
     } finally {
       setUploading(false);
-      if (focused() === panel) uploadButton?.focus({ preventScroll: true });
     }
   };
 
