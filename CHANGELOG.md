@@ -18,6 +18,23 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.38.0](https://github.com/glasshome/ui/compare/v1.37.2...v1.38.0) (2026-11-06)
+
+
+### Features
+
+* **button:** busy keeps focus while a press's work runs; image picker's Upload uses it ([93c960d](https://github.com/glasshome/ui/commit/93c960d0f713adf04ae706dc93975186bc8f72b1))
+* **ui:** OptionCard and the dialog action buttons take busy, keeping focus while a press's work runs ([df0ba58](https://github.com/glasshome/ui/commit/df0ba583e6f2c7bda1422997a5af7fb920cfdf15))
+
+
+### Bug Fixes
+
+* **button:** busy adds one spread only while busy, so a Button costs sealed widgets no extra listener or reactive prop ([56d0904](https://github.com/glasshome/ui/commit/56d0904be4bf2b5b5cadd0bc22a87114502996c8))
+* **data-table:** the load-more button is busy while loading, so it keeps focus ([2d1beb9](https://github.com/glasshome/ui/commit/2d1beb96e497bf3dd224d1d594c4b4da2fa74281))
+* **image-picker:** Upload keeps focus as busy, so it needs no hand-off to the panel and back ([5fb8d41](https://github.com/glasshome/ui/commit/5fb8d41de4f627ee6b5056172f5a57baee26b27a))
+* **ui:** a select or popover opened inside a modal is no longer aria-hidden under the focus in it ([4ec507d](https://github.com/glasshome/ui/commit/4ec507d1503d83ef2d5bc3aecf58465c745c08f5))
+* **ui:** ui owns its Kobalte patch, so the published bundle keeps a menu from hiding the page before its content exists ([e05a33b](https://github.com/glasshome/ui/commit/e05a33b5094561a425e67926550cf6f67ec5356e))
+
 ## [1.37.2](https://github.com/glasshome/ui/compare/v1.37.1...v1.37.2) (2026-11-06)
 
 
