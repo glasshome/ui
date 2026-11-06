@@ -491,7 +491,7 @@ const Dock: Component<DockProps> = (props) => {
                       aria-label={`Remove ${item().label}`}
                       onClick={() => local.onRemove?.(item().id)}
                       class={cn(
-                        "bg-destructive text-destructive-foreground absolute top-0 left-0 z-10 flex size-5 items-center justify-center rounded-full shadow-sm",
+                        "bg-card border-foreground/25 text-destructive absolute top-0 left-0 z-10 flex size-5 items-center justify-center rounded-full border shadow-sm",
                         "before:absolute before:-top-2 before:right-0 before:bottom-0 before:-left-2",
                       )}
                     >
