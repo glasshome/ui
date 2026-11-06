@@ -5,15 +5,44 @@ import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 
-type ButtonProps = ComponentProps<typeof KobalteButton> & VariantProps<typeof buttonVariants>;
+type ButtonProps = ComponentProps<typeof KobalteButton> &
+  VariantProps<typeof buttonVariants> & {
+    /** Presses do nothing; unlike `disabled` it keeps focus, so the popover or dialog around it stays. */
+    busy?: boolean;
+  };
+
+type Click = JSX.EventHandlerUnion<HTMLButtonElement, MouseEvent>;
+
+function callClick(
+  handler: Click | undefined,
+  event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element },
+) {
+  if (typeof handler === "function") handler(event);
+  else if (Array.isArray(handler)) handler[0](handler[1], event);
+}
 
 function Button(props: ButtonProps) {
-  const [local, others] = splitProps(props, ["class", "variant", "size"] as const);
+  const [local, others] = splitProps(props, [
+    "class",
+    "variant",
+    "size",
+    "busy",
+    "onClick",
+  ] as const);
   return (
     <KobalteButton
       data-slot="button"
-      class={cn(buttonVariants({ variant: local.variant, size: local.size }), local.class)}
       {...others}
+      class={cn(buttonVariants({ variant: local.variant, size: local.size }), local.class)}
+      aria-busy={local.busy || undefined}
+      aria-disabled={local.busy || others["aria-disabled"]}
+      onClick={(event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => {
+        if (local.busy) {
+          event.preventDefault();
+          return;
+        }
+        callClick(local.onClick as Click | undefined, event);
+      }}
     />
   );
 }

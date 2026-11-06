@@ -492,7 +492,7 @@ function ImageGallery(
                 size="sm"
                 ref={uploadButton}
                 data-slot="image-picker-upload"
-                disabled={uploading()}
+                busy={uploading()}
                 onClick={() => fileInput?.click()}
               >
                 <Icon icon="lucide:upload" width={14} height={14} />
