@@ -144,6 +144,7 @@ function ImageGallery(
   const thumbUrl = (id: string) => store?.url(id, "thumb") ?? "";
   const brokenTiles = createBrokenMedia(thumbUrl);
   let fileInput: HTMLInputElement | undefined;
+  let uploadButton: HTMLButtonElement | undefined;
   let panel: HTMLElement | undefined;
 
   const [index, { refetch }] = createResource(
@@ -218,8 +219,24 @@ function ImageGallery(
   // A store rejection is picker state, never an unhandled rejection escaping the tree.
   const fail = (cause: unknown) => setError(toMediaStoreError(cause));
 
+  // A control that disables or leaves drops focus to the page, which a sealed dialog's trap moves outside, closing the gallery.
+  const holdFocus = () => panel?.focus({ preventScroll: true });
+  const focused = () => (panel?.getRootNode() as Document | ShadowRoot | undefined)?.activeElement;
+  const focusLost = () => {
+    const at = focused();
+    return !at || at === document.body;
+  };
+  let deleteFrom: Element | null | undefined;
+  let deleteConfirmed = false;
+  let confirmation: HTMLElement | undefined;
+  const focusLeaving = () => {
+    const at = focused();
+    return focusLost() || at === deleteFrom || (!!at && !!confirmation?.contains(at));
+  };
+
   const handleUpload = async (file: File) => {
     setError(undefined);
+    holdFocus();
     setUploading(true);
     try {
       if (!store) return;
@@ -230,15 +247,18 @@ function ImageGallery(
       fail(cause);
     } finally {
       setUploading(false);
+      if (focused() === panel) uploadButton?.focus({ preventScroll: true });
     }
   };
 
   const confirmDelete = async () => {
     const target = pendingDelete();
     if (!target) return;
+    deleteConfirmed = true;
     setError(undefined);
     try {
       await store?.remove(target.id);
+      if (focusLeaving()) holdFocus();
       await refetch();
     } catch (cause) {
       fail(cause);
@@ -331,7 +351,14 @@ function ImageGallery(
                       variant="outline"
                       size="sm"
                       data-slot="image-picker-retry"
-                      onClick={() => void refetch()}
+                      onClick={async () => {
+                        holdFocus();
+                        await Promise.resolve(refetch()).catch(() => undefined);
+                        const again = panel?.querySelector<HTMLElement>(
+                          '[data-slot="image-picker-retry"]',
+                        );
+                        if (focused() === panel) again?.focus({ preventScroll: true });
+                      }}
                     >
                       Try again
                     </Button>
@@ -389,7 +416,11 @@ function ImageGallery(
                         onDelete={
                           store?.canRemove === false
                             ? undefined
-                            : () => setPendingDelete(tile.image)
+                            : () => {
+                                deleteFrom = focused();
+                                deleteConfirmed = false;
+                                setPendingDelete(tile.image);
+                              }
                         }
                       />
                     )
@@ -459,6 +490,7 @@ function ImageGallery(
                 type="button"
                 variant="outline"
                 size="sm"
+                ref={uploadButton}
                 data-slot="image-picker-upload"
                 disabled={uploading()}
                 onClick={() => fileInput?.click()}
@@ -476,7 +508,16 @@ function ImageGallery(
           if (!next) setPendingDelete(undefined);
         }}
       >
-        <AlertDialogContent>
+        <AlertDialogContent
+          ref={(el: HTMLElement) => (confirmation = el)}
+          onCloseAutoFocus={(event: Event) => {
+            // The confirmation has no trigger to return to; the page would get focus and the gallery would close.
+            event.preventDefault();
+            if (!deleteConfirmed && deleteFrom instanceof HTMLElement && deleteFrom.isConnected) {
+              deleteFrom.focus({ preventScroll: true });
+            } else holdFocus();
+          }}
+        >
           <AlertDialogHeader>
             <AlertDialogTitle>Delete image?</AlertDialogTitle>
             <AlertDialogDescription>{deleteDescription()}</AlertDialogDescription>

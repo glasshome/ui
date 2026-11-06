@@ -3,6 +3,13 @@ import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../src/solid/dialog.js";
 import { ImagePicker } from "../../src/solid/image-picker.jsx";
 import {
   MEDIA_PAGE_SIZE,
@@ -336,6 +343,197 @@ describe("ImagePicker", () => {
     settle?.(image("c"));
     await waitFor(() => expect(uploadButton().disabled).toBe(false));
     expect(uploadButton().textContent).toMatch(/^\s*Upload\s*$/);
+  });
+
+  describe("in a dialog, focus stays in the gallery when the control holding it goes", () => {
+    const inDialog = (store: MediaStore) =>
+      withStore(store, () => (
+        <Dialog open>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Room</DialogTitle>
+            </DialogHeader>
+            <DialogBody>
+              <input aria-label="Title" />
+              <ImagePicker value="" onChange={() => {}} />
+            </DialogBody>
+          </DialogContent>
+        </Dialog>
+      ));
+    // A control that disables or leaves drops focus to the page a frame later; a sealed dialog's trap then takes it out of the gallery.
+    const focusStaysInGallery = async (left: HTMLElement) => {
+      await waitFor(() => expect(document.activeElement).not.toBe(left));
+      expect(gallery()?.contains(document.activeElement)).toBe(true);
+    };
+
+    it("Upload, disabled while its upload is in flight", async () => {
+      let settle: ((uploaded: StoredMedia) => void) | undefined;
+      inDialog(
+        storeWith({
+          upload: () =>
+            new Promise<StoredMedia>((resolve) => {
+              settle = resolve;
+            }),
+        }),
+      );
+      await openGallery();
+      await waitFor(() => screen.getByTestId("image-upload-input"));
+      uploadButton().focus();
+
+      await uploadFile();
+      await waitFor(() => expect(uploadButton().disabled).toBe(true));
+      await focusStaysInGallery(uploadButton());
+
+      settle?.(image("c"));
+      await waitFor(() => expect(uploadButton().disabled).toBe(false));
+      expect(gallery()).not.toBeNull();
+    });
+
+    it("Upload, which has focus back once its upload has landed", async () => {
+      let settle: ((uploaded: StoredMedia) => void) | undefined;
+      inDialog(
+        storeWith({
+          upload: () =>
+            new Promise<StoredMedia>((resolve) => {
+              settle = resolve;
+            }),
+        }),
+      );
+      await openGallery();
+      await waitFor(() => screen.getByTestId("image-upload-input"));
+      uploadButton().focus();
+      await uploadFile();
+      await focusStaysInGallery(uploadButton());
+
+      settle?.(image("c"));
+
+      await waitFor(() => expect(document.activeElement).toBe(uploadButton()));
+    });
+
+    it("Try again, gone once the photos list", async () => {
+      let fails = true;
+      inDialog(
+        storeWith({
+          index: async () => {
+            if (fails) throw new MediaStoreError("upload_failed");
+            return indexOf([image("a")]);
+          },
+        }),
+      );
+      await openGallery();
+      const retry = await waitFor(() =>
+        first(screen.getAllByRole("button", { name: /try again/i }), "retry"),
+      );
+      fails = false;
+      await userEvent.click(retry);
+
+      await waitFor(() => expect(screen.getAllByTestId("media-tile")).toHaveLength(1));
+      await focusStaysInGallery(retry);
+    });
+
+    it("a deleted photo's Delete", async () => {
+      let media = [image("a"), image("b")];
+      inDialog(
+        storeWith({
+          index: async () => indexOf(media),
+          remove: async (id) => {
+            media = media.filter((item) => item.id !== id);
+          },
+        }),
+      );
+      await openGallery();
+      const remove = await waitFor(() =>
+        first(screen.getAllByRole("button", { name: /^delete b$/i }), "delete button"),
+      );
+      await userEvent.click(remove);
+      await userEvent.click(await waitFor(() => screen.getByRole("button", { name: /^delete$/i })));
+
+      await waitFor(() => expect(remove.isConnected).toBe(false));
+      await focusStaysInGallery(remove);
+    });
+
+    const slowRemove = () => {
+      let media = [image("a"), image("b")];
+      let settle: (() => void) | undefined;
+      inDialog(
+        storeWith({
+          index: async () => indexOf(media),
+          remove: (id) =>
+            new Promise<void>((resolve) => {
+              settle = () => {
+                media = media.filter((item) => item.id !== id);
+                resolve();
+              };
+            }),
+        }),
+      );
+      return () => settle?.();
+    };
+    const deleteOf = (id: string) =>
+      waitFor(() =>
+        first(screen.getAllByRole("button", { name: new RegExp(`^delete ${id}$`, "i") }), id),
+      );
+    const confirmation = () => screen.queryByRole("alertdialog");
+
+    it("a photo's Delete, once a slow delete's confirmation has closed", async () => {
+      const settle = slowRemove();
+      await openGallery();
+      const remove = await deleteOf("b");
+      await userEvent.click(remove);
+      await userEvent.click(await waitFor(() => screen.getByRole("button", { name: /^delete$/i })));
+      await waitFor(() => expect(confirmation()).toBeNull());
+      await waitFor(() => expect(gallery()?.contains(document.activeElement)).toBe(true));
+
+      settle();
+
+      await waitFor(() => expect(remove.isConnected).toBe(false));
+      await focusStaysInGallery(remove);
+    });
+
+    it("a photo's Delete, once its confirmation is cancelled", async () => {
+      slowRemove();
+      await openGallery();
+      const remove = await deleteOf("b");
+      await userEvent.click(remove);
+
+      await userEvent.click(await waitFor(() => screen.getByRole("button", { name: /^cancel$/i })));
+
+      await waitFor(() => expect(confirmation()).toBeNull());
+      await waitFor(() => expect(document.activeElement).toBe(remove));
+    });
+
+    it("another photo the person moved to while a delete ran", async () => {
+      const settle = slowRemove();
+      await openGallery();
+      await userEvent.click(await deleteOf("b"));
+      await userEvent.click(await waitFor(() => screen.getByRole("button", { name: /^delete$/i })));
+      await waitFor(() => expect(confirmation()).toBeNull());
+      const other = await deleteOf("a");
+      other.focus();
+
+      settle();
+
+      await waitFor(() => expect(screen.getAllByTestId("media-tile")).toHaveLength(1));
+      expect(document.activeElement).toBe(other);
+    });
+
+    it("Try again, still there after a retry that fails too", async () => {
+      inDialog(
+        storeWith({
+          index: async () => {
+            throw new MediaStoreError("upload_failed");
+          },
+        }),
+      );
+      await openGallery();
+      const retry = () =>
+        first(screen.getAllByRole("button", { name: /try again/i }), "retry") as HTMLElement;
+      await waitFor(retry);
+
+      await userEvent.click(retry());
+
+      await waitFor(() => expect(document.activeElement).toBe(retry()));
+    });
   });
 
   it("clears a failed upload's banner when the gallery is reopened", async () => {
