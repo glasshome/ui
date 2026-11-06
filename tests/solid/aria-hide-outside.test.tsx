@@ -20,15 +20,9 @@ afterEach(() => {
   document.body.innerHTML = "";
 });
 
-const frames = async (count: number) => {
-  for (let i = 0; i < count; i++) await new Promise(requestAnimationFrame);
-};
-
-/** Kobalte hides through setTimeout then requestAnimationFrame, so a pass lands a few frames after the open. */
+/** Kobalte's focus and hide passes run in zero-delay timers and the next frame, so six frames cover a pass and its follow-up. */
 const settle = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 60));
-  await frames(3);
-  await new Promise((resolve) => setTimeout(resolve, 60));
+  for (let i = 0; i < 6; i++) await new Promise(requestAnimationFrame);
 };
 
 function closedRoot() {
