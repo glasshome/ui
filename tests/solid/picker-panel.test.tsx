@@ -5,6 +5,7 @@ import { cleanup, render, waitFor } from "@solidjs/testing-library";
 import type { JSX } from "solid-js";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
+import { userEvent } from "vitest/browser";
 import { press } from "../press.js";
 
 import { AreaPicker } from "../../src/solid/area-picker.js";
@@ -184,6 +185,16 @@ describe("picker triggers", () => {
       expect(trigger.hasAttribute("data-expanded")).toBe(false);
       await press(trigger);
       await waitFor(() => expect(trigger.hasAttribute("data-expanded")).toBe(true));
+    });
+
+    it(`${name} gives focus back to its trigger when Escape closes the panel`, async () => {
+      const { container } = withData(ui);
+      const trigger = firstButton(container);
+      await press(trigger);
+      await waitFor(() => expect(panel()?.contains(document.activeElement)).toBe(true));
+      await userEvent.keyboard("{Escape}");
+      await waitFor(() => expect(panel()).toBeNull());
+      await waitFor(() => expect(document.activeElement).toBe(trigger));
     });
   }
 
