@@ -328,12 +328,7 @@ export function TableLoadMore(props: {
       class={cn("flex justify-center py-3", props.class)}
     >
       <Show when={props.hasMore}>
-        <Button
-          variant="ghost"
-          size="sm"
-          disabled={props.loading}
-          onClick={() => props.onLoadMore()}
-        >
+        <Button variant="ghost" size="sm" busy={props.loading} onClick={() => props.onLoadMore()}>
           {props.loading ? "Loading…" : (props.label ?? "Show more")}
         </Button>
       </Show>
