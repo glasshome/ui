@@ -389,6 +389,27 @@ describe("ImagePicker", () => {
       expect(gallery()).not.toBeNull();
     });
 
+    it("Upload, which has focus back once its upload has landed", async () => {
+      let settle: ((uploaded: StoredMedia) => void) | undefined;
+      inDialog(
+        storeWith({
+          upload: () =>
+            new Promise<StoredMedia>((resolve) => {
+              settle = resolve;
+            }),
+        }),
+      );
+      await openGallery();
+      await waitFor(() => screen.getByTestId("image-upload-input"));
+      uploadButton().focus();
+      await uploadFile();
+      await focusStaysInGallery(uploadButton());
+
+      settle?.(image("c"));
+
+      await waitFor(() => expect(document.activeElement).toBe(uploadButton()));
+    });
+
     it("Try again, gone once the photos list", async () => {
       let fails = true;
       inDialog(

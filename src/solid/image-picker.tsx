@@ -144,6 +144,7 @@ function ImageGallery(
   const thumbUrl = (id: string) => store?.url(id, "thumb") ?? "";
   const brokenTiles = createBrokenMedia(thumbUrl);
   let fileInput: HTMLInputElement | undefined;
+  let uploadButton: HTMLButtonElement | undefined;
   let panel: HTMLElement | undefined;
 
   const [index, { refetch }] = createResource(
@@ -234,6 +235,8 @@ function ImageGallery(
       fail(cause);
     } finally {
       setUploading(false);
+      const root = panel?.getRootNode() as Document | ShadowRoot | undefined;
+      if (root?.activeElement === panel) uploadButton?.focus({ preventScroll: true });
     }
   };
 
@@ -467,6 +470,7 @@ function ImageGallery(
                 type="button"
                 variant="outline"
                 size="sm"
+                ref={uploadButton}
                 data-slot="image-picker-upload"
                 disabled={uploading()}
                 onClick={() => fileInput?.click()}
