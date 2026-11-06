@@ -110,6 +110,8 @@ export function OptionCard(props: {
    *  which the group's `onChange` alone never reports. */
   onPick?: () => void;
   disabled?: boolean;
+  /** Picks do nothing while the pick's work runs; unlike `disabled` it keeps focus. */
+  busy?: boolean;
   class?: string;
   /** The current sub-option (an OptionChoice value). */
   subValue?: string;
@@ -145,9 +147,10 @@ export function OptionCard(props: {
       <RadioGroupItem
         value={props.value}
         disabled={props.disabled}
+        busy={props.busy}
         showControl={false}
         onClick={(event: MouseEvent) =>
-          !props.disabled && isItemActivation(event) && props.onPick?.()
+          !props.disabled && !props.busy && isItemActivation(event) && props.onPick?.()
         }
         class="relative w-full cursor-pointer overflow-hidden rounded-[inherit] text-left"
       >

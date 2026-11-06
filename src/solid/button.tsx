@@ -1,6 +1,7 @@
 import { Button as KobalteButton } from "@kobalte/core/button";
 import type { VariantProps } from "cva";
 import { type ComponentProps, type JSX, splitProps } from "solid-js";
+import { busyProps } from "../lib/busy.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -10,12 +11,6 @@ type ButtonProps = ComponentProps<typeof KobalteButton> &
     /** Presses do nothing; unlike `disabled` it keeps focus, so the popover or dialog around it stays. */
     busy?: boolean;
   };
-
-const busyProps = {
-  "aria-busy": true,
-  "aria-disabled": true,
-  onClick: (event: MouseEvent) => event.preventDefault(),
-} as const;
 
 function Button(props: ButtonProps) {
   const [local, others] = splitProps(props, ["class", "variant", "size", "busy"] as const);
