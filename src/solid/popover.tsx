@@ -122,8 +122,19 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
   );
 };
 
+/** Inside a PopoverAnchor: names the control that opens the popover, so focus goes back to it on close. */
+const AnchorTriggerContext = createContext<(el: HTMLElement) => void>();
+
 const PopoverAnchor: Component<ComponentProps<typeof PopoverPrimitive.Anchor>> = (props) => {
-  return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />;
+  const popover = usePopoverContext();
+  return (
+    <AnchorTriggerContext.Provider value={popover.setTriggerRef}>
+      <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />
+    </AnchorTriggerContext.Provider>
+  );
 };
 
-export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger };
+/** The control, inside a PopoverAnchor, that opens its popover. */
+const useAnchorTrigger = () => useContext(AnchorTriggerContext);
+
+export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger, useAnchorTrigger };

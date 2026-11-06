@@ -2,6 +2,7 @@ import { type JSX, Show, splitProps } from "solid-js";
 import { PICKER_TRIGGER } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
+import { useAnchorTrigger } from "./popover.js";
 
 export interface PickerTriggerProps extends Omit<
   JSX.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -25,11 +26,17 @@ export function PickerTrigger(props: PickerTriggerProps) {
     "clearLabel",
     "class",
     "children",
+    "ref",
   ]);
+  const anchorTrigger = useAnchorTrigger();
 
   return (
     <div class="relative">
       <button
+        ref={(el) => {
+          anchorTrigger?.(el);
+          if (typeof own.ref === "function") own.ref(el);
+        }}
         type="button"
         data-slot={own.slot}
         data-expanded={own.open || undefined}
