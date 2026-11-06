@@ -35,10 +35,16 @@ export function spendLongPress(): void {
 
 /** The release of a fired hold belongs to the hold: a finger's compat mousedown and click, or a
  *  mouse's click, never reach what the hold opened under the pointer. */
-function spendRelease(): () => void {
+function spendRelease(pressed: EventTarget | null | undefined): () => void {
+  if (typeof window === "undefined") return () => {};
   const stopTouch = (e: Event) => {
     if (e.cancelable) e.preventDefault();
+    untouch();
+  };
+  // A pressed node the hold took out of the page still gets its touchend; the window does not.
+  const untouch = () => {
     window.removeEventListener("touchend", stopTouch, true);
+    pressed?.removeEventListener("touchend", stopTouch);
   };
   const swallow = (e: Event) => {
     e.preventDefault();
@@ -47,16 +53,27 @@ function spendRelease(): () => void {
   };
   const afterUp = () => setTimeout(off, 0);
   const off = () => {
-    window.removeEventListener("touchend", stopTouch, true);
+    untouch();
     window.removeEventListener("click", swallow, true);
     window.removeEventListener("pointerup", afterUp, true);
     window.removeEventListener("pointercancel", off, true);
+    window.removeEventListener("pointerdown", off, true);
   };
   window.addEventListener("touchend", stopTouch, { capture: true, passive: false });
+  pressed?.addEventListener("touchend", stopTouch, { passive: false });
   window.addEventListener("click", swallow, true);
   window.addEventListener("pointerup", afterUp, true);
   window.addEventListener("pointercancel", off, true);
+  window.addEventListener("pointerdown", off, true);
   return off;
+}
+
+/** What a hold reads from a press: a PointerEvent fits, and so does a touch or a recorded point. */
+export interface HoldPress {
+  clientX: number;
+  clientY: number;
+  pointerId?: number;
+  target?: EventTarget | null;
 }
 
 export interface HoldOptions {
@@ -70,8 +87,8 @@ export interface HoldOptions {
 }
 
 export interface Hold {
-  down: (e: PointerEvent) => void;
-  move: (e: PointerEvent) => void;
+  down: (press: HoldPress) => void;
+  move: (press: HoldPress) => void;
   up: () => void;
   cancel: () => void;
   /** The current press, or the last one, became a hold. */
@@ -79,14 +96,26 @@ export interface Hold {
 }
 
 /** The one hold door: a press held still for `delayMs` calls `onHold`, after it spends the
- *  press and its release so neither lands on what the hold opened. */
+ *  press and its release so neither lands on what the hold opened. One press at a time; the
+ *  release is watched on the window too, so a release off the pressed node still ends it. */
 export function createHold(opts: HoldOptions): Hold {
   let grace: ReturnType<typeof setTimeout> | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let start = { x: 0, y: 0 };
+  let pointer: number | undefined;
+  let pressing = false;
   let armed = false;
   let didFire = false;
   let unspend: (() => void) | undefined;
+
+  const other = (press: { pointerId?: number }) =>
+    pointer !== undefined && press.pointerId !== undefined && press.pointerId !== pointer;
+
+  const onWindowEnd = (e: PointerEvent) => {
+    if (other(e)) return;
+    if (e.type === "pointercancel") cancel();
+    else up();
+  };
 
   const stop = () => {
     clearTimeout(grace);
@@ -96,13 +125,32 @@ export function createHold(opts: HoldOptions): Hold {
     armed = false;
   };
 
+  const up = () => {
+    stop();
+    pressing = false;
+    if (typeof window === "undefined") return;
+    window.removeEventListener("pointerup", onWindowEnd, true);
+    window.removeEventListener("pointercancel", onWindowEnd, true);
+  };
+
+  const cancel = () => {
+    up();
+    unspend?.();
+    unspend = undefined;
+  };
+
   return {
-    down(e) {
-      stop();
-      unspend?.();
-      unspend = undefined;
+    down(press) {
+      if (pressing && other(press)) return;
+      cancel();
+      pressing = true;
+      pointer = press.pointerId;
       didFire = false;
-      start = { x: e.clientX, y: e.clientY };
+      start = { x: press.clientX, y: press.clientY };
+      if (typeof window !== "undefined") {
+        window.addEventListener("pointerup", onWindowEnd, true);
+        window.addEventListener("pointercancel", onWindowEnd, true);
+      }
       const delay = opts.delayMs ?? HOLD_MS;
       grace = setTimeout(
         () => {
@@ -115,21 +163,17 @@ export function createHold(opts: HoldOptions): Hold {
         timer = undefined;
         didFire = true;
         spendPress();
-        unspend = spendRelease();
+        unspend = spendRelease(press.target);
         opts.onHold();
       }, delay);
     },
-    move(e) {
-      if (timer === undefined) return;
+    move(press) {
+      if (timer === undefined || other(press)) return;
       const slop = opts.slopPx ?? HOLD_SLOP_PX;
-      if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > slop) stop();
+      if (Math.hypot(press.clientX - start.x, press.clientY - start.y) > slop) stop();
     },
-    up: stop,
-    cancel() {
-      stop();
-      unspend?.();
-      unspend = undefined;
-    },
+    up,
+    cancel,
     fired: () => didFire,
   };
 }

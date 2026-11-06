@@ -146,4 +146,38 @@ describe("createHold", () => {
     await vi.runAllTimersAsync();
     expect({ log, fired: hold.fired() }).toEqual({ log: ["arm", "disarm"], fired: false });
   });
+
+  it("a release off the pressed node ends the press, so no hold fires and no click is swallowed", async () => {
+    useFakeTime();
+    const el = sheet();
+    const other = document.body.appendChild(document.createElement("button"));
+    other.textContent = "Other";
+    let held = 0;
+    let clicks = 0;
+    other.addEventListener("click", () => clicks++);
+    const hold = createHold({ onHold: () => held++ });
+    el.addEventListener("pointerdown", hold.down);
+    await commands.mouse("down", 50, 50);
+    await commands.mouse("move", 50, 150);
+    await commands.mouse("up", 50, 150);
+    await vi.advanceTimersByTimeAsync(HOLD_MS);
+    await userEvent.click(other);
+    expect({ held, clicks }).toEqual({ held: 0, clicks: 1 });
+  });
+
+  it("spends a finger's release when the hold takes the pressed node out of the page", async () => {
+    useFakeTime();
+    const el = sheet();
+    const opened = document.createElement("div");
+    opened.style.cssText = "width: 200px; height: 100px;";
+    const seen: string[] = [];
+    for (const t of ["mousedown", "click"]) opened.addEventListener(t, () => seen.push(t));
+    const hold = createHold({ onHold: () => el.replaceWith(opened) });
+    el.addEventListener("pointerdown", hold.down);
+    await commands.touch("down", 50, 50);
+    await vi.advanceTimersByTimeAsync(HOLD_MS);
+    await commands.touch("up", 50, 50);
+    await vi.runAllTimersAsync();
+    expect(seen).toEqual([]);
+  });
 });
