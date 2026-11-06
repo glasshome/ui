@@ -3,6 +3,13 @@ import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../src/solid/dialog.js";
 import { ImagePicker } from "../../src/solid/image-picker.jsx";
 import {
   MEDIA_PAGE_SIZE,
@@ -336,6 +343,42 @@ describe("ImagePicker", () => {
     settle?.(image("c"));
     await waitFor(() => expect(uploadButton().disabled).toBe(false));
     expect(uploadButton().textContent).toMatch(/^\s*Upload\s*$/);
+  });
+
+  it("stays open in a dialog while the upload it started is in flight", async () => {
+    let settle: ((uploaded: StoredMedia) => void) | undefined;
+    const store = storeWith({
+      upload: () =>
+        new Promise<StoredMedia>((resolve) => {
+          settle = resolve;
+        }),
+    });
+    withStore(store, () => (
+      <Dialog open>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Room</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <input aria-label="Title" />
+            <ImagePicker value="" onChange={() => {}} />
+          </DialogBody>
+        </DialogContent>
+      </Dialog>
+    ));
+    await openGallery();
+    await waitFor(() => screen.getByTestId("image-upload-input"));
+    uploadButton().focus();
+
+    await uploadFile();
+    await waitFor(() => expect(uploadButton().disabled).toBe(true));
+    // A disabled control drops focus to the page at the next frame; a sealed dialog's focus trap then moves it out of the gallery.
+    await waitFor(() => expect(document.activeElement).not.toBe(uploadButton()));
+    expect(gallery()?.contains(document.activeElement)).toBe(true);
+
+    settle?.(image("c"));
+    await waitFor(() => expect(uploadButton().disabled).toBe(false));
+    expect(gallery()).not.toBeNull();
   });
 
   it("clears a failed upload's banner when the gallery is reopened", async () => {

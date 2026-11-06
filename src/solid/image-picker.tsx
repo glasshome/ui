@@ -220,6 +220,8 @@ function ImageGallery(
 
   const handleUpload = async (file: File) => {
     setError(undefined);
+    // A disabled button drops focus out of the panel, which reads as an outside interaction and closes it.
+    panel?.focus({ preventScroll: true });
     setUploading(true);
     try {
       if (!store) return;
