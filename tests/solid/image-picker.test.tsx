@@ -323,7 +323,7 @@ describe("ImagePicker", () => {
     expect(content.className).toContain("glass-sink");
   });
 
-  it("disables Upload and says so while an upload is in flight", async () => {
+  it("marks Upload busy and keeps its focus and the gallery while an upload is in flight", async () => {
     let settle: ((uploaded: StoredMedia) => void) | undefined;
     const store = storeWith({
       upload: () =>
@@ -334,15 +334,21 @@ describe("ImagePicker", () => {
     withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
     await openGallery();
     await waitFor(() => screen.getByTestId("image-upload-input"));
-    expect(uploadButton().disabled).toBe(false);
+    expect(uploadButton().getAttribute("aria-busy")).toBeNull();
+    uploadButton().focus();
 
     await uploadFile();
-    await waitFor(() => expect(uploadButton().disabled).toBe(true));
+    await waitFor(() => expect(uploadButton().getAttribute("aria-busy")).toBe("true"));
     expect(uploadButton().textContent).toMatch(/uploading/i);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    expect(document.activeElement).toBe(uploadButton());
 
     settle?.(image("c"));
-    await waitFor(() => expect(uploadButton().disabled).toBe(false));
+    await waitFor(() => expect(uploadButton().getAttribute("aria-busy")).toBeNull());
     expect(uploadButton().textContent).toMatch(/^\s*Upload\s*$/);
+    expect(gallery()).not.toBeNull();
+    expect(document.activeElement).toBe(uploadButton());
   });
 
   describe("in a dialog, focus stays in the gallery when the control holding it goes", () => {
