@@ -218,10 +218,12 @@ function ImageGallery(
   // A store rejection is picker state, never an unhandled rejection escaping the tree.
   const fail = (cause: unknown) => setError(toMediaStoreError(cause));
 
+  // A control that disables or leaves drops focus to the page, which a sealed dialog's trap moves outside, closing the gallery.
+  const holdFocus = () => panel?.focus({ preventScroll: true });
+
   const handleUpload = async (file: File) => {
     setError(undefined);
-    // A disabled button drops focus out of the panel, which reads as an outside interaction and closes it.
-    panel?.focus({ preventScroll: true });
+    holdFocus();
     setUploading(true);
     try {
       if (!store) return;
@@ -241,6 +243,7 @@ function ImageGallery(
     setError(undefined);
     try {
       await store?.remove(target.id);
+      holdFocus();
       await refetch();
     } catch (cause) {
       fail(cause);
@@ -333,7 +336,10 @@ function ImageGallery(
                       variant="outline"
                       size="sm"
                       data-slot="image-picker-retry"
-                      onClick={() => void refetch()}
+                      onClick={() => {
+                        holdFocus();
+                        void refetch();
+                      }}
                     >
                       Try again
                     </Button>
