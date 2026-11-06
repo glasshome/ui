@@ -18,6 +18,32 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.37.0](https://github.com/glasshome/ui/compare/v1.36.0...v1.37.0) (2026-11-06)
+
+
+### Features
+
+* **dock:** edit chrome with remove badge, add slot and drag reorder ([37830d1](https://github.com/glasshome/ui/commit/37830d1f711c90ef1c8b4f19645ebcee6b457065))
+* **dock:** left and right placement with vertical paging and an arrival glow ([7df39c7](https://github.com/glasshome/ui/commit/7df39c7106a9e80c20095179f0b974dc434be04b))
+* **hold:** createHold is the one hold door and spends its release ([#101](https://github.com/glasshome/ui/issues/101)) ([ae2854b](https://github.com/glasshome/ui/commit/ae2854bf50e51b9685deb9c2ad1de5b5c3a40c69))
+* **ui:** a small dashboard picture fills its icon tiles with the glyph and leaves the names out ([92c08dd](https://github.com/glasshome/ui/commit/92c08dd5e5c8974eec1de836f798773e8c6a7171))
+* **ui:** FaceToggleGroup, people and screens as faces to turn on and off ([ea47660](https://github.com/glasshome/ui/commit/ea4766056b0468b815143fa2cef89f2b75d3180e))
+* **ui:** PreviewTile takes a film shape, a 16 by 9 face for strips that must stay short ([ca8bc61](https://github.com/glasshome/ui/commit/ca8bc61a5114a3909dd26159aab77ff795e60f1c))
+* **ui:** PreviewTileAction can draw a picture on a solid face ([37f1e82](https://github.com/glasshome/ui/commit/37f1e82e28c4936933b222c2c3f13849dda9fb62))
+* **ui:** PreviewTileGroup scrolls sideways on a phone, PreviewTile can be dashed, PreviewTileAction opens a larger set ([65dc3c9](https://github.com/glasshome/ui/commit/65dc3c905d6e3ee05f23fb0a49eac7cc100e6fb6))
+* **ui:** SlotButton and IconPicker variant slot in the dock's own slot shape, GlyphTileGroup for a short row of places ([4e57a4b](https://github.com/glasshome/ui/commit/4e57a4b36d2c06e3f3e0f5ba6f2ee42c685eb32b))
+* **ui:** the dock's slot, face and layout parts, scrolling preview tiles, a film shape ([01de523](https://github.com/glasshome/ui/commit/01de523c55ebda6042fbf0cb889ef4d1b0c7f170))
+
+
+### Bug Fixes
+
+* **dock:** the first tap after a drag reaches the item instead of being swallowed ([e5cff3d](https://github.com/glasshome/ui/commit/e5cff3da34cb03c6540432578703cefbfc61cce7))
+* **dock:** the remove badge's tap area grows outward only, so a tap on an item's middle opens the item ([83ffc6e](https://github.com/glasshome/ui/commit/83ffc6e2fab7099ac9a571e43e2b587c4bb550eb))
+* **ui:** a picked room tile is tinted with an inset ring and its badge sits inside, a face that is on shows a check ([9e5ef6a](https://github.com/glasshome/ui/commit/9e5ef6a7307cb2348c1c410e84357583a57c6b2d))
+* **ui:** a room tile is wide enough for Dining Room and Guest Room ([ef194c8](https://github.com/glasshome/ui/commit/ef194c84d5b464c47328432c73472001bc291a83))
+* **ui:** a scrolling PreviewTileGroup holds its hidden radio inputs, so a sheet around it never scrolls sideways ([3e498ad](https://github.com/glasshome/ui/commit/3e498adda998281e13ca44a667027fdafcf9f1cf))
+* **ui:** a scrolling PreviewTileGroup keeps its picked tile in view through the shared scroll track, so the page never moves ([ef034e7](https://github.com/glasshome/ui/commit/ef034e7f1be2254b1fe34381edc1a55e9fc84e1f))
+
 ## [1.36.0](https://github.com/glasshome/ui/compare/v1.35.4...v1.36.0) (2026-11-05)
 
 
