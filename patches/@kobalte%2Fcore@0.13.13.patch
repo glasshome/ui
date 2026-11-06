@@ -1,0 +1,24 @@
+diff --git a/dist/chunk/EHGSTO6V.jsx b/dist/chunk/EHGSTO6V.jsx
+index ef4518f2ff9e25041fe7434161689e765d29fa44..ea1cdd4dcd969efdd24cb984253e988c7cf20926 100644
+--- a/dist/chunk/EHGSTO6V.jsx
++++ b/dist/chunk/EHGSTO6V.jsx
+@@ -19,6 +19,7 @@ function createHideOutside(props) {
+ var refCountMap = /* @__PURE__ */ new WeakMap();
+ var observerStack = [];
+ function ariaHideOutside(targets, root = document.body) {
++  if (!targets.some((target) => root.contains(target))) return () => {};
+   const visibleNodes = new Set(targets);
+   const hiddenNodes = /* @__PURE__ */ new Set();
+   const walk = (root2) => {
+diff --git a/dist/chunk/R4V3527Z.js b/dist/chunk/R4V3527Z.js
+index a605bdbf8f5bf1c4640b47698c6def8549bd71c6..07c33aeaeb304baf8da53945f32b26ce47fda6da 100644
+--- a/dist/chunk/R4V3527Z.js
++++ b/dist/chunk/R4V3527Z.js
+@@ -14,6 +14,7 @@ function createHideOutside(props) {
+ var refCountMap = /* @__PURE__ */ new WeakMap();
+ var observerStack = [];
+ function ariaHideOutside(targets, root = document.body) {
++  if (!targets.some((target) => root.contains(target))) return () => {};
+   const visibleNodes = new Set(targets);
+   const hiddenNodes = /* @__PURE__ */ new Set();
+   const walk = (root2) => {
