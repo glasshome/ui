@@ -18,6 +18,7 @@ import {
   type ValidComponent,
 } from "solid-js";
 import { Dynamic } from "solid-js/web";
+import { busyProps } from "../lib/busy.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { ANCHORED_MOTION, MODAL_MOTION, SCRIM_MOTION } from "../lib/motion-classes.js";
 import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
@@ -187,7 +188,10 @@ export function callEventHandler<T, E extends Event>(
   else handler[0](handler[1], event);
 }
 
-export type ModalDismissProps = ComponentProps<typeof KobalteButton>;
+export type ModalDismissProps = ComponentProps<typeof KobalteButton> & {
+  /** Presses do nothing, the dialog stays open and focus stays put; see Button. */
+  busy?: boolean;
+};
 
 /* Not kobalte's own CloseButton: that one hard-defaults aria-label to its
  * "Dismiss" translation, and an aria-label outranks the visible text, so every
@@ -196,7 +200,7 @@ export type ModalDismissProps = ComponentProps<typeof KobalteButton>;
  * one factory serves both families. */
 export function createModalDismiss(slot: string): ParentComponent<ModalDismissProps> {
   return (props) => {
-    const [local, rest] = splitProps(props, ["onClick"]);
+    const [local, rest] = splitProps(props, ["onClick", "busy"]);
     const context = useDialogContext();
     return (
       <KobalteButton
@@ -206,6 +210,7 @@ export function createModalDismiss(slot: string): ParentComponent<ModalDismissPr
           context.close();
         }}
         {...rest}
+        {...(local.busy ? busyProps : undefined)}
       />
     );
   };

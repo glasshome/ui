@@ -7,6 +7,7 @@ import {
   Show,
   splitProps,
 } from "solid-js";
+import { busyProps } from "../lib/busy.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 
@@ -34,16 +35,16 @@ const RadioGroupItemContent: ParentComponent = (props) => {
 };
 
 const RadioGroupItem: Component<
-  ComponentProps<typeof RadioGroupPrimitive.Item> & { showControl?: boolean }
+  ComponentProps<typeof RadioGroupPrimitive.Item> & { showControl?: boolean; busy?: boolean }
 > = (props) => {
-  const [local, rest] = splitProps(props, ["class", "children", "showControl"]);
+  const [local, rest] = splitProps(props, ["class", "children", "showControl", "busy"]);
   return (
     <RadioGroupPrimitive.Item
       data-slot="radio-group-item"
       class={cn("flex", local.class)}
       {...rest}
     >
-      <RadioGroupPrimitive.ItemInput class="peer" />
+      <RadioGroupPrimitive.ItemInput class="peer" {...(local.busy ? busyProps : undefined)} />
       <RadioGroupPrimitive.ItemLabel
         data-slot="radio-group-item-label"
         class="flex flex-1 cursor-pointer items-center gap-2.5 select-none data-[disabled]:cursor-not-allowed"

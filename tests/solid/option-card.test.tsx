@@ -97,6 +97,36 @@ describe("OptionCard", () => {
     expect(value()).toBeNull();
   });
 
+  it("keeps focus and ignores picks while busy, then answers again", async () => {
+    const [value, setValue] = createSignal<string | null>("invite");
+    const [busy, setBusy] = createSignal(false);
+    const onPick = vi.fn();
+    const { container } = render(() => (
+      <OptionCardGroup value={value()} onChange={setValue}>
+        <OptionCard value="invite" title="Send an invite" />
+        <OptionCard value="code" title="Share a code" busy={busy()} onPick={onPick} />
+      </OptionCardGroup>
+    ));
+    const card = radioAt(container, 1);
+    card.focus();
+    setBusy(true);
+    await Promise.resolve();
+
+    expect(document.activeElement).toBe(card);
+    expect(card.disabled).toBe(false);
+    expect(card.getAttribute("aria-busy")).toBe("true");
+    expect(card.getAttribute("aria-disabled")).toBe("true");
+
+    await press(card, { force: true });
+    expect(value()).toBe("invite");
+    expect(onPick).not.toHaveBeenCalled();
+
+    setBusy(false);
+    await press(card);
+    expect(value()).toBe("code");
+    expect(onPick).toHaveBeenCalledOnce();
+  });
+
   it("renders sub-options inside the card, outside the radio item", () => {
     const view = render(() => (
       <OptionCardGroup value="person" onChange={() => {}}>
