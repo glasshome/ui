@@ -10,7 +10,7 @@ import {
 } from "solid-js";
 import { INPUT_SURFACE } from "../lib/input-classes.js";
 import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
-import { Z_CLASS } from "../lib/layers.js";
+import { nestedLayerAttrs, Z_CLASS } from "../lib/layers.js";
 import { FIELD_MOTION, MORPH_MOTION, STAGGER } from "../lib/motion-classes.js";
 import { anchorToTriggerTop, FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
@@ -115,6 +115,7 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
         onCloseAutoFocus={layer.onCloseAutoFocus}
         data-slot="popover-content"
         data-surface={surface()}
+        {...nestedLayerAttrs(popover.isModal())}
         class={cn(surface() === "field" ? FIELD_PANEL : OVERLAY_PANEL, local.class)}
         {...rest}
       />
