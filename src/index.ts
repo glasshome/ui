@@ -84,7 +84,8 @@ export {
   SETTLE_MOTION,
   STAGGER,
 } from "./lib/motion-classes.js";
-export { HOLD_GRACE_MS, HOLD_MS, spendLongPress } from "./lib/hold.js";
+export { createHold, HOLD_GRACE_MS, HOLD_MS, spendLongPress } from "./lib/hold.js";
+export type { Hold, HoldOptions, HoldPress } from "./lib/hold.js";
 export { MOTION_WINDOW_MS, startMotionWindow } from "./lib/motion-window.js";
 export {
   anchorToTriggerTop,
