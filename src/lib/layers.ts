@@ -10,3 +10,8 @@ export const Z_CLASS = {
   sheet: "z-40",
   overlay: "z-50",
 } as const satisfies Record<keyof typeof Z, string>;
+
+/** Kobalte's hide-outside of a modal below walks every portal that mounts later and hides it, a focused list included, unless the content carries its top-layer marker. */
+export const nestedLayerAttrs = (modal: boolean) => ({
+  "data-kb-top-layer": modal ? undefined : "",
+});

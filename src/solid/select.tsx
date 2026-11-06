@@ -9,7 +9,7 @@ import {
 } from "solid-js";
 import { shadowLayer } from "../lib/shadow-layer.js";
 import { CONTROL_H, INPUT_SURFACE } from "../lib/input-classes.js";
-import { Z_CLASS } from "../lib/layers.js";
+import { nestedLayerAttrs, Z_CLASS } from "../lib/layers.js";
 import { MENU_ITEM, MENU_LABEL, MENU_SEPARATOR } from "../lib/menu-classes.js";
 import { FIELD_MOTION, STAGGER } from "../lib/motion-classes.js";
 import { ignoreOpeningRelease } from "../lib/opening-release.js";
@@ -86,6 +86,7 @@ const SelectContent: ParentComponent<
         onInteractOutside={layer.onInteractOutside}
         onCloseAutoFocus={layer.onCloseAutoFocus}
         data-slot="select-content"
+        {...nestedLayerAttrs(select.isModal())}
         class={cn(
           // Same concave surface as the trigger: opening reads as the input
           // expanding, not a separate floating panel.
