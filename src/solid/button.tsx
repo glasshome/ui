@@ -11,38 +11,20 @@ type ButtonProps = ComponentProps<typeof KobalteButton> &
     busy?: boolean;
   };
 
-type Click = JSX.EventHandlerUnion<HTMLButtonElement, MouseEvent>;
-
-function callClick(
-  handler: Click | undefined,
-  event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element },
-) {
-  if (typeof handler === "function") handler(event);
-  else if (Array.isArray(handler)) handler[0](handler[1], event);
-}
+const busyProps = {
+  "aria-busy": true,
+  "aria-disabled": true,
+  onClick: (event: MouseEvent) => event.preventDefault(),
+} as const;
 
 function Button(props: ButtonProps) {
-  const [local, others] = splitProps(props, [
-    "class",
-    "variant",
-    "size",
-    "busy",
-    "onClick",
-  ] as const);
+  const [local, others] = splitProps(props, ["class", "variant", "size", "busy"] as const);
   return (
     <KobalteButton
       data-slot="button"
       {...others}
       class={cn(buttonVariants({ variant: local.variant, size: local.size }), local.class)}
-      aria-busy={local.busy || undefined}
-      aria-disabled={local.busy || others["aria-disabled"]}
-      onClick={(event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => {
-        if (local.busy) {
-          event.preventDefault();
-          return;
-        }
-        callClick(local.onClick as Click | undefined, event);
-      }}
+      {...(local.busy ? busyProps : undefined)}
     />
   );
 }
