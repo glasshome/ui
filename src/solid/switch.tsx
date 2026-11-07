@@ -7,6 +7,7 @@ type SwitchProps = Omit<ComponentProps<"button">, "onChange" | "children"> & {
   checked?: boolean;
   defaultChecked?: boolean;
   onChange?: (checked: boolean) => void;
+  busy?: boolean;
 };
 
 const Switch: Component<SwitchProps> = (props) => {
@@ -17,6 +18,7 @@ const Switch: Component<SwitchProps> = (props) => {
     "onChange",
     "disabled",
     "name",
+    "busy",
   ]);
   const [uncontrolled, setUncontrolled] = createSignal(props.defaultChecked ?? false);
   const checked = () => local.checked ?? uncontrolled();
@@ -30,15 +32,18 @@ const Switch: Component<SwitchProps> = (props) => {
       data-slot="switch"
       data-checked={checked() ? "" : undefined}
       disabled={local.disabled}
+      aria-busy={local.busy || undefined}
+      aria-disabled={local.busy || undefined}
       class={cn(
         // Unchecked wears the recessed input surface, the same dug-out glass as
         // the slider rail; checked matches the slider fill. A `border-input`
         // utility here would beat `:where(.glass)` and flatten the rim.
-        `group/switch peer transition-glass relative inline-flex h-7 w-14 shrink-0 cursor-pointer items-center rounded-xl duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-50 ${FOCUS_RING}`,
+        `group/switch peer transition-glass relative inline-flex h-7 w-14 shrink-0 cursor-pointer items-center rounded-xl duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress aria-busy:opacity-50 ${FOCUS_RING}`,
         checked() ? CONTROL_ON : FIELD_CHROME,
         local.class,
       )}
       onClick={() => {
+        if (local.busy) return;
         const next = !checked();
         setUncontrolled(next);
         local.onChange?.(next);

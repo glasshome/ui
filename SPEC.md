@@ -187,6 +187,7 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | a status chip | `<Badge tone="var(--success)">` | `rounded-lg bg-green-500/10` |
 | a callout | `<Alert tone="warning">` | `border-amber-500/30 bg-amber-500/10` |
 | a button while the work its press started runs | `<Button busy={saving()}>`: keeps focus, so the popover or dialog around it stays open | `disabled={saving()}`, which drops focus to the page |
+| a switch or text field while the work its change started runs | `<Switch busy={saving()}>` / `<Input busy={saving()}>`: keeps focus, ignores the press or edit | `disabled={saving()}` |
 | a labelled group inside a card | `<SectionGroup icon label count action>` | a hand-rolled `SectionIcon` + `SectionSubtitle` header row |
 | a titled group of form rows | `<FieldSet>` + `<FieldLegend>` (+ `<FieldDescription>`) | a tracked uppercase `SectionLabel` eyebrow |
 | rows that belong to the row above them | `<FieldSubGroup>` | a bare `<Separator>` and a left pad |
