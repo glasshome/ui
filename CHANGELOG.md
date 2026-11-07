@@ -18,6 +18,18 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.39.0](https://github.com/glasshome/ui/compare/v1.38.0...v1.39.0) (2026-11-07)
+
+
+### Features
+
+* **ui:** Switch and Input take busy, keeping focus while their own work runs ([#110](https://github.com/glasshome/ui/issues/110)) ([92c2667](https://github.com/glasshome/ui/commit/92c26678be1fa9c060fe1d297da33996635029c1))
+
+
+### Bug Fixes
+
+* **dock:** remove badge is a neutral chip with a destructive minus ([441d95e](https://github.com/glasshome/ui/commit/441d95e4d9be18fda8f0111d3c01029f9c88f8ee))
+
 ## [1.38.0](https://github.com/glasshome/ui/compare/v1.37.2...v1.38.0) (2026-11-06)
 
 
