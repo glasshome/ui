@@ -1,4 +1,5 @@
 import {
+  children,
   type Component,
   type ComponentProps,
   createEffect,
@@ -66,6 +67,11 @@ interface DockProps extends ComponentProps<"div"> {
   onReorder?: (ids: string[]) => void;
   /** While editing, a grip on the outer edge carries the whole dock to a screen edge; fires once on release over one. */
   onMovePlacement?: (placement: DockPlacement) => void;
+  /** Sits inside the glass before the strip, never pages away; the strip's room shrinks by it. */
+  lead?: JSX.Element;
+  /** A second glass unit beside the dock on the side facing the content; grows out of the dock while `companionOpen`. */
+  companion?: JSX.Element;
+  companionOpen?: boolean;
 }
 
 interface DockIconButtonProps extends ComponentProps<"button"> {
@@ -166,12 +172,18 @@ const Dock: Component<DockProps> = (props) => {
     "onAdd",
     "onReorder",
     "onMovePlacement",
+    "lead",
+    "companion",
+    "companionOpen",
   ]);
   const placement = () => local.placement ?? "bottom";
   const vertical = () => placement() !== "bottom";
   // The drain plays where the fill grew, so the point outlives the hold.
   const [holdPoint, setHoldPoint] = createSignal({ x: 0, y: 0, r: 0 });
   let surfaceRef: HTMLDivElement | undefined;
+  let leadRef: HTMLDivElement | undefined;
+  const lead = children(() => local.lead);
+  const companion = children(() => local.companion);
   createEffect(() => {
     const h = local.hold;
     if (!h) return;
@@ -254,7 +266,8 @@ const Dock: Component<DockProps> = (props) => {
   const availableSpan = () => {
     const box = containerRef?.closest<HTMLElement>('[data-slot="dock"]');
     if (!box || !surfaceRef) return 0;
-    return viewSize(box) - padAlong(box) - padAlong(surfaceRef);
+    const lead = leadRef ? (vertical() ? leadRef.offsetHeight : leadRef.offsetWidth) : 0;
+    return viewSize(box) - padAlong(box) - padAlong(surfaceRef) - lead;
   };
 
   const checkOverflow = () => {
@@ -358,7 +371,7 @@ const Dock: Component<DockProps> = (props) => {
 
   // The box pads by mode and the strip runs along the edge, so either switching changes the room it has.
   createEffect(
-    on([() => local.items.length, dockMode, vertical], () => {
+    on([() => local.items.length, dockMode, vertical, () => Boolean(lead())], () => {
       const frame = requestAnimationFrame(checkOverflow);
       onCleanup(() => cancelAnimationFrame(frame));
     }),
@@ -370,6 +383,7 @@ const Dock: Component<DockProps> = (props) => {
       data-placement={placement()}
       class={cn(
         "flex max-w-full items-center justify-center",
+        { bottom: "flex-col-reverse", left: "flex-row", right: "flex-row-reverse" }[placement()],
         vertical() && "h-full max-h-full",
         dockMode() === "floating" ? "p-1 sm:p-2" : "",
         local.class,
@@ -427,6 +441,22 @@ const Dock: Component<DockProps> = (props) => {
             class="glass-edge-orbit fade-in-0 animate-in duration-(--duration-state)"
           >
             <div />
+          </div>
+        </Show>
+        <Show when={lead()}>
+          <div
+            ref={leadRef}
+            data-slot="dock-lead"
+            class={cn(
+              "flex shrink-0 items-center gap-0.5 sm:gap-1",
+              vertical() ? "flex-col pb-1 sm:pb-2" : "pr-1 sm:pr-2",
+            )}
+          >
+            {lead()}
+            <span
+              aria-hidden="true"
+              class={cn("bg-foreground/15 rounded-full", vertical() ? "h-px w-6" : "h-6 w-px")}
+            />
           </div>
         </Show>
         <div
@@ -555,6 +585,43 @@ const Dock: Component<DockProps> = (props) => {
           </div>
         </Show>
       </div>
+      <Show when={companion()}>
+        <div
+          data-slot="dock-companion-reveal"
+          data-open={local.companionOpen ? "" : undefined}
+          aria-hidden={local.companionOpen ? undefined : "true"}
+          inert={!local.companionOpen}
+          class={cn(
+            "grid opacity-0 transition-[grid-template-rows,grid-template-columns,opacity] duration-(--duration-micro) ease-(--ease-contract) data-[open]:opacity-100 data-[open]:duration-(--duration-expand) data-[open]:ease-(--ease-expand)",
+            vertical()
+              ? "grid-cols-[0fr] data-[open]:grid-cols-[1fr]"
+              : "grid-rows-[0fr] data-[open]:grid-rows-[1fr]",
+          )}
+        >
+          <div class="min-h-0 min-w-0 overflow-hidden">
+            <div
+              class={
+                { bottom: "px-2 pt-2 pb-1", left: "py-2 pr-2 pl-1", right: "py-2 pr-1 pl-2" }[
+                  placement()
+                ]
+              }
+            >
+              <div
+                data-slot="dock-companion"
+                data-placement={placement()}
+                class={cn(
+                  "pointer-events-auto flex w-max items-center gap-1 rounded-xl p-1.5",
+                  vertical() && "flex-col",
+                  CARD_SURFACE,
+                  "[--glass-lift:0.55]",
+                )}
+              >
+                {companion()}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Show>
     </div>
   );
 };
