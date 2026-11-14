@@ -20,11 +20,18 @@ const rectOf = (el: Element | null | undefined) => el?.getBoundingClientRect() a
 function mount(placement: DockPlacement, open: boolean, box = { width: 800, height: 600 }) {
   useFakeTime();
   const view = render(() => (
-    <div class="reduce-motion" style={{ width: `${box.width}px`, height: `${box.height}px` }}>
+    <div
+      class="reduce-motion flex items-start"
+      style={{ width: `${box.width}px`, height: `${box.height}px` }}
+    >
       <Dock
         items={items(3)}
         placement={placement}
-        companion={<button type="button">Done</button>}
+        companion={
+          <button type="button" style={{ "white-space": "nowrap" }}>
+            Done for the day, every widget placed
+          </button>
+        }
         companionOpen={open}
       />
     </div>
@@ -42,14 +49,44 @@ describe("Dock companion", () => {
     expect(companion.left).toBeGreaterThanOrEqual(surface.left - companion.width);
   });
 
-  it("sits on the content side of a left dock", () => {
-    const { surface, companion } = mount("left", true);
-    expect(companion.left).toBeGreaterThanOrEqual(surface.right);
-  });
+  for (const placement of ["left", "right"] as const)
+    it(`stacks under a ${placement} dock, so the edge it takes keeps its width`, () => {
+      const { surface, companion } = mount(placement, true);
+      expect(companion.top).toBeGreaterThanOrEqual(surface.bottom);
+      expect(companion.left).toBeCloseTo(surface.left, 0);
+      expect(companion.right).toBeCloseTo(surface.right, 0);
+    });
 
-  it("sits on the content side of a right dock", () => {
-    const { surface, companion } = mount("right", true);
-    expect(companion.right).toBeLessThanOrEqual(surface.left);
+  it("leaves a side dock less height, so the strip pages and the pair stays on screen", () => {
+    useFakeTime();
+    const view = render(() => (
+      <div class="reduce-motion" style={{ width: "800px", height: `${OVERFLOWING_BOX}px` }}>
+        <Dock
+          items={items(6)}
+          placement="left"
+          companion={
+            <button type="button" style={{ width: "40px", height: "160px" }}>
+              Done
+            </button>
+          }
+          companionOpen
+        />
+      </div>
+    ));
+    vi.advanceTimersToNextFrame();
+    vi.advanceTimersToNextFrame();
+    const companion = rectOf(view.container.querySelector('[data-slot="dock-companion"]'));
+    const dock = rectOf(view.container.querySelector('[data-slot="dock"]'));
+    expect(view.container.querySelector('[data-slot="dock-pages"]')).not.toBeNull();
+    const surface = rectOf(view.container.querySelector('[data-slot="dock-surface"]'));
+    const bar = rectOf(view.container.querySelector('[data-slot="dock-bar"]'));
+    expect(companion.bottom).toBeLessThanOrEqual(dock.bottom + 1);
+    expect(bar.bottom).toBeLessThanOrEqual(surface.bottom + 1);
+    const cut = Array.from(
+      view.container.querySelectorAll('[data-slot="dock-item"]'),
+      rectOf,
+    ).filter((item) => item.top < bar.bottom - 1 && item.bottom > bar.bottom + 1);
+    expect(cut).toEqual([]);
   });
 
   it("takes no room and no input while closed", () => {
@@ -61,6 +98,28 @@ describe("Dock companion", () => {
     expect(rectOf(reveal).height).toBe(0);
     expect(height(view.container)).toBeCloseTo(height(bare.container), 0);
     expect(reveal?.hasAttribute("inert")).toBe(true);
+  });
+});
+
+describe("Side dock pages", () => {
+  it("keep the dock as wide as an unpaged one", () => {
+    useFakeTime();
+    const width = (count: number) => {
+      const view = render(() => (
+        <div class="flex items-start" style={{ height: `${OVERFLOWING_BOX}px` }}>
+          <Dock items={items(count)} placement="left" />
+        </div>
+      ));
+      vi.advanceTimersToNextFrame();
+      return {
+        paged: view.container.querySelector('[data-slot="dock-pages"]') !== null,
+        width: rectOf(view.container.querySelector('[data-slot="dock-surface"]')).width,
+      };
+    };
+    const few = width(2);
+    const many = width(12);
+    expect([few.paged, many.paged]).toEqual([false, true]);
+    expect(many.width).toBeCloseTo(few.width, 0);
   });
 });
 

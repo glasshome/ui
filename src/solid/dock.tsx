@@ -69,7 +69,7 @@ interface DockProps extends ComponentProps<"div"> {
   onMovePlacement?: (placement: DockPlacement) => void;
   /** Sits inside the glass before the strip, never pages away; the strip's room shrinks by it. */
   lead?: JSX.Element;
-  /** A second glass unit beside the dock on the side facing the content; grows out of the dock while `companionOpen`. */
+  /** A second glass unit that grows out of the dock while `companionOpen`: above a bottom dock, under a side dock, which pages to make room. */
   companion?: JSX.Element;
   companionOpen?: boolean;
 }
@@ -182,6 +182,7 @@ const Dock: Component<DockProps> = (props) => {
   const [holdPoint, setHoldPoint] = createSignal({ x: 0, y: 0, r: 0 });
   let surfaceRef: HTMLDivElement | undefined;
   let leadRef: HTMLDivElement | undefined;
+  let companionRef: HTMLDivElement | undefined;
   const lead = children(() => local.lead);
   const companion = children(() => local.companion);
   createEffect(() => {
@@ -267,7 +268,9 @@ const Dock: Component<DockProps> = (props) => {
     const box = containerRef?.closest<HTMLElement>('[data-slot="dock"]');
     if (!box || !surfaceRef) return 0;
     const lead = leadRef ? (vertical() ? leadRef.offsetHeight : leadRef.offsetWidth) : 0;
-    return viewSize(box) - padAlong(box) - padAlong(surfaceRef) - lead;
+    // A side dock's companion stacks along the edge, so the strip gives up its height.
+    const companion = vertical() && local.companionOpen ? (companionRef?.offsetHeight ?? 0) : 0;
+    return viewSize(box) - padAlong(box) - padAlong(surfaceRef) - lead - companion;
   };
 
   const checkOverflow = () => {
@@ -369,12 +372,37 @@ const Dock: Component<DockProps> = (props) => {
     });
   });
 
+  // The companion's own content can change height while open, under a side dock that is the strip's room.
+  onMount(() => {
+    if (!companionRef) return;
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      if (!vertical() || !local.companionOpen) return;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(checkOverflow);
+    });
+    observer.observe(companionRef);
+    onCleanup(() => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    });
+  });
+
   // The box pads by mode and the strip runs along the edge, so either switching changes the room it has.
   createEffect(
-    on([() => local.items.length, dockMode, vertical, () => Boolean(lead())], () => {
-      const frame = requestAnimationFrame(checkOverflow);
-      onCleanup(() => cancelAnimationFrame(frame));
-    }),
+    on(
+      [
+        () => local.items.length,
+        dockMode,
+        vertical,
+        () => Boolean(lead()),
+        () => local.companionOpen,
+      ],
+      () => {
+        const frame = requestAnimationFrame(checkOverflow);
+        onCleanup(() => cancelAnimationFrame(frame));
+      },
+    ),
   );
 
   return (
@@ -383,8 +411,7 @@ const Dock: Component<DockProps> = (props) => {
       data-placement={placement()}
       class={cn(
         "flex max-w-full items-center justify-center",
-        { bottom: "flex-col-reverse", left: "flex-row", right: "flex-row-reverse" }[placement()],
-        vertical() && "h-full max-h-full",
+        vertical() ? "h-full max-h-full flex-col" : "flex-col-reverse",
         dockMode() === "floating" ? "p-1 sm:p-2" : "",
         local.class,
       )}
@@ -396,17 +423,12 @@ const Dock: Component<DockProps> = (props) => {
         class={cn(
           // isolate: the layers behind the icons stay inside the dock even with blur off.
           "pointer-events-auto relative isolate flex max-w-full items-center justify-center p-1.5 sm:p-2",
-          vertical() && "max-h-full flex-col",
-          // A flush side dock runs the whole edge.
-          vertical() && dockMode() === "docked" && "h-full",
-          // Room for the page dots inside the glass; outside it they sit on
-          // the screen edge and get clipped.
-          pages() > 1 &&
-            {
-              bottom: "pb-4 sm:pb-5",
-              left: "pr-4 sm:pr-5",
-              right: "pl-4 sm:pl-5",
-            }[placement()],
+          vertical() && "max-h-full min-h-0 flex-col",
+          // A flush side dock runs the whole edge, less what the companion takes.
+          vertical() && dockMode() === "docked" && "flex-1",
+          // Room for the page dots inside the glass; outside it they sit on the screen edge and
+          // get clipped. A side dock's dots fit its padding, so paging never widens it.
+          pages() > 1 && placement() === "bottom" && "pb-4 sm:pb-5",
           CARD_SURFACE,
           "[--glass-lift:0.55]",
           dockMode() === "floating"
@@ -560,8 +582,8 @@ const Dock: Component<DockProps> = (props) => {
               "pointer-events-auto absolute flex justify-center gap-1.5",
               {
                 bottom: "inset-x-0 bottom-1.5",
-                left: "inset-y-0 right-1.5 flex-col items-center",
-                right: "inset-y-0 left-1.5 flex-col items-center",
+                left: "inset-y-0 right-0.5 flex-col items-center",
+                right: "inset-y-0 left-0.5 flex-col items-center",
               }[placement()],
             )}
           >
@@ -574,10 +596,10 @@ const Dock: Component<DockProps> = (props) => {
                   onClick={() => goToPage(i)}
                   class={cn(
                     "transition-glass rounded-full",
-                    vertical() ? "w-1.5" : "h-1.5",
+                    vertical() ? "w-1" : "h-1.5",
                     page() === i
                       ? cn("bg-foreground/70", vertical() ? "h-4" : "w-4")
-                      : cn("bg-foreground/25", vertical() ? "h-1.5" : "w-1.5"),
+                      : cn("bg-foreground/25", vertical() ? "h-1" : "w-1.5"),
                   )}
                 />
               )}
@@ -592,26 +614,19 @@ const Dock: Component<DockProps> = (props) => {
           aria-hidden={local.companionOpen ? undefined : "true"}
           inert={!local.companionOpen}
           class={cn(
-            "grid opacity-0 transition-[grid-template-rows,grid-template-columns,opacity] duration-(--duration-micro) ease-(--ease-contract) data-[open]:opacity-100 data-[open]:duration-(--duration-expand) data-[open]:ease-(--ease-expand)",
-            vertical()
-              ? "grid-cols-[0fr] data-[open]:grid-cols-[1fr]"
-              : "grid-rows-[0fr] data-[open]:grid-rows-[1fr]",
+            "grid shrink-0 grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-(--duration-micro) ease-(--ease-contract) data-[open]:grid-rows-[1fr] data-[open]:opacity-100 data-[open]:duration-(--duration-expand) data-[open]:ease-(--ease-expand)",
+            // Takes the dock's width instead of widening it.
+            vertical() && "self-stretch [contain:inline-size]",
           )}
         >
           <div class="min-h-0 min-w-0 overflow-hidden">
-            <div
-              class={
-                { bottom: "px-2 pt-2 pb-1", left: "py-2 pr-2 pl-1", right: "py-2 pr-1 pl-2" }[
-                  placement()
-                ]
-              }
-            >
+            <div ref={companionRef} class={vertical() ? "pt-2" : "px-2 pt-2 pb-1"}>
               <div
                 data-slot="dock-companion"
                 data-placement={placement()}
                 class={cn(
-                  "pointer-events-auto flex w-max items-center gap-1 rounded-xl p-1.5",
-                  vertical() && "flex-col",
+                  "pointer-events-auto flex items-center gap-1 rounded-xl p-1.5",
+                  vertical() ? "w-full flex-col" : "w-max",
                   CARD_SURFACE,
                   "[--glass-lift:0.55]",
                 )}
