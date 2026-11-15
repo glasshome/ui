@@ -29,14 +29,16 @@ export const checkoutSlug = (dir = PKG) =>
 export const galleryBuildDir = (pkg = PKG) =>
   join(homedir(), ".cache", "glasshome-gallery-build", checkoutSlug(pkg));
 
-export function buildGallery(pkg = PKG, outDir = galleryBuildDir(pkg)): string {
-  const run = spawnSync(
-    "bunx",
-    ["vite", "build", "--config", "vite.dev.config.ts", "--base", "./", "--outDir", outDir],
-    // Build chatter goes to stderr, so a --json caller reads clean stdout.
-    { cwd: pkg, stdio: ["ignore", 2, 2] },
-  );
-  if (run.status !== 0) throw new Error(`gallery build in ${pkg} exited ${run.status}`);
+/** In process with this checkout's Vite, so a ref checkout with no node_modules of its own builds too. */
+export async function buildGallery(pkg = PKG, outDir = galleryBuildDir(pkg)): Promise<string> {
+  const { build } = await import("vite");
+  await build({
+    configFile: join(pkg, "vite.dev.config.ts"),
+    root: join(pkg, "dev"),
+    base: "./",
+    logLevel: "error",
+    build: { outDir, emptyOutDir: true },
+  });
   return outDir;
 }
 

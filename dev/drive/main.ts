@@ -1,15 +1,17 @@
 // bun run drive <component> <scenario> [--steps keyboard] [--cpu-rate 1] [--width phone|tablet|desktop]
-//                [--theme light|dark] [--out <dir>] [--json] [--no-build]
+//                [--theme light|dark] [--out <dir>] [--json] [--no-build] [--against <git-ref> [--check]]
 // bun run drive --all                     every scenario of every component
 // bun run preview ...                     see preview.ts
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { join, resolve } from "node:path";
+import { basename, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { type Browser, chromium } from "playwright";
 import type { IndexedComponent, IndexedScenario, Step } from "../harness/types";
 import { axTree, focusPath } from "./ax";
+import { comparePage } from "./compare-page";
+import { diffReports, type StepDiff } from "./diff";
 import { markers } from "./markers";
 import { preview } from "./preview";
 import {
@@ -25,7 +27,15 @@ import {
   type Width,
   WIDTHS,
 } from "./scenario";
-import { buildGallery, checkoutSlug, galleryBuildDir, ORIGIN, PKG, serveGallery } from "./serve";
+import {
+  buildGallery,
+  checkoutRef,
+  checkoutSlug,
+  galleryBuildDir,
+  ORIGIN,
+  PKG,
+  serveGallery,
+} from "./serve";
 import { createSettler } from "./settle";
 import { summarize } from "./trace";
 import type { RunReport, StepReport, TimelineEntry, TraceEvent } from "./types";
@@ -182,6 +192,68 @@ function printHuman(report: RunReport) {
   console.log(join(report.dir, "report.json"));
 }
 
+/** The ref's gallery build, made once per commit; null when the ref predates the scenario folders. */
+async function refBuild(ref: string): Promise<{ dir: string; label: string } | null> {
+  const pkg = checkoutRef(ref);
+  if (pkg === null) throw new UsageError(`no commit ${ref}`);
+  if (!existsSync(join(pkg, "dev", "components"))) return null;
+  const out = galleryBuildDir(pkg);
+  if (!existsSync(join(out, "stage.html"))) await buildGallery(pkg, out);
+  return { dir: out, label: `${ref} (${basename(pkg).slice(0, 7)})` };
+}
+
+interface Compared {
+  same: boolean;
+  steps: StepDiff[];
+  base: RunReport;
+  head: RunReport;
+  html: string;
+}
+
+async function compare(
+  browser: Browser,
+  [component, scenario]: [IndexedComponent, IndexedScenario],
+  ref: string,
+  opts: Options,
+): Promise<Compared> {
+  const missing = new UsageError(`${ref} has no scenario ${component.slug}/${scenario.id}`);
+  const built = await refBuild(ref);
+  if (built === null) throw missing;
+  const baseScenario = findComponent(
+    await readBuildIndex(browser, built.dir),
+    component.slug,
+  )?.scenarios.find((s) => s.id === scenario.id);
+  if (!baseScenario) throw missing;
+  const base = await runScenario(browser, component, baseScenario, {
+    ...opts,
+    build: built.dir,
+    label: built.label,
+  });
+  const head = await runScenario(browser, component, scenario, opts);
+  const diff = diffReports(base, head);
+  const dir = mkdtempSync(join(opts.out, `${component.slug}-${scenario.id}-compare-`));
+  writeFileSync(join(dir, "compare.json"), `${JSON.stringify({ ...diff, base, head }, null, 2)}\n`);
+  const html = join(dir, "compare.html");
+  writeFileSync(html, comparePage(base, head, diff));
+  return { ...diff, base, head, html };
+}
+
+function printCompare(c: Compared) {
+  console.log(
+    `${c.head.component}/${c.head.scenario}: ${c.same ? "same behaviour" : "behaviour differs"} (${c.base.build} against ${c.head.build})`,
+  );
+  for (const s of c.steps) {
+    const parts = [
+      s.ax.length > 0 && "ax",
+      s.focus !== null && "focus",
+      s.markers.length > 0 && "markers",
+      Object.keys(s.perf).length > 0 && `perf ${Object.keys(s.perf).join(", ")}`,
+    ].filter(Boolean);
+    if (parts.length > 0) console.log(`  ${s.index}: ${parts.join("; ")}`);
+  }
+  console.log(c.html);
+}
+
 async function main(argv: string[]): Promise<number> {
   if (argv[0] === "preview") return preview(argv.slice(1));
   const { values, positionals } = parseArgs({
@@ -196,6 +268,8 @@ async function main(argv: string[]): Promise<number> {
       json: { type: "boolean", default: false },
       all: { type: "boolean", default: false },
       "no-build": { type: "boolean", default: false },
+      against: { type: "string" },
+      check: { type: "boolean", default: false },
     },
   });
   const cpuRate = Number(values["cpu-rate"]);
@@ -207,11 +281,14 @@ async function main(argv: string[]): Promise<number> {
   if (!values.all && (wanted === undefined || id === undefined)) {
     throw new UsageError("usage: drive <component> <scenario> | drive --all");
   }
+  if (values.all && values.against !== undefined) {
+    throw new UsageError("--against takes one scenario, not --all");
+  }
   const base = resolve(
     values.out ?? join(homedir(), ".cache", "glasshome-ui-drive", checkoutSlug()),
   );
   mkdirSync(base, { recursive: true });
-  const build = values["no-build"] ? galleryBuildDir() : buildGallery();
+  const build = values["no-build"] ? galleryBuildDir() : await buildGallery();
   const opts: Options = {
     keyboard: values.steps === "keyboard",
     cpuRate,
@@ -237,6 +314,13 @@ async function main(argv: string[]): Promise<number> {
       const scenario = component?.scenarios.find((s) => s.id === id);
       if (!component || !scenario) throw new UsageError(`no scenario ${wanted}/${id}`);
       runs.push([component, scenario]);
+    }
+    const [only] = runs;
+    if (values.against !== undefined && only !== undefined) {
+      const compared = await compare(browser, only, values.against, opts);
+      if (values.json) console.log(JSON.stringify(compared));
+      else printCompare(compared);
+      return values.check && !compared.same ? 1 : 0;
     }
     const reports: RunReport[] = [];
     for (const [component, scenario] of runs) {

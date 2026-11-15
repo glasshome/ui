@@ -74,7 +74,7 @@ const outDir = resolve(
 const buildDir = galleryBuildDir();
 const names = args.filter((a) => !a.startsWith("--"));
 
-if (!noBuild) buildGallery();
+if (!noBuild) await buildGallery();
 mkdirSync(outDir, { recursive: true });
 
 const { chromium } = await import("playwright");

@@ -4,9 +4,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { buildGallery, PKG } from "../../dev/drive/serve";
 import type { RunReport } from "../../dev/drive/types";
 
-beforeAll(() => {
-  buildGallery();
-});
+beforeAll(() => buildGallery());
 
 function drive(...args: string[]) {
   const run = spawnSync("bun", ["dev/drive/main.ts", ...args, "--no-build", "--json"], {
@@ -61,6 +59,27 @@ describe("drive", () => {
     const firstFast = run.timeline.findIndex((e) => e.kind === "throttle" && e.rate !== 1);
     expect(mount).toBeGreaterThan(-1);
     expect(firstFast).toBeGreaterThan(mount);
+  });
+
+  it("--against HEAD on an unchanged tree is same", () => {
+    const run = drive("tabs", "keyboard-nav", "--against", "HEAD", "--check");
+    expect(run.code, run.stderr).toBe(0);
+    const compare: { same: boolean; html: string; base: RunReport; head: RunReport } = JSON.parse(
+      run.stdout,
+    );
+    expect(compare.same).toBe(true);
+    expect(compare.base.steps).toHaveLength(compare.head.steps.length);
+    expect(existsSync(compare.html)).toBe(true);
+  });
+
+  it("--against a ref without dev/components exits 2 with the message", () => {
+    const before = spawnSync("git", ["merge-base", "origin/main", "HEAD"], {
+      cwd: PKG,
+      encoding: "utf8",
+    }).stdout.trim();
+    const run = drive("tabs", "keyboard-nav", "--against", before);
+    expect(run.code).toBe(2);
+    expect(run.stderr).toContain(`${before} has no scenario tabs/keyboard-nav`);
   });
 
   it("an unknown scenario exits 2 and names it", () => {
