@@ -1,0 +1,4 @@
+document
+tab, Lights, selected, 1 control, position 1, set size 3
+tab, Media, selected, 1 control, position 3, set size 3
+tab, Lights, selected, 1 control, position 1, set size 3

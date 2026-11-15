@@ -145,6 +145,7 @@
     "node": ">=20"
   },
   "patchedDependencies": {
+    "@guidepup/virtual-screen-reader@0.33.0": "patches/@guidepup%2Fvirtual-screen-reader@0.33.0.patch",
     "@kobalte/core@0.13.13": "patches/@kobalte%2Fcore@0.13.13.patch"
   }
 }

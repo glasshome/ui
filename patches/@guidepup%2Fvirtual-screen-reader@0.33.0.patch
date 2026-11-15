@@ -1,0 +1,13 @@
+diff --git a/lib/esm/index.mjs b/lib/esm/index.mjs
+index 2fe7338f126cbd288ccf0129fc9ea9fd2063445a..8e4c918f4b52fa284dacf7f155a1686943f64ef3 100644
+--- a/lib/esm/index.mjs
++++ b/lib/esm/index.mjs
+@@ -2310,7 +2310,7 @@ var Virtual = class {
+   async #announceLiveRegions(mutations) {
+     await tick();
+     const container = this.#container;
+-    mutations.map(
++    mutations.filter((mutation) => mutation.target.isConnected).map(
+       (mutation) => getLiveSpokenPhrase({
+         container,
+         mutation

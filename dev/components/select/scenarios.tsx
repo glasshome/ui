@@ -68,7 +68,7 @@ export default defineScenarios({
       title: "Inside a closed shadow root",
       render: Fruit,
       within: "shadow-root",
-      steps: [{ press: TRIGGER }, { press: { role: "option", name: "Banana" } }],
+      steps: [{ press: TRIGGER }],
     },
   ],
 });

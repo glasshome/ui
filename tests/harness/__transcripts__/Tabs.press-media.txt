@@ -1,0 +1,2 @@
+document
+tab, Media, selected, 1 control, position 3, set size 3

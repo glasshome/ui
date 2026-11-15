@@ -2,7 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { playwright } from "@vitest/browser-playwright";
 import solid from "vite-plugin-solid";
 import { defineConfig } from "vitest/config";
-import { mouse, touch } from "./tests/commands";
+import { emulateMedia, mouse, touch } from "./tests/commands";
 
 // Forked workers inherit it, so a direct run matches the gate; bun test is UTC already.
 process.env.TZ = "UTC";
@@ -37,6 +37,9 @@ export default defineConfig({
       "embla-carousel-autoplay",
       "embla-carousel-fade",
       "@iconify/utils",
+      "axe-core",
+      "@guidepup/virtual-screen-reader",
+      "dom-accessibility-api",
     ],
   },
   test: {
@@ -70,7 +73,7 @@ export default defineConfig({
               contextOptions: { permissions: ["clipboard-read", "clipboard-write"] },
             }),
             instances: [{ browser: "chromium" }],
-            commands: { mouse, touch },
+            commands: { emulateMedia, mouse, touch },
           },
         },
       },
