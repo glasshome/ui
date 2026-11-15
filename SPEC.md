@@ -181,6 +181,7 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | a floating panel | `<Overlay>` / the overlay-wearing primitive | raw `bg-popover shadow` |
 | a modal | `<ResponsiveDialog>` (desktop dialog + mobile bottom sheet), `<Dialog>` for desktop-only; `anchor={el}` on the content opens the desktop panel beside the element that opened it | `<Sheet side="bottom">` as a modal; a popover restyled or repositioned as a modal |
 | an avatar or icon beside a modal title | `<Header media={…}>` | a hand-rolled row inside the header |
+| a word a homeowner may not know (an account kind, a feature name) | `<Term term={…}>`: tap opens an icon, one line and a docs link in place; the app keeps one glossary of definitions | a helper paragraph or a hover-only tooltip explaining it |
 | a tab row in a modal header | `<Tabs layout="split">` around the parts, `<Header wrap action={<TabsList class="w-auto">…}>` | `class="contents"` on `Tabs` and `flex-wrap` by hand |
 | a form inside a modal | `<Body as="form" id="…">` + a footer button with `form="…"` | a `display: contents` form wrapper inside the Body |
 | a glyph | `<Icon icon="lucide:plus" width={16}>` (inline svg from the host's `provideIcons` source) | `<iconify-icon>`, `@iconify-icon/solid` |

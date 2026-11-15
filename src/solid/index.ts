@@ -396,6 +396,7 @@ export {
   TableRow,
 } from "./table.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs.js";
+export { Term, type TermDefinition } from "./term.js";
 export { Textarea } from "./textarea.js";
 export { Toggle, toggleVariants } from "./toggle.js";
 export { ToggleGroup, ToggleGroupItem } from "./toggle-group.js";
