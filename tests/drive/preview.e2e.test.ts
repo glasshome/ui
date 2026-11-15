@@ -19,6 +19,8 @@ function preview(args: string[], env: Record<string, string> = {}) {
 function sheetOf(args: string[], env: Record<string, string> = {}): string {
   const run = preview([...args, "--out", mkdtempSync(join(tmpdir(), "ui-preview-"))], env);
   expect(run.code, run.stderr).toBe(0);
+  const noise = run.stderr.split("\n").filter((line) => line && !/ gallery on http/.test(line));
+  expect(noise).toEqual([]);
   expect(existsSync(run.last), run.stdout).toBe(true);
   return run.last;
 }
