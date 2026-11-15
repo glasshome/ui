@@ -14,6 +14,17 @@ function drive(...args: string[]) {
   return { code: run.status, stdout: run.stdout, stderr: run.stderr };
 }
 
+const git = (args: string[], input?: string) =>
+  spawnSync("git", ["-c", "user.name=t", "-c", "user.email=t@t", ...args], {
+    cwd: PKG,
+    encoding: "utf8",
+    input,
+    env: { ...process.env, GIT_AUTHOR_DATE: "@0 +0000", GIT_COMMITTER_DATE: "@0 +0000" },
+  }).stdout.trim();
+
+/** Predates dev/components in any clone, shallow or merged, since its tree is empty. */
+const emptyTreeCommit = () => git(["commit-tree", git(["mktree"], ""), "-m", "empty"]);
+
 function report(...args: string[]): RunReport {
   const run = drive(...args);
   expect(run.code, run.stderr).toBe(0);
@@ -72,11 +83,14 @@ describe("drive", () => {
     expect(existsSync(compare.html)).toBe(true);
   });
 
+  it("a ref checkout registers no git worktree", () => {
+    const run = drive("spinner", "labelled", "--against", "HEAD");
+    expect(run.code, run.stderr).toBe(0);
+    expect(git(["worktree", "list", "--porcelain"])).not.toContain("glasshome-ui-refs");
+  });
+
   it("--against a ref without dev/components exits 2 with the message", () => {
-    const before = spawnSync("git", ["merge-base", "origin/main", "HEAD"], {
-      cwd: PKG,
-      encoding: "utf8",
-    }).stdout.trim();
+    const before = emptyTreeCommit();
     const run = drive("tabs", "keyboard-nav", "--against", before);
     expect(run.code).toBe(2);
     expect(run.stderr).toContain(`${before} has no scenario tabs/keyboard-nav`);

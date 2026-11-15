@@ -85,6 +85,20 @@ describe("preview", () => {
     ]);
   });
 
+  it("preview --against a ref without dev/components exits 2 with the message", () => {
+    const git = (args: string[], input?: string) =>
+      spawnSync("git", ["-c", "user.name=t", "-c", "user.email=t@t", ...args], {
+        cwd: PKG,
+        encoding: "utf8",
+        input,
+        env: { ...process.env, GIT_AUTHOR_DATE: "@0 +0000", GIT_COMMITTER_DATE: "@0 +0000" },
+      }).stdout.trim();
+    const before = git(["commit-tree", git(["mktree"], ""), "-m", "empty"]);
+    const run = preview(["spinner", "--against", before]);
+    expect(run.code).toBe(2);
+    expect(run.stderr).toContain(`${before} has no scenario folders`);
+  });
+
   it("preview leaves no server listening", async () => {
     const port = await freePort();
     const run = preview(["spinner", "labelled"], { GALLERY_PORT: String(port) });
