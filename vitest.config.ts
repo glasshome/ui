@@ -105,6 +105,7 @@ export default defineConfig({
             ...BROWSER,
             // A page smaller than the frame scales every shot down; this fits the widest one.
             provider: playwright({
+              // test-change-ok same 5 s as the shared provider, restated since this one replaces it
               actionTimeout: 5000,
               contextOptions: { viewport: { width: 1280, height: 900 } },
             }),
