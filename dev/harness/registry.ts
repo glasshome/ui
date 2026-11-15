@@ -4,6 +4,27 @@ const modules = import.meta.glob<{ default: ComponentScenarios }>("../components
   eager: true,
 });
 
+const contracts = import.meta.glob<string>("../components/*/contract.md", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
+
+/** Rows of the contract's `| id | when | then |` table, header and rule dropped. */
+export function contractRows(slug: string): string[][] {
+  const source = contracts[`../components/${slug}/contract.md`] ?? "";
+  return source
+    .split("\n")
+    .filter((line) => line.startsWith("|"))
+    .slice(2)
+    .map((line) =>
+      line
+        .split("|")
+        .slice(1, -1)
+        .map((cell) => cell.trim()),
+    );
+}
+
 export const COMPONENTS: ComponentScenarios[] = Object.values(modules)
   .map((m) => m.default)
   .sort((a, b) => a.component.localeCompare(b.component));

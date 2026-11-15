@@ -22,33 +22,13 @@ import {
 import { MATERIAL_PRESETS } from "../../src/tokens";
 import type { RunReport, StepReport } from "../drive/types";
 import { STAGE_WIDTHS, type StageWidth, WidthPicker } from "../Stage";
-import { findComponent, kebab, scenarioPath } from "./registry";
+import { contractRows, findComponent, kebab, scenarioPath } from "./registry";
 import type { Scenario, Step } from "./types";
 
-const CONTRACTS = import.meta.glob<string>("../components/*/contract.md", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-});
 const NO_MATERIAL = "None";
 const MATERIALS = [NO_MATERIAL, ...Object.keys(MATERIAL_PRESETS)];
 const THEMES = ["light", "dark"] as const;
 const MIN_CELL_HEIGHT = 96;
-
-/** Rows of the contract's `| id | when | then |` table, header and rule dropped. */
-function contractRows(slug: string): string[][] {
-  const source = CONTRACTS[`../components/${slug}/contract.md`] ?? "";
-  return source
-    .split("\n")
-    .filter((line) => line.startsWith("|"))
-    .slice(2)
-    .map((line) =>
-      line
-        .split("|")
-        .slice(1, -1)
-        .map((cell) => cell.trim()),
-    );
-}
 
 /** Backtick spans become code; nothing else of markdown appears in a contract cell. */
 const Inline = (props: { text: string }) => (
