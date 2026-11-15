@@ -78,21 +78,27 @@ describe("Dock placement", () => {
     expect(dots[0]?.getAttribute("aria-current")).toBe("true");
   });
 
-  it("draws the dot column on the inner edge, inside the glass", () => {
-    const left = mountSide("left", 12, OVERFLOWING_BOX);
-    const leftBar = rectOf(left.container.querySelector('[data-slot="dock-bar"]'));
-    const leftDots = rectOf(left.container.querySelector('[data-slot="dock-pages"]'));
-    const leftSurface = rectOf(left.container.querySelector('[data-slot="dock-surface"]'));
-    expect(leftDots.left).toBeGreaterThanOrEqual(leftBar.right);
-    expect(leftDots.right).toBeLessThanOrEqual(leftSurface.right + 0.5);
-    left.unmount();
-
-    const right = mountSide("right", 12, OVERFLOWING_BOX);
-    const rightBar = rectOf(right.container.querySelector('[data-slot="dock-bar"]'));
-    const rightDots = rectOf(right.container.querySelector('[data-slot="dock-pages"]'));
-    expect(rightDots.right).toBeLessThanOrEqual(rightBar.left);
-    right.unmount();
-  });
+  it.each(["left", "right"] as const)(
+    "draws a %s dock's dot column behind the icons, 10px in from the glass edge",
+    (side) => {
+      const view = mountSide(side, 12, OVERFLOWING_BOX);
+      const slot = (name: string) => view.container.querySelector(`[data-slot="${name}"]`);
+      const dots = slot("dock-pages") as HTMLElement;
+      const dot = rectOf(view.container.querySelector('[data-slot="dock-pages"] button'));
+      const icon = rectOf(slot("dock-item-icon"));
+      const bar = rectOf(slot("dock-bar"));
+      const surface = rectOf(slot("dock-surface"));
+      const [toGlass, toIcon] =
+        side === "left"
+          ? [dot.left - surface.left, icon.left - dot.right]
+          : [surface.right - dot.right, dot.left - icon.right];
+      expect(toGlass).toBeCloseTo(10, 0);
+      expect(toIcon).toBeGreaterThanOrEqual(8);
+      expect(Number(getComputedStyle(dots).zIndex)).toBeLessThan(0);
+      expect(Math.abs(bar.left - surface.left - (surface.right - bar.right))).toBeLessThan(1);
+      view.unmount();
+    },
+  );
 
   it("turns to a page when its dot is pressed", async () => {
     const { container } = render(() => (

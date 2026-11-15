@@ -48,12 +48,15 @@ const ToggleGroup: ParentComponent<
   // discriminated union, so pulling `multiple` into a separate prop collapses the
   // union and mistypes `value`. Leave it in `rest` and just peek at it here.
   const sliding = () => !(props as { multiple?: boolean }).multiple;
+  // Same peek for `orientation`: a column stacks its segments instead of balancing rows.
+  const vertical = () => (props as { orientation?: string }).orientation === "vertical";
   let root: HTMLDivElement | undefined;
   let scope: HTMLDivElement | undefined;
   onMount(() => {
     if (!root) return;
     if (local.scroll) onCleanup(trackScroll(root, "[data-pressed]", "data-pressed"));
-    else onCleanup(balanceRows(root, scope ?? root, '[data-slot="toggle-group-item"]'));
+    else if (!vertical())
+      onCleanup(balanceRows(root, scope ?? root, '[data-slot="toggle-group-item"]'));
   });
   return (
     <ToggleGroupPrimitive
@@ -66,9 +69,11 @@ const ToggleGroup: ParentComponent<
         `group/toggle-group w-fit max-w-full items-center gap-y-1 rounded-lg data-[wrapped]:w-full ${TRACK_SURFACE} p-1 data-[variant=outline]:shadow-xs`,
         local.scroll
           ? `flex [scrollbar-width:none] flex-nowrap overflow-x-auto ${SCROLL_TRACK_FADE}`
-          : sliding()
-            ? "flex"
-            : BALANCED_ROWS,
+          : vertical()
+            ? "flex flex-col items-stretch"
+            : sliding()
+              ? "flex"
+              : BALANCED_ROWS,
         local.class,
       )}
       {...rest}
@@ -86,7 +91,9 @@ const ToggleGroup: ParentComponent<
             class={
               local.scroll
                 ? "flex w-max flex-nowrap items-center"
-                : `w-full items-center gap-y-1 ${BALANCED_ROWS}`
+                : vertical()
+                  ? "flex w-full flex-col items-stretch gap-y-0.5"
+                  : `w-full items-center gap-y-1 ${BALANCED_ROWS}`
             }
           >
             {local.children}

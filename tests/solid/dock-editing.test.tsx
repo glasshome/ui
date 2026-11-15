@@ -290,6 +290,39 @@ describe("Dock move grip", () => {
     return el;
   }
 
+  it.each(["bottom", "left", "right"] as const)(
+    "sits at the start of a %s dock, before the lead, and leaves the items centred across it",
+    (placement) => {
+      const { container } = render(() => (
+        <div class="flex h-[600px] items-start">
+          <Dock
+            items={items(3)}
+            placement={placement}
+            editing
+            onMovePlacement={() => {}}
+            lead={<button type="button">Home</button>}
+          />
+        </div>
+      ));
+      const box = (slot: string) =>
+        (container.querySelector(`[data-slot="${slot}"]`) as HTMLElement).getBoundingClientRect();
+      const grip = box("dock-grip");
+      const surface = box("dock-surface");
+      const bar = box("dock-bar");
+      const lead = box("dock-lead");
+      const across = (r: DOMRect) =>
+        placement === "bottom" ? r.top + r.height / 2 : r.left + r.width / 2;
+      const [gripEnd, leadStart, surfaceStart, gripStart] =
+        placement === "bottom"
+          ? [grip.right, lead.left, surface.left, grip.left]
+          : [grip.bottom, lead.top, surface.top, grip.top];
+      expect(gripStart).toBeGreaterThanOrEqual(surfaceStart - 0.5);
+      expect(gripEnd).toBeLessThanOrEqual(leadStart + 0.5);
+      expect(Math.abs(across(grip) - across(surface))).toBeLessThan(1);
+      expect(Math.abs(across(bar) - across(surface))).toBeLessThan(1);
+    },
+  );
+
   it("moves the dock to the side whose zone the grip is released over", async () => {
     const onMovePlacement = vi.fn();
     const { container } = render(() => (

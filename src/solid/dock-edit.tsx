@@ -3,6 +3,7 @@ import { Portal } from "solid-js/web";
 import { Z_CLASS } from "../lib/layers.js";
 import { cn } from "../lib/utils.js";
 import { type EdgeZone, edgeZone, moveId, slotAt } from "./dock-paging.js";
+import { Icon } from "./icon.js";
 import { usePortalMount } from "./portal-mount.js";
 
 const DRAG_SLOP = 6;
@@ -168,19 +169,7 @@ const ZONE_BOX: Record<EdgeZone, string> = {
   bottom: "inset-x-1/4 bottom-0 h-2/5 border-t-2",
 };
 
-const GRIP_BOX: Record<EdgeZone, string> = {
-  bottom: "top-0 left-1/2 h-3 w-12 -translate-x-1/2",
-  left: "top-1/2 left-0 h-12 w-3 -translate-y-1/2",
-  right: "top-1/2 right-0 h-12 w-3 -translate-y-1/2",
-};
-
-const GRIP_PILL: Record<EdgeZone, string> = {
-  bottom: "h-1 w-8",
-  left: "h-8 w-1",
-  right: "h-8 w-1",
-};
-
-/** The grip on a dock's outer edge: carry it toward a screen edge and the three landing zones light up. */
+/** The grip at the start of a dock (its top on a side, its left end at the bottom): carry it toward a screen edge and the three landing zones light up. */
 export function DockMoveGrip(props: {
   placement: EdgeZone;
   onMove: (placement: EdgeZone) => void;
@@ -233,11 +222,17 @@ export function DockMoveGrip(props: {
         aria-hidden="true"
         onPointerDown={onPointerDown}
         class={cn(
-          "absolute z-10 flex cursor-grab touch-none items-center justify-center",
-          GRIP_BOX[props.placement],
+          "text-foreground/50 absolute z-10 flex cursor-grab touch-none items-center justify-center",
+          props.placement === "bottom"
+            ? "top-1/2 left-0 h-12 w-5 -translate-y-1/2 sm:w-6"
+            : "top-0 left-1/2 h-5 w-12 -translate-x-1/2 sm:h-6",
         )}
       >
-        <span class={cn("bg-foreground/35 rounded-full", GRIP_PILL[props.placement])} />
+        <Icon
+          icon={props.placement === "bottom" ? "lucide:grip-vertical" : "lucide:grip-horizontal"}
+          width={16}
+          height={16}
+        />
       </div>
       <Show when={carrying()}>
         <Portal mount={usePortalMount()}>
