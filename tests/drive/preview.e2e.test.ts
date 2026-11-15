@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 import { PKG } from "../../dev/drive/serve";
 
 function preview(args: string[], env: Record<string, string> = {}) {
-  const run = spawnSync("bun", ["dev/drive/main.ts", "preview", ...args], {
+  const run = spawnSync("bun", [join(PKG, "dev/drive/main.ts"), "preview", ...args], {
     cwd: PKG,
     encoding: "utf8",
     env: { ...process.env, ...env },

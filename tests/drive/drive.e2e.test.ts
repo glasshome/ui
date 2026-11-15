@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import { buildGallery, PKG } from "../../dev/drive/serve";
 import type { RunReport } from "../../dev/drive/types";
@@ -7,7 +8,7 @@ import type { RunReport } from "../../dev/drive/types";
 beforeAll(() => buildGallery());
 
 function drive(...args: string[]) {
-  const run = spawnSync("bun", ["dev/drive/main.ts", ...args, "--no-build", "--json"], {
+  const run = spawnSync("bun", [join(PKG, "dev/drive/main.ts"), ...args, "--no-build", "--json"], {
     cwd: PKG,
     encoding: "utf8",
   });
