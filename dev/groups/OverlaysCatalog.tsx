@@ -2,13 +2,10 @@ import { createSignal, For, Show } from "solid-js";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogBody,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogHead,
   AlertDialogTrigger,
   Avatar,
   AvatarFallback,
@@ -25,6 +22,7 @@ import {
   Button,
   buttonVariants,
   Collapsible,
+  ConfirmDialog,
   CollapsibleContent,
   CollapsibleTrigger,
   ContextMenu,
@@ -47,6 +45,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
+  DialogHead,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -72,10 +71,8 @@ import {
   ResponsiveDialogBody,
   ResponsiveDialogClose,
   ResponsiveDialogContent,
-  ResponsiveDialogDescription,
   ResponsiveDialogFooter,
-  ResponsiveDialogHeader,
-  ResponsiveDialogTitle,
+  ResponsiveDialogHead,
   ResponsiveDialogTrigger,
   Sheet,
   SheetBody,
@@ -139,6 +136,7 @@ export function OverlaysCatalog() {
   const [dockedCollapsed, setDockedCollapsed] = createSignal(false);
   const [tabsOpen, setTabsOpen] = usePersistentOpen("dialog-header-tabs");
   const [tab, setTab] = createSignal("controls");
+  const [confirmOpen, setConfirmOpen] = createSignal(false);
   const [anchorOpen, setAnchorOpen] = createSignal(false);
   const [spotlightOpen, setSpotlightOpen] = createSignal(false);
   const [spotlightScrim, setSpotlightScrim] = createSignal(true);
@@ -151,17 +149,16 @@ export function OverlaysCatalog() {
             Open dialog
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader
-              media={
+            <DialogHead
+              avatar={
                 <Avatar class="size-11">
                   <AvatarFallback>AL</AvatarFallback>
                 </Avatar>
               }
+              title="Package dialog"
+              line="Confirm actions, edit records, link devices."
               action={<HeaderAction />}
-            >
-              <DialogTitle>Package dialog</DialogTitle>
-              <DialogDescription>Confirm actions, edit records, link devices.</DialogDescription>
-            </DialogHeader>
+            />
             <DialogBody>
               <DemoRows />
             </DialogBody>
@@ -179,17 +176,12 @@ export function OverlaysCatalog() {
             Delete widget
           </AlertDialogTrigger>
           <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete this widget?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This removes it from every dashboard. This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogBody>
-              <p class="text-muted-foreground text-sm">
-                Three dashboards still show it. They will fall back to an empty cell.
-              </p>
-            </AlertDialogBody>
+            <AlertDialogHead
+              icon="lucide:trash-2"
+              tone="var(--destructive)"
+              title="Delete this widget?"
+              line="It leaves every dashboard."
+            />
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction>Delete</AlertDialogAction>
@@ -488,18 +480,34 @@ export function OverlaysCatalog() {
         </Dialog>
       </Specimen>
 
+      <Specimen name="ConfirmDialog" try="Remove Anna">
+        <Button variant="outline" onClick={() => setConfirmOpen(true)}>
+          Remove Anna
+        </Button>
+        <ConfirmDialog
+          open={confirmOpen()}
+          onOpenChange={setConfirmOpen}
+          icon="lucide:user-minus"
+          title="Remove Anna?"
+          line="She loses access to this home right away."
+          actionLabel="Remove"
+          onConfirm={() => setConfirmOpen(false)}
+        />
+      </Specimen>
+
       <Specimen name="ResponsiveDialog" try="Open responsive">
         <ResponsiveDialog>
           <ResponsiveDialogTrigger class={buttonVariants({ variant: "outline" })}>
             Open responsive
           </ResponsiveDialogTrigger>
           <ResponsiveDialogContent>
-            <ResponsiveDialogHeader action={<HeaderAction />}>
-              <ResponsiveDialogTitle>Adaptive dialog</ResponsiveDialogTitle>
-              <ResponsiveDialogDescription>
-                Centered modal on desktop, drag-to-dismiss bottom sheet on mobile.
-              </ResponsiveDialogDescription>
-            </ResponsiveDialogHeader>
+            <ResponsiveDialogHead
+              icon="lucide:smartphone"
+              tone="var(--material-accent)"
+              title="Adaptive dialog"
+              line="A dialog on desktop, a bottom sheet on a phone."
+              action={<HeaderAction />}
+            />
             <ResponsiveDialogBody>
               <DemoRows />
             </ResponsiveDialogBody>

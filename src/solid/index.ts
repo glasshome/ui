@@ -29,6 +29,7 @@ export {
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
+  AlertDialogHead,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -148,11 +149,13 @@ export {
   DialogContent,
   DialogDescription,
   DialogFooter,
+  DialogHead,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "./dialog.js";
-export type { ModalSize } from "./dialog-parts.js";
+export { ConfirmDialog, type ConfirmDialogProps } from "./confirm-dialog.js";
+export type { ModalHeadProps, ModalMedia, ModalSize } from "./dialog-parts.js";
 export type { DockIconButtonProps, DockItem, DockPlacement, DockProps } from "./dock.js";
 export { Dock } from "./dock.js";
 export {
@@ -315,6 +318,7 @@ export {
   ResponsiveDialogContent,
   ResponsiveDialogDescription,
   ResponsiveDialogFooter,
+  ResponsiveDialogHead,
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,

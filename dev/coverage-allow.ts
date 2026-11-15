@@ -1,6 +1,34 @@
 /** Exports with no specimen, each with the reason. Reasons are a backlog. */
 export const ALLOW: Array<[name: string, reason: string]> = [
   [
+    "AlertDialogHeader",
+    "Raw header part: apps compose AlertDialogHead, whose specimen is the picture; the free-children Header is left for ui internals and tab-row headers.",
+  ],
+  [
+    "AlertDialogTitle",
+    "Rendered inside AlertDialogHead, which the AlertDialog and ConfirmDialog specimens show.",
+  ],
+  [
+    "AlertDialogDescription",
+    "Rendered inside AlertDialogHead, which the AlertDialog and ConfirmDialog specimens show.",
+  ],
+  [
+    "AlertDialogBody",
+    "Rendered by ConfirmDialog when it has children; its specimen is the picture.",
+  ],
+  [
+    "ResponsiveDialogHeader",
+    "Raw header part: apps compose ResponsiveDialogHead, whose specimen is the picture.",
+  ],
+  [
+    "ResponsiveDialogTitle",
+    "Rendered inside ResponsiveDialogHead, which the ResponsiveDialog specimen shows.",
+  ],
+  [
+    "ResponsiveDialogDescription",
+    "Rendered inside ResponsiveDialogHead, which the ResponsiveDialog specimen shows.",
+  ],
+  [
     "Logo",
     "Its mark loads /assets/glasshome_logo.png, which dev/ does not serve, so a specimen 404s and gallery:shots fails on the console error (GALLERY-PLAN.md gap 4).",
   ],

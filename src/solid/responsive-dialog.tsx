@@ -25,7 +25,7 @@ import {
 } from "./bottom-sheet/index.js";
 import { Button } from "./button.js";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./dialog.js";
-import { createModalParts, type ModalSize } from "./dialog-parts.js";
+import { createModalHead, createModalParts, type ModalSize } from "./dialog-parts.js";
 
 interface ResponsiveDialogContextValue {
   open: () => boolean;
@@ -153,6 +153,12 @@ const ResponsiveDialogDescription: Component<ComponentProps<"p">> = (props) => {
   );
 };
 
+const ResponsiveDialogHead = createModalHead(
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogDescription,
+);
+
 /** Defaults to the footer's outline button; an icon-only close passes `ghost`
  *  so the glyph is not boxed. */
 const ResponsiveDialogClose: ParentComponent<
@@ -182,6 +188,7 @@ export {
   ResponsiveDialogContent,
   ResponsiveDialogDescription,
   ResponsiveDialogFooter,
+  ResponsiveDialogHead,
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,

@@ -57,6 +57,12 @@ const NOT_PROBED: Record<string, string> = {
   Tooltip: "renderless context root (kobalte Tooltip), no DOM element of its own",
   AvatarImage:
     "kobalte Image renders the img element only after a successful load, which the default probe has no source for",
+  AlertDialogHead:
+    "the header door: media, title and line are the whole API, no class to restyle it",
+  DialogHead: "the header door: media, title and line are the whole API, no class to restyle it",
+  ResponsiveDialogHead:
+    "the header door: media, title and line are the whole API, no class to restyle it",
+  ConfirmDialog: "a composed dialog: its parts are fixed, no class to restyle them",
   MediaStoreError: "error class, not a component: no class prop to pass through",
   HeroOption: "deprecated alias of OptionCard",
   SelectionHighlight:
