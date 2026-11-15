@@ -78,24 +78,8 @@ describe("Dock placement", () => {
     expect(dots[0]?.getAttribute("aria-current")).toBe("true");
   });
 
-  it("draws the dot column on the inner edge, inside the glass", () => {
-    const left = mountSide("left", 12, OVERFLOWING_BOX);
-    const leftBar = rectOf(left.container.querySelector('[data-slot="dock-bar"]'));
-    const leftDots = rectOf(left.container.querySelector('[data-slot="dock-pages"]'));
-    const leftSurface = rectOf(left.container.querySelector('[data-slot="dock-surface"]'));
-    expect(leftDots.left).toBeGreaterThanOrEqual(leftBar.right);
-    expect(leftDots.right).toBeLessThanOrEqual(leftSurface.right + 0.5);
-    left.unmount();
-
-    const right = mountSide("right", 12, OVERFLOWING_BOX);
-    const rightBar = rectOf(right.container.querySelector('[data-slot="dock-bar"]'));
-    const rightDots = rectOf(right.container.querySelector('[data-slot="dock-pages"]'));
-    expect(rightDots.right).toBeLessThanOrEqual(rightBar.left);
-    right.unmount();
-  });
-
   it.each(["left", "right"] as const)(
-    "keeps a %s dock's dots clear of the glass edge and the strip",
+    "draws a %s dock's dot column on the outer edge, clear of the glass edge and the strip",
     (side) => {
       const view = mountSide(side, 12, OVERFLOWING_BOX);
       const bar = rectOf(view.container.querySelector('[data-slot="dock-bar"]'));
@@ -103,8 +87,8 @@ describe("Dock placement", () => {
       const surface = rectOf(view.container.querySelector('[data-slot="dock-surface"]'));
       const [toGlass, toStrip] =
         side === "left"
-          ? [surface.right - dot.right, dot.left - bar.right]
-          : [dot.left - surface.left, bar.left - dot.right];
+          ? [dot.left - surface.left, bar.left - dot.right]
+          : [surface.right - dot.right, dot.left - bar.right];
       expect(toGlass).toBeGreaterThanOrEqual(3);
       expect(toStrip).toBeGreaterThanOrEqual(3);
       view.unmount();

@@ -65,7 +65,7 @@ interface DockProps extends ComponentProps<"div"> {
   onAdd?: () => void;
   /** The full id order after a drag or an Alt+arrow move. */
   onReorder?: (ids: string[]) => void;
-  /** While editing, a grip on the outer edge carries the whole dock to a screen edge; fires once on release over one. */
+  /** While editing, a grip atop the dock carries the whole dock to a screen edge; fires once on release over one. */
   onMovePlacement?: (placement: DockPlacement) => void;
   /** Sits inside the glass before the strip, never pages away; the strip's room shrinks by it. */
   lead?: JSX.Element;
@@ -178,6 +178,7 @@ const Dock: Component<DockProps> = (props) => {
   ]);
   const placement = () => local.placement ?? "bottom";
   const vertical = () => placement() !== "bottom";
+  const gripShown = () => Boolean(local.editing && local.onMovePlacement);
   // The drain plays where the fill grew, so the point outlives the hold.
   const [holdPoint, setHoldPoint] = createSignal({ x: 0, y: 0, r: 0 });
   let surfaceRef: HTMLDivElement | undefined;
@@ -325,9 +326,9 @@ const Dock: Component<DockProps> = (props) => {
       : point.x >= surface.left && point.x <= surface.right;
     const pastStrip =
       place === "left"
-        ? point.x > strip.right && point.x <= surface.right
+        ? point.x < strip.left && point.x >= surface.left
         : place === "right"
-          ? point.x < strip.left && point.x >= surface.left
+          ? point.x > strip.right && point.x <= surface.right
           : point.y > strip.bottom && point.y <= surface.bottom;
     if (!pastStrip || !inSurfaceAlong) return;
     const ratio = vertical()
@@ -397,6 +398,7 @@ const Dock: Component<DockProps> = (props) => {
         vertical,
         () => Boolean(lead()),
         () => local.companionOpen,
+        gripShown,
       ],
       () => {
         const frame = requestAnimationFrame(checkOverflow);
@@ -427,13 +429,14 @@ const Dock: Component<DockProps> = (props) => {
           // A flush side dock runs the whole edge, less what the companion takes.
           vertical() && dockMode() === "docked" && "flex-1",
           // Room for the page dots inside the glass; outside it they sit on the screen edge and get
-          // clipped. A side dock moves padding to its inner edge for them, so paging never widens it.
+          // clipped. A side dock moves padding to its outer edge for them, so paging never widens it.
           pages() > 1 &&
             {
               bottom: "pb-4 sm:pb-5",
-              left: "pr-2.5 pl-0.5 sm:pr-3 sm:pl-1",
-              right: "pr-0.5 pl-2.5 sm:pr-1 sm:pl-3",
+              left: "pr-0.5 pl-2.5 sm:pr-1 sm:pl-3",
+              right: "pr-2.5 pl-0.5 sm:pr-3 sm:pl-1",
             }[placement()],
+          gripShown() && "pt-5 sm:pt-6",
           CARD_SURFACE,
           "[--glass-lift:0.55]",
           dockMode() === "floating"
@@ -577,7 +580,7 @@ const Dock: Component<DockProps> = (props) => {
             </Show>
           </SelectionScope>
         </div>
-        <Show when={local.editing && local.onMovePlacement}>
+        <Show when={gripShown()}>
           <DockMoveGrip placement={placement()} onMove={(next) => local.onMovePlacement?.(next)} />
         </Show>
         <Show when={pages() > 1}>
@@ -587,8 +590,8 @@ const Dock: Component<DockProps> = (props) => {
               "pointer-events-auto absolute flex justify-center gap-1.5",
               {
                 bottom: "inset-x-0 bottom-1.5",
-                left: "inset-y-0 right-0 w-2.5 flex-col items-center sm:w-3",
-                right: "inset-y-0 left-0 w-2.5 flex-col items-center sm:w-3",
+                left: "inset-y-0 left-0 w-2.5 flex-col items-center sm:w-3",
+                right: "inset-y-0 right-0 w-2.5 flex-col items-center sm:w-3",
               }[placement()],
             )}
           >
