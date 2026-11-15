@@ -18,6 +18,15 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.40.0](https://github.com/glasshome/ui/compare/v1.39.0...v1.40.0) (2026-11-15)
+
+
+### Features
+
+* **dev:** component harness for owned primitives ([#114](https://github.com/glasshome/ui/issues/114)) ([d4d30f1](https://github.com/glasshome/ui/commit/d4d30f1417a626620238fc8ff8fa9ca509ce55a7))
+* **dock:** a companion beside the dock, a lead inside it, and side docks that page without widening ([#111](https://github.com/glasshome/ui/issues/111)) ([701a537](https://github.com/glasshome/ui/commit/701a53739d1e0d7ae7bd32ce5b603da0d1374693))
+* **solid:** Term explains a word in place ([#113](https://github.com/glasshome/ui/issues/113)) ([a284827](https://github.com/glasshome/ui/commit/a284827af5dc3f2a389468077e5b83d8089f2a92))
+
 ## [1.39.0](https://github.com/glasshome/ui/compare/v1.38.0...v1.39.0) (2026-11-07)
 
 
