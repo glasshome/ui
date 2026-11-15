@@ -12,6 +12,7 @@ const READS_FILES_NO_DOM = [
   "tests/styles/**",
   "tests/gallery-coverage.test.ts",
   "tests/harness/contracts-covered.test.ts",
+  "tests/drive/trace.test.ts",
   "tests/lib/{material,glass-tone,utils}.test.ts",
   "tests/bottom-sheet/{state-machine,velocity}.test.ts",
   "tests/solid/{dock-paging,spotlight-geometry}.test.ts",
@@ -20,6 +21,7 @@ const READS_FILES_NO_DOM = [
 const HAPPY_DOM_SHIM = ["tests/happy-dom-fidelity.test.ts"];
 // Baselines hold only in the Playwright image's fonts and rasteriser: `bun run test:visual:image`.
 const VISUAL = "tests/visual/**/*.test.tsx";
+const DRIVE = "tests/drive/*.e2e.test.ts";
 
 const BROWSER = {
   enabled: true,
@@ -74,10 +76,22 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          name: "drive",
+          environment: "node",
+          include: [DRIVE],
+          // test-change-ok each case spawns the driver, which launches Chromium
+          testTimeout: 60_000,
+          // test-change-ok the hook builds the gallery
+          hookTimeout: 240_000,
+        },
+      },
+      {
+        extends: true,
+        test: {
           name: "chromium",
           setupFiles: ["./tests/setup.ts"],
           include: ["tests/**/*.test.{ts,tsx}"],
-          exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM, VISUAL],
+          exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM, VISUAL, DRIVE],
           browser: BROWSER,
         },
       },

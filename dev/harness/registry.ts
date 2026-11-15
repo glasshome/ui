@@ -1,4 +1,4 @@
-import type { ComponentScenarios, Scenario } from "./types";
+import type { ComponentScenarios, IndexedComponent, Scenario } from "./types";
 
 const modules = import.meta.glob<{ default: ComponentScenarios }>("../components/*/scenarios.tsx", {
   eager: true,
@@ -15,6 +15,19 @@ export const findComponent = (component: string): ComponentScenarios | undefined
 
 export const findScenario = (component: string, id: string): Scenario | undefined =>
   findComponent(component)?.scenarios.find((s) => s.id === id);
+
+export const scenarioIndex = (): IndexedComponent[] =>
+  COMPONENTS.map((c) => ({
+    component: c.component,
+    slug: kebab(c.component),
+    scenarios: c.scenarios.map((s) => ({
+      id: s.id,
+      title: s.title,
+      within: s.within ?? "page",
+      steps: s.steps ?? [],
+      keyboard: s.keyboard ?? null,
+    })),
+  }));
 
 export function scenarioPath(
   component: string,

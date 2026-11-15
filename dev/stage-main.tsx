@@ -4,10 +4,14 @@ import { createEffect, createSignal, onCleanup, Show } from "solid-js";
 import { Dynamic, render } from "solid-js/web";
 import { provideIcons, Toaster } from "../src/solid";
 import { ScenarioStage } from "./harness/ScenarioStage";
+import { scenarioIndex } from "./harness/registry";
 import { findEntry } from "./routes";
 import "./styles.css";
 
 provideIcons({ bundled });
+
+// The driver reads steps here: Bun cannot load scenarios.tsx, which needs Vite's glob and Solid's JSX.
+const INDEX = JSON.stringify(scenarioIndex());
 
 interface StageRoute {
   parts: string[];
@@ -59,6 +63,7 @@ function StageEntry() {
         />
       </Show>
       <Toaster />
+      <script type="application/json" id="scenario-index" textContent={INDEX} />
     </div>
   );
 }

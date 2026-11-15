@@ -29,4 +29,19 @@ export interface ComponentScenarios {
   scenarios: Scenario[];
 }
 
+/** A scenario without its render, as the stage publishes it for tools outside the page. */
+export interface IndexedScenario {
+  id: string;
+  title: string;
+  within: Within;
+  steps: Step[];
+  keyboard: Step[] | null;
+}
+
+export interface IndexedComponent {
+  component: string;
+  slug: string;
+  scenarios: IndexedScenario[];
+}
+
 export const defineScenarios = (c: ComponentScenarios): ComponentScenarios => c;

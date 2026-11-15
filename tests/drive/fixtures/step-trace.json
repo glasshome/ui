@@ -1,0 +1,1856 @@
+{
+  "traceEvents": [
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 14009,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 1970,
+      "tid": 1514719,
+      "ts": 888218051730,
+      "tts": 118716
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 8
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 1494,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 1422,
+      "tid": 1514719,
+      "ts": 888218066581,
+      "tts": 121510
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 526,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 470,
+      "tid": 1514719,
+      "ts": 888218071857,
+      "tts": 123532
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 2408,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 1238,
+      "tid": 1514719,
+      "ts": 888218072410,
+      "tts": 124027
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 9
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 1472,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 1447,
+      "tid": 1514719,
+      "ts": 888218078620,
+      "tts": 126968
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 2
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 496,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 496,
+      "tid": 1514719,
+      "ts": 888218081406,
+      "tts": 129563
+    },
+    {
+      "args": {
+        "beginData": {
+          "dirtyObjects": 9,
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "partialLayout": false,
+          "totalObjects": 24
+        },
+        "endData": {
+          "layoutRoots": [
+            {
+              "depth": 1,
+              "nodeId": 2,
+              "nodeName": "#document",
+              "quads": [[0, 0, 1280, 0, 1280, 900, 0, 900]]
+            }
+          ]
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 272,
+      "name": "Layout",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 262,
+      "tid": 1514719,
+      "ts": 888218081911,
+      "tts": 130066
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 6
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 2192,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 1844,
+      "tid": 1514719,
+      "ts": 888218083770,
+      "tts": 131515
+    },
+    {
+      "args": {
+        "beginData": {
+          "dirtyObjects": 10,
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "partialLayout": false,
+          "totalObjects": 25
+        },
+        "endData": {
+          "layoutRoots": [
+            {
+              "depth": 1,
+              "nodeId": 2,
+              "nodeName": "#document",
+              "quads": [[0, 0, 1280, 0, 1280, 900, 0, 900]]
+            }
+          ]
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 131,
+      "name": "Layout",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 121,
+      "tid": 1514719,
+      "ts": 888218085970,
+      "tts": 133366
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 342,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 325,
+      "tid": 1514719,
+      "ts": 888218089779,
+      "tts": 134066
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 10,
+          "nodeName": "BODY"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 19,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 19,
+      "tid": 1514719,
+      "ts": 888218089818,
+      "tts": 134104
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 246,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 232,
+      "tid": 1514719,
+      "ts": 888218089840,
+      "tts": 134125
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [-8388608, -8388608, 8388607, -8388608, 8388607, 8388607, -8388608, 8388607],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 6,
+          "nodeName": "SPAN class='glass glass-tint'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 184,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 170,
+      "tid": 1514719,
+      "ts": 888218089862,
+      "tts": 134147
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [-8388608, -8388608, 8388607, -8388608, 8388607, 8388607, -8388608, 8388607],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 5,
+          "nodeName": "DIV id='tabs-cl-0-content-media' class='animate-in fade-in-0 slide-in-from-bottom-1 duration-(--duration-state) ease-(--ease-expand) focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 25,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 25,
+      "tid": 1514719,
+      "ts": 888218090093,
+      "tts": 134363
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 0
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 37,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 37,
+      "tid": 1514719,
+      "ts": 888218096233,
+      "tts": 135148
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 484,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 485,
+      "tid": 1514719,
+      "ts": 888218104498,
+      "tts": 136171
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 114,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 112,
+      "tid": 1514719,
+      "ts": 888218105326,
+      "tts": 136983
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 61,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 60,
+      "tid": 1514719,
+      "ts": 888218105373,
+      "tts": 137029
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 307,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 307,
+      "tid": 1514719,
+      "ts": 888218120334,
+      "tts": 137701
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 59,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 58,
+      "tid": 1514719,
+      "ts": 888218120806,
+      "tts": 138169
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 18,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 17,
+      "tid": 1514719,
+      "ts": 888218120841,
+      "tts": 138204
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 266,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 267,
+      "tid": 1514719,
+      "ts": 888218137731,
+      "tts": 138858
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 57,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 56,
+      "tid": 1514719,
+      "ts": 888218138188,
+      "tts": 139288
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 18,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 18,
+      "tid": 1514719,
+      "ts": 888218138220,
+      "tts": 139320
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 321,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 321,
+      "tid": 1514719,
+      "ts": 888218153584,
+      "tts": 139819
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 80,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 78,
+      "tid": 1514719,
+      "ts": 888218154083,
+      "tts": 140307
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 44,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 44,
+      "tid": 1514719,
+      "ts": 888218154113,
+      "tts": 140336
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 395,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 396,
+      "tid": 1514719,
+      "ts": 888218170363,
+      "tts": 140805
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 86,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 74,
+      "tid": 1514719,
+      "ts": 888218170977,
+      "tts": 141414
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 30,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 29,
+      "tid": 1514719,
+      "ts": 888218171025,
+      "tts": 141451
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 423,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 408,
+      "tid": 1514719,
+      "ts": 888218186983,
+      "tts": 141971
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 70,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 68,
+      "tid": 1514719,
+      "ts": 888218187679,
+      "tts": 142648
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 22,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 21,
+      "tid": 1514719,
+      "ts": 888218187721,
+      "tts": 142689
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 450,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 442,
+      "tid": 1514719,
+      "ts": 888218203690,
+      "tts": 143250
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 69,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 67,
+      "tid": 1514719,
+      "ts": 888218204379,
+      "tts": 143928
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 20,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 20,
+      "tid": 1514719,
+      "ts": 888218204420,
+      "tts": 143968
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 301,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 301,
+      "tid": 1514719,
+      "ts": 888218220532,
+      "tts": 144484
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 63,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 62,
+      "tid": 1514719,
+      "ts": 888218221033,
+      "tts": 144969
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 17,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 16,
+      "tid": 1514719,
+      "ts": 888218221073,
+      "tts": 145009
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 301,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 301,
+      "tid": 1514719,
+      "ts": 888218238090,
+      "tts": 145473
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 60,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 58,
+      "tid": 1514719,
+      "ts": 888218238571,
+      "tts": 145951
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 18,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 18,
+      "tid": 1514719,
+      "ts": 888218238606,
+      "tts": 145985
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 267,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 265,
+      "tid": 1514719,
+      "ts": 888218254596,
+      "tts": 146698
+    },
+    {
+      "args": {
+        "beginData": {
+          "dirtyObjects": 8,
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "partialLayout": false,
+          "totalObjects": 25
+        },
+        "endData": {
+          "layoutRoots": [
+            {
+              "depth": 1,
+              "nodeId": 2,
+              "nodeName": "#document",
+              "quads": [[0, 0, 1280, 0, 1280, 900, 0, 900]]
+            }
+          ]
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 166,
+      "name": "Layout",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 153,
+      "tid": 1514719,
+      "ts": 888218254944,
+      "tts": 147041
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 838,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 241,
+      "tid": 1514719,
+      "ts": 888218255350,
+      "tts": 147431
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 10,
+          "nodeName": "BODY"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 782,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 187,
+      "tid": 1514719,
+      "ts": 888218255380,
+      "tts": 147461
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 21,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 20,
+      "tid": 1514719,
+      "ts": 888218256165,
+      "tts": 147650
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 3
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 272,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 273,
+      "tid": 1514719,
+      "ts": 888218270531,
+      "tts": 148171
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 78,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 76,
+      "tid": 1514719,
+      "ts": 888218272292,
+      "tts": 148891
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 27,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 26,
+      "tid": 1514719,
+      "ts": 888218272339,
+      "tts": 148938
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 3
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 179,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 179,
+      "tid": 1514719,
+      "ts": 888218287712,
+      "tts": 149336
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 104,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 102,
+      "tid": 1514719,
+      "ts": 888218288085,
+      "tts": 149696
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 66,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 65,
+      "tid": 1514719,
+      "ts": 888218288119,
+      "tts": 149730
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 3
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 187,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 186,
+      "tid": 1514719,
+      "ts": 888218304562,
+      "tts": 150491
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 73,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 63,
+      "tid": 1514719,
+      "ts": 888218304938,
+      "tts": 150862
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 17,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 16,
+      "tid": 1514719,
+      "ts": 888218304982,
+      "tts": 150906
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 4
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 900,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 880,
+      "tid": 1514719,
+      "ts": 888218320902,
+      "tts": 151561
+    },
+    {
+      "args": {
+        "beginData": {
+          "dirtyObjects": 9,
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "partialLayout": false,
+          "totalObjects": 24
+        },
+        "endData": {
+          "layoutRoots": [
+            {
+              "depth": 1,
+              "nodeId": 2,
+              "nodeName": "#document",
+              "quads": [[0, 0, 1280, 0, 1280, 900, 0, 900]]
+            }
+          ]
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 151,
+      "name": "Layout",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 151,
+      "tid": 1514719,
+      "ts": 888218321811,
+      "tts": 152449
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 1280, 0, 1280, 900, 0, 900],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 2,
+          "nodeName": "#document"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 188,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 180,
+      "tid": 1514719,
+      "ts": 888218322144,
+      "tts": 152764
+    },
+    {
+      "args": {
+        "data": {
+          "clip": [0, 0, 345, 0, 345, 38, 0, 38],
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "layerId": 0,
+          "nodeId": 11,
+          "nodeName": "DIV class='scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto border border-border/50 bg-card/40 backdrop-blur-sm data-[clip-end]:[mask-image:linear-gradient(to_right,black_85%,transparent)] data-[clip-start]:[mask-image:linear-gradient(to_left,black_85%,transparent)] data-[clip-start]:data-[clip-end]:[mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] text-muted-foreground p-1'"
+        }
+      },
+      "cat": "devtools.timeline",
+      "dur": 163,
+      "name": "Paint",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 157,
+      "tid": 1514719,
+      "ts": 888218322166,
+      "tts": 152786
+    },
+    {
+      "args": {
+        "beginData": {
+          "frame": "1DF8B57847C216EC3F8230B9940485DB"
+        },
+        "elementCount": 0
+      },
+      "cat": "blink,devtools.timeline",
+      "dur": 29,
+      "name": "UpdateLayoutTree",
+      "ph": "X",
+      "pid": 1514719,
+      "tdur": 28,
+      "tid": 1514719,
+      "ts": 888218336963,
+      "tts": 153290
+    },
+    {
+      "args": {
+        "data": {
+          "cancelable": true,
+          "commitFinishTime": 1094.503,
+          "duration": 54.683,
+          "enqueuedToMainThreadTime": 1050.134,
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "interactionId": 5570,
+          "interactionOffset": 3,
+          "nodeId": 12,
+          "processingEnd": 1083.634,
+          "processingStart": 1050.879,
+          "timeStamp": 1049.483,
+          "type": "keydown"
+        }
+      },
+      "cat": "devtools.timeline",
+      "id": "0x12",
+      "name": "EventTiming",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218049100
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 67,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 39,
+          "num_scripts": 1
+        },
+        "id": "f18470c1cdab8038"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218049778
+    },
+    {
+      "args": {
+        "data": {
+          "cancelable": true,
+          "commitFinishTime": 1100.452,
+          "duration": 22.581,
+          "enqueuedToMainThreadTime": 1085.165,
+          "frame": "1DF8B57847C216EC3F8230B9940485DB",
+          "interactionId": 5570,
+          "interactionOffset": 3,
+          "nodeId": 3,
+          "processingEnd": 1096.742,
+          "processingStart": 1096.7,
+          "timeStamp": 1084.97,
+          "type": "keyup"
+        }
+      },
+      "cat": "devtools.timeline",
+      "id": "0x1f",
+      "name": "EventTiming",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218084587
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218089685
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 69,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 0,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab802d"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218096159
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218096647
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 70,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 2,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab83d0"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218103218
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id": "0x12",
+      "name": "EventTiming",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218103783
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218105302
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id": "0x1f",
+      "name": "EventTiming",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218107168
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 71,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 13,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab83c3"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218107689
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218120788
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 72,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 17,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab83f2"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218121089
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218138171
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 73,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 15,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab83fd"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218138433
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218154067
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 74,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 16,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab83e2"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218154378
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218170953
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 75,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 16,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab83eb"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218171301
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218187651
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 76,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 16,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab8390"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218187954
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218204348
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 77,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 16,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab8399"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218204704
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218220996
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 78,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 17,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab838d"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218221342
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218238551
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 79,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 16,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab83b7"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218238841
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218255318
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 80,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 15,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab83bd"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218256418
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218272263
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 81,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 15,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab83a4"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218272544
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218288064
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 82,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 16,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab83ad"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218288428
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218304917
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 83,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 16,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab8354"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218305213
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218322119
+    },
+    {
+      "args": {
+        "animation_frame_timing_info": {
+          "begin_frame_id": {
+            "sequence_number": 84,
+            "source_id": 8589934592
+          },
+          "blocking_duration_ms": 0,
+          "duration_ms": 14,
+          "num_scripts": 0
+        },
+        "id": "f18470c1cdab835c"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "b",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218322507
+    },
+    {
+      "args": {},
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "AnimationFrame",
+      "ph": "e",
+      "pid": 1514719,
+      "tid": 1514719,
+      "ts": 888218337271
+    }
+  ]
+}

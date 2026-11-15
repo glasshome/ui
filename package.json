@@ -91,7 +91,8 @@
     "test:visual:update": "sh dev/visual-in-image.sh --update",
     "test:watch": "vitest",
     "dev:gallery": "vite --config vite.dev.config.ts",
-    "gallery:shots": "node dev/shoot.mjs"
+    "gallery:shots": "bun dev/shoot.mjs",
+    "drive": "bun dev/drive/main.ts"
   },
   "dependencies": {
     "@iconify/types": "^2.0.0",

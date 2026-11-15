@@ -25,10 +25,14 @@ const KEYBOARD = CASES.filter((c) => c.scenario.keyboard !== undefined);
 const THEMES = ["light", "dark"] as const;
 
 const frame = () => new Promise<void>((done) => requestAnimationFrame(() => done()));
+// A progress indicator keeps moving under reduced motion: WCAG 2.2.2 counts it as essential.
+const showsProgress = (a: Animation) =>
+  a.effect instanceof KeyframeEffect &&
+  a.effect.target?.closest('[role="status"], [role="progressbar"]') != null;
 const running = () =>
   [document, ...CLOSED_ROOTS]
     .flatMap((r) => r.getAnimations())
-    .filter((a) => a.playState === "running");
+    .filter((a) => a.playState === "running" && !showsProgress(a));
 
 async function mount(component: string, scenario: Scenario) {
   return mountScenario(component, scenario.id);
