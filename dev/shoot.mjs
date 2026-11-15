@@ -186,9 +186,12 @@ async function verify() {
 async function shootRoute(target) {
   await page.goto(`http://gallery.local/stage.html#/${target}`);
   try {
-    await page.locator("[data-screen]").first().waitFor({ state: "visible", timeout: SETTLE_MS });
+    await page
+      .locator("[data-screen], [data-scenario]")
+      .first()
+      .waitFor({ state: "visible", timeout: SETTLE_MS });
   } catch {
-    console.error(`no [data-screen] rendered at stage.html#/${target}`);
+    console.error(`no [data-screen] or [data-scenario] rendered at stage.html#/${target}`);
     return 2;
   }
   await settle();
