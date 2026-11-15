@@ -78,17 +78,38 @@ describe("Dock placement", () => {
     expect(dots[0]?.getAttribute("aria-current")).toBe("true");
   });
 
-  for (const side of ["left", "right"] as const)
-    it(`draws a ${side} dock's dots in a row under the strip, inside the glass`, () => {
-      const { container } = mountSide(side, 12, OVERFLOWING_BOX);
-      const bar = rectOf(container.querySelector('[data-slot="dock-bar"]'));
-      const dots = rectOf(container.querySelector('[data-slot="dock-pages"]'));
-      const surface = rectOf(container.querySelector('[data-slot="dock-surface"]'));
-      expect(dots.top).toBeGreaterThanOrEqual(bar.bottom);
-      expect(dots.bottom).toBeLessThanOrEqual(surface.bottom + 0.5);
-      expect(dots.left).toBeGreaterThanOrEqual(surface.left - 0.5);
-      expect(dots.right).toBeLessThanOrEqual(surface.right + 0.5);
-    });
+  it("draws the dot column on the inner edge, inside the glass", () => {
+    const left = mountSide("left", 12, OVERFLOWING_BOX);
+    const leftBar = rectOf(left.container.querySelector('[data-slot="dock-bar"]'));
+    const leftDots = rectOf(left.container.querySelector('[data-slot="dock-pages"]'));
+    const leftSurface = rectOf(left.container.querySelector('[data-slot="dock-surface"]'));
+    expect(leftDots.left).toBeGreaterThanOrEqual(leftBar.right);
+    expect(leftDots.right).toBeLessThanOrEqual(leftSurface.right + 0.5);
+    left.unmount();
+
+    const right = mountSide("right", 12, OVERFLOWING_BOX);
+    const rightBar = rectOf(right.container.querySelector('[data-slot="dock-bar"]'));
+    const rightDots = rectOf(right.container.querySelector('[data-slot="dock-pages"]'));
+    expect(rightDots.right).toBeLessThanOrEqual(rightBar.left);
+    right.unmount();
+  });
+
+  it.each(["left", "right"] as const)(
+    "keeps a %s dock's dots clear of the glass edge and the strip",
+    (side) => {
+      const view = mountSide(side, 12, OVERFLOWING_BOX);
+      const bar = rectOf(view.container.querySelector('[data-slot="dock-bar"]'));
+      const dot = rectOf(view.container.querySelector('[data-slot="dock-pages"] button'));
+      const surface = rectOf(view.container.querySelector('[data-slot="dock-surface"]'));
+      const [toGlass, toStrip] =
+        side === "left"
+          ? [surface.right - dot.right, dot.left - bar.right]
+          : [dot.left - surface.left, bar.left - dot.right];
+      expect(toGlass).toBeGreaterThanOrEqual(3);
+      expect(toStrip).toBeGreaterThanOrEqual(3);
+      view.unmount();
+    },
+  );
 
   it("turns to a page when its dot is pressed", async () => {
     const { container } = render(() => (

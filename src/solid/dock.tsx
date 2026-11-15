@@ -319,13 +319,20 @@ const Dock: Component<DockProps> = (props) => {
     if (!point || pages() < 2 || !surfaceRef || !containerRef) return;
     const strip = containerRef.getBoundingClientRect();
     const surface = surfaceRef.getBoundingClientRect();
-    const onDotRow =
-      point.x >= surface.left &&
-      point.x <= surface.right &&
-      point.y > strip.bottom &&
-      point.y <= surface.bottom;
-    if (!onDotRow) return;
-    const ratio = (point.x - surface.left) / surface.width;
+    const place = placement();
+    const inSurfaceAlong = vertical()
+      ? point.y >= surface.top && point.y <= surface.bottom
+      : point.x >= surface.left && point.x <= surface.right;
+    const pastStrip =
+      place === "left"
+        ? point.x > strip.right && point.x <= surface.right
+        : place === "right"
+          ? point.x < strip.left && point.x >= surface.left
+          : point.y > strip.bottom && point.y <= surface.bottom;
+    if (!pastStrip || !inSurfaceAlong) return;
+    const ratio = vertical()
+      ? (point.y - surface.top) / surface.height
+      : (point.x - surface.left) / surface.width;
     const target = Math.min(pages() - 1, Math.floor(ratio * pages()));
     if (target === page()) return;
     const timer = setTimeout(() => goToPage(target), DOCK_PAGE_MS);
@@ -390,7 +397,6 @@ const Dock: Component<DockProps> = (props) => {
         vertical,
         () => Boolean(lead()),
         () => local.companionOpen,
-        pages,
       ],
       () => {
         const frame = requestAnimationFrame(checkOverflow);
@@ -420,8 +426,14 @@ const Dock: Component<DockProps> = (props) => {
           vertical() && "max-h-full min-h-0 flex-col",
           // A flush side dock runs the whole edge, less what the companion takes.
           vertical() && dockMode() === "docked" && "flex-1",
-          // Page dots sit in a row under the strip, inside the glass: a side dock pages without widening.
-          pages() > 1 && "pb-4 sm:pb-5",
+          // Room for the page dots inside the glass; outside it they sit on the screen edge and get
+          // clipped. A side dock moves padding to its inner edge for them, so paging never widens it.
+          pages() > 1 &&
+            {
+              bottom: "pb-4 sm:pb-5",
+              left: "pr-2.5 pl-0.5 sm:pr-3 sm:pl-1",
+              right: "pr-0.5 pl-2.5 sm:pr-1 sm:pl-3",
+            }[placement()],
           CARD_SURFACE,
           "[--glass-lift:0.55]",
           dockMode() === "floating"
@@ -573,7 +585,11 @@ const Dock: Component<DockProps> = (props) => {
             data-slot="dock-pages"
             class={cn(
               "pointer-events-auto absolute flex justify-center gap-1.5",
-              "inset-x-0 bottom-1.5",
+              {
+                bottom: "inset-x-0 bottom-1.5",
+                left: "inset-y-0 right-0 w-2.5 flex-col items-center sm:w-3",
+                right: "inset-y-0 left-0 w-2.5 flex-col items-center sm:w-3",
+              }[placement()],
             )}
           >
             <Index each={Array.from({ length: pages() })}>
@@ -585,8 +601,10 @@ const Dock: Component<DockProps> = (props) => {
                   onClick={() => goToPage(i)}
                   class={cn(
                     "transition-glass rounded-full",
-                    "h-1.5",
-                    page() === i ? "bg-foreground/70 w-4" : "bg-foreground/25 w-1.5",
+                    vertical() ? "w-1" : "h-1.5",
+                    page() === i
+                      ? cn("bg-foreground/70", vertical() ? "h-4" : "w-4")
+                      : cn("bg-foreground/25", vertical() ? "h-1" : "w-1.5"),
                   )}
                 />
               )}
