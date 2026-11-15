@@ -46,10 +46,13 @@ const refuses = (port: number) =>
     socket.on("error", () => done(true));
   });
 
-function workingTreeRef(): string {
-  const git = (...args: string[]) =>
-    spawnSync("git", args, { cwd: PKG, encoding: "utf8" }).stdout.trim();
-  return git("stash", "create") || git("rev-parse", "HEAD");
+/** A repository with one empty commit, so nothing has changed whatever this checkout holds. */
+function emptyRepo(): Record<string, string> {
+  const dir = mkdtempSync(join(tmpdir(), "ui-preview-git-"));
+  const git = (...args: string[]) => spawnSync("git", ["-C", dir, ...args], { encoding: "utf8" });
+  git("init", "-q");
+  git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--allow-empty", "-m", "init");
+  return { GIT_DIR: join(dir, ".git"), GIT_WORK_TREE: dir };
 }
 
 describe("preview", () => {
@@ -89,10 +92,9 @@ describe("preview", () => {
   });
 
   it("preview --changed with no changes previews nothing and says so", () => {
-    const ref = workingTreeRef();
-    const run = preview(["--changed", "--since", ref]);
+    const run = preview(["--changed", "--since", "HEAD"], emptyRepo());
     expect(run.code, run.stderr).toBe(0);
-    expect(run.last).toBe(`No component changed since ${ref}.`);
+    expect(run.last).toBe("No component changed since HEAD.");
   });
 
   it("preview of an unknown component exits 2 listing the known ones", () => {
