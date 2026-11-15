@@ -329,7 +329,8 @@ Checklist for a new component:
    through a pure `lib/` file, never duplicate it.
 5. Export via `src/solid/index.ts` (components) and root `src/index.ts` (pure
    recipes needed by SSR).
-6. Register a specimen in the gallery (`dev/groups/*` in this package).
+6. Register a specimen in the gallery (`dev/groups/*` in this package). A
+   component with behaviour also gets a harness folder (`dev/HARNESS.md`).
 7. Comments: only constraints the code cannot express (rendering bugs worked
    around, cascade requirements, a11y invariants). One line each.
 
