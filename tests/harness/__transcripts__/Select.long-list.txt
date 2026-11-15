@@ -1,0 +1,4 @@
+document
+listbox, Fruit, orientated vertically | option, Option 1, not selected, not disabled, position 1, set size 60 | listbox, Fruit, orientated vertically | option, Option 1, not selected, not disabled, position 1, set size 60
+option, Option 60, not selected, not disabled, position 60, set size 60
+button, Fruit Option 60, not expanded, has popup listbox

@@ -59,3 +59,10 @@ export const touch: BrowserCommand<[action: keyof typeof TOUCH, x: number, y: nu
     touchPoints: action === "down" ? [{ ...at, id: 0 }] : [],
   });
 };
+
+type Media = { reducedMotion?: "reduce" | "no-preference"; colorScheme?: "light" | "dark" };
+
+/** Emulated media features for the page and its test frame. */
+export const emulateMedia: BrowserCommand<[media: Media]> = async (ctx, media) => {
+  await ctx.page.emulateMedia(media);
+};

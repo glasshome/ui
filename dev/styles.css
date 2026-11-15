@@ -1,2 +1,4 @@
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
 @import "../src/styles/globals.css";
 @source "./";

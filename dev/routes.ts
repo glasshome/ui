@@ -1,4 +1,6 @@
 import type { Component } from "solid-js";
+import { ComponentPage } from "./harness/ComponentPage";
+import { COMPONENTS, kebab } from "./harness/registry";
 import ColourRoles from "./foundations/ColourRoles";
 import Elevation from "./foundations/Elevation";
 import GlassPlayground from "./foundations/GlassPlayground";
@@ -44,7 +46,14 @@ export const AREAS: Area[] = [
     id: "components",
     title: "Components",
     icon: "lucide:box",
-    entries: [{ id: "all", title: "All components", component: PackageCatalog }],
+    entries: [
+      { id: "all", title: "Catalog", component: PackageCatalog },
+      ...COMPONENTS.map(({ component }) => ({
+        id: kebab(component),
+        title: component,
+        component: () => ComponentPage({ component }),
+      })),
+    ],
   },
   {
     id: "screens",

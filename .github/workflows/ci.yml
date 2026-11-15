@@ -34,3 +34,16 @@ jobs:
       # Real Node runtime import of the server-safe entries (root + tokens);
       # ./solid is browser-only, it creates DOM templates at import time.
       - run: node -e "await import('./dist/index.js'); await import('./dist/tokens/index.js')"
+
+  visual:
+    runs-on: ubuntu-latest
+    # Baselines hold only in this image's fonts and rasteriser; its tag follows the playwright pin.
+    container: mcr.microsoft.com/playwright:v1.63.0-noble
+    steps:
+      - uses: actions/checkout@v4
+      - run: apt-get update && apt-get install -y unzip
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+      - run: bun install --frozen-lockfile
+      - run: bun run test:visual

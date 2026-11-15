@@ -1,6 +1,5 @@
 // Screenshot gallery specimens without a dev server: build the gallery static,
-// serve the folder from disk through Playwright's request interception (ES
-// modules are refused over file://), shoot each named cell.
+// serve it from disk (drive/serve.ts), shoot each named cell.
 //
 //   bun run gallery:shots                      every cell
 //   bun run gallery:shots ResponsiveDialog Select
@@ -17,14 +16,17 @@
 //
 // CHROMIUM_PATH points at a system Chromium when Playwright's bundled one
 // cannot launch (NixOS).
-import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { homedir } from "node:os";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, resolve } from "node:path";
+import {
+  buildGallery,
+  checkoutSlug,
+  galleryBuildDir,
+  ORIGIN,
+  serveGallery,
+} from "./drive/serve.ts";
 
-const here = dirname(fileURLToPath(import.meta.url));
-const pkg = resolve(here, "..");
 const args = process.argv.slice(2);
 const flag = (name, fallback) => {
   const i = args.indexOf(`--${name}`);
@@ -66,38 +68,16 @@ const press = click
   : rightClick
     ? { text: String(rightClick), button: "right", prefix: "right-" }
     : null;
-// Per-checkout cache dirs, so parallel worktrees never overwrite each other.
-const checkout = pkg
-  .replace(/[^a-z0-9]+/gi, "-")
-  .replace(/^-|-$/g, "")
-  .toLowerCase();
 const outDir = resolve(
-  String(flag("out", join(homedir(), ".cache", "glasshome-gallery-shots", checkout))),
+  String(flag("out", join(homedir(), ".cache", "glasshome-gallery-shots", checkoutSlug()))),
 );
-const buildDir = join(homedir(), ".cache", "glasshome-gallery-build", checkout);
+const buildDir = galleryBuildDir();
 const names = args.filter((a) => !a.startsWith("--"));
 
-if (!noBuild) {
-  const r = spawnSync(
-    "bunx",
-    ["vite", "build", "--config", "vite.dev.config.ts", "--base", "./", "--outDir", buildDir],
-    { cwd: pkg, stdio: "inherit" },
-  );
-  if (r.status !== 0) process.exit(r.status ?? 1);
-}
+if (!noBuild) await buildGallery();
 mkdirSync(outDir, { recursive: true });
 
 const { chromium } = await import("playwright");
-const MIME = {
-  html: "text/html",
-  js: "text/javascript",
-  css: "text/css",
-  svg: "image/svg+xml",
-  woff2: "font/woff2",
-  woff: "font/woff",
-  png: "image/png",
-  json: "application/json",
-};
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
 const page = await browser.newPage({
   viewport: { width, height },
@@ -105,18 +85,7 @@ const page = await browser.newPage({
   colorScheme: light ? "light" : "dark",
 });
 if (reducedMotion) await page.emulateMedia({ reducedMotion: "reduce" });
-await page.route("http://gallery.local/**", (route) => {
-  let path = new URL(route.request().url()).pathname;
-  if (path === "/") path = "/index.html";
-  const file = join(buildDir, path);
-  if (!existsSync(file)) return route.fulfill({ status: 404, body: "" });
-  const ext = file.split(".").pop();
-  return route.fulfill({
-    status: 200,
-    contentType: MIME[ext] ?? "application/octet-stream",
-    body: readFileSync(file),
-  });
-});
+await serveGallery(page, buildDir);
 const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
 page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
@@ -156,7 +125,7 @@ async function settle() {
 }
 
 async function verify() {
-  await page.goto("http://gallery.local/#/all");
+  await page.goto(`${ORIGIN}/#/all`);
   await page.locator("[data-specimen]").first().waitFor();
   await settle();
   const cells = page.locator("[data-try]");
@@ -184,11 +153,14 @@ async function verify() {
 }
 
 async function shootRoute(target) {
-  await page.goto(`http://gallery.local/stage.html#/${target}`);
+  await page.goto(`${ORIGIN}/stage.html#/${target}`);
   try {
-    await page.locator("[data-screen]").first().waitFor({ state: "visible", timeout: SETTLE_MS });
+    await page
+      .locator("[data-screen], [data-scenario]")
+      .first()
+      .waitFor({ state: "visible", timeout: SETTLE_MS });
   } catch {
-    console.error(`no [data-screen] rendered at stage.html#/${target}`);
+    console.error(`no [data-screen] or [data-scenario] rendered at stage.html#/${target}`);
     return 2;
   }
   await settle();
@@ -199,7 +171,7 @@ async function shootRoute(target) {
 }
 
 async function shootSpecimens() {
-  await page.goto("http://gallery.local/#/all");
+  await page.goto(`${ORIGIN}/#/all`);
   await page.waitForTimeout(800);
 
   const cells = page.locator("[data-specimen]");

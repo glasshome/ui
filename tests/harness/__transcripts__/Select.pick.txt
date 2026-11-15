@@ -1,0 +1,3 @@
+document
+listbox, Fruit, orientated vertically | option, Apple, not selected, not disabled, position 1, set size 4 | listbox, Fruit, orientated vertically | option, Apple, not selected, not disabled, position 1, set size 4
+option, Cherry, not selected, not disabled, position 3, set size 4 | button, Fruit Cherry, not expanded, has popup listbox

@@ -1,4 +1,4 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -25,11 +25,18 @@ const pkg = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CONFIG = join(pkg, "tsconfig.json");
 const ENTRY = join(pkg, "src/solid/index.ts");
 const GROUPS = join(pkg, "dev/groups");
+const SCENARIOS = join(pkg, "dev/components");
 const SCREAMING_CASE = /^[A-Z][A-Z0-9_]*$/;
 
 export type Component = { name: string; module: string };
 export type SpecimenUse = { name: string; renders: string[] };
-export type Inventory = { exports: string[]; components: Component[]; specimens: SpecimenUse[] };
+/** `scenarios` names each export a `dev/components/<kebab(name)>/scenarios.tsx` declares. */
+export type Inventory = {
+  exports: string[];
+  components: Component[];
+  specimens: SpecimenUse[];
+  scenarios: string[];
+};
 export type Report = {
   uncovered: string[];
   unknownSpecimens: string[];
@@ -40,7 +47,7 @@ type Allow = ReadonlyArray<readonly [name: string, reason: string]>;
 
 export function judge(inventory: Inventory, allow: Allow): Report {
   const moduleOf = new Map(inventory.components.map((c) => [c.name, c.module]));
-  const named = new Set(inventory.specimens.map((s) => s.name));
+  const named = new Set([...inventory.specimens.map((s) => s.name), ...inventory.scenarios]);
   const exportNames = new Set(inventory.exports);
   const renderedByOwnModule = (c: Component) =>
     inventory.specimens.some(
@@ -49,7 +56,7 @@ export function judge(inventory: Inventory, allow: Allow): Report {
   const uncovered = inventory.components
     .filter((c) => !named.has(c.name) && !renderedByOwnModule(c))
     .map((c) => c.name);
-  const unknown = [...named].filter((name) => !exportNames.has(name));
+  const unknown = inventory.specimens.map((s) => s.name).filter((name) => !exportNames.has(name));
   const allowed = new Set(allow.map(([name]) => name));
   const failing = new Set([...uncovered, ...unknown]);
   return {
@@ -99,6 +106,16 @@ function specimenName(node: Node): string | undefined {
       : "{non-literal name}";
   }
   return "{no name}";
+}
+
+function scenarioComponents(): string[] {
+  return readdirSync(SCENARIOS).flatMap((folder) => {
+    const file = join(SCENARIOS, folder, "scenarios.tsx");
+    if (!existsSync(file)) return [];
+    const name = /\bcomponent:\s*"([A-Za-z]+)"/.exec(readFileSync(file, "utf8"))?.[1];
+    const kebab = name?.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+    return name !== undefined && kebab === folder ? [name] : [];
+  });
 }
 
 export async function collectInventory(): Promise<Inventory> {
@@ -158,6 +175,7 @@ export async function collectInventory(): Promise<Inventory> {
       exports,
       components,
       specimens: [...specimens].map(([name, renders]) => ({ name, renders: [...renders] })),
+      scenarios: scenarioComponents(),
     };
   } finally {
     await api.close();

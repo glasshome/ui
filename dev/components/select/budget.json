@@ -1,0 +1,340 @@
+{
+  "closed": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 32,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 16,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 6,
+        "reason": "kobalte baseline 2026-11-15"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "open": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 32,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 16,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 568,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 41,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 24,
+        "reason": "kobalte baseline 2026-11-15"
+      },
+      "domCalls": {
+        "getComputedStyle": 64,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 1,
+        "MutationObserver": 1
+      }
+    }
+  },
+  "pick": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 32,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 16,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 568,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 41,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 125,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 41,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 33,
+        "reason": "kobalte baseline 2026-11-15"
+      },
+      "domCalls": {
+        "getComputedStyle": 83,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 1,
+        "MutationObserver": 1
+      }
+    }
+  },
+  "long-list": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 28,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 16,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 6864,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 377,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 18,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 7,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 534,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 377,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 210,
+        "reason": "kobalte baseline 2026-11-15"
+      },
+      "domCalls": {
+        "getComputedStyle": 102,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 2,
+        "MutationObserver": 1
+      }
+    }
+  },
+  "dismiss": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 32,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 16,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 564,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 41,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 97,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 38,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 27,
+        "reason": "kobalte baseline 2026-11-15"
+      },
+      "domCalls": {
+        "getComputedStyle": 64,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 1,
+        "MutationObserver": 1
+      }
+    }
+  },
+  "in-sheet": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 322,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 25,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 5,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 585,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 42,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 27,
+        "reason": "kobalte baseline 2026-11-15"
+      },
+      "domCalls": {
+        "getComputedStyle": 66,
+        "compareDocumentPosition": 1,
+        "IntersectionObserver": 1,
+        "MutationObserver": 1
+      }
+    }
+  },
+  "in-shadow-root": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 34,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 18,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 17,
+          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "kobalte baseline 2026-11-15"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "kobalte baseline 2026-11-15"
+        }
+      }
+    }
+  }
+}

@@ -85,10 +85,15 @@
     "check:publish": "publint && attw --pack . --profile esm-only --exclude-entrypoints ./styles ./styles/theme && bun scripts/check-pack.ts",
     "dev": "tsc -b tsconfig.build.json --force && vite build --watch",
     "lint": "oxlint --type-aware . && oxfmt --check .",
-    "test": "vitest run",
+    "test": "vitest run --project '!visual'",
+    "test:visual": "vitest run --project visual",
+    "test:visual:image": "sh dev/visual-in-image.sh",
+    "test:visual:update": "sh dev/visual-in-image.sh --update",
     "test:watch": "vitest",
     "dev:gallery": "vite --config vite.dev.config.ts",
-    "gallery:shots": "node dev/shoot.mjs"
+    "gallery:shots": "bun dev/shoot.mjs",
+    "drive": "bun dev/drive/main.ts",
+    "preview": "bun dev/drive/main.ts preview"
   },
   "dependencies": {
     "@iconify/types": "^2.0.0",
@@ -105,6 +110,9 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
+    "@guidepup/virtual-screen-reader": "^0.33.0",
     "@iconify-json/lucide": "^1.2.130",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/simple-icons": "^1.2.95",
@@ -113,6 +121,8 @@
     "@types/bun": "^1.4.0",
     "@types/node": "^25.2.2",
     "@vitest/browser-playwright": "4.1.11",
+    "axe-core": "^4.14.0",
+    "dom-accessibility-api": "^0.7.1",
     "fallow": "3.17.0",
     "happy-dom": "^20.14.0",
     "oxfmt": "0.65.0",
@@ -142,6 +152,7 @@
     "node": ">=20"
   },
   "patchedDependencies": {
+    "@guidepup/virtual-screen-reader@0.33.0": "patches/@guidepup%2Fvirtual-screen-reader@0.33.0.patch",
     "@kobalte/core@0.13.13": "patches/@kobalte%2Fcore@0.13.13.patch"
   }
 }

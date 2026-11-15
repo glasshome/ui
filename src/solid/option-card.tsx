@@ -31,7 +31,7 @@ const OPTION_CHOICE_ROW =
   "rounded-sm text-foreground/75 transition-colors hover:bg-foreground/5 aria-checked:text-foreground";
 
 const OPTION_CARD_DRAWER_CONTENT =
-  "-translate-y-2 flex flex-col gap-0.5 pr-1 pb-2 pl-[calc(var(--spacing)*3.5+54px)] opacity-0 transition-[opacity,translate] duration-(--duration-expand) ease-(--ease-morph) group-data-[checked]/option-card:translate-y-0 group-data-[checked]/option-card:opacity-100 group-data-[checked]/option-card:delay-[80ms]";
+  "-translate-y-2 flex flex-col gap-0.5 pr-1 pb-2 pl-[calc(var(--spacing)*3.5+54px)] opacity-0 transition-[opacity,translate] duration-(--duration-expand) ease-(--ease-morph) group-data-[checked]/option-card:translate-y-0 group-data-[checked]/option-card:opacity-100 group-data-[checked]/option-card:delay-[var(--stagger-base,80ms)]";
 
 /* Sub-options are rows of the card, chosen in place: the same row a picker
  * list shows, flat on the card (a glass pill on a glass card is a layer too

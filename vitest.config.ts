@@ -2,7 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { playwright } from "@vitest/browser-playwright";
 import solid from "vite-plugin-solid";
 import { defineConfig } from "vitest/config";
-import { mouse, touch } from "./tests/commands";
+import { emulateMedia, mouse, touch } from "./tests/commands";
 
 // Forked workers inherit it, so a direct run matches the gate; bun test is UTC already.
 process.env.TZ = "UTC";
@@ -11,12 +11,31 @@ const READS_FILES_NO_DOM = [
   "tests/tokens/**",
   "tests/styles/**",
   "tests/gallery-coverage.test.ts",
+  "tests/harness/contracts-covered.test.ts",
+  "tests/drive/{trace,budget}.test.ts",
   "tests/lib/{material,glass-tone,utils}.test.ts",
   "tests/bottom-sheet/{state-machine,velocity}.test.ts",
   "tests/solid/{dock-paging,spotlight-geometry}.test.ts",
 ];
 // The shim dash, hub, widget-sdk, widget-realm and governor still install runs where they run it.
 const HAPPY_DOM_SHIM = ["tests/happy-dom-fidelity.test.ts"];
+// Baselines hold only in the Playwright image's fonts and rasteriser: `bun run test:visual:image`.
+const VISUAL = "tests/visual/**/*.test.tsx";
+const DRIVE = "tests/drive/*.e2e.test.ts";
+
+const BROWSER = {
+  enabled: true,
+  headless: true,
+  screenshotFailures: false,
+  viewport: { width: 1024, height: 768 },
+  provider: playwright({
+    // test-change-ok a press that cannot land fails in 5 s instead of waiting out the test
+    actionTimeout: 5000,
+    contextOptions: { permissions: ["clipboard-read", "clipboard-write"] },
+  }),
+  instances: [{ browser: "chromium" as const }],
+  commands: { emulateMedia, mouse, touch },
+};
 
 export default defineConfig({
   plugins: [solid({ dev: false, hot: false }), tailwindcss()],
@@ -36,6 +55,9 @@ export default defineConfig({
       "embla-carousel-autoplay",
       "embla-carousel-fade",
       "@iconify/utils",
+      "axe-core",
+      "@guidepup/virtual-screen-reader",
+      "dom-accessibility-api",
     ],
   },
   test: {
@@ -54,22 +76,39 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          name: "drive",
+          environment: "node",
+          include: [DRIVE],
+          // test-change-ok each case spawns the driver, which launches Chromium
+          testTimeout: 60_000,
+          // test-change-ok the hook builds the gallery
+          hookTimeout: 240_000,
+        },
+      },
+      {
+        extends: true,
+        test: {
           name: "chromium",
           setupFiles: ["./tests/setup.ts"],
           include: ["tests/**/*.test.{ts,tsx}"],
-          exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM],
+          exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM, VISUAL, DRIVE],
+          browser: BROWSER,
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "visual",
+          setupFiles: ["./tests/visual/setup.ts"],
+          include: [VISUAL],
           browser: {
-            enabled: true,
-            headless: true,
-            screenshotFailures: false,
-            viewport: { width: 1024, height: 768 },
+            ...BROWSER,
+            // A page smaller than the frame scales every shot down; this fits the widest one.
             provider: playwright({
-              // test-change-ok a press that cannot land fails in 5 s instead of waiting out the test
+              // test-change-ok same 5 s as the shared provider, restated since this one replaces it
               actionTimeout: 5000,
-              contextOptions: { permissions: ["clipboard-read", "clipboard-write"] },
+              contextOptions: { viewport: { width: 1280, height: 900 } },
             }),
-            instances: [{ browser: "chromium" }],
-            commands: { mouse, touch },
           },
         },
       },
