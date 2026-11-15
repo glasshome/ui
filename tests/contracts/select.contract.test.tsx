@@ -167,4 +167,21 @@ describe("Select contract", () => {
       expect(trigger().textContent).toContain("Banana");
     }, "list open in the shadow root: expected [] to have a length of 1 but got +0");
   });
+
+  it("S14 End in a long list scrolls the last option into view", async () => {
+    const { option, run } = await mount("long-list");
+    await run({ press: TRIGGER }, { key: "End" });
+    const last = option("Option 60");
+    expect(last.hasAttribute("data-highlighted")).toBe(true);
+    let scroller = last.parentElement;
+    while (scroller && !/auto|scroll/.test(getComputedStyle(scroller).overflowY)) {
+      scroller = scroller.parentElement;
+    }
+    if (!scroller) throw new Error("the list has no scroll container");
+    const box = last.getBoundingClientRect();
+    const view = scroller.getBoundingClientRect();
+    // Scroll offsets are whole pixels, option boxes are not.
+    expect(box.top).toBeGreaterThanOrEqual(view.top - 1);
+    expect(box.bottom).toBeLessThanOrEqual(view.bottom + 1);
+  });
 });

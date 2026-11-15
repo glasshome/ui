@@ -69,6 +69,7 @@ const SelectContent: ParentComponent<
   ]);
   const select = useSelectContext();
   const [panel, setPanel] = createSignal<HTMLElement>();
+  const [list, setList] = createSignal<HTMLElement>();
   const layer = shadowLayer({
     content: panel,
     open: () => select.isOpen(),
@@ -98,11 +99,15 @@ const SelectContent: ParentComponent<
         {...rest}
       >
         <SelectionScope
-          ref={ignoreOpeningRelease}
+          ref={(el: HTMLElement) => {
+            ignoreOpeningRelease(el);
+            setList(el);
+          }}
           marker="highlighted"
           class={cn("w-full", PICKER_LIST)}
         >
-          <SelectPrimitive.Listbox class={cn(STAGGER, local.listboxClass)} />
+          {/* Kobalte scrolls its scrollRef to the highlighted option; the scope is what scrolls. */}
+          <SelectPrimitive.Listbox scrollRef={list} class={cn(STAGGER, local.listboxClass)} />
         </SelectionScope>
       </SelectPrimitive.Content>
     </SelectPrimitive.Portal>
