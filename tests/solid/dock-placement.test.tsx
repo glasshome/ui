@@ -79,18 +79,23 @@ describe("Dock placement", () => {
   });
 
   it.each(["left", "right"] as const)(
-    "draws a %s dock's dot column on the outer edge, clear of the glass edge and the strip",
+    "draws a %s dock's dot column behind the icons on the outer side, clear of the glass edge",
     (side) => {
       const view = mountSide(side, 12, OVERFLOWING_BOX);
-      const bar = rectOf(view.container.querySelector('[data-slot="dock-bar"]'));
+      const slot = (name: string) => view.container.querySelector(`[data-slot="${name}"]`);
+      const dots = slot("dock-pages") as HTMLElement;
       const dot = rectOf(view.container.querySelector('[data-slot="dock-pages"] button'));
-      const surface = rectOf(view.container.querySelector('[data-slot="dock-surface"]'));
-      const [toGlass, toStrip] =
+      const icon = rectOf(slot("dock-item-icon"));
+      const bar = rectOf(slot("dock-bar"));
+      const surface = rectOf(slot("dock-surface"));
+      const [toGlass, toIcon] =
         side === "left"
-          ? [dot.left - surface.left, bar.left - dot.right]
-          : [surface.right - dot.right, dot.left - bar.right];
-      expect(toGlass).toBeGreaterThanOrEqual(3);
-      expect(toStrip).toBeGreaterThanOrEqual(3);
+          ? [dot.left - surface.left, icon.left - dot.right]
+          : [surface.right - dot.right, dot.left - icon.right];
+      expect(toGlass).toBeGreaterThanOrEqual(6);
+      expect(toIcon).toBeGreaterThanOrEqual(2);
+      expect(Number(getComputedStyle(dots).zIndex)).toBeLessThan(0);
+      expect(Math.abs(bar.left - surface.left - (surface.right - bar.right))).toBeLessThan(1);
       view.unmount();
     },
   );

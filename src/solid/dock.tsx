@@ -182,6 +182,7 @@ const Dock: Component<DockProps> = (props) => {
   // The drain plays where the fill grew, so the point outlives the hold.
   const [holdPoint, setHoldPoint] = createSignal({ x: 0, y: 0, r: 0 });
   let surfaceRef: HTMLDivElement | undefined;
+  let dotsRef: HTMLDivElement | undefined;
   let leadRef: HTMLDivElement | undefined;
   let companionRef: HTMLDivElement | undefined;
   const lead = children(() => local.lead);
@@ -324,11 +325,12 @@ const Dock: Component<DockProps> = (props) => {
     const inSurfaceAlong = vertical()
       ? point.y >= surface.top && point.y <= surface.bottom
       : point.x >= surface.left && point.x <= surface.right;
+    const dots = dotsRef?.getBoundingClientRect();
     const pastStrip =
       place === "left"
-        ? point.x < strip.left && point.x >= surface.left
+        ? point.x >= surface.left && point.x <= (dots?.right ?? strip.left)
         : place === "right"
-          ? point.x > strip.right && point.x <= surface.right
+          ? point.x <= surface.right && point.x >= (dots?.left ?? strip.right)
           : point.y > strip.bottom && point.y <= surface.bottom;
     if (!pastStrip || !inSurfaceAlong) return;
     const ratio = vertical()
@@ -429,13 +431,8 @@ const Dock: Component<DockProps> = (props) => {
           // A flush side dock runs the whole edge, less what the companion takes.
           vertical() && dockMode() === "docked" && "flex-1",
           // Room for the page dots inside the glass; outside it they sit on the screen edge and get
-          // clipped. A side dock moves padding to its outer edge for them, so paging never widens it.
-          pages() > 1 &&
-            {
-              bottom: "pb-4 sm:pb-5",
-              left: "pr-0.5 pl-2.5 sm:pr-1 sm:pl-3",
-              right: "pr-2.5 pl-0.5 sm:pr-3 sm:pl-1",
-            }[placement()],
+          // clipped. A side dock's dots sit behind its icons, so paging never widens or shifts it.
+          pages() > 1 && placement() === "bottom" && "pb-4 sm:pb-5",
           // The grip takes the start of the dock's length, so the items stay centred across it.
           gripShown() && (vertical() ? "pt-5 sm:pt-6" : "pl-5 sm:pl-6"),
           CARD_SURFACE,
@@ -586,13 +583,14 @@ const Dock: Component<DockProps> = (props) => {
         </Show>
         <Show when={pages() > 1}>
           <div
+            ref={dotsRef}
             data-slot="dock-pages"
             class={cn(
               "pointer-events-auto absolute flex justify-center gap-1.5",
               {
                 bottom: "inset-x-0 bottom-1.5",
-                left: "inset-y-0 left-0 w-2.5 flex-col items-center sm:w-3",
-                right: "inset-y-0 right-0 w-2.5 flex-col items-center sm:w-3",
+                left: "inset-y-0 left-2.5 -z-1 flex-col items-center sm:left-3",
+                right: "inset-y-0 right-2.5 -z-1 flex-col items-center sm:right-3",
               }[placement()],
             )}
           >
