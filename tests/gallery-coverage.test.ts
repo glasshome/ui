@@ -13,6 +13,7 @@ const inventory: Inventory = {
     { name: "Card", renders: ["CardTitle", "CountPill"] },
     { name: "cardVariants", renders: [] },
   ],
+  scenarios: [],
 };
 
 describe("judge", () => {
@@ -22,6 +23,11 @@ describe("judge", () => {
 
   it("reports a component rendered only inside another module's specimen", () => {
     expect(judge(inventory, []).uncovered).toEqual(["CountPill", "Logo"]);
+  });
+
+  it("an export with a scenario folder and no specimen is covered", () => {
+    const report = judge({ ...inventory, scenarios: ["Logo"] }, []);
+    expect(report.uncovered).toEqual(["CountPill"]);
   });
 
   it("reports a specimen name that is not an export", () => {

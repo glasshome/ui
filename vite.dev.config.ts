@@ -6,6 +6,7 @@ import { getIconData } from "@iconify/utils";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, type Plugin } from "vite";
 import solid from "vite-plugin-solid";
+import { driveReports } from "./dev/harness/report-middleware";
 
 /* Dev-only gallery server (`bun run dev:gallery`). The publishable library
  * build stays in vite.config.ts; this config never ships anything. */
@@ -77,12 +78,12 @@ function galleryIcons(): Plugin {
 
 export default defineConfig({
   root: "dev",
-  plugins: [solid(), tailwindcss(), galleryIcons()],
+  plugins: [solid(), tailwindcss(), galleryIcons(), driveReports()],
   resolve: {
     conditions: ["@glasshome/source"],
   },
   server: {
-    port: 5199,
+    port: Number(process.env.GALLERY_PORT ?? 5199),
   },
   build: {
     rollupOptions: {

@@ -2,7 +2,7 @@
 import { createSignal, For, onCleanup, onMount } from "solid-js";
 import { Icon, ToggleGroup, ToggleGroupItem } from "../src/solid";
 
-interface StageWidth {
+export interface StageWidth {
   id: string;
   label: string;
   icon: string;
@@ -32,7 +32,7 @@ const DESKTOP: StageWidth = {
   height: 900,
 };
 
-const WIDTHS = [PHONE, TABLET, DESKTOP];
+export const STAGE_WIDTHS = [PHONE, TABLET, DESKTOP];
 const CHROME_HEIGHT = 260;
 
 function useParentTheme() {
@@ -42,6 +42,25 @@ function useParentTheme() {
   observer.observe(document.documentElement, { attributeFilter: ["class"] });
   onCleanup(() => observer.disconnect());
   return theme;
+}
+
+export function WidthPicker(props: { value: StageWidth; onChange: (w: StageWidth) => void }) {
+  const pick = (value: string | string[] | null) => {
+    const next = STAGE_WIDTHS.find((w) => w.id === value);
+    if (next) props.onChange(next);
+  };
+  return (
+    <ToggleGroup value={props.value.id} onChange={pick}>
+      <For each={STAGE_WIDTHS}>
+        {(width) => (
+          <ToggleGroupItem value={width.id}>
+            <Icon icon={width.icon} width="16" height="16" />
+            {width.label}
+          </ToggleGroupItem>
+        )}
+      </For>
+    </ToggleGroup>
+  );
 }
 
 export function Stage(props: { route: string }) {
@@ -71,24 +90,10 @@ export function Stage(props: { route: string }) {
     Math.min(size().height, Math.max(360, viewportHeight() - CHROME_HEIGHT));
   const offset = () => Math.max(0, (available() - size().width * scale()) / 2);
 
-  const pick = (value: string | string[] | null) => {
-    const next = WIDTHS.find((w) => w.id === value);
-    if (next) setSize(next);
-  };
-
   return (
     <div class="flex flex-col gap-3">
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <ToggleGroup value={size().id} onChange={pick}>
-          <For each={WIDTHS}>
-            {(width) => (
-              <ToggleGroupItem value={width.id}>
-                <Icon icon={width.icon} width="16" height="16" />
-                {width.label}
-              </ToggleGroupItem>
-            )}
-          </For>
-        </ToggleGroup>
+        <WidthPicker value={size()} onChange={setSize} />
         <span class="text-muted-foreground font-mono text-xs">
           {size().width} × {size().height}
         </span>

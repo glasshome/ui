@@ -26,6 +26,10 @@ export const checkoutSlug = (dir = PKG) =>
     .replace(/^-|-$/g, "")
     .toLowerCase();
 
+/** Where the driver writes its runs by default, and where the gallery's report panel reads them. */
+export const driveCacheDir = (pkg = PKG) =>
+  join(homedir(), ".cache", "glasshome-ui-drive", checkoutSlug(pkg));
+
 export const galleryBuildDir = (pkg = PKG) =>
   join(homedir(), ".cache", "glasshome-gallery-build", checkoutSlug(pkg));
 

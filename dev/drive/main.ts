@@ -4,7 +4,6 @@
 // bun run preview ...                     see preview.ts
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
-import { homedir } from "node:os";
 import { basename, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { type Browser, chromium } from "playwright";
@@ -30,7 +29,7 @@ import {
 import {
   buildGallery,
   checkoutRef,
-  checkoutSlug,
+  driveCacheDir,
   galleryBuildDir,
   ORIGIN,
   PKG,
@@ -284,9 +283,7 @@ async function main(argv: string[]): Promise<number> {
   if (values.all && values.against !== undefined) {
     throw new UsageError("--against takes one scenario, not --all");
   }
-  const base = resolve(
-    values.out ?? join(homedir(), ".cache", "glasshome-ui-drive", checkoutSlug()),
-  );
+  const base = resolve(values.out ?? driveCacheDir());
   mkdirSync(base, { recursive: true });
   const build = values["no-build"] ? galleryBuildDir() : await buildGallery();
   const opts: Options = {
