@@ -68,13 +68,21 @@ export interface DevServer {
 
 /** The gallery's Vite dev server, in this process; port 0 takes any free port. */
 export async function startDevServer(pkg = PKG, port = 0): Promise<DevServer> {
-  const { createServer } = await import("vite");
+  const { createServer, searchForWorkspaceRoot } = await import("vite");
   const server = await createServer({
     configFile: join(pkg, "vite.dev.config.ts"),
     root: join(pkg, "dev"),
     logLevel: "error",
     clearScreen: false,
-    server: { port, strictPort: false, host: "127.0.0.1", ws: false, watch: null },
+    server: {
+      port,
+      strictPort: false,
+      host: "127.0.0.1",
+      ws: false,
+      watch: null,
+      // A ref checkout resolves its dependencies from this checkout's node_modules, above its own root.
+      fs: { allow: [searchForWorkspaceRoot(pkg), PKG] },
+    },
   });
   await server.listen();
   const address = server.httpServer?.address();
