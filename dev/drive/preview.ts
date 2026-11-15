@@ -2,7 +2,7 @@
 //                 [--after-steps] [--against <git-ref>] [--out <dir>]
 // bun run preview --changed [--since <ref>]   every component touched since <ref> (origin/main)
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
@@ -245,6 +245,9 @@ export async function preview(argv: string[]): Promise<number> {
   mkdirSync(out, { recursive: true });
   const basePkg = values.against === undefined ? undefined : checkoutRef(values.against);
   if (basePkg === null) throw new UsageError(`no commit ${values.against}`);
+  if (basePkg !== undefined && !existsSync(join(basePkg, "dev", "components"))) {
+    throw new UsageError(`${values.against} has no scenario folders (dev/components)`);
+  }
 
   const servers: DevServer[] = [];
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });

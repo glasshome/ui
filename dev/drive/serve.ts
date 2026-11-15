@@ -1,6 +1,6 @@
 // Builds the gallery static and serves it from disk through Playwright's request interception (ES modules are refused over file://).
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 import type { Page } from "playwright";
@@ -85,19 +85,33 @@ export async function startDevServer(pkg = PKG, port = 0): Promise<DevServer> {
   return { origin: `http://127.0.0.1:${address.port}`, close: () => server.close() };
 }
 
-/** A detached checkout of `ref`, reused per commit; under node_modules so its imports resolve to this checkout's dependencies. Null when git knows no such commit. */
+/** `ref`'s tree, extracted once per commit; under node_modules so its imports resolve to this checkout's dependencies. Null when git knows no such commit. */
 export function checkoutRef(ref: string, pkg = PKG): string | null {
   const sha = spawnSync("git", ["rev-parse", "--verify", "--quiet", `${ref}^{commit}`], {
     cwd: pkg,
     encoding: "utf8",
   }).stdout.trim();
   if (!sha) return null;
-  const dir = join(pkg, "node_modules", ".cache", "glasshome-ui-refs", sha);
-  if (existsSync(join(dir, "package.json"))) return dir;
-  const add = spawnSync("git", ["worktree", "add", "--quiet", "--detach", dir, sha], {
-    cwd: pkg,
-    stdio: ["ignore", 2, 2],
-  });
-  if (add.status !== 0) throw new Error(`git worktree add ${dir} exited ${add.status}`);
+  const refs = join(pkg, "node_modules", ".cache", "glasshome-ui-refs");
+  const dir = join(refs, sha);
+  if (existsSync(dir)) return dir;
+  mkdirSync(refs, { recursive: true });
+  const staging = mkdtempSync(join(refs, `${sha}-`));
+  const extract = spawnSync(
+    "bash",
+    ["-c", 'set -o pipefail; git archive "$1" | tar -x -C "$0"', staging, sha],
+    { cwd: pkg, stdio: ["ignore", 2, 2] },
+  );
+  if (extract.status !== 0) {
+    rmSync(staging, { recursive: true, force: true });
+    throw new Error(`git archive ${sha} exited ${extract.status}`);
+  }
+  try {
+    renameSync(staging, dir);
+  } catch (error) {
+    rmSync(staging, { recursive: true, force: true });
+    // A parallel run extracted the same commit first.
+    if (!existsSync(dir)) throw error;
+  }
   return dir;
 }
