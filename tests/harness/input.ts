@@ -1,7 +1,7 @@
 import { commands, userEvent } from "vitest/browser";
 import type { Input } from "../../dev/harness/steps";
 
-export const centre = (el: Element) => {
+const centre = (el: Element) => {
   const box = el.getBoundingClientRect();
   return [box.x + box.width / 2, box.y + box.height / 2] as const;
 };
