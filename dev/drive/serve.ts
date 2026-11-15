@@ -94,7 +94,7 @@ export function checkoutRef(ref: string, pkg = PKG): string | null {
   if (!sha) return null;
   const dir = join(pkg, "node_modules", ".cache", "glasshome-ui-refs", sha);
   if (existsSync(join(dir, "package.json"))) return dir;
-  const add = spawnSync("git", ["worktree", "add", "--detach", dir, sha], {
+  const add = spawnSync("git", ["worktree", "add", "--quiet", "--detach", dir, sha], {
     cwd: pkg,
     stdio: ["ignore", 2, 2],
   });
