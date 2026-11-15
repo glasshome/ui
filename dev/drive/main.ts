@@ -1,6 +1,7 @@
 // bun run drive <component> <scenario> [--steps keyboard] [--cpu-rate 1] [--width phone|tablet|desktop]
 //                [--theme light|dark] [--out <dir>] [--json] [--no-build] [--against <git-ref> [--check]]
 // bun run drive --all                     every scenario of every component
+// --check without --against               fails on any count over dev/components/<slug>/budget.json
 // bun run preview ...                     see preview.ts
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
@@ -9,6 +10,7 @@ import { parseArgs } from "node:util";
 import { type Browser, chromium } from "playwright";
 import type { IndexedComponent, IndexedScenario, Step } from "../harness/types";
 import { axTree, focusPath } from "./ax";
+import { checkBudget, readBudget } from "./budget";
 import { comparePage } from "./compare-page";
 import { diffReports, type StepDiff } from "./diff";
 import { markers } from "./markers";
@@ -320,16 +322,23 @@ async function main(argv: string[]): Promise<number> {
       return values.check && !compared.same ? 1 : 0;
     }
     const reports: RunReport[] = [];
+    const overruns: string[] = [];
     for (const [component, scenario] of runs) {
       const report = await runScenario(browser, component, scenario, opts);
       reports.push(report);
       if (!values.json) printHuman(report);
+      if (values.check) {
+        overruns.push(
+          ...checkBudget(report, readBudget(component.slug)).map((o) => `${component.slug}/${o}`),
+        );
+      }
     }
     if (values.json) console.log(JSON.stringify(values.all ? reports : reports[0]));
+    for (const overrun of overruns) console.error(`over budget: ${overrun}`);
+    return overruns.length > 0 ? 1 : 0;
   } finally {
     await browser.close();
   }
-  return 0;
 }
 
 main(process.argv.slice(2)).then(
