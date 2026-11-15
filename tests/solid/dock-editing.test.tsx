@@ -291,7 +291,7 @@ describe("Dock move grip", () => {
   }
 
   it.each(["bottom", "left", "right"] as const)(
-    "sits atop a %s dock, above the lead and the strip, inside the glass",
+    "sits at the start of a %s dock, before the lead, and leaves the items centred across it",
     (placement) => {
       const { container } = render(() => (
         <div class="flex h-[600px] items-start">
@@ -308,12 +308,18 @@ describe("Dock move grip", () => {
         (container.querySelector(`[data-slot="${slot}"]`) as HTMLElement).getBoundingClientRect();
       const grip = box("dock-grip");
       const surface = box("dock-surface");
-      expect(grip.top).toBeGreaterThanOrEqual(surface.top - 0.5);
-      expect(grip.bottom).toBeLessThanOrEqual(box("dock-lead").top + 0.5);
-      expect(grip.bottom).toBeLessThanOrEqual(box("dock-bar").top + 0.5);
-      expect(
-        Math.abs(grip.left + grip.width / 2 - (surface.left + surface.width / 2)),
-      ).toBeLessThan(1);
+      const bar = box("dock-bar");
+      const lead = box("dock-lead");
+      const across = (r: DOMRect) =>
+        placement === "bottom" ? r.top + r.height / 2 : r.left + r.width / 2;
+      const [gripEnd, leadStart, surfaceStart, gripStart] =
+        placement === "bottom"
+          ? [grip.right, lead.left, surface.left, grip.left]
+          : [grip.bottom, lead.top, surface.top, grip.top];
+      expect(gripStart).toBeGreaterThanOrEqual(surfaceStart - 0.5);
+      expect(gripEnd).toBeLessThanOrEqual(leadStart + 0.5);
+      expect(Math.abs(across(grip) - across(surface))).toBeLessThan(1);
+      expect(Math.abs(across(bar) - across(surface))).toBeLessThan(1);
     },
   );
 

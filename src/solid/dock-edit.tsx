@@ -169,7 +169,7 @@ const ZONE_BOX: Record<EdgeZone, string> = {
   bottom: "inset-x-1/4 bottom-0 h-2/5 border-t-2",
 };
 
-/** The grip atop a dock: carry it toward a screen edge and the three landing zones light up. */
+/** The grip at the start of a dock (its top on a side, its left end at the bottom): carry it toward a screen edge and the three landing zones light up. */
 export function DockMoveGrip(props: {
   placement: EdgeZone;
   onMove: (placement: EdgeZone) => void;
@@ -221,9 +221,18 @@ export function DockMoveGrip(props: {
         data-slot="dock-grip"
         aria-hidden="true"
         onPointerDown={onPointerDown}
-        class="text-foreground/50 absolute top-0 left-1/2 z-10 flex h-5 w-12 -translate-x-1/2 cursor-grab touch-none items-center justify-center sm:h-6"
+        class={cn(
+          "text-foreground/50 absolute z-10 flex cursor-grab touch-none items-center justify-center",
+          props.placement === "bottom"
+            ? "top-1/2 left-0 h-12 w-5 -translate-y-1/2 sm:w-6"
+            : "top-0 left-1/2 h-5 w-12 -translate-x-1/2 sm:h-6",
+        )}
       >
-        <Icon icon="lucide:grip-horizontal" width={16} height={16} />
+        <Icon
+          icon={props.placement === "bottom" ? "lucide:grip-vertical" : "lucide:grip-horizontal"}
+          width={16}
+          height={16}
+        />
       </div>
       <Show when={carrying()}>
         <Portal mount={usePortalMount()}>

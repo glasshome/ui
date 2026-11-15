@@ -65,7 +65,7 @@ interface DockProps extends ComponentProps<"div"> {
   onAdd?: () => void;
   /** The full id order after a drag or an Alt+arrow move. */
   onReorder?: (ids: string[]) => void;
-  /** While editing, a grip atop the dock carries the whole dock to a screen edge; fires once on release over one. */
+  /** While editing, a grip at the dock's start carries the whole dock to a screen edge; fires once on release over one. */
   onMovePlacement?: (placement: DockPlacement) => void;
   /** Sits inside the glass before the strip, never pages away; the strip's room shrinks by it. */
   lead?: JSX.Element;
@@ -436,7 +436,8 @@ const Dock: Component<DockProps> = (props) => {
               left: "pr-0.5 pl-2.5 sm:pr-1 sm:pl-3",
               right: "pr-2.5 pl-0.5 sm:pr-3 sm:pl-1",
             }[placement()],
-          gripShown() && "pt-5 sm:pt-6",
+          // The grip takes the start of the dock's length, so the items stay centred across it.
+          gripShown() && (vertical() ? "pt-5 sm:pt-6" : "pl-5 sm:pl-6"),
           CARD_SURFACE,
           "[--glass-lift:0.55]",
           dockMode() === "floating"
