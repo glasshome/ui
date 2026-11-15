@@ -27,6 +27,33 @@ export const input: Input = {
   type: (text) => userEvent.keyboard(text),
 };
 
+/**
+ * Content that opens under a still pointer is hovered or not by timing; `rehover` moves the pointer
+ * again so it always is. Only once per pointer step: a key that later scrolls the page leaves it be.
+ */
+export function trackPointer(base: Input) {
+  const pointer: { pending?: readonly [number, number] } = {};
+  const tracked: Input = {
+    ...base,
+    press(el) {
+      pointer.pending = centre(el);
+      return base.press(el);
+    },
+    hover(el) {
+      pointer.pending = centre(el);
+      return base.hover(el);
+    },
+  };
+  async function rehover() {
+    if (!pointer.pending) return;
+    const [x, y] = pointer.pending;
+    pointer.pending = undefined;
+    await commands.mouse("move", x + 1, y);
+    await commands.mouse("move", x, y);
+  }
+  return { input: tracked, rehover };
+}
+
 declare module "vitest/browser" {
   interface BrowserCommands {
     mouse(action: "move" | "down" | "up", x: number, y: number): Promise<void>;

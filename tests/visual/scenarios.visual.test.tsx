@@ -1,11 +1,11 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it } from "vitest";
-import { commands, page } from "vitest/browser";
+import { page } from "vitest/browser";
 import { COMPONENTS } from "../../dev/harness/registry";
 import { ScenarioStage } from "../../dev/harness/ScenarioStage";
-import { type Input, runSteps, scenarioScope } from "../../dev/harness/steps";
+import { runSteps, scenarioScope } from "../../dev/harness/steps";
 import { settle } from "../../dev/harness/settle";
-import { centre, input } from "../harness/input";
+import { input, trackPointer } from "../harness/input";
 
 afterEach(() => {
   cleanup();
@@ -37,26 +37,10 @@ describe.each(CASES)("$name", ({ component, scenario }) => {
     ));
     await settle();
     await document.fonts.ready;
-    const pointer: { at?: readonly [number, number] } = {};
-    const tracked: Input = {
-      ...input,
-      press(el) {
-        pointer.at = centre(el);
-        return input.press(el);
-      },
-      hover(el) {
-        pointer.at = centre(el);
-        return input.hover(el);
-      },
-    };
-    await runSteps(scenarioScope, scenario.steps ?? [], tracked, settle);
-    // A list that opens under a still pointer is hovered or not by timing; moving it always hovers.
-    if (pointer.at) {
-      const [x, y] = pointer.at;
-      await commands.mouse("move", x + 1, y);
-      await commands.mouse("move", x, y);
-      await settle();
-    }
+    const pointer = trackPointer(input);
+    await runSteps(scenarioScope, scenario.steps ?? [], pointer.input, settle);
+    await pointer.rehover();
+    await settle();
     await expect
       .element(page.elementLocator(document.body))
       .toMatchScreenshot(`${component}-${scenario.id}-${theme}-${width}`, {

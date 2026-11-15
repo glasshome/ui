@@ -3,6 +3,7 @@ import axe from "axe-core";
 import { computeAccessibleName, getRole } from "dom-accessibility-api";
 import { findAll, type Input, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
+import { trackPointer } from "./input";
 import { focusedElement, settle } from "./mount";
 
 const frame = () => new Promise<void>((done) => requestAnimationFrame(() => done()));
@@ -77,7 +78,9 @@ export async function spokenTranscript(
       heard = log.length;
     };
     await take();
-    await runSteps(scope, steps, input, async () => {
+    const pointer = trackPointer(input);
+    await runSteps(scope, steps, pointer.input, async () => {
+      await pointer.rehover();
       await settle();
       await take();
     });
