@@ -589,8 +589,8 @@ const Dock: Component<DockProps> = (props) => {
               "pointer-events-auto absolute flex justify-center gap-1.5",
               {
                 bottom: "inset-x-0 bottom-1.5",
-                left: "inset-y-0 left-2.5 -z-1 flex-col items-center sm:left-3",
-                right: "inset-y-0 right-2.5 -z-1 flex-col items-center sm:right-3",
+                left: "inset-y-0 left-0.75 -z-1 flex-col items-center sm:left-1",
+                right: "inset-y-0 right-0.75 -z-1 flex-col items-center sm:right-1",
               }[placement()],
             )}
           >
