@@ -1,45 +1,50 @@
 // bun run drive <component> <scenario> [--steps keyboard] [--cpu-rate 1] [--width phone|tablet|desktop]
 //                [--theme light|dark] [--out <dir>] [--json] [--no-build]
 // bun run drive --all                     every scenario of every component
+// bun run preview ...                     see preview.ts
 import { spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { type Browser, type CDPSession, chromium, type Page } from "playwright";
-import type { IndexedComponent, IndexedScenario, Step, Target } from "../harness/types";
+import { type Browser, chromium } from "playwright";
+import type { IndexedComponent, IndexedScenario, Step } from "../harness/types";
 import { axTree, focusPath } from "./ax";
 import { markers } from "./markers";
+import { preview } from "./preview";
+import {
+  describeTarget,
+  findComponent,
+  oneOf,
+  prepare,
+  readIndex,
+  stageHash,
+  THEMES,
+  type Theme,
+  UsageError,
+  type Width,
+  WIDTHS,
+} from "./scenario";
 import { buildGallery, checkoutSlug, galleryBuildDir, ORIGIN, PKG, serveGallery } from "./serve";
 import { createSettler } from "./settle";
 import { summarize } from "./trace";
 import type { RunReport, StepReport, TimelineEntry, TraceEvent } from "./types";
 
-const WIDTHS = { phone: [390, 844], tablet: [834, 1112], desktop: [1280, 900] } as const;
-const THEMES = ["light", "dark"] as const;
 const TRACE_CATEGORIES = [
   "devtools.timeline",
   "disabled-by-default-devtools.timeline",
   "disabled-by-default-devtools.timeline.frame",
 ];
 
-class UsageError extends Error {}
-
 interface Options {
   keyboard: boolean;
   cpuRate: number;
-  width: keyof typeof WIDTHS;
-  theme: (typeof THEMES)[number];
+  width: Width;
+  theme: Theme;
   out: string;
   build: string;
   label: string;
 }
-
-const oneOf = <T extends string>(value: string, allowed: readonly T[], flag: string): T => {
-  const hit = allowed.find((a) => a === value);
-  if (hit === undefined) throw new UsageError(`--${flag} takes one of: ${allowed.join(", ")}`);
-  return hit;
-};
 
 function buildLabel(): string {
   const git = (...args: string[]) =>
@@ -47,59 +52,12 @@ function buildLabel(): string {
   return `${git("rev-parse", "--short", "HEAD")}${git("status", "--porcelain") ? "+dirty" : ""}`;
 }
 
-async function readIndex(browser: Browser, dir: string): Promise<IndexedComponent[]> {
+async function readBuildIndex(browser: Browser, dir: string): Promise<IndexedComponent[]> {
   const page = await browser.newPage();
   await serveGallery(page, dir);
-  await page.goto(`${ORIGIN}/stage.html`);
-  const json = await page.locator("#scenario-index").textContent();
+  const index = await readIndex(page, `${ORIGIN}/stage.html`);
   await page.close();
-  return JSON.parse(json ?? "[]");
-}
-
-const findComponent = (index: IndexedComponent[], name: string) =>
-  index.find((c) => c.slug === name || c.component.toLowerCase() === name.toLowerCase());
-
-const describeTarget = (t: Target) => (t.name === undefined ? t.role : `${t.role} "${t.name}"`);
-
-async function locate(cdp: CDPSession, target: Target): Promise<{ x: number; y: number }> {
-  const { root } = await cdp.send("DOM.getDocument", { depth: 0 });
-  const { nodes } = await cdp.send("Accessibility.queryAXTree", {
-    backendNodeId: root.backendNodeId,
-    role: target.role,
-    accessibleName: target.name,
-  });
-  const hits = nodes.filter((n) => !n.ignored && n.backendDOMNodeId !== undefined);
-  const [only] = hits;
-  if (only?.backendDOMNodeId === undefined) throw new Error(`no ${describeTarget(target)}`);
-  if (hits.length > 1) throw new Error(`${hits.length} matches for ${describeTarget(target)}`);
-  const backendNodeId = only.backendDOMNodeId;
-  await cdp.send("DOM.scrollIntoViewIfNeeded", { backendNodeId });
-  const { quads } = await cdp.send("DOM.getContentQuads", { backendNodeId });
-  const quad = quads[0];
-  if (quad?.length !== 8) throw new Error(`${describeTarget(target)} has no box`);
-  const mean = (offset: number) =>
-    quad.filter((_, i) => i % 2 === offset).reduce((a, b) => a + b) / 4;
-  return { x: mean(0), y: mean(1) };
-}
-
-/** Resolves the target at rate 1 and returns the input alone, so a throttled step measures only the input. */
-async function prepare(page: Page, cdp: CDPSession, step: Step): Promise<() => Promise<void>> {
-  if ("key" in step) return () => page.keyboard.press(step.key);
-  if ("type" in step) return () => page.keyboard.type(step.type);
-  if ("press" in step) {
-    const { x, y } = await locate(cdp, step.press);
-    return async () => {
-      await page.mouse.move(x, y);
-      await page.mouse.down();
-      await page.mouse.up();
-    };
-  }
-  if ("touch" in step) {
-    const { x, y } = await locate(cdp, step.touch);
-    return () => page.touchscreen.tap(x, y);
-  }
-  const { x, y } = await locate(cdp, step.hover);
-  return () => page.mouse.move(x, y);
+  return index;
 }
 
 async function runScenario(
@@ -164,8 +122,7 @@ async function runScenario(
 
   await throttle(1);
   const mounted = await traced(async () => {
-    const hash = `#/components/${component.slug}/${scenario.id}?theme=${opts.theme}`;
-    await page.goto(`${ORIGIN}/stage.html${hash}`);
+    await page.goto(`${ORIGIN}/stage.html${stageHash(component.slug, scenario.id, opts.theme)}`);
     timeline.push({ kind: "load" });
     await page.locator("[data-scenario]").waitFor({ state: "attached" });
     return settle();
@@ -226,6 +183,7 @@ function printHuman(report: RunReport) {
 }
 
 async function main(argv: string[]): Promise<number> {
+  if (argv[0] === "preview") return preview(argv.slice(1));
   const { values, positionals } = parseArgs({
     args: argv,
     allowPositionals: true,
@@ -266,7 +224,7 @@ async function main(argv: string[]): Promise<number> {
 
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
   try {
-    const index = await readIndex(browser, build);
+    const index = await readBuildIndex(browser, build);
     const runs: [IndexedComponent, IndexedScenario][] = values.all
       ? index.flatMap((c) =>
           c.scenarios
@@ -296,7 +254,11 @@ async function main(argv: string[]): Promise<number> {
 main(process.argv.slice(2)).then(
   (code) => process.exit(code),
   (error: unknown) => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exit(error instanceof UsageError ? 2 : 1);
+    if (error instanceof UsageError) {
+      console.error(error.message);
+      process.exit(2);
+    }
+    console.error(error instanceof Error ? (error.stack ?? error.message) : String(error));
+    process.exit(1);
   },
 );

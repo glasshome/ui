@@ -54,3 +54,44 @@ export async function serveGallery(page: Page, dir: string): Promise<void> {
     });
   });
 }
+
+export interface DevServer {
+  origin: string;
+  close(): Promise<void>;
+}
+
+/** The gallery's Vite dev server, in this process; port 0 takes any free port. */
+export async function startDevServer(pkg = PKG, port = 0): Promise<DevServer> {
+  const { createServer } = await import("vite");
+  const server = await createServer({
+    configFile: join(pkg, "vite.dev.config.ts"),
+    root: join(pkg, "dev"),
+    logLevel: "error",
+    clearScreen: false,
+    server: { port, strictPort: false, host: "127.0.0.1", ws: false, watch: null },
+  });
+  await server.listen();
+  const address = server.httpServer?.address();
+  if (typeof address !== "object" || address === null) {
+    await server.close();
+    throw new Error("the gallery dev server has no address");
+  }
+  return { origin: `http://127.0.0.1:${address.port}`, close: () => server.close() };
+}
+
+/** A detached checkout of `ref`, reused per commit; under node_modules so its imports resolve to this checkout's dependencies. Null when git knows no such commit. */
+export function checkoutRef(ref: string, pkg = PKG): string | null {
+  const sha = spawnSync("git", ["rev-parse", "--verify", "--quiet", `${ref}^{commit}`], {
+    cwd: pkg,
+    encoding: "utf8",
+  }).stdout.trim();
+  if (!sha) return null;
+  const dir = join(pkg, "node_modules", ".cache", "glasshome-ui-refs", sha);
+  if (existsSync(join(dir, "package.json"))) return dir;
+  const add = spawnSync("git", ["worktree", "add", "--detach", dir, sha], {
+    cwd: pkg,
+    stdio: ["ignore", 2, 2],
+  });
+  if (add.status !== 0) throw new Error(`git worktree add ${dir} exited ${add.status}`);
+  return dir;
+}

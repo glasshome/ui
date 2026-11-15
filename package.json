@@ -92,7 +92,8 @@
     "test:watch": "vitest",
     "dev:gallery": "vite --config vite.dev.config.ts",
     "gallery:shots": "bun dev/shoot.mjs",
-    "drive": "bun dev/drive/main.ts"
+    "drive": "bun dev/drive/main.ts",
+    "preview": "bun dev/drive/main.ts preview"
   },
   "dependencies": {
     "@iconify/types": "^2.0.0",
