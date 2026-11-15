@@ -7,8 +7,6 @@ import * as solid from "../../src/solid/index.js";
 
 afterEach(cleanup);
 
-const settle = () => new Promise((done) => requestAnimationFrame(() => setTimeout(done, 0)));
-
 describe("scenario registry", () => {
   it("holds the pilot components", () => {
     const names = COMPONENTS.map((c) => c.component);
@@ -56,7 +54,6 @@ describe("every scenario", () => {
     const { container } = render(() => (
       <WithinStage mode={within}>{scenario.render()}</WithinStage>
     ));
-    await settle();
-    expect(RENDERED[within](container)).toBe(true);
+    await expect.poll(() => RENDERED[within](container)).toBe(true);
   });
 });
