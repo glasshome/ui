@@ -136,12 +136,14 @@ export function Icon(props: IconProps) {
   const body = createMemo(() => built().body);
   // A TrustedHTML is a fresh object per call, which the spread would write as a new innerHTML.
   const html = createMemo(() => trusted(body()));
+  const named = () =>
+    rest["aria-label"] != null || rest["aria-labelledby"] != null || rest.role != null;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       data-slot="icon"
       data-icon={local.icon}
-      aria-hidden="true"
+      aria-hidden={named() ? undefined : "true"}
       fill="currentColor"
       {...rest}
       viewBox={built().attributes.viewBox}

@@ -29,6 +29,22 @@ describe("Icon", () => {
     expect(container.querySelector("svg")?.shadowRoot).toBeNull();
   });
 
+  it("is exposed to assistive tech when given a name or a role", () => {
+    provideIcons({ bundled: { "lucide:plus": PLUS } });
+    const { container } = render(() => (
+      <>
+        <Icon icon="lucide:plus" aria-label="Add" />
+        <Icon icon="lucide:plus" aria-labelledby="elsewhere" />
+        <Icon icon="lucide:plus" role="status" />
+        <Icon icon="lucide:plus" role="img" aria-label="Add" aria-hidden="true" />
+      </>
+    ));
+    const hidden = [...container.querySelectorAll("svg")].map((svg) =>
+      svg.getAttribute("aria-hidden"),
+    );
+    expect(hidden).toEqual([null, null, null, "true"]);
+  });
+
   it("defaults to 1em when no size is given", () => {
     provideIcons({ bundled: { "lucide:plus": PLUS } });
     const { container } = render(() => <Icon icon="lucide:plus" />);
