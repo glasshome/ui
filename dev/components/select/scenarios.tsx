@@ -46,9 +46,9 @@ export default defineScenarios({
     },
     {
       id: "long-list",
-      title: "Sixty options, typeahead",
+      title: "Sixty options, jump to the last",
       render: () => <Picker options={MANY} label="Fruit" />,
-      steps: [{ press: TRIGGER }, { type: "Option 4" }, { key: "Enter" }],
+      steps: [{ press: TRIGGER }, { key: "End" }, { key: "Enter" }],
     },
     {
       id: "dismiss",

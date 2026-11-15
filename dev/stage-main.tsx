@@ -3,9 +3,7 @@ import { bundled } from "virtual:gallery-icons";
 import { createEffect, createSignal, onCleanup, Show } from "solid-js";
 import { Dynamic, render } from "solid-js/web";
 import { provideIcons, Toaster } from "../src/solid";
-import { MATERIAL_PRESETS, type MaterialPresetId, resolveMaterial } from "../src/tokens";
-import { findComponent, findScenario } from "./harness/registry";
-import { Within } from "./harness/Within";
+import { ScenarioStage } from "./harness/ScenarioStage";
 import { findEntry } from "./routes";
 import "./styles.css";
 
@@ -33,36 +31,6 @@ function useStageRoute() {
   window.addEventListener("hashchange", onChange);
   onCleanup(() => window.removeEventListener("hashchange", onChange));
   return route;
-}
-
-const isPreset = (name: string): name is MaterialPresetId => Object.hasOwn(MATERIAL_PRESETS, name);
-
-function ScenarioStage(props: {
-  component: string;
-  id: string;
-  material: string | null;
-  dark: boolean;
-}) {
-  const scenario = () => findScenario(props.component, props.id);
-  const name = () => findComponent(props.component)?.component ?? props.component;
-  const style = () => {
-    const preset = props.material;
-    if (!preset || !isPreset(preset)) return {};
-    return resolveMaterial({ v: 1, preset }, "dynamic", props.dark ? "dark" : "light");
-  };
-  return (
-    <Show
-      when={scenario()}
-      keyed
-      fallback={<p data-scenario-missing>{`no scenario ${props.component}/${props.id}`}</p>}
-    >
-      {(s) => (
-        <div data-scenario={`${name()}/${s.id}`} class="p-6" style={style()}>
-          <Within mode={s.within ?? "page"}>{s.render()}</Within>
-        </div>
-      )}
-    </Show>
-  );
 }
 
 function StageEntry() {

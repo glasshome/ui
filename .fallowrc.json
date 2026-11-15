@@ -7,5 +7,9 @@
     "dev/components/*/scenarios.tsx",
     "scripts/*.{ts,mjs}"
   ],
-  "ignoreDependencies": ["@arethetypeswrong/cli"]
+  "ignoreDependencies": [
+    "@arethetypeswrong/cli",
+    "@fontsource-variable/geist",
+    "@fontsource-variable/geist-mono"
+  ]
 }

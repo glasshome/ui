@@ -18,6 +18,22 @@ const READS_FILES_NO_DOM = [
 ];
 // The shim dash, hub, widget-sdk, widget-realm and governor still install runs where they run it.
 const HAPPY_DOM_SHIM = ["tests/happy-dom-fidelity.test.ts"];
+// Baselines hold only in the Playwright image's fonts and rasteriser: `bun run test:visual:image`.
+const VISUAL = "tests/visual/**/*.test.tsx";
+
+const BROWSER = {
+  enabled: true,
+  headless: true,
+  screenshotFailures: false,
+  viewport: { width: 1024, height: 768 },
+  provider: playwright({
+    // test-change-ok a press that cannot land fails in 5 s instead of waiting out the test
+    actionTimeout: 5000,
+    contextOptions: { permissions: ["clipboard-read", "clipboard-write"] },
+  }),
+  instances: [{ browser: "chromium" as const }],
+  commands: { emulateMedia, mouse, touch },
+};
 
 export default defineConfig({
   plugins: [solid({ dev: false, hot: false }), tailwindcss()],
@@ -61,19 +77,23 @@ export default defineConfig({
           name: "chromium",
           setupFiles: ["./tests/setup.ts"],
           include: ["tests/**/*.test.{ts,tsx}"],
-          exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM],
+          exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM, VISUAL],
+          browser: BROWSER,
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "visual",
+          setupFiles: ["./tests/visual/setup.ts"],
+          include: [VISUAL],
           browser: {
-            enabled: true,
-            headless: true,
-            screenshotFailures: false,
-            viewport: { width: 1024, height: 768 },
+            ...BROWSER,
+            // A page smaller than the frame scales every shot down; this fits the widest one.
             provider: playwright({
-              // test-change-ok a press that cannot land fails in 5 s instead of waiting out the test
               actionTimeout: 5000,
-              contextOptions: { permissions: ["clipboard-read", "clipboard-write"] },
+              contextOptions: { viewport: { width: 1280, height: 900 } },
             }),
-            instances: [{ browser: "chromium" }],
-            commands: { emulateMedia, mouse, touch },
           },
         },
       },
