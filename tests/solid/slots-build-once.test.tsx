@@ -275,6 +275,7 @@ const FIXTURES: Record<string, Fixture> = {
   TabsContent: { wrap: inTabs, props: { value: "a" } },
   TabsList: { wrap: inTabs },
   TabsTrigger: { wrap: inTabs, props: { value: "a" } },
+  Term: { props: { term: { icon: "lucide:cloud", title: "Hub account", line: "l" } } },
   ToggleGroupItem: { wrap: inToggleGroup, props: { value: "a" } },
   TooltipContent: { wrap: inTooltip },
   TooltipTrigger: { wrap: inTooltip },

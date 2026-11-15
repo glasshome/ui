@@ -10,6 +10,7 @@ import {
   Progress,
   Skeleton,
   Spinner,
+  Term,
   Toaster,
   Tooltip,
   TooltipContent,
@@ -137,6 +138,21 @@ export function FeedbackCatalog() {
             <TooltipContent>Turn off lights</TooltipContent>
           </Tooltip>
         </div>
+      </Specimen>
+
+      <Specimen name="Term" try="Hub account">
+        <p class="text-sm">
+          Connect your{" "}
+          <Term
+            term={{
+              icon: "lucide:cloud",
+              title: "Hub account",
+              line: "Your account on glasshome.app. It holds PRO and lets you share.",
+              href: "https://glasshome.app/docs/hub/faq",
+            }}
+          />{" "}
+          in Settings.
+        </p>
       </Specimen>
 
       <Specimen name="HoverCard" try="@glasshome">
