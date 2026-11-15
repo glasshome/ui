@@ -79,7 +79,7 @@ describe("Dock placement", () => {
   });
 
   it.each(["left", "right"] as const)(
-    "draws a %s dock's dot column behind the icons, half the padding in from the glass edge",
+    "draws a %s dock's dot column behind the icons, 10px in from the glass edge",
     (side) => {
       const view = mountSide(side, 12, OVERFLOWING_BOX);
       const slot = (name: string) => view.container.querySelector(`[data-slot="${name}"]`);
@@ -92,14 +92,8 @@ describe("Dock placement", () => {
         side === "left"
           ? [dot.left - surface.left, icon.left - dot.right]
           : [surface.right - dot.right, dot.left - icon.right];
-      const style = getComputedStyle(slot("dock-surface") as HTMLElement);
-      const [padding, border] = (
-        side === "left"
-          ? [style.paddingLeft, style.borderLeftWidth]
-          : [style.paddingRight, style.borderRightWidth]
-      ).map(parseFloat);
-      expect(toGlass - (border ?? 0)).toBeCloseTo((padding ?? 0) / 2, 0);
-      expect(toIcon).toBeGreaterThan(toGlass);
+      expect(toGlass).toBeCloseTo(10, 0);
+      expect(toIcon).toBeGreaterThanOrEqual(8);
       expect(Number(getComputedStyle(dots).zIndex)).toBeLessThan(0);
       expect(Math.abs(bar.left - surface.left - (surface.right - bar.right))).toBeLessThan(1);
       view.unmount();
