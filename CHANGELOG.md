@@ -18,6 +18,25 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.41.0](https://github.com/glasshome/ui/compare/v1.40.0...v1.41.0) (2026-11-16)
+
+
+### Features
+
+* **solid:** modal Head and ConfirmDialog ([#115](https://github.com/glasshome/ui/issues/115)) ([318b5a8](https://github.com/glasshome/ui/commit/318b5a843d20e075c177cc6da5884c7e21829d0b))
+* **solid:** TabsTrigger inline sets the glyph beside the word ([#120](https://github.com/glasshome/ui/issues/120)) ([a1d495f](https://github.com/glasshome/ui/commit/a1d495fa5ec4287db79f30f987f7553fa92126ba))
+
+
+### Bug Fixes
+
+* **styles:** a covered page pauses ambient loops without restyling the document ([#116](https://github.com/glasshome/ui/issues/116)) ([504dd46](https://github.com/glasshome/ui/commit/504dd46fe8ddf25ff146b96f0f26234750a740da))
+
+
+### Performance Improvements
+
+* **icon:** parse each icon body once and clone it per instance ([#122](https://github.com/glasshome/ui/issues/122)) ([3a41953](https://github.com/glasshome/ui/commit/3a41953c37e419820834b3ae3ea2df80e7dccf09))
+* **overlays:** modal scrim only dims on touch screens ([#125](https://github.com/glasshome/ui/issues/125)) ([10c7063](https://github.com/glasshome/ui/commit/10c7063267bc3986f6ddf48386fe6aecf438aec4))
+
 ## [1.40.0](https://github.com/glasshome/ui/compare/v1.39.0...v1.40.0) (2026-11-15)
 
 
