@@ -280,7 +280,9 @@ Motion is one system, not per-component flair. Four rules, all held by
    lifecycle; hub calls it directly. Light-DOM loops gate on that attribute,
    widget shadow roots on the inherited `--motion-ambient` (1 live, else 0)
    or, for a loop that can only pause, `--motion-play` (`running` live, else
-   `paused`). A wrapper with `data-motion="still"` opts out: thumbnails are
+   `paused`). The tokens go live only under `[data-motion-reader]`, which the
+   widget realm puts on a widget whose styles name them: a custom property
+   written on `html` restyles the whole page. A wrapper with `data-motion="still"` opts out: thumbnails are
    stills. A mode indicator is not decoration: it may loop for as long
    as its mode is on, provided the mode itself is bounded (dash leaves edit mode
    after three idle minutes). `.glass-edge-orbit` is that rim.
