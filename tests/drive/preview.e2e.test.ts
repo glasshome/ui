@@ -1,6 +1,5 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, readdirSync, readFileSync } from "node:fs";
-import { createServer, connect } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -19,8 +18,7 @@ function preview(args: string[], env: Record<string, string> = {}) {
 function sheetOf(args: string[], env: Record<string, string> = {}): string {
   const run = preview([...args, "--out", mkdtempSync(join(tmpdir(), "ui-preview-"))], env);
   expect(run.code, run.stderr).toBe(0);
-  const noise = run.stderr.split("\n").filter((line) => line && !/ gallery on http/.test(line));
-  expect(noise).toEqual([]);
+  expect(run.stderr).toBe("");
   expect(existsSync(run.last), run.stdout).toBe(true);
   return run.last;
 }
@@ -29,24 +27,6 @@ const scenarioIds = (component: string) =>
   readdirSync(join(PKG, "tests/harness/__transcripts__"))
     .filter((f) => f.startsWith(`${component}.`))
     .map((f) => f.slice(component.length + 1, -".txt".length));
-
-const freePort = () =>
-  new Promise<number>((done) => {
-    const server = createServer().listen(0, () => {
-      const address = server.address();
-      server.close(() => done(typeof address === "object" && address ? address.port : 0));
-    });
-  });
-
-const refuses = (port: number) =>
-  new Promise<boolean>((done) => {
-    const socket = connect(port, "127.0.0.1");
-    socket.on("connect", () => {
-      socket.destroy();
-      done(false);
-    });
-    socket.on("error", () => done(true));
-  });
 
 /** A repository with one empty commit, so nothing has changed whatever this checkout holds. */
 function emptyRepo(): Record<string, string> {
@@ -97,14 +77,6 @@ describe("preview", () => {
     const run = preview(["spinner", "--against", before]);
     expect(run.code).toBe(2);
     expect(run.stderr).toContain(`${before} has no scenario folders`);
-  });
-
-  it("preview leaves no server listening", async () => {
-    const port = await freePort();
-    const run = preview(["spinner", "labelled"], { GALLERY_PORT: String(port) });
-    expect(run.code, run.stderr).toBe(0);
-    expect(run.stderr).toContain(`:${port}`);
-    expect(await refuses(port)).toBe(true);
   });
 
   it("preview --changed with no changes previews nothing and says so", () => {

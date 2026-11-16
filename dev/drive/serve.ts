@@ -1,8 +1,8 @@
 // Builds the gallery static and serves it from disk through Playwright's request interception (ES modules are refused over file://).
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync } from "node:fs";
-import { homedir } from "node:os";
-import { join, resolve } from "node:path";
+import { homedir, tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
 import type { Page } from "playwright";
 
 export const PKG = resolve(import.meta.dirname, "../..");
@@ -30,11 +30,13 @@ export const checkoutSlug = (dir = PKG) =>
 export const driveCacheDir = (pkg = PKG) =>
   join(homedir(), ".cache", "glasshome-ui-drive", checkoutSlug(pkg));
 
-export const galleryBuildDir = (pkg = PKG) =>
-  join(homedir(), ".cache", "glasshome-gallery-build", checkoutSlug(pkg));
+const galleryBuildDir = (pkg = PKG) =>
+  join(homedir(), ".cache", "glasshome-gallery-builds", checkoutSlug(pkg));
 
-/** In process with this checkout's Vite, so a ref checkout with no node_modules of its own builds too. */
-export async function buildGallery(pkg = PKG, outDir = galleryBuildDir(pkg)): Promise<string> {
+/** In process with this checkout's Vite, so a ref checkout with no node_modules of its own builds too; a fresh directory per run. */
+export async function buildGallery(pkg = PKG, parent = tmpdir()): Promise<string> {
+  mkdirSync(parent, { recursive: true });
+  const outDir = mkdtempSync(join(parent, "glasshome-gallery-"));
   const { build } = await import("vite");
   await build({
     configFile: join(pkg, "vite.dev.config.ts"),
@@ -44,6 +46,21 @@ export async function buildGallery(pkg = PKG, outDir = galleryBuildDir(pkg)): Pr
     build: { outDir, emptyOutDir: true },
   });
   return outDir;
+}
+
+/** A commit's gallery never changes, so it is built once and moved into place whole. */
+export async function buildGalleryOnce(pkg: string): Promise<string> {
+  const dir = galleryBuildDir(pkg);
+  if (existsSync(join(dir, "stage.html"))) return dir;
+  const staging = await buildGallery(pkg, dirname(dir));
+  try {
+    renameSync(staging, dir);
+  } catch (error) {
+    rmSync(staging, { recursive: true, force: true });
+    // A parallel run moved the same commit's build in first.
+    if (!existsSync(join(dir, "stage.html"))) throw error;
+  }
+  return dir;
 }
 
 export async function serveGallery(page: Page, dir: string): Promise<void> {
@@ -59,38 +76,6 @@ export async function serveGallery(page: Page, dir: string): Promise<void> {
       body: readFileSync(file),
     });
   });
-}
-
-export interface DevServer {
-  origin: string;
-  close(): Promise<void>;
-}
-
-/** The gallery's Vite dev server, in this process; port 0 takes any free port. */
-export async function startDevServer(pkg = PKG, port = 0): Promise<DevServer> {
-  const { createServer, searchForWorkspaceRoot } = await import("vite");
-  const server = await createServer({
-    configFile: join(pkg, "vite.dev.config.ts"),
-    root: join(pkg, "dev"),
-    logLevel: "error",
-    clearScreen: false,
-    server: {
-      port,
-      strictPort: false,
-      host: "127.0.0.1",
-      ws: false,
-      watch: null,
-      // A ref checkout resolves its dependencies from this checkout's node_modules, above its own root.
-      fs: { allow: [searchForWorkspaceRoot(pkg), PKG] },
-    },
-  });
-  await server.listen();
-  const address = server.httpServer?.address();
-  if (typeof address !== "object" || address === null) {
-    await server.close();
-    throw new Error("the gallery dev server has no address");
-  }
-  return { origin: `http://127.0.0.1:${address.port}`, close: () => server.close() };
 }
 
 /** `ref`'s tree, extracted once per commit; under node_modules so its imports resolve to this checkout's dependencies. Null when git knows no such commit. */

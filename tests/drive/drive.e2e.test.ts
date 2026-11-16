@@ -1,17 +1,25 @@
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { buildGallery, PKG } from "../../dev/drive/serve";
 import type { RunReport } from "../../dev/drive/types";
 
-beforeAll(() => buildGallery());
+let build = "";
+beforeAll(async () => {
+  build = await buildGallery();
+});
+afterAll(() => rmSync(build, { recursive: true, force: true }));
 
 function drive(...args: string[]) {
-  const run = spawnSync("bun", [join(PKG, "dev/drive/main.ts"), ...args, "--no-build", "--json"], {
-    cwd: PKG,
-    encoding: "utf8",
-  });
+  const run = spawnSync(
+    "bun",
+    [join(PKG, "dev/drive/main.ts"), ...args, "--build", build, "--json"],
+    {
+      cwd: PKG,
+      encoding: "utf8",
+    },
+  );
   return { code: run.status, stdout: run.stdout, stderr: run.stderr };
 }
 

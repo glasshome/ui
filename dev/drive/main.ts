@@ -1,10 +1,10 @@
 // bun run drive <component> <scenario> [--steps keyboard] [--cpu-rate 1] [--width phone|tablet|desktop]
-//                [--theme light|dark] [--out <dir>] [--json] [--no-build] [--against <git-ref> [--check]]
+//                [--theme light|dark] [--out <dir>] [--json] [--build <dir>] [--against <git-ref> [--check]]
 // bun run drive --all                     every scenario of every component
 // --check without --against               fails on any count over dev/components/<slug>/budget.json
 // bun run preview ...                     see preview.ts
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { type Browser, chromium } from "playwright";
@@ -30,9 +30,9 @@ import {
 } from "./scenario";
 import {
   buildGallery,
+  buildGalleryOnce,
   checkoutRef,
   driveCacheDir,
-  galleryBuildDir,
   ORIGIN,
   PKG,
   serveGallery,
@@ -205,9 +205,7 @@ async function refBuild(ref: string): Promise<{ dir: string; label: string } | n
   const pkg = checkoutRef(ref);
   if (pkg === null) throw new UsageError(`no commit ${ref}`);
   if (!existsSync(join(pkg, "dev", "components"))) return null;
-  const out = galleryBuildDir(pkg);
-  if (!existsSync(join(out, "stage.html"))) await buildGallery(pkg, out);
-  return { dir: out, label: `${ref} (${basename(pkg).slice(0, 7)})` };
+  return { dir: await buildGalleryOnce(pkg), label: `${ref} (${basename(pkg).slice(0, 7)})` };
 }
 
 interface Compared {
@@ -275,7 +273,7 @@ async function main(argv: string[]): Promise<number> {
       out: { type: "string" },
       json: { type: "boolean", default: false },
       all: { type: "boolean", default: false },
-      "no-build": { type: "boolean", default: false },
+      build: { type: "string" },
       against: { type: "string" },
       check: { type: "boolean", default: false },
     },
@@ -294,7 +292,7 @@ async function main(argv: string[]): Promise<number> {
   }
   const base = resolve(values.out ?? driveCacheDir());
   mkdirSync(base, { recursive: true });
-  const build = values["no-build"] ? galleryBuildDir() : await buildGallery();
+  const build = values.build ?? (await buildGallery());
   const opts: Options = {
     keyboard: values.steps === "keyboard",
     cpuRate,
@@ -345,6 +343,7 @@ async function main(argv: string[]): Promise<number> {
     return overruns.length > 0 ? 1 : 0;
   } finally {
     await browser.close();
+    if (values.build === undefined) rmSync(build, { recursive: true, force: true });
   }
 }
 

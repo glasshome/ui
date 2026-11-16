@@ -12,20 +12,14 @@
 // Trigger text resolves inside the cell's [data-stage] body only: the header
 // chip repeats it, and an unscoped locator clicks the chip instead.
 //   flags: --width 1280 --height 900 --stage phone|tablet|desktop --reduced-motion --light --scale 2
-//          --out ~/.cache/glasshome-gallery-shots --no-build
+//          --out ~/.cache/glasshome-gallery-shots --build <dir> (reuse a gallery build)
 //
 // CHROMIUM_PATH points at a system Chromium when Playwright's bundled one
 // cannot launch (NixOS).
-import { mkdirSync } from "node:fs";
+import { mkdirSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
-import {
-  buildGallery,
-  checkoutSlug,
-  galleryBuildDir,
-  ORIGIN,
-  serveGallery,
-} from "./drive/serve.ts";
+import { buildGallery, checkoutSlug, ORIGIN, serveGallery } from "./drive/serve.ts";
 
 const args = process.argv.slice(2);
 const flag = (name, fallback) => {
@@ -52,7 +46,6 @@ const width = stageW ?? widthFlag;
 const height = stageH ?? heightFlag;
 const scale = Number(flag("scale", 1));
 const light = flag("light", false) === true;
-const noBuild = flag("no-build", false) === true;
 const reducedMotion = flag("reduced-motion", false) === true;
 const verifyTriggers = flag("verify-triggers", false) === true;
 const route = flag("route", null);
@@ -71,10 +64,10 @@ const press = click
 const outDir = resolve(
   String(flag("out", join(homedir(), ".cache", "glasshome-gallery-shots", checkoutSlug()))),
 );
-const buildDir = galleryBuildDir();
+const reuse = flag("build", null);
 const names = args.filter((a) => !a.startsWith("--"));
 
-if (!noBuild) await buildGallery();
+const buildDir = reuse ? resolve(String(reuse)) : await buildGallery();
 mkdirSync(outDir, { recursive: true });
 
 const { chromium } = await import("playwright");
@@ -224,6 +217,7 @@ const code = verifyTriggers
     : await shootSpecimens();
 
 await browser.close();
+if (!reuse) rmSync(buildDir, { recursive: true, force: true });
 if (errors.length) {
   console.error(`page errors (${errors.length}):\n${errors.slice(0, 5).join("\n")}`);
   process.exit(1);
