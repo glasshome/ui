@@ -29,6 +29,36 @@
       }
     }
   },
+  "inline-icon": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 68,
+          "reason": "baseline 2026-11-16, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+        },
+        "largestRecalc": {
+          "max": 34,
+          "reason": "baseline 2026-11-16"
+        },
+        "layouts": {
+          "max": 4,
+          "reason": "baseline 2026-11-16"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 8,
+        "reason": "baseline 2026-11-16"
+      },
+      "domCalls": {
+        "getComputedStyle": 1,
+        "compareDocumentPosition": 2,
+        "IntersectionObserver": 2,
+        "MutationObserver": 3
+      }
+    }
+  },
   "keyboard-nav": {
     "steps": {
       "0": {
