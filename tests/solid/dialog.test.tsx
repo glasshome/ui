@@ -1049,6 +1049,7 @@ describe("Page cover", () => {
     setOpen(true);
     await vi.waitFor(() => expect(document.getAnimations().length).toBeGreaterThan(0));
     setOpen(false);
+    await Promise.allSettled(document.getAnimations().map((animation) => animation.finished));
     await vi.waitFor(() =>
       expect(document.querySelector("[data-sheet-content]")?.getAttribute("data-state")).toBe(
         "closed",
