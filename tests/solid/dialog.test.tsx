@@ -913,3 +913,42 @@ describe("Dialog body gutter", () => {
     }
   });
 });
+
+describe("Dialog scrim", () => {
+  const scrimFilter = () => {
+    const el = document.querySelector<HTMLElement>('[data-slot="dialog-overlay"]');
+    if (!el) throw new Error("no dialog scrim rendered");
+    return getComputedStyle(el).backdropFilter;
+  };
+
+  const touchScreen = (on: boolean) =>
+    cdp().send("Emulation.setTouchEmulationEnabled", { enabled: on, maxTouchPoints: on ? 5 : 1 });
+
+  it("blurs the page behind it under a mouse", () => {
+    render(() => (
+      <Dialog open>
+        <DialogContent>
+          <DialogTitle>Title</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    ));
+    expect(scrimFilter()).toContain("blur");
+  });
+
+  it("only dims the page on a touch screen, where a blur over moving widgets re-blurs every frame", async () => {
+    await touchScreen(true);
+    try {
+      render(() => (
+        <Dialog open>
+          <DialogContent>
+            <DialogTitle>Title</DialogTitle>
+          </DialogContent>
+        </Dialog>
+      ));
+      expect(matchMedia("(pointer: coarse)").matches).toBe(true);
+      expect(scrimFilter()).toBe("none");
+    } finally {
+      await touchScreen(false);
+    }
+  });
+});
