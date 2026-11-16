@@ -1,6 +1,16 @@
 import type { IconifyIcon } from "@iconify/types";
 import { iconToSVG } from "@iconify/utils";
-import { batch, createMemo, createSignal, type JSX, type Signal, splitProps } from "solid-js";
+import {
+  batch,
+  createMemo,
+  createSignal,
+  type JSX,
+  mergeProps,
+  type Signal,
+  splitProps,
+} from "solid-js";
+import { isServer } from "solid-js/web";
+import { iconNodes, trusted } from "./icon-nodes.js";
 
 export type IconData = IconifyIcon;
 
@@ -85,29 +95,6 @@ function lookup(name: string): IconData | undefined {
   return undefined;
 }
 
-interface TrustedPolicy {
-  createHTML(input: string): string;
-}
-let policy: TrustedPolicy | null | undefined;
-
-// Icon bodies come from the build or the host's own icon route; under a
-// require-trusted-types-for CSP the assignment still needs a policy.
-function trusted(html: string): string {
-  if (policy === undefined) {
-    const tt = (
-      globalThis as {
-        trustedTypes?: { createPolicy(name: string, rules: TrustedPolicy): TrustedPolicy };
-      }
-    ).trustedTypes;
-    try {
-      policy = tt ? tt.createPolicy("glasshome-ui", { createHTML: (s) => s }) : null;
-    } catch {
-      policy = null;
-    }
-  }
-  return policy ? policy.createHTML(html) : html;
-}
-
 export interface IconProps extends Omit<
   JSX.SvgSVGAttributes<SVGSVGElement>,
   "width" | "height" | "children"
@@ -134,24 +121,40 @@ export function Icon(props: IconProps) {
     return iconToSVG(data, size);
   });
   const body = createMemo(() => built().body);
-  // A TrustedHTML is a fresh object per call, which the spread would write as a new innerHTML.
-  const html = createMemo(() => trusted(body()));
   const named = () =>
     rest["aria-label"] != null || rest["aria-labelledby"] != null || rest.role != null;
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      data-slot="icon"
-      data-icon={local.icon}
-      aria-hidden={named() ? undefined : "true"}
-      fill="currentColor"
-      {...rest}
-      viewBox={built().attributes.viewBox}
-      width={built().attributes.width}
-      height={built().attributes.height}
-      innerHTML={html()}
-    />
+  const shell = mergeProps(
+    {
+      xmlns: "http://www.w3.org/2000/svg",
+      "data-slot": "icon",
+      get "data-icon"() {
+        return local.icon;
+      },
+      get "aria-hidden"() {
+        return named() ? undefined : ("true" as const);
+      },
+      fill: "currentColor",
+    },
+    rest,
+    {
+      get viewBox() {
+        return built().attributes.viewBox;
+      },
+      get width() {
+        return built().attributes.width;
+      },
+      get height() {
+        return built().attributes.height;
+      },
+    },
   );
+  if (isServer) {
+    // A TrustedHTML is a fresh object per call, which the spread would write as a new innerHTML.
+    const html = createMemo(() => trusted(body()));
+    return <svg {...shell} innerHTML={html()} />;
+  }
+  const nodes = createMemo(() => iconNodes(body()));
+  return <svg {...shell}>{nodes()}</svg>;
 }
 
 function sizeOrDefault(size: { width: string | null; height: string | null }) {
