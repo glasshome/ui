@@ -57,11 +57,12 @@ const TabsList: Component<ComponentProps<typeof TabsPrimitive.List>> = (props) =
   );
 };
 
-/** `icon` stacks a glyph over the word, so a tab row reads apart from the toggle groups under it. */
-const TabsTrigger: Component<ComponentProps<typeof TabsPrimitive.Trigger> & { icon?: string }> = (
-  props,
-) => {
-  const [local, others] = splitProps(props, ["class", "icon", "children"]);
+/** `icon` stacks a glyph over the word, so a tab row reads apart from the toggle groups under it.
+ *  `inline` sets the glyph beside the word instead, for a row that stands alone. */
+const TabsTrigger: Component<
+  ComponentProps<typeof TabsPrimitive.Trigger> & { icon?: string; inline?: boolean }
+> = (props) => {
+  const [local, others] = splitProps(props, ["class", "icon", "inline", "children"]);
   return (
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
@@ -69,7 +70,7 @@ const TabsTrigger: Component<ComponentProps<typeof TabsPrimitive.Trigger> & { ic
         SEGMENT_ITEM,
         PRESS_DIP,
         "not-data-[selected]:hover:text-foreground relative isolate data-[selected]:text-(--material-accent)",
-        local.icon && "h-auto flex-1 flex-col gap-1 py-2 text-xs",
+        local.icon && !local.inline && "h-auto flex-1 flex-col gap-1 py-2 text-xs",
         local.class,
       )}
       {...others}
@@ -77,10 +78,10 @@ const TabsTrigger: Component<ComponentProps<typeof TabsPrimitive.Trigger> & { ic
       <SelectionHighlight />
       {local.icon && (
         <Icon
-          data-slot="tabs-trigger-icon"
+          data-slot={local.inline ? "tabs-trigger-inline-icon" : "tabs-trigger-icon"}
           icon={local.icon}
-          width={18}
-          height={18}
+          width={local.inline ? 16 : 18}
+          height={local.inline ? 16 : 18}
           aria-hidden="true"
         />
       )}
