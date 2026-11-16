@@ -664,14 +664,18 @@
     transparent 360deg
   );
   animation: spin-slow 8s linear infinite;
+  animation-play-state: var(--_orbit-play, running);
 }
 @media (prefers-reduced-motion: reduce) {
   :where(.glass-edge-orbit) > * {
     animation: none;
   }
 }
-/* Ambient loops under a modal's blurred scrim would make the browser re-blur the whole page every frame. */
-:root[data-page-covered] :is(:where(.glass-edge-orbit) > *, .animate-spin-slow, .animate-float) {
+/* Ambient loops under a modal's scrim re-blur the page every frame; each selector ends in a class, as a trailing * restyles the whole document. */
+:root[data-page-covered] .glass-edge-orbit {
+  --_orbit-play: paused;
+}
+:root[data-page-covered] :is(.animate-spin-slow, .animate-float) {
   animation-play-state: paused;
 }
 
