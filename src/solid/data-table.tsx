@@ -60,10 +60,13 @@ export function TableFilterSelect(props: {
   options: readonly string[];
   value: string;
   onChange: (value: string) => void;
-  label: (value: string) => string;
+  label: (value: string) => JSX.Element;
   ariaLabel: string;
+  /** Leading icon, `prefix:name`; defaults to the filter funnel. */
+  icon?: string;
   class?: string;
 }) {
+  const icon = createMemo(() => props.icon ?? "lucide:funnel");
   return (
     <Select<string>
       options={[...props.options]}
@@ -81,7 +84,7 @@ export function TableFilterSelect(props: {
         aria-label={props.ariaLabel}
       >
         <Icon
-          icon="lucide:funnel"
+          icon={icon()}
           width={14}
           height={14}
           class="text-muted-foreground size-3.5 shrink-0"
@@ -214,6 +217,7 @@ export function TableSortHeader(props: {
   align?: "start" | "end";
   class?: string;
 }) {
+  const label = createMemo(() => props.label);
   return (
     <Button
       type="button"
@@ -226,9 +230,9 @@ export function TableSortHeader(props: {
         props.align === "end" ? "justify-end" : "justify-start",
         props.class,
       )}
-      aria-label={`Sort by ${props.label}`}
+      aria-label={`Sort by ${label()}`}
     >
-      {props.label}
+      {label()}
       <Show
         when={props.active}
         fallback={
