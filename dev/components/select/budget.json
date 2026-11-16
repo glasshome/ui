@@ -192,13 +192,13 @@
     },
     "guest": {
       "workUnits": {
-        "max": 212,
-        "reason": "kobalte baseline 2026-11-15, raised 2026-11-16 by 2 when the modal Head and ConfirmDialog made every guest load more of ui: measured 211"
+        "max": 213,
+        "reason": "kobalte baseline 2026-11-15, raised 2026-11-16 by 2 when the modal Head and ConfirmDialog made every guest load more of ui, and by 1 when the realm honoured an IntersectionObserver's root, so floating-ui sees the trigger move when End scrolls the page and Enter resizes it: measured 213"
       },
       "domCalls": {
-        "getComputedStyle": 102,
+        "getComputedStyle": 140,
         "compareDocumentPosition": 0,
-        "IntersectionObserver": 2,
+        "IntersectionObserver": 4,
         "MutationObserver": 1
       }
     }
