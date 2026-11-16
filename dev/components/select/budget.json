@@ -192,8 +192,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 210,
-        "reason": "kobalte baseline 2026-11-15"
+        "max": 212,
+        "reason": "kobalte baseline 2026-11-15, raised 2026-11-16 by 2 when the modal Head and ConfirmDialog made every guest load more of ui: measured 211"
       },
       "domCalls": {
         "getComputedStyle": 102,
@@ -294,8 +294,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 27,
-        "reason": "kobalte baseline 2026-11-15"
+        "max": 29,
+        "reason": "kobalte baseline 2026-11-15, raised 2026-11-16 by 2 when the modal Head and ConfirmDialog made every guest load more of ui: measured 28"
       },
       "domCalls": {
         "getComputedStyle": 66,
