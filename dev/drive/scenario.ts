@@ -35,8 +35,7 @@ export function requireSlug(name: string, pkg = PKG): string {
 
 export async function readIndex(page: Page, stageUrl: string): Promise<IndexedComponent[]> {
   await page.goto(stageUrl);
-  // A cold dev server transforms every module on the first load.
-  const json = await page.locator("#scenario-index").textContent({ timeout: 120_000 });
+  const json = await page.locator("#scenario-index").textContent();
   return JSON.parse(json ?? "[]");
 }
 

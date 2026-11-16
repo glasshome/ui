@@ -2,7 +2,7 @@
 //                 [--after-steps] [--against <git-ref>] [--out <dir>]
 // bun run preview --changed [--since <ref>]   every component touched since <ref> (origin/main)
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
@@ -23,7 +23,15 @@ import {
   type Width,
   WIDTHS,
 } from "./scenario";
-import { checkoutRef, checkoutSlug, type DevServer, PKG, startDevServer } from "./serve";
+import {
+  buildGallery,
+  buildGalleryOnce,
+  checkoutRef,
+  checkoutSlug,
+  ORIGIN,
+  PKG,
+  serveGallery,
+} from "./serve";
 import { createSettler } from "./settle";
 import { type Cell, contactSheet } from "./sheet";
 
@@ -39,7 +47,7 @@ interface Column {
 
 interface Build {
   name: "base" | "head";
-  origin: string;
+  dir: string;
   index: IndexedComponent[];
 }
 
@@ -97,10 +105,11 @@ async function shoot(browser: Browser, shot: Shot, afterSteps: boolean, material
   const page = await context.newPage();
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(String(e)));
+  await serveGallery(page, shot.build.dir);
   const cdp = await context.newCDPSession(page);
   const settle = await createSettler(page, cdp);
   const hash = stageHash(shot.component.slug, shot.scenario.id, shot.column.theme, material);
-  await page.goto(`${shot.build.origin}/stage.html${hash}`);
+  await page.goto(`${ORIGIN}/stage.html${hash}`);
   await page.locator("[data-scenario]").waitFor({ state: "attached", timeout: 30_000 });
   await page.evaluate(() => document.fonts.ready);
   await settle(SETTLE_MS);
@@ -199,12 +208,11 @@ async function sheetFor(
   return sheet;
 }
 
-async function serveBuild(name: Build["name"], pkg: string, port: number, browser: Browser) {
-  const server = await startDevServer(pkg, port);
-  console.error(`${name} gallery on ${server.origin}`);
+async function indexBuild(name: Build["name"], dir: string, browser: Browser): Promise<Build> {
   const page = await browser.newPage();
-  const index = await readIndex(page, `${server.origin}/stage.html`).finally(() => page.close());
-  return { server, build: { name, origin: server.origin, index } satisfies Build };
+  await serveGallery(page, dir);
+  const index = await readIndex(page, `${ORIGIN}/stage.html`).finally(() => page.close());
+  return { name, dir, index };
 }
 
 export async function preview(argv: string[]): Promise<number> {
@@ -249,25 +257,21 @@ export async function preview(argv: string[]): Promise<number> {
     throw new UsageError(`${values.against} has no scenario folders (dev/components)`);
   }
 
-  const servers: DevServer[] = [];
+  const headDir = await buildGallery();
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
   try {
     const builds: Build[] = [];
     if (basePkg !== undefined) {
-      const base = await serveBuild("base", basePkg, 0, browser);
-      servers.push(base.server);
-      builds.push(base.build);
+      builds.push(await indexBuild("base", await buildGalleryOnce(basePkg), browser));
     }
-    const head = await serveBuild("head", PKG, Number(process.env.GALLERY_PORT ?? 0), browser);
-    servers.push(head.server);
-    builds.push(head.build);
+    builds.push(await indexBuild("head", headDir, browser));
     for (const slug of slugs) {
       const opts = { out, afterSteps: values["after-steps"], material };
       console.log(await sheetFor(browser, builds, slug, values.changed ? [] : ids, columns, opts));
     }
   } finally {
     await browser.close();
-    await Promise.all(servers.map((s) => s.close()));
+    rmSync(headDir, { recursive: true, force: true });
   }
   return 0;
 }
