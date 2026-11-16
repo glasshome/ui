@@ -30,7 +30,7 @@ export const checkoutSlug = (dir = PKG) =>
 export const driveCacheDir = (pkg = PKG) =>
   join(homedir(), ".cache", "glasshome-ui-drive", checkoutSlug(pkg));
 
-export const galleryBuildDir = (pkg = PKG) =>
+const galleryBuildDir = (pkg = PKG) =>
   join(homedir(), ".cache", "glasshome-gallery-builds", checkoutSlug(pkg));
 
 /** In process with this checkout's Vite, so a ref checkout with no node_modules of its own builds too; a fresh directory per run. */
