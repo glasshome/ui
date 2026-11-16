@@ -132,9 +132,16 @@ async function runScenario(
   };
 
   await throttle(1);
+  // Step 0 counts the mount alone: page load and font swaps vary with host load.
+  await page.goto(`${ORIGIN}/stage.html#/?theme=${opts.theme}`);
+  await page.evaluate(() => Promise.all([...document.fonts].map((face) => face.load())));
+  await settle();
+  timeline.push({ kind: "load" });
+  const hash = stageHash(component.slug, scenario.id, opts.theme);
   const mounted = await traced(async () => {
-    await page.goto(`${ORIGIN}/stage.html${stageHash(component.slug, scenario.id, opts.theme)}`);
-    timeline.push({ kind: "load" });
+    await page.evaluate((h) => {
+      window.location.hash = h;
+    }, hash);
     await page.locator("[data-scenario]").waitFor({ state: "attached" });
     return settle();
   });

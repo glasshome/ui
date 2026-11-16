@@ -3,30 +3,30 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 174,
-          "reason": "baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "max": 157,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 10,
-          "reason": "baseline 2026-11-15"
+          "max": 4,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 3,
-          "reason": "baseline 2026-11-15"
+          "max": 2,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 154,
-          "reason": "baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "max": 155,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 1,
-          "reason": "baseline 2026-11-15"
+          "max": 2,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 0,
-          "reason": "baseline 2026-11-15"
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       }
     },
@@ -47,16 +47,16 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 174,
-          "reason": "baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "max": 157,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 10,
-          "reason": "baseline 2026-11-15"
+          "max": 4,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 3,
-          "reason": "baseline 2026-11-15"
+          "max": 2,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       }
     },

@@ -3,16 +3,16 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 54,
-          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "max": 37,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 25,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 23,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 4,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 3,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       }
     },
@@ -33,16 +33,16 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 68,
-          "reason": "baseline 2026-11-16, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "max": 47,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 34,
-          "reason": "baseline 2026-11-16"
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 4,
-          "reason": "baseline 2026-11-16"
+          "max": 3,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       }
     },
@@ -63,72 +63,72 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 53,
-          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "max": 35,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 25,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 23,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 4,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 3,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 12,
-          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 4,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 5,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 2,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       },
       "2": {
         "elementsRestyled": {
           "max": 117,
-          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 9,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 12,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 4,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 5,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       },
       "3": {
         "elementsRestyled": {
           "max": 112,
-          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 9,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 12,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 4,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 5,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       },
       "4": {
         "elementsRestyled": {
           "max": 0,
-          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 0,
-          "reason": "kobalte baseline 2026-11-15"
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 0,
-          "reason": "kobalte baseline 2026-11-15"
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       }
     },
@@ -149,30 +149,30 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 55,
-          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "max": 35,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 25,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 23,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 4,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 3,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 118,
-          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "max": 113,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 10,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 13,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 5,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 7,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       }
     },
@@ -193,30 +193,30 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 109,
-          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "max": 98,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 33,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 39,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 6,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 5,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 87,
-          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "max": 94,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 11,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 14,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 5,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 7,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       }
     },
@@ -237,30 +237,30 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 59,
-          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "max": 39,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 27,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 25,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 3,
-          "reason": "kobalte baseline 2026-11-15"
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 28,
-          "reason": "kobalte baseline 2026-11-15, max of 3 T50 runs plus 25%, since the measured T50 rate moves with host load and frame counts with it"
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 4,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 5,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-15"
+          "max": 2,
+          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         }
       }
     }
