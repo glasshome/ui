@@ -24,6 +24,7 @@ import {
   MODAL_MAX_H,
   MODAL_TITLE,
   type ModalDismissProps,
+  ModalCover,
   ModalScrollLock,
 } from "./dialog-parts.js";
 
@@ -134,6 +135,7 @@ const SheetContent: ParentComponent<SheetContentProps> = (props) => {
   return (
     <DialogPrimitive.Portal mount={usePortalMount()}>
       <ModalScrollLock />
+      <ModalCover panel={panel} open={context.isOpen} />
       <SheetOverlay />
       <DialogPrimitive.Content
         ref={(el: HTMLElement) => {

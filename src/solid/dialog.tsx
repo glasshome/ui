@@ -26,6 +26,7 @@ import {
   MODAL_TITLE,
   MODAL_WIDTH,
   type ModalDismissProps,
+  ModalCover,
   ModalScrollLock,
   type ModalSize,
 } from "./dialog-parts.js";
@@ -129,6 +130,7 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
   return (
     <DialogPrimitive.Portal mount={usePortalMount()}>
       <ModalScrollLock />
+      <ModalCover panel={panel} open={context.isOpen} />
       <DialogPrimitive.Overlay data-slot="dialog-overlay" class={MODAL_SCRIM} />
       <DialogPrimitive.Content
         ref={(el: HTMLElement) => {

@@ -18,6 +18,7 @@ import { Dynamic, Portal } from "solid-js/web";
 import { usePortalMount } from "../portal-mount.js";
 import { Z } from "../../lib/layers.js";
 import { OVERLAY_SURFACE_OPAQUE } from "../../lib/overlay-classes.js";
+import { coverOnceOpen } from "../../lib/page-cover.js";
 import { cn } from "../../lib/utils.js";
 import { whenAnimationsSettle } from "../../lib/when-animations-settle.js";
 import { isSheetMotion } from "./sheet-motion.js";
@@ -211,6 +212,11 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     if (!present()) return;
     acquireScrollLock();
     onCleanup(releaseScrollLock);
+  });
+
+  const covering = createMemo(() => present() && ctx.state() !== "opening");
+  createEffect(() => {
+    if (covering() && el) onCleanup(coverOnceOpen(el, () => ctx.state() !== "closing"));
   });
 
   const clearAnimInline = () => {
