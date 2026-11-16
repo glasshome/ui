@@ -19,12 +19,7 @@
 import { mkdirSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
-import {
-  buildGallery,
-  checkoutSlug,
-  ORIGIN,
-  serveGallery,
-} from "./drive/serve.ts";
+import { buildGallery, checkoutSlug, ORIGIN, serveGallery } from "./drive/serve.ts";
 
 const args = process.argv.slice(2);
 const flag = (name, fallback) => {
