@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from "@solidjs/testing-library";
 import { createSignal, Show } from "solid-js";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cdp, page, userEvent } from "vitest/browser";
+import { cdp, commands, page, userEvent } from "vitest/browser";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -913,3 +913,35 @@ describe("Dialog body gutter", () => {
     }
   });
 });
+
+describe("Dialog scrim", () => {
+  const scrimFilter = async (kind: "finger" | "mouse") => {
+    await commands.pointer(kind);
+    render(() => (
+      <Dialog open>
+        <DialogContent>
+          <DialogTitle>Title</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    ));
+    const el = document.querySelector<HTMLElement>('[data-slot="dialog-overlay"]');
+    if (!el) throw new Error("no dialog scrim rendered");
+    return getComputedStyle(el).backdropFilter;
+  };
+
+  afterEach(() => commands.pointer("mouse"));
+
+  it("blurs the page behind it under a mouse", async () => {
+    expect(await scrimFilter("mouse")).toContain("blur");
+  });
+
+  it("only dims the page on a touch screen, where a blur over moving widgets re-blurs every frame", async () => {
+    expect(await scrimFilter("finger")).toBe("none");
+  });
+});
+
+declare module "vitest/browser" {
+  interface BrowserCommands {
+    pointer(kind: "finger" | "mouse"): Promise<void>;
+  }
+}
