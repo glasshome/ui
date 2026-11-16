@@ -62,6 +62,9 @@ type ToggleGroupContextValue = VariantProps<typeof toggleVariants> & {
   set: ToggleSet;
 };
 
+// A stacked item keeps its control height: flex-1 in a column would shrink it to its text.
+const STACKED_ITEMS = "[&_[data-slot=toggle-group-item]]:flex-none";
+
 const ToggleGroupContext = createContext<ToggleGroupContextValue | null>(null);
 
 const useToggleGroup = (): ToggleGroupContextValue => {
@@ -180,7 +183,7 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
             props.scroll
               ? `flex [scrollbar-width:none] flex-nowrap overflow-x-auto ${SCROLL_TRACK_FADE}`
               : vertical()
-                ? "flex flex-col items-stretch"
+                ? `flex flex-col items-stretch ${STACKED_ITEMS}`
                 : sliding()
                   ? "flex"
                   : undefined,
@@ -203,7 +206,7 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
               props.scroll
                 ? "flex w-max flex-nowrap items-center"
                 : vertical()
-                  ? "flex w-full flex-col items-stretch gap-y-0.5"
+                  ? `flex w-full flex-col items-stretch gap-y-0.5 ${STACKED_ITEMS}`
                   : "w-full items-center gap-y-1"
             }
           >
