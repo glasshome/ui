@@ -202,6 +202,7 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | one colour out of a few | `<SwatchPicker>` (+ a picker as its child) | round buttons by hand |
 | an editor that leaves the page live behind it | `<DockedPanel>` + its Header, Body, Footer | a `<Sheet>` with its scrim hidden |
 | tabs above a stack of toggle groups | `<TabsTrigger icon>` | an `<Icon>` placed inside the trigger by hand |
+| a tab row on its own, a glyph beside each word | `<TabsTrigger icon inline>` | an `<Icon>` placed inside the trigger by hand |
 | picking one area, or several | `<AreaPicker>` (`values` + `onValuesChange` for multi) | a hand-rolled checkbox list of areas |
 | a field-shaped picker's trigger | `<PickerTrigger>` (chevron, clear button, expanded state) | a `PICKER_TRIGGER` button with its own chevron |
 | a table that can grow past a screenful | `createTableWindow(rows, { resetOn })` + `<TableLoadMore>` at its end | every row rendered at once; an `IntersectionObserver` by hand |

@@ -81,6 +81,22 @@ describe("Tabs layout", () => {
     expect(tokens).not.toContain("contents");
   });
 
+  it("inline sets the glyph beside the word and keeps the row one line tall", () => {
+    const { container } = render(() => (
+      <Tabs value="a">
+        <TabsList>
+          <TabsTrigger value="a" icon="lucide:compass" inline>
+            A
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+    ));
+    const trigger = container.querySelector<HTMLElement>('[data-slot="tabs-trigger"]');
+    expect(trigger?.className.split(/\s+/)).not.toContain("flex-col");
+    expect(trigger?.querySelector('[data-slot="tabs-trigger-inline-icon"]')).toBeTruthy();
+    expect(container.querySelector('[data-slot="tabs-trigger-icon"]')).toBeNull();
+  });
+
   it("layout=split lets the host lay the parts out, and still shares the tab state", () => {
     const { container } = render(() => (
       <div class="panel">
