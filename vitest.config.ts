@@ -43,6 +43,8 @@ export default defineConfig({
     conditions: ["browser"],
   },
   optimizeDeps: {
+    // A dependency found mid-run re-optimizes and reloads the page, failing the in-flight test import.
+    noDiscovery: true,
     include: [
       "solid-js",
       "solid-js/web",
