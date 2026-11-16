@@ -6,6 +6,7 @@ import {
   type Component,
   type ComponentProps,
   createSignal,
+  type JSX,
   type ParentComponent,
   splitProps,
 } from "solid-js";
@@ -14,7 +15,9 @@ import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
   createModalDismiss,
+  createModalHead,
   createModalParts,
+  type ModalHeadProps,
   MODAL_ANCHOR,
   MODAL_DESCRIPTION,
   MODAL_PANEL,
@@ -133,6 +136,15 @@ const AlertDialogDescription: Component<ComponentProps<typeof AlertDialogPrimiti
   );
 };
 
+/** An alert dialog is read aloud as a description, and the line carries the consequence. */
+type AlertDialogHeadProps = ModalHeadProps & { line: JSX.Element };
+
+const AlertDialogHead = createModalHead<AlertDialogHeadProps>(
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+);
+
 type AlertDialogButtonProps = ModalDismissProps &
   Partial<Pick<VariantProps<typeof buttonVariants>, "variant" | "size">>;
 
@@ -175,6 +187,7 @@ export {
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
+  AlertDialogHead,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,

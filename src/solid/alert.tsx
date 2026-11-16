@@ -88,7 +88,7 @@ const Alert: Component<AlertProps> = (props) => {
       data-size={local.size ?? "default"}
       class={cn(
         ALERT_CLASS,
-        "glass glass-tint",
+        "glass glass-tint shrink-0",
         local.size === "sm" && ALERT_SM_CLASS,
         local.class,
       )}

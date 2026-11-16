@@ -141,10 +141,22 @@ const inContextSub = (child: () => JSX.Element) =>
   inContextContent(() => <ui.ContextMenuSub>{child()}</ui.ContextMenuSub>);
 const inSelect = inside(ui.Select as never, { options: [], open: true });
 
+const head = { icon: "lucide:check", title: "Title" };
 const widget = { scope: "glasshome", name: "clock" };
 
 /** Context and required data a component needs to mount at all; everything else mounts bare. */
 const FIXTURES: Record<string, Fixture> = {
+  ConfirmDialog: {
+    props: {
+      open: true,
+      icon: "lucide:trash-2",
+      title: "Remove it?",
+      line: "Gone.",
+      actionLabel: "Remove",
+      onConfirm: noop,
+      onOpenChange: noop,
+    },
+  },
   AccordionItem: { wrap: inside(ui.Accordion as never), props: { value: "a" } },
   AccordionTrigger: { wrap: inAccordionItem },
   AccordionContent: { wrap: inAccordionItem },
@@ -152,6 +164,7 @@ const FIXTURES: Record<string, Fixture> = {
   AlertDialogCancel: { wrap: inAlertDialog },
   AlertDialogContent: { wrap: inAlertDialog },
   AlertDialogDescription: { wrap: inAlertDialog },
+  AlertDialogHead: { wrap: inAlertDialog, props: { ...head, line: "One line." } },
   AlertDialogTitle: { wrap: inAlertDialog },
   AlertDialogTrigger: { wrap: inAlertDialog },
   AreaChart: { props: { data: [] } },
@@ -187,6 +200,7 @@ const FIXTURES: Record<string, Fixture> = {
   DialogClose: { wrap: inDialog },
   DialogContent: { wrap: inDialog },
   DialogDescription: { wrap: inDialog },
+  DialogHead: { wrap: inDialog, props: head },
   DialogTitle: { wrap: inDialog },
   DialogTrigger: { wrap: inDialog },
   Dock: { props: { items: [] } },
@@ -255,6 +269,7 @@ const FIXTURES: Record<string, Fixture> = {
   ResponsiveDialogClose: { wrap: inResponsive },
   ResponsiveDialogContent: { wrap: inResponsive },
   ResponsiveDialogDescription: { wrap: inResponsive },
+  ResponsiveDialogHead: { wrap: inResponsive, props: head },
   ResponsiveDialogTitle: { wrap: inResponsive },
   ResponsiveDialogTrigger: { wrap: inResponsive },
   SchemaForm: { props: { schema: { type: "object", properties: {} }, data: {}, onChange: noop } },

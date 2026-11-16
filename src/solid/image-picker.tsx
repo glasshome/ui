@@ -18,10 +18,8 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogHead,
 } from "./alert-dialog.js";
 import { Badge } from "./badge.js";
 import { Button } from "./button.js";
@@ -180,8 +178,8 @@ function ImageGallery(
   const deleteDescription = createMemo(() => {
     const used = pendingDelete()?.usedBy ?? 0;
     return used === 0
-      ? "This image isn't used by any widget."
-      : `This image is used in ${used} widget${used === 1 ? "" : "s"}. Deleting it will leave those widgets without an image.`;
+      ? "No widget uses it."
+      : `${used} widget${used === 1 ? "" : "s"} will lose the image.`;
   });
 
   const chosenPreset = () => {
@@ -516,10 +514,12 @@ function ImageGallery(
             } else holdFocus();
           }}
         >
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete image?</AlertDialogTitle>
-            <AlertDialogDescription>{deleteDescription()}</AlertDialogDescription>
-          </AlertDialogHeader>
+          <AlertDialogHead
+            icon="lucide:image-off"
+            tone="var(--destructive)"
+            title="Delete image?"
+            line={deleteDescription()}
+          />
           <AlertDialogFooter>
             <AlertDialogCancel aria-label="Cancel">Cancel</AlertDialogCancel>
             <AlertDialogAction

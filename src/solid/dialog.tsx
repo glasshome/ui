@@ -17,6 +17,7 @@ import { cn } from "../lib/utils.js";
 import {
   ANCHORED_PANEL,
   createModalDismiss,
+  createModalHead,
   createModalParts,
   MODAL_ANCHOR,
   MODAL_DESCRIPTION,
@@ -181,6 +182,8 @@ const DialogDescription: Component<ComponentProps<typeof DialogPrimitive.Descrip
   );
 };
 
+const DialogHead = createModalHead(DialogHeader, DialogTitle, DialogDescription);
+
 export {
   Dialog,
   DialogBody,
@@ -188,6 +191,7 @@ export {
   DialogContent,
   DialogDescription,
   DialogFooter,
+  DialogHead,
   DialogHeader,
   DialogTitle,
   DialogTrigger,

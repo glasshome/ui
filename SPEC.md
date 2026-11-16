@@ -180,7 +180,8 @@ role clears 4.5:1 against `--background`/`--card`/`--popover`/`--muted` (3:1 for
 | a panel | `<Card>` | `border bg-card/NN backdrop-blur` |
 | a floating panel | `<Overlay>` / the overlay-wearing primitive | raw `bg-popover shadow` |
 | a modal | `<ResponsiveDialog>` (desktop dialog + mobile bottom sheet), `<Dialog>` for desktop-only; `anchor={el}` on the content opens the desktop panel beside the element that opened it | `<Sheet side="bottom">` as a modal; a popover restyled or repositioned as a modal |
-| an avatar or icon beside a modal title | `<Header media={…}>` | a hand-rolled row inside the header |
+| the top of a modal: what it is about and what it asks | `<ResponsiveDialogHead icon tone title line>` (or `DialogHead`, `AlertDialogHead`; `avatar` for a dialog about a person): media, a few-word title, one line, no free children | `*Header` with a title, a paragraph and a hand-rolled media row; a title and a paragraph with no media |
+| a yes/no on one object | `<ConfirmDialog icon title line actionLabel onConfirm>`; `children` shows the thing | a hand-written `AlertDialogContent` with a header and a paragraph |
 | a word a homeowner may not know (an account kind, a feature name) | `<Term term={…}>`: tap opens an icon, one line and a docs link in place; the app keeps one glossary of definitions | a helper paragraph or a hover-only tooltip explaining it |
 | a tab row in a modal header | `<Tabs layout="split">` around the parts, `<Header wrap action={<TabsList class="w-auto">…}>` | `class="contents"` on `Tabs` and `flex-wrap` by hand |
 | a form inside a modal | `<Body as="form" id="…">` + a footer button with `form="…"` | a `display: contents` form wrapper inside the Body |
@@ -249,6 +250,20 @@ answer; every rule here makes that hunt shorter.
    popover, card), group with `SectionGroup`, `FieldSet` and `Separator`, and
    stop at one bordered row layer (`SectionRow`, `OptionCard`). A `Card` or
    `SectionCard` never goes inside another glass surface.
+
+## Dialog anatomy
+
+A homeowner opens a dialog with one question: what is this asking me? The head answers it before any line is read.
+
+1. **Head.** `*Head`: media (a toned icon per state, or the avatar when the dialog is about a person), a title of at most six words that names the outcome or the question ("Same person?", "Remove Anna?"), and at most one line of at most 90 characters and one sentence. No free children.
+2. **Body shows the thing.** Avatars, a code, a preview, the choices. A paragraph of help becomes the thing itself, or a `Term` in the line.
+3. **Left-aligned.** No `text-center`, `self-center`, `mx-auto` or a centred `flex-col` stack. A code or a QR may centre with a `dialog-anatomy-ok` reason.
+4. **Actions live in the Footer**, right-aligned, primary last. A Body holds no `Button` except an icon button, a `CopyButton`, a link, an `Alert` action and a button inside a row (`SectionRow`, `li`, `OptionCard`, input group). A Head `action` is a step indicator, tabs, a close or a link, never the work.
+5. **The Footer holds buttons**: no sentence, no `mr-auto`, no `justify-*`. A confirm is `ConfirmDialog`.
+6. **A confirm names its object** in the title and its consequence in the line.
+7. **A workbench** (a search palette, a catalog) has no Head and carries `ariaLabel`.
+
+Held by the `dialog-anatomy` gate in apps and in this package.
 
 ## Motion (the pillar)
 

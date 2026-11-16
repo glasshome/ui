@@ -24,6 +24,7 @@ import { ANCHORED_MOTION, MODAL_MOTION, SCRIM_MOTION } from "../lib/motion-class
 import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import { acquireScrollLock, releaseScrollLock } from "./bottom-sheet/scroll-lock.js";
+import { SectionIcon } from "./section-card.js";
 
 /* kobalte 0.13.13 builds AlertDialog with Object.assign(DialogRoot, ...), the
  * same object Dialog is built from, so whichever of the two modules a bundle
@@ -96,7 +97,7 @@ const MODAL_FOOTER =
 export const MODAL_TITLE = "font-semibold text-foreground text-lg leading-none tracking-tight";
 export const MODAL_DESCRIPTION = "text-muted-foreground text-sm";
 
-type ModalHeaderProps = ComponentProps<"div"> & {
+export type ModalHeaderProps = ComponentProps<"div"> & {
   /** Avatar or icon, rendered ahead of the title column. */
   media?: JSX.Element;
   action?: JSX.Element;
@@ -174,6 +175,55 @@ export function createModalParts(slot: string): ModalParts {
   };
 
   return { Header, Body, Footer };
+}
+
+export type ModalMedia =
+  | { icon: string; tone?: string; avatar?: never }
+  | { avatar: JSX.Element; icon?: never; tone?: never };
+
+export type ModalHeadProps = ModalMedia & {
+  /** A few words: the outcome or the question. */
+  title: string;
+  /** One line under the title; a `Term` goes here. */
+  line?: JSX.Element;
+  /** Badges after the title. */
+  status?: JSX.Element;
+  /** The title is a key or an id: mono, breaks anywhere. */
+  mono?: boolean;
+  /** A step indicator, tabs, a close or a link; the work's buttons live in the Footer. */
+  action?: JSX.Element;
+  wrap?: boolean;
+};
+
+/** The header door: media, a title and one line, no free children. A family
+ *  hands in its own Header, Title and Description so ResponsiveDialog still
+ *  switches between dialog and sheet parts at render time. */
+export function createModalHead<P extends ModalHeadProps = ModalHeadProps>(
+  Header: Component<ModalHeaderProps>,
+  Title: Component<ComponentProps<"h2">>,
+  Description: Component<ComponentProps<"p">>,
+): Component<P> {
+  return (props) => {
+    const line = children(() => props.line);
+    const status = children(() => props.status);
+    return (
+      <Header
+        wrap={props.wrap}
+        action={props.action}
+        media={props.avatar ?? <SectionIcon icon={props.icon} tone={props.tone} size="md" />}
+      >
+        <Title
+          class={cn(status() && "flex items-center gap-2", props.mono && "font-mono break-all")}
+        >
+          {props.title}
+          {status()}
+        </Title>
+        <Show when={line()}>
+          <Description>{line()}</Description>
+        </Show>
+      </Header>
+    );
+  };
 }
 
 /** Solid's handler prop is a union: a plain function, or the bound
