@@ -26,22 +26,24 @@ export const mouse: BrowserCommand<[action: "move" | "down" | "up", x: number, y
   if (action === "up") await ctx.page.mouse.up();
 };
 
-// Chromium tracks the fingers down per session, so a finger's start and end share it.
+// Chromium tracks the fingers down and the touch screen per session, so every pointer command shares one.
 const sessions = new WeakMap<Page, Promise<Cdp>>();
-function touchSession(page: Page) {
+function pointerSession(page: Page) {
   let session = sessions.get(page);
   if (!session) {
-    session = page
-      .context()
-      .newCDPSession(page)
-      .then(async (cdp) => {
-        await cdp.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
-        return cdp;
-      });
+    session = page.context().newCDPSession(page);
     sessions.set(page, session);
   }
   return session;
 }
+
+const touchScreen = (cdp: Cdp, on: boolean) =>
+  cdp.send("Emulation.setTouchEmulationEnabled", { enabled: on, maxTouchPoints: on ? 5 : 1 });
+
+/** Whether the page's main pointer is a finger (pointer: coarse) or a mouse; it lasts until the next call or finger. */
+export const pointer: BrowserCommand<[kind: "finger" | "mouse"]> = async (ctx, kind) => {
+  await touchScreen(await pointerSession(ctx.page), kind === "finger");
+};
 
 const TOUCH = { down: "touchStart", up: "touchEnd", cancel: "touchCancel" } as const;
 
@@ -53,7 +55,8 @@ export const touch: BrowserCommand<[action: keyof typeof TOUCH, x: number, y: nu
   y,
 ) => {
   const at = await toPage(ctx, x, y);
-  const cdp = await touchSession(ctx.page);
+  const cdp = await pointerSession(ctx.page);
+  await touchScreen(cdp, true);
   await cdp.send("Input.dispatchTouchEvent", {
     type: TOUCH[action],
     touchPoints: action === "down" ? [{ ...at, id: 0 }] : [],
