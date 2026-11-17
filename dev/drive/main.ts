@@ -308,7 +308,11 @@ async function main(argv: string[]): Promise<number> {
     label: buildLabel(),
   };
 
-  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
+  const browser = await chromium.launch({
+    executablePath: process.env.CHROMIUM_PATH || undefined,
+    // An animated key scroll spans as many frames as the host draws, so its counts would move with the runner.
+    args: ["--disable-smooth-scrolling"],
+  });
   try {
     const index = await readBuildIndex(browser, build);
     const runs: [IndexedComponent, IndexedScenario][] = values.all

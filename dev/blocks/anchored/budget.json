@@ -119,16 +119,16 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 4,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; predates Phase 1 Next step 5"
+          "max": 3,
+          "reason": "2026-11-17, the key scroll lands in one frame (the driver turns smooth scrolling off): 2 at rates 1, 4.27 and 4.8, plus 25%"
         },
         "largestRecalc": {
           "max": 1,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "2026-11-17, one-frame key scroll: 1 at rates 1, 4.27 and 4.8"
         },
         "layouts": {
-          "max": 3,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; one placement layout per scroll frame, and the frames a scroll spans move with the host rate: dash CI at 4.8x measured 3; predates Phase 1 Next step 5"
+          "max": 1,
+          "reason": "2026-11-17, one-frame key scroll: one placement layout at rates 1, 4.27 and 4.8"
         }
       }
     },
