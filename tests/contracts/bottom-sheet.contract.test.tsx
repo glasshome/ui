@@ -8,6 +8,9 @@ import {
   BottomSheetPortal,
   BottomSheetTrigger,
 } from "../../src/solid";
+import { MOTION_EXIT_MS } from "../../src/lib/motion-classes";
+import { useFakeTime } from "../../src/testing";
+import { commands } from "vitest/browser";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -70,6 +73,47 @@ describe("BottomSheet contract", () => {
     const { sheets, run } = await mount("outside-press");
     await run(OPEN, { pressAt: { x: 8, y: 8 } });
     await vi.waitFor(() => expect(sheets()).toHaveLength(0));
+  });
+
+  it("B9 a drag that ends where it began leaves the sheet open at once, grabbable and dismissable", async () => {
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
+    render(() => (
+      <BottomSheet defaultOpen>
+        <BottomSheetPortal>
+          <BottomSheetContent ariaLabel="Sheet">
+            <p style={{ height: "300px" }}>Something to read.</p>
+          </BottomSheetContent>
+        </BottomSheetPortal>
+      </BottomSheet>
+    ));
+    await settle();
+    await vi.advanceTimersByTimeAsync(MOTION_EXIT_MS.sheet);
+    const sheet = findAll([document], { role: "dialog" })[0] as HTMLElement;
+    expect(sheet.getAttribute("data-state")).toBe("open");
+
+    const box = (sheet.querySelector("p") as Element).getBoundingClientRect();
+    const x = box.x + box.width / 2;
+    const y = box.y + box.height / 2;
+    await commands.mouse("move", x, y);
+    await commands.mouse("down", x, y);
+    await commands.mouse("move", x, y + 40);
+    await settle();
+    expect(sheet.getAttribute("data-state")).toBe("dragging");
+    await commands.mouse("move", x, y);
+    await settle();
+    await commands.mouse("up", x, y);
+    await settle();
+    expect(sheet.getAttribute("data-state")).toBe("open");
+
+    await commands.mouse("down", x, y);
+    expect(sheet.getAttribute("data-state")).toBe("pressing");
+    await commands.mouse("up", x, y);
+    await settle();
+    expect(sheet.getAttribute("data-state")).toBe("open");
+
+    await input.pressAt(8, 8);
+    await settle();
+    expect(["closing", "closed"]).toContain(sheet.getAttribute("data-state"));
   });
 
   it("B8 once open, nothing on the sheet sends focus to the trigger behind it, and a click into a field keeps it there", async () => {

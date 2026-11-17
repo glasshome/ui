@@ -12,3 +12,4 @@ Each line is one browser test in `tests/contracts/bottom-sheet.contract.test.tsx
 | B6 | Escape with that list open | the list closes and the sheet stays open |
 | B7 | a press on the page beside the open sheet | the sheet closes |
 | B8 | the sheet is open and settled, then a press on its body, then a click into a field in it | the trigger behind it receives no focus event, and the field keeps focus after the pointer is released |
+| B9 | a committed drag is released where it began (no transform change to animate) | the sheet is `open` at once, with no wait for a transition that never runs; a new grab and an outside press both work immediately |

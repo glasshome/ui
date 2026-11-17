@@ -43,6 +43,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
   let dragAborted = false;
   let height = 0;
   let lastTotalDy = 0;
+  let shownDy = 0;
 
   const isDraggableState = (): boolean => {
     const s = getState();
@@ -55,6 +56,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
     const value = pendingDy;
     pendingDy = null;
     const applied = value < 0 ? dampen(-value) * -1 : value;
+    shownDy = applied;
     el.style.transform = `translate3d(0, ${applied}px, 0)`;
   };
 
@@ -77,6 +79,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
     startX = e.clientX;
     pointerTarget = target;
     dy = 0;
+    shownDy = 0;
     lastTotalDy = 0;
     movedPastDeadZone = false;
     dragAborted = false;
@@ -141,6 +144,14 @@ export function attachDrag(opts: DragOptions): DragHandle {
 
   const settleSnap = () => {
     setState("snapping");
+    if (shownDy === 0) {
+      el.style.transition = "";
+      el.style.animation = "";
+      el.style.transform = "";
+      setState("open");
+      return;
+    }
+    shownDy = 0;
     el.style.transition = TRANSITION_CSS;
     el.style.animation = "";
     el.style.transform = "translate3d(0, 0, 0)";
