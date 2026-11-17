@@ -37,14 +37,14 @@ export function createAnchored(options: AnchoredOptions): void {
 
       let size = { width: 0, height: 0 };
       const place = (measure: boolean) => {
-        if (measure) size = { width: floating.offsetWidth, height: floating.offsetHeight };
-        const box = anchor.getBoundingClientRect();
         if (measure) {
           write("position", "fixed");
           write("margin", "0");
           write("right", "auto");
           write("bottom", "auto");
+          size = { width: floating.offsetWidth, height: floating.offsetHeight };
         }
+        const box = anchor.getBoundingClientRect();
         const placed = placeBeside(
           { left: box.left, top: box.top, width: box.width, height: box.height },
           size,
