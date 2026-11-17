@@ -38,6 +38,53 @@ interface TooltipRootProps {
   openDelay?: number;
   closeDelay?: number;
   children?: JSX.Element;
+  /** @deprecated Ignored. */
+  id?: string;
+  /** @deprecated Ignored. */
+  disabled?: boolean;
+  /** @deprecated Ignored. */
+  skipDelayDuration?: number;
+  /** @deprecated Ignored. */
+  triggerOnFocusOnly?: boolean;
+  /** @deprecated Ignored. */
+  ignoreSafeArea?: boolean;
+  /** @deprecated Ignored. */
+  forceMount?: boolean;
+  /** @deprecated Ignored. */
+  getAnchorRect?: (anchor?: HTMLElement) => unknown;
+  /** @deprecated Ignored. */
+  shift?: number;
+  /** @deprecated Ignored. */
+  flip?: boolean | string;
+  /** @deprecated Ignored. */
+  slide?: boolean;
+  /** @deprecated Ignored. */
+  overlap?: boolean;
+  /** @deprecated Ignored. */
+  sameWidth?: boolean;
+  /** @deprecated Ignored. */
+  fitViewport?: boolean;
+  /** @deprecated Ignored. */
+  hideWhenDetached?: boolean;
+  /** @deprecated Ignored. */
+  detachedPadding?: number;
+  /** @deprecated Ignored. */
+  arrowPadding?: number;
+  /** @deprecated Ignored. */
+  overflowPadding?: number;
+}
+
+interface TooltipContentProps extends ComponentProps<"div"> {
+  /** @deprecated Ignored. */
+  forceMount?: boolean;
+  /** @deprecated Ignored. */
+  onEscapeKeyDown?: (event: Event) => void;
+  /** @deprecated Ignored. */
+  onPointerDownOutside?: (event: Event) => void;
+  /** @deprecated Ignored. */
+  onFocusOutside?: (event: Event) => void;
+  /** @deprecated Ignored. */
+  onInteractOutside?: (event: Event) => void;
 }
 
 interface TooltipContextValue {
@@ -112,6 +159,11 @@ function TooltipTrigger<T extends ValidComponent = "button">(
   ]);
   let pressed = false;
 
+  onCleanup(() => {
+    ctx.setTrigger(undefined);
+    ctx.hide(false);
+  });
+
   effect(ctx.trigger, (el) => {
     if (!el) return;
     const mouseLike = (e: PointerEvent) => e.pointerType !== "touch";
@@ -168,9 +220,17 @@ function TooltipTrigger<T extends ValidComponent = "button">(
   );
 }
 
-const TooltipContent: Component<ComponentProps<"div">> = (props) => {
+const TooltipContent: Component<TooltipContentProps> = (props) => {
   const ctx = useTooltip();
-  const [local, others] = splitProps(props, ["class", "ref"]);
+  const [local, others] = splitProps(props, [
+    "class",
+    "ref",
+    "forceMount",
+    "onEscapeKeyDown",
+    "onPointerDownOutside",
+    "onFocusOutside",
+    "onInteractOutside",
+  ]);
   const [panel, setPanel] = createSignal<HTMLElement>();
   const presence = createPresence({
     present: ctx.open,
@@ -231,10 +291,10 @@ const TooltipContent: Component<ComponentProps<"div">> = (props) => {
   );
 };
 
-const TooltipPortal: Component<{ children?: JSX.Element }> = (props) => (
-  <Portal mount={usePortalMount()}>{props.children}</Portal>
-);
+/** @deprecated TooltipContent portals itself; this renders its children in place. */
+const TooltipPortal: Component<{ children?: JSX.Element }> = (props) => <>{props.children}</>;
 
+/** @deprecated Renders nothing. */
 const TooltipArrow: Component = () => null;
 
 const Tooltip = Object.assign(TooltipRoot, {

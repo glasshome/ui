@@ -11,3 +11,5 @@ Each line is one browser test in `tests/contracts/tooltip.contract.test.tsx`, na
 | TT5 | the pointer moves to another button | the `tooltip` closes |
 | TT6 | the trigger is pressed | the `tooltip` closes |
 | TT7 | open | it sits below the trigger, inside the viewport |
+| TT8 | `Tooltip.Portal` wraps the content | the page gains one element and no empty wrapper, since the content portals itself |
+| TT9 | the trigger leaves the page while the tooltip is open | the `tooltip` closes |
