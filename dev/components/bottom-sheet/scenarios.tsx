@@ -30,6 +30,7 @@ const Sheet = (props: { fruit?: boolean }) => (
   </BottomSheet>
 );
 
+const OUTSIDE = { x: 8, y: 8 };
 const OPEN = { press: { role: "button", name: "Open sheet" } };
 
 export default defineScenarios({
@@ -47,6 +48,12 @@ export default defineScenarios({
       title: "Escape closes it",
       render: () => <Sheet />,
       steps: [OPEN, { key: "Escape" }],
+    },
+    {
+      id: "outside-press",
+      title: "A press beside it closes it",
+      render: () => <Sheet />,
+      steps: [OPEN, { pressAt: OUTSIDE }],
     },
     {
       id: "nested-select",

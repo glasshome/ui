@@ -86,6 +86,14 @@ export async function prepare(
 ): Promise<() => Promise<void>> {
   if ("key" in step) return () => page.keyboard.press(step.key);
   if ("type" in step) return () => page.keyboard.type(step.type);
+  if ("pressAt" in step) {
+    const { x, y } = step.pressAt;
+    return async () => {
+      await page.mouse.move(x, y);
+      await page.mouse.down();
+      await page.mouse.up();
+    };
+  }
   if ("press" in step) {
     const { x, y } = await locate(cdp, step.press);
     return async () => {

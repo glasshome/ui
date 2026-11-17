@@ -41,7 +41,8 @@ const describeStep = (step: Step | null) => {
   if (step === null) return "Mounted";
   const [verb, arg] = Object.entries(step)[0] ?? ["", ""];
   if (typeof arg === "string") return `${verb} ${arg}`;
-  return `${verb} ${arg.name ?? arg.role}`;
+  if ("role" in arg) return `${verb} ${arg.name ?? arg.role}`;
+  return `${verb} ${arg.x},${arg.y}`;
 };
 
 /** An iframe of the stage route, scaled to its column; a page scenario is as tall as its content. */

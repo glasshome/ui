@@ -63,4 +63,10 @@ describe("BottomSheet contract", () => {
       "sheet open after Escape: expected [] to have a length of 1 but got +0",
     );
   });
+
+  it("B7 a press beside the open sheet closes it", async () => {
+    const { sheets, run } = await mount("outside-press");
+    await run(OPEN, { pressAt: { x: 8, y: 8 } });
+    await vi.waitFor(() => expect(sheets()).toHaveLength(0));
+  });
 });

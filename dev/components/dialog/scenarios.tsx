@@ -24,6 +24,7 @@ const Panel = (props: { fruit?: boolean }) => (
   </Dialog>
 );
 
+const OUTSIDE = { x: 8, y: 8 };
 const OPEN = { press: { role: "button", name: "Open dialog" } };
 
 export default defineScenarios({
@@ -41,6 +42,12 @@ export default defineScenarios({
       title: "Escape closes it",
       render: () => <Panel />,
       steps: [OPEN, { key: "Escape" }],
+    },
+    {
+      id: "outside-press",
+      title: "A press beside it closes it",
+      render: () => <Panel />,
+      steps: [OPEN, { pressAt: OUTSIDE }],
     },
     {
       id: "nested-select",

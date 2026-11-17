@@ -61,4 +61,11 @@ describe("Dialog contract", () => {
     await vi.waitFor(() => expect(listboxes()).toHaveLength(0));
     expect(dialogs()).toHaveLength(1);
   });
+
+  it("D7 a press beside the open dialog closes it and refocuses the trigger", async () => {
+    const { trigger, dialogs, run } = await mount("outside-press");
+    await run(OPEN, { pressAt: { x: 8, y: 8 } });
+    await vi.waitFor(() => expect(dialogs()).toHaveLength(0));
+    await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
+  });
 });

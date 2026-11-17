@@ -10,3 +10,4 @@ Each line is one browser test in `tests/contracts/bottom-sheet.contract.test.tsx
 | B4 | Escape with the sheet open | the sheet closes and focus returns to the trigger |
 | B5 | a select inside it is opened | a `listbox` opens and the sheet stays open |
 | B6 | Escape with that list open | the list closes. Gap: the sheet closes with it (`2026-10-11-one-layer-stack`) |
+| B7 | a press on the page beside the open sheet | the sheet closes |

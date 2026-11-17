@@ -8,7 +8,7 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:
 import { basename, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { type Browser, chromium } from "playwright";
-import type { IndexedComponent, IndexedScenario, Step } from "../harness/types";
+import type { IndexedComponent, IndexedScenario, Step, Target } from "../harness/types";
 import { axTree, focusPath } from "./ax";
 import { checkBudget, readBudget } from "./budget";
 import { comparePage } from "./compare-page";
@@ -179,11 +179,16 @@ async function runScenario(
   return report;
 }
 
+const describeArg = (arg: string | Target | { x: number; y: number }) => {
+  if (typeof arg === "string") return arg;
+  return "role" in arg ? describeTarget(arg) : `${arg.x},${arg.y}`;
+};
+
 const describeStep = (step: Step | null) =>
   step === null
     ? "mounted"
     : Object.entries(step)
-        .map(([verb, arg]) => `${verb} ${typeof arg === "string" ? arg : describeTarget(arg)}`)
+        .map(([verb, arg]) => `${verb} ${describeArg(arg)}`)
         .join("");
 
 function printHuman(report: RunReport) {

@@ -14,6 +14,11 @@ export const input: Input = {
     await commands.mouse("down", x, y);
     await commands.mouse("up", x, y);
   },
+  async pressAt(x, y) {
+    await commands.mouse("move", x, y);
+    await commands.mouse("down", x, y);
+    await commands.mouse("up", x, y);
+  },
   async touch(el) {
     const [x, y] = centre(el);
     await commands.touch("down", x, y);

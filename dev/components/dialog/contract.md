@@ -10,3 +10,4 @@ Each line is one browser test in `tests/contracts/dialog.contract.test.tsx`, nam
 | D4 | Escape with the dialog open | the dialog closes and focus returns to the trigger |
 | D5 | a select inside it is opened | a `listbox` opens and the dialog stays open |
 | D6 | Escape with that list open | the list closes and the dialog stays open |
+| D7 | a press on the page beside the open dialog | the dialog closes and focus returns to the trigger |
