@@ -1,0 +1,3 @@
+document
+button, Open modal
+dialog, Modal | button, Close modal
