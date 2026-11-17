@@ -1,0 +1,58 @@
+import {
+  BottomSheet,
+  BottomSheetBody,
+  BottomSheetClose,
+  BottomSheetContent,
+  BottomSheetHandle,
+  BottomSheetOverlay,
+  BottomSheetPortal,
+  BottomSheetTitle,
+  BottomSheetTrigger,
+  Button,
+} from "../../../src/solid";
+import { defineScenarios } from "../../harness/types";
+import { Fruit, FRUIT_TRIGGER } from "../select/scenarios";
+
+const Sheet = (props: { fruit?: boolean }) => (
+  <BottomSheet>
+    <BottomSheetTrigger as={Button}>Open sheet</BottomSheetTrigger>
+    <BottomSheetPortal>
+      <BottomSheetOverlay />
+      <BottomSheetContent>
+        <BottomSheetHandle />
+        <BottomSheetBody>
+          <BottomSheetTitle>Sheet</BottomSheetTitle>
+          {props.fruit ? <Fruit /> : <p>Something to read.</p>}
+          <BottomSheetClose as={Button}>Done</BottomSheetClose>
+        </BottomSheetBody>
+      </BottomSheetContent>
+    </BottomSheetPortal>
+  </BottomSheet>
+);
+
+const OPEN = { press: { role: "button", name: "Open sheet" } };
+
+export default defineScenarios({
+  component: "BottomSheet",
+  scenarios: [
+    { id: "open", title: "Opens from its trigger", render: () => <Sheet />, steps: [OPEN] },
+    {
+      id: "close",
+      title: "Done closes it",
+      render: () => <Sheet />,
+      steps: [OPEN, { press: { role: "button", name: "Done" } }],
+    },
+    {
+      id: "escape",
+      title: "Escape closes it",
+      render: () => <Sheet />,
+      steps: [OPEN, { key: "Escape" }],
+    },
+    {
+      id: "nested-select",
+      title: "A select opens above it and leaves it open",
+      render: () => <Sheet fruit />,
+      steps: [OPEN, { press: FRUIT_TRIGGER }, { key: "Escape" }],
+    },
+  ],
+});
