@@ -61,7 +61,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
     element: bubble,
     open: () => true,
     kind: "tour",
-    escape: () => true,
+    escape: () => props.onSkip !== undefined,
     dismiss: () => props.onSkip?.(),
   });
   createDismiss({
