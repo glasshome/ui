@@ -36,7 +36,7 @@ import {
 } from "../dialog-parts.js";
 import { EASE, TRANSITION_MS } from "./constants.js";
 import { attachDrag } from "./drag-controller.js";
-import { type InitialFocus, trapFocus } from "./focus-trap.js";
+import { createFocusScope, type InitialFocus } from "../../lib/behavior/focus-scope.js";
 import { watchKeyboard } from "./keyboard.js";
 import { acquireScrollLock, releaseScrollLock } from "./scroll-lock.js";
 import { assertTransition, type SheetState } from "./state-machine.js";
@@ -260,12 +260,11 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     onCleanup(() => handle.destroy());
   });
 
-  createEffect(() => {
-    const s = ctx.state();
-    if (s !== "open" && s !== "opening") return;
-    if (!el) return;
-    const handle = trapFocus(el, local.initialFocus ?? "container");
-    onCleanup(() => handle.release());
+  createFocusScope({
+    container: ctx.contentRef,
+    active: () => ctx.state() === "open" || ctx.state() === "opening",
+    trapped: () => true,
+    initialFocus: local.initialFocus ?? "container",
   });
 
   createEffect(() => {

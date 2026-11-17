@@ -1,5 +1,9 @@
 import { type Accessor, createEffect, onCleanup } from "solid-js";
-import { type InitialFocus, trapFocus } from "../solid/bottom-sheet/focus-trap.js";
+import {
+  createFocusScope,
+  focusWithoutTracking,
+  type InitialFocus,
+} from "./behavior/focus-scope.js";
 
 /** True for a node inside a shadow root, where page-level layer logic sees only the root's host. */
 export const inShadowRoot = (node: Node | undefined): boolean =>
@@ -47,6 +51,16 @@ interface ShadowLayerOptions {
  */
 export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
   let dismissedIn: ShadowRoot | undefined;
+  createFocusScope({
+    container: options.content,
+    active: () =>
+      !!options.trapsFocus &&
+      !!options.dismiss &&
+      options.open() &&
+      inShadowRoot(options.content()),
+    trapped: () => true,
+    initialFocus: options.initialFocus ?? "first",
+  });
   createEffect(() => {
     const el = options.content();
     const dismiss = options.dismiss;
@@ -90,10 +104,6 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
     };
     // Listening only after the opening press has finished, as Kobalte's own layers do.
     const timer = setTimeout(() => root.addEventListener("pointerdown", onDown, true), 0);
-    if (options.trapsFocus) {
-      const trap = trapFocus(el, options.initialFocus ?? "first");
-      onCleanup(() => trap.release());
-    }
     onCleanup(() => {
       clearTimeout(timer);
       root.removeEventListener("pointerdown", onDown, true);
@@ -125,7 +135,7 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
         const kept = root.activeElement;
         queueMicrotask(() => {
           if (kept instanceof HTMLElement && kept.isConnected && root.activeElement !== kept) {
-            kept.focus();
+            focusWithoutTracking(kept);
           }
         });
       }

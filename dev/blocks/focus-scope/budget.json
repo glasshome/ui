@@ -1,0 +1,348 @@
+{
+  "trap": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1385,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1108,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 14,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 7,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 4,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 3,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "4": {
+        "elementsRestyled": {
+          "max": 3,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "5": {
+        "elementsRestyled": {
+          "max": 3,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "6": {
+        "elementsRestyled": {
+          "max": 3,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 5,
+        "reason": "baseline 2026-11-17; phase 1 step 5 is open, Task 12 re-measures"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "restore": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1385,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1108,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 10,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 8,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 4,
+        "reason": "baseline 2026-11-17; phase 1 step 5 is open, Task 12 re-measures"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "radio-group": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1385,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1108,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 22,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 13,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 4,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 3,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "4": {
+        "elementsRestyled": {
+          "max": 3,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "5": {
+        "elementsRestyled": {
+          "max": 3,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 5,
+        "reason": "baseline 2026-11-17; phase 1 step 5 is open, Task 12 re-measures"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "nested-shadow": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1388,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1110,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 18,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 6,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 8,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 3,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 3,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      },
+      "4": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      }
+    }
+  }
+}

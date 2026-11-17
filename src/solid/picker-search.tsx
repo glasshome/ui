@@ -1,4 +1,5 @@
 import { type JSX, Show, splitProps } from "solid-js";
+import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { CONTROL_H, FIELD_TEXT } from "../lib/input-classes.js";
 import { CONTROL_H_TOUCH } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
@@ -76,7 +77,7 @@ export function PickerSearch(props: PickerSearchProps) {
           class="text-muted-foreground hover:text-foreground shrink-0 rounded-sm p-1 transition-colors"
           onClick={() => {
             local.onValueChange?.("");
-            input?.focus();
+            focusWithoutTracking(input, { preventScroll: false });
           }}
         >
           <Icon icon="mdi:close-circle" width={16} height={16} />

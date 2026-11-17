@@ -8,6 +8,7 @@ import {
   Show,
   Switch,
 } from "solid-js";
+import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
 import { SECTION_INNER_RADIUS } from "../lib/section-tokens.js";
@@ -218,7 +219,7 @@ function ImageGallery(
   const fail = (cause: unknown) => setError(toMediaStoreError(cause));
 
   // A control that disables or leaves drops focus to the page, which a sealed dialog's trap moves outside, closing the gallery.
-  const holdFocus = () => panel?.focus({ preventScroll: true });
+  const holdFocus = () => focusWithoutTracking(panel);
   const focused = () => (panel?.getRootNode() as Document | ShadowRoot | undefined)?.activeElement;
   const focusLost = () => {
     const at = focused();
@@ -313,7 +314,7 @@ function ImageGallery(
           // A key pressed as the gallery opens lands on the panel, never on a tile it would pick.
           onOpenAutoFocus={(event: Event) => {
             event.preventDefault();
-            panel?.focus({ preventScroll: true });
+            focusWithoutTracking(panel);
           }}
           onInteractOutside={(event) => {
             // The delete confirmation takes focus; the gallery stays open to show the result.
@@ -353,7 +354,7 @@ function ImageGallery(
                         const again = panel?.querySelector<HTMLElement>(
                           '[data-slot="image-picker-retry"]',
                         );
-                        if (focused() === panel) again?.focus({ preventScroll: true });
+                        if (focused() === panel) focusWithoutTracking(again);
                       }}
                     >
                       Try again
@@ -510,7 +511,7 @@ function ImageGallery(
             // The confirmation has no trigger to return to; the page would get focus and the gallery would close.
             event.preventDefault();
             if (!deleteConfirmed && deleteFrom instanceof HTMLElement && deleteFrom.isConnected) {
-              deleteFrom.focus({ preventScroll: true });
+              focusWithoutTracking(deleteFrom);
             } else holdFocus();
           }}
         >

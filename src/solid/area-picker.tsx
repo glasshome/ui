@@ -1,4 +1,5 @@
 import { createMemo, createSignal, For, Show } from "solid-js";
+import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { MENU_ITEM } from "../lib/menu-classes.js";
 import { STAGGER } from "../lib/motion-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
@@ -175,7 +176,7 @@ export function AreaPicker(props: AreaPickerProps) {
         onOpenAutoFocus={(e) => {
           e.preventDefault();
           // preventScroll: the panel is portalled at (0,0) until the popper places it.
-          searchRef?.focus({ preventScroll: true });
+          focusWithoutTracking(searchRef);
         }}
         onInteractOutside={() => setOpen(false)}
       >
