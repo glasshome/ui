@@ -110,6 +110,13 @@ describe("StaleVeil", () => {
     expect(getComputedStyle(el).position).toBe("absolute");
   });
 
+  it("a shown veil is 40% of the background colour", () => {
+    render(() => <Tile shown />);
+    expect(getComputedStyle(veil() as HTMLElement).backgroundColor).toMatch(
+      /\/ 0\.4\)$|, 0\.4\)$/,
+    );
+  });
+
   it("hiding it removes the cover", () => {
     const [shown, setShown] = createSignal(true);
     render(() => <Tile shown={shown()} />);

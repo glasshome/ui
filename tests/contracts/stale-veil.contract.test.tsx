@@ -79,4 +79,13 @@ describe("StaleVeil contract", () => {
     const top = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
     expect(button.contains(top)).toBe(true);
   });
+
+  it("SV6 the content is black and white at once and the cover is a 40% veil", async () => {
+    const { scope } = await mountScenario("StaleVeil", "over-a-widget");
+    const button = tileButton(scope());
+    expect(getComputedStyle(button).filter).toBe("grayscale(1)");
+    expect(parseFloat(getComputedStyle(button).transitionDuration)).toBe(0);
+    const background = getComputedStyle(veil() as HTMLElement).backgroundColor;
+    expect(background).toMatch(/\/ 0\.4\)$|, 0\.4\)$/);
+  });
 });
