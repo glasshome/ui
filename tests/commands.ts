@@ -113,7 +113,7 @@ function frameIdOf(node: FrameNode, url: string): string | undefined {
 }
 
 /** The Chromium accessibility tree of the test frame, one `role "name"` line per kept node. */
-export const axTree: BrowserCommand<[]> = async (ctx) => {
+export const frameAxTree: BrowserCommand<[]> = async (ctx) => {
   const cdp = await pointerSession(ctx.page);
   const { frameTree } = await cdp.send("Page.getFrameTree");
   const frame = await ctx.frame();
