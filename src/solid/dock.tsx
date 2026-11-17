@@ -13,7 +13,7 @@ import {
   Show,
   splitProps,
 } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { CARD_SURFACE } from "../lib/card-classes.js";
 import { DOCK_SLOT_SHAPE } from "../lib/dock-slot-classes.js";
 import {
@@ -133,8 +133,8 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
           {isElement() ? (
             (local.icon as JSX.Element)
           ) : (
-            <Dynamic
-              component={local.icon as Component<{ class?: string }>}
+            <Polymorphic
+              defaultAs={local.icon as Component<{ class?: string }>}
               class="h-5 w-5 sm:h-6 sm:w-6"
             />
           )}

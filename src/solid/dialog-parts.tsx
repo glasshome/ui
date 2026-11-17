@@ -18,7 +18,7 @@ import {
   useContext,
   type ValidComponent,
 } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { busyProps } from "../lib/busy.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { ANCHORED_MOTION, MODAL_MOTION, SCRIM_MOTION } from "../lib/motion-classes.js";
@@ -157,8 +157,9 @@ export function createModalParts(slot: string): ModalParts {
       if (el) el.style.setProperty("--scrollbar-gutter", `${el.offsetWidth - el.clientWidth}px`);
     });
     return (
-      <Dynamic
-        component={local.as ?? "div"}
+      <Polymorphic
+        defaultAs="div"
+        as={local.as}
         ref={(node: HTMLElement) => {
           el = node;
           if (typeof local.ref === "function") local.ref(node as HTMLDivElement);

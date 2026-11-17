@@ -1,5 +1,5 @@
 import { type Component, type ComponentProps, type JSX, splitProps } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import {
   LOGO_DEFAULT_SIZE,
   LOGO_DEFAULT_SRC,
@@ -48,8 +48,9 @@ const Logo: Component<LogoProps> = (props) => {
   const size = () => local.size ?? LOGO_DEFAULT_SIZE;
   const s = () => LOGO_SIZES[size()];
   return (
-    <Dynamic
-      component={local.href ? "a" : "div"}
+    <Polymorphic
+      defaultAs="div"
+      as={local.href ? "a" : undefined}
       data-slot="logo"
       class={cn(LOGO_ROOT_CLASS, s().gap, local.class)}
       href={local.href}
@@ -72,7 +73,7 @@ const Logo: Component<LogoProps> = (props) => {
           </span>
         )}
       </span>
-    </Dynamic>
+    </Polymorphic>
   );
 };
 

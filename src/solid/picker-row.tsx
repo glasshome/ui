@@ -6,7 +6,7 @@ import {
   splitProps,
   type ValidComponent,
 } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { MENU_ITEM } from "../lib/menu-classes.js";
 import { ICON_PILL, ICON_PILL_TINT } from "../lib/pill-classes.js";
 import { cn } from "../lib/utils.js";
@@ -46,8 +46,9 @@ export function PickerRow(props: PickerRowProps) {
   const subtitle = children(() => local.subtitle);
   const meta = children(() => local.meta);
   return (
-    <Dynamic
-      component={local.as ?? "div"}
+    <Polymorphic
+      defaultAs="div"
+      as={local.as}
       class={cn(
         MENU_ITEM,
         "w-full cursor-pointer gap-3 py-0 text-left",
@@ -108,6 +109,6 @@ export function PickerRow(props: PickerRowProps) {
           />
         </div>
       </Show>
-    </Dynamic>
+    </Polymorphic>
   );
 }

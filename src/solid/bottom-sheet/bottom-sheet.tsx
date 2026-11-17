@@ -14,7 +14,8 @@ import {
   useContext,
   type ValidComponent,
 } from "solid-js";
-import { Dynamic, Portal } from "solid-js/web";
+import { Portal } from "solid-js/web";
+import { Polymorphic } from "../../lib/behavior/polymorphic.js";
 import { usePortalMount } from "../portal-mount.js";
 import { createControllableSignal } from "../../lib/behavior/controllable.js";
 import { Z } from "../../lib/layers.js";
@@ -120,11 +121,10 @@ type SheetButtonProps = ComponentProps<"button"> &
 const BottomSheetTrigger: ParentComponent<SheetButtonProps> = (props) => {
   const [local, rest] = splitProps(props, ["children", "onClick", "as"]);
   const ctx = useBottomSheetContext();
-  const component = () => local.as ?? "button";
   return (
-    <Dynamic
-      component={component()}
-      type={component() === "button" ? "button" : undefined}
+    <Polymorphic
+      defaultAs="button"
+      as={local.as}
       data-slot="bottom-sheet-trigger"
       aria-haspopup="dialog"
       aria-expanded={ctx.open()}
@@ -135,7 +135,7 @@ const BottomSheetTrigger: ParentComponent<SheetButtonProps> = (props) => {
       {...rest}
     >
       {local.children}
-    </Dynamic>
+    </Polymorphic>
   );
 };
 
@@ -451,11 +451,10 @@ const BottomSheetDescription: Component<ComponentProps<"p">> = (props) => {
 const BottomSheetClose: ParentComponent<SheetButtonProps> = (props) => {
   const [local, rest] = splitProps(props, ["children", "onClick", "as"]);
   const ctx = useBottomSheetContext();
-  const component = () => local.as ?? "button";
   return (
-    <Dynamic
-      component={component()}
-      type={component() === "button" ? "button" : undefined}
+    <Polymorphic
+      defaultAs="button"
+      as={local.as}
       data-slot="bottom-sheet-close"
       onClick={(event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => {
         callEventHandler(event, local.onClick);
@@ -464,7 +463,7 @@ const BottomSheetClose: ParentComponent<SheetButtonProps> = (props) => {
       {...rest}
     >
       {local.children}
-    </Dynamic>
+    </Polymorphic>
   );
 };
 

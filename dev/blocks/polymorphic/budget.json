@@ -1,0 +1,62 @@
+{
+  "default": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1384,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1107,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 2,
+        "reason": "baseline 2026-11-17; phase 1 step 5 is open, Task 12 re-measures"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "as-link": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1385,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1108,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 3,
+        "reason": "baseline 2026-11-17; phase 1 step 5 is open, Task 12 re-measures"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  }
+}
