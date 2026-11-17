@@ -11,3 +11,4 @@ Each line is one browser test in `tests/contracts/bottom-sheet.contract.test.tsx
 | B5 | a select inside it is opened | a `listbox` opens and the sheet stays open |
 | B6 | Escape with that list open | the list closes and the sheet stays open |
 | B7 | a press on the page beside the open sheet | the sheet closes |
+| B8 | the sheet is open and settled, then a press on its body, then a click into a field in it | the trigger behind it receives no focus event, and the field keeps focus after the pointer is released |

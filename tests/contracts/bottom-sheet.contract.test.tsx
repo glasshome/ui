@@ -1,7 +1,13 @@
-import { cleanup } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { findAll, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetPortal,
+  BottomSheetTrigger,
+} from "../../src/solid";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -64,5 +70,37 @@ describe("BottomSheet contract", () => {
     const { sheets, run } = await mount("outside-press");
     await run(OPEN, { pressAt: { x: 8, y: 8 } });
     await vi.waitFor(() => expect(sheets()).toHaveLength(0));
+  });
+
+  it("B8 once open, nothing on the sheet sends focus to the trigger behind it, and a click into a field keeps it there", async () => {
+    render(() => (
+      <BottomSheet>
+        <BottomSheetTrigger>Open sheet</BottomSheetTrigger>
+        <BottomSheetPortal>
+          <BottomSheetContent ariaLabel="Sheet">
+            <p>Something to read.</p>
+            <input aria-label="Name" />
+          </BottomSheetContent>
+        </BottomSheetPortal>
+      </BottomSheet>
+    ));
+    const trigger = findAll([document], { role: "button", name: "Open sheet" })[0] as HTMLElement;
+    await input.press(trigger);
+    let triggerFocuses = 0;
+    trigger.addEventListener("focus", () => triggerFocuses++);
+    await settle();
+    const sheet = findAll([document], { role: "dialog" })[0] as HTMLElement;
+    expect(sheet.getAttribute("data-state")).toBe("open");
+    expect(triggerFocuses).toBe(0);
+
+    await input.press(sheet.querySelector("p") as Element);
+    await settle();
+    expect(triggerFocuses).toBe(0);
+
+    const field = findAll([document], { role: "textbox", name: "Name" })[0] as HTMLElement;
+    await input.press(field);
+    await settle();
+    expect(focusedElement()).toBe(field);
+    expect(triggerFocuses).toBe(0);
   });
 });

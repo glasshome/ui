@@ -1,4 +1,4 @@
-import { type Accessor, untrack } from "solid-js";
+import { type Accessor, createMemo, untrack } from "solid-js";
 import { layerStack } from "./layer-stack";
 import { effect } from "./solid";
 
@@ -59,14 +59,19 @@ function initialTarget(container: HTMLElement, initial: InitialFocus): HTMLEleme
   return null;
 }
 
+// A deactivation restores after a microtask, so a scope that activates in the same tick can inherit the target.
+let pendingRestore: { target: Element | null } | undefined;
+
 export function createFocusScope(options: FocusScopeOptions): FocusScope {
   let skipNext = false;
+  const isActive = createMemo(() => options.active());
   effect(
-    () => [options.container(), options.active(), options.trapped()] as const,
+    () => [options.container(), isActive(), options.trapped()] as const,
     ([container, active, trapped]) => {
       if (!container || !active) return;
       skipNext = false;
-      const previous = activeOf(container);
+      const previous = pendingRestore ? pendingRestore.target : activeOf(container);
+      pendingRestore = undefined;
       activeScopes.push(container);
 
       const initial = options.initialFocus ?? "container";
@@ -112,11 +117,17 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
         container.removeEventListener("focusout", onFocusOut);
         activeScopes.splice(activeScopes.indexOf(container), 1);
         if (skipNext) return;
-        const current = activeOf(container);
-        const tookOver = activeScopes.some((scope) => current && scope.contains(current));
-        if (!tookOver && previous instanceof HTMLElement && previous.isConnected) {
-          focusWithoutTracking(previous);
-        }
+        const pending = { target: previous };
+        pendingRestore = pending;
+        queueMicrotask(() => {
+          if (pendingRestore !== pending) return;
+          pendingRestore = undefined;
+          const current = activeOf(container);
+          const tookOver = activeScopes.some((scope) => current && scope.contains(current));
+          if (!tookOver && previous instanceof HTMLElement && previous.isConnected) {
+            focusWithoutTracking(previous);
+          }
+        });
       };
     },
   );

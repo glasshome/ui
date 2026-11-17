@@ -278,6 +278,81 @@ describe("focus-scope contract", () => {
     expect(deepActive()).toBe(view.box);
   });
 
+  it("FO11 an active accessor that changes without changing its answer neither refocuses nor restores", async () => {
+    const [stage, setStage] = createSignal(0);
+    const [box, setBox] = createSignal<HTMLElement>();
+    let activations = 0;
+    const view = render(() => {
+      createFocusScope({
+        container: box,
+        active: () => stage() > 0,
+        trapped: () => true,
+        initialFocus: (el) => {
+          activations++;
+          return el.querySelector<HTMLElement>("button");
+        },
+      });
+      return (
+        <>
+          <button type="button">Trigger</button>
+          <div ref={setBox} tabindex="-1">
+            <button type="button">One</button>
+          </div>
+        </>
+      );
+    });
+    const trigger = view.getByRole("button", { name: "Trigger" });
+    await input.press(trigger);
+    setStage(1);
+    await settle();
+    expect(label()).toBe("One");
+    let triggerFocuses = 0;
+    trigger.addEventListener("focus", () => triggerFocuses++);
+    setStage(2);
+    setStage(3);
+    await settle();
+    expect(triggerFocuses).toBe(0);
+    expect(activations).toBe(1);
+    expect(label()).toBe("One");
+  });
+
+  it("FO12 a same-tick handoff to a second scope never focuses the first scope's trigger", async () => {
+    const [a, setA] = createSignal(false);
+    const [b, setB] = createSignal(false);
+    const [boxA, setBoxA] = createSignal<HTMLElement>();
+    const [boxB, setBoxB] = createSignal<HTMLElement>();
+    const view = render(() => {
+      createFocusScope({ container: boxA, active: a, trapped: () => true, initialFocus: "first" });
+      createFocusScope({ container: boxB, active: b, trapped: () => true, initialFocus: "first" });
+      return (
+        <>
+          <button type="button">Trigger</button>
+          <div ref={setBoxA} tabindex="-1">
+            <button type="button">In A</button>
+          </div>
+          <div ref={setBoxB} tabindex="-1">
+            <button type="button">In B</button>
+          </div>
+        </>
+      );
+    });
+    const trigger = view.getByRole("button", { name: "Trigger" });
+    await input.press(trigger);
+    setA(true);
+    await settle();
+    expect(label()).toBe("In A");
+    let triggerFocuses = 0;
+    trigger.addEventListener("focus", () => triggerFocuses++);
+    setA(false);
+    setB(true);
+    await settle();
+    expect(label()).toBe("In B");
+    expect(triggerFocuses).toBe(0);
+    setB(false);
+    await settle();
+    expect(label()).toBe("Trigger");
+  });
+
   it("focusWithoutTracking reports whether the element took focus", () => {
     const view = render(() => (
       <>

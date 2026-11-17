@@ -14,3 +14,5 @@ Each line is one browser test in `tests/contracts/focus-scope.contract.test.tsx`
 | FO8 | trapped, a RadioGroup of three items inside | Tab enters the group once and the next Tab leaves it |
 | FO9 | trapped, a focusable inside an open shadow root nested in the container | Tab reaches it and Tab again moves on inside the container |
 | FO10 | trapped, the focused control is removed and focus falls to `body` | focus returns to the container |
+| FO11 | the `active` accessor re-evaluates to the answer it already gave | nothing refocuses and nothing restores; the scope acts only on a real false/true change |
+| FO12 | a scope deactivates and another activates in the same tick | the first scope's trigger receives no focus: the restore runs in a microtask, is dropped when a newer scope activated, and the new scope restores to the first one's target |

@@ -279,7 +279,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
 
   createFocusScope({
     container: ctx.contentRef,
-    active: () => ctx.state() === "open" || ctx.state() === "opening",
+    active: () => ctx.state() !== "closed" && ctx.state() !== "closing",
     trapped: () => true,
     initialFocus: local.initialFocus ?? "container",
   });
