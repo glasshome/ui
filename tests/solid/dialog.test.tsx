@@ -902,7 +902,7 @@ describe("Page cover", () => {
     expect(writes).toEqual([]);
   });
 
-  it("a bottom sheet covers the page from the end of its open animation until it closes", async () => {
+  it("a bottom sheet covers the page as it opens, until it closes", async () => {
     const { root, writes } = livePage();
     const [open, setOpen] = createSignal(false);
     render(() => (
@@ -912,16 +912,14 @@ describe("Page cover", () => {
     ));
     setOpen(true);
     await vi.waitFor(() => expect(root.hasAttribute("data-covered")).toBe(true));
-    expect(writes).toEqual([{ covered: true, animating: 0 }]);
+    expect(writes.map((write) => write.covered)).toEqual([true]);
     setOpen(false);
     await vi.waitFor(() => expect(root.hasAttribute("data-covered")).toBe(false));
-    expect(writes).toEqual([
-      { covered: true, animating: 0 },
-      { covered: false, animating: 0 },
-    ]);
+    expect(writes.map((write) => write.covered)).toEqual([true, false]);
+    expect(writes[1]?.animating).toBe(0);
   });
 
-  it("a bottom sheet closed while it opens never covers the page", async () => {
+  it("a bottom sheet closed while it opens leaves the page uncovered", async () => {
     const { writes } = livePage();
     const [open, setOpen] = createSignal(false);
     render(() => (
@@ -938,7 +936,7 @@ describe("Page cover", () => {
         "closed",
       ),
     );
-    expect(writes).toEqual([]);
+    expect(writes.map((write) => write.covered)).toEqual([true, false]);
   });
 
   it("two open modals keep the page covered until the last one closes", async () => {

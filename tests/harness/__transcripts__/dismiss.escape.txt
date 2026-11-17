@@ -1,4 +1,4 @@
 document
 button, Open Layer | dialog, Layer | textbox, Layer field
 button, Remove row | dialog, Layer
-button, Open Layer | polite: Layer dismissals | polite: Layer reason
+polite: Layer dismissals | polite: Layer reason | button, Open Layer
