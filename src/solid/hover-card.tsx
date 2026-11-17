@@ -1,4 +1,4 @@
-import { HoverCard as HoverCardPrimitive } from "@kobalte/core/hover-card";
+import { HoverCard as HoverCardPrimitive, useHoverCardContext } from "@kobalte/core/hover-card";
 import { usePortalMount } from "./portal-mount.js";
 import { type Component, type ComponentProps, createSignal, splitProps } from "solid-js";
 import { OVERLAY_MOTION } from "../lib/motion-classes.js";
@@ -16,7 +16,12 @@ const HoverCardContent: Component<ComponentProps<typeof HoverCardPrimitive.Conte
   const [local, rest] = splitProps(props, ["class", "ref", "onInteractOutside"]);
   const [panel, setPanel] = createSignal<HTMLElement>();
   // A hover card closes as the pointer leaves; inside a shadow root it only must not close on its own presses.
-  const { onInteractOutside } = shadowLayer({ content: panel, open: () => true, consumer: local });
+  const card = useHoverCardContext();
+  const { onInteractOutside } = shadowLayer({
+    content: panel,
+    open: () => card.isOpen(),
+    consumer: local,
+  });
   return (
     <HoverCardPrimitive.Portal data-slot="hover-card-portal" mount={usePortalMount()}>
       <HoverCardPrimitive.Content

@@ -18,10 +18,7 @@ function rootOf(element: HTMLElement): Document | ShadowRoot {
   return root.nodeType === SHADOW_ROOT_NODE ? (root as ShadowRoot) : document;
 }
 
-const takesKeys = (entry: Layer): boolean => {
-  const element = entry.element();
-  return element !== undefined && element.isConnected !== false;
-};
+const takesKeys = (entry: Layer): boolean => entry.element() !== undefined;
 
 function createOutsidePress(options: DismissOptions) {
   const { layer } = options;
