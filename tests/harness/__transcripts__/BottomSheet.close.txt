@@ -1,0 +1,3 @@
+document
+button, Open sheet, not expanded, has popup dialog | dialog, Sheet, modal | button, Open sheet, expanded, has popup dialog | dialog, Sheet, modal
+button, Open sheet, expanded, has popup dialog | dialog, Sheet, modal | button, Done | dialog, Sheet, modal | button, Done

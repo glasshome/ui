@@ -1,0 +1,4 @@
+document
+button, Open dialog, not expanded, has popup dialog | dialog, Dialog, Something to confirm | button, Fruit Pick one, not expanded, has popup listbox
+listbox, Fruit, orientated vertically | option, Apple, not selected, not disabled, position 1, set size 4
+dialog, Dialog, Something to confirm | button, Fruit Pick one, not expanded, has popup listbox
