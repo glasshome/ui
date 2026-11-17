@@ -41,6 +41,13 @@ export const SCRIM_MOTION = `${ARRIVE} data-[expanded]:fade-in-0 ${LEAVE} data-[
 export const SETTLE_MOTION =
   "animate-in fade-in-0 slide-in-from-bottom-1 duration-(--duration-state) ease-(--ease-expand)";
 
+/* A cover that fades in once and rests; the animation ends, nothing runs after. */
+export const VEIL_MOTION =
+  "animate-in fade-in-0 duration-(--duration-state) ease-(--ease-emphasis) motion-reduce:animate-none in-[.reduce-motion]:animate-none";
+
+/* The content a StaleVeil covers: black and white for as long as it is stale, no transition. */
+export const STALE_CONTENT = "grayscale";
+
 /* Every pressable dips the same amount. */
 export const PRESS_DIP = "active:scale-[0.97]";
 

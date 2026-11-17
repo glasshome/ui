@@ -721,6 +721,7 @@ const CASES: Record<string, () => JSX.Element> = {
       </solid.SheetContent>
     </solid.Sheet>
   ),
+  StaleVeil: () => <solid.StaleVeil class="probe" shown />,
   StepIndicator: () => <solid.StepIndicator class="probe" count={3} index={0} />,
   TableFilterSelect: () => (
     <solid.TableFilterSelect

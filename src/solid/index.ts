@@ -8,7 +8,7 @@ export { SECTION_ROW_SURFACE } from "../lib/card-classes.js";
 export { copyImage, copyText } from "../lib/clipboard.js";
 export { createHold, HOLD_GRACE_MS, HOLD_MS, spendLongPress } from "../lib/hold.js";
 export type { Hold, HoldOptions, HoldPress } from "../lib/hold.js";
-export { RISE_MOTION, SETTLE_MOTION, TRAVEL_MOTION } from "../lib/motion-classes.js";
+export { RISE_MOTION, SETTLE_MOTION, STALE_CONTENT, TRAVEL_MOTION } from "../lib/motion-classes.js";
 export { COVERING_ATTR, coverPage } from "../lib/page-cover.js";
 export { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
 // Section tokens re-exported from the Solid entry for convenience.
@@ -386,6 +386,7 @@ export { FaceToggle, FaceToggleGroup } from "./face-toggle.js";
 export { GlyphTile, GlyphTileGroup } from "./glyph-tile.js";
 export { Spinner } from "./spinner.js";
 export { Spotlight } from "./spotlight.js";
+export { StaleVeil } from "./stale-veil.js";
 export { StepIndicator } from "./step-indicator.js";
 export { SwatchPicker } from "./swatch-picker.js";
 export { Switch } from "./switch.js";
