@@ -1,6 +1,5 @@
 import { createSignal } from "solid-js";
-import { STALE_CONTENT } from "../../../src/lib/motion-classes";
-import { Button, Card, Icon, StaleVeil } from "../../../src/solid";
+import { Button, Card, Icon, STALE_CONTENT, StaleVeil } from "../../../src/solid";
 import { defineScenarios } from "../../harness/types";
 
 export const LightTile = (props: { shown: boolean; lit?: boolean }) => (
@@ -50,7 +49,7 @@ export default defineScenarios({
       id: "reveal",
       title: "Fades in once when the toggle is pressed, gone when pressed again",
       render: () => <Reveal />,
-      steps: [{ press: { role: "button", name: "Stale" } }],
+      steps: [{ key: "Tab" }, { key: "Tab" }, { key: "Enter" }],
     },
   ],
 });
