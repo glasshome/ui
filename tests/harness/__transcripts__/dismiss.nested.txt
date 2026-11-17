@@ -1,0 +1,5 @@
+document
+button, Open Lower | dialog, Lower | textbox, Lower field
+button, Open Upper
+polite: Upper dismissals | polite: Upper reason
+button, Open Lower | polite: Lower dismissals | polite: Lower reason

@@ -1,4 +1,6 @@
-import { type Accessor, createEffect, onCleanup } from "solid-js";
+import type { Accessor } from "solid-js";
+import { createDismiss } from "./behavior/dismiss.js";
+import { effect } from "./behavior/solid.js";
 import {
   createFocusScope,
   focusWithoutTracking,
@@ -73,50 +75,19 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
     trapped: () => true,
     initialFocus: options.initialFocus ?? "first",
   });
-  createEffect(() => {
-    const el = options.content();
-    const dismiss = options.dismiss;
-    if (options.open()) dismissedIn = undefined;
-    if (!el || !dismiss || !options.open() || !inShadowRoot(el)) return;
-    const root = el.getRootNode() as ShadowRoot;
-    const newestInRoot = () =>
-      handle
-        .above()
-        .every((other) => other.kind === "tooltip" || other.element()?.getRootNode() !== root);
-    const dismisses = (e: Event) =>
-      (options.tree || newestInRoot()) && !handle.containsPath(e.composedPath());
-    const close = () => {
-      dismissedIn = root;
-      dismiss();
+  effect(options.open, (open) => {
+    if (open) dismissedIn = undefined;
+  });
+  createDismiss({
+    layer: handle,
+    outsidePress: () => !!options.dismiss && inShadowRoot(options.content()),
+    onDismiss: () => {
+      const root = options.content()?.getRootNode();
+      dismissedIn = root instanceof ShadowRoot ? root : undefined;
+      options.dismiss?.();
       // The caller refused the close (a controlled `open`): the next close is not this one.
       if (options.open()) dismissedIn = undefined;
-    };
-    let pendingClick: ((e: Event) => void) | undefined;
-    const dropPendingClick = () => {
-      if (pendingClick) root.removeEventListener("click", pendingClick);
-      pendingClick = undefined;
-    };
-    const onDown = (e: Event) => {
-      dropPendingClick();
-      if (!dismisses(e)) return;
-      // A touch dismisses on its own click, judged again then: a scroll never clicks.
-      if ((e as PointerEvent).pointerType === "touch") {
-        pendingClick = (click) => {
-          pendingClick = undefined;
-          if (dismisses(click)) close();
-        };
-        root.addEventListener("click", pendingClick, { once: true });
-      } else {
-        close();
-      }
-    };
-    // Listening only after the opening press has finished, as Kobalte's own layers do.
-    const timer = setTimeout(() => root.addEventListener("pointerdown", onDown, true), 0);
-    onCleanup(() => {
-      clearTimeout(timer);
-      root.removeEventListener("pointerdown", onDown, true);
-      dropPendingClick();
-    });
+    },
   });
   const shadowHost = () => {
     const root = options.content()?.getRootNode();

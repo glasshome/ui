@@ -63,5 +63,6 @@ declare module "vitest/browser" {
   interface BrowserCommands {
     mouse(action: "move" | "down" | "up", x: number, y: number): Promise<void>;
     touch(action: "down" | "up" | "cancel", x: number, y: number): Promise<void>;
+    compose(on: boolean): Promise<void>;
   }
 }

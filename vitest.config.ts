@@ -2,7 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { playwright } from "@vitest/browser-playwright";
 import solid from "vite-plugin-solid";
 import { defineConfig } from "vitest/config";
-import { emulateMedia, mouse, pointer, touch } from "./tests/commands";
+import { compose, emulateMedia, mouse, pointer, touch } from "./tests/commands";
 
 // Forked workers inherit it, so a direct run matches the gate; bun test is UTC already.
 process.env.TZ = "UTC";
@@ -35,7 +35,7 @@ const BROWSER = {
     contextOptions: { permissions: ["clipboard-read", "clipboard-write"] },
   }),
   instances: [{ browser: "chromium" as const }],
-  commands: { emulateMedia, mouse, pointer, touch },
+  commands: { compose, emulateMedia, mouse, pointer, touch },
 };
 
 export default defineConfig({

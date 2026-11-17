@@ -63,6 +63,16 @@ export const touch: BrowserCommand<[action: keyof typeof TOUCH, x: number, y: nu
   });
 };
 
+/** An IME composition running in the focused control, so the next key is one `isComposing` marks. */
+export const compose: BrowserCommand<[on: boolean]> = async (ctx, on) => {
+  const cdp = await pointerSession(ctx.page);
+  await cdp.send("Input.imeSetComposition", {
+    text: on ? "あ" : "",
+    selectionStart: on ? 1 : 0,
+    selectionEnd: on ? 1 : 0,
+  });
+};
+
 type Media = { reducedMotion?: "reduce" | "no-preference"; colorScheme?: "light" | "dark" };
 
 /** Emulated media features for the page and its test frame. */

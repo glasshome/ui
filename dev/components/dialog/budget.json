@@ -278,8 +278,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 13,
-        "reason": "baseline 2026-11-17"
+        "max": 14,
+        "reason": "baseline 2026-11-17; the outside press now dismisses in the guest lane, so the step does work"
       },
       "domCalls": {
         "getComputedStyle": 18,

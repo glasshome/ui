@@ -36,6 +36,7 @@ import {
 } from "../dialog-parts.js";
 import { EASE, TRANSITION_MS } from "./constants.js";
 import { attachDrag } from "./drag-controller.js";
+import { createDismiss } from "../../lib/behavior/dismiss.js";
 import { createFocusScope, type InitialFocus } from "../../lib/behavior/focus-scope.js";
 import { registerLayer } from "../../lib/behavior/layer-stack.js";
 import { watchKeyboard } from "./keyboard.js";
@@ -276,77 +277,13 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     initialFocus: local.initialFocus ?? "container",
   });
 
-  createEffect(() => {
-    if (ctx.state() === "closed") return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
-      if (!ctx.dismissible()) return;
-      e.preventDefault();
+  createDismiss({
+    layer: handle,
+    outsidePress: ctx.dismissible,
+    onDismiss: (reason) => {
+      if (reason === "outside-press" && ctx.state() !== "open") return;
       ctx.setOpen(false);
-    };
-    document.addEventListener("keydown", onKey);
-    onCleanup(() => document.removeEventListener("keydown", onKey));
-  });
-
-  // setTimeout(0) lets the click that opened the sheet finish bubbling
-  // before the dismiss listener is attached. Touch defers to `click` so
-  // drag/scroll intent can be detected first.
-  createEffect(() => {
-    if (ctx.state() === "closed") return;
-    if (!ctx.dismissible()) return;
-
-    let attached = false;
-    let pendingClick: ((click: Event) => void) | null = null;
-
-    // Judged along the composed path: a press inside an icon's own shadow root is still inside the
-    // sheet. Only the part below the listening root counts: a realm's host inside a page dialog
-    // must not make every press in the realm look like one inside a layer.
-    const isOutside = (e: Event): boolean => {
-      if (!el || !(e.target instanceof Element)) return false;
-      const full = e.composedPath();
-      const listener = e.currentTarget;
-      const end = listener && listener !== document ? full.indexOf(listener) : -1;
-      const path = end >= 0 ? full.slice(0, end) : full;
-      return !path.includes(el) && !handle.containsPath(path);
-    };
-
-    // Inside a shadow root the page sees every press there as one on the root's host, so the
-    // sheet judges those from its own root and only the page's other presses from the document.
-    const scope = (el?.getRootNode() ?? document) as Document | ShadowRoot;
-    const scopes: (Document | ShadowRoot)[] = scope === document ? [document] : [scope, document];
-    const host = scope instanceof ShadowRoot ? scope.host : undefined;
-    const onPointerDown = (e: Event) => {
-      if (e.currentTarget === document && host && e.target === host) return;
-      // Every press starts over: a touch that scrolled never clicked, and its close must not wait for the next tap.
-      if (pendingClick) document.removeEventListener("click", pendingClick);
-      pendingClick = null;
-      if (!isOutside(e)) return;
-      const dismiss = () => {
-        if (ctx.state() === "open") ctx.setOpen(false);
-      };
-      if ((e as PointerEvent).pointerType === "touch") {
-        pendingClick = (click: Event) => {
-          pendingClick = null;
-          // The click lands where the touch ended; it closes only if that is still outside.
-          if (el && !click.composedPath().includes(el)) dismiss();
-        };
-        document.addEventListener("click", pendingClick, { once: true });
-      } else {
-        dismiss();
-      }
-    };
-
-    const timer = window.setTimeout(() => {
-      for (const s of scopes) s.addEventListener("pointerdown", onPointerDown, true);
-      attached = true;
-    }, 0);
-
-    onCleanup(() => {
-      window.clearTimeout(timer);
-      if (attached)
-        for (const s of scopes) s.removeEventListener("pointerdown", onPointerDown, true);
-      if (pendingClick) document.removeEventListener("click", pendingClick);
-    });
+    },
   });
 
   const setRef = (node: HTMLDivElement) => {

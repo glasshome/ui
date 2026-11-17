@@ -1,0 +1,4 @@
+document
+button, Open Layer | dialog, Layer | textbox, Layer field
+
+polite: Layer dismissals | polite: Layer reason | button, Beside

@@ -9,6 +9,7 @@ import {
 } from "solid-js";
 import { Portal } from "solid-js/web";
 import { usePortalMount } from "./portal-mount.js";
+import { createDismiss } from "../lib/behavior/dismiss.js";
 import { registerLayer } from "../lib/behavior/layer-stack.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { SCRIM_MOTION, TRAVEL_MOTION } from "../lib/motion-classes.js";
@@ -56,12 +57,18 @@ const Spotlight: Component<SpotlightProps> = (props) => {
     { equals: sameFields },
   );
   const [bubble, setBubble] = createSignal<HTMLDivElement>();
-  registerLayer({
+  const handle = registerLayer({
     element: bubble,
     open: () => true,
     kind: "tour",
     escape: () => true,
     dismiss: () => props.onSkip?.(),
+  });
+  createDismiss({
+    layer: handle,
+    outsidePress: () => false,
+    escapeFrom: "document",
+    onDismiss: () => props.onSkip?.(),
   });
 
   const anchorEl = () => props.anchor ?? props.target;
@@ -115,16 +122,11 @@ const Spotlight: Component<SpotlightProps> = (props) => {
   });
 
   onMount(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") props.onSkip?.();
-    };
     window.addEventListener("resize", measure);
     window.addEventListener("scroll", measure, { capture: true, passive: true });
-    document.addEventListener("keydown", onKey);
     onCleanup(() => {
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", measure, { capture: true });
-      document.removeEventListener("keydown", onKey);
     });
   });
 
