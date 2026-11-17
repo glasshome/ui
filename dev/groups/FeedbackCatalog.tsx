@@ -18,6 +18,7 @@ import {
   toast,
 } from "../../src/solid";
 import { Axis, CatalogGroup, Specimen } from "../CatalogKit";
+import { LightTile } from "../components/stale-veil/scenarios";
 
 export function FeedbackCatalog() {
   return (
@@ -80,6 +81,14 @@ export function FeedbackCatalog() {
           <Spinner />
           Saving
         </Button>
+      </Specimen>
+
+      <Specimen name="StaleVeil" span={2}>
+        <Axis of="shown">
+          <LightTile shown={false} lit />
+          <LightTile shown lit />
+          <LightTile shown />
+        </Axis>
       </Specimen>
 
       <Specimen name="Toaster" try="success" span={2}>

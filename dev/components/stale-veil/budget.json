@@ -1,0 +1,106 @@
+{
+  "over-a-widget": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 29,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 12,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 5,
+        "reason": "baseline 2026-11-17, measured 4 (reveal 4 then 1) in the realm"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "over-a-lit-widget": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 29,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 12,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 5,
+        "reason": "baseline 2026-11-17, measured 4 (reveal 4 then 1) in the realm"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "reveal": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 19,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 15,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 97,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 7,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 5,
+        "reason": "baseline 2026-11-17, measured 4 (reveal 4 then 1) in the realm"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  }
+}

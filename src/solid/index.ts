@@ -386,6 +386,7 @@ export { FaceToggle, FaceToggleGroup } from "./face-toggle.js";
 export { GlyphTile, GlyphTileGroup } from "./glyph-tile.js";
 export { Spinner } from "./spinner.js";
 export { Spotlight } from "./spotlight.js";
+export { StaleVeil } from "./stale-veil.js";
 export { StepIndicator } from "./step-indicator.js";
 export { SwatchPicker } from "./swatch-picker.js";
 export { Switch } from "./switch.js";
