@@ -20,21 +20,28 @@ export function coverPage(): () => void {
   };
 }
 
+/** A modal panel covers the page from now until the returned release runs. */
+export function coverNow(panel: Element): () => void {
+  panel.setAttribute(COVERING_ATTR, "");
+  const release = coverPage();
+  return () => {
+    panel.removeAttribute(COVERING_ATTR);
+    release();
+  };
+}
+
 /** A modal panel covers the page once its open animation ends, if it is still open then, until the returned release runs. */
 export function coverOnceOpen(panel: Element, open: () => boolean): () => void {
   let release: (() => void) | undefined;
   let done = false;
   const stop = watchMotion(panel, MOTION_EXIT_MS.sheet, () => {
     if (done || !open()) return;
-    panel.setAttribute(COVERING_ATTR, "");
-    release = coverPage();
+    release = coverNow(panel);
   });
   return () => {
     if (done) return;
     done = true;
     stop();
-    if (!release) return;
-    panel.removeAttribute(COVERING_ATTR);
-    release();
+    release?.();
   };
 }

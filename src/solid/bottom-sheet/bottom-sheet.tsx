@@ -24,7 +24,8 @@ import {
   SCRIM_CONTAIN,
   SCROLL_CONTAIN,
 } from "../../lib/overlay-classes.js";
-import { coverOnceOpen } from "../../lib/page-cover.js";
+import { coverNow } from "../../lib/page-cover.js";
+import { effect } from "../../lib/behavior/solid.js";
 import { cn } from "../../lib/utils.js";
 import { type MotionEvent, watchMotion } from "../../lib/behavior/presence.js";
 import { MOTION_EXIT_MS } from "../../lib/motion-classes.js";
@@ -214,10 +215,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
 
   const present = createMemo(() => ctx.state() !== "closed");
 
-  const covering = createMemo(() => present() && ctx.state() !== "opening");
-  createEffect(() => {
-    if (covering() && el) onCleanup(coverOnceOpen(el, () => ctx.state() !== "closing"));
-  });
+  effect(present, (on) => (on && el ? coverNow(el) : undefined));
 
   const clearAnimInline = () => {
     if (!el) return;

@@ -1,5 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { createSignal } from "solid-js";
+import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { findAll, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
 import {
@@ -114,6 +115,26 @@ describe("BottomSheet contract", () => {
     await input.pressAt(8, 8);
     await settle();
     expect(["closing", "closed"]).toContain(sheet.getAttribute("data-state"));
+  });
+
+  it("B10 the page is covered in the frame the sheet opens, and uncovered once it is gone", async () => {
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
+    const [open, setOpen] = createSignal(true);
+    const page = document.body.appendChild(document.createElement("div"));
+    page.setAttribute("data-page", "");
+    onTestFinished(() => page.remove());
+    render(() => (
+      <BottomSheet open={open()} onOpenChange={setOpen}>
+        <BottomSheetPortal>
+          <BottomSheetContent ariaLabel="Sheet">Body</BottomSheetContent>
+        </BottomSheetPortal>
+      </BottomSheet>
+    ));
+    expect(page.hasAttribute("data-covered")).toBe(true);
+    setOpen(false);
+    await settle();
+    await vi.advanceTimersByTimeAsync(MOTION_EXIT_MS.sheet);
+    expect(page.hasAttribute("data-covered")).toBe(false);
   });
 
   it("B8 once open, nothing on the sheet sends focus to the trigger behind it, and a click into a field keeps it there", async () => {
