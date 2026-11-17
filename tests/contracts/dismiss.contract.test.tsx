@@ -261,6 +261,60 @@ describe("dismiss contract", () => {
     expect(document.querySelectorAll('[data-slot="bottom-sheet-content"]')).toHaveLength(1);
   });
 
+  it("DI13 Escape with a tooltip on top closes it and prevents nothing", async () => {
+    const watched = watchWindow();
+    const tip = stacked({ kind: "tooltip", top: 20 });
+    await settle();
+    await input.key("Escape");
+    expect(tip.reasons).toEqual(["escape"]);
+    expect(watched.seen[0]?.defaultPrevented).toBe(false);
+    expect(watched.heard).toHaveLength(1);
+  });
+
+  it("DI14 Escape with a tooltip over a modal closes both", async () => {
+    const modal = stacked({ kind: "modal", top: 20 });
+    const tip = stacked({ kind: "tooltip", top: 160 });
+    modal.button.focus();
+    await settle();
+    await input.key("Escape");
+    expect(tip.reasons).toEqual(["escape"]);
+    expect(modal.reasons).toEqual(["escape"]);
+  });
+
+  it("DI15 Escape with a layer opened above a tooltip closes only that layer", async () => {
+    const tip = stacked({ kind: "tooltip", top: 20 });
+    const popover = stacked({ kind: "popover", top: 160 });
+    popover.button.focus();
+    await settle();
+    await input.key("Escape");
+    expect(popover.reasons).toEqual(["escape"]);
+    expect(tip.reasons).toEqual([]);
+  });
+
+  it("DI16 Escape while an IME composes leaves a tooltip open", async () => {
+    const tip = stacked({ kind: "tooltip", top: 20 });
+    const field = document.body.appendChild(document.createElement("input"));
+    field.focus();
+    await settle();
+    await commands.compose(true);
+    onTestFinished(() => commands.compose(false));
+    await input.key("Escape");
+    expect(tip.reasons).toEqual([]);
+    expect(tip.open()).toBe(true);
+  });
+
+  it("DI17 Escape in a modal that does not close on it stays in the layer", async () => {
+    const watched = watchWindow();
+    const modal = stacked({ kind: "modal", top: 20, escape: false });
+    modal.button.focus();
+    await settle();
+    await input.key("Escape");
+    expect(modal.reasons).toEqual([]);
+    expect(modal.open()).toBe(true);
+    expect(watched.seen[0]?.defaultPrevented).toBe(true);
+    expect(watched.heard).toHaveLength(0);
+  });
+
   it("DI12 a press outside a popover and the tooltip over it closes the popover and leaves the tooltip", async () => {
     useFakeTime({ toFake: TIMERS });
     const popover = stacked({ kind: "popover", top: 20 });

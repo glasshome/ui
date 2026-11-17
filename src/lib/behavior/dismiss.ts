@@ -76,26 +76,51 @@ function createOutsidePress(options: DismissOptions) {
   );
 }
 
+function createTooltipEscape(options: DismissOptions) {
+  const { layer } = options;
+  const onKey = (event: KeyboardEvent) => {
+    if (event.key !== "Escape" || event.isComposing) return;
+    const mine = layer.layer();
+    if (!mine || !mine.escape() || !takesKeys(mine)) return;
+    const stack = layerStack.layers();
+    if (stack.slice(stack.indexOf(mine) + 1).some((entry) => entry.kind !== "tooltip")) return;
+    options.onDismiss("escape");
+  };
+  document.addEventListener("keydown", onKey, true);
+  return () => document.removeEventListener("keydown", onKey, true);
+}
+
 function createEscape(options: DismissOptions) {
   const { layer } = options;
   effect(
-    () => [layer.layer()?.element(), options.escapeFrom ?? "layer"] as const,
+    () =>
+      [
+        layer.layer()?.element(),
+        layer.layer()?.kind === "tooltip" ? "tooltip" : (options.escapeFrom ?? "layer"),
+      ] as const,
     ([element, from]) => {
       if (!element) return;
+      if (from === "tooltip") return createTooltipEscape(options);
       const target = from === "document" ? document : element;
       const onKey = (event: KeyboardEvent) => {
         if (event.key !== "Escape" || event.isComposing) return;
         const mine = layer.layer();
         if (!mine || !takesKeys(mine)) return;
         const stack = layerStack.layers();
-        const closes = stack
+        const claims = stack
           .slice(stack.indexOf(mine))
-          .findLast((entry) => entry.kind !== "tooltip" && entry.escape() && takesKeys(entry));
-        if (!closes) return;
+          .findLast(
+            (entry) =>
+              entry.kind !== "tooltip" &&
+              takesKeys(entry) &&
+              (entry.escape() || entry.kind === "modal"),
+          );
+        if (!claims) return;
         event.preventDefault();
         event.stopPropagation();
-        if (closes === mine) options.onDismiss("escape");
-        else closes.dismiss?.();
+        if (!claims.escape()) return;
+        if (claims === mine) options.onDismiss("escape");
+        else claims.dismiss?.();
       };
       target.addEventListener("keydown", onKey as EventListener);
       return () => target.removeEventListener("keydown", onKey as EventListener);

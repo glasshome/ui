@@ -16,6 +16,7 @@ import {
 import { Portal } from "solid-js/web";
 import { createAnchored } from "../lib/behavior/anchored.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
+import { createDismiss } from "../lib/behavior/dismiss.js";
 import { registerLayer } from "../lib/behavior/layer-stack.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
@@ -177,13 +178,14 @@ const TooltipContent: Component<ComponentProps<"div">> = (props) => {
     exitMs: MOTION_EXIT_MS.overlay,
   });
 
-  registerLayer({
+  const layer = registerLayer({
     element: panel,
     open: presence.mounted,
     kind: "tooltip",
-    escape: () => false,
+    escape: () => true,
     topLayer: "manual",
   });
+  createDismiss({ layer, outsidePress: () => false, onDismiss: () => ctx.hide(false) });
   createAnchored({
     anchor: ctx.trigger,
     floating: panel,
@@ -191,14 +193,6 @@ const TooltipContent: Component<ComponentProps<"div">> = (props) => {
     side: ctx.side,
     align: ctx.align,
     offset: ctx.gutter,
-  });
-  effect(ctx.open, (open) => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") ctx.hide(false);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
   });
 
   const Panel: Component = () => {

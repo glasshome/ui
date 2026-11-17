@@ -1,6 +1,6 @@
 # dismiss: behaviour contract
 
-Each line is one browser test in `tests/contracts/dismiss.contract.test.tsx`, named by its id. `src/lib/behavior/dismiss.ts` holds `createDismiss`: outside press judged by the composed path, and Escape consumed in the layer's own keydown. A `topLayer: "auto"` layer does not use it; the browser dismisses that one.
+Each line is one browser test in `tests/contracts/dismiss.contract.test.tsx`, named by its id. `src/lib/behavior/dismiss.ts` holds `createDismiss`: outside press judged by the composed path, and Escape consumed in the layer's own keydown. A tooltip reads Escape from the document in the capture phase instead, closes only when no non-tooltip layer sits above it, and consumes nothing. A `topLayer: "auto"` layer does not use it; the browser dismisses that one.
 
 | id | when | then |
 |---|---|---|
@@ -16,3 +16,8 @@ Each line is one browser test in `tests/contracts/dismiss.contract.test.tsx`, na
 | DI10 | the focused control inside the top layer is removed (focus falls to `body`), then Escape | the layer closes with `escape`; a `window` keydown listener never runs |
 | DI11 | a Kobalte dialog whose consumer vetoes Escape (`onEscapeKeyDown` calls `preventDefault`) is open above a BottomSheet, Escape | both stay open |
 | DI12 | a tooltip opens over an open popover, a press outside both | the popover closes with `outside-press`; a press on the tooltip leaves it open |
+| DI13 | Escape while a tooltip is the topmost layer, focus anywhere | it closes with `escape`; the key is not prevented, a `window` listener hears it |
+| DI14 | Escape with a tooltip over a modal | the tooltip closes, and the modal closes on the same key: a tooltip never consumes an Escape a layer below needs |
+| DI15 | Escape with a layer opened above a tooltip | only that layer closes; the tooltip stays |
+| DI16 | Escape while `isComposing`, a tooltip open | it stays open |
+| DI17 | Escape in a modal whose `escape()` is false | it stays open and the key is consumed (prevented, stopped): a modal never lets Escape through to the page |
