@@ -2,7 +2,7 @@ import type { Accessor } from "solid-js";
 import type { LayerHandle } from "./layer-stack";
 import { effect } from "./solid";
 
-const LIVE_REGION = '[aria-live], [role="status"], [role="alert"]';
+const KEPT = '[aria-live], [role="status"], [role="alert"], [data-kb-top-layer]';
 const ELEMENT = 1;
 const DOCUMENT = 9;
 const FRAGMENT = 11;
@@ -63,7 +63,7 @@ export function createHideOutside(options: HideOutsideOptions): void {
         const aboveElement = above.element();
         if (aboveElement) layers.push(aboveElement);
       }
-      const hidden = hiddenAround(parent, layers, Array.from(parent.querySelectorAll(LIVE_REGION)));
+      const hidden = hiddenAround(parent, layers, Array.from(parent.querySelectorAll(KEPT)));
       for (const child of hidden) hide(child);
       return () => {
         for (const child of hidden) release(child);

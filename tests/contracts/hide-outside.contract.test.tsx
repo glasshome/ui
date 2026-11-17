@@ -134,4 +134,13 @@ describe("hide-outside contract", () => {
     await run(press("Announce"));
     expect(await commands.axTree()).toContain("Saved Modal");
   });
+
+  it("HO7 a layer marked data-kb-top-layer outside the modal is never hidden", async () => {
+    const marked = document.body.appendChild(document.createElement("div"));
+    marked.setAttribute("data-kb-top-layer", "");
+    const run = await mount("modal");
+    await run(press("Open Modal"));
+    expect(document.querySelector('[aria-hidden="true"]')).not.toBeNull();
+    expect(marked.getAttribute("aria-hidden")).toBeNull();
+  });
 });
