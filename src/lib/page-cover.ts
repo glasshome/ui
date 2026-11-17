@@ -1,4 +1,5 @@
-import { whenAnimationsSettle } from "./when-animations-settle.js";
+import { watchMotion } from "./behavior/presence.js";
+import { MOTION_EXIT_MS } from "./motion-classes.js";
 
 /** On a modal's panel from the end of its open animation; the widget realm carries it out of a sealed widget. */
 export const COVERING_ATTR = "data-covering";
@@ -23,7 +24,7 @@ export function coverPage(): () => void {
 export function coverOnceOpen(panel: Element, open: () => boolean): () => void {
   let release: (() => void) | undefined;
   let done = false;
-  void whenAnimationsSettle(panel).then(() => {
+  const stop = watchMotion(panel, MOTION_EXIT_MS.sheet, () => {
     if (done || !open()) return;
     panel.setAttribute(COVERING_ATTR, "");
     release = coverPage();
@@ -31,6 +32,7 @@ export function coverOnceOpen(panel: Element, open: () => boolean): () => void {
   return () => {
     if (done) return;
     done = true;
+    stop();
     if (!release) return;
     panel.removeAttribute(COVERING_ATTR);
     release();

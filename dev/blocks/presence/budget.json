@@ -1,0 +1,132 @@
+{
+  "exit": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1388,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1110,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 24,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 15,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 4,
+        "reason": "baseline 2026-11-17; phase 1 step 5 is open, Task 12 re-measures"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "keep": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1389,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1111,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 23,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 15,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 24,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 5,
+        "reason": "baseline 2026-11-17; phase 1 step 5 is open, Task 12 re-measures"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  }
+}

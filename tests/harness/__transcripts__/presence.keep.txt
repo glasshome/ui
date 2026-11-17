@@ -1,0 +1,4 @@
+document
+button, Open Panel | polite: Panel phase | polite: Panel phase
+button, Close Panel | polite: Panel phase | polite: Panel phase
+button, Open Panel | polite: Panel phase | polite: Panel phase

@@ -22,8 +22,8 @@ import { Z } from "../../lib/layers.js";
 import { OVERLAY_SURFACE_OPAQUE } from "../../lib/overlay-classes.js";
 import { coverOnceOpen } from "../../lib/page-cover.js";
 import { cn } from "../../lib/utils.js";
-import { whenAnimationsSettle } from "../../lib/when-animations-settle.js";
-import { isSheetMotion } from "./sheet-motion.js";
+import { type MotionEvent, watchMotion } from "../../lib/behavior/presence.js";
+import { MOTION_EXIT_MS } from "../../lib/motion-classes.js";
 import {
   callEventHandler,
   createModalLabels,
@@ -52,6 +52,11 @@ interface BottomSheetContextValue {
   contentRef: () => HTMLDivElement | undefined;
   setContentRef: (el: HTMLDivElement | undefined) => void;
 }
+
+const isSheetMotion = (e: MotionEvent) =>
+  "animationName" in e
+    ? e.animationName === "bs-slide-up" || e.animationName === "bs-slide-down"
+    : e.propertyName === "transform";
 
 const BottomSheetContext = createContext<BottomSheetContextValue>();
 
@@ -230,16 +235,20 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     if (s !== "opening" && s !== "closing" && s !== "snapping") return;
     const node = el;
     if (!node) return;
-    let stale = false;
-    onCleanup(() => (stale = true));
-    void whenAnimationsSettle(node, { filter: isSheetMotion }).then(() => {
-      if (stale) return;
-      if (s === "opening") ctx.setState("open");
-      else {
-        ctx.setState(s === "snapping" ? "open" : "closed");
-        clearAnimInline();
-      }
-    });
+    onCleanup(
+      watchMotion(
+        node,
+        MOTION_EXIT_MS.sheet,
+        () => {
+          if (s === "opening") ctx.setState("open");
+          else {
+            ctx.setState(s === "snapping" ? "open" : "closed");
+            clearAnimInline();
+          }
+        },
+        isSheetMotion,
+      ),
+    );
   });
 
   createEffect(() => {
