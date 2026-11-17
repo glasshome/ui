@@ -9,6 +9,6 @@ Each line is one browser test in `tests/contracts/stale-veil.contract.test.tsx`,
 | SV3 | shown, with reduced motion | no animation runs and the cover is fully shown at once |
 | SV4 | shown | a press at its centre reaches the content beneath, and focus stays on that content |
 | SV5 | no longer shown | the cover is gone and the content is the top element again |
-| SV6 | shown, over content carrying `STALE_CONTENT` | the content is black and white at once with no transition, and the cover is a 40% veil in `--background` |
+| SV6 | shown, in a parent carrying `STALE_CONTENT` | the whole parent, its surface tint included, is black and white at once with no transition, and the cover is a 40% veil in `--background` |
 
 The veil and the grey leave small labels at about 4.2:1 (dark) and 3.1:1 (light); the owner chose that knowingly, and the content is inert, `aria-hidden` and on screen for seconds, which WCAG exempts as inactive content.

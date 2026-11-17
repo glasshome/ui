@@ -5,12 +5,9 @@ import { defineScenarios } from "../../harness/types";
 
 export const LightTile = (props: { shown: boolean; lit?: boolean }) => (
   <Card
-    class={`relative h-40 w-64 rounded-3xl p-4 ${props.lit ? "glass-tint [--glass-tone:var(--warning)] [--glass-wash:30%]" : ""}`}
+    class={`relative h-40 w-64 rounded-3xl p-4 ${props.lit ? "glass-tint [--glass-tone:var(--warning)] [--glass-wash:30%]" : ""} ${props.shown ? STALE_CONTENT : ""}`}
   >
-    <button
-      type="button"
-      class={`flex size-full flex-col text-left ${props.shown ? STALE_CONTENT : ""}`}
-    >
+    <button type="button" class="flex size-full flex-col text-left">
       <span class="flex items-center gap-2">
         <Icon icon="lucide:lightbulb" width={20} />
         <span class="text-sm font-medium">Hallway</span>
