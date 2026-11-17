@@ -36,7 +36,7 @@ Times are reported and never gated; only counts gate. A replacement lands at or 
 
 1. Run `bun gov ops ui drive --all --t50 --json` three times.
 2. For each step, take the highest of the three runs. Add 25% to `elementsRestyled`, since the measured T50 rate moves with host load and the frames an animation runs move with it. Keep `largestRecalc` and `layouts` exact.
-3. For `guest`, run `bunx vitest run tests/dom/ui-scenarios.test.ts` in `packages/private/widget-realm` and sum each scenario's rows in `tests/dom/.ui-scenarios/report.json`.
+3. For `guest`, run `bunx vitest run tests/dom/ui-scenarios.test.ts` in `packages/private/widget-realm` and sum each scenario's rows in `tests/dom/.ui-scenarios/report.json`. Add 25% and at least one to `workUnits`: guest work driven by frames (Spotlight's 600 ms sampler) runs as many ticks as the host draws while a step's press is in flight. Keep the DOM call counts exact.
 4. Each `reason` names the date and why the number moved.
 
 ## Visual baselines

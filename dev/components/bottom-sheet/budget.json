@@ -32,8 +32,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 7,
-        "reason": "baseline 2026-11-17"
+        "max": 9,
+        "reason": "baseline 2026-11-17; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -90,8 +90,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 9,
-        "reason": "baseline 2026-11-17"
+        "max": 10,
+        "reason": "baseline 2026-11-17; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -148,8 +148,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 8,
-        "reason": "baseline 2026-11-17"
+        "max": 10,
+        "reason": "baseline 2026-11-17; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -220,8 +220,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 30,
-        "reason": "baseline 2026-11-17"
+        "max": 37,
+        "reason": "baseline 2026-11-17; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 66,
@@ -278,8 +278,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 9,
-        "reason": "baseline 2026-11-17; the outside press now dismisses in the guest lane, so the step does work; presence waits on the host's open motion, whose end event is one more forwarded call"
+        "max": 12,
+        "reason": "baseline 2026-11-17; the outside press now dismisses in the guest lane, so the step does work; presence waits on the host's open motion, whose end event is one more forwarded call; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 0,

@@ -120,8 +120,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 6,
-        "reason": "baseline 2026-11-17, measured 4 (reveal 4 then 1) in the realm; the mount measured 5 then 1 once the behaviour blocks joined the guest bundle, the key steps cost nothing more"
+        "max": 8,
+        "reason": "baseline 2026-11-17, measured 4 (reveal 4 then 1) in the realm; the mount measured 5 then 1 once the behaviour blocks joined the guest bundle, the key steps cost nothing more; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 0,
