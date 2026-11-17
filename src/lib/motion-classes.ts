@@ -45,6 +45,9 @@ export const SETTLE_MOTION =
 export const VEIL_MOTION =
   "animate-in fade-in-0 duration-(--duration-state) ease-(--ease-emphasis) motion-reduce:animate-none in-[.reduce-motion]:animate-none";
 
+/* The content a StaleVeil covers: black and white for as long as it is stale, no transition. */
+export const STALE_CONTENT = "grayscale";
+
 /* Every pressable dips the same amount. */
 export const PRESS_DIP = "active:scale-[0.97]";
 

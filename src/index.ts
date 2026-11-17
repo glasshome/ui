@@ -83,6 +83,7 @@ export {
   SCRIM_MOTION,
   SETTLE_MOTION,
   STAGGER,
+  STALE_CONTENT,
 } from "./lib/motion-classes.js";
 export { createHold, HOLD_GRACE_MS, HOLD_MS, spendLongPress } from "./lib/hold.js";
 export type { Hold, HoldOptions, HoldPress } from "./lib/hold.js";

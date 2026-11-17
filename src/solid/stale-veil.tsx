@@ -9,7 +9,7 @@ const StaleVeil: Component<{ shown: boolean; class?: string }> = (props) => (
       data-slot="stale-veil"
       aria-hidden="true"
       class={cn(
-        "bg-background/20 pointer-events-none absolute inset-0 rounded-[inherit]",
+        "bg-background/40 pointer-events-none absolute inset-0 rounded-[inherit]",
         VEIL_MOTION,
         props.class,
       )}
