@@ -25,6 +25,7 @@ import {
   MODAL_TITLE,
   MODAL_WIDTH,
   type ModalDismissProps,
+  ModalCover,
   ModalScrollLock,
   type ModalSize,
 } from "./dialog-parts.js";
@@ -80,6 +81,7 @@ const AlertDialogContent: ParentComponent<AlertDialogContentProps> = (props) => 
   return (
     <AlertDialogPrimitive.Portal mount={usePortalMount()}>
       <ModalScrollLock />
+      <ModalCover panel={panel} open={context.isOpen} />
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Content
         ref={(el: HTMLElement) => {

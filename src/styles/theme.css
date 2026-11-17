@@ -334,6 +334,11 @@ html[data-motion="live"] [data-motion-reader] {
   --motion-play: running;
 }
 
+[data-page][data-covered] [data-motion-reader] {
+  --motion-ambient: 0;
+  --motion-play: paused;
+}
+
 .dark {
   --background: oklch(0.12 0.01 250);
   --foreground: oklch(0.9551 0 0);

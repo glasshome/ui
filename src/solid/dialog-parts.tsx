@@ -6,6 +6,7 @@ import {
   type Component,
   type ComponentProps,
   createContext,
+  createEffect,
   createSignal,
   createUniqueId,
   type JSX,
@@ -22,6 +23,7 @@ import { busyProps } from "../lib/busy.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { ANCHORED_MOTION, MODAL_MOTION, SCRIM_MOTION } from "../lib/motion-classes.js";
 import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
+import { coverOnceOpen } from "../lib/page-cover.js";
 import { cn } from "../lib/utils.js";
 import { acquireScrollLock, releaseScrollLock } from "./bottom-sheet/scroll-lock.js";
 import { SectionIcon } from "./section-card.js";
@@ -271,6 +273,18 @@ export function createModalDismiss(slot: string): ParentComponent<ModalDismissPr
 export const ModalScrollLock: Component = () => {
   onMount(acquireScrollLock);
   onCleanup(releaseScrollLock);
+  return null;
+};
+
+/** Renderless, inside the modal's portal: the panel covers the page from the end of its open animation until the portal leaves. */
+export const ModalCover: Component<{
+  panel: Accessor<Element | undefined>;
+  open: Accessor<boolean>;
+}> = (props) => {
+  createEffect(() => {
+    const panel = props.panel();
+    if (panel) onCleanup(coverOnceOpen(panel, props.open));
+  });
   return null;
 };
 

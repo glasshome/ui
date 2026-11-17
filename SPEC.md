@@ -302,6 +302,10 @@ Motion is one system, not per-component flair. Four rules, all held by
    stills. A mode indicator is not decoration: it may loop for as long
    as its mode is on, provided the mode itself is bounded (dash leaves edit mode
    after three idle minutes). `.glass-edge-orbit` is that rim.
+   An open modal pauses all of it under itself: once its open animation ends,
+   `coverPage()` sets `data-covered` on the app's `[data-page]` root (never
+   `html`), and a sealed widget's modal reaches it through the realm. An app
+   without a `[data-page]` root gets no pause.
 
 `HOLD_MOTION`: hold progress. A fill grows out of the touch while held, dissolves once the hold fires, and drains back faster if let go early (holding the dock to change modes).
 

@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@solidjs/testing-library";
 import { createSignal, Show } from "solid-js";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { cdp, commands, page, userEvent } from "vitest/browser";
 import {
   AlertDialog,
@@ -325,21 +325,28 @@ describe("one page-scroll lock", () => {
   it("holds the dock's mode rim still while a dialog covers the page", async () => {
     const [open, setOpen] = createSignal(false);
     const two = ["a", "b"].map((id) => ({ id, icon: <span />, label: id, onClick: () => {} }));
-    const { container } = render(() => (
-      <>
-        <Dock items={two} glow />
-        <Dialog open={open()} onOpenChange={setOpen}>
-          <DialogContent ariaLabel="Add widget">library</DialogContent>
-        </Dialog>
-      </>
-    ));
+    const page = document.createElement("div");
+    page.setAttribute("data-page", "");
+    document.body.append(page);
+    onTestFinished(() => page.remove());
+    const { container } = render(
+      () => (
+        <>
+          <Dock items={two} glow />
+          <Dialog open={open()} onOpenChange={setOpen}>
+            <DialogContent ariaLabel="Add widget">library</DialogContent>
+          </Dialog>
+        </>
+      ),
+      { container: page },
+    );
     const orbit = container.querySelector('[data-slot="dock-glow"] > div');
     if (!orbit) throw new Error("no orbit");
     const playState = () => orbit.getAnimations().map((a) => a.playState);
 
     expect(playState()).toEqual(["running"]);
     setOpen(true);
-    expect(playState()).toEqual(["paused"]);
+    await vi.waitFor(() => expect(playState()).toEqual(["paused"]));
     setOpen(false);
     await vi.waitFor(() => expect(playState()).toEqual(["running"]));
   });
@@ -937,6 +944,144 @@ describe("Dialog scrim", () => {
 
   it("only dims the page on a touch screen, where a blur over moving widgets re-blurs every frame", async () => {
     expect(await scrimFilter("finger")).toBe("none");
+  });
+});
+
+describe("Page cover", () => {
+  const livePage = () => {
+    const root = document.createElement("div");
+    root.setAttribute("data-page", "");
+    const reader = document.createElement("div");
+    reader.setAttribute("data-motion-reader", "");
+    root.append(reader);
+    document.body.append(root);
+    document.documentElement.dataset.motion = "live";
+    onTestFinished(() => {
+      root.remove();
+      delete document.documentElement.dataset.motion;
+    });
+    const ambient = () => getComputedStyle(reader).getPropertyValue("--motion-ambient").trim();
+    // What was still animating at the moment each cover was written or lifted.
+    const writes: { covered: boolean; animating: number }[] = [];
+    const observer = new MutationObserver(() =>
+      writes.push({
+        covered: root.hasAttribute("data-covered"),
+        animating: document.getAnimations().filter((a) => a.playState === "running").length,
+      }),
+    );
+    observer.observe(root, { attributes: true, attributeFilter: ["data-covered"] });
+    onTestFinished(() => observer.disconnect());
+    return { root, ambient, writes };
+  };
+
+  it("an open dialog pauses the page's ambient loops once its open animation ends, and resumes them when it closes", async () => {
+    const { root, ambient, writes } = livePage();
+    const htmlBefore = document.documentElement.getAttributeNames();
+    const [open, setOpen] = createSignal(false);
+    render(() => (
+      <Dialog open={open()} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogTitle>Title</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    ));
+    expect(ambient()).toBe("1");
+    setOpen(true);
+    await vi.waitFor(() => expect(root.hasAttribute("data-covered")).toBe(true));
+    expect(writes).toEqual([{ covered: true, animating: 0 }]);
+    expect(ambient()).toBe("0");
+    expect(document.documentElement.getAttributeNames()).toEqual(htmlBefore);
+    setOpen(false);
+    await vi.waitFor(() => expect(root.hasAttribute("data-covered")).toBe(false));
+    expect(writes).toEqual([
+      { covered: true, animating: 0 },
+      { covered: false, animating: 0 },
+    ]);
+    expect(ambient()).toBe("1");
+  });
+
+  it("a dialog closed during its open animation never covers the page", async () => {
+    const { writes } = livePage();
+    const [open, setOpen] = createSignal(true);
+    render(() => (
+      <Dialog open={open()} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogTitle>Title</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    ));
+    const opening = panel().getAnimations();
+    expect(opening.length).toBeGreaterThan(0);
+    setOpen(false);
+    await vi.waitFor(() =>
+      expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull(),
+    );
+    expect(writes).toEqual([]);
+  });
+
+  it("a bottom sheet covers the page from the end of its open animation until it closes", async () => {
+    const { root, writes } = livePage();
+    const [open, setOpen] = createSignal(false);
+    render(() => (
+      <BottomSheet open={open()} onOpenChange={setOpen}>
+        <BottomSheetContent ariaLabel="Filters">rows</BottomSheetContent>
+      </BottomSheet>
+    ));
+    setOpen(true);
+    await vi.waitFor(() => expect(root.hasAttribute("data-covered")).toBe(true));
+    expect(writes).toEqual([{ covered: true, animating: 0 }]);
+    setOpen(false);
+    await vi.waitFor(() => expect(root.hasAttribute("data-covered")).toBe(false));
+    expect(writes).toEqual([
+      { covered: true, animating: 0 },
+      { covered: false, animating: 0 },
+    ]);
+  });
+
+  it("a bottom sheet closed while it opens never covers the page", async () => {
+    const { writes } = livePage();
+    const [open, setOpen] = createSignal(false);
+    render(() => (
+      <BottomSheet open={open()} onOpenChange={setOpen}>
+        <BottomSheetContent ariaLabel="Filters">rows</BottomSheetContent>
+      </BottomSheet>
+    ));
+    setOpen(true);
+    await vi.waitFor(() => expect(document.getAnimations().length).toBeGreaterThan(0));
+    setOpen(false);
+    await Promise.allSettled(document.getAnimations().map((animation) => animation.finished));
+    await vi.waitFor(() =>
+      expect(document.querySelector("[data-sheet-content]")?.getAttribute("data-state")).toBe(
+        "closed",
+      ),
+    );
+    expect(writes).toEqual([]);
+  });
+
+  it("two open modals keep the page covered until the last one closes", async () => {
+    const { root } = livePage();
+    const [first, setFirst] = createSignal(true);
+    const [second, setSecond] = createSignal(true);
+    render(() => (
+      <>
+        <Dialog open={first()} onOpenChange={setFirst}>
+          <DialogContent>
+            <DialogTitle>One</DialogTitle>
+          </DialogContent>
+        </Dialog>
+        <AlertDialog open={second()} onOpenChange={setSecond}>
+          <AlertDialogContent>
+            <AlertDialogTitle>Two</AlertDialogTitle>
+          </AlertDialogContent>
+        </AlertDialog>
+      </>
+    ));
+    await vi.waitFor(() => expect(document.querySelectorAll("[data-covering]").length).toBe(2));
+    setFirst(false);
+    await vi.waitFor(() => expect(document.querySelectorAll("[data-covering]").length).toBe(1));
+    expect(root.hasAttribute("data-covered")).toBe(true);
+    setSecond(false);
+    await vi.waitFor(() => expect(root.hasAttribute("data-covered")).toBe(false));
   });
 });
 

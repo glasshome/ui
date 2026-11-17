@@ -9,6 +9,7 @@ export { copyImage, copyText } from "../lib/clipboard.js";
 export { createHold, HOLD_GRACE_MS, HOLD_MS, spendLongPress } from "../lib/hold.js";
 export type { Hold, HoldOptions, HoldPress } from "../lib/hold.js";
 export { RISE_MOTION, SETTLE_MOTION, TRAVEL_MOTION } from "../lib/motion-classes.js";
+export { COVERING_ATTR, coverPage } from "../lib/page-cover.js";
 export { OVERLAY_SURFACE } from "../lib/overlay-classes.js";
 // Section tokens re-exported from the Solid entry for convenience.
 export {
