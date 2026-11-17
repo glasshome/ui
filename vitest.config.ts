@@ -14,7 +14,7 @@ const READS_FILES_NO_DOM = [
   "tests/harness/contracts-covered.test.ts",
   "tests/behavior/server-import.test.ts",
   "tests/drive/{trace,budget}.test.ts",
-  "tests/lib/{material,glass-tone,utils}.test.ts",
+  "tests/lib/{material,glass-tone,utils,anchor-placement}.test.ts",
   "tests/bottom-sheet/{state-machine,velocity}.test.ts",
   "tests/solid/{dock-paging,spotlight-geometry}.test.ts",
 ];
