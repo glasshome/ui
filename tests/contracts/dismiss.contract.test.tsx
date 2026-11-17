@@ -1,6 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, describe, expect, it, onTestFinished } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { commands } from "vitest/browser";
 import { findAll, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
@@ -15,8 +15,12 @@ import {
   BottomSheetContent,
   BottomSheetPortal,
 } from "../../src/solid";
+import { useFakeTime } from "../../src/testing";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
+
+const TIMERS = ["setTimeout", "clearTimeout"] as const;
+const LISTEN_DELAY_MS = 1;
 
 afterEach(() => {
   cleanup();
@@ -100,8 +104,10 @@ describe("dismiss contract", () => {
   });
 
   it("DI2 a press inside, on the trigger, or inside a layer opened above leaves it open", async () => {
+    useFakeTime({ toFake: TIMERS });
     const { dialogs, text, run } = await mount("outside");
     await run(press("Open Layer"));
+    await vi.advanceTimersByTimeAsync(LISTEN_DELAY_MS);
     await input.press(findAll([document], { role: "textbox", name: "Layer field" })[0] as Element);
     await input.press(findAll([document], { role: "button", name: "Open Layer" })[0] as Element);
     await settle();
@@ -113,7 +119,7 @@ describe("dismiss contract", () => {
     const lower = stacked({ kind: "popover", top: 20 });
     const upper = stacked({ kind: "popover", top: 160, dismiss: false });
     await settle();
-    await new Promise((done) => setTimeout(done, 20));
+    await vi.advanceTimersByTimeAsync(LISTEN_DELAY_MS);
     await input.press(upper.button);
     await settle();
     expect(lower.reasons).toEqual([]);
@@ -162,9 +168,10 @@ describe("dismiss contract", () => {
   });
 
   it("DI6 the press that opened the layer leaves it open", async () => {
+    useFakeTime({ toFake: TIMERS });
     const { dialogs, text, run } = await mount("escape");
     await run(press("Open Layer"));
-    await new Promise((done) => setTimeout(done, 50));
+    await vi.advanceTimersByTimeAsync(LISTEN_DELAY_MS);
     await settle();
     expect(dialogs()).toHaveLength(1);
     expect(text("Layer dismissals")).toBe("0");
@@ -255,6 +262,7 @@ describe("dismiss contract", () => {
   });
 
   it("DI12 a press outside a popover and the tooltip over it closes the popover and leaves the tooltip", async () => {
+    useFakeTime({ toFake: TIMERS });
     const popover = stacked({ kind: "popover", top: 20 });
     const tooltip = stacked({ kind: "tooltip", top: 160, dismiss: false });
     const elsewhere = document.body.appendChild(document.createElement("button"));
@@ -262,7 +270,7 @@ describe("dismiss contract", () => {
     elsewhere.textContent = "Elsewhere";
     elsewhere.style.cssText = "position:fixed;left:400px;top:20px";
     await settle();
-    await new Promise((done) => setTimeout(done, 20));
+    await vi.advanceTimersByTimeAsync(LISTEN_DELAY_MS);
     await input.press(tooltip.button);
     await settle();
     expect(popover.reasons).toEqual([]);
