@@ -1,4 +1,4 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { CDPSession, Page } from "playwright";
 import type { IndexedComponent, Step, Target } from "../harness/types";
@@ -22,7 +22,16 @@ export const oneOf = <T extends string>(value: string, allowed: readonly T[], fl
 };
 
 /** Read from disk so a bad name fails before any server or browser starts. */
-export const componentSlugs = (pkg = PKG) => readdirSync(join(pkg, "dev/components")).toSorted();
+export const componentSlugs = (pkg = PKG) =>
+  ["dev/components", "dev/blocks"]
+    .flatMap((root) =>
+      existsSync(join(pkg, root))
+        ? readdirSync(join(pkg, root), { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => entry.name)
+        : [],
+    )
+    .toSorted();
 
 export function requireSlug(name: string, pkg = PKG): string {
   const slugs = componentSlugs(pkg);

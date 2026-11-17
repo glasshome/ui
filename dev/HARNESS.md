@@ -13,6 +13,16 @@ Each component that has a folder under `dev/components/<slug>/` can be seen, dri
 
 Every new scenario needs a budget: a missing scenario or step is an overrun.
 
+## Blocks
+
+A behaviour block under `src/lib/behavior/<name>.ts` is a subject like a component. Its folder is `dev/blocks/<name>/`, with the same three files, and `defineScenarios({ component: "<name>", kind: "block", scenarios })`. Every consumer above reads it the same way, with three differences:
+
+- A block scenario renders plain elements and the block under test, and imports nothing from `src/solid`: the guest lane bundles the block's source, and a component import would make a second layer stack beside the guest's `@glasshome/ui/solid`. `tests/harness/scenarios.test.tsx` checks both this and that the name matches a file in `src/lib/behavior`.
+- The browser lane renders it beside `BusyPage` (`dev/blocks/busy-page.tsx`, 1,000 elements), so a restyle of the whole document shows as a recalc of 1,000 or more. Step 0 restyles the fixture once, and its budget says so. The guest lane mounts the scenario without the fixture.
+- A block has no gallery page and no export.
+
+`bun gov ops ui list` marks block scenarios with `(block)`.
+
 ## Commands, from the dash root
 
 - `bun gov ops ui list` lists components and scenario ids.

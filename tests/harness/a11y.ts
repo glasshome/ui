@@ -16,14 +16,17 @@ interface Gap {
   item: string;
 }
 
-const GAP_FILES = import.meta.glob<Gap[]>("../../dev/components/*/a11y-gaps.json", {
-  eager: true,
-  import: "default",
-});
+const GAP_FILES = import.meta.glob<Gap[]>(
+  ["../../dev/components/*/a11y-gaps.json", "../../dev/blocks/*/a11y-gaps.json"],
+  { eager: true, import: "default" },
+);
 
 /** Axe rules a scenario is known to break today, each naming its work item. */
 export function knownGaps(folder: string, scenario: string): string[] {
-  const gaps = GAP_FILES[`../../dev/components/${folder}/a11y-gaps.json`] ?? [];
+  const gaps =
+    GAP_FILES[`../../dev/components/${folder}/a11y-gaps.json`] ??
+    GAP_FILES[`../../dev/blocks/${folder}/a11y-gaps.json`] ??
+    [];
   return gaps.filter((g) => g.scenario === scenario).map((g) => g.rule);
 }
 

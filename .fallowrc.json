@@ -5,6 +5,7 @@
     "dev/stage-main.tsx",
     "dev/screens/*.tsx",
     "dev/components/*/scenarios.tsx",
+    "dev/blocks/*/scenarios.tsx",
     "scripts/*.{ts,mjs}"
   ],
   "ignoreDependencies": [

@@ -1,0 +1,46 @@
+{
+  "effect-attribute": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1384,
+          "reason": "owned baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not"
+        },
+        "largestRecalc": {
+          "max": 1107,
+          "reason": "owned baseline 2026-11-17: the mount restyles the 1,000-element page fixture once; a press must not"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 3,
+        "reason": "baseline 2026-11-17"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  }
+}

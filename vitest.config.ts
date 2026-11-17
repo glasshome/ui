@@ -12,6 +12,7 @@ const READS_FILES_NO_DOM = [
   "tests/styles/**",
   "tests/gallery-coverage.test.ts",
   "tests/harness/contracts-covered.test.ts",
+  "tests/behavior/server-import.test.ts",
   "tests/drive/{trace,budget}.test.ts",
   "tests/lib/{material,glass-tone,utils}.test.ts",
   "tests/bottom-sheet/{state-machine,velocity}.test.ts",

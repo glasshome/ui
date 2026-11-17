@@ -24,8 +24,12 @@ export interface Scenario {
   keyboard?: Step[];
 }
 
+export type SubjectKind = "component" | "block";
+
 export interface ComponentScenarios {
   component: string;
+  /** A block is a behaviour primitive under src/lib/behavior; the default is a component. */
+  kind?: SubjectKind;
   scenarios: Scenario[];
 }
 
@@ -41,6 +45,7 @@ export interface IndexedScenario {
 export interface IndexedComponent {
   component: string;
   slug: string;
+  kind: SubjectKind;
   scenarios: IndexedScenario[];
 }
 

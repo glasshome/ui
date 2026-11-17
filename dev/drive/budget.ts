@@ -25,8 +25,11 @@ interface ScenarioBudget {
 export type Budget = Record<string, ScenarioBudget>;
 
 export function readBudget(slug: string): Budget {
-  const file = join(PKG, "dev/components", slug, "budget.json");
-  return existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as Budget) : {};
+  const file = [
+    join(PKG, "dev/components", slug, "budget.json"),
+    join(PKG, "dev/blocks", slug, "budget.json"),
+  ].find(existsSync);
+  return file !== undefined ? (JSON.parse(readFileSync(file, "utf8")) as Budget) : {};
 }
 
 export function checkBudget(report: RunReport, budget: Budget): string[] {

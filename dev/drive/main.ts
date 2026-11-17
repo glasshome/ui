@@ -1,7 +1,7 @@
 // bun run drive <component> <scenario> [--steps keyboard] [--cpu-rate 1] [--width phone|tablet|desktop]
 //                [--theme light|dark] [--out <dir>] [--json] [--build <dir>] [--against <git-ref> [--check]]
 // bun run drive --all                     every scenario of every component
-// --check without --against               fails on any count over dev/components/<slug>/budget.json
+// --check without --against               fails on any count over dev/components/<slug>/budget.json or dev/blocks/<slug>/budget.json
 // bun run preview ...                     see preview.ts
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
