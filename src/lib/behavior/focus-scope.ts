@@ -93,16 +93,28 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
       const mine = layers.findIndex((layer) => layer.element() === container);
       return mine >= 0 && layers.slice(mine + 1).some((above) => within(above.element(), node));
     };
-    const onFocusOut = (event: FocusEvent) => {
-      const next = event.relatedTarget;
-      if (next instanceof Node && (container.contains(next) || isAbove(next))) return;
-      if (next === null && !tab) {
+    const recover = (pressed: { shift: boolean } | null) => {
+      if (!pressed) {
         focusWithoutTracking(container);
         return;
       }
       const candidates = Array.from(container.querySelectorAll<HTMLElement>(CANDIDATES));
-      if (tab?.shift) candidates.reverse();
+      if (pressed.shift) candidates.reverse();
       if (!firstThatTakesFocus(candidates)) focusWithoutTracking(container);
+    };
+    const onFocusOut = (event: FocusEvent) => {
+      const next = event.relatedTarget;
+      if (next instanceof Node && (container.contains(next) || isAbove(next))) return;
+      if (next !== null) {
+        recover(tab);
+        return;
+      }
+      // Chromium fires focusout while removing the focused node; refocusing then strands keys on a detached node.
+      const pressed = tab;
+      queueMicrotask(() => {
+        const current = activeOf(container);
+        if (container.isConnected && !(current && container.contains(current))) recover(pressed);
+      });
     };
     if (trapped) {
       container.addEventListener("keydown", onKeyDown);
