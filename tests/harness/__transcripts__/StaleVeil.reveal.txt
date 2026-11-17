@@ -1,0 +1,3 @@
+document
+button, Hallway On Brightness 80%
+button, Stale, not pressed
