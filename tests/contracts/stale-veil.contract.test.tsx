@@ -81,10 +81,11 @@ describe("StaleVeil contract", () => {
   });
 
   it("SV6 the content is black and white at once and the cover is a 40% veil", async () => {
-    const { scope } = await mountScenario("StaleVeil", "over-a-widget");
-    const button = tileButton(scope());
-    expect(getComputedStyle(button).filter).toBe("grayscale(1)");
-    expect(parseFloat(getComputedStyle(button).transitionDuration)).toBe(0);
+    await mountScenario("StaleVeil", "over-a-lit-widget");
+    const card = (veil() as HTMLElement).parentElement as HTMLElement;
+    expect(getComputedStyle(card).filter).toBe("grayscale(1)");
+    const { transitionProperty } = getComputedStyle(card);
+    expect(transitionProperty === "all" || transitionProperty.includes("filter")).toBe(false);
     const background = getComputedStyle(veil() as HTMLElement).backgroundColor;
     expect(background).toMatch(/\/ 0\.4\)$|, 0\.4\)$/);
   });
