@@ -44,16 +44,20 @@ describe("BottomSheet contract", () => {
   });
 
   it("B3 Done closes the sheet", async () => {
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
     const { sheets, run } = await mount("close");
     await run(OPEN, { press: { role: "button", name: "Done" } });
-    await vi.waitFor(() => expect(sheets()).toHaveLength(0));
+    await vi.advanceTimersByTimeAsync(MOTION_EXIT_MS.sheet);
+    expect(sheets()).toHaveLength(0);
   });
 
   it("B4 Escape closes the sheet and refocuses the trigger", async () => {
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
     const { trigger, sheets, run } = await mount("escape");
     await run(OPEN, { key: "Escape" });
-    await vi.waitFor(() => expect(sheets()).toHaveLength(0));
-    await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
+    await vi.advanceTimersByTimeAsync(MOTION_EXIT_MS.sheet);
+    expect(sheets()).toHaveLength(0);
+    expect(focusedElement()).toBe(trigger());
   });
 
   it("B5 a select inside opens its list and leaves the sheet open", async () => {
@@ -64,16 +68,22 @@ describe("BottomSheet contract", () => {
   });
 
   it("B6 Escape in that list closes the list and leaves the sheet open", async () => {
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
     const { sheets, listboxes, run } = await mount("nested-select");
     await run(OPEN, SELECT, { key: "Escape" });
-    await vi.waitFor(() => expect(listboxes()).toHaveLength(0));
+    await vi.advanceTimersByTimeAsync(MOTION_EXIT_MS.sheet);
+    expect(listboxes()).toHaveLength(0);
     expect(sheets()).toHaveLength(1);
   });
 
   it("B7 a press beside the open sheet closes it", async () => {
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
     const { sheets, run } = await mount("outside-press");
-    await run(OPEN, { pressAt: { x: 8, y: 8 } });
-    await vi.waitFor(() => expect(sheets()).toHaveLength(0));
+    await run(OPEN);
+    await vi.advanceTimersByTimeAsync(1);
+    await run({ pressAt: { x: 8, y: 8 } });
+    await vi.advanceTimersByTimeAsync(MOTION_EXIT_MS.sheet);
+    expect(sheets()).toHaveLength(0);
   });
 
   it("B9 a drag that ends where it began leaves the sheet open at once, grabbable and dismissable", async () => {
