@@ -42,6 +42,7 @@ import { EASE, TRANSITION_MS } from "./constants.js";
 import { attachDrag } from "./drag-controller.js";
 import { createDismiss } from "../../lib/behavior/dismiss.js";
 import { createFocusScope, type InitialFocus } from "../../lib/behavior/focus-scope.js";
+import { createHideOutside } from "../../lib/behavior/hide-outside.js";
 import { registerLayer } from "../../lib/behavior/layer-stack.js";
 import { watchKeyboard } from "./keyboard.js";
 import { assertTransition, type SheetState } from "./state-machine.js";
@@ -273,6 +274,8 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     escape: ctx.dismissible,
     dismiss: () => ctx.setOpen(false),
   });
+
+  createHideOutside({ layer: handle, active: ctx.open });
 
   createFocusScope({
     container: ctx.contentRef,

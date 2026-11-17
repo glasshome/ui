@@ -1,0 +1,5 @@
+document
+button, Open Outer | dialog, Outer, modal | button, Open Inner
+dialog, Inner, modal | button, Close Inner
+dialog, Outer, modal | button, Open Inner
+button, Close Outer | button, Open Outer
