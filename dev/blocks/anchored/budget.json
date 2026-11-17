@@ -127,8 +127,8 @@
           "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
         },
         "layouts": {
-          "max": 2,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; one placement layout per scroll frame, and the frames a scroll spans move with the host rate: dash CI at 4.8x measured 3; predates Phase 1 Next step 5"
         }
       }
     },
