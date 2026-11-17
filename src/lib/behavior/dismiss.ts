@@ -113,7 +113,7 @@ function createEscape(options: DismissOptions) {
             (entry) =>
               entry.kind !== "tooltip" &&
               takesKeys(entry) &&
-              (entry.escape() || entry.kind === "modal"),
+              (entry.escape() || (entry.kind === "modal" && !entry.readsOwnEscape)),
           );
         if (!claims) return;
         event.preventDefault();

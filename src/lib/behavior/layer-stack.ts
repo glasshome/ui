@@ -9,6 +9,7 @@ export interface LayerOptions {
   open: Accessor<boolean>;
   kind: LayerKind;
   escape: Accessor<boolean>;
+  readsOwnEscape?: boolean;
   dismiss?: () => void;
   trigger?: Accessor<Element | undefined>;
   topLayer?: TopLayer;
@@ -17,6 +18,7 @@ export interface LayerOptions {
 export interface Layer {
   readonly id: number;
   readonly kind: LayerKind;
+  readonly readsOwnEscape: boolean;
   element(): HTMLElement | undefined;
   trigger(): Element | undefined;
   escape(): boolean;
@@ -78,6 +80,7 @@ export function registerLayer(options: LayerOptions): LayerHandle {
       const entry: Layer = {
         id: ++nextId,
         kind: options.kind,
+        readsOwnEscape: options.readsOwnEscape ?? false,
         element: options.element,
         trigger: () => options.trigger?.(),
         escape: options.escape,

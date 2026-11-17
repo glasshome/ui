@@ -20,4 +20,4 @@ Each line is one browser test in `tests/contracts/dismiss.contract.test.tsx`, na
 | DI14 | Escape with a tooltip over a modal | the tooltip closes, and the modal closes on the same key: a tooltip never consumes an Escape a layer below needs |
 | DI15 | Escape with a layer opened above a tooltip | only that layer closes; the tooltip stays |
 | DI16 | Escape while `isComposing`, a tooltip open | it stays open |
-| DI17 | Escape in a modal whose `escape()` is false | it stays open and the key is consumed (prevented, stopped): a modal never lets Escape through to the page |
+| DI17 | Escape in a modal whose `escape()` is false | it stays open and the key is consumed (prevented, stopped): a modal never lets Escape through to the page. A layer whose library reads its own Escape (`readsOwnEscape`, the Kobalte dialogs) is left alone |

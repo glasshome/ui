@@ -62,6 +62,7 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
           ? "menu"
           : "popover",
     escape: () => false,
+    readsOwnEscape: true,
     dismiss: options.dismiss,
     trigger: options.trigger,
   });
