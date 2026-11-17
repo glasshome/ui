@@ -16,6 +16,7 @@ import {
 } from "solid-js";
 import { Dynamic, Portal } from "solid-js/web";
 import { usePortalMount } from "../portal-mount.js";
+import { createControllableSignal } from "../../lib/behavior/controllable.js";
 import { Z } from "../../lib/layers.js";
 import { OVERLAY_SURFACE_OPAQUE } from "../../lib/overlay-classes.js";
 import { coverOnceOpen } from "../../lib/page-cover.js";
@@ -66,17 +67,13 @@ interface BottomSheetRootProps {
 }
 
 const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
-  const [uncontrolled, setUncontrolled] = createSignal(props.defaultOpen ?? false);
+  const [open, setOpen] = createControllableSignal<boolean>({
+    value: () => props.open,
+    defaultValue: () => props.defaultOpen ?? false,
+    onChange: (next) => props.onOpenChange?.(next),
+  });
   const [state, setStateRaw] = createSignal<SheetState>("closed");
   const [contentRef, setContentRef] = createSignal<HTMLDivElement | undefined>(undefined);
-
-  const isControlled = () => props.open !== undefined;
-  const open = (): boolean => (isControlled() ? props.open === true : uncontrolled());
-
-  const setOpen = (next: boolean) => {
-    if (!isControlled()) setUncontrolled(next);
-    props.onOpenChange?.(next);
-  };
 
   const setState = (next: SheetState) => {
     const current = state();
