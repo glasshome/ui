@@ -1,4 +1,5 @@
-import { type Component, type ComponentProps, createSignal, splitProps } from "solid-js";
+import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { CONTROL_ON, FIELD_CHROME, FOCUS_RING } from "../lib/input-classes.js";
 import { THUMB_CLASS } from "../lib/thumb-classes.js";
 import { cn } from "../lib/utils.js";
@@ -20,8 +21,11 @@ const Switch: Component<SwitchProps> = (props) => {
     "name",
     "busy",
   ]);
-  const [uncontrolled, setUncontrolled] = createSignal(props.defaultChecked ?? false);
-  const checked = () => local.checked ?? uncontrolled();
+  const [checked, setChecked] = createControllableSignal<boolean>({
+    value: () => local.checked,
+    defaultValue: () => props.defaultChecked ?? false,
+    onChange: (next) => local.onChange?.(next),
+  });
 
   return (
     <button
@@ -44,9 +48,7 @@ const Switch: Component<SwitchProps> = (props) => {
       )}
       onClick={() => {
         if (local.busy) return;
-        const next = !checked();
-        setUncontrolled(next);
-        local.onChange?.(next);
+        setChecked(!checked());
       }}
     >
       <span

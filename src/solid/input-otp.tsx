@@ -8,6 +8,7 @@ import {
   splitProps,
   useContext,
 } from "solid-js";
+import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { CONTROL_H, FOCUS_RING, INPUT_SURFACE } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -96,7 +97,7 @@ const InputOTP: ParentComponent<
       <div
         data-slot="input-otp"
         class={cn("flex items-center gap-2 has-[:disabled]:opacity-50", local.containerClass)}
-        onClick={() => inputRef.focus()}
+        onClick={() => focusWithoutTracking(inputRef, { preventScroll: false })}
         {...rest}
       >
         <input

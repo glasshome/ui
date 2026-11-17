@@ -2,7 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { playwright } from "@vitest/browser-playwright";
 import solid from "vite-plugin-solid";
 import { defineConfig } from "vitest/config";
-import { emulateMedia, mouse, pointer, touch } from "./tests/commands";
+import { frameAxTree, compose, emulateMedia, mouse, pointer, touch, wheel } from "./tests/commands";
 
 // Forked workers inherit it, so a direct run matches the gate; bun test is UTC already.
 process.env.TZ = "UTC";
@@ -12,8 +12,9 @@ const READS_FILES_NO_DOM = [
   "tests/styles/**",
   "tests/gallery-coverage.test.ts",
   "tests/harness/contracts-covered.test.ts",
+  "tests/behavior/server-import.test.ts",
   "tests/drive/{trace,budget}.test.ts",
-  "tests/lib/{material,glass-tone,utils}.test.ts",
+  "tests/lib/{material,glass-tone,utils,anchor-placement}.test.ts",
   "tests/bottom-sheet/{state-machine,velocity}.test.ts",
   "tests/solid/{dock-paging,spotlight-geometry}.test.ts",
 ];
@@ -34,8 +35,14 @@ const BROWSER = {
     contextOptions: { permissions: ["clipboard-read", "clipboard-write"] },
   }),
   instances: [{ browser: "chromium" as const }],
-  commands: { emulateMedia, mouse, pointer, touch },
+  commands: { axTree: frameAxTree, compose, emulateMedia, mouse, pointer, touch, wheel },
 };
+
+// Engines that differ on one CSS behaviour; Chromium runs these files too.
+const WEBKIT_FILES = [
+  "tests/contracts/scroll-contain.contract.test.tsx",
+  "tests/contracts/anchored.contract.test.tsx",
+];
 
 export default defineConfig({
   plugins: [solid({ dev: false, hot: false }), tailwindcss()],
@@ -95,6 +102,21 @@ export default defineConfig({
           include: ["tests/**/*.test.{ts,tsx}"],
           exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM, VISUAL, DRIVE],
           browser: BROWSER,
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "webkit",
+          setupFiles: ["./tests/setup.ts"],
+          include: WEBKIT_FILES,
+          browser: {
+            ...BROWSER,
+            instances: [{ browser: "webkit" as const }],
+            // WebKit has no clipboard permission to grant.
+            // test-change-ok same 5 s as the shared provider, restated since this one replaces it
+            provider: playwright({ actionTimeout: 5000 }),
+          },
         },
       },
       {

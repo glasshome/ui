@@ -9,6 +9,8 @@ export type Step =
   | { press: Target }
   | { touch: Target }
   | { hover: Target }
+  /** A mouse press at a point of the viewport, for what no role names: the page behind a modal. */
+  | { pressAt: { x: number; y: number } }
   | { key: string }
   | { type: string };
 
@@ -24,8 +26,12 @@ export interface Scenario {
   keyboard?: Step[];
 }
 
+export type SubjectKind = "component" | "block";
+
 export interface ComponentScenarios {
   component: string;
+  /** A block is a behaviour primitive under src/lib/behavior; the default is a component. */
+  kind?: SubjectKind;
   scenarios: Scenario[];
 }
 
@@ -41,6 +47,7 @@ export interface IndexedScenario {
 export interface IndexedComponent {
   component: string;
   slug: string;
+  kind: SubjectKind;
   scenarios: IndexedScenario[];
 }
 

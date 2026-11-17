@@ -149,10 +149,7 @@ describe("Select contract", () => {
     const escaped = await mount("in-sheet");
     await escaped.run({ press: TRIGGER }, { key: "Escape" });
     await escaped.closed();
-    await expectGap(
-      () => expect(sheetOpen(escaped.scope), "sheet open after Escape").toHaveLength(1),
-      "sheet open after Escape: expected [] to have a length of 1 but got +0",
-    );
+    expect(sheetOpen(escaped.scope), "sheet open after Escape").toHaveLength(1);
   });
 
   it("S13 inside a closed shadow root the list opens and picks in the same root", async () => {

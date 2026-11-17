@@ -9,6 +9,7 @@ import {
   type ParentComponent,
   Show,
 } from "solid-js";
+import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { MENU_LABEL } from "../lib/menu-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
 import { createIsMobile } from "../lib/use-is-mobile.js";
@@ -627,7 +628,7 @@ export function EntitySelector(props: EntitySelectorProps) {
             e.preventDefault();
             // preventScroll: the panel is portalled at (0,0) until the popper places it,
             // so a plain focus() scrolls the page to the top.
-            inputRef?.focus({ preventScroll: true });
+            focusWithoutTracking(inputRef);
           }}
           onInteractOutside={() => closePicker()}
         >

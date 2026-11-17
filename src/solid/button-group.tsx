@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "cva";
 import { type Component, type ComponentProps, splitProps, type ValidComponent } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { cn } from "../lib/utils.js";
 import { Separator } from "./separator.js";
 
@@ -35,10 +35,10 @@ const ButtonGroup: Component<ComponentProps<"div"> & VariantProps<typeof buttonG
 
 const ButtonGroupText: Component<ComponentProps<"div"> & { as?: ValidComponent }> = (props) => {
   const [local, rest] = splitProps(props, ["class", "as"] as const);
-  const Comp = () => local.as || "div";
   return (
-    <Dynamic
-      component={Comp()}
+    <Polymorphic
+      defaultAs="div"
+      as={local.as}
       class={cn(
         "glass text-muted-foreground flex items-center gap-2 rounded-md px-4 text-sm font-medium [--glass-edge:var(--border)] [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
         local.class,

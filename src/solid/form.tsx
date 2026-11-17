@@ -16,7 +16,7 @@ import {
   useContext,
   type ValidComponent,
 } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { cn } from "../lib/utils.js";
 import { Field, FieldDescription, FieldError, FieldLabel } from "./field.js";
 import { Input } from "./input.js";
@@ -174,8 +174,9 @@ const FormControl = <T extends ValidComponent = typeof Input>(
     <Show
       when={wrapped()}
       fallback={
-        <Dynamic
-          component={local.as ?? Input}
+        <Polymorphic
+          defaultAs={Input}
+          as={local.as}
           id={formItemId()}
           aria-describedby={describedBy()}
           aria-invalid={error() ? true : undefined}

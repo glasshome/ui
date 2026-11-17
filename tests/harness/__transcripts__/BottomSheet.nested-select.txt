@@ -1,0 +1,4 @@
+document
+button, Open sheet, not expanded, has popup dialog | dialog, Sheet, modal
+listbox, Fruit, orientated vertically | option, Apple, not selected, not disabled, position 1, set size 4 | listbox, Fruit, orientated vertically | option, Banana, not selected, not disabled, position 2, set size 4
+dialog, Sheet, modal | button, Fruit Pick one, not expanded, has popup listbox

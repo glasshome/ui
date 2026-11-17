@@ -1,4 +1,5 @@
 import { Show } from "solid-js";
+import { BusyPage } from "../blocks/busy-page";
 import { MATERIAL_PRESETS, type MaterialPresetId, resolveMaterial } from "../../src/tokens";
 import { findComponent, findScenario } from "./registry";
 import { Within } from "./Within";
@@ -13,6 +14,7 @@ export function ScenarioStage(props: {
 }) {
   const scenario = () => findScenario(props.component, props.id);
   const name = () => findComponent(props.component)?.component ?? props.component;
+  const isBlock = () => findComponent(props.component)?.kind === "block";
   const style = () => {
     const preset = props.material;
     if (!preset || !isPreset(preset)) return {};
@@ -26,7 +28,11 @@ export function ScenarioStage(props: {
     >
       {(s) => (
         <div data-scenario={`${name()}/${s.id}`} class="p-6" style={style()}>
-          <Within mode={s.within ?? "page"}>{s.render()}</Within>
+          <Within mode={s.within ?? "page"}>
+            <Show when={isBlock()} fallback={s.render()}>
+              <BusyPage>{s.render()}</BusyPage>
+            </Show>
+          </Within>
         </div>
       )}
     </Show>

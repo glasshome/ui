@@ -1,5 +1,5 @@
 import { type Component, type ComponentProps, splitProps, type ValidComponent } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { BADGE_DEFAULT_TONE, BADGE_NEUTRAL_KNOBS } from "../lib/badge-tone.js";
 import { isNeutralTone } from "../lib/glass-tone.js";
 import { CHIP } from "../lib/pill-classes.js";
@@ -15,18 +15,18 @@ type BadgeProps = ComponentProps<"span"> &
 
 const Badge: Component<BadgeProps> = (props) => {
   const [local, others] = splitProps(props, ["class", "as", "tone", "children", "style"]);
-  const Comp = () => local.as || "span";
   const c = () => local.tone ?? BADGE_DEFAULT_TONE;
   return (
-    <Dynamic
-      component={Comp()}
+    <Polymorphic
+      defaultAs="span"
+      as={local.as}
       data-slot="badge"
       class={cn(CHIP, isNeutralTone(c()) && BADGE_NEUTRAL_KNOBS, local.class)}
       style={{ "--glass-tone": c(), ...(local.style as Record<string, string>) }}
       {...others}
     >
       {local.children}
-    </Dynamic>
+    </Polymorphic>
   );
 };
 

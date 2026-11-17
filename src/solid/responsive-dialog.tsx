@@ -3,7 +3,6 @@ import {
   type Component,
   type ComponentProps,
   createContext,
-  createSignal,
   type JSX,
   type ParentComponent,
   Show,
@@ -12,6 +11,7 @@ import {
   type ValidComponent,
 } from "solid-js";
 import type { buttonVariants } from "../lib/button-variants.js";
+import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createIsMobile } from "../lib/use-is-mobile.js";
 import {
   BottomSheet,
@@ -51,15 +51,13 @@ interface ResponsiveDialogProps {
 /** Centred kobalte dialog from `sm` up, drag-to-dismiss bottom sheet below it.
  *  Both branches render the same parts, so a call site never branches. */
 const ResponsiveDialog: ParentComponent<ResponsiveDialogProps> = (props) => {
-  const [uncontrolledOpen, setUncontrolledOpen] = createSignal(props.defaultOpen ?? false);
+  const [open, setOpen] = createControllableSignal<boolean>({
+    value: () => props.open,
+    defaultValue: () => props.defaultOpen ?? false,
+    onChange: (next) => props.onOpenChange?.(next),
+  });
   const mobile = createIsMobile();
   const isMobile = () => mobile() === true;
-
-  const open = () => (props.open !== undefined ? props.open === true : uncontrolledOpen());
-  const setOpen = (next: boolean) => {
-    if (props.open === undefined) setUncontrolledOpen(next);
-    props.onOpenChange?.(next);
-  };
 
   return (
     <ResponsiveDialogContext.Provider value={{ open, setOpen, isMobile }}>

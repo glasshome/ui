@@ -14,6 +14,11 @@ export const input: Input = {
     await commands.mouse("down", x, y);
     await commands.mouse("up", x, y);
   },
+  async pressAt(x, y) {
+    await commands.mouse("move", x, y);
+    await commands.mouse("down", x, y);
+    await commands.mouse("up", x, y);
+  },
   async touch(el) {
     const [x, y] = centre(el);
     await commands.touch("down", x, y);
@@ -57,6 +62,9 @@ export function trackPointer(base: Input) {
 declare module "vitest/browser" {
   interface BrowserCommands {
     mouse(action: "move" | "down" | "up", x: number, y: number): Promise<void>;
-    touch(action: "down" | "up" | "cancel", x: number, y: number): Promise<void>;
+    touch(action: "down" | "move" | "up" | "cancel", x: number, y: number): Promise<void>;
+    wheel(x: number, y: number, deltaY: number): Promise<void>;
+    compose(on: boolean): Promise<void>;
+    axTree(): Promise<string>;
   }
 }

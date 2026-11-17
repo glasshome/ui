@@ -1,14 +1,14 @@
 // bun run drive <component> <scenario> [--steps keyboard] [--cpu-rate 1] [--width phone|tablet|desktop]
 //                [--theme light|dark] [--out <dir>] [--json] [--build <dir>] [--against <git-ref> [--check]]
 // bun run drive --all                     every scenario of every component
-// --check without --against               fails on any count over dev/components/<slug>/budget.json
+// --check without --against               fails on any count over dev/components/<slug>/budget.json or dev/blocks/<slug>/budget.json
 // bun run preview ...                     see preview.ts
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { type Browser, chromium } from "playwright";
-import type { IndexedComponent, IndexedScenario, Step } from "../harness/types";
+import type { IndexedComponent, IndexedScenario, Step, Target } from "../harness/types";
 import { axTree, focusPath } from "./ax";
 import { checkBudget, readBudget } from "./budget";
 import { comparePage } from "./compare-page";
@@ -179,11 +179,16 @@ async function runScenario(
   return report;
 }
 
+const describeArg = (arg: string | Target | { x: number; y: number }) => {
+  if (typeof arg === "string") return arg;
+  return "role" in arg ? describeTarget(arg) : `${arg.x},${arg.y}`;
+};
+
 const describeStep = (step: Step | null) =>
   step === null
     ? "mounted"
     : Object.entries(step)
-        .map(([verb, arg]) => `${verb} ${typeof arg === "string" ? arg : describeTarget(arg)}`)
+        .map(([verb, arg]) => `${verb} ${describeArg(arg)}`)
         .join("");
 
 function printHuman(report: RunReport) {
@@ -303,7 +308,11 @@ async function main(argv: string[]): Promise<number> {
     label: buildLabel(),
   };
 
-  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
+  const browser = await chromium.launch({
+    executablePath: process.env.CHROMIUM_PATH || undefined,
+    // An animated key scroll spans as many frames as the host draws, so its counts would move with the runner.
+    args: ["--disable-smooth-scrolling"],
+  });
   try {
     const index = await readBuildIndex(browser, build);
     const runs: [IndexedComponent, IndexedScenario][] = values.all

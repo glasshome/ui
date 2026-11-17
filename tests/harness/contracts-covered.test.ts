@@ -3,21 +3,36 @@ import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const pkg = resolve(import.meta.dirname, "../..");
-const folders = readdirSync(join(pkg, "dev/components"), { withFileTypes: true })
-  .filter((d) => d.isDirectory())
-  .map((d) => d.name);
+const ROOTS = ["dev/components", "dev/blocks"];
+const folderRoot = (folder: string) =>
+  ROOTS.find((root) => existsSync(join(pkg, root, folder, "contract.md"))) ?? "dev/components";
+const folders = ROOTS.flatMap((root) =>
+  existsSync(join(pkg, root))
+    ? readdirSync(join(pkg, root), { withFileTypes: true })
+        .filter((d) => d.isDirectory())
+        .map((d) => d.name)
+    : [],
+);
 
 const contractIds = (folder: string) =>
   [
-    ...readFileSync(join(pkg, "dev/components", folder, "contract.md"), "utf8").matchAll(
+    ...readFileSync(join(pkg, folderRoot(folder), folder, "contract.md"), "utf8").matchAll(
       /^\|\s*([A-Z]+\d+)\s*\|/gm,
     ),
   ].map((m) => m[1]);
 
 const testTitles = (folder: string) => {
-  const file = join(pkg, "tests/contracts", `${folder}.contract.test.tsx`);
-  if (!existsSync(file)) return [];
-  return [...readFileSync(file, "utf8").matchAll(/\bit\(\s*["'`]([A-Z]+\d+)\b/g)].map((m) => m[1]);
+  const dir = join(pkg, "tests/contracts");
+  const files = readdirSync(dir).filter(
+    (name) =>
+      name === `${folder}.contract.test.tsx` ||
+      (name.startsWith(`${folder}-`) && name.endsWith(".contract.test.tsx")),
+  );
+  return files.flatMap((name) =>
+    [...readFileSync(join(dir, name), "utf8").matchAll(/\bit\(\s*["'`]([A-Z]+\d+)\b/g)].map(
+      (m) => m[1],
+    ),
+  );
 };
 
 describe("every contract line has its test", () => {
@@ -35,7 +50,7 @@ const workDir = resolve(pkg, "../../../docs/work");
 describe("a11y gaps", () => {
   it("a gap entry names an open work item", () => {
     const entries = folders.flatMap((folder) => {
-      const file = join(pkg, "dev/components", folder, "a11y-gaps.json");
+      const file = join(pkg, folderRoot(folder), folder, "a11y-gaps.json");
       if (!existsSync(file)) return [];
       const gaps: { scenario: string; rule: string; item: string }[] = JSON.parse(
         readFileSync(file, "utf8"),

@@ -1,7 +1,8 @@
-import { render } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { cdp, userEvent } from "vitest/browser";
+import { BottomSheet, BottomSheetContent, BottomSheetPortal } from "../../src/solid/index.js";
 import { Z_CLASS } from "../../src/lib/layers.js";
 import { TRAVEL_MOTION } from "../../src/lib/motion-classes.js";
 import { OVERLAY_SURFACE_OPAQUE, SCRIM_CLASS } from "../../src/lib/overlay-classes.js";
@@ -77,6 +78,7 @@ async function liveResizeObservers(): Promise<number> {
 }
 
 afterEach(() => {
+  cleanup();
   document.body.innerHTML = "";
 });
 
@@ -199,6 +201,40 @@ describe("Spotlight", () => {
     ));
     await userEvent.keyboard("{Escape}");
     expect(onSkip).toHaveBeenCalledOnce();
+  });
+
+  it("claims no Escape without onSkip", async () => {
+    const heard: KeyboardEvent[] = [];
+    const listen = (e: KeyboardEvent) => heard.push(e);
+    window.addEventListener("keydown", listen);
+    onTestFinished(() => window.removeEventListener("keydown", listen));
+    render(() => (
+      <Spotlight target={undefined} scrim>
+        Step
+      </Spotlight>
+    ));
+    await userEvent.keyboard("{Escape}");
+    expect(heard).toHaveLength(1);
+    expect(heard[0]?.defaultPrevented).toBe(false);
+  });
+
+  it("lets a sheet opened under a tour without onSkip close on Escape", async () => {
+    render(() => (
+      <>
+        <BottomSheet defaultOpen>
+          <BottomSheetPortal>
+            <BottomSheetContent ariaLabel="Sheet">Body</BottomSheetContent>
+          </BottomSheetPortal>
+        </BottomSheet>
+        <Spotlight target={undefined} scrim>
+          Step
+        </Spotlight>
+      </>
+    ));
+    await nextFrame();
+    await userEvent.keyboard("{Escape}");
+    const sheet = document.querySelector('[data-slot="bottom-sheet-content"]');
+    expect(["closing", "closed"]).toContain(sheet?.getAttribute("data-state") ?? "closed");
   });
 
   it("blocks no presses when the target is unmeasured", () => {

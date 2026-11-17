@@ -1,7 +1,7 @@
 import type { CDPSession } from "playwright";
 
-const fullTree = async (cdp: CDPSession) =>
-  (await cdp.send("Accessibility.getFullAXTree", {})).nodes;
+const fullTree = async (cdp: CDPSession, frameId?: string) =>
+  (await cdp.send("Accessibility.getFullAXTree", frameId ? { frameId } : {})).nodes;
 type AXNode = Awaited<ReturnType<typeof fullTree>>[number];
 
 const STATES = ["focused", "selected", "expanded", "checked", "pressed", "disabled", "hidden"];
@@ -30,8 +30,8 @@ function states(n: AXNode): string {
 
 const label = (n: AXNode) => role(n) + (name(n) ? ` "${name(n)}"` : "");
 
-export async function axTree(cdp: CDPSession): Promise<string> {
-  const nodes = await fullTree(cdp);
+export async function axTree(cdp: CDPSession, frameId?: string): Promise<string> {
+  const nodes = await fullTree(cdp, frameId);
   const byId = new Map(nodes.map((n) => [n.nodeId, n]));
   const lines: string[] = [];
   const walk = (n: AXNode, depth: number, parentName: string) => {

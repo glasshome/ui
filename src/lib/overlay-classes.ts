@@ -25,6 +25,10 @@ export const OVERLAY_SURFACE_OPAQUE = `${OVERLAY_KNOBS} [--glass-base:var(--popo
 /* Touch screens only dim: a full-screen blur over moving widgets re-blurs every frame on a tablet GPU. */
 export const SCRIM_CLASS = "bg-scrim backdrop-blur-md pointer-coarse:backdrop-blur-none";
 
+/* overflow-hidden makes the scrim a scroll container, so overscroll-behavior applies to it. */
+export const SCROLL_CONTAIN = "overscroll-contain";
+export const SCRIM_CONTAIN = `${SCROLL_CONTAIN} overflow-hidden`;
+
 export const PANEL_TAIL = `${Z_CLASS.overlay} rounded-md text-popover-foreground outline-hidden`;
 
 /* The floating panel surface, minus positioning: a caller that is not

@@ -5,7 +5,7 @@ import {
   splitProps,
   type ValidComponent,
 } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 
@@ -40,10 +40,10 @@ const BreadcrumbItem: Component<ComponentProps<"li">> = (props) => {
 
 const BreadcrumbLink: Component<ComponentProps<"a"> & { as?: ValidComponent }> = (props) => {
   const [local, rest] = splitProps(props, ["class", "as"]);
-  const Comp = () => local.as || "a";
   return (
-    <Dynamic
-      component={Comp()}
+    <Polymorphic
+      defaultAs="a"
+      as={local.as}
       data-slot="breadcrumb-link"
       class={cn("hover:text-foreground transition-colors", local.class)}
       {...rest}

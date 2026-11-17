@@ -1,0 +1,7 @@
+document
+button, Open | dialog, Scope | button, First
+button, Middle
+button, Last
+button, Close
+button, First
+button, Middle

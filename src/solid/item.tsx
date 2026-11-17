@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "cva";
 import { type Component, type ComponentProps, splitProps, type ValidComponent } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { ICON_PILL } from "../lib/pill-classes.js";
 import { cn } from "../lib/utils.js";
 import { Separator } from "./separator.js";
@@ -54,10 +54,10 @@ const Item: Component<
   const [local, rest] = splitProps(props, ["class", "variant", "size", "as"] as const);
   const variant = () => local.variant ?? "default";
   const size = () => local.size ?? "default";
-  const Comp = () => local.as || "div";
   return (
-    <Dynamic
-      component={Comp()}
+    <Polymorphic
+      defaultAs="div"
+      as={local.as}
       data-slot="item"
       data-variant={variant()}
       data-size={size()}

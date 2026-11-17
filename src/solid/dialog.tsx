@@ -27,13 +27,9 @@ import {
   MODAL_WIDTH,
   type ModalDismissProps,
   ModalCover,
-  ModalScrollLock,
   type ModalSize,
 } from "./dialog-parts.js";
 
-/* Kobalte's own scroll lock is off everywhere: one refcounted lock
- * (bottom-sheet/scroll-lock.ts) serves every modal family, so a nested modal
- * cannot release the page early. */
 const Dialog: ParentComponent<ComponentProps<typeof DialogPrimitive>> = (props) => {
   const mount = usePortalMount();
   return <DialogPrimitive modal={!inShadowRoot(mount)} {...props} preventScroll={false} />;
@@ -129,7 +125,6 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
   };
   return (
     <DialogPrimitive.Portal mount={usePortalMount()}>
-      <ModalScrollLock />
       <ModalCover panel={panel} open={context.isOpen} />
       <DialogPrimitive.Overlay data-slot="dialog-overlay" class={MODAL_SCRIM} />
       <DialogPrimitive.Content

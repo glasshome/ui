@@ -23,8 +23,9 @@ const Picker = (props: { options: string[]; label: string }) => {
   );
 };
 
-const Fruit = () => <Picker options={FRUIT} label="Fruit" />;
-const TRIGGER = { role: "button", name: "Fruit Pick one" };
+export const Fruit = () => <Picker options={FRUIT} label="Fruit" />;
+export const FRUIT_TRIGGER = { role: "button", name: "Fruit Pick one" };
+const TRIGGER = FRUIT_TRIGGER;
 
 export default defineScenarios({
   component: "Select",

@@ -1,0 +1,292 @@
+{
+  "open": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 167,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 34,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 13,
+        "reason": "baseline 2026-11-17"
+      },
+      "domCalls": {
+        "getComputedStyle": 18,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 2
+      }
+    }
+  },
+  "close": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 190,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 34,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 125,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 27,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 14,
+        "reason": "baseline 2026-11-17"
+      },
+      "domCalls": {
+        "getComputedStyle": 18,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 2
+      }
+    }
+  },
+  "escape": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 192,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 34,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 130,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 27,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 14,
+        "reason": "baseline 2026-11-17"
+      },
+      "domCalls": {
+        "getComputedStyle": 18,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 2
+      }
+    }
+  },
+  "nested-select": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 225,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 41,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 462,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 43,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 92,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 40,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 31,
+        "reason": "baseline 2026-11-17"
+      },
+      "domCalls": {
+        "getComputedStyle": 91,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 1,
+        "MutationObserver": 4
+      }
+    }
+  },
+  "outside-press": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 185,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 34,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 90,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 27,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 14,
+        "reason": "baseline 2026-11-17; the outside press now dismisses in the guest lane, so the step does work"
+      },
+      "domCalls": {
+        "getComputedStyle": 18,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 2
+      }
+    }
+  }
+}

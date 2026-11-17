@@ -88,8 +88,15 @@ describe("preview", () => {
   it("preview of an unknown component exits 2 listing the known ones", () => {
     const run = preview(["nope"]);
     expect(run.code).toBe(2);
-    const known = readdirSync(join(PKG, "dev/components")).toSorted().join(", ");
-    expect(known).toMatch(/select.*spinner.*tabs/);
+    const known = ["components", "blocks"]
+      .flatMap((root) =>
+        readdirSync(join(PKG, "dev", root), { withFileTypes: true })
+          .filter((entry) => entry.isDirectory())
+          .map((entry) => entry.name),
+      )
+      .toSorted()
+      .join(", ");
+    for (const slug of ["select", "spinner", "tabs"]) expect(known).toContain(slug);
     expect(run.stderr).toContain(`no component nope; known: ${known}`);
   });
 });

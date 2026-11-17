@@ -1,12 +1,16 @@
-import { type Accessor, createEffect, onCleanup } from "solid-js";
-import { type InitialFocus, trapFocus } from "../solid/bottom-sheet/focus-trap.js";
+import type { Accessor } from "solid-js";
+import { createDismiss } from "./behavior/dismiss.js";
+import { effect } from "./behavior/solid.js";
+import {
+  createFocusScope,
+  focusWithoutTracking,
+  type InitialFocus,
+} from "./behavior/focus-scope.js";
+import { registerLayer } from "./behavior/layer-stack.js";
 
 /** True for a node inside a shadow root, where page-level layer logic sees only the root's host. */
 export const inShadowRoot = (node: Node | undefined): boolean =>
   typeof ShadowRoot !== "undefined" && node?.getRootNode() instanceof ShadowRoot;
-
-/** Layers open in each shadow root, oldest first: only the newest dismisses on a press, as Kobalte's own stack does. */
-const stacks = new WeakMap<ShadowRoot, Element[]>();
 
 type OutsideEvent = { target: EventTarget | null; preventDefault(): void };
 type AutoFocusEvent = { preventDefault(): void };
@@ -47,59 +51,44 @@ interface ShadowLayerOptions {
  */
 export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
   let dismissedIn: ShadowRoot | undefined;
-  createEffect(() => {
-    const el = options.content();
-    const dismiss = options.dismiss;
-    if (options.open()) dismissedIn = undefined;
-    if (!el || !dismiss || !options.open() || !inShadowRoot(el)) return;
-    const root = el.getRootNode() as ShadowRoot;
-    const stack = stacks.get(root) ?? [];
-    stacks.set(root, stack);
-    stack.push(el);
-    const inside = (e: Event) => {
-      const path = e.composedPath();
-      const trigger = options.trigger?.();
-      if (path.includes(el) || (trigger && path.includes(trigger))) return true;
-      return stack.slice(stack.indexOf(el) + 1).some((above) => path.includes(above));
-    };
-    const dismisses = (e: Event) => (options.tree || stack[stack.length - 1] === el) && !inside(e);
-    const close = () => {
-      dismissedIn = root;
-      dismiss();
+  const handle = registerLayer({
+    element: options.content,
+    open: options.open,
+    kind: !options.dismiss
+      ? "tooltip"
+      : options.trapsFocus
+        ? "modal"
+        : options.tree
+          ? "menu"
+          : "popover",
+    escape: () => false,
+    readsOwnEscape: true,
+    dismiss: options.dismiss,
+    trigger: options.trigger,
+  });
+  createFocusScope({
+    container: options.content,
+    active: () =>
+      !!options.trapsFocus &&
+      !!options.dismiss &&
+      options.open() &&
+      inShadowRoot(options.content()),
+    trapped: () => true,
+    initialFocus: options.initialFocus ?? "first",
+  });
+  effect(options.open, (open) => {
+    if (open) dismissedIn = undefined;
+  });
+  createDismiss({
+    layer: handle,
+    outsidePress: () => !!options.dismiss && inShadowRoot(options.content()),
+    onDismiss: () => {
+      const root = options.content()?.getRootNode();
+      dismissedIn = root instanceof ShadowRoot ? root : undefined;
+      options.dismiss?.();
       // The caller refused the close (a controlled `open`): the next close is not this one.
       if (options.open()) dismissedIn = undefined;
-    };
-    let pendingClick: ((e: Event) => void) | undefined;
-    const dropPendingClick = () => {
-      if (pendingClick) root.removeEventListener("click", pendingClick);
-      pendingClick = undefined;
-    };
-    const onDown = (e: Event) => {
-      dropPendingClick();
-      if (!dismisses(e)) return;
-      // A touch dismisses on its own click, judged again then: a scroll never clicks.
-      if ((e as PointerEvent).pointerType === "touch") {
-        pendingClick = (click) => {
-          pendingClick = undefined;
-          if (dismisses(click)) close();
-        };
-        root.addEventListener("click", pendingClick, { once: true });
-      } else {
-        close();
-      }
-    };
-    // Listening only after the opening press has finished, as Kobalte's own layers do.
-    const timer = setTimeout(() => root.addEventListener("pointerdown", onDown, true), 0);
-    if (options.trapsFocus) {
-      const trap = trapFocus(el, options.initialFocus ?? "first");
-      onCleanup(() => trap.release());
-    }
-    onCleanup(() => {
-      clearTimeout(timer);
-      root.removeEventListener("pointerdown", onDown, true);
-      dropPendingClick();
-      stack.splice(stack.indexOf(el), 1);
-    });
+    },
   });
   const shadowHost = () => {
     const root = options.content()?.getRootNode();
@@ -125,7 +114,7 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
         const kept = root.activeElement;
         queueMicrotask(() => {
           if (kept instanceof HTMLElement && kept.isConnected && root.activeElement !== kept) {
-            kept.focus();
+            focusWithoutTracking(kept);
           }
         });
       }

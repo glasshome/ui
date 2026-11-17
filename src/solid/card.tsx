@@ -5,7 +5,7 @@ import {
   splitProps,
   type ValidComponent,
 } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import {
   CARD_ACTION_CLASS,
   CARD_CONTENT_CLASS,
@@ -48,8 +48,9 @@ const Card: Component<CardProps> = (props) => {
     "children",
   ]);
   return (
-    <Dynamic
-      component={local.as ?? "div"}
+    <Polymorphic
+      defaultAs="div"
+      as={local.as}
       data-slot="card"
       class={cn(
         local.opaque ? CARD_SURFACE_OPAQUE : CARD_SURFACE,
@@ -63,7 +64,7 @@ const Card: Component<CardProps> = (props) => {
     >
       <Show when={local.ornament}>{(kind) => <Ornament kind={kind()} />}</Show>
       {local.children}
-    </Dynamic>
+    </Polymorphic>
   );
 };
 

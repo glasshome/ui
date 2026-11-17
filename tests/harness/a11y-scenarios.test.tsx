@@ -2,7 +2,7 @@ import { cleanup } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it } from "vitest";
 import { commands, page } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
-import { COMPONENTS, kebab } from "../../dev/harness/registry";
+import { BLOCKS, COMPONENTS, kebab } from "../../dev/harness/registry";
 import { runSteps } from "../../dev/harness/steps";
 import type { Scenario } from "../../dev/harness/types";
 import { expectAxeClean, interactiveState, knownGaps, spokenTranscript } from "./a11y";
@@ -18,7 +18,7 @@ afterEach(async () => {
   await page.viewport(VIEWPORT.width, VIEWPORT.height);
 });
 
-const CASES = COMPONENTS.flatMap(({ component, scenarios }) =>
+const CASES = [...COMPONENTS, ...BLOCKS].flatMap(({ component, scenarios }) =>
   scenarios.map((scenario) => ({ name: `${component} ${scenario.id}`, component, scenario })),
 );
 const KEYBOARD = CASES.filter((c) => c.scenario.keyboard !== undefined);

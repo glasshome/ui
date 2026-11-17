@@ -14,14 +14,21 @@ import {
   useContext,
   type ValidComponent,
 } from "solid-js";
-import { Dynamic, Portal } from "solid-js/web";
+import { Portal } from "solid-js/web";
+import { Polymorphic } from "../../lib/behavior/polymorphic.js";
 import { usePortalMount } from "../portal-mount.js";
+import { createControllableSignal } from "../../lib/behavior/controllable.js";
 import { Z } from "../../lib/layers.js";
-import { OVERLAY_SURFACE_OPAQUE } from "../../lib/overlay-classes.js";
-import { coverOnceOpen } from "../../lib/page-cover.js";
+import {
+  OVERLAY_SURFACE_OPAQUE,
+  SCRIM_CONTAIN,
+  SCROLL_CONTAIN,
+} from "../../lib/overlay-classes.js";
+import { coverNow } from "../../lib/page-cover.js";
+import { effect } from "../../lib/behavior/solid.js";
 import { cn } from "../../lib/utils.js";
-import { whenAnimationsSettle } from "../../lib/when-animations-settle.js";
-import { isSheetMotion } from "./sheet-motion.js";
+import { type MotionEvent, watchMotion } from "../../lib/behavior/presence.js";
+import { MOTION_EXIT_MS } from "../../lib/motion-classes.js";
 import {
   callEventHandler,
   createModalLabels,
@@ -34,9 +41,11 @@ import {
 } from "../dialog-parts.js";
 import { EASE, TRANSITION_MS } from "./constants.js";
 import { attachDrag } from "./drag-controller.js";
-import { type InitialFocus, trapFocus } from "./focus-trap.js";
+import { createDismiss } from "../../lib/behavior/dismiss.js";
+import { createFocusScope, type InitialFocus } from "../../lib/behavior/focus-scope.js";
+import { createHideOutside } from "../../lib/behavior/hide-outside.js";
+import { registerLayer } from "../../lib/behavior/layer-stack.js";
 import { watchKeyboard } from "./keyboard.js";
-import { acquireScrollLock, releaseScrollLock } from "./scroll-lock.js";
 import { assertTransition, type SheetState } from "./state-machine.js";
 
 interface BottomSheetContextValue {
@@ -48,6 +57,11 @@ interface BottomSheetContextValue {
   contentRef: () => HTMLDivElement | undefined;
   setContentRef: (el: HTMLDivElement | undefined) => void;
 }
+
+const isSheetMotion = (e: MotionEvent) =>
+  "animationName" in e
+    ? e.animationName === "bs-slide-up" || e.animationName === "bs-slide-down"
+    : e.propertyName === "transform";
 
 const BottomSheetContext = createContext<BottomSheetContextValue>();
 
@@ -66,17 +80,13 @@ interface BottomSheetRootProps {
 }
 
 const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
-  const [uncontrolled, setUncontrolled] = createSignal(props.defaultOpen ?? false);
+  const [open, setOpen] = createControllableSignal<boolean>({
+    value: () => props.open,
+    defaultValue: () => props.defaultOpen ?? false,
+    onChange: (next) => props.onOpenChange?.(next),
+  });
   const [state, setStateRaw] = createSignal<SheetState>("closed");
   const [contentRef, setContentRef] = createSignal<HTMLDivElement | undefined>(undefined);
-
-  const isControlled = () => props.open !== undefined;
-  const open = (): boolean => (isControlled() ? props.open === true : uncontrolled());
-
-  const setOpen = (next: boolean) => {
-    if (!isControlled()) setUncontrolled(next);
-    props.onOpenChange?.(next);
-  };
 
   const setState = (next: SheetState) => {
     const current = state();
@@ -123,11 +133,10 @@ type SheetButtonProps = ComponentProps<"button"> &
 const BottomSheetTrigger: ParentComponent<SheetButtonProps> = (props) => {
   const [local, rest] = splitProps(props, ["children", "onClick", "as"]);
   const ctx = useBottomSheetContext();
-  const component = () => local.as ?? "button";
   return (
-    <Dynamic
-      component={component()}
-      type={component() === "button" ? "button" : undefined}
+    <Polymorphic
+      defaultAs="button"
+      as={local.as}
       data-slot="bottom-sheet-trigger"
       aria-haspopup="dialog"
       aria-expanded={ctx.open()}
@@ -138,7 +147,7 @@ const BottomSheetTrigger: ParentComponent<SheetButtonProps> = (props) => {
       {...rest}
     >
       {local.children}
-    </Dynamic>
+    </Polymorphic>
   );
 };
 
@@ -176,7 +185,7 @@ const BottomSheetOverlay: Component<ComponentProps<"div">> = (props) => {
       data-state={dataState()}
       aria-hidden="true"
       class={cn(
-        "fixed inset-0 bg-black/80 transition-opacity duration-300 ease-out",
+        `fixed inset-0 bg-black/80 transition-opacity duration-300 ease-out ${SCRIM_CONTAIN}`,
         "data-[state=closing]:opacity-0 data-[state=open]:opacity-100",
         local.class,
       )}
@@ -204,20 +213,9 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
   const labels = createModalLabels();
   let el: HTMLDivElement | undefined;
 
-  /* Keyed on presence, not on mount: a sheet rendered without
-   * BottomSheetPortal stays in the tree while closed and must not hold the
-   * page lock. Release also runs on unmount, so no animation can strand it. */
   const present = createMemo(() => ctx.state() !== "closed");
-  createEffect(() => {
-    if (!present()) return;
-    acquireScrollLock();
-    onCleanup(releaseScrollLock);
-  });
 
-  const covering = createMemo(() => present() && ctx.state() !== "opening");
-  createEffect(() => {
-    if (covering() && el) onCleanup(coverOnceOpen(el, () => ctx.state() !== "closing"));
-  });
+  effect(present, (on) => (on && el ? coverNow(el) : undefined));
 
   const clearAnimInline = () => {
     if (!el) return;
@@ -231,16 +229,20 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     if (s !== "opening" && s !== "closing" && s !== "snapping") return;
     const node = el;
     if (!node) return;
-    let stale = false;
-    onCleanup(() => (stale = true));
-    void whenAnimationsSettle(node, { filter: isSheetMotion }).then(() => {
-      if (stale) return;
-      if (s === "opening") ctx.setState("open");
-      else {
-        ctx.setState(s === "snapping" ? "open" : "closed");
-        clearAnimInline();
-      }
-    });
+    onCleanup(
+      watchMotion(
+        node,
+        MOTION_EXIT_MS.sheet,
+        () => {
+          if (s === "opening") ctx.setState("open");
+          else {
+            ctx.setState(s === "snapping" ? "open" : "closed");
+            clearAnimInline();
+          }
+        },
+        isSheetMotion,
+      ),
+    );
   });
 
   createEffect(() => {
@@ -263,92 +265,30 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     onCleanup(() => handle.destroy());
   });
 
-  createEffect(() => {
-    const s = ctx.state();
-    if (s !== "open" && s !== "opening") return;
-    if (!el) return;
-    const handle = trapFocus(el, local.initialFocus ?? "container");
-    onCleanup(() => handle.release());
+  const handle = registerLayer({
+    element: ctx.contentRef,
+    open: ctx.open,
+    kind: "modal",
+    escape: ctx.dismissible,
+    dismiss: () => ctx.setOpen(false),
   });
 
-  createEffect(() => {
-    if (ctx.state() === "closed") return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
-      if (!ctx.dismissible()) return;
-      e.preventDefault();
+  createHideOutside({ layer: handle, active: ctx.open });
+
+  createFocusScope({
+    container: ctx.contentRef,
+    active: () => ctx.state() !== "closed" && ctx.state() !== "closing",
+    trapped: () => true,
+    initialFocus: local.initialFocus ?? "container",
+  });
+
+  createDismiss({
+    layer: handle,
+    outsidePress: ctx.dismissible,
+    onDismiss: (reason) => {
+      if (reason === "outside-press" && ctx.state() !== "open") return;
       ctx.setOpen(false);
-    };
-    document.addEventListener("keydown", onKey);
-    onCleanup(() => document.removeEventListener("keydown", onKey));
-  });
-
-  // setTimeout(0) lets the click that opened the sheet finish bubbling
-  // before the dismiss listener is attached. Touch defers to `click` so
-  // drag/scroll intent can be detected first.
-  createEffect(() => {
-    if (ctx.state() === "closed") return;
-    if (!ctx.dismissible()) return;
-
-    let attached = false;
-    let pendingClick: ((click: Event) => void) | null = null;
-
-    const PORTAL_LAYER_SELECTOR =
-      '[data-kb-top-layer], [role="dialog"], [role="menu"], [role="listbox"], [role="combobox"], [role="tooltip"]';
-    // Judged along the composed path: a press inside an icon's own shadow root is still inside the
-    // sheet. Only the part below the listening root counts: a realm's host inside a page dialog
-    // must not make every press in the realm look like one inside a layer.
-    const isOutside = (e: Event): boolean => {
-      if (!el || !(e.target instanceof Element)) return false;
-      const full = e.composedPath();
-      const listener = e.currentTarget;
-      const end = listener && listener !== document ? full.indexOf(listener) : -1;
-      const path = end >= 0 ? full.slice(0, end) : full;
-      if (path.includes(el)) return false;
-      return !path.some(
-        (node) =>
-          node instanceof Element &&
-          (node.matches("[data-sheet-content]") || node.matches(PORTAL_LAYER_SELECTOR)),
-      );
-    };
-
-    // Inside a shadow root the page sees every press there as one on the root's host, so the
-    // sheet judges those from its own root and only the page's other presses from the document.
-    const scope = (el?.getRootNode() ?? document) as Document | ShadowRoot;
-    const scopes: (Document | ShadowRoot)[] = scope === document ? [document] : [scope, document];
-    const host = scope instanceof ShadowRoot ? scope.host : undefined;
-    const onPointerDown = (e: Event) => {
-      if (e.currentTarget === document && host && e.target === host) return;
-      // Every press starts over: a touch that scrolled never clicked, and its close must not wait for the next tap.
-      if (pendingClick) document.removeEventListener("click", pendingClick);
-      pendingClick = null;
-      if (!isOutside(e)) return;
-      const dismiss = () => {
-        if (ctx.state() === "open") ctx.setOpen(false);
-      };
-      if ((e as PointerEvent).pointerType === "touch") {
-        pendingClick = (click: Event) => {
-          pendingClick = null;
-          // The click lands where the touch ended; it closes only if that is still outside.
-          if (el && !click.composedPath().includes(el)) dismiss();
-        };
-        document.addEventListener("click", pendingClick, { once: true });
-      } else {
-        dismiss();
-      }
-    };
-
-    const timer = window.setTimeout(() => {
-      for (const s of scopes) s.addEventListener("pointerdown", onPointerDown, true);
-      attached = true;
-    }, 0);
-
-    onCleanup(() => {
-      window.clearTimeout(timer);
-      if (attached)
-        for (const s of scopes) s.removeEventListener("pointerdown", onPointerDown, true);
-      if (pendingClick) document.removeEventListener("click", pendingClick);
-    });
+    },
   });
 
   const setRef = (node: HTMLDivElement) => {
@@ -389,7 +329,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
         }}
         class={cn(
           "bs-content",
-          `fixed inset-x-0 bottom-0 flex ${MODAL_MAX_H} flex-col rounded-t-xl ${OVERLAY_SURFACE_OPAQUE} outline-none`,
+          `fixed inset-x-0 bottom-0 flex ${MODAL_MAX_H} flex-col ${SCROLL_CONTAIN} rounded-t-xl ${OVERLAY_SURFACE_OPAQUE} outline-none`,
           "after:absolute after:inset-x-0 after:top-full after:h-1/2 after:bg-inherit",
           local.class,
         )}
@@ -454,11 +394,10 @@ const BottomSheetDescription: Component<ComponentProps<"p">> = (props) => {
 const BottomSheetClose: ParentComponent<SheetButtonProps> = (props) => {
   const [local, rest] = splitProps(props, ["children", "onClick", "as"]);
   const ctx = useBottomSheetContext();
-  const component = () => local.as ?? "button";
   return (
-    <Dynamic
-      component={component()}
-      type={component() === "button" ? "button" : undefined}
+    <Polymorphic
+      defaultAs="button"
+      as={local.as}
       data-slot="bottom-sheet-close"
       onClick={(event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => {
         callEventHandler(event, local.onClick);
@@ -467,7 +406,7 @@ const BottomSheetClose: ParentComponent<SheetButtonProps> = (props) => {
       {...rest}
     >
       {local.children}
-    </Dynamic>
+    </Polymorphic>
   );
 };
 

@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from "cva";
 import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { CONTROL_H, FIELD_TEXT, INPUT_SURFACE } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 import { Button } from "./button.js";
@@ -63,9 +64,10 @@ const InputGroupAddon: Component<
         if ((e.target as HTMLElement).closest("button")) {
           return;
         }
-        (e.currentTarget as HTMLElement).parentElement
-          ?.querySelector<HTMLInputElement>("input")
-          ?.focus();
+        focusWithoutTracking(
+          (e.currentTarget as HTMLElement).parentElement?.querySelector<HTMLInputElement>("input"),
+          { preventScroll: false },
+        );
       }}
       {...rest}
     />

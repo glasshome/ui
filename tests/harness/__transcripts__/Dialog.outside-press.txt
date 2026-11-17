@@ -1,0 +1,3 @@
+document
+button, Open dialog, not expanded, has popup dialog | dialog, Dialog, Something to confirm | button, Done
+button, Open dialog, not expanded, has popup dialog

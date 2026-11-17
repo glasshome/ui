@@ -1,0 +1,5 @@
+document
+button, Open One | polite: Top | polite: Stack
+button, Open Two | polite: Top | polite: Stack
+button, Open Three | polite: Top | polite: Stack
+dialog, Two | button, Close Two | polite: Stack

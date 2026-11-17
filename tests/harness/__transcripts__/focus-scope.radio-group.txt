@@ -1,0 +1,6 @@
+document
+button, Open | dialog, Scope | button, Before
+radio, Small, not checked, position 1, set size 3
+button, After
+button, Close
+button, Before

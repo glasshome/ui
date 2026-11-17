@@ -1,5 +1,6 @@
 import { createSignal, For, onCleanup, Show } from "solid-js";
 import { Portal } from "solid-js/web";
+import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { cn } from "../lib/utils.js";
 import { type EdgeZone, edgeZone, moveId, slotAt } from "./dock-paging.js";
@@ -136,10 +137,10 @@ export function createDockReorder(options: ReorderOptions) {
     if (ids.indexOf(id) < 0 || to < 0 || to >= ids.length) return;
     options.onReorder(moveId(ids, id, to));
     requestAnimationFrame(() =>
-      options
-        .bar()
-        ?.querySelector<HTMLElement>(`[data-dock-id="${CSS.escape(id)}"]`)
-        ?.focus(),
+      focusWithoutTracking(
+        options.bar()?.querySelector<HTMLElement>(`[data-dock-id="${CSS.escape(id)}"]`),
+        { preventScroll: false },
+      ),
     );
   }
 

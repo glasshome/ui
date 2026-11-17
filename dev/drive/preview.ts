@@ -65,6 +65,8 @@ function componentsTouched(files: string[], slugs: string[]): string[] {
     files.some(
       (f) =>
         f.startsWith(`dev/components/${slug}/`) ||
+        f.startsWith(`dev/blocks/${slug}/`) ||
+        f.startsWith(`src/lib/behavior/${slug}.`) ||
         f === `src/solid/${slug}.tsx` ||
         f.startsWith(`src/solid/${slug}/`),
     ),
@@ -253,8 +255,9 @@ export async function preview(argv: string[]): Promise<number> {
   mkdirSync(out, { recursive: true });
   const basePkg = values.against === undefined ? undefined : checkoutRef(values.against);
   if (basePkg === null) throw new UsageError(`no commit ${values.against}`);
-  if (basePkg !== undefined && !existsSync(join(basePkg, "dev", "components"))) {
-    throw new UsageError(`${values.against} has no scenario folders (dev/components)`);
+  const scenarioRoots = ["components", "blocks"].map((root) => join("dev", root));
+  if (basePkg !== undefined && !scenarioRoots.some((root) => existsSync(join(basePkg, root)))) {
+    throw new UsageError(`${values.against} has no scenario folders (${scenarioRoots.join(", ")})`);
   }
 
   const headDir = await buildGallery();

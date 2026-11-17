@@ -1,4 +1,5 @@
 import { createMemo, createSignal, For, Show } from "solid-js";
+import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { STAGGER } from "../lib/motion-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
 import { CHIP, ICON_PILL_TINT } from "../lib/pill-classes.js";
@@ -381,7 +382,7 @@ export function IconPicker(props: IconPickerProps) {
           e.preventDefault();
           // preventScroll: the panel is portalled at (0,0) until the popper places it,
           // so a plain focus() scrolls the page to the top.
-          searchRef?.focus({ preventScroll: true });
+          focusWithoutTracking(searchRef);
         }}
         onInteractOutside={() => setOpen(false)}
       >

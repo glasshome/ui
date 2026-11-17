@@ -1,0 +1,3 @@
+document
+button, Open | dialog, Scope | textbox, Name
+button, Close | button, Open

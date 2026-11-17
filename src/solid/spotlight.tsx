@@ -9,6 +9,8 @@ import {
 } from "solid-js";
 import { Portal } from "solid-js/web";
 import { usePortalMount } from "./portal-mount.js";
+import { createDismiss } from "../lib/behavior/dismiss.js";
+import { registerLayer } from "../lib/behavior/layer-stack.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { SCRIM_MOTION, TRAVEL_MOTION } from "../lib/motion-classes.js";
 import { OVERLAY_SURFACE_OPAQUE, PANEL_TAIL, SCRIM_CLASS } from "../lib/overlay-classes.js";
@@ -54,7 +56,20 @@ const Spotlight: Component<SpotlightProps> = (props) => {
     { width: BUBBLE_DEFAULT_WIDTH, height: 96 },
     { equals: sameFields },
   );
-  let bubble: HTMLDivElement | undefined;
+  const [bubble, setBubble] = createSignal<HTMLDivElement>();
+  const handle = registerLayer({
+    element: bubble,
+    open: () => true,
+    kind: "tour",
+    escape: () => props.onSkip !== undefined,
+    dismiss: () => props.onSkip?.(),
+  });
+  createDismiss({
+    layer: handle,
+    outsidePress: () => false,
+    escapeFrom: "document",
+    onDismiss: () => props.onSkip?.(),
+  });
 
   const anchorEl = () => props.anchor ?? props.target;
 
@@ -70,10 +85,11 @@ const Spotlight: Component<SpotlightProps> = (props) => {
     const anchor = anchorEl();
     /* Same element as target: reuse its box instead of measuring it twice a tick. */
     setAnchorBox(anchor === props.target ? targetBox : rectToBox(anchor));
-    if (bubble)
+    const node = bubble();
+    if (node)
       setBubbleSize({
-        width: bubble.offsetWidth || BUBBLE_DEFAULT_WIDTH,
-        height: bubble.offsetHeight || 96,
+        width: node.offsetWidth || BUBBLE_DEFAULT_WIDTH,
+        height: node.offsetHeight || 96,
       });
   };
 
@@ -97,7 +113,8 @@ const Spotlight: Component<SpotlightProps> = (props) => {
     const observer = new ResizeObserver(measure);
     if (target) observer.observe(target);
     if (anchor && anchor !== target) observer.observe(anchor);
-    if (bubble) observer.observe(bubble);
+    const node = bubble();
+    if (node) observer.observe(node);
     onCleanup(() => {
       cancelAnimationFrame(raf);
       observer.disconnect();
@@ -105,16 +122,11 @@ const Spotlight: Component<SpotlightProps> = (props) => {
   });
 
   onMount(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") props.onSkip?.();
-    };
     window.addEventListener("resize", measure);
     window.addEventListener("scroll", measure, { capture: true, passive: true });
-    document.addEventListener("keydown", onKey);
     onCleanup(() => {
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", measure, { capture: true });
-      document.removeEventListener("keydown", onKey);
     });
   });
 
@@ -142,7 +154,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
         />
       </Show>
       <div
-        ref={bubble}
+        ref={setBubble}
         data-slot="spotlight-bubble"
         data-side={place().side}
         class={cn(TRAVEL_MOTION, Z_CLASS.overlay, "fixed top-0 left-0 w-96", props.class)}
