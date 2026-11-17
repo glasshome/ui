@@ -18,8 +18,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 7,
-        "reason": "kobalte baseline 2026-11-15"
+        "max": 9,
+        "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 1,
@@ -48,8 +48,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 8,
-        "reason": "baseline 2026-11-16"
+        "max": 9,
+        "reason": "baseline 2026-11-16; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 1,
@@ -134,8 +134,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 10,
-        "reason": "kobalte baseline 2026-11-15"
+        "max": 12,
+        "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 2,
@@ -178,8 +178,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 9,
-        "reason": "kobalte baseline 2026-11-15"
+        "max": 10,
+        "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 2,
@@ -222,8 +222,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 16,
-        "reason": "kobalte baseline 2026-11-15"
+        "max": 18,
+        "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 30,
