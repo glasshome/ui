@@ -1,6 +1,6 @@
 # scroll-contain: behaviour contract
 
-Each line is one browser test in `tests/contracts/scroll-contain.contract.test.tsx`, named by its id. There is no behaviour file: `SCROLL_CONTAIN` and `SCRIM_CONTAIN` in `src/lib/overlay-classes.ts` are the block, and the modal families wear them. A modal writes nothing on `html` or `body`. The scenarios render plain elements wearing those classes; SC1 and SC3 also run the real Dialog and BottomSheet. WebKit runs this file in the `webkit` project (`bun run test:webkit`, `bun run test:webkit:image` on a host without WebKit's libraries); SC2 is Chromium only, since it drives a finger through CDP.
+Each line is one browser test in `tests/contracts/scroll-contain.contract.test.tsx` (SC2 in `scroll-contain-touch.contract.test.tsx`), named by its id. There is no behaviour file: `SCROLL_CONTAIN` and `SCRIM_CONTAIN` in `src/lib/overlay-classes.ts` are the block, and the modal families wear them. A modal writes nothing on `html` or `body`. The scenarios render plain elements wearing those classes; SC1 and SC3 also run the real Dialog and BottomSheet. WebKit runs the main file in the `webkit` project (`bun run test:webkit`, `bun run test:webkit:image` on a host without WebKit's libraries); the touch file is Chromium only, since it drives a finger through CDP.
 
 | id | when | then |
 |---|---|---|

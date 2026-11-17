@@ -22,9 +22,17 @@ const contractIds = (folder: string) =>
   ].map((m) => m[1]);
 
 const testTitles = (folder: string) => {
-  const file = join(pkg, "tests/contracts", `${folder}.contract.test.tsx`);
-  if (!existsSync(file)) return [];
-  return [...readFileSync(file, "utf8").matchAll(/\bit\(\s*["'`]([A-Z]+\d+)\b/g)].map((m) => m[1]);
+  const dir = join(pkg, "tests/contracts");
+  const files = readdirSync(dir).filter(
+    (name) =>
+      name === `${folder}.contract.test.tsx` ||
+      (name.startsWith(`${folder}-`) && name.endsWith(".contract.test.tsx")),
+  );
+  return files.flatMap((name) =>
+    [...readFileSync(join(dir, name), "utf8").matchAll(/\bit\(\s*["'`]([A-Z]+\d+)\b/g)].map(
+      (m) => m[1],
+    ),
+  );
 };
 
 describe("every contract line has its test", () => {

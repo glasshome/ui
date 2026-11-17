@@ -2,9 +2,6 @@ import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal, type JSX } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { commands } from "vitest/browser";
-import { findScenario } from "../../dev/harness/registry";
-import { runSteps, scenarioScope } from "../../dev/harness/steps";
-import { Within } from "../../dev/harness/Within";
 import {
   BottomSheet,
   BottomSheetBody,
@@ -17,15 +14,13 @@ import {
   DialogContent,
 } from "../../src/solid";
 import { expectGap } from "../harness/gap";
-import { input } from "../harness/input";
 import { settle } from "../harness/mount";
+import { corner, find, openBlock, type Parts, pageY } from "./scroll-contain-parts";
 
 afterEach(() => {
   cleanup();
   for (const spacer of document.querySelectorAll("[data-test-spacer]")) spacer.remove();
 });
-
-const pageY = () => document.scrollingElement?.scrollTop ?? 0;
 
 const rootsState = () =>
   [document.documentElement, document.body]
@@ -49,26 +44,11 @@ const centre = (el: Element) => {
   return [box.x + box.width / 2, box.y + box.height / 2] as const;
 };
 
-function find(selector: string): Element {
-  for (const root of scenarioScope()) {
-    const hit = root.querySelector(selector);
-    if (hit) return hit;
-  }
-  throw new Error(`no ${selector}`);
-}
-
 const scrollerOf = (panel: Element): Element => {
   const found = [...panel.querySelectorAll("*")].find((el) => el.scrollHeight > el.clientHeight);
   if (!found) throw new Error("no scrolling part");
   return found;
 };
-
-interface Parts {
-  scrim: Element;
-  body: Element;
-  header: Element | null;
-  close: () => Promise<void>;
-}
 
 interface Subject {
   name: string;
@@ -85,21 +65,6 @@ const spacer = () => {
 };
 
 const LONG = Array.from({ length: 60 }, (_, i) => <p>{`Line ${i + 1}`}</p>);
-
-async function openBlock(id: string, within: "page" | "shadow-root"): Promise<Parts> {
-  const scenario = findScenario("scroll-contain", id);
-  if (!scenario) throw new Error(`no scenario ${id}`);
-  render(() => <Within mode={within}>{scenario.render()}</Within>);
-  await settle();
-  await runSteps(scenarioScope, [{ press: { role: "button", name: "Open modal" } }], input, settle);
-  return {
-    scrim: find('[data-slot="scroll-contain-scrim"]'),
-    body: find('[data-slot="scroll-contain-body"]'),
-    header: find('[data-slot="scroll-contain-header"]'),
-    close: () =>
-      runSteps(scenarioScope, [{ press: { role: "button", name: "Close modal" } }], input, settle),
-  };
-}
 
 const [dialogOpen, setDialogOpen] = createSignal(false);
 
@@ -179,8 +144,6 @@ async function wheelOver(el: Element, deltaY: number) {
   await commands.wheel(x, y, deltaY);
 }
 
-const corner = { x: 8, y: 8 };
-
 async function wheelToEndOfBody(body: Element) {
   await vi.waitFor(async () => {
     await wheelOver(body, 2000);
@@ -215,19 +178,6 @@ describe("scroll-contain contract", () => {
       await settle();
       expectRootsAs(before);
     });
-  });
-
-  it("SC2 a touch drag on the scrim leaves the page where it is", async () => {
-    const parts = await openBlock("modal", "page");
-    await commands.pointer("finger");
-    const { x, y } = corner;
-    await commands.touch("down", x, y + 400);
-    for (let step = 1; step <= 8; step++) await commands.touch("move", x, y + 400 - step * 45);
-    await commands.touch("up", x, y);
-    await settle();
-    await commands.pointer("mouse");
-    expect(pageY()).toBe(0);
-    expect(parts.scrim.isConnected).toBe(true);
   });
 
   it("SC4 a wheel over the header of the modal", async () => {
