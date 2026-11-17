@@ -1,4 +1,4 @@
-import { render } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { cdp, userEvent } from "vitest/browser";
@@ -78,6 +78,7 @@ async function liveResizeObservers(): Promise<number> {
 }
 
 afterEach(() => {
+  cleanup();
   document.body.innerHTML = "";
 });
 
