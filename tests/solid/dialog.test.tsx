@@ -1,11 +1,10 @@
 import { cleanup, render, screen } from "@solidjs/testing-library";
-import { createSignal, Show } from "solid-js";
+import { createSignal } from "solid-js";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { cdp, commands, page, userEvent } from "vitest/browser";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogBody,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -46,9 +45,6 @@ const scrollers = (root: HTMLElement) =>
   Array.from(root.querySelectorAll<HTMLElement>("*")).filter((el) =>
     el.className.includes("overflow-y-auto"),
   );
-
-const pageLocked = () =>
-  document.body.style.overflow === "hidden" || document.body.style.position === "fixed";
 
 describe("Dialog scroll contract", () => {
   it("scrolls in Body only; the panel clips", () => {
@@ -321,7 +317,7 @@ describe("Dialog trigger", () => {
   });
 });
 
-describe("one page-scroll lock", () => {
+describe("page cover", () => {
   it("holds the dock's mode rim still while a dialog covers the page", async () => {
     const [open, setOpen] = createSignal(false);
     const two = ["a", "b"].map((id) => ({ id, icon: <span />, label: id, onClick: () => {} }));
@@ -349,119 +345,6 @@ describe("one page-scroll lock", () => {
     await vi.waitFor(() => expect(playState()).toEqual(["paused"]));
     setOpen(false);
     await vi.waitFor(() => expect(playState()).toEqual(["running"]));
-  });
-
-  it("holds the lock until the last nested modal is gone", () => {
-    const [inner, setInner] = createSignal(false);
-
-    const { unmount } = render(() => (
-      <Dialog open>
-        <DialogContent>
-          <DialogTitle>Outer</DialogTitle>
-          <Show when={inner()}>
-            <AlertDialog open>
-              <AlertDialogContent>
-                <AlertDialogTitle>Inner</AlertDialogTitle>
-                <AlertDialogBody>sure?</AlertDialogBody>
-              </AlertDialogContent>
-            </AlertDialog>
-          </Show>
-        </DialogContent>
-      </Dialog>
-    ));
-
-    expect(pageLocked()).toBe(true);
-
-    setInner(true);
-    expect(document.querySelector('[data-slot="alert-dialog-content"]')).not.toBeNull();
-    expect(pageLocked()).toBe(true);
-
-    setInner(false);
-    expect(document.querySelector('[data-slot="alert-dialog-content"]')).toBeNull();
-    expect(pageLocked()).toBe(true);
-
-    unmount();
-    expect(pageLocked()).toBe(false);
-  });
-
-  it("does not lock the page for a closed kobalte-family modal", () => {
-    const { unmount } = render(() => (
-      <>
-        <Dialog>
-          <DialogContent ariaLabel="d">d</DialogContent>
-        </Dialog>
-        <AlertDialog>
-          <AlertDialogContent ariaLabel="a">a</AlertDialogContent>
-        </AlertDialog>
-        <Sheet>
-          <SheetContent ariaLabel="s">s</SheetContent>
-        </Sheet>
-      </>
-    ));
-
-    expect(pageLocked()).toBe(false);
-    unmount();
-    expect(pageLocked()).toBe(false);
-  });
-
-  it("releases the lock when a Dialog closes", async () => {
-    const [open, setOpen] = createSignal(true);
-    render(() => (
-      <Dialog open={open()} onOpenChange={setOpen}>
-        <DialogContent ariaLabel="d">d</DialogContent>
-      </Dialog>
-    ));
-
-    expect(pageLocked()).toBe(true);
-    setOpen(false);
-    await vi.waitFor(() =>
-      expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull(),
-    );
-    expect(pageLocked()).toBe(false);
-  });
-
-  it("releases the lock when an AlertDialog closes", async () => {
-    const [open, setOpen] = createSignal(true);
-    render(() => (
-      <AlertDialog open={open()} onOpenChange={setOpen}>
-        <AlertDialogContent ariaLabel="a">a</AlertDialogContent>
-      </AlertDialog>
-    ));
-
-    expect(pageLocked()).toBe(true);
-    setOpen(false);
-    await vi.waitFor(() =>
-      expect(document.querySelector('[data-slot="alert-dialog-content"]')).toBeNull(),
-    );
-    expect(pageLocked()).toBe(false);
-  });
-
-  it("releases the lock when a Sheet closes", async () => {
-    const [open, setOpen] = createSignal(true);
-    render(() => (
-      <Sheet open={open()} onOpenChange={setOpen}>
-        <SheetContent ariaLabel="s">s</SheetContent>
-      </Sheet>
-    ));
-
-    expect(pageLocked()).toBe(true);
-    setOpen(false);
-    await vi.waitFor(() =>
-      expect(document.querySelector('[data-slot="sheet-content"]')).toBeNull(),
-    );
-    expect(pageLocked()).toBe(false);
-  });
-
-  it("does not lock the page for a bottom sheet that is mounted but closed", () => {
-    const { unmount } = render(() => (
-      <BottomSheet>
-        <BottomSheetContent ariaLabel="Filters">rows</BottomSheetContent>
-      </BottomSheet>
-    ));
-
-    expect(pageLocked()).toBe(false);
-    unmount();
-    expect(pageLocked()).toBe(false);
   });
 });
 

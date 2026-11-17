@@ -45,7 +45,12 @@ export const pointer: BrowserCommand<[kind: "finger" | "mouse"]> = async (ctx, k
   await touchScreen(await pointerSession(ctx.page), kind === "finger");
 };
 
-const TOUCH = { down: "touchStart", up: "touchEnd", cancel: "touchCancel" } as const;
+const TOUCH = {
+  down: "touchStart",
+  move: "touchMove",
+  up: "touchEnd",
+  cancel: "touchCancel",
+} as const;
 
 /** One real finger at a point of the test frame's viewport. */
 export const touch: BrowserCommand<[action: keyof typeof TOUCH, x: number, y: number]> = async (
@@ -59,8 +64,20 @@ export const touch: BrowserCommand<[action: keyof typeof TOUCH, x: number, y: nu
   await touchScreen(cdp, true);
   await cdp.send("Input.dispatchTouchEvent", {
     type: TOUCH[action],
-    touchPoints: action === "down" ? [{ ...at, id: 0 }] : [],
+    touchPoints: action === "down" || action === "move" ? [{ ...at, id: 0 }] : [],
   });
+};
+
+/** A real wheel turn of `deltaY` pixels over a point of the test frame's viewport. */
+export const wheel: BrowserCommand<[x: number, y: number, deltaY: number]> = async (
+  ctx,
+  x,
+  y,
+  deltaY,
+) => {
+  const at = await toPage(ctx, x, y);
+  await ctx.page.mouse.move(at.x, at.y);
+  await ctx.page.mouse.wheel(0, deltaY);
 };
 
 /** An IME composition running in the focused control, so the next key is one `isComposing` marks. */

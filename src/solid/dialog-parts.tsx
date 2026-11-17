@@ -22,10 +22,14 @@ import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { busyProps } from "../lib/busy.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { ANCHORED_MOTION, MODAL_MOTION, SCRIM_MOTION } from "../lib/motion-classes.js";
-import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
+import {
+  OVERLAY_SURFACE,
+  SCRIM_CLASS,
+  SCRIM_CONTAIN,
+  SCROLL_CONTAIN,
+} from "../lib/overlay-classes.js";
 import { coverOnceOpen } from "../lib/page-cover.js";
 import { cn } from "../lib/utils.js";
-import { acquireScrollLock, releaseScrollLock } from "./bottom-sheet/scroll-lock.js";
 import { SectionIcon } from "./section-card.js";
 
 /* kobalte 0.13.13 builds AlertDialog with Object.assign(DialogRoot, ...), the
@@ -64,13 +68,13 @@ export const MODAL_ANCHOR: Record<ModalSize, string> = {
 /* The panel: it clips, it never scrolls, and it carries no padding. Every inset
  * belongs to Header, Body or Footer, so the Body scrollbar rides inside the
  * panel edge instead of under the header. */
-export const MODAL_PANEL = `${OVERLAY_SURFACE} ${MODAL_MOTION} fixed left-1/2 flex ${MODAL_MAX_H} w-[calc(100%-2rem)] -translate-x-1/2 flex-col overflow-hidden rounded-lg outline-none ${Z_CLASS.overlay}`;
+export const MODAL_PANEL = `${OVERLAY_SURFACE} ${MODAL_MOTION} fixed left-1/2 flex ${MODAL_MAX_H} w-[calc(100%-2rem)] -translate-x-1/2 flex-col overflow-hidden ${SCROLL_CONTAIN} rounded-lg outline-none ${Z_CLASS.overlay}`;
 
 /* A panel anchored on the element that opened it: placed and sized inline (lib/anchor-placement),
  * so it drops the centring, and it unrolls out of that element instead of rising in. */
-export const ANCHORED_PANEL = `${OVERLAY_SURFACE} ${ANCHORED_MOTION} fixed flex ${MODAL_MAX_H} flex-col overflow-hidden rounded-lg outline-none ${Z_CLASS.overlay}`;
+export const ANCHORED_PANEL = `${OVERLAY_SURFACE} ${ANCHORED_MOTION} fixed flex ${MODAL_MAX_H} flex-col overflow-hidden ${SCROLL_CONTAIN} rounded-lg outline-none ${Z_CLASS.overlay}`;
 
-export const MODAL_SCRIM = `${SCRIM_MOTION} fixed inset-0 ${Z_CLASS.overlay} ${SCRIM_CLASS}`;
+export const MODAL_SCRIM = `${SCRIM_MOTION} fixed inset-0 ${Z_CLASS.overlay} ${SCRIM_CLASS} ${SCRIM_CONTAIN}`;
 
 const MODAL_HEADER =
   "flex shrink-0 items-start gap-4 px-6 pt-6 pb-3 in-data-[slot=bottom-sheet-content]:px-4 [[data-slot=bottom-sheet-handle]+&]:pt-1";
@@ -268,14 +272,6 @@ export function createModalDismiss(slot: string): ParentComponent<ModalDismissPr
     );
   };
 }
-
-/** Renderless. Mounted inside a portal that exists only while the modal is
- *  open, so the refcounted page lock follows the modal's real lifetime. */
-export const ModalScrollLock: Component = () => {
-  onMount(acquireScrollLock);
-  onCleanup(releaseScrollLock);
-  return null;
-};
 
 /** Renderless, inside the modal's portal: the panel covers the page from the end of its open animation until the portal leaves. */
 export const ModalCover: Component<{

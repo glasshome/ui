@@ -4,6 +4,7 @@ import { BusyPage } from "../../dev/blocks/busy-page";
 import { BLOCKS, COMPONENTS, findScenario, scenarioPath } from "../../dev/harness/registry";
 import type { Within } from "../../dev/harness/types";
 import { Within as WithinStage } from "../../dev/harness/Within";
+import * as overlayClasses from "../../src/lib/overlay-classes.js";
 import * as solid from "../../src/solid/index.js";
 
 afterEach(cleanup);
@@ -63,6 +64,10 @@ const BEHAVIOR_FILES = Object.keys(import.meta.glob("../../src/lib/behavior/*.{t
   (path) => (path.split("/").at(-1) ?? "").replace(/\.tsx?$/, ""),
 );
 
+const CSS_BLOCKS = Object.keys(overlayClasses).map((name) =>
+  name.toLowerCase().replaceAll("_", "-"),
+);
+
 const BLOCK_SOURCES = import.meta.glob<string>("../../dev/blocks/*/scenarios.tsx", {
   query: "?raw",
   import: "default",
@@ -74,10 +79,10 @@ describe("block registry", () => {
     expect(BLOCKS.map((b) => b.component)).toContain("solid");
   });
 
-  it("a block's name matches a file in src/lib/behavior", () => {
+  it("a block's name matches a file in src/lib/behavior or a class in overlay-classes", () => {
     for (const block of BLOCKS) {
       expect(block.kind, block.component).toBe("block");
-      expect(BEHAVIOR_FILES, block.component).toContain(block.component);
+      expect([...BEHAVIOR_FILES, ...CSS_BLOCKS], block.component).toContain(block.component);
     }
   });
 

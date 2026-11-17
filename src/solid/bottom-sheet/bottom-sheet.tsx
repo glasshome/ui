@@ -19,7 +19,11 @@ import { Polymorphic } from "../../lib/behavior/polymorphic.js";
 import { usePortalMount } from "../portal-mount.js";
 import { createControllableSignal } from "../../lib/behavior/controllable.js";
 import { Z } from "../../lib/layers.js";
-import { OVERLAY_SURFACE_OPAQUE } from "../../lib/overlay-classes.js";
+import {
+  OVERLAY_SURFACE_OPAQUE,
+  SCRIM_CONTAIN,
+  SCROLL_CONTAIN,
+} from "../../lib/overlay-classes.js";
 import { coverOnceOpen } from "../../lib/page-cover.js";
 import { cn } from "../../lib/utils.js";
 import { type MotionEvent, watchMotion } from "../../lib/behavior/presence.js";
@@ -40,7 +44,6 @@ import { createDismiss } from "../../lib/behavior/dismiss.js";
 import { createFocusScope, type InitialFocus } from "../../lib/behavior/focus-scope.js";
 import { registerLayer } from "../../lib/behavior/layer-stack.js";
 import { watchKeyboard } from "./keyboard.js";
-import { acquireScrollLock, releaseScrollLock } from "./scroll-lock.js";
 import { assertTransition, type SheetState } from "./state-machine.js";
 
 interface BottomSheetContextValue {
@@ -180,7 +183,7 @@ const BottomSheetOverlay: Component<ComponentProps<"div">> = (props) => {
       data-state={dataState()}
       aria-hidden="true"
       class={cn(
-        "fixed inset-0 bg-black/80 transition-opacity duration-300 ease-out",
+        `fixed inset-0 bg-black/80 transition-opacity duration-300 ease-out ${SCRIM_CONTAIN}`,
         "data-[state=closing]:opacity-0 data-[state=open]:opacity-100",
         local.class,
       )}
@@ -208,15 +211,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
   const labels = createModalLabels();
   let el: HTMLDivElement | undefined;
 
-  /* Keyed on presence, not on mount: a sheet rendered without
-   * BottomSheetPortal stays in the tree while closed and must not hold the
-   * page lock. Release also runs on unmount, so no animation can strand it. */
   const present = createMemo(() => ctx.state() !== "closed");
-  createEffect(() => {
-    if (!present()) return;
-    acquireScrollLock();
-    onCleanup(releaseScrollLock);
-  });
 
   const covering = createMemo(() => present() && ctx.state() !== "opening");
   createEffect(() => {
@@ -333,7 +328,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
         }}
         class={cn(
           "bs-content",
-          `fixed inset-x-0 bottom-0 flex ${MODAL_MAX_H} flex-col rounded-t-xl ${OVERLAY_SURFACE_OPAQUE} outline-none`,
+          `fixed inset-x-0 bottom-0 flex ${MODAL_MAX_H} flex-col ${SCROLL_CONTAIN} rounded-t-xl ${OVERLAY_SURFACE_OPAQUE} outline-none`,
           "after:absolute after:inset-x-0 after:top-full after:h-1/2 after:bg-inherit",
           local.class,
         )}

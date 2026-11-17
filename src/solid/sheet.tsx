@@ -15,7 +15,12 @@ import { buttonVariants } from "../lib/button-variants.js";
 import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { SCRIM_MOTION } from "../lib/motion-classes.js";
-import { OVERLAY_SURFACE, SCRIM_CLASS } from "../lib/overlay-classes.js";
+import {
+  OVERLAY_SURFACE,
+  SCRIM_CLASS,
+  SCRIM_CONTAIN,
+  SCROLL_CONTAIN,
+} from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import {
   createModalDismiss,
@@ -25,11 +30,8 @@ import {
   MODAL_TITLE,
   type ModalDismissProps,
   ModalCover,
-  ModalScrollLock,
 } from "./dialog-parts.js";
 
-/* Kobalte's own scroll lock is off here too: ModalScrollLock is the one
- * refcounted page lock every modal family shares. */
 const Sheet: ParentComponent<ComponentProps<typeof DialogPrimitive>> = (props) => {
   const mount = usePortalMount();
   return <DialogPrimitive modal={!inShadowRoot(mount)} {...props} preventScroll={false} />;
@@ -66,7 +68,7 @@ const SheetOverlay: Component<ComponentProps<typeof DialogPrimitive.Overlay>> = 
     <DialogPrimitive.Overlay
       data-slot="sheet-overlay"
       class={cn(
-        `${SCRIM_MOTION} pointer-events-auto fixed inset-0 select-none ${Z_CLASS.overlay} ${SCRIM_CLASS}`,
+        `${SCRIM_MOTION} pointer-events-auto fixed inset-0 select-none ${Z_CLASS.overlay} ${SCRIM_CLASS} ${SCRIM_CONTAIN}`,
         local.class,
       )}
       {...rest}
@@ -78,7 +80,7 @@ const SheetOverlay: Component<ComponentProps<typeof DialogPrimitive.Overlay>> = 
  * blob over a flat field; pinned lengths match the ellipse a dialog gets. */
 const SHEET_SURFACE = `${OVERLAY_SURFACE} [--glass-sheen:600px_300px]`;
 
-const SHEET_PANEL = `fixed ${Z_CLASS.overlay} flex flex-col overflow-hidden rounded-lg ${SHEET_SURFACE} transition ease-in-out focus:outline-none focus-visible:outline-none data-[closed]:animate-out data-[expanded]:animate-in data-[closed]:duration-300 data-[expanded]:duration-500`;
+const SHEET_PANEL = `fixed ${Z_CLASS.overlay} flex flex-col overflow-hidden ${SCROLL_CONTAIN} rounded-lg ${SHEET_SURFACE} transition ease-in-out focus:outline-none focus-visible:outline-none data-[closed]:animate-out data-[expanded]:animate-in data-[closed]:duration-300 data-[expanded]:duration-500`;
 
 const SHEET_SIDE = {
   right:
@@ -134,7 +136,6 @@ const SheetContent: ParentComponent<SheetContentProps> = (props) => {
 
   return (
     <DialogPrimitive.Portal mount={usePortalMount()}>
-      <ModalScrollLock />
       <ModalCover panel={panel} open={context.isOpen} />
       <SheetOverlay />
       <DialogPrimitive.Content

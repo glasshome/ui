@@ -1,0 +1,118 @@
+{
+  "modal": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1385,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1108,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 60,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25%: the modal's own subtree, the fixture is not touched; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 46,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25%, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 7,
+        "reason": "baseline 2026-11-17, 5 measured plus 25%; phase 1 step 5 is open, Task 12 re-measures"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "sheet": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1385,
+          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 1108,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 60,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25%: the modal's own subtree, the fixture is not touched; phase 1 step 5 is open, Task 12 re-measures"
+        },
+        "largestRecalc": {
+          "max": 46,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25%, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 7,
+        "reason": "baseline 2026-11-17, 5 measured plus 25%; phase 1 step 5 is open, Task 12 re-measures"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  }
+}

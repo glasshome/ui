@@ -62,7 +62,8 @@ export function trackPointer(base: Input) {
 declare module "vitest/browser" {
   interface BrowserCommands {
     mouse(action: "move" | "down" | "up", x: number, y: number): Promise<void>;
-    touch(action: "down" | "up" | "cancel", x: number, y: number): Promise<void>;
+    touch(action: "down" | "move" | "up" | "cancel", x: number, y: number): Promise<void>;
+    wheel(x: number, y: number, deltaY: number): Promise<void>;
     compose(on: boolean): Promise<void>;
   }
 }
