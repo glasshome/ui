@@ -34,16 +34,14 @@ export interface LayerHandle {
 
 const [layers, setLayers] = createSignal<readonly Layer[]>([]);
 
-const { top, modalOpen } = createRoot(() => ({
-  top: createMemo(() => layers().findLast((layer) => layer.kind !== "tooltip")),
-  modalOpen: createMemo(() => layers().some((layer) => layer.kind === "modal")),
-}));
+const top = createRoot(() =>
+  createMemo(() => layers().findLast((layer) => layer.kind !== "tooltip")),
+);
 
 export const layerStack: {
   layers: Accessor<readonly Layer[]>;
   top: Accessor<Layer | undefined>;
-  modalOpen: Accessor<boolean>;
-} = { layers, top, modalOpen };
+} = { layers, top };
 
 let nextId = 0;
 
