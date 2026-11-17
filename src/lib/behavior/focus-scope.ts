@@ -1,10 +1,23 @@
 import { type Accessor, untrack } from "solid-js";
+import { layerStack } from "./layer-stack";
 import { effect } from "./solid";
 
 const CANDIDATES =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [contenteditable]:not([contenteditable="false"]), [tabindex]:not([tabindex="-1"])';
 
-const PORTALED_LAYER = '[data-kb-top-layer], [role="menu"], [role="listbox"], [role="tooltip"]';
+const MARKED_LAYER = "[data-kb-top-layer]";
+
+function within(ancestor: Element | undefined, node: Node): boolean {
+  const hosted = typeof ShadowRoot !== "undefined";
+  for (
+    let n: Node | null = node;
+    n;
+    n = hosted && n instanceof ShadowRoot ? n.host : n.parentNode
+  ) {
+    if (n === ancestor) return true;
+  }
+  return false;
+}
 
 export type InitialFocus = "container" | "first" | ((container: HTMLElement) => HTMLElement | null);
 
@@ -70,11 +83,12 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
       const onKeyUp = (event: KeyboardEvent) => {
         if (event.key === "Tab") tab = null;
       };
-      const isAbove = (node: Node) =>
-        activeScopes
-          .slice(activeScopes.indexOf(container) + 1)
-          .some((above) => above.contains(node)) ||
-        (node instanceof Element && node.closest(PORTALED_LAYER) !== null);
+      const isAbove = (node: Node) => {
+        if (node instanceof Element && node.closest(MARKED_LAYER) !== null) return true;
+        const layers = layerStack.layers();
+        const mine = layers.findIndex((layer) => layer.element() === container);
+        return mine >= 0 && layers.slice(mine + 1).some((above) => within(above.element(), node));
+      };
       const onFocusOut = (event: FocusEvent) => {
         const next = event.relatedTarget;
         if (next instanceof Node && (container.contains(next) || isAbove(next))) return;

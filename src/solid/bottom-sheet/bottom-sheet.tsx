@@ -37,6 +37,7 @@ import {
 import { EASE, TRANSITION_MS } from "./constants.js";
 import { attachDrag } from "./drag-controller.js";
 import { createFocusScope, type InitialFocus } from "../../lib/behavior/focus-scope.js";
+import { registerLayer } from "../../lib/behavior/layer-stack.js";
 import { watchKeyboard } from "./keyboard.js";
 import { acquireScrollLock, releaseScrollLock } from "./scroll-lock.js";
 import { assertTransition, type SheetState } from "./state-machine.js";
@@ -260,6 +261,14 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     onCleanup(() => handle.destroy());
   });
 
+  const handle = registerLayer({
+    element: ctx.contentRef,
+    open: ctx.open,
+    kind: "modal",
+    escape: ctx.dismissible,
+    dismiss: () => ctx.setOpen(false),
+  });
+
   createFocusScope({
     container: ctx.contentRef,
     active: () => ctx.state() === "open" || ctx.state() === "opening",
@@ -289,8 +298,6 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     let attached = false;
     let pendingClick: ((click: Event) => void) | null = null;
 
-    const PORTAL_LAYER_SELECTOR =
-      '[data-kb-top-layer], [role="dialog"], [role="menu"], [role="listbox"], [role="combobox"], [role="tooltip"]';
     // Judged along the composed path: a press inside an icon's own shadow root is still inside the
     // sheet. Only the part below the listening root counts: a realm's host inside a page dialog
     // must not make every press in the realm look like one inside a layer.
@@ -300,12 +307,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
       const listener = e.currentTarget;
       const end = listener && listener !== document ? full.indexOf(listener) : -1;
       const path = end >= 0 ? full.slice(0, end) : full;
-      if (path.includes(el)) return false;
-      return !path.some(
-        (node) =>
-          node instanceof Element &&
-          (node.matches("[data-sheet-content]") || node.matches(PORTAL_LAYER_SELECTOR)),
-      );
+      return !path.includes(el) && !handle.containsPath(path);
     };
 
     // Inside a shadow root the page sees every press there as one on the root's host, so the

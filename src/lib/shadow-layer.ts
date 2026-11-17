@@ -4,13 +4,11 @@ import {
   focusWithoutTracking,
   type InitialFocus,
 } from "./behavior/focus-scope.js";
+import { registerLayer } from "./behavior/layer-stack.js";
 
 /** True for a node inside a shadow root, where page-level layer logic sees only the root's host. */
 export const inShadowRoot = (node: Node | undefined): boolean =>
   typeof ShadowRoot !== "undefined" && node?.getRootNode() instanceof ShadowRoot;
-
-/** Layers open in each shadow root, oldest first: only the newest dismisses on a press, as Kobalte's own stack does. */
-const stacks = new WeakMap<ShadowRoot, Element[]>();
 
 type OutsideEvent = { target: EventTarget | null; preventDefault(): void };
 type AutoFocusEvent = { preventDefault(): void };
@@ -51,6 +49,20 @@ interface ShadowLayerOptions {
  */
 export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
   let dismissedIn: ShadowRoot | undefined;
+  const handle = registerLayer({
+    element: options.content,
+    open: options.open,
+    kind: !options.dismiss
+      ? "tooltip"
+      : options.trapsFocus
+        ? "modal"
+        : options.tree
+          ? "menu"
+          : "popover",
+    escape: () => false,
+    dismiss: options.dismiss,
+    trigger: options.trigger,
+  });
   createFocusScope({
     container: options.content,
     active: () =>
@@ -67,16 +79,12 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
     if (options.open()) dismissedIn = undefined;
     if (!el || !dismiss || !options.open() || !inShadowRoot(el)) return;
     const root = el.getRootNode() as ShadowRoot;
-    const stack = stacks.get(root) ?? [];
-    stacks.set(root, stack);
-    stack.push(el);
-    const inside = (e: Event) => {
-      const path = e.composedPath();
-      const trigger = options.trigger?.();
-      if (path.includes(el) || (trigger && path.includes(trigger))) return true;
-      return stack.slice(stack.indexOf(el) + 1).some((above) => path.includes(above));
-    };
-    const dismisses = (e: Event) => (options.tree || stack[stack.length - 1] === el) && !inside(e);
+    const newestInRoot = () =>
+      handle
+        .above()
+        .every((other) => other.kind === "tooltip" || other.element()?.getRootNode() !== root);
+    const dismisses = (e: Event) =>
+      (options.tree || newestInRoot()) && !handle.containsPath(e.composedPath());
     const close = () => {
       dismissedIn = root;
       dismiss();
@@ -108,7 +116,6 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
       clearTimeout(timer);
       root.removeEventListener("pointerdown", onDown, true);
       dropPendingClick();
-      stack.splice(stack.indexOf(el), 1);
     });
   });
   const shadowHost = () => {
