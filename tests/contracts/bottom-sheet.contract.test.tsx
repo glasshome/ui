@@ -2,7 +2,6 @@ import { cleanup } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { findAll, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -54,14 +53,11 @@ describe("BottomSheet contract", () => {
     expect(sheets()).toHaveLength(1);
   });
 
-  it("B6 Escape in that list closes the list, and the sheet with it", async () => {
+  it("B6 Escape in that list closes the list and leaves the sheet open", async () => {
     const { sheets, listboxes, run } = await mount("nested-select");
     await run(OPEN, SELECT, { key: "Escape" });
     await vi.waitFor(() => expect(listboxes()).toHaveLength(0));
-    await expectGap(
-      () => expect(sheets(), "sheet open after Escape").toHaveLength(1),
-      "sheet open after Escape: expected [] to have a length of 1 but got +0",
-    );
+    expect(sheets()).toHaveLength(1);
   });
 
   it("B7 a press beside the open sheet closes it", async () => {
