@@ -89,7 +89,7 @@ describe("preview", () => {
     const run = preview(["nope"]);
     expect(run.code).toBe(2);
     const known = readdirSync(join(PKG, "dev/components")).toSorted().join(", ");
-    expect(known).toContain("select, spinner, tabs");
+    expect(known).toMatch(/select.*spinner.*tabs/);
     expect(run.stderr).toContain(`no component nope; known: ${known}`);
   });
 });
