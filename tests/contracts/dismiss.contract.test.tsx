@@ -19,7 +19,7 @@ import { useFakeTime } from "../../src/testing";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
-const TIMERS = ["setTimeout", "clearTimeout"] as const;
+const TIMERS: ("setTimeout" | "clearTimeout")[] = ["setTimeout", "clearTimeout"];
 const LISTEN_DELAY_MS = 1;
 
 afterEach(() => {
