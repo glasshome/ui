@@ -165,7 +165,12 @@ async function openSheet(): Promise<Parts> {
 const SUBJECTS: Subject[] = [
   { name: "a centred modal", open: () => openBlock("modal", "page") },
   { name: "a sheet from the bottom", open: () => openBlock("sheet", "page") },
-  { name: "the Dialog", open: openDialog, writesWhileOpen: 'BODY style="pointer-events: none;"' },
+  {
+    name: "the Dialog",
+    open: openDialog,
+    writesWhileOpen:
+      'html and body now read: HTML lang="en" | BODY style="pointer-events: none;": expected false to be true // Object.is equality',
+  },
   { name: "the BottomSheet", open: openSheet },
 ];
 
