@@ -44,7 +44,7 @@ const SheetTrigger: Component<ComponentProps<typeof DialogPrimitive.Trigger>> = 
 type SheetCloseProps = ModalDismissProps &
   Partial<Pick<VariantProps<typeof buttonVariants>, "variant" | "size">>;
 
-const SheetDismiss = createModalDismiss("sheet-close");
+const SheetDismiss = createModalDismiss("sheet-close", useDialogContext);
 
 /** Already the outline button; see DialogClose on why `as={Button}` is wrong. */
 const SheetClose: ParentComponent<SheetCloseProps> = (props) => {

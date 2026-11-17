@@ -1,5 +1,4 @@
 import { Button as KobalteButton } from "@kobalte/core/button";
-import { useDialogContext } from "@kobalte/core/dialog";
 import {
   type Accessor,
   children,
@@ -19,6 +18,7 @@ import {
   type ValidComponent,
 } from "solid-js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
+import { callEventHandler } from "../lib/behavior/solid.js";
 import { busyProps } from "../lib/busy.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { ANCHORED_MOTION, MODAL_MOTION, SCRIM_MOTION } from "../lib/motion-classes.js";
@@ -233,32 +233,21 @@ export function createModalHead<P extends ModalHeadProps = ModalHeadProps>(
   };
 }
 
-/** Solid's handler prop is a union: a plain function, or the bound
- *  `[handler, data]` form that calls `handler(data, event)`. A wrapper that
- *  only checks for a function silently drops the bound one. */
-export function callEventHandler<T, E extends Event>(
-  event: E & { currentTarget: T; target: Element },
-  handler: JSX.EventHandlerUnion<T, E> | undefined,
-): void {
-  if (!handler) return;
-  if (typeof handler === "function") handler(event);
-  else handler[0](handler[1], event);
-}
-
 export type ModalDismissProps = ComponentProps<typeof KobalteButton> & {
   /** Presses do nothing, the dialog stays open and focus stays put; see Button. */
   busy?: boolean;
 };
 
-/* Not kobalte's own CloseButton: that one hard-defaults aria-label to its
- * "Dismiss" translation, and an aria-label outranks the visible text, so every
- * labelled button in every modal answered to "Dismiss". Here a name is set only
- * when the caller passes one. AlertDialog is built on the Dialog context, so
- * one factory serves both families. */
-export function createModalDismiss(slot: string): ParentComponent<ModalDismissProps> {
+/* A name is set only when the caller passes one: an aria-label outranks the
+ * visible text, so a default label would rename every close button. Each
+ * family hands in the context its parts close through. */
+export function createModalDismiss(
+  slot: string,
+  useCloser: () => { close(): void },
+): ParentComponent<ModalDismissProps> {
   return (props) => {
     const [local, rest] = splitProps(props, ["onClick", "busy"]);
-    const context = useDialogContext();
+    const context = useCloser();
     return (
       <KobalteButton
         data-slot={slot}

@@ -1,0 +1,13 @@
+# modal-root: behaviour contract
+
+Each line is one browser test in `tests/contracts/modal-root.contract.test.tsx`, named by its id. `src/lib/behavior/modal-root.tsx` holds `ModalRoot`, its context (`useDialogContext`), `ModalTrigger`, `ModalTitle`, `ModalDescription` and `ModalFrame`: the owned modal the Dialog family skins. It assembles controllable, polymorphic, layer stack, dismiss, presence, focus scope and hide outside; every block keys on `isOpen()`. The rows run through the public `Dialog` API, so they hold the skin and the root together.
+
+| id | when | then |
+|---|---|---|
+| MR1 | a panel with a `DialogTitle`, a `DialogDescription` and `ariaLabel`; then one with only `ariaLabel` | the Title names the panel and `aria-label` is absent; the Description describes it; the untitled panel is named by `ariaLabel` and has no `aria-labelledby` |
+| MR2 | the trigger, closed, then pressed | `aria-haspopup="dialog"` and `aria-expanded="false"` with no `aria-controls`; open, `aria-expanded="true"` and `aria-controls` names the panel's id |
+| MR3 | `defaultOpen`, Done pressed, the trigger pressed | starts open, closes, reopens; `onOpenChange` reports `[false, true]` |
+| MR4 | `onEscapeKeyDown` and `onInteractOutside` call `preventDefault`; Escape, then a press beside the panel | the dialog stays open |
+| MR5 | `ref`, `data-testid` and `onKeyDown` on the content | `ref` receives the panel; the attribute and the handler reach it |
+| MR6 | the dialog inside a closed shadow root; then on the page | in the shadow root nothing on the page gets `aria-hidden`; on the page what is beside it gets `aria-hidden="true"` |
+| MR7 | a Select list opened inside the dialog, then the dialog closes | the list closes with it: every layer whose trigger or element sits inside the panel is dismissed, newest first |

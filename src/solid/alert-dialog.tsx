@@ -148,8 +148,8 @@ const AlertDialogHead = createModalHead<AlertDialogHeadProps>(
 type AlertDialogButtonProps = ModalDismissProps &
   Partial<Pick<VariantProps<typeof buttonVariants>, "variant" | "size">>;
 
-const ActionDismiss = createModalDismiss("alert-dialog-action");
-const CancelDismiss = createModalDismiss("alert-dialog-cancel");
+const ActionDismiss = createModalDismiss("alert-dialog-action", useDialogContext);
+const CancelDismiss = createModalDismiss("alert-dialog-cancel", useDialogContext);
 
 /** Confirming action. Pass `variant` (e.g. "destructive"); layering a second
  *  buttonVariants() call through `class` cannot work, because the variants

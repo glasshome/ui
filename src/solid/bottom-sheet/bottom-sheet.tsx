@@ -25,12 +25,11 @@ import {
   SCROLL_CONTAIN,
 } from "../../lib/overlay-classes.js";
 import { coverNow } from "../../lib/page-cover.js";
-import { effect } from "../../lib/behavior/solid.js";
+import { callEventHandler, effect } from "../../lib/behavior/solid.js";
 import { cn } from "../../lib/utils.js";
 import { type MotionEvent, watchMotion } from "../../lib/behavior/presence.js";
 import { MOTION_EXIT_MS } from "../../lib/motion-classes.js";
 import {
-  callEventHandler,
   createModalLabels,
   createModalParts,
   MODAL_DESCRIPTION,
