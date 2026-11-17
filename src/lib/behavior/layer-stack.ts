@@ -46,6 +46,7 @@ export const layerStack: {
 let nextId = 0;
 
 function enterTopLayer(element: HTMLElement, mode: TopLayer, dismiss: (() => void) | undefined) {
+  if (typeof element.showPopover !== "function") return undefined;
   element.setAttribute("popover", mode);
   try {
     element.showPopover();
