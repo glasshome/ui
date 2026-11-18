@@ -868,7 +868,7 @@
     display: flex;
     flex-wrap: wrap;
   }
-  [data-balanced-rows][data-wrapped] {
+  [data-balanced-rows][data-balanced] {
     display: grid;
     grid-auto-flow: row;
     grid-template-columns: repeat(var(--balance-columns), minmax(max-content, 1fr));
