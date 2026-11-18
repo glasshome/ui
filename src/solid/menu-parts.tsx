@@ -76,57 +76,57 @@ export function createMenuLevel(options: MenuOptions, parent?: MenuLevel): MenuL
   return { menu, parent, triggerId, setTriggerId, contentId, setContentId };
 }
 
-/** Kobalte's root options with no owned meaning, accepted so no consumer breaks. */
+/** @deprecated Ignored options; removed in 2.0.0. */
 export interface DeprecatedMenuRootProps {
-  /** @deprecated Ignored; a menu never blocks or hides the page. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   modal?: boolean;
-  /** @deprecated Ignored; a menu never locks page scroll. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   preventScroll?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   id?: string;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   forceMount?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   orientation?: "horizontal" | "vertical";
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   value?: string;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   shift?: number;
-  /** @deprecated Ignored; the panel flips on its own when there is no room. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   flip?: boolean | string;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   slide?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   overlap?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   sameWidth?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   fitViewport?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   hideWhenDetached?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   detachedPadding?: number;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   arrowPadding?: number;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   overflowPadding?: number;
 }
 
-/** Kobalte's content callbacks, accepted so no consumer breaks. */
+/** @deprecated Ignored callbacks; removed in 2.0.0. */
 export interface DeprecatedMenuContentProps {
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   forceMount?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   onOpenAutoFocus?: (event: Event) => void;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   onCloseAutoFocus?: (event: Event) => void;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   onPointerDownOutside?: (event: Event) => void;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   onFocusOutside?: (event: Event) => void;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   onInteractOutside?: (event: Event) => void;
 }
 
@@ -215,23 +215,23 @@ export interface MenuSubProps {
   onOpenChange?: (open: boolean) => void;
   gutter?: number;
   children?: JSX.Element;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   shift?: number;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   slide?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   overlap?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   fitViewport?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   hideWhenDetached?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   detachedPadding?: number;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   arrowPadding?: number;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   overflowPadding?: number;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   getAnchorRect?: (anchor?: HTMLElement) => unknown;
 }
 
@@ -251,7 +251,7 @@ export const MenuSub: Component<MenuSubProps> = (props) => {
 
 type ToneProps = {
   tone?: string;
-  /** @deprecated pass `tone="var(--destructive)"` instead */
+  /** @deprecated `tone="var(--destructive)"`; removed in 2.0.0. */
   variant?: "default" | "destructive";
 };
 
@@ -279,7 +279,7 @@ interface RowOwnProps {
   disabled?: boolean;
   closeOnSelect?: boolean;
   onSelect?: () => void;
-  /** @deprecated Ignored; typeahead reads the row's text. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   textValue?: string;
 }
 
@@ -705,13 +705,13 @@ export function MenuRadioItemPart(
   );
 }
 
-/** @deprecated Kobalte's part statics: content portals itself, so this renders its children in place. */
+/** @deprecated Drop the wrapper; the content portals itself; removed in 2.0.0. */
 export const MenuPortal: Component<{ children?: JSX.Element; mount?: Node }> = (props) => (
   <>{props.children}</>
 );
 
-/** @deprecated Renders nothing. */
+/** @deprecated Ignored; removed in 2.0.0. */
 export const MenuArrow: Component = () => null;
 
-/** @deprecated A plain span; kept for Kobalte's statics. */
+/** @deprecated Use a plain `span`; removed in 2.0.0. */
 export const MenuTextPart: Component<ComponentProps<"span">> = (props) => <span {...props} />;

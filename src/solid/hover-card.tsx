@@ -37,33 +37,33 @@ interface HoverCardProps {
   placement?: Placement;
   gutter?: number;
   children?: JSX.Element;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   id?: string;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   ignoreSafeArea?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   forceMount?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   getAnchorRect?: (anchor?: HTMLElement) => unknown;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   shift?: number;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   flip?: boolean | string;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   slide?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   overlap?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   sameWidth?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   fitViewport?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   hideWhenDetached?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   detachedPadding?: number;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   arrowPadding?: number;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   overflowPadding?: number;
 }
 
@@ -212,15 +212,15 @@ function HoverCardTrigger<T extends ValidComponent = "a">(
 }
 
 interface HoverCardContentProps extends ComponentProps<"div"> {
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   forceMount?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   onEscapeKeyDown?: (event: Event) => void;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   onPointerDownOutside?: (event: Event) => void;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   onFocusOutside?: (event: Event) => void;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   onInteractOutside?: (event: Event) => void;
 }
 
@@ -287,10 +287,10 @@ const HoverCardContent: Component<HoverCardContentProps> = (props) => {
   );
 };
 
-/** @deprecated HoverCardContent portals itself; this renders its children in place. */
+/** @deprecated Drop the wrapper; the content portals itself; removed in 2.0.0. */
 const HoverCardPortal: Component<{ children?: JSX.Element }> = (props) => <>{props.children}</>;
 
-/** @deprecated Renders nothing. */
+/** @deprecated Ignored; removed in 2.0.0. */
 const HoverCardArrow: Component = () => null;
 
 const HoverCard = Object.assign(HoverCardRoot, {

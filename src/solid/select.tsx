@@ -77,27 +77,27 @@ interface SelectBaseProps<Option, OptGroup> extends Omit<
   readOnly?: boolean;
   validationState?: "valid" | "invalid";
   children?: JSX.Element;
-  /** @deprecated Ignored: Select renders no native select for a form. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   name?: string;
-  /** @deprecated Ignored: the list always covers its trigger. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   placement?: string;
-  /** @deprecated Ignored: the list always covers its trigger. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   gutter?: number;
-  /** @deprecated Ignored: the list always covers its trigger. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   flip?: boolean | string;
-  /** @deprecated Ignored: the list always covers its trigger. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   overlap?: boolean;
-  /** @deprecated Ignored: the list is always at least the trigger's width. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   sameWidth?: boolean;
-  /** @deprecated Ignored: the list always covers its trigger. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   getAnchorRect?: (anchor?: HTMLElement) => unknown;
-  /** @deprecated Ignored: the list never traps focus. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   modal?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   preventScroll?: boolean;
-  /** @deprecated Ignored: choosing the chosen option keeps it. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   disallowEmptySelection?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   allowDuplicateSelectionEvents?: boolean;
 }
 
@@ -664,11 +664,11 @@ interface SelectContentProps extends Omit<ComponentProps<"div">, "children"> {
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
   onInteractOutside?: (event: InteractOutsideEvent) => void;
   onCloseAutoFocus?: (event: Event) => void;
-  /** @deprecated Ignored: the list renders the options itself. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   children?: JSX.Element;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   forceMount?: boolean;
-  /** @deprecated Ignored: opening always focuses the list. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   onOpenAutoFocus?: (event: Event) => void;
 }
 

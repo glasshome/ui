@@ -95,7 +95,7 @@ const FormField: ParentComponent<{ name: string }> = (props) => {
   );
 };
 
-/** @deprecated Use `Field`. Form* is the same stack with the id wiring attached. */
+/** @deprecated `Field`; removed in 2.0.0. */
 const FormItem: ParentComponent<ComponentProps<typeof Field>> = (props) => {
   const id = createUniqueId();
   const [hasDescription, setHasDescription] = createSignal(false);
@@ -107,7 +107,7 @@ const FormItem: ParentComponent<ComponentProps<typeof Field>> = (props) => {
   );
 };
 
-/** @deprecated Use `FieldLabel`. */
+/** @deprecated `FieldLabel`; removed in 2.0.0. */
 const FormLabel: Component<ComponentProps<typeof FieldLabel>> = (props) => {
   const [local, rest] = splitProps(props, ["class"]);
   const { error, formItemId } = useFormField();
@@ -145,8 +145,7 @@ function warnFormControlWrapper() {
  * Passing children keeps the old wrapper shape working: a `div` carrying the
  * same id and aria, with the children inside.
  *
- * @deprecated with `children`. Render the control itself, so the id and the
- * describedby land on the element a screen reader announces.
+ * @deprecated With `children`, render the control itself; removed in 2.0.0.
  */
 const FormControl = <T extends ValidComponent = typeof Input>(
   props: { as?: T } & ComponentProps<T>,
@@ -197,7 +196,7 @@ const FormControl = <T extends ValidComponent = typeof Input>(
   );
 };
 
-/** @deprecated Use `FieldDescription`. */
+/** @deprecated `FieldDescription`; removed in 2.0.0. */
 const FormDescription: Component<ComponentProps<typeof FieldDescription>> = (props) => {
   const itemContext = useContext(FormItemContext);
   const { formDescriptionId } = useFormField();
@@ -208,7 +207,7 @@ const FormDescription: Component<ComponentProps<typeof FieldDescription>> = (pro
   return <FieldDescription id={formDescriptionId()} {...props} />;
 };
 
-/** @deprecated Use `FieldError`. */
+/** @deprecated `FieldError`; removed in 2.0.0. */
 const FormMessage: ParentComponent<ComponentProps<typeof FieldError>> = (props) => {
   const [local, rest] = splitProps(props, ["children"]);
   const { error, formMessageId } = useFormField();

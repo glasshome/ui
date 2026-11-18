@@ -40,9 +40,7 @@ export const FLOATING_PANEL_SURFACE = `${OVERLAY_SURFACE} ${PANEL_TAIL}`;
  * menus add p-1, popovers p-4, pickers none. */
 export const FLOATING_PANEL = `${OVERLAY_SURFACE} relative ${PANEL_TAIL}`;
 
-/* Zero-height rect on the trigger's top edge. With gutter 0 and the panel
- * width bound to --kb-popper-anchor-width, the panel covers the trigger and
- * grows downward from it. */
+/** @deprecated Ignored; removed in 2.0.0. */
 export const anchorToTriggerTop = (anchor?: HTMLElement) => {
   const r = anchor?.getBoundingClientRect();
   return r

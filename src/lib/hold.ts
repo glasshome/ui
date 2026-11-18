@@ -28,7 +28,7 @@ function spendPress(): void {
 
 /** A fired hold spends the press: the browser's own long press (text selection, context menu)
  *  must not land on what the hold opened under the finger. Lasts until the release.
- *  @deprecated use createHold, which also spends the release. */
+ *  @deprecated `createHold`; removed in 2.0.0. */
 export function spendLongPress(): void {
   spendPress();
 }

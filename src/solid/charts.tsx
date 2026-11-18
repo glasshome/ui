@@ -281,7 +281,7 @@ type StackedBarSegment = {
   value: number;
   /** CSS color driving the segment's own glass tint. */
   tone?: string;
-  /** @deprecated pass `tone` instead */
+  /** @deprecated `tone`; removed in 2.0.0. */
   class?: string;
 };
 

@@ -64,35 +64,35 @@ interface PopoverProps {
   gutter?: number;
   anchorRef?: Accessor<HTMLElement | undefined>;
   children?: JSX.Element;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   id?: string;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   preventScroll?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   forceMount?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   translations?: unknown;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   getAnchorRect?: (anchor?: HTMLElement) => unknown;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   shift?: number;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   flip?: boolean | string;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   slide?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   overlap?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   sameWidth?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   fitViewport?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   hideWhenDetached?: boolean;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   detachedPadding?: number;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   arrowPadding?: number;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   overflowPadding?: number;
 }
 
@@ -246,7 +246,7 @@ interface PopoverContentProps extends Omit<ComponentProps<"div">, "ref"> {
   onInteractOutside?: (event: InteractOutsideEvent) => void;
   onOpenAutoFocus?: (event: Event) => void;
   onCloseAutoFocus?: (event: Event) => void;
-  /** @deprecated Ignored. */
+  /** @deprecated Ignored; removed in 2.0.0. */
   forceMount?: boolean;
 }
 
@@ -476,12 +476,12 @@ function PopoverCloseButton<T extends ValidComponent = "button">(props: PartProp
   );
 }
 
-/** @deprecated PopoverContent portals itself; this renders its children in place. */
+/** @deprecated Drop the wrapper; the content portals itself; removed in 2.0.0. */
 const PopoverPortal: Component<{ children?: JSX.Element; mount?: Node }> = (props) => (
   <>{props.children}</>
 );
 
-/** @deprecated Renders nothing. */
+/** @deprecated Ignored; removed in 2.0.0. */
 const PopoverArrow: Component = () => null;
 
 const Popover = Object.assign(PopoverRoot, {

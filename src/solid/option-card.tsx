@@ -214,8 +214,5 @@ function OptionIconWell(props: { icon?: string; image?: string }) {
   );
 }
 
-/**
- * @deprecated OptionCard carries the same props; HeroOption is an alias.
- * @alias
- */
+/** @deprecated `OptionCard`; removed in 2.0.0. */
 export const HeroOption = OptionCard;

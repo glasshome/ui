@@ -36,7 +36,7 @@ const EMPTY_MEDIA: Record<EmptyMediaKind, string> = {
 const EmptyMedia: Component<
   ComponentProps<"div"> & {
     media?: EmptyMediaKind;
-    /** @deprecated `media` */
+    /** @deprecated `media`; removed in 2.0.0. */
     variant?: EmptyMediaKind | "default";
   }
 > = (props) => {
