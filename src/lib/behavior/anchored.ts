@@ -13,6 +13,8 @@ export interface AnchoredOptions {
 }
 
 const SHADOW_ROOT_NODE = 11;
+// The widget realm's tap guard reads this marker as a placed panel.
+const ANCHORED = "data-anchored";
 
 export function createAnchored(options: AnchoredOptions): void {
   effect(
@@ -26,6 +28,7 @@ export function createAnchored(options: AnchoredOptions): void {
       ] as const,
     ([open, anchor, floating, side, align]) => {
       if (!open || !anchor || !floating) return;
+      floating.setAttribute(ANCHORED, "");
       const offset = options.offset ?? 0;
       const matchAnchorWidth = options.matchAnchorWidth ?? false;
       const written = new Map<string, string>();
@@ -82,6 +85,7 @@ export function createAnchored(options: AnchoredOptions): void {
           target.removeEventListener("scroll", onScroll, { capture: true });
         window.removeEventListener("resize", onResize);
         if (frame !== undefined) cancelAnimationFrame(frame);
+        floating.removeAttribute(ANCHORED);
       };
     },
   );

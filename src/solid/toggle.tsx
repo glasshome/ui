@@ -1,6 +1,8 @@
-import { ToggleButton as ToggleButtonPrimitive } from "@kobalte/core/toggle-button";
 import { cva, type VariantProps } from "cva";
-import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { type Accessor, children, type JSX, splitProps } from "solid-js";
+import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
+import { createControllableSignal } from "../lib/behavior/controllable.js";
+import { callEventHandler } from "../lib/behavior/solid.js";
 import { OUTLINE_SURFACE } from "../lib/button-variants.js";
 import { CONTROL_H } from "../lib/input-classes.js";
 import { SEGMENT_ITEM } from "../lib/segment-classes.js";
@@ -36,13 +38,39 @@ const TOGGLE_HOVER: Record<"default" | "outline", string> = {
   outline: "",
 };
 
-const Toggle: Component<
-  ComponentProps<typeof ToggleButtonPrimitive> & VariantProps<typeof toggleVariants>
-> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "variant", "size"] as const);
+type ToggleProps = Omit<ButtonRootProps<"button">, "children" | "onChange"> &
+  VariantProps<typeof toggleVariants> & {
+    pressed?: boolean;
+    defaultPressed?: boolean;
+    onChange?: (pressed: boolean) => void;
+    children?: JSX.Element | ((state: { pressed: Accessor<boolean> }) => JSX.Element);
+  };
+
+function Toggle(props: ToggleProps) {
+  const [local, rest] = splitProps(props, [
+    "class",
+    "variant",
+    "size",
+    "pressed",
+    "defaultPressed",
+    "onChange",
+    "onClick",
+    "children",
+  ]);
+  const [pressed, setPressed] = createControllableSignal({
+    value: () => local.pressed,
+    defaultValue: () => local.defaultPressed ?? false,
+    onChange: (next) => local.onChange?.(next),
+  });
+  const content = children(() => {
+    const body = local.children;
+    return typeof body === "function" ? body({ pressed }) : body;
+  });
   return (
-    <ToggleButtonPrimitive
+    <ButtonRoot
       data-slot="toggle"
+      aria-pressed={pressed()}
+      data-pressed={pressed() ? "" : undefined}
       class={cn(
         toggleVariants({ variant: local.variant, size: local.size }),
         TOGGLE_HOVER[local.variant ?? "default"],
@@ -50,8 +78,14 @@ const Toggle: Component<
         local.class,
       )}
       {...rest}
-    />
+      onClick={(event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => {
+        callEventHandler(event, local.onClick);
+        if (!rest.disabled) setPressed(!pressed());
+      }}
+    >
+      {content()}
+    </ButtonRoot>
   );
-};
+}
 
 export { Toggle, toggleVariants };

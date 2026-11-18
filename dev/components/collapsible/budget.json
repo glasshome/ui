@@ -1,0 +1,196 @@
+{
+  "closed": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 4,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "open": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 9,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 5,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 5,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "toggle": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 33,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, over Kobalte's 32: restyles and layouts follow the frames the open motion draws at the T50 rate, which move a frame or two run to run (Kobalte's layouts ranged 17 to 19)"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 20,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 19: restyles and layouts follow the frames the open motion draws at the T50 rate, which move a frame or two run to run (Kobalte's layouts ranged 17 to 19)"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 25,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 18,
+          "reason": "owned baseline 2026-11-18, max of 6 T50 runs, since the close motion's frame count moved 15 to 18 run to run under the 3 runs' rate (Kobalte's was 20)"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 7,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "disabled": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 3,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 4,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "in-shadow-root": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 5,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 34,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, over Kobalte's 5: the press now opens the content inside the closed shadow root (CL10), so the step runs the open motion where Kobalte did nothing"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 2: the press now opens the content inside the closed shadow root (CL10), so the step runs the open motion where Kobalte did nothing"
+        },
+        "layouts": {
+          "max": 20,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 0: the press now opens the content inside the closed shadow root (CL10), so the step runs the open motion where Kobalte did nothing"
+        }
+      }
+    }
+  }
+}

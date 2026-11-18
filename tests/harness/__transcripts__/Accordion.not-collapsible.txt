@@ -1,0 +1,2 @@
+document
+button, Wi-Fi, 1 control, expanded

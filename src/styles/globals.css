@@ -418,21 +418,17 @@
   background:
     var(--glass-grain, none),
     radial-gradient(
-      var(--glass-sheen, 120% 120%) at
-        calc(50% + (-28% * var(--_material-light-cos) + 42% * var(--_material-light-sin)))
-        calc(50% + (-28% * var(--_material-light-sin) - 42% * var(--_material-light-cos))),
+      var(--glass-sheen, 120% 120%) at var(--_material-sheen-at),
       oklch(1 0 0 / calc(var(--glass-light) * var(--_material-sheen))),
       transparent 58%
     ),
     radial-gradient(
-      120% 120% at calc(50% + (32% * var(--_material-light-cos) - 50% * var(--_material-light-sin)))
-        calc(50% + (32% * var(--_material-light-sin) + 50% * var(--_material-light-cos))),
+      120% 120% at var(--_material-shade-at),
       oklch(0 0 0 / calc(var(--glass-shade) * var(--_material-sheen))),
       transparent 58%
     ),
     radial-gradient(
-      circle at calc(50% + 12% * var(--_material-light-sin))
-        calc(50% - 12% * var(--_material-light-cos)),
+      circle at var(--_material-relief-at),
       oklch(1 0 0 / calc(0.07 * var(--_material-face-raised) * var(--_material-relief))),
       transparent 70%
     ),

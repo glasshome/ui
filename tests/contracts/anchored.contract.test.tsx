@@ -103,4 +103,13 @@ describe("anchored contract", () => {
     expect(part.getAttribute("style") ?? "").not.toMatch(/anchor/);
     expect(anchor.getAttribute("style") ?? "").not.toMatch(/anchor/);
   });
+
+  it("PO7 marks the part it places while open, and only then", async () => {
+    const { anchor, part } = await open("below");
+    expect(part.hasAttribute("data-anchored")).toBe(true);
+    expect(anchor.hasAttribute("data-anchored")).toBe(false);
+    await input.press(anchor);
+    await settle();
+    expect(part.hasAttribute("data-anchored")).toBe(false);
+  });
 });

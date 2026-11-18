@@ -1,10 +1,13 @@
-import { ToggleGroup as ToggleGroupPrimitive } from "@kobalte/core/toggle-group";
-import { createContext, createMemo, type JSX, Show, useContext } from "solid-js";
+import { createContext, createMemo, createSignal, type JSX, Show, useContext } from "solid-js";
+import { createToggleItem, createToggleSet, type ToggleSet } from "../lib/toggle-set.js";
 import { cn } from "../lib/utils.js";
 import { Avatar, AvatarFallback } from "./avatar.js";
 import { Icon } from "./icon.js";
 
-const LockedContext = createContext<() => ReadonlySet<string>>(() => new Set<string>());
+const FaceContext = createContext<{ locked: () => ReadonlySet<string>; set: ToggleSet }>();
+
+const sameList = (a: readonly string[], b: readonly string[]) =>
+  a.length === b.length && a.every((v, i) => v === b[i]);
 
 /** People and screens to turn on or off. Faces in `lockedIds` always count: shown on, never reported in `onChange`. */
 export function FaceToggleGroup(props: {
@@ -18,19 +21,33 @@ export function FaceToggleGroup(props: {
 }) {
   const locked = createMemo(() => new Set(props.lockedIds ?? []));
   const pressed = () => [...new Set([...props.value, ...locked()])];
+  const [root, setRoot] = createSignal<HTMLElement>();
+  const set = createToggleSet({
+    root,
+    itemSelector: '[data-slot="face-toggle"][data-key]',
+    values: pressed,
+    setValues: (next) => {
+      const chosen = next.filter((id) => !locked().has(id));
+      if (!sameList(chosen, props.value)) props.onChange(chosen);
+    },
+    multiple: () => true,
+    disabledFocusable: true,
+  });
   return (
-    <LockedContext.Provider value={locked}>
-      <ToggleGroupPrimitive
-        multiple
+    <FaceContext.Provider value={{ locked, set }}>
+      <div
+        ref={setRoot}
+        role="group"
+        id={set.id()}
+        data-orientation={set.orientation()}
         data-slot="face-toggle-group"
         aria-label={props["aria-label"]}
-        value={pressed()}
-        onChange={(next: string[]) => props.onChange(next.filter((id) => !locked().has(id)))}
         class={cn("flex flex-wrap gap-x-3 gap-y-2", props.class)}
+        on:keydown={(event) => set.collection.onKeyDown(event)}
       >
         {props.children}
-      </ToggleGroupPrimitive>
-    </LockedContext.Provider>
+      </div>
+    </FaceContext.Provider>
   );
 }
 
@@ -40,11 +57,19 @@ export function FaceToggle(props: {
   kind: "person" | "screen";
   class?: string;
 }) {
-  const locked = useContext(LockedContext);
-  const isLocked = () => locked().has(props.id);
+  const group = useContext(FaceContext);
+  if (!group) throw new Error("FaceToggle renders inside a FaceToggleGroup");
+  const isLocked = () => group.locked().has(props.id);
+  const item = createToggleItem(group.set, {
+    value: () => props.id,
+    disabled: () => false,
+    locked: isLocked,
+  });
   return (
-    <ToggleGroupPrimitive.Item
-      value={props.id}
+    <button
+      ref={item.ref}
+      type="button"
+      {...item.props}
       data-slot="face-toggle"
       aria-disabled={isLocked() ? "true" : undefined}
       class={cn(
@@ -53,7 +78,7 @@ export function FaceToggle(props: {
       )}
     >
       <span aria-hidden="true" class="relative">
-        <Avatar class="group-data-[pressed]/face-toggle:ring-primary group-data-[pressed]/face-toggle:ring-offset-background size-11 opacity-50 transition-opacity duration-200 group-active/face-toggle:scale-[0.97] group-data-[pressed]/face-toggle:opacity-100 group-data-[pressed]/face-toggle:ring-2 group-data-[pressed]/face-toggle:ring-offset-2">
+        <Avatar class="group-data-[pressed]/face-toggle:ring-primary group-data-[pressed]/face-toggle:ring-offset-background size-11 opacity-50 transition-opacity duration-(--duration-expand) group-active/face-toggle:scale-[0.97] group-data-[pressed]/face-toggle:opacity-100 group-data-[pressed]/face-toggle:ring-2 group-data-[pressed]/face-toggle:ring-offset-2">
           <AvatarFallback>
             <Show when={props.kind === "screen"} fallback={props.name.slice(0, 1)}>
               <Icon icon="lucide:monitor-smartphone" width={18} height={18} />
@@ -81,13 +106,13 @@ export function FaceToggle(props: {
       </span>
       <span
         data-slot="face-toggle-name"
-        class="text-muted-foreground group-data-[pressed]/face-toggle:text-foreground max-w-full truncate transition-colors duration-200"
+        class="text-muted-foreground group-data-[pressed]/face-toggle:text-foreground max-w-full truncate transition-colors duration-(--duration-expand)"
       >
         {props.name}
       </span>
       <Show when={isLocked()}>
-        <span class="sr-only">always sees it</span>
+        <span class="sr-only">{" always sees it"}</span>
       </Show>
-    </ToggleGroupPrimitive.Item>
+    </button>
   );
 }

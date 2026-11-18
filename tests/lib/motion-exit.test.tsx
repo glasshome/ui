@@ -37,6 +37,7 @@ const DOORS = {
   modal: { class: MODAL_MOTION, attrs: { "data-closed": "" } },
   scrim: { class: SCRIM_MOTION, attrs: { "data-closed": "" } },
   field: { class: FIELD_MOTION, attrs: { "data-closed": "" } },
+  disclosure: { class: "data-closed:animate-collapsible-up", attrs: { "data-closed": "" } },
   sheet: {
     class: "bs-content",
     attrs: {

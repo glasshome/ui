@@ -1,0 +1,5 @@
+document
+button, Garage, pressed
+button, Kitchen, not pressed
+button, Garage, pressed
+button, Office, not pressed

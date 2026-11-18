@@ -16,6 +16,8 @@ export interface CollectionOptions {
   dir?: Accessor<"ltr" | "rtl">;
   /** Keys that hold the tab stop while focus is outside, first present wins (a selected tab). */
   preferred?: Accessor<readonly string[]>;
+  /** APG's focusable when disabled: an `aria-disabled` item stays in the arrow order and can hold the tab stop. */
+  disabledFocusable?: boolean;
 }
 
 export interface Collection {
@@ -70,8 +72,11 @@ function matchText(items: HTMLElement[], from: number, buffer: string): HTMLElem
 export function createCollection(options: CollectionOptions): Collection {
   const [own, setOwn] = createSignal<string>();
   const highlighted = () => own() ?? options.preferred?.()[0];
+  const skipped = options.disabledFocusable
+    ? (el: HTMLElement) => el.matches(":disabled")
+    : isDisabled;
   const enabledItems = (root: HTMLElement) =>
-    [...root.querySelectorAll<HTMLElement>(options.itemSelector)].filter((el) => !isDisabled(el));
+    [...root.querySelectorAll<HTMLElement>(options.itemSelector)].filter((el) => !skipped(el));
 
   // Tracked from focus events, which a sealed widget already receives; reading activeElement asks the page.
   let focused: Element | null = null;

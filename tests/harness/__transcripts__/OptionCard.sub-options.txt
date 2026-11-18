@@ -1,0 +1,2 @@
+document
+radio, Eight digits, not checked, position 2, set size 2

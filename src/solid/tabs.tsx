@@ -14,7 +14,7 @@ import {
 } from "solid-js";
 import { type Collection, createCollection } from "../lib/behavior/collection.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
-import { CANDIDATES, focusWithoutTracking } from "../lib/behavior/focus-scope.js";
+import { CANDIDATES, focusWithoutTracking, trackFocus } from "../lib/behavior/focus-scope.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { effect, merge } from "../lib/behavior/solid.js";
 import { TRACK_SURFACE } from "../lib/card-classes.js";
@@ -268,7 +268,7 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
   effect(el, (node) => {
     if (!node) return;
     let mousePressed = false;
-    let focused = false;
+    const focused = trackFocus(node);
     const choose = () => {
       if (disabled()) return;
       ctx.select(local.value);
@@ -281,24 +281,19 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
     };
     const click = (event: MouseEvent) => {
       // WebKit leaves a clicked button unfocused.
-      if (!disabled() && !focused) focusWithoutTracking(node);
+      if (!disabled() && !focused.has()) focusWithoutTracking(node);
       if (event.detail === 0 || !mousePressed) choose();
       mousePressed = false;
     };
-    const focus = () => {
-      focused = true;
-      ctx.collection.highlight(local.value, "pointer");
-    };
-    const blur = () => (focused = false);
+    const focus = () => ctx.collection.highlight(local.value, "pointer");
     node.addEventListener("pointerdown", pointerdown);
     node.addEventListener("click", click);
     node.addEventListener("focus", focus);
-    node.addEventListener("blur", blur);
     return () => {
+      focused.stop();
       node.removeEventListener("pointerdown", pointerdown);
       node.removeEventListener("click", click);
       node.removeEventListener("focus", focus);
-      node.removeEventListener("blur", blur);
     };
   });
 
