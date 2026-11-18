@@ -445,6 +445,7 @@ describe("the rest of the shadow-root review's cases", () => {
       ),
       { container: mount },
     );
+    await layersListening();
     await press(subTriggerIn(root));
     await layersListening();
     const nested = root.querySelector<HTMLElement>('[data-testid="nested"]');
