@@ -106,7 +106,7 @@ describe("ToggleGroup", () => {
     expect(item?.firstElementChild?.hasAttribute("data-selection-highlight")).toBe(true);
   });
 
-  const rowsOf = (width: number, count: number, multiple = false) => {
+  const rowsOf = async (width: number, count: number, multiple = false) => {
     const values = Array.from({ length: count }, (_, i) => `mode-${i}`);
     const items = () =>
       values.map((value) => (
@@ -127,22 +127,23 @@ describe("ToggleGroup", () => {
         )}
       </div>
     ));
+    for (let i = 0; i < 2; i++) await new Promise(requestAnimationFrame);
     const tops = [...view.container.querySelectorAll('[data-slot="toggle-group-item"]')].map(
       (item) => Math.round(item.getBoundingClientRect().top),
     );
     return [...new Set(tops)].map((top) => tops.filter((t) => t === top).length);
   };
 
-  it("keeps every segment on one row while they fit", () => {
-    expect(rowsOf(600, 4)).toEqual([4]);
+  it("keeps every segment on one row while they fit", async () => {
+    expect(await rowsOf(600, 4)).toEqual([4]);
   });
 
-  it("wraps four segments two by two, never three and an orphan", () => {
-    expect(rowsOf(400, 4)).toEqual([2, 2]);
+  it("wraps four segments two by two, never three and an orphan", async () => {
+    expect(await rowsOf(400, 4)).toEqual([2, 2]);
   });
 
-  it("wraps five segments that fit three to a row as three and two", () => {
-    expect(rowsOf(540, 5)).toEqual([3, 2]);
+  it("wraps five segments that fit three to a row as three and two", async () => {
+    expect(await rowsOf(540, 5)).toEqual([3, 2]);
   });
 
   it("wraps again when a label widens after mount, as a late icon does", async () => {
@@ -174,8 +175,8 @@ describe("ToggleGroup", () => {
     expect(root?.hasAttribute("data-wrapped")).toBe(true);
   });
 
-  it("balances a multi-select group's rows too", () => {
-    expect(rowsOf(400, 4, true)).toEqual([2, 2]);
+  it("balances a multi-select group's rows too", async () => {
+    expect(await rowsOf(400, 4, true)).toEqual([2, 2]);
   });
 
   it("in scroll mode keeps one row and still picks on a tap", async () => {
