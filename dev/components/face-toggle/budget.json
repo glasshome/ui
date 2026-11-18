@@ -18,13 +18,13 @@
     },
     "guest": {
       "workUnits": {
-        "max": 13,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 9,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
-        "compareDocumentPosition": 2,
-        "IntersectionObserver": 2,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -76,13 +76,13 @@
     },
     "guest": {
       "workUnits": {
-        "max": 14,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 10,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
-        "compareDocumentPosition": 2,
-        "IntersectionObserver": 2,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -120,13 +120,13 @@
     },
     "guest": {
       "workUnits": {
-        "max": 13,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 9,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
-        "compareDocumentPosition": 2,
-        "IntersectionObserver": 2,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -149,16 +149,16 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 23,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 60,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled; Kobalte ignored this press inside a closed shadow root, so its figure was no ceiling, and this matches the light DOM press"
         },
         "largestRecalc": {
-          "max": 8,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 10,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled; Kobalte ignored this press inside a closed shadow root, so its figure was no ceiling, and this matches the light DOM press"
         },
         "layouts": {
-          "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 2,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled; Kobalte ignored this press inside a closed shadow root, so its figure was no ceiling, and this matches the light DOM press"
         }
       }
     }

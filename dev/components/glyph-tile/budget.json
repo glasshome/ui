@@ -18,13 +18,13 @@
     },
     "guest": {
       "workUnits": {
-        "max": 13,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 9,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
-        "compareDocumentPosition": 3,
-        "IntersectionObserver": 2,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
         "MutationObserver": 1
       }
     }
@@ -61,8 +61,8 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 144,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 135,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 10,
@@ -76,13 +76,13 @@
     },
     "guest": {
       "workUnits": {
-        "max": 14,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 10,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
-        "compareDocumentPosition": 3,
-        "IntersectionObserver": 2,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
         "MutationObserver": 1
       }
     }
@@ -162,13 +162,13 @@
     },
     "guest": {
       "workUnits": {
-        "max": 15,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 12,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
-        "compareDocumentPosition": 3,
-        "IntersectionObserver": 2,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
         "MutationObserver": 1
       }
     }
@@ -191,12 +191,12 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 23,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 267,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled; Kobalte ignored this press inside a closed shadow root, so its figure was no ceiling, and this matches the light DOM press"
         },
         "largestRecalc": {
-          "max": 7,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 20,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled; Kobalte ignored this press inside a closed shadow root, so its figure was no ceiling, and this matches the light DOM press"
         },
         "layouts": {
           "max": 2,

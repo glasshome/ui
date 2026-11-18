@@ -106,8 +106,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 5,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 4,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -201,8 +201,8 @@
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 0,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
@@ -281,16 +281,16 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 54,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 58,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled; Kobalte ignored this press inside a closed shadow root, so its figure was no ceiling, and this matches the light DOM press"
         },
         "largestRecalc": {
           "max": 4,
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled; Kobalte ignored this press inside a closed shadow root, so its figure was no ceiling, and this matches the light DOM press"
         }
       }
     }
