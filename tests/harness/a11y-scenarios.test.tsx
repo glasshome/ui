@@ -49,6 +49,8 @@ describe.each(CASES)("$name", ({ component, scenario }) => {
     const gaps = knownGaps(kebab(component), scenario.id, theme);
     document.documentElement.classList.toggle("dark", theme === "dark");
     await commands.emulateMedia({ colorScheme: theme });
+    // The previous test leaves the pointer anywhere; hovering a control at mount would make the first pass depend on test order.
+    await commands.mouse("move", innerWidth - 1, innerHeight - 1);
     const { scope } = await mount(component, scenario);
     const seen = await expectAxeClean(document, gaps);
     const pointer = trackPointer(input);

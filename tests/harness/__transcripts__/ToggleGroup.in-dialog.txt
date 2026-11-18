@@ -1,2 +1,2 @@
 document
-dialog, Scenario | button, High, pressed
+dialog, Scenario, modal | button, High, pressed
