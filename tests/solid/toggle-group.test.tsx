@@ -213,6 +213,43 @@ describe("ToggleGroup", () => {
     expect(errors).toEqual([]);
   });
 
+  it("wraps under a page that watches its own size, with no ResizeObserver loop error", async () => {
+    const errors: string[] = [];
+    const onError = (e: ErrorEvent) => errors.push(e.message);
+    window.addEventListener("error", onError);
+    const [width, setWidth] = createSignal(600);
+    let outer: HTMLDivElement | undefined;
+    const view = render(() => (
+      <div ref={outer} style={{ width: `${width()}px` }}>
+        <ToggleGroup value="a" class="w-full">
+          {["a", "b", "c", "d"].map((value) => (
+            <ToggleGroupItem value={value}>
+              <span style={{ display: "inline-block", width: "80px" }}>{value}</span>
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </div>
+    ));
+    const heights: number[] = [];
+    const page = new ResizeObserver((entries) => {
+      for (const entry of entries) heights.push(Math.round(entry.contentRect.height));
+    });
+    if (outer) page.observe(outer);
+    const frames = async () => {
+      for (let i = 0; i < 3; i++) await new Promise(requestAnimationFrame);
+    };
+    await frames();
+    setWidth(300);
+    await frames();
+    page.disconnect();
+    window.removeEventListener("error", onError);
+
+    const root = view.container.querySelector('[data-slot="toggle-group"]');
+    expect(root?.hasAttribute("data-wrapped")).toBe(true);
+    expect(new Set(heights).size).toBeGreaterThan(1);
+    expect(errors).toEqual([]);
+  });
+
   it("balances a multi-select group's rows too", async () => {
     expect(await rowsOf(400, 4, true)).toEqual([2, 2]);
   });

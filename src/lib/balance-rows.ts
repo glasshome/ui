@@ -80,13 +80,15 @@ export function balanceRows(sizer: HTMLElement, items: HTMLElement, item: string
     else items.style.removeProperty("--balance-columns");
   };
 
-  // A change made inside the observer's callback would resize what it observes, so it looks again a frame on.
+  // A layout change inside any ResizeObserver callback resizes what other observers watch and loops, so it waits a frame.
   const relayout = (next: number, then: "measure" | "settle") => {
     resize.disconnect();
-    layout(next);
     phase = then;
     cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(watch);
+    frame = requestAnimationFrame(() => {
+      layout(next);
+      watch();
+    });
   };
 
   const apply = (room: number, widths: number[]) => {
