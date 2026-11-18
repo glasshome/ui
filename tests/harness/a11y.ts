@@ -17,7 +17,11 @@ interface Gap {
   rule: string;
   item: string;
   theme?: Theme;
+  /** The gap shows only where the browser reports `(hover: hover)`; headless CI reports none. */
+  hover?: boolean;
 }
+
+const canHover = () => matchMedia("(hover: hover)").matches;
 
 const GAP_FILES = import.meta.glob<Gap[]>(
   ["../../dev/components/*/a11y-gaps.json", "../../dev/blocks/*/a11y-gaps.json"],
@@ -31,7 +35,12 @@ export function knownGaps(folder: string, scenario: string, theme: Theme): strin
     GAP_FILES[`../../dev/blocks/${folder}/a11y-gaps.json`] ??
     [];
   return gaps
-    .filter((g) => g.scenario === scenario && (g.theme ?? theme) === theme)
+    .filter(
+      (g) =>
+        g.scenario === scenario &&
+        (g.theme ?? theme) === theme &&
+        (g.hover === undefined || g.hover === canHover()),
+    )
     .map((g) => g.rule);
 }
 
