@@ -11,3 +11,4 @@ Each line is one browser test in `tests/contracts/modal-root.contract.test.tsx`,
 | MR5 | `ref`, `data-testid` and `onKeyDown` on the content | `ref` receives the panel; the attribute and the handler reach it |
 | MR6 | the dialog inside a closed shadow root; then on the page | in the shadow root nothing on the page gets `aria-hidden`; on the page what is beside it gets `aria-hidden="true"` |
 | MR7 | a Select list opened inside the dialog, then the dialog closes | the list closes with it: every layer whose trigger or element sits inside the panel is dismissed, newest first |
+| MR8 | a `modal` Popover open; a Dialog opened from a button inside it, Confirm pressed, then Keep | the panel sits under no `aria-hidden`, holds focus and takes the press; Keep closes the dialog and the popover stays open: a Kobalte root drops `modal` while an owned modal covers it, and the owned modal's portal takes pointer events whatever the body says |

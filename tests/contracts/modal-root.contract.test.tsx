@@ -12,6 +12,9 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -215,5 +218,39 @@ describe("modal root contract", () => {
     setDialog(false);
     await settle();
     expect(list()).toBe(false);
+  });
+  it("MR8 a dialog opened over a modal Popover takes presses, keeps focus and leaves the popover open", async () => {
+    const [dialog, setDialog] = createSignal(false);
+    const [popover, setPopover] = createSignal(true);
+    const pressed: string[] = [];
+    render(() => (
+      <>
+        <Popover modal open={popover()} onOpenChange={setPopover}>
+          <PopoverTrigger as={Button}>Gallery</PopoverTrigger>
+          <PopoverContent>
+            <Button onClick={() => setDialog(true)}>Remove</Button>
+          </PopoverContent>
+        </Popover>
+        <Dialog open={dialog()} onOpenChange={setDialog}>
+          <DialogContent>
+            <DialogTitle>Remove photo</DialogTitle>
+            <Button onClick={() => pressed.push("Confirm")}>Confirm</Button>
+            <DialogClose>Keep</DialogClose>
+          </DialogContent>
+        </Dialog>
+      </>
+    ));
+    await settle();
+    await input.press(button("Remove"));
+    await settle();
+    const [panel] = findAll(scope(), { role: "dialog", name: "Remove photo" });
+    expect(panel?.closest("[aria-hidden]")).toBeNull();
+    expect(panel?.contains(document.activeElement)).toBe(true);
+    await input.press(button("Confirm"));
+    expect(pressed).toEqual(["Confirm"]);
+    await input.press(button("Keep"));
+    await settle();
+    expect(dialog()).toBe(false);
+    expect(popover()).toBe(true);
   });
 });
