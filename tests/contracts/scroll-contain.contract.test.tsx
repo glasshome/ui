@@ -13,7 +13,6 @@ import {
   DialogBody,
   DialogContent,
 } from "../../src/solid";
-import { expectGap } from "../harness/gap";
 import { settle } from "../harness/mount";
 import { corner, find, openBlock, type Parts, pageY } from "./scroll-contain-parts";
 
@@ -53,8 +52,6 @@ const scrollerOf = (panel: Element): Element => {
 interface Subject {
   name: string;
   open: () => Promise<Parts>;
-  /** What the primitive still writes on body while open; Phase 3 of 2026-11-15-ui-owns-its-primitives removes Kobalte. */
-  writesWhileOpen?: string;
 }
 
 const spacer = () => {
@@ -130,12 +127,7 @@ async function openSheet(): Promise<Parts> {
 const SUBJECTS: Subject[] = [
   { name: "a centred modal", open: () => openBlock("modal", "page") },
   { name: "a sheet from the bottom", open: () => openBlock("sheet", "page") },
-  {
-    name: "the Dialog",
-    open: openDialog,
-    writesWhileOpen:
-      'html and body now read: HTML lang="en" | BODY style="pointer-events: none;": expected false to be true // Object.is equality',
-  },
+  { name: "the Dialog", open: openDialog },
   { name: "the BottomSheet", open: openSheet },
 ];
 
@@ -171,9 +163,7 @@ describe("scroll-contain contract", () => {
     it("SC3 open and close leave html and body as they were", async () => {
       const before = rootsState();
       const parts = await subject.open();
-      const whileOpen = () => expectRootsAs(before);
-      if (subject.writesWhileOpen) await expectGap(whileOpen, subject.writesWhileOpen);
-      else whileOpen();
+      expectRootsAs(before);
       await parts.close();
       await settle();
       expectRootsAs(before);
