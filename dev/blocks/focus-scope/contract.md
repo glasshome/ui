@@ -17,3 +17,4 @@ Each line is one browser test in `tests/contracts/focus-scope.contract.test.tsx`
 | FO11 | the `active` accessor re-evaluates to the answer it already gave | nothing refocuses and nothing restores; the scope acts only on a real false/true change |
 | FO12 | a scope deactivates and another activates in the same tick | the first scope's trigger receives no focus: the restore runs in a microtask, is dropped when a newer scope activated, and the new scope restores to the first one's target |
 | FO13 | trapped, the container is removed while focus is inside it | keys still reach the page: the recovery waits a microtask and skips a container that left the document |
+| FO14 | trapped, `untrap()`, focus moved to a button outside, then deactivated | focus stays on the outside button until the deactivation, which still restores to the element focused before |

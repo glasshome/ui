@@ -310,6 +310,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
         }
       }
       if (!trapping()) return;
+      scope.untrap();
       const kept =
         vetoed(local.onCloseAutoFocus, new Event("closeautofocus", { cancelable: true })) ||
         (closedByOutside && !ctx.modal());

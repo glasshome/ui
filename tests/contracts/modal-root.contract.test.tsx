@@ -336,4 +336,27 @@ describe("modal root contract", () => {
     expect(await commands.axTree()).toContain('button "Wake screen"');
     wake.remove();
   });
+
+  it("MR12 onCloseAutoFocus that prevents and focuses a page button outside every layer leaves focus there", async () => {
+    const [open, setOpen] = createSignal(true);
+    const { sibling } = page(() => (
+      <Dialog open={open()} onOpenChange={setOpen}>
+        <DialogContent
+          onCloseAutoFocus={(e: Event) => {
+            e.preventDefault();
+            sibling.focus();
+          }}
+        >
+          <DialogTitle>Moved</DialogTitle>
+          <Button>Inside</Button>
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    expect(dialogs()[0]?.contains(document.activeElement)).toBe(true);
+    setOpen(false);
+    await vi.waitFor(() => expect(dialogs()).toHaveLength(0));
+    await settle();
+    expect(document.activeElement).toBe(sibling);
+  });
 });

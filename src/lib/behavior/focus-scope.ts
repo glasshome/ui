@@ -30,6 +30,7 @@ export interface FocusScopeOptions {
 
 export interface FocusScope {
   skipRestore(): void;
+  untrap(): void;
 }
 
 type FocusRoot = Document | ShadowRoot;
@@ -64,10 +65,15 @@ let pendingRestore: { target: Element | null } | undefined;
 
 export function createFocusScope(options: FocusScopeOptions): FocusScope {
   let skipNext = false;
-  let held: { container: HTMLElement; trapped: boolean; release: () => void } | undefined;
+  let held:
+    | { container: HTMLElement; trapped: boolean; release: () => void; untrap: () => void }
+    | undefined;
   onCleanup(() => held?.release());
 
-  const activate = (container: HTMLElement, trapped: boolean): (() => void) => {
+  const activate = (
+    container: HTMLElement,
+    trapped: boolean,
+  ): { release: () => void; untrap: () => void } => {
     skipNext = false;
     const previous = pendingRestore ? pendingRestore.target : activeOf(container);
     pendingRestore = undefined;
@@ -122,11 +128,15 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
       container.addEventListener("focusout", onFocusOut);
     }
 
-    return () => {
+    const untrap = () => {
       trapping = false;
       container.removeEventListener("keydown", onKeyDown);
       container.removeEventListener("keyup", onKeyUp);
       container.removeEventListener("focusout", onFocusOut);
+    };
+
+    const release = () => {
+      untrap();
       activeScopes.splice(activeScopes.indexOf(container), 1);
       if (skipNext) return;
       const pending = { target: previous };
@@ -141,6 +151,7 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
         }
       });
     };
+    return { release, untrap };
   };
 
   effect(
@@ -149,14 +160,15 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
       const wanted = container && active ? container : undefined;
       if (held && held.container === wanted && held.trapped === trapped) return;
       held?.release();
-      held = wanted
-        ? { container: wanted, trapped, release: activate(wanted, trapped) }
-        : undefined;
+      held = wanted ? { container: wanted, trapped, ...activate(wanted, trapped) } : undefined;
     },
   );
   return {
     skipRestore() {
       skipNext = true;
+    },
+    untrap() {
+      held?.untrap();
     },
   };
 }

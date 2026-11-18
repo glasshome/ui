@@ -15,3 +15,4 @@ Each line is one browser test in `tests/contracts/modal-root.contract.test.tsx`,
 | MR9 | a Dialog open on the page; one with `modal={false}`; one inside a closed shadow root | the modal panel carries `aria-modal="true"`; the non-modal panel and the shadow-root panel carry no `aria-modal` |
 | MR10 | a `Toaster` beside a modal Dialog that is open, then `toast("Scene saved")` | the panel carries `aria-modal="true"` and the toast's text is in the Chromium AX tree |
 | MR11 | a `data-kb-top-layer` "Wake screen" button on the page, then a modal Dialog opened | the panel carries `aria-modal="true"` and `button "Wake screen"` stays in the Chromium AX tree |
+| MR12 | a controlled modal with no Trigger closes; `onCloseAutoFocus` calls `preventDefault` and focuses an unmarked page button | focus ends on that button after the exit: the trap lets go before the consumer runs |
