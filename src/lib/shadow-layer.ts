@@ -1,7 +1,7 @@
 import { type Accessor, createContext, createSignal, onCleanup, useContext } from "solid-js";
 import { createDismiss } from "./behavior/dismiss.js";
 import { effect } from "./behavior/solid.js";
-import { focusWithoutTracking } from "./behavior/focus-scope.js";
+import { activeOf, focusWithoutTracking } from "./behavior/focus-scope.js";
 import { registerLayer } from "./behavior/layer-stack.js";
 
 /** True for a node inside a shadow root, where page-level layer logic sees only the root's host. */
@@ -108,9 +108,9 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
         // Dismissed by a press elsewhere in the root: focus stays where that press put it, even
         // for the Kobalte layers that focus their trigger past preventDefault.
         e.preventDefault();
-        const kept = root.activeElement;
+        const kept = activeOf(root);
         queueMicrotask(() => {
-          if (kept instanceof HTMLElement && kept.isConnected && root.activeElement !== kept) {
+          if (kept instanceof HTMLElement && kept.isConnected && activeOf(root) !== kept) {
             focusWithoutTracking(kept);
           }
         });

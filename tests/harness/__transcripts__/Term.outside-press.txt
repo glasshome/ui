@@ -1,0 +1,3 @@
+document
+dialog | link, Learn more
+button, Hub account, not expanded, has popup dialog

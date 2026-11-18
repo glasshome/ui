@@ -1,8 +1,7 @@
-import { Popover as PopoverPrimitive } from "@kobalte/core/popover";
 import { type JSX, Show } from "solid-js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
-import { Popover, PopoverContent } from "./popover.js";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover.js";
 import { SectionIcon } from "./section-card.js";
 
 export interface TermDefinition {
@@ -17,7 +16,7 @@ export interface TermDefinition {
 export function Term(props: { term: TermDefinition; children?: JSX.Element; class?: string }) {
   return (
     <Popover>
-      <PopoverPrimitive.Trigger
+      <PopoverTrigger
         data-slot="term"
         class={cn(
           "decoration-muted-foreground/60 hover:decoration-foreground cursor-help underline decoration-dotted underline-offset-4 outline-none focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-[var(--material-accent)]",
@@ -25,7 +24,7 @@ export function Term(props: { term: TermDefinition; children?: JSX.Element; clas
         )}
       >
         {props.children ?? props.term.title}
-      </PopoverPrimitive.Trigger>
+      </PopoverTrigger>
       <PopoverContent class="flex w-72 items-start gap-3 text-left">
         <SectionIcon icon={props.term.icon} tone="var(--material-accent)" size="sm" />
         <div class="flex min-w-0 flex-col gap-1">

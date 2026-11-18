@@ -10,6 +10,10 @@ export interface AnchoredOptions {
   align?: Accessor<Align>;
   offset?: number;
   matchAnchorWidth?: boolean;
+  /** The anchor counts as its top edge and the part never flips: placed below, it covers the anchor. */
+  coverAnchor?: boolean;
+  /** A custom property the part gets the anchor's width in, for styles sized by the anchor. */
+  widthVar?: string;
 }
 
 const SHADOW_ROOT_NODE = 11;
@@ -31,6 +35,7 @@ export function createAnchored(options: AnchoredOptions): void {
       floating.setAttribute(ANCHORED, "");
       const offset = options.offset ?? 0;
       const matchAnchorWidth = options.matchAnchorWidth ?? false;
+      const cover = options.coverAnchor ?? false;
       const written = new Map<string, string>();
       const write = (name: string, value: string) => {
         if (written.get(name) === value) return;
@@ -45,14 +50,15 @@ export function createAnchored(options: AnchoredOptions): void {
           write("margin", "0");
           write("right", "auto");
           write("bottom", "auto");
-          size = { width: floating.offsetWidth, height: floating.offsetHeight };
         }
         const box = anchor.getBoundingClientRect();
+        if (options.widthVar) write(options.widthVar, `${box.width}px`);
+        if (measure) size = { width: floating.offsetWidth, height: floating.offsetHeight };
         const placed = placeBeside(
-          { left: box.left, top: box.top, width: box.width, height: box.height },
+          { left: box.left, top: box.top, width: box.width, height: cover ? 0 : box.height },
           size,
           { width: window.innerWidth, height: window.innerHeight },
-          { side, align, offset, matchAnchorWidth },
+          { side, align, offset, matchAnchorWidth, flip: !cover },
         );
         write("top", `${placed.top}px`);
         write("left", `${placed.left}px`);

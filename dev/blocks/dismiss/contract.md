@@ -22,3 +22,5 @@ Each line is one browser test in `tests/contracts/dismiss.contract.test.tsx`, na
 | DI16 | Escape while `isComposing`, a tooltip open | it stays open |
 | DI17 | Escape in a modal whose `escape()` is false | it stays open and the key is consumed (prevented, stopped): a modal never lets Escape through to the page. A layer whose library reads its own Escape (`readsOwnEscape`, the Kobalte dialogs) is left alone |
 | DI18 | two popovers, focus inside the lower, Escape | the newer one closes through its own `onDismiss` (reason `escape`), so a veto there holds; the lower stays open |
+| DI19 | `focusOutside`, focus lands outside the top layer after the tick it opened in | it closes with `focus-outside`; focus moved while it opens never closes it; focus inside it or on its trigger leaves it open; without `focusOutside` nothing closes |
+| DI20 | a layer in a closed shadow root, and a newer layer open in another root | a press in its own root outside it closes it; a layer in the document stays shielded by any newer layer |
