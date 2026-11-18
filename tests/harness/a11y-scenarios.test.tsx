@@ -12,7 +12,7 @@ import {
   knownGaps,
   spokenTranscript,
 } from "./a11y";
-import { input } from "./input";
+import { input, trackPointer } from "./input";
 import { mountScenario, settle } from "./mount";
 
 const VIEWPORT = { width: 1024, height: 768 };
@@ -51,7 +51,9 @@ describe.each(CASES)("$name", ({ component, scenario }) => {
     await commands.emulateMedia({ colorScheme: theme });
     const { scope } = await mount(component, scenario);
     const seen = await expectAxeClean(document, gaps);
-    await runSteps(scope, scenario.steps ?? [], input, async () => {
+    const pointer = trackPointer(input);
+    await runSteps(scope, scenario.steps ?? [], pointer.input, async () => {
+      await pointer.rehover();
       await settle();
       seen.push(...(await expectAxeClean(document, gaps)));
     });
