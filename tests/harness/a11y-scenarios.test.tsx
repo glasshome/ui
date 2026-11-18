@@ -59,6 +59,13 @@ describe.each(CASES)("$name", ({ component, scenario }) => {
       await settle();
       seen.push(...(await expectAxeClean(document, gaps)));
     });
+    if (component === "ToggleGroup" && theme === "dark") {
+      const axe = (await import("axe-core")).default;
+      const r = await axe.run(document, { runOnly: { type: "rule", values: ["color-contrast"] } });
+      const el = [...document.querySelectorAll("button")].find((b) => b.textContent === "High" || b.textContent === "Mon");
+      const cs = el ? getComputedStyle(el) : undefined;
+      throw new Error(`DBG ${scenario.id} seen=${JSON.stringify(seen)} v=${JSON.stringify(r.violations.flatMap((v) => v.nodes.map((n) => n.any.map((c) => c.message).join(";"))))} inc=${JSON.stringify(r.incomplete.flatMap((v) => v.nodes.map((n) => n.target.join(" ") + ":" + n.any.map((c) => c.message).join(";"))))} color=${cs?.color} hover=${el?.matches(":hover")} mq=${matchMedia("(hover: hover)").matches}`);
+    }
     expectGapsSeen(gaps, seen);
   });
 
