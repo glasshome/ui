@@ -6,7 +6,6 @@ import { OUTSIDE } from "../../dev/components/popover/scenarios";
 import { MOTION_EXIT_MS } from "../../src/lib/motion-classes";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "../../src/solid";
 import { useFakeTime } from "../../src/testing";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -38,7 +37,7 @@ describe("HoverCard contract", () => {
   it("HC1 mounted, a button trigger reads as a focusable link and no card exists", async () => {
     const { trigger, cards } = await mount("open");
     expect(trigger().getAttribute("data-slot")).toBe("hover-card-trigger");
-    expect(trigger().tabIndex).toBe(0);
+    expect((trigger() as HTMLElement).tabIndex).toBe(0);
     expect(cards()).toHaveLength(0);
   });
 
@@ -106,10 +105,7 @@ describe("HoverCard contract", () => {
     await run({ touch: TRIGGER });
     await new Promise((resolve) => setTimeout(resolve, 100));
     await settle();
-    await expectGap(
-      () => expect(cards(), "cards after a touch").toHaveLength(0),
-      "cards after a touch: expected [ <div",
-    );
+    expect(cards()).toHaveLength(0);
   });
 
   it("HC8 Escape closes the card", async () => {
@@ -128,7 +124,7 @@ describe("HoverCard contract", () => {
     await expectClosed();
   });
 
-  it("HC10 inside a expectClosed shadow root the card opens in the same root", async () => {
+  it("HC10 inside a closed shadow root the card opens in the same root", async () => {
     const { scope } = await mountScenario("HoverCard", "in-shadow-root");
     const { cards, run, expectOpen } = helpers(scope);
     await run(HOVER);

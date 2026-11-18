@@ -10,7 +10,7 @@ Each line is one browser test in `tests/contracts/hover-card.contract.test.tsx`,
 | HC4 | the pointer moves from the trigger onto the card | the card stays open |
 | HC5 | the pointer moves to another control | after `closeDelay` (300 ms by default) the card closes |
 | HC6 | Tab moves focus off the trigger | the card closes |
-| HC7 | a touch on the trigger | no card opens. Gap: Kobalte opens it from the focus that follows the tap (`2026-11-15-ui-owns-its-primitives`) |
+| HC7 | a touch on the trigger | no card opens, the focus that follows the tap included (Kobalte opened it from that focus) |
 | HC8 | Escape with the card open | the card closes |
 | HC9 | a press outside | the card closes |
 | HC10 | inside a closed shadow root | HC2 holds there, with the card in the same root |

@@ -7,7 +7,6 @@ import type { Step } from "../../dev/harness/types";
 import { OUTSIDE } from "../../dev/components/popover/scenarios";
 import { Button, Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "../../src/solid";
 import { useAnchorTrigger } from "../../src/solid/popover.js";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -90,10 +89,7 @@ describe("Popover contract", () => {
     const { button, run, expectClosed } = await mount("outside-press");
     await run(OPEN, { pressAt: OUTSIDE });
     await expectClosed();
-    await expectGap(
-      () => expect(focusedElement(), "focus after an outside press").toBe(button("Filters")),
-      "focus after an outside press: expected <body",
-    );
+    await vi.waitFor(() => expect(focusedElement()).toBe(button("Filters")));
   });
 
   it("P7 a press outside on a control leaves focus on that control", async () => {
@@ -127,13 +123,17 @@ describe("Popover contract", () => {
     expect(host()?.contains(focusedElement())).toBe(true);
   });
 
-  it("P10 inside a expectClosed shadow root it opens, takes focus and closes on Escape", async () => {
-    const { button, panels, run } = await mount("in-shadow-root");
-    await expectGap(async () => {
-      await run(OPEN);
-      expect(panels(), "panels in the shadow root").toHaveLength(1);
-    }, "panels in the shadow root: expected [] to have a length of 1 but got +0");
-    expect(button("Filters")).toBeDefined();
+  it("P10 inside a closed shadow root it opens, takes focus and closes on Escape", async () => {
+    const { button, panels, run, expectClosed } = await mount("in-shadow-root");
+    await run(OPEN);
+    const [panel] = panels();
+    expect(panels()).toHaveLength(1);
+    expect(panel?.getRootNode()).toBeInstanceOf(ShadowRoot);
+    expect(button("Filters").getAttribute("aria-controls")).toBe(panel?.id);
+    expect(focusedElement()).toBe(button("Lights"));
+    await run({ key: "Escape" });
+    await expectClosed();
+    await vi.waitFor(() => expect(focusedElement()).toBe(button("Filters")));
   });
 
   it("P11 the panel covers its trigger from the trigger's top edge, inside the viewport", async () => {
@@ -181,6 +181,7 @@ describe("Popover contract", () => {
     const { button, panels, run, expectClosed } = helpers(scenarioScope);
     await run({ press: { role: "button", name: "Gallery" } });
     expect(findAll(scenarioScope(), { role: "button", name: "Before" })).toHaveLength(0);
+    expect(getComputedStyle(document.body).pointerEvents).toBe("none");
     expect(focusedElement()).toBe(button("First"));
     await run({ key: "Tab" }, { key: "Tab" });
     expect(panels()[0]?.contains(focusedElement())).toBe(true);
@@ -188,6 +189,7 @@ describe("Popover contract", () => {
     await expectClosed();
     await vi.waitFor(() => expect(focusedElement()).toBe(button("Gallery")));
     expect(button("Before")).toBeDefined();
+    expect(getComputedStyle(document.body).pointerEvents).toBe("auto");
   });
 
   it("P14 a PopoverAnchor places the panel over the anchor and focus returns to its control", async () => {
