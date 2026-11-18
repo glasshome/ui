@@ -58,7 +58,7 @@ export const ALLOW: Array<[name: string, reason: string]> = [
   ],
   [
     "SelectLabel",
-    "Wraps Kobalte's Select.Label, the control's form label, in menu-group label chrome. No consumer settles which of the two it is, so a specimen would guess.",
+    "The Select's form label, which names its trigger and list, in menu-group label chrome. No consumer settles which of the two it is, so a specimen would guess.",
   ],
   [
     "SelectSeparator",

@@ -102,4 +102,9 @@ describe("placeBeside", () => {
   it("reports the room inside the viewport as max width and max height", () => {
     expect(beside()).toMatchObject({ maxWidth: 968, maxHeight: 768 });
   });
+
+  it("never flips with flip false, and moves the part back inside the viewport", () => {
+    const placed = beside({ flip: false, offset: 0 }, { ...ANCHOR, top: 760 });
+    expect(placed).toMatchObject({ side: "bottom", top: 724 });
+  });
 });

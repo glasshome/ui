@@ -60,18 +60,40 @@ function forwardKeys(orientation: Orientation, rtl: boolean): { next: string; pr
     : { next: "ArrowRight", prev: "ArrowLeft" };
 }
 
-const textOf = (el: HTMLElement) => (el.textContent ?? "").trim().toLowerCase();
+const textOf = (el: HTMLElement) => el.textContent ?? "";
 
-function matchText(items: HTMLElement[], from: number, buffer: string): HTMLElement | undefined {
+function matchText(texts: readonly string[], from: number, buffer: string): number {
   const first = buffer.charAt(0);
   const cycling = buffer.length > 1 && buffer === first.repeat(buffer.length);
   const search = cycling ? first : buffer;
   const start = cycling || buffer.length === 1 ? from + 1 : Math.max(from, 0);
-  for (let i = 0; i < items.length; i++) {
-    const item = items[(start + i) % items.length];
-    if (item && textOf(item).startsWith(search)) return item;
+  for (let i = 0; i < texts.length; i++) {
+    const index = (start + i) % texts.length;
+    if ((texts[index] ?? "").trim().toLowerCase().startsWith(search)) return index;
   }
-  return undefined;
+  return -1;
+}
+
+export interface Typeahead {
+  /** The index in `texts` the key leads to: -1 when nothing matches, `undefined` when the key types nothing. */
+  match: (event: KeyboardEvent, texts: readonly string[], from: number) => number | undefined;
+}
+
+/** The typing buffer alone, for a list whose items are not in the DOM (a closed Select's trigger). */
+export function createTypeahead(): Typeahead {
+  let buffer = "";
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  onCleanup(() => clearTimeout(timer));
+  return {
+    match(event, texts, from) {
+      const char = event.key;
+      if (char.length !== 1 || (char === " " && buffer === "")) return undefined;
+      buffer += char.toLowerCase();
+      clearTimeout(timer);
+      timer = setTimeout(() => (buffer = ""), TYPEAHEAD_MS);
+      return matchText(texts, from, buffer);
+    },
+  };
 }
 
 export function createCollection(options: CollectionOptions): Collection {
@@ -122,9 +144,7 @@ export function createCollection(options: CollectionOptions): Collection {
     });
   }
 
-  let buffer = "";
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  onCleanup(() => clearTimeout(timer));
+  const typer = createTypeahead();
 
   function moveTo(el: HTMLElement | undefined) {
     if (!el) return;
@@ -144,12 +164,9 @@ export function createCollection(options: CollectionOptions): Collection {
   }
 
   function typeahead(event: KeyboardEvent, items: HTMLElement[], current: number): boolean {
-    const char = event.key;
-    if (char.length !== 1 || (char === " " && buffer === "")) return false;
-    buffer += char.toLowerCase();
-    clearTimeout(timer);
-    timer = setTimeout(() => (buffer = ""), TYPEAHEAD_MS);
-    moveTo(matchText(items, current, buffer));
+    const index = typer.match(event, items.map(textOf), current);
+    if (index === undefined) return false;
+    moveTo(items[index]);
     return true;
   }
 

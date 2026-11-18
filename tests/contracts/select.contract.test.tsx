@@ -5,7 +5,6 @@ import { commands } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { findAll, findTarget, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -155,14 +154,13 @@ describe("Select contract", () => {
   it("S13 inside a closed shadow root the list opens and picks in the same root", async () => {
     const { trigger, listboxes, run, closed } = await mount("in-shadow-root");
     const [root] = CLOSED_ROOTS;
-    await expectGap(async () => {
-      await run({ press: TRIGGER });
-      expect(listboxes(), "list open in the shadow root").toHaveLength(1);
-      expect(root?.contains(listboxes()[0] ?? null)).toBe(true);
-      await run({ press: { role: "option", name: "Banana" } });
-      await closed();
-      expect(trigger().textContent).toContain("Banana");
-    }, "list open in the shadow root: expected [] to have a length of 1 but got +0");
+    await run({ press: TRIGGER });
+    expect(listboxes(), "list open in the shadow root").toHaveLength(1);
+    expect(root?.contains(listboxes()[0] ?? null)).toBe(true);
+    await run({ press: { role: "option", name: "Banana" } });
+    await closed();
+    expect(trigger().textContent).toContain("Banana");
+    await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
   });
 
   it("S14 End in a long list scrolls the last option into view", async () => {
@@ -180,5 +178,67 @@ describe("Select contract", () => {
     // Scroll offsets are whole pixels, option boxes are not.
     expect(box.top).toBeGreaterThanOrEqual(view.top - 1);
     expect(box.bottom).toBeLessThanOrEqual(view.bottom + 1);
+  });
+
+  it("S15 inside a Dialog, Escape closes only the list", async () => {
+    const { scope, trigger, listboxes, run, closed } = await mount("in-dialog");
+    await run({ press: TRIGGER });
+    expect(listboxes()).toHaveLength(1);
+    await run({ key: "Escape" });
+    await closed();
+    expect(findAll(scope(), { role: "dialog", name: "Scenario" }), "dialog open").toHaveLength(1);
+    await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
+  });
+
+  it("S16 a touch that moves past the slop picks nothing, a still tap picks", async () => {
+    const { trigger, option, listboxes, run, closed } = await mount();
+    await run({ press: TRIGGER });
+    const banana = option("Banana").getBoundingClientRect();
+    const x = banana.x + banana.width / 2;
+    const y = banana.y + banana.height / 2;
+    await commands.touch("down", x, y);
+    await commands.touch("move", x, y + 12);
+    await commands.touch("move", x, y + 24);
+    await commands.touch("up", x, y + 24);
+    await settle();
+    expect(listboxes(), "list still open after the moved press").toHaveLength(1);
+    expect(trigger().textContent).toContain("Pick one");
+
+    await commands.touch("down", x, y);
+    await commands.touch("up", x, y);
+    await closed();
+    expect(trigger().textContent).toContain("Banana");
+  });
+
+  it("S17 typing and Left and Right on the closed trigger pick without opening", async () => {
+    const { trigger, listboxes, run } = await mount();
+    await run({ key: "Tab" }, { type: "c" });
+    expect(listboxes()).toHaveLength(0);
+    expect(trigger().textContent).toContain("Cherry");
+    await run({ key: "ArrowRight" });
+    expect(trigger().textContent).toContain("Elderberry");
+    await run({ key: "ArrowLeft" }, { key: "ArrowLeft" });
+    expect(trigger().textContent).toContain("Banana");
+    expect(listboxes()).toHaveLength(0);
+    expect(focusedElement()).toBe(trigger());
+  });
+
+  it("S18 the list opens on the picked option, named by aria-activedescendant, over the trigger", async () => {
+    const { trigger, option, listboxes, highlighted, run, closed } = await mount();
+    await run({ press: TRIGGER }, { press: { role: "option", name: "Cherry" } });
+    await closed();
+    await run({ key: "Enter" });
+    const [listbox] = listboxes();
+    if (!listbox) throw new Error("the list did not open");
+    expect(focusedElement()).toBe(listbox);
+    expect(highlighted().map((o) => o.textContent)).toEqual(["Cherry"]);
+    expect(listbox.getAttribute("aria-activedescendant")).toBe(option("Cherry").id);
+    await run({ key: "ArrowDown" });
+    expect(listbox.getAttribute("aria-activedescendant")).toBe(option("Elderberry").id);
+    const panel = listbox.closest('[data-slot="select-content"]');
+    if (!panel) throw new Error("no select-content around the listbox");
+    expect(
+      Math.abs(panel.getBoundingClientRect().top - trigger().getBoundingClientRect().top),
+    ).toBeLessThanOrEqual(1);
   });
 });
