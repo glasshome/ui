@@ -1,5 +1,5 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import type { JSX } from "solid-js";
+import { createSignal, For, type JSX } from "solid-js";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SelectionHighlight, SelectionScope } from "../../src/solid/selection.js";
 import { useFakeTime } from "../../src/testing/index.js";
@@ -169,6 +169,30 @@ describe("SelectionScope", () => {
     expect(landing?.hasAttribute("data-landing")).toBe(true);
   });
 
+  it("does not fly on mount when items report active, whatever order they report in", async () => {
+    const { container } = render(() => (
+      <SelectionScope marker="pressed" style={{ display: "flex", "--duration-slide": "220ms" }}>
+        <button type="button" style={sized(80)}>
+          <SelectionHighlight active={false} />
+          One
+        </button>
+        <button type="button" data-pressed="" style={sized(80)}>
+          <SelectionHighlight active />
+          Two
+        </button>
+        <button type="button" style={sized(80)}>
+          <SelectionHighlight active={false} />
+          Three
+        </button>
+      </SelectionScope>
+    ));
+    await flush();
+    await frame();
+    record();
+    expect(flights()).toHaveLength(0);
+    expect(container.querySelector("[data-flying]")).toBeNull();
+  });
+
   it("starts a redirected flight from where the flyer is", async () => {
     const { scope, flyer, select } = renderGroup({ widths: [80, 80, 220] });
     await select(2);
@@ -301,6 +325,34 @@ describe("SelectionScope", () => {
 
     expect(flights()).toHaveLength(0);
     expect(flyer.hasAttribute("data-flying")).toBe(false);
+  });
+
+  it("does not fly in from an item the same task scrolls out of sight", async () => {
+    const [on, setOn] = createSignal(0);
+    const { container } = render(() => (
+      <SelectionScope
+        marker="pressed"
+        style={{ display: "flex", width: "150px", overflow: "hidden", "--duration-slide": "220ms" }}
+      >
+        <For each={[80, 80, 140]}>
+          {(width, i) => (
+            <button type="button" data-pressed={on() === i() ? "" : undefined} style={sized(width)}>
+              <SelectionHighlight active={on() === i()} />
+            </button>
+          )}
+        </For>
+      </SelectionScope>
+    ));
+    const scope = container.querySelector<HTMLElement>("[data-selection-scope]");
+    await flush();
+    record();
+
+    setOn(2);
+    if (scope) scope.scrollLeft = 150;
+    await flush();
+    record();
+
+    expect(flights()).toHaveLength(0);
   });
 
   it("lands in layout pixels while an ancestor is mid-zoom", async () => {

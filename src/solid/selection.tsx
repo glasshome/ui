@@ -236,10 +236,19 @@ export function SelectionScope(props: SelectionScopeProps) {
   let watching = false;
   let watch: (() => void) | undefined;
   const reported = new Set<HTMLElement>();
+  let queued = false;
+  // Decides after the task that changed the marker, which may still scroll the new item into view.
   const report = (item: HTMLElement, active: boolean) => {
-    if (active) reported.add(item);
-    else reported.delete(item);
-    move?.(active ? item : [...reported].at(-1));
+    if (active) {
+      reported.delete(item);
+      reported.add(item);
+    } else if (!reported.delete(item)) return;
+    if (queued) return;
+    queued = true;
+    queueMicrotask(() => {
+      queued = false;
+      move?.([...reported].at(-1));
+    });
   };
   const watchMarker = () => {
     if (watching) return;
