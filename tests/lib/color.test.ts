@@ -1,12 +1,13 @@
 // @vitest-environment happy-dom
-import {
-  COLOR_INTL_TRANSLATIONS as KOBALTE_TRANSLATIONS,
-  parseColor as kobalteParse,
-} from "@kobalte/core/colors";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { type Color, COLOR_INTL_TRANSLATIONS, parseColor } from "../../src/lib/color/index.js";
 
 type Parse = (value: string) => Color;
+
+// Recorded from @kobalte/core 0.13.13's colors module before Kobalte left ui.
+const KOBALTE = JSON.parse(readFileSync(join(import.meta.dirname, "color.kobalte.json"), "utf8"));
 
 const FORMATS = ["hex", "hexa", "rgb", "rgba", "hsl", "hsla", "hsb", "hsba"] as const;
 const CHANNELS = [
@@ -105,45 +106,43 @@ function surface(color: Color) {
 
 const read = (parse: Parse, input: string) => attempt(() => surface(parse(input)));
 
+const plain = (value: unknown): unknown => JSON.parse(JSON.stringify(value));
+
+function hueNames(parse: Parse): string[] {
+  const out: string[] = [];
+  for (let h = 0; h < 360; h += 5)
+    for (const l of [8, 25, 45, 60, 75, 92])
+      for (const s of [0, 4, 30, 100]) {
+        const c = parse(`hsl(${h}, ${s}%, ${l}%)`);
+        out.push(
+          `${c.getColorName(COLOR_INTL_TRANSLATIONS)} / ${c.getHueName(COLOR_INTL_TRANSLATIONS)}`,
+        );
+      }
+  return out;
+}
+
 describe("the owned Color matches Kobalte's", () => {
   it("keeps the translations table", () => {
-    expect(Object.keys(COLOR_INTL_TRANSLATIONS)).toEqual(Object.keys(KOBALTE_TRANSLATIONS));
-    expect(COLOR_INTL_TRANSLATIONS.colorName("a", "b", "c")).toBe(
-      KOBALTE_TRANSLATIONS.colorName("a", "b", "c"),
-    );
+    expect(Object.keys(COLOR_INTL_TRANSLATIONS)).toEqual(KOBALTE.translations.keys);
+    expect(COLOR_INTL_TRANSLATIONS.colorName("a", "b", "c")).toBe(KOBALTE.translations.colorName);
   });
 
   it.each(INPUTS)("%s, through every method", (input) => {
-    const kobalte = read(kobalteParse, input);
-    expect(kobalte).not.toHaveProperty("throws");
-    expect(read(parseColor, input)).toEqual(kobalte);
+    expect(KOBALTE.inputs[input]).not.toHaveProperty("throws");
+    expect(plain(read(parseColor, input))).toEqual(KOBALTE.inputs[input]);
   });
 
   it.each(INVALID)("refuses %j with the same error", (input) => {
-    expect(attempt(() => parseColor(input))).toEqual(attempt(() => kobalteParse(input)));
+    expect(attempt(() => parseColor(input))).toEqual(KOBALTE.invalid[input]);
     expect(attempt(() => parseColor(input))).toHaveProperty("throws");
   });
 
   it("names every hue the same, around the wheel and down the lightness", () => {
-    const names = (parse: Parse) => {
-      const out: string[] = [];
-      for (let h = 0; h < 360; h += 5)
-        for (const l of [8, 25, 45, 60, 75, 92])
-          for (const s of [0, 4, 30, 100]) {
-            const c = parse(`hsl(${h}, ${s}%, ${l}%)`);
-            out.push(
-              `${c.getColorName(COLOR_INTL_TRANSLATIONS)} / ${c.getHueName(COLOR_INTL_TRANSLATIONS)}`,
-            );
-          }
-      return out;
-    };
-    expect(names(parseColor)).toEqual(names(kobalteParse));
+    expect(hueNames(parseColor)).toEqual(KOBALTE.names);
   });
 
   it("keeps the strings published widgets read", () => {
-    expect(parseColor("hsb(25, 92%, 100%)").toString("css")).toBe(
-      kobalteParse("hsb(25, 92%, 100%)").toString("css"),
-    );
+    expect(parseColor("hsb(25, 92%, 100%)").toString("css")).toBe(KOBALTE.publishedCss);
     expect(parseColor("hsb(100, 50%, 100%)").withChannelValue("hue", 110).toString("hsb")).toMatch(
       /hsb\(110,? 50%/,
     );

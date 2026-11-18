@@ -1,4 +1,4 @@
-import { parseColor } from "@kobalte/core/colors";
+import { parseColor } from "../../src/lib/color/index.js";
 import { cleanup, render, screen } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
