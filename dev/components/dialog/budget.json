@@ -32,8 +32,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 13,
-        "reason": "baseline 2026-11-17"
+        "max": 17,
+        "reason": "baseline 2026-11-17; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 18,
@@ -90,8 +90,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 14,
-        "reason": "baseline 2026-11-17"
+        "max": 18,
+        "reason": "baseline 2026-11-17; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 18,
@@ -148,8 +148,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 14,
-        "reason": "baseline 2026-11-17"
+        "max": 18,
+        "reason": "baseline 2026-11-17; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 18,
@@ -220,8 +220,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 31,
-        "reason": "baseline 2026-11-17"
+        "max": 39,
+        "reason": "baseline 2026-11-17; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 91,
@@ -278,8 +278,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 14,
-        "reason": "baseline 2026-11-17; the outside press now dismisses in the guest lane, so the step does work"
+        "max": 18,
+        "reason": "baseline 2026-11-17; the outside press now dismisses in the guest lane, so the step does work; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 18,

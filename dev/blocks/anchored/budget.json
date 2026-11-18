@@ -32,8 +32,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 4,
-        "reason": "baseline 2026-11-17; predates Phase 1 Next step 5, Task 12 re-measures"
+        "max": 5,
+        "reason": "baseline 2026-11-17; predates Phase 1 Next step 5, Task 12 re-measures; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -76,8 +76,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 4,
-        "reason": "baseline 2026-11-17; predates Phase 1 Next step 5, Task 12 re-measures"
+        "max": 5,
+        "reason": "baseline 2026-11-17; predates Phase 1 Next step 5, Task 12 re-measures; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -134,8 +134,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 4,
-        "reason": "baseline 2026-11-17; predates Phase 1 Next step 5, Task 12 re-measures"
+        "max": 5,
+        "reason": "baseline 2026-11-17; predates Phase 1 Next step 5, Task 12 re-measures; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -178,8 +178,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 4,
-        "reason": "baseline 2026-11-17; predates Phase 1 Next step 5, Task 12 re-measures"
+        "max": 5,
+        "reason": "baseline 2026-11-17; predates Phase 1 Next step 5, Task 12 re-measures; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -266,8 +266,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 4,
-        "reason": "baseline 2026-11-17; predates Phase 1 Next step 5, Task 12 re-measures"
+        "max": 5,
+        "reason": "baseline 2026-11-17; predates Phase 1 Next step 5, Task 12 re-measures; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 0,
