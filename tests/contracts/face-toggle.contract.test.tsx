@@ -4,7 +4,6 @@ import { afterEach, describe, expect, it } from "vitest";
 import { findAll, findTarget, runSteps, scenarioScope } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
 import { FaceToggle, FaceToggleGroup } from "../../src/solid";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -114,9 +113,7 @@ describe("FaceToggle contract", () => {
 
   it("FT7 a press turns a face on inside a closed shadow root", async () => {
     const { run, pressed } = await mount("in-shadow-root");
-    await expectGap(async () => {
-      await run(press("Leo"));
-      expect(pressed(), "faces on in the shadow root").toEqual(["Maya", "Leo"]);
-    }, "faces on in the shadow root: expected [ 'Maya' ] to deeply equal [ 'Maya', 'Leo' ]");
+    await run(press("Leo"));
+    expect(pressed(), "faces on in the shadow root").toEqual(["Maya", "Leo"]);
   });
 });

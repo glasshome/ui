@@ -2,7 +2,6 @@ import { cleanup } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it } from "vitest";
 import { findAll, findTarget, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -61,13 +60,11 @@ describe("Button contract", () => {
     expect(door.getAttribute("tabindex")).toBe("0");
     await run(press("Open the door"));
     expect(said()).toEqual(["Opened once"]);
-    await expectGap(async () => {
-      expect(focusedElement()).toBe(door);
-      await run({ key: "Enter" });
-      expect(said(), "Enter runs it").toEqual(["Opened 2 times"]);
-      await run({ key: " " });
-      expect(said(), "Space runs it").toEqual(["Opened 3 times"]);
-    }, "Enter runs it: expected [ 'Opened once' ] to deeply equal [ 'Opened 2 times' ]");
+    expect(focusedElement()).toBe(door);
+    await run({ key: "Enter" });
+    expect(said(), "Enter runs it").toEqual(["Opened 2 times"]);
+    await run({ key: " " });
+    expect(said(), "Space runs it").toEqual(["Opened 3 times"]);
   });
 
   it("B6 a disabled native button says so and runs nothing", async () => {
@@ -86,10 +83,8 @@ describe("Button contract", () => {
     expect(archive.hasAttribute("data-disabled")).toBe(true);
     await run({ key: "Tab" });
     expect(focusedElement()).not.toBe(archive);
-    await expectGap(async () => {
-      await run(press("Archive"));
-      expect(said(), "a press on the disabled element").toEqual(["Nothing happened"]);
-    }, "a press on the disabled element: expected [ 'Ran once' ] to deeply equal [ 'Nothing happened' ]");
+    await run(press("Archive"));
+    expect(said(), "a press on the disabled element").toEqual(["Nothing happened"]);
   });
 
   it("B8 busy keeps focus and runs nothing", async () => {
@@ -106,9 +101,7 @@ describe("Button contract", () => {
 
   it("B9 a press runs onClick inside a closed shadow root", async () => {
     const { run, said } = await mount("in-shadow-root");
-    await expectGap(async () => {
-      await run(press("Save"));
-      expect(said(), "saved in the shadow root").toEqual(["Saved once"]);
-    }, "saved in the shadow root: expected [ 'Not saved yet' ] to deeply equal [ 'Saved once' ]");
+    await run(press("Save"));
+    expect(said(), "saved in the shadow root").toEqual(["Saved once"]);
   });
 });

@@ -10,4 +10,4 @@ Each line is one browser test in `tests/contracts/face-toggle.contract.test.tsx`
 | FT4 | ArrowRight or ArrowLeft on a focused face | focus moves to the next or previous face, wrapping at the ends; nothing is pressed or released |
 | FT5 | Enter or Space on a focused face | the face flips |
 | FT6 | Tab from before the group | focus lands on one face; a second Tab leaves the group |
-| FT7 | inside a closed shadow root | FT2 holds there too. Gap: a press changes nothing (`2026-11-15-kobalte-collections-dead-in-closed-shadow-roots`) |
+| FT7 | inside a closed shadow root | FT2 holds there too |

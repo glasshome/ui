@@ -11,4 +11,4 @@ Each line is one browser test in `tests/contracts/glyph-tile.contract.test.tsx`,
 | GT5 | Home or End | focus moves to the first or last tile |
 | GT6 | Tab from before the group | focus lands on the picked tile; a second Tab leaves the group |
 | GT7 | Enter or Space on a focused tile | the tile is picked, or cleared when it was picked |
-| GT8 | inside a closed shadow root | GT2 holds there too. Gap: a press changes nothing (`2026-11-15-kobalte-collections-dead-in-closed-shadow-roots`) |
+| GT8 | inside a closed shadow root | GT2 holds there too |

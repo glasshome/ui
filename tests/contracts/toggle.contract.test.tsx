@@ -4,7 +4,6 @@ import { afterEach, describe, expect, it } from "vitest";
 import { findAll, findTarget, runSteps, scenarioScope } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
 import { Toggle } from "../../src/solid";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -98,9 +97,7 @@ describe("Toggle contract", () => {
 
   it("TO7 a press flips it inside a closed shadow root", async () => {
     const { run, pressed } = await mount("in-shadow-root");
-    await expectGap(async () => {
-      await run(press("Italic"));
-      expect(pressed(), "pressed in the shadow root").toEqual(["B", "Italic"]);
-    }, "pressed in the shadow root: expected [ 'B' ] to deeply equal [ 'B', 'Italic' ]");
+    await run(press("Italic"));
+    expect(pressed(), "pressed in the shadow root").toEqual(["B", "Italic"]);
   });
 });

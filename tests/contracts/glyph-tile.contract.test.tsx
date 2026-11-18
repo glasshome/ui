@@ -4,7 +4,6 @@ import { afterEach, describe, expect, it } from "vitest";
 import { findAll, findTarget, runSteps, scenarioScope } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
 import { GlyphTile, GlyphTileGroup } from "../../src/solid";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -116,9 +115,7 @@ describe("GlyphTile contract", () => {
 
   it("GT8 a press picks a tile inside a closed shadow root", async () => {
     const { run, pressed } = await mount("in-shadow-root");
-    await expectGap(async () => {
-      await run(press("Office"));
-      expect(pressed(), "tiles picked in the shadow root").toEqual(["Office"]);
-    }, "tiles picked in the shadow root: expected [ 'Kitchen' ] to deeply equal [ 'Office' ]");
+    await run(press("Office"));
+    expect(pressed(), "tiles picked in the shadow root").toEqual(["Office"]);
   });
 });

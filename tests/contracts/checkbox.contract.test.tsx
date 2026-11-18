@@ -4,7 +4,6 @@ import { afterEach, describe, expect, it } from "vitest";
 import { findAll, findTarget, runSteps, scenarioScope } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
 import { Checkbox } from "../../src/solid";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -88,12 +87,9 @@ describe("Checkbox contract", () => {
     expect([...new FormData(form).entries()]).toEqual([["sunset", "on"]]);
     await run(label("Notify"), label("Sunset"));
     expect([...new FormData(form).entries()]).toEqual([["notify", "on"]]);
-    const reset = form;
-    await expectGap(async () => {
-      reset.reset();
-      await settle();
-      expect([...new FormData(reset).entries()], "after a reset").toEqual([["sunset", "on"]]);
-    }, "after a reset: expected [] to deeply equal [ [ 'sunset', 'on' ] ]");
+    form.reset();
+    await settle();
+    expect([...new FormData(form).entries()], "after a reset").toEqual([["sunset", "on"]]);
   });
 
   it("CB7 controlled, a press reports the next state and shows only what checked says", async () => {
@@ -118,5 +114,12 @@ describe("Checkbox contract", () => {
     const { run, checked } = await mount("in-shadow-root");
     await run(label("Notify me"));
     expect(checked()).toEqual(["Turn on at sunset", "Notify me"]);
+  });
+
+  it("CB9 a box with only an aria-label is named by it", async () => {
+    render(() => <Checkbox aria-label="Pick Kitchen" />);
+    await settle();
+    const { box } = helpers(scenarioScope);
+    expect(box("Pick Kitchen").type).toBe("checkbox");
   });
 });
