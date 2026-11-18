@@ -14,7 +14,7 @@ import {
   type ValidComponent,
 } from "solid-js";
 import { Portal } from "solid-js/web";
-import type { Align, Side } from "../lib/anchor-placement.js";
+import { type Align, controlRadius, type Side } from "../lib/anchor-placement.js";
 import { createAnchored } from "../lib/behavior/anchored.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createDismiss } from "../lib/behavior/dismiss.js";
@@ -390,12 +390,8 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
     const trigger = ctx.trigger();
     if (!trigger || surface() === "field") return;
     const height = trigger.getBoundingClientRect().height;
-    const radius = Math.min(
-      Number.parseFloat(getComputedStyle(trigger).borderTopLeftRadius) || 0,
-      height / 2,
-    );
     el.style.setProperty("--morph-h", `${height}px`);
-    el.style.setProperty("--morph-radius", `${radius}px`);
+    el.style.setProperty("--morph-radius", controlRadius(height));
   };
 
   const Panel: Component = () => {

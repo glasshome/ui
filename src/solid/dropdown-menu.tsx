@@ -44,6 +44,7 @@ import {
   parsePlacement,
   useMenuLevel,
 } from "./menu-parts.js";
+import { controlRadius } from "../lib/anchor-placement.js";
 
 type AnchorRect = { x?: number; y?: number; width?: number; height?: number };
 
@@ -184,18 +185,13 @@ function DropdownMenuTrigger<T extends ValidComponent = "button">(
   );
 }
 
-/* The panel opens as its trigger's box: its height and radius are read from the trigger itself. */
+/* The panel opens as its trigger's box. */
 function writeMorphStart(trigger: HTMLElement | undefined, el: HTMLElement) {
   if (!trigger) return;
   const box = trigger.getBoundingClientRect();
-  // A pill's radius is "infinite"; the rendered one is half its height.
-  const radius = Math.min(
-    Number.parseFloat(getComputedStyle(trigger).borderTopLeftRadius) || 0,
-    box.height / 2,
-  );
   el.style.setProperty("--kb-popper-anchor-width", `${box.width}px`);
   el.style.setProperty("--morph-h", `${box.height}px`);
-  el.style.setProperty("--morph-radius", `${radius}px`);
+  el.style.setProperty("--morph-radius", controlRadius(box.height));
 }
 
 const DropdownMenuContent: Component<MenuContentProps> = (props) => {

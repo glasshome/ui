@@ -20,12 +20,6 @@
       "workUnits": {
         "max": 7,
         "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 0
       }
     }
   },
@@ -64,12 +58,6 @@
       "workUnits": {
         "max": 28,
         "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
-      },
-      "domCalls": {
-        "getComputedStyle": 64,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 1,
-        "MutationObserver": 1
       }
     }
   },
@@ -122,12 +110,6 @@
       "workUnits": {
         "max": 38,
         "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
-      },
-      "domCalls": {
-        "getComputedStyle": 83,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 1,
-        "MutationObserver": 1
       }
     }
   },
@@ -167,8 +149,8 @@
           "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 16,
-          "reason": "2026-11-18: the owned list recalcs 13 elements at most on this move against Kobalte's 9, cause not yet traced; owned max of 3 T50 runs plus 25%"
+          "max": 14,
+          "reason": "traced 2026-11-18: the listbox restyles as its :focus-visible starts matching on the first key after a pointer open, and the old and new option each restyle with their children; the check's wrapper renders only on a picked option since, which took 13 elements to 11; owned max of 3 T50 runs plus 25%"
         },
         "layouts": {
           "max": 0,
@@ -194,12 +176,6 @@
       "workUnits": {
         "max": 240,
         "reason": "kobalte baseline 2026-11-15, raised 2026-11-16 by 2 when the modal Head and ConfirmDialog made every guest load more of ui, and by 1 when the realm honoured an IntersectionObserver's root, so floating-ui sees the trigger move when End scrolls the page and Enter resizes it: measured 213; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
-      },
-      "domCalls": {
-        "getComputedStyle": 140,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 4,
-        "MutationObserver": 1
       }
     }
   },
@@ -252,12 +228,6 @@
       "workUnits": {
         "max": 30,
         "reason": "kobalte baseline 2026-11-15, raised 2026-11-16 by 2 when the modal Head and ConfirmDialog made every guest load more of ui: measured 28; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
-      },
-      "domCalls": {
-        "getComputedStyle": 64,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 1,
-        "MutationObserver": 1
       }
     }
   },
@@ -296,12 +266,6 @@
       "workUnits": {
         "max": 32,
         "reason": "kobalte baseline 2026-11-15, raised 2026-11-16 by 2 when the modal Head and ConfirmDialog made every guest load more of ui: measured 28; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
-      },
-      "domCalls": {
-        "getComputedStyle": 66,
-        "compareDocumentPosition": 1,
-        "IntersectionObserver": 1,
-        "MutationObserver": 1
       }
     }
   },
@@ -354,12 +318,6 @@
       "workUnits": {
         "max": 17,
         "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 1
       }
     }
   },

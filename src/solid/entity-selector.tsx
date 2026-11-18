@@ -10,7 +10,7 @@ import {
   Show,
 } from "solid-js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
-import { MENU_LABEL } from "../lib/menu-classes.js";
+import { MENU_ITEM_RADIUS, MENU_LABEL } from "../lib/menu-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
 import { createIsMobile } from "../lib/use-is-mobile.js";
 import { cn } from "../lib/utils.js";
@@ -431,7 +431,7 @@ export function EntitySelector(props: EntitySelectorProps) {
         id={optionId(p.entityIndex)}
         data-slot="entity-selector-row"
         aria-selected={selected()}
-        data-highlighted={(!isMobile() && activeIndex() === p.entityIndex) || undefined}
+        highlighted={!isMobile() && activeIndex() === p.entityIndex}
         class="absolute inset-x-0"
         style={{ top: `${p.top}px`, height: `${ROW_HEIGHT}px` }}
         icon={view()?.icon ?? FALLBACK_ICON}
@@ -532,6 +532,7 @@ export function EntitySelector(props: EntitySelectorProps) {
         >
           <SelectionScope
             marker="highlighted"
+            radius={MENU_ITEM_RADIUS}
             role="presentation"
             style={{ height: `${totalHeight()}px` }}
           >

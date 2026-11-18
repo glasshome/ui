@@ -12,6 +12,9 @@ export const MENU_ITEM_BASE =
   // structural-ok: guards an svg color rule on a sibling data attribute this package always renders, not a class the consumer must also scan
   "relative flex cursor-default select-none items-center gap-2 rounded-sm py-1.5 text-sm outline-hidden transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&:not([data-tone])_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&>[data-slot=icon]]:shrink-0 [&>[data-slot=icon]]:text-[16px]";
 
+/** The rounded-sm in MENU_ITEM_BASE, for a selection flyer that crosses rows. */
+export const MENU_ITEM_RADIUS = "var(--radius-sm)";
+
 export const MENU_ITEM_X = "px-2";
 
 export const MENU_ITEM = `${MENU_ITEM_BASE} ${MENU_ITEM_X}`;

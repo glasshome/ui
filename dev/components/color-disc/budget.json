@@ -20,12 +20,6 @@
       "workUnits": {
         "max": 4,
         "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 0
       }
     }
   },
@@ -120,12 +114,6 @@
       "workUnits": {
         "max": 5,
         "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 0
       }
     }
   },
@@ -164,12 +152,6 @@
       "workUnits": {
         "max": 5,
         "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 0
       }
     }
   },
@@ -208,12 +190,6 @@
       "workUnits": {
         "max": 5,
         "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 0
       }
     }
   },

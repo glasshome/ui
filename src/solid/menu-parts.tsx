@@ -22,7 +22,13 @@ import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
 import { effect, merge } from "../lib/behavior/solid.js";
 import { glassToneText } from "../lib/glass-tone.js";
-import { MENU_ITEM, MENU_ITEM_BASE, MENU_LABEL, MENU_SEPARATOR } from "../lib/menu-classes.js";
+import {
+  MENU_ITEM,
+  MENU_ITEM_BASE,
+  MENU_ITEM_RADIUS,
+  MENU_LABEL,
+  MENU_SEPARATOR,
+} from "../lib/menu-classes.js";
 import { STAGGER } from "../lib/motion-classes.js";
 import { FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
@@ -37,7 +43,7 @@ const MENU_CONTENT_CLASS = cn(FLOATING_PANEL, "min-w-[8rem] overflow-hidden p-1"
 /** Every menu content and sub content wraps its rows in one selection scope, keyed off the highlighted row. */
 const MenuContentIndicator: ParentComponent = (props) => (
   // The one element between role="menu" and its rows: an unnamed div there breaks the menu's ownership in the a11y tree.
-  <SelectionScope role="none" class={STAGGER} marker="highlighted">
+  <SelectionScope role="none" class={STAGGER} marker="highlighted" radius={MENU_ITEM_RADIUS}>
     {props.children}
   </SelectionScope>
 );
@@ -376,7 +382,7 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
   const subOpen = () => submenu?.menu.open() ?? false;
   const inner = (
     <RowContext.Provider value={{ checked, indeterminate }}>
-      <SelectionHighlight />
+      <SelectionHighlight active={menu.highlighted() === key} />
       {local.children}
     </RowContext.Provider>
   );

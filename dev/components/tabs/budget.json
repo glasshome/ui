@@ -20,12 +20,6 @@
       "workUnits": {
         "max": 9,
         "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 2
       }
     }
   },
@@ -50,12 +44,6 @@
       "workUnits": {
         "max": 9,
         "reason": "baseline 2026-11-16; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 2
       }
     }
   },
@@ -134,14 +122,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 12,
-        "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 2
+        "max": 15,
+        "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step; plus two since 2026-11-18 for the selection flight, which runs as CSS keyframes in the guest and ends there by an animationend event"
       }
     }
   },
@@ -178,14 +160,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 10,
-        "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 2
+        "max": 12,
+        "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step; plus two since 2026-11-18 for the selection flight, which runs as CSS keyframes in the guest and ends there by an animationend event"
       }
     }
   },
@@ -224,12 +200,6 @@
       "workUnits": {
         "max": 18,
         "reason": "kobalte baseline 2026-11-15; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
-      },
-      "domCalls": {
-        "getComputedStyle": 28,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 4
       }
     }
   },

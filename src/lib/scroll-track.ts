@@ -1,3 +1,6 @@
+import type { Accessor } from "solid-js";
+import { effect } from "./behavior/solid.js";
+
 /* A row of segments that scrolls sideways (tabs, a scrolling toggle group):
  * the selected segment stays in view and a clipped edge fades out, so the row
  * reads as "more this way" instead of ending mid-label. */
@@ -12,9 +15,13 @@ function writeClip(list: HTMLElement): void {
   list.toggleAttribute("data-clip-end", end > 1);
 }
 
-/** Centres the segment matching `selected` whenever it changes; drives
+/** Centres the segment matching `selected` whenever `selection` changes; drives
  *  scrollLeft, since scrollIntoView would scroll the page with it. */
-export function trackScroll(list: HTMLElement, selected: string, attribute: string): () => void {
+export function trackScroll(
+  list: HTMLElement,
+  selected: string,
+  selection: Accessor<unknown>,
+): () => void {
   const reveal = () => {
     writeClip(list);
     if (list.scrollWidth <= list.clientWidth) return;
@@ -29,18 +36,16 @@ export function trackScroll(list: HTMLElement, selected: string, attribute: stri
   const clip = () => writeClip(list);
   // A frame late: on mount the track has no width yet, and during a press
   // the focus scroll cancels a smooth scroll started in the same task.
-  let frame = requestAnimationFrame(reveal);
-  const observer = new MutationObserver(() => {
+  let frame = 0;
+  effect(selection, () => {
     cancelAnimationFrame(frame);
     frame = requestAnimationFrame(reveal);
   });
-  observer.observe(list, { attributes: true, attributeFilter: [attribute], subtree: true });
   const resize = new ResizeObserver(clip);
   resize.observe(list);
   list.addEventListener("scroll", clip, { passive: true });
   return () => {
     cancelAnimationFrame(frame);
-    observer.disconnect();
     resize.disconnect();
     list.removeEventListener("scroll", clip);
   };

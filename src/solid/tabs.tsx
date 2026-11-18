@@ -20,7 +20,7 @@ import { effect, merge } from "../lib/behavior/solid.js";
 import { TRACK_SURFACE } from "../lib/card-classes.js";
 import { PRESS_DIP, SETTLE_MOTION } from "../lib/motion-classes.js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
-import { SEGMENT_ITEM } from "../lib/segment-classes.js";
+import { SEGMENT_ITEM, SEGMENT_RADIUS } from "../lib/segment-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
@@ -181,7 +181,7 @@ const TabsList: Component<TabsListProps> = (props) => {
   const [el, setEl] = createSignal<HTMLElement>();
   onMount(() => {
     const listEl = el();
-    if (listEl) onCleanup(trackScroll(listEl, "[data-selected]", "data-selected"));
+    if (listEl) onCleanup(trackScroll(listEl, "[data-selected]", ctx.value));
   });
   onCleanup(() => ctx.setList(undefined));
 
@@ -224,7 +224,11 @@ const TabsList: Component<TabsListProps> = (props) => {
     >
       {/* w-max so triggers keep their natural width and the track scrolls;
 			    w-full alone squeezed them past the rounded edge, unreachable. */}
-      <SelectionScope marker="selected" class="flex h-full w-max min-w-full items-center gap-1">
+      <SelectionScope
+        marker="selected"
+        radius={SEGMENT_RADIUS}
+        class="flex h-full w-max min-w-full items-center gap-1"
+      >
         {local.children}
       </SelectionScope>
     </Polymorphic>
@@ -351,7 +355,7 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
         },
       })}
     >
-      <SelectionHighlight />
+      <SelectionHighlight active={selected()} />
       {local.icon && (
         <Icon
           data-slot={local.inline ? "tabs-trigger-inline-icon" : "tabs-trigger-icon"}

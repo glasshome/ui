@@ -1,3 +1,6 @@
+import type { Accessor } from "solid-js";
+import { effect } from "./behavior/solid.js";
+
 /* A row of segments that runs out of width wraps into a grid whose rows hold an even count
  * (four modes go two by two, five go three and two), never a full row and an orphan. */
 
@@ -40,7 +43,12 @@ const inline = (sizes: readonly ResizeObserverSize[] | undefined, fallback: numb
  * item's own width is its content node's width plus its padding and border, the same in either
  * layout, so only the column count waits a frame, and the wrapping row never overflows meanwhile.
  */
-export function balanceRows(sizer: HTMLElement, items: HTMLElement, item: string): () => void {
+export function balanceRows(
+  sizer: HTMLElement,
+  items: HTMLElement,
+  item: string,
+  members: Accessor<unknown>,
+): () => void {
   const content = `[${BALANCE_CONTENT}]`;
   const each = () => [...items.querySelectorAll<HTMLElement>(`:scope > ${item}`)];
   const own = new WeakMap<Element, number>();
@@ -121,12 +129,9 @@ export function balanceRows(sizer: HTMLElement, items: HTMLElement, item: string
   };
 
   layout(0, 0);
-  watch();
-  const children = new MutationObserver(watch);
-  children.observe(items, { childList: true });
+  effect(members, watch);
   return () => {
     cancelAnimationFrame(frame);
     resize.disconnect();
-    children.disconnect();
   };
 }

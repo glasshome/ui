@@ -33,7 +33,7 @@ import { createPresence } from "../lib/behavior/presence.js";
 import { effect, merge } from "../lib/behavior/solid.js";
 import { CONTROL_H, INPUT_SURFACE } from "../lib/input-classes.js";
 import { nestedLayerAttrs, Z_CLASS } from "../lib/layers.js";
-import { MENU_ITEM, MENU_LABEL, MENU_SEPARATOR } from "../lib/menu-classes.js";
+import { MENU_ITEM, MENU_ITEM_RADIUS, MENU_LABEL, MENU_SEPARATOR } from "../lib/menu-classes.js";
 import { FIELD_MOTION, MOTION_EXIT_MS, STAGGER } from "../lib/motion-classes.js";
 import { PICKER_LIST, PICKER_TRIGGER } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
@@ -870,7 +870,11 @@ const SelectContent: Component<SelectContentProps> = (props) => {
           },
         })}
       >
-        <SelectionScope marker="highlighted" class={cn("w-full", PICKER_LIST)}>
+        <SelectionScope
+          marker="highlighted"
+          radius={MENU_ITEM_RADIUS}
+          class={cn("w-full", PICKER_LIST)}
+        >
           <ul
             ref={setListbox}
             role="listbox"
@@ -984,14 +988,14 @@ const SelectItem: Component<SelectItemProps> = (props) => {
         },
       })}
     >
-      <SelectionHighlight />
-      <span class="absolute right-2 flex size-3.5 items-center justify-center">
-        <Show when={isSelected()}>
+      <SelectionHighlight active={list.highlighted() === key()} />
+      <Show when={isSelected()}>
+        <span class="absolute right-2 flex size-3.5 items-center justify-center">
           <div aria-hidden="true" {...marks}>
             <Icon icon="lucide:check" width={16} height={16} class="size-4 text-current" />
           </div>
-        </Show>
-      </span>
+        </span>
+      </Show>
       <div id={labelId()} {...marks}>
         {local.children}
       </div>
