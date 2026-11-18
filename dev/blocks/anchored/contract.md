@@ -11,3 +11,4 @@ Each line is one browser test in `tests/contracts/anchored.contract.test.tsx`, n
 | PO5 | trigger and part in one closed shadow root | PO1 holds |
 | PO6 | any placement | no `getComputedStyle` call; the part carries no anchor property |
 | PO7 | open, then closed | while open the part carries `data-anchored`, the marker the widget realm's tap guard reads as a placed panel; the anchor never does; on close the part loses it |
+| PO10 | the anchor is a box with no element, as a context menu's pointer point | the part is placed beside that box as it is beside an element |
