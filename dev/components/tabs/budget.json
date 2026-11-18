@@ -201,8 +201,8 @@
           "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
-          "max": 4,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "max": 5,
+          "reason": "2026-11-18: the dialog's focus trap puts its two edge stops (fixed 1px spans beside the container) in as it opens, one layout"
         }
       },
       "1": {
