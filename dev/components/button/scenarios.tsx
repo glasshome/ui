@@ -13,7 +13,9 @@ const Actions = () => {
       <Button variant="destructive" disabled>
         Delete
       </Button>
-      <p role="status" class="text-sm">{saves() === 0 ? "Not saved yet" : `Saved ${times(saves())}`}</p>
+      <p role="status" class="text-sm">
+        {saves() === 0 ? "Not saved yet" : `Saved ${times(saves())}`}
+      </p>
     </div>
   );
 };
@@ -31,7 +33,9 @@ const Element = () => {
       <Button as="span" onClick={() => setOpens((n) => n + 1)}>
         Open the door
       </Button>
-      <p role="status" class="text-sm">{opens() === 0 ? "Door closed" : `Opened ${times(opens())}`}</p>
+      <p role="status" class="text-sm">
+        {opens() === 0 ? "Door closed" : `Opened ${times(opens())}`}
+      </p>
     </div>
   );
 };
@@ -61,7 +65,9 @@ const Busy = () => {
       <Button busy onClick={() => setPresses((n) => n + 1)}>
         Upload
       </Button>
-      <p role="status" class="text-sm">{presses() === 0 ? "Uploading" : `Ran ${times(presses())}`}</p>
+      <p role="status" class="text-sm">
+        {presses() === 0 ? "Uploading" : `Ran ${times(presses())}`}
+      </p>
     </div>
   );
 };
