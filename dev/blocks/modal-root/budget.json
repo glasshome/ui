@@ -1,0 +1,220 @@
+{
+  "open": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1384,
+          "reason": "owned baseline 2026-11-18: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%"
+        },
+        "largestRecalc": {
+          "max": 1107,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 15,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 8,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 8,
+        "reason": "owned baseline 2026-11-18; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "close": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1384,
+          "reason": "owned baseline 2026-11-18: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%"
+        },
+        "largestRecalc": {
+          "max": 1107,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 15,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 8,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 12,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 6,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 8,
+        "reason": "owned baseline 2026-11-18; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "escape": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1384,
+          "reason": "owned baseline 2026-11-18: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%"
+        },
+        "largestRecalc": {
+          "max": 1107,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 15,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 8,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 10,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 6,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 8,
+        "reason": "owned baseline 2026-11-18; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "outside-press": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1384,
+          "reason": "owned baseline 2026-11-18: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%"
+        },
+        "largestRecalc": {
+          "max": 1107,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 15,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 8,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 12,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 6,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 9,
+        "reason": "owned baseline 2026-11-18; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  }
+}

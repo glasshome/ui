@@ -9,7 +9,12 @@ import {
   splitProps,
 } from "solid-js";
 import { OVERLAY_MOTION } from "../lib/motion-classes.js";
-import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
+import {
+  createCoveredRoot,
+  inShadowRoot,
+  ReportCovered,
+  shadowLayer,
+} from "../lib/shadow-layer.js";
 import { cn } from "../lib/utils.js";
 import {
   MENU_CONTENT_CLASS,
@@ -26,7 +31,12 @@ import {
 const ContextMenuRoot: Component<ComponentProps<typeof ContextMenuPrimitive>> = (props) => {
   // Modal in a shadow root, Kobalte would aria-hide the realm's host, menu included.
   const inShadow = inShadowRoot(usePortalMount());
-  return <ContextMenuPrimitive {...props} modal={inShadow ? false : props.modal} />;
+  const cover = createCoveredRoot();
+  return (
+    <ReportCovered.Provider value={cover.report}>
+      <ContextMenuPrimitive {...props} modal={inShadow || cover.covered() ? false : props.modal} />
+    </ReportCovered.Provider>
+  );
 };
 const ContextMenu = Object.assign(ContextMenuRoot, ContextMenuPrimitive) as Component<
   ComponentProps<typeof ContextMenuPrimitive>

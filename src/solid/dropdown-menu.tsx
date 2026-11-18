@@ -9,7 +9,12 @@ import {
   splitProps,
 } from "solid-js";
 import { MORPH_MOTION } from "../lib/motion-classes.js";
-import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
+import {
+  createCoveredRoot,
+  inShadowRoot,
+  ReportCovered,
+  shadowLayer,
+} from "../lib/shadow-layer.js";
 import { anchorToTriggerTop } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -29,13 +34,16 @@ import {
 const DropdownMenuRoot: Component<ComponentProps<typeof DropdownMenuPrimitive>> = (props) => {
   // Modal in a shadow root, Kobalte would aria-hide the realm's host, menu included.
   const inShadow = inShadowRoot(usePortalMount());
+  const cover = createCoveredRoot();
   return (
-    <DropdownMenuPrimitive
-      gutter={0}
-      getAnchorRect={anchorToTriggerTop}
-      {...props}
-      modal={inShadow ? false : props.modal}
-    />
+    <ReportCovered.Provider value={cover.report}>
+      <DropdownMenuPrimitive
+        gutter={0}
+        getAnchorRect={anchorToTriggerTop}
+        {...props}
+        modal={inShadow || cover.covered() ? false : props.modal}
+      />
+    </ReportCovered.Provider>
   );
 };
 const DropdownMenu = Object.assign(DropdownMenuRoot, DropdownMenuPrimitive) as Component<

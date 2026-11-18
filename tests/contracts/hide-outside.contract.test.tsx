@@ -93,6 +93,42 @@ describe("hide-outside contract", () => {
     expect(page.getAttribute("aria-hidden")).toBeNull();
   });
 
+  it("HO8 two modals opened in one tick: the upper stays in the tree, and a later one rewrites nothing already hidden", async () => {
+    const [lateOpen, setLate] = createSignal(false);
+    const page = document.body.appendChild(document.createElement("div"));
+    const outer = document.body.appendChild(document.createElement("div"));
+    const inner = document.body.appendChild(document.createElement("div"));
+    const late = document.body.appendChild(document.createElement("div"));
+    render(() => {
+      for (const [element, open] of [
+        [outer, () => true],
+        [inner, () => true],
+        [late, lateOpen],
+      ] as const) {
+        const handle = registerLayer({
+          element: () => element,
+          open,
+          kind: "modal",
+          escape: () => true,
+        });
+        createHideOutside({ layer: handle, active: open });
+      }
+      return <></>;
+    });
+    await settle();
+    expect(inner.getAttribute("aria-hidden")).toBeNull();
+    expect(outer.getAttribute("aria-hidden")).toBe("true");
+    expect(page.getAttribute("aria-hidden")).toBe("true");
+    const writes = new MutationObserver(() => undefined);
+    writes.observe(page, { attributes: true });
+    setLate(true);
+    await settle();
+    expect(late.getAttribute("aria-hidden")).toBeNull();
+    expect(inner.getAttribute("aria-hidden")).toBe("true");
+    expect(writes.takeRecords()).toEqual([]);
+    writes.disconnect();
+  });
+
   it("HO4 an inner modal hides the outer, and the outer is visible again when it closes", async () => {
     const run = await mount("handoff");
     await run(press("Open Outer"));
@@ -133,5 +169,14 @@ describe("hide-outside contract", () => {
     expect(await commands.axTree()).toContain('status "Toast"');
     await run(press("Announce"));
     expect(await commands.axTree()).toContain("Saved Modal");
+  });
+
+  it("HO7 a layer marked data-kb-top-layer outside the modal is never hidden", async () => {
+    const marked = document.body.appendChild(document.createElement("div"));
+    marked.setAttribute("data-kb-top-layer", "");
+    const run = await mount("modal");
+    await run(press("Open Modal"));
+    expect(document.querySelector('[aria-hidden="true"]')).not.toBeNull();
+    expect(marked.getAttribute("aria-hidden")).toBeNull();
   });
 });

@@ -1,6 +1,6 @@
 # dismiss: behaviour contract
 
-Each line is one browser test in `tests/contracts/dismiss.contract.test.tsx`, named by its id. `src/lib/behavior/dismiss.ts` holds `createDismiss`: outside press judged by the composed path, and Escape consumed in the layer's own keydown. A tooltip reads Escape from the document in the capture phase instead, closes only when no non-tooltip layer sits above it, and consumes nothing. A `topLayer: "auto"` layer does not use it; the browser dismisses that one.
+Each line is one browser test in `tests/contracts/dismiss.contract.test.tsx`, named by its id. `src/lib/behavior/dismiss.ts` holds `createDismiss`: outside press judged by the composed path, and Escape consumed in the layer's own keydown, or with `escapeFrom: "document"` (the owned modals, the spotlight) on the root element, before Kobalte's document listeners, unless the topmost layer reads its own Escape. Whichever listener claims the key hands it to the claiming layer's own handler, once. A tooltip reads Escape from the document in the capture phase instead, closes only when no non-tooltip layer sits above it, and consumes nothing. A `topLayer: "auto"` layer does not use it; the browser dismisses that one.
 
 | id | when | then |
 |---|---|---|
@@ -21,3 +21,4 @@ Each line is one browser test in `tests/contracts/dismiss.contract.test.tsx`, na
 | DI15 | Escape with a layer opened above a tooltip | only that layer closes; the tooltip stays |
 | DI16 | Escape while `isComposing`, a tooltip open | it stays open |
 | DI17 | Escape in a modal whose `escape()` is false | it stays open and the key is consumed (prevented, stopped): a modal never lets Escape through to the page. A layer whose library reads its own Escape (`readsOwnEscape`, the Kobalte dialogs) is left alone |
+| DI18 | two popovers, focus inside the lower, Escape | the newer one closes through its own `onDismiss` (reason `escape`), so a veto there holds; the lower stays open |

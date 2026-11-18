@@ -30,6 +30,7 @@ export interface FocusScopeOptions {
 
 export interface FocusScope {
   skipRestore(): void;
+  untrap(): void;
 }
 
 type FocusRoot = Document | ShadowRoot;
@@ -64,10 +65,15 @@ let pendingRestore: { target: Element | null } | undefined;
 
 export function createFocusScope(options: FocusScopeOptions): FocusScope {
   let skipNext = false;
-  let held: { container: HTMLElement; trapped: boolean; release: () => void } | undefined;
+  let held:
+    | { container: HTMLElement; trapped: boolean; release: () => void; untrap: () => void }
+    | undefined;
   onCleanup(() => held?.release());
 
-  const activate = (container: HTMLElement, trapped: boolean): (() => void) => {
+  const activate = (
+    container: HTMLElement,
+    trapped: boolean,
+  ): { release: () => void; untrap: () => void } => {
     skipNext = false;
     const previous = pendingRestore ? pendingRestore.target : activeOf(container);
     pendingRestore = undefined;
@@ -81,6 +87,7 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
     }
 
     let tab: { shift: boolean } | null = null;
+    let trapping = true;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Tab") tab = { shift: event.shiftKey };
     };
@@ -93,16 +100,27 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
       const mine = layers.findIndex((layer) => layer.element() === container);
       return mine >= 0 && layers.slice(mine + 1).some((above) => within(above.element(), node));
     };
+    const toCandidate = (backward: boolean) => {
+      const candidates = Array.from(container.querySelectorAll<HTMLElement>(CANDIDATES));
+      if (backward) candidates.reverse();
+      if (!firstThatTakesFocus(candidates)) focusWithoutTracking(container);
+    };
     const onFocusOut = (event: FocusEvent) => {
       const next = event.relatedTarget;
       if (next instanceof Node && (container.contains(next) || isAbove(next))) return;
-      if (next === null && !tab) {
-        focusWithoutTracking(container);
+      if (next !== null) {
+        toCandidate(tab?.shift ?? false);
         return;
       }
-      const candidates = Array.from(container.querySelectorAll<HTMLElement>(CANDIDATES));
-      if (tab?.shift) candidates.reverse();
-      if (!firstThatTakesFocus(candidates)) focusWithoutTracking(container);
+      // Chromium fires focusout while removing the focused node; refocusing then strands keys on a detached node.
+      const pressed = tab;
+      queueMicrotask(() => {
+        const current = activeOf(container);
+        if (trapping && container.isConnected && !(current && container.contains(current))) {
+          if (pressed) toCandidate(pressed.shift);
+          else focusWithoutTracking(container);
+        }
+      });
     };
     if (trapped) {
       container.addEventListener("keydown", onKeyDown);
@@ -110,10 +128,15 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
       container.addEventListener("focusout", onFocusOut);
     }
 
-    return () => {
+    const untrap = () => {
+      trapping = false;
       container.removeEventListener("keydown", onKeyDown);
       container.removeEventListener("keyup", onKeyUp);
       container.removeEventListener("focusout", onFocusOut);
+    };
+
+    const release = () => {
+      untrap();
       activeScopes.splice(activeScopes.indexOf(container), 1);
       if (skipNext) return;
       const pending = { target: previous };
@@ -128,6 +151,7 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
         }
       });
     };
+    return { release, untrap };
   };
 
   effect(
@@ -136,14 +160,15 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
       const wanted = container && active ? container : undefined;
       if (held && held.container === wanted && held.trapped === trapped) return;
       held?.release();
-      held = wanted
-        ? { container: wanted, trapped, release: activate(wanted, trapped) }
-        : undefined;
+      held = wanted ? { container: wanted, trapped, ...activate(wanted, trapped) } : undefined;
     },
   );
   return {
     skipRestore() {
       skipNext = true;
+    },
+    untrap() {
+      held?.untrap();
     },
   };
 }
