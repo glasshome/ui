@@ -177,8 +177,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 117,
-          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 159,
+          "reason": "owned baseline 2026-11-18 after the merge of ui main, max of 3 T50 runs (127) plus 25% on elements restyled, since counts move with the T50 rate the host measures; Kobalte's was 155"
         },
         "largestRecalc": {
           "max": 16,
