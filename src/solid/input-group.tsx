@@ -83,11 +83,11 @@ const inputGroupButtonVariants = cva({
   base: "flex items-center gap-2 rounded-sm text-sm shadow-none",
   variants: {
     size: {
-      /** @deprecated Use "sm". */
+      /** @deprecated `"sm"`; removed in 2.0.0. */
       xs: GROUP_BUTTON_SM,
       sm: GROUP_BUTTON_SM,
       default: `${CONTROL_H.default} px-3 has-[>svg]:px-3`,
-      /** @deprecated Use "icon-sm". */
+      /** @deprecated `"icon-sm"`; removed in 2.0.0. */
       "icon-xs": GROUP_BUTTON_ICON_SM,
       "icon-sm": GROUP_BUTTON_ICON_SM,
       "icon-default": "size-9 p-0 has-[>svg]:p-0",

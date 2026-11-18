@@ -72,12 +72,7 @@ export const SCHEMA_FORM_FORM_TYPES = [
 
 const warnedLegacyAreaKeys = new Set<string>();
 
-/**
- * @deprecated Removed in the next major. Before the SDK had `field.area()`,
- * an area picker was inferred from the property name alone, so a field had to
- * be called `areaId` to get one and any other name silently rendered a text
- * input. Declare `field.area()` instead — it works under any name.
- */
+/** @deprecated `field.area()`; removed in 2.0.0. */
 function isLegacyAreaKey(key: string, prop: ExtendedJSONSchema): boolean {
   const lower = key.toLowerCase();
   if (prop.type !== "string" || (lower !== "areaid" && lower !== "area_id")) return false;

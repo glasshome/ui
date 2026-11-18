@@ -409,7 +409,7 @@ const BottomSheetClose: ParentComponent<SheetButtonProps> = (props) => {
   );
 };
 
-/** @deprecated the shared modal parts; `BottomSheetHeader` and `BottomSheetFooter` stay as aliases. */
+/** @deprecated The shared modal parts; removed in 2.0.0. */
 export {
   BottomSheet,
   BottomSheetBody,

@@ -19,7 +19,7 @@ const ScrollArea: ParentComponent<ComponentProps<"div">> = (props) => {
   );
 };
 
-/** @deprecated `gh-scroll`'s native-styled bar is the bar; renders nothing. */
+/** @deprecated Ignored; removed in 2.0.0. */
 const ScrollBar: Component<ComponentProps<"div"> & { orientation?: "vertical" | "horizontal" }> = (
   _props,
 ) => null;

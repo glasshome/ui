@@ -78,7 +78,7 @@ const ItemMedia: Component<
   ComponentProps<"div"> & {
     /** The well the media sits in. Omit for bare content. */
     media?: ItemMediaKind;
-    /** @deprecated `media` */
+    /** @deprecated `media`; removed in 2.0.0. */
     variant?: ItemMediaKind | "default";
   }
 > = (props) => {

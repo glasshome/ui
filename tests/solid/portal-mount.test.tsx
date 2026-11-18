@@ -445,6 +445,7 @@ describe("the rest of the shadow-root review's cases", () => {
       ),
       { container: mount },
     );
+    await layersListening();
     await press(subTriggerIn(root));
     await layersListening();
     const nested = root.querySelector<HTMLElement>('[data-testid="nested"]');
@@ -668,6 +669,7 @@ describe("the second shadow-root review's cases", () => {
       ),
       { container: mount },
     );
+    await layersListening();
     await press(subTriggerIn(root));
     await layersListening();
     expect(root.querySelector('[data-slot="dropdown-menu-sub-content"]')).not.toBeNull();

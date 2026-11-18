@@ -1,0 +1,5 @@
+document
+slider, Low, orientated horizontally, max value 100, min value 0, 20
+
+
+

@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
 import { findTarget, runSteps } from "../../dev/harness/steps";
 import {
+  activeOf,
   createFocusScope,
   type FocusScope,
   focusWithoutTracking,
@@ -432,6 +433,24 @@ describe("focus-scope contract", () => {
     await settle();
     expect(label()).toBe("One");
     expect(document.hasFocus()).toBe(true);
+  });
+
+  it("FO16 activeOf answers null for a root that does not hold focus", () => {
+    const roots = ["one", "two"].map((id) => {
+      const host = document.createElement("div");
+      document.body.append(host);
+      const root = host.attachShadow({ mode: "closed" });
+      const button = document.createElement("button");
+      button.textContent = id;
+      root.append(button);
+      return { host, button };
+    });
+    const [one, two] = roots;
+    if (!one || !two) throw new Error("no roots");
+    one.button.focus();
+    expect(activeOf(one.button)).toBe(one.button);
+    expect(activeOf(two.button)).toBeNull();
+    for (const { host } of roots) host.remove();
   });
 
   it("focusWithoutTracking reports whether the element took focus", () => {

@@ -1,10 +1,16 @@
+import { vi } from "vitest";
 import { commands, userEvent } from "vitest/browser";
 import type { Input } from "../../dev/harness/steps";
+import { PRESENCE_TIMEOUT_MS } from "../../src/lib/behavior/presence";
+import { HOLD_GRACE_MS, HOLD_MS } from "../../src/lib/hold";
+import { useFakeTime } from "../../src/testing/index.js";
 
 const centre = (el: Element) => {
   const box = el.getBoundingClientRect();
   return [box.x + box.width / 2, box.y + box.height / 2] as const;
 };
+
+const DRAG_MOVES = 4;
 
 /** Real input at the element's centre: a selector cannot reach into a closed shadow root, a point can. */
 export const input: Input = {
@@ -19,6 +25,15 @@ export const input: Input = {
     await commands.mouse("down", x, y);
     await commands.mouse("up", x, y);
   },
+  async drag(el, by) {
+    const [x, y] = centre(el);
+    await commands.mouse("move", x, y);
+    await commands.mouse("down", x, y);
+    for (let i = 1; i <= DRAG_MOVES; i++) {
+      await commands.mouse("move", x + (by.x * i) / DRAG_MOVES, y + (by.y * i) / DRAG_MOVES);
+    }
+    await commands.mouse("up", x + by.x, y + by.y);
+  },
   async touch(el) {
     const [x, y] = centre(el);
     await commands.touch("down", x, y);
@@ -27,6 +42,21 @@ export const input: Input = {
   async hover(el) {
     const [x, y] = centre(el);
     await commands.mouse("move", x, y);
+  },
+  async contextMenu(el) {
+    const [x, y] = centre(el);
+    await commands.mouse("move", x, y);
+    await commands.mouse("down", x, y, "right");
+    await commands.mouse("up", x, y, "right");
+  },
+  async hold(el) {
+    const [x, y] = centre(el);
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
+    await commands.touch("down", x, y);
+    await vi.advanceTimersByTimeAsync(HOLD_MS + PRESENCE_TIMEOUT_MS);
+    await commands.touch("up", x, y);
+    await vi.advanceTimersByTimeAsync(HOLD_GRACE_MS);
+    vi.useRealTimers();
   },
   key: (key) => userEvent.keyboard(`{${key}}`),
   type: (text) => userEvent.keyboard(text),

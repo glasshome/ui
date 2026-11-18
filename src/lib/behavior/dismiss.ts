@@ -1,14 +1,16 @@
 import type { Accessor } from "solid-js";
-import { type Layer, type LayerHandle, layerStack } from "./layer-stack";
-import { effect } from "./solid";
+import { type Layer, type LayerHandle, layerStack } from "./layer-stack.js";
+import { effect } from "./solid.js";
 
-export type DismissReason = "escape" | "outside-press";
+export type DismissReason = "escape" | "outside-press" | "focus-outside";
 
 export interface DismissOptions {
   layer: LayerHandle;
-  /** `event` is the keydown for `escape` and the pointerdown for `outside-press`. */
-  onDismiss: (reason: DismissReason, event: KeyboardEvent | PointerEvent) => void;
+  /** `event` is the keydown for `escape`, the pointerdown for `outside-press` and the focusin for `focus-outside`. */
+  onDismiss: (reason: DismissReason, event: KeyboardEvent | PointerEvent | FocusEvent) => void;
   outsidePress?: Accessor<boolean>;
+  /** Off unless asked: a non-modal layer closes when focus lands outside it. */
+  focusOutside?: Accessor<boolean>;
   escapeFrom?: "layer" | "document";
 }
 
@@ -21,24 +23,63 @@ function rootOf(element: HTMLElement): Document | ShadowRoot {
 
 const takesKeys = (entry: Layer): boolean => entry.element() !== undefined;
 
+// A layer in a shadow root tops its own root: layers newer in other roots never shield it.
+function topsItsRoot(layer: LayerHandle, mine: Layer): boolean {
+  if (layer.isTop()) return true;
+  const root = mine.element()?.getRootNode();
+  if (root?.nodeType !== SHADOW_ROOT_NODE) return false;
+  return !layer
+    .above()
+    .some((other) => other.kind !== "tooltip" && other.element()?.getRootNode() === root);
+}
+
+function isOutside(layer: LayerHandle, event: Event): boolean {
+  const mine = layer.layer();
+  if (!mine || (mine.kind !== "menu" && !topsItsRoot(layer, mine))) return false;
+  const full = event.composedPath();
+  const listener = event.currentTarget;
+  const end = listener === document || !listener ? -1 : full.indexOf(listener);
+  return !layer.containsPath(end >= 0 ? full.slice(0, end) : full);
+}
+
+function listenersFor(element: HTMLElement) {
+  const root = rootOf(element);
+  const host = root === document ? undefined : (root as ShadowRoot).host;
+  return { host, targets: host ? [root, document] : [root] };
+}
+
+function createFocusOutside(options: DismissOptions) {
+  const { layer } = options;
+  effect(
+    () => [layer.layer()?.element(), options.focusOutside?.() ?? false] as const,
+    ([element, enabled]) => {
+      if (!element || !enabled) return;
+      const { host, targets } = listenersFor(element);
+      const onFocus = (event: FocusEvent) => {
+        if (event.currentTarget === document && host && event.target === host) return;
+        if (isOutside(layer, event)) options.onDismiss("focus-outside", event);
+      };
+      const listener = onFocus as EventListener;
+      // After the tick that opened it: focus moved by the opening itself is never outside.
+      const timer = setTimeout(() => {
+        for (const target of targets) target.addEventListener("focusin", listener, true);
+      }, 0);
+      return () => {
+        clearTimeout(timer);
+        for (const target of targets) target.removeEventListener("focusin", listener, true);
+      };
+    },
+  );
+}
+
 function createOutsidePress(options: DismissOptions) {
   const { layer } = options;
   effect(
     () => [layer.layer()?.element(), options.outsidePress?.() ?? true] as const,
     ([element, enabled]) => {
       if (!element || !enabled) return;
-      const root = rootOf(element);
-      const host = root === document ? undefined : (root as ShadowRoot).host;
-      const targets = host ? [root, document] : [root];
-
-      const outside = (event: Event): boolean => {
-        const mine = layer.layer();
-        if (!mine || (mine.kind !== "menu" && !layer.isTop())) return false;
-        const full = event.composedPath();
-        const listener = event.currentTarget;
-        const end = listener === document || !listener ? -1 : full.indexOf(listener);
-        return !layer.containsPath(end >= 0 ? full.slice(0, end) : full);
-      };
+      const { host, targets } = listenersFor(element);
+      const outside = (event: Event): boolean => isOutside(layer, event);
 
       let pending: { target: EventTarget; click: (e: Event) => void } | undefined;
       const dropPending = () => {
@@ -105,20 +146,18 @@ function createEscape(options: DismissOptions) {
       if (!entry || !element) return;
       if (from === "tooltip") return createTooltipEscape(options);
       escapeHandlers.set(entry, (event) => options.onDismiss("escape", event));
-      // The root element, so the key is taken before Kobalte's document listeners hear it.
+      // The root element, so the key is taken before any document listener hears it.
       const target = from === "document" ? document.documentElement : element;
       const onKey = (event: KeyboardEvent) => {
         if (event.key !== "Escape" || event.isComposing || claimedKeys.has(event)) return;
         const mine = layer.layer();
         if (!mine || !takesKeys(mine)) return;
         const stack = layerStack.layers().slice(layerStack.layers().indexOf(mine));
-        const topmost = stack.findLast((other) => other.kind !== "tooltip" && takesKeys(other));
-        if (from === "document" && topmost !== mine && topmost?.readsOwnEscape) return;
         const claims = stack.findLast(
           (other) =>
             other.kind !== "tooltip" &&
             takesKeys(other) &&
-            (other.escape() || (other.kind === "modal" && !other.readsOwnEscape)),
+            (other.escape() || other.kind === "modal"),
         );
         if (!claims) return;
         claimedKeys.add(event);
@@ -141,5 +180,6 @@ function createEscape(options: DismissOptions) {
 
 export function createDismiss(options: DismissOptions): void {
   createOutsidePress(options);
+  createFocusOutside(options);
   createEscape(options);
 }

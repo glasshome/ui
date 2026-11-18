@@ -75,7 +75,7 @@ const SHEET_SIDE = {
     "data-[closed]:slide-out-to-right data-[expanded]:slide-in-from-right inset-y-3 right-3 w-3/4 sm:max-w-sm",
   left: "data-[closed]:slide-out-to-left data-[expanded]:slide-in-from-left inset-y-3 left-3 w-3/4 sm:max-w-sm",
   top: `data-[closed]:slide-out-to-top data-[expanded]:slide-in-from-top inset-x-3 top-3 ${MODAL_MAX_H}`,
-  /** @deprecated a modal from the bottom is `BottomSheet` / `ResponsiveDialog`. */
+  /** @deprecated `BottomSheet` or `ResponsiveDialog`; removed in 2.0.0. */
   bottom: `data-[closed]:slide-out-to-bottom data-[expanded]:slide-in-from-bottom inset-x-3 bottom-3 ${MODAL_MAX_H}`,
 } as const;
 

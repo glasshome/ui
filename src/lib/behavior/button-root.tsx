@@ -1,6 +1,6 @@
 import { type ComponentProps, createSignal, type JSX, type ValidComponent } from "solid-js";
-import { Polymorphic } from "./polymorphic";
-import { callEventHandler, effect, merge, omit } from "./solid";
+import { Polymorphic } from "./polymorphic.js";
+import { callEventHandler, effect, merge, omit } from "./solid.js";
 
 export type ButtonRootProps<T extends ValidComponent = "button"> = Omit<
   ComponentProps<T>,

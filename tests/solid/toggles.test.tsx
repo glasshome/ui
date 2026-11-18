@@ -2,7 +2,7 @@
  * typed field share two things a caller cannot see from the call site: one
  * draggable thumb and one focus ring. Both are asserted from the recipe
  * constants, so a control that retypes either fails here. */
-import { parseColor } from "@kobalte/core/colors";
+import { parseColor } from "../../src/lib/color/index.js";
 import { cleanup, render } from "@solidjs/testing-library";
 import type { JSX } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";

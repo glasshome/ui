@@ -256,7 +256,7 @@ const ICON_DIMENSIONS: Record<SectionIconSize, string> = {
   lg: "size-12 sm:size-14 [&>[data-slot=icon]]:text-[24px] sm:[&>[data-slot=icon]]:text-[28px]",
 };
 
-/** @deprecated pass a CSS color to `tone` instead. */
+/** @deprecated Pass a CSS color to `tone`; removed in 2.0.0. */
 const LEGACY_TONES: Record<string, string | undefined> = {
   neutral: undefined,
   primary: "var(--primary)",
@@ -319,8 +319,7 @@ function SectionHeading(props: { children: JSX.Element; class?: string }) {
   );
 }
 
-/** @deprecated A bare heading has no owner: `SectionGroup` for a labelled group
- *  inside a card, `FieldLegend` for a titled group of form rows. */
+/** @deprecated `SectionGroup`, or `FieldLegend` for a titled group of form rows; removed in 2.0.0. */
 export function SectionSubtitle(props: { children: JSX.Element; class?: string }) {
   return <SectionHeading class={props.class}>{props.children}</SectionHeading>;
 }
@@ -357,7 +356,7 @@ export function SectionGroup(props: {
   );
 }
 
-/** @deprecated SectionMeta, or FieldLegend for a titled group of rows. */
+/** @deprecated `SectionMeta`, or `FieldLegend` for a titled group of rows; removed in 2.0.0. */
 export function SectionLabel(props: { children: JSX.Element; class?: string }) {
   return <SectionMeta class={cn("font-medium", props.class)}>{props.children}</SectionMeta>;
 }

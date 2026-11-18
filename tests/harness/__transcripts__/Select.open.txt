@@ -1,2 +1,2 @@
 document
-listbox, Fruit, orientated vertically | option, Apple, not selected, not disabled, position 1, set size 4 | listbox, Fruit, orientated vertically | option, Apple, not selected, not disabled, position 1, set size 4
+listbox, Fruit, orientated vertically, active descendant Apple | option, Apple, not selected, not disabled, position 1, set size 4

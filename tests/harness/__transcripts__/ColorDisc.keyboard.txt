@@ -1,0 +1,5 @@
+document
+slider, Colour, orientated horizontally, max value 360, min value 0, current value Hue 0, saturation 50%
+
+
+

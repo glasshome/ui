@@ -1,6 +1,6 @@
 # Select: behaviour contract
 
-Each line is one browser test in `tests/contracts/select.contract.test.tsx`, named by its id. Tests read roles, names, ARIA states, focus and `data-*` markers, never classes. A "Gap" is behaviour that fails today: its test is an `expectGap` holding the recorded failure, and it fails the day the gap closes. The list portals to `document.body` (or the nearest portal mount in a shadow root).
+Each line is one browser test in `tests/contracts/select.contract.test.tsx`, named by its id. Tests read roles, names, ARIA states, focus and `data-*` markers, never classes. The list portals to `document.body` (or the nearest portal mount in a shadow root).
 
 | id | when | then |
 |---|---|---|
@@ -16,5 +16,10 @@ Each line is one browser test in `tests/contracts/select.contract.test.tsx`, nam
 | S10 | a picked option, list reopened | that option has `aria-selected="true"` and `data-selected` |
 | S11 | a press outside the open list | the list closes without a change |
 | S12 | inside a bottom sheet | the list opens above the sheet, and picking leaves the sheet open, and Escape closes only the list |
-| S13 | inside a closed shadow root | S2 and S4 hold there too, with the list inside the same shadow root. Gap: the press lands and the list never opens (`2026-11-15-kobalte-collections-dead-in-closed-shadow-roots`) |
+| S13 | inside a closed shadow root | S2 and S4 hold there too, with the list inside the same shadow root |
 | S14 | Home, End or arrows move the highlight in a long list | the highlighted option scrolls into the list's view |
+| S15 | inside a Dialog, the list open | Escape closes the list and leaves the Dialog open; focus returns to the trigger |
+| S16 | a touch press on an option that moves past the tap slop before it lifts | nothing is picked and the list stays open; a still tap picks |
+| S17 | typing or Left and Right on the closed, focused trigger | the matching, previous or next option is picked without opening the list |
+| S18 | the list opens on a picked value | focus sits on the listbox, which names the highlighted option in `aria-activedescendant`; the picked option is the highlighted one; the list covers the trigger, its top on the trigger's top |
+| S19 | a click with no pointer press before it, as assistive technology sends, on the trigger, then on an option | the list opens, and the option is picked |

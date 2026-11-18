@@ -16,6 +16,8 @@ export interface AnchorPlace {
   align: Align;
   offset: number;
   matchAnchorWidth: boolean;
+  /** False keeps the chosen side even without room; the part only shifts to stay inside the viewport. */
+  flip?: boolean;
 }
 export interface Placement {
   left: number;
@@ -50,7 +52,10 @@ export function placeBeside(
   const vertical = place.side === "top" || place.side === "bottom";
   const need = vertical ? floating.height : floating.width;
   const other = OPPOSITE[place.side];
-  const side = rooms[place.side] >= need || rooms[other] <= rooms[place.side] ? place.side : other;
+  const side =
+    place.flip === false || rooms[place.side] >= need || rooms[other] <= rooms[place.side]
+      ? place.side
+      : other;
   const maxWidth = viewport.width - 2 * EDGE;
   const maxHeight = viewport.height - 2 * EDGE;
   const width = Math.min(

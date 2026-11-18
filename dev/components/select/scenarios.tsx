@@ -65,6 +65,13 @@ export default defineScenarios({
       steps: [{ press: TRIGGER }],
     },
     {
+      id: "in-dialog",
+      title: "Inside a dialog, Escape closes only the list",
+      render: Fruit,
+      within: "dialog",
+      steps: [{ press: TRIGGER }, { key: "Escape" }],
+    },
+    {
       id: "in-shadow-root",
       title: "Inside a closed shadow root",
       render: Fruit,

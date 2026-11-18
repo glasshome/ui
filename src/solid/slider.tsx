@@ -1,7 +1,9 @@
-import { Slider as KSlider } from "@kobalte/core/slider";
 import type { Component } from "solid-js";
-import { Index, splitProps } from "solid-js";
+import { createMemo, createSignal, For } from "solid-js";
+import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
+import { alongTrack, createDrag, createRange } from "../lib/behavior/range.js";
 import { FIELD_CHROME, FOCUS_RING } from "../lib/input-classes.js";
+import { locale, readingDirection } from "../lib/locale.js";
 import { THUMB_CLASS, THUMB_RAIL_BLEED, THUMB_RAIL_PAD } from "../lib/thumb-classes.js";
 import { cn } from "../lib/utils.js";
 
@@ -32,118 +34,166 @@ interface SliderProps {
   "aria-labelledby"?: string;
 }
 
+const decimal = new Intl.NumberFormat(locale, { style: "decimal" });
+const rtl = readingDirection === "rtl";
+const START = rtl ? "right" : "left";
+const END = rtl ? "left" : "right";
+const THUMB_SHIFT = rtl ? "translateX(50%)" : "translateX(-50%)";
+
 const Slider: Component<SliderProps> = (props) => {
-  const [local] = splitProps(props, [
-    "value",
-    "defaultValue",
-    "min",
-    "max",
-    "step",
-    "disabled",
-    "onChange",
-    "onChangeEnd",
-    "class",
-    "trackClass",
-    "thumbClass",
-    "thumbColors",
-    "fillTone",
-    "markers",
-    "minStepsBetweenThumbs",
-    "aria-label",
-    "aria-labelledby",
-  ]);
+  const min = () => props.min ?? 0;
+  const max = () => props.max ?? 100;
+  const disabled = () => props.disabled ?? false;
+  const range = createRange({
+    values: () => props.value,
+    defaultValues: () => props.defaultValue ?? [min()],
+    min,
+    max,
+    step: () => props.step ?? 1,
+    minStepsBetween: () => props.minStepsBetweenThumbs ?? 0,
+    disabled,
+    onChange: (values) => props.onChange?.(values),
+    onChangeEnd: (values) => props.onChangeEnd?.(values),
+  });
+  const indices = createMemo(() => range.values().map((_, i) => i), [], {
+    equals: (a, b) => a.length === b.length,
+  });
+  const percents = () => range.values().map((v) => range.fraction(v) * 100);
+  const [thumbs, setThumbs] = createSignal<HTMLElement[]>([]);
+  let active = 0;
+  let grab = 0;
+
+  const drag = createDrag({
+    disabled,
+    start: (e, rect) => {
+      const thumb = (e.target as Element).closest('[data-slot="slider-thumb"]');
+      const pressed = thumbs().findIndex((el) => el === thumb);
+      const at = alongTrack(e, rect);
+      if (pressed >= 0) {
+        active = pressed;
+        grab = at - range.fraction(range.values()[pressed] ?? 0);
+      } else {
+        const raw = min() + at * (max() - min());
+        grab = 0;
+        active = range.closestThumb(raw);
+        range.setThumb(active, raw);
+      }
+      focusWithoutTracking(thumbs()[active]);
+    },
+    move: (e, rect) => range.setThumb(active, range.valueAt(alongTrack(e, rect) - grab)),
+    end: range.dragEnd,
+  });
 
   const markerPct = (v: number) => {
-    const min = local.min ?? 0;
-    const max = local.max ?? 100;
-    return max === min ? 0 : ((v - min) / (max - min)) * 100;
+    const span = max() - min();
+    return span === 0 ? 0 : ((v - min()) / span) * 100;
   };
 
+  const disabledMark = () => (disabled() ? "" : undefined);
+
   return (
-    <KSlider
-      value={local.value}
-      defaultValue={local.defaultValue}
-      minValue={local.min ?? 0}
-      maxValue={local.max ?? 100}
-      step={local.step ?? 1}
-      minStepsBetweenThumbs={local.minStepsBetweenThumbs}
-      disabled={local.disabled}
-      onChange={local.onChange}
-      onChangeEnd={local.onChangeEnd}
+    <div
+      role="group"
       data-slot="slider"
+      data-orientation="horizontal"
+      data-disabled={disabledMark()}
       class={cn(
         // The rail wears the shared toggle/rail chrome, so it reads as an empty
         // well in both themes (a field's light-theme fill rises to the card).
         "relative flex w-full touch-none items-center rounded-xl select-none",
         THUMB_RAIL_PAD,
         FIELD_CHROME,
-        local.disabled && "cursor-not-allowed opacity-50",
-        local.class,
+        disabled() && "cursor-not-allowed opacity-50",
+        props.class,
       )}
     >
-      <KSlider.Track
+      <div
         data-slot="slider-track"
+        data-orientation="horizontal"
+        data-disabled={disabledMark()}
         class={cn(
           "relative h-7 w-full",
-          local.disabled ? "cursor-not-allowed" : "cursor-pointer",
-          local.trackClass,
+          disabled() ? "cursor-not-allowed" : "cursor-pointer",
+          props.trackClass,
         )}
+        on:pointerdown={drag.onPointerDown}
+        on:pointermove={drag.onPointerMove}
+        on:pointerup={drag.onPointerUp}
+        on:pointercancel={drag.onPointerCancel}
       >
-        <KSlider.Fill
+        <div
           data-slot="slider-fill"
+          data-orientation="horizontal"
+          data-disabled={disabledMark()}
           class={cn(
             // The fill sits sunk inside the recessed rail: the tinted-surface
             // outer drop shadow would read as a halo leaking out of the groove.
             "glass glass-tint absolute inset-y-0 rounded-xl [--glass-drop:0%] [--glass-wash:90%]",
             THUMB_RAIL_BLEED,
-            Array.isArray(local.fillTone) && "glass-edge-gradient",
+            Array.isArray(props.fillTone) && "glass-edge-gradient",
           )}
-          style={
-            Array.isArray(local.fillTone)
+          style={{
+            [START]: `${percents().length > 1 ? Math.min(...percents()) : 0}%`,
+            [END]: `${100 - Math.max(...percents())}%`,
+            ...(Array.isArray(props.fillTone)
               ? {
-                  "--glass-tone": local.fillTone[0],
-                  "--glass-tone-2": local.fillTone[1],
+                  "--glass-tone": props.fillTone[0],
+                  "--glass-tone-2": props.fillTone[1],
                   "--glass-wash-2": "var(--glass-wash)",
                   "--glass-wash-angle": "90deg",
                 }
-              : { "--glass-tone": local.fillTone ?? "var(--material-accent)" }
-          }
+              : { "--glass-tone": props.fillTone ?? "var(--material-accent)" }),
+          }}
         />
-        <Index each={local.markers ?? []}>
+        <For each={props.markers ?? []}>
           {(marker) => (
             <span
               data-slot="slider-marker"
               class="pointer-events-none absolute top-1/2 h-3 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
               style={{
-                left: `${markerPct(marker())}%`,
+                left: `${markerPct(marker)}%`,
                 background: "color-mix(in oklab, var(--foreground) 60%, transparent)",
               }}
             />
           )}
-        </Index>
-        <Index each={local.value ?? local.defaultValue ?? [0]}>
-          {(_, thumbIndex) => (
-            <KSlider.Thumb
+        </For>
+        <For each={indices()}>
+          {(index) => (
+            <span
+              ref={(el) => setThumbs((all) => Object.assign(all.slice(), { [index]: el }))}
+              role="slider"
               data-slot="slider-thumb"
+              data-orientation="horizontal"
+              data-disabled={disabledMark()}
+              tabIndex={disabled() ? undefined : 0}
+              aria-label={props["aria-label"]}
+              aria-labelledby={props["aria-labelledby"]}
+              aria-valuemin={min()}
+              aria-valuemax={max()}
+              aria-valuenow={range.values()[index]}
+              aria-valuetext={decimal.format(range.values()[index] ?? 0)}
+              aria-orientation="horizontal"
+              aria-disabled={disabled() || undefined}
               class={cn(
                 THUMB_CLASS,
                 FOCUS_RING,
-                "absolute top-0 transition-transform duration-200 ease-out hover:scale-125 active:scale-110",
-                local.disabled && "cursor-not-allowed",
-                local.thumbClass,
+                "absolute top-0 transition-transform duration-(--duration-expand) ease-out hover:scale-125 active:scale-110",
+                disabled() && "cursor-not-allowed",
+                props.thumbClass,
               )}
-              aria-label={local["aria-label"]}
-              aria-labelledby={local["aria-labelledby"]}
               style={{
-                background: local.thumbColors?.[thumbIndex] ?? "var(--material-control-knob)",
+                [START]: `calc(${percents()[index] ?? 0}%)`,
+                transform: THUMB_SHIFT,
+                "touch-action": "none",
+                background: props.thumbColors?.[index] ?? "var(--material-control-knob)",
               }}
-            >
-              <KSlider.Input />
-            </KSlider.Thumb>
+              on:keydown={(e) => range.keyDown(e, index)}
+              onBlur={range.blur}
+            />
           )}
-        </Index>
-      </KSlider.Track>
-    </KSlider>
+        </For>
+      </div>
+    </div>
   );
 };
 

@@ -1,0 +1,6 @@
+document
+slider, Hue, orientated horizontally, max value 360, min value 0, current value 200°, cyan blue
+
+
+
+

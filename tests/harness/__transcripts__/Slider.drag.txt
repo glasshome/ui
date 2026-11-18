@@ -1,0 +1,2 @@
+document
+slider, Brightness, orientated horizontally, max value 100, min value 0, current value 50

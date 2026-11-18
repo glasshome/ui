@@ -8,18 +8,17 @@ const LEAVE =
   "data-[closed]:animate-out data-[closed]:duration-(--duration-micro) data-[closed]:ease-(--ease-contract)";
 
 /* Anchored panels (menu, popover, tooltip, hover card): unfold from the
- * trigger edge. Kobalte writes the origin per placement. */
+ * trigger edge; each panel sets its origin from data-side or the pointer. */
 export const OVERLAY_MOTION = `origin-(--kb-popper-content-transform-origin) ${ARRIVE} data-[expanded]:fade-in-0 data-[expanded]:zoom-in-90 ${LEAVE} data-[closed]:fade-out-0 data-[closed]:zoom-out-95`;
 
-/* Field pickers: paired with gutter={0} + anchorToTriggerTop, the clip-path
- * reveal is what makes the panel read as the field expanding, not a box
- * dropping in. */
+/* Field pickers: the clip-path reveal is what makes the panel read as the
+ * field expanding, not a box dropping in. */
 export const FIELD_MOTION = "data-[closed]:animate-select-out data-[expanded]:animate-select-in";
 
 /* Anchored panels that own their trigger (dropdown menu): the panel covers
- * the trigger (gutter 0 + anchorToTriggerTop) and unrolls out of the
+ * the trigger and unrolls out of the
  * trigger's box; the content writes --morph-h/--morph-radius from the
- * trigger it replaces, --morph-w is kobalte's anchor width. */
+ * trigger it replaces, --morph-w is the anchor width the menu writes. */
 export const MORPH_MOTION =
   "[--morph-w:var(--kb-popper-anchor-width)] min-w-[var(--kb-popper-anchor-width)] data-[expanded]:animate-morph-in data-[closed]:animate-morph-out";
 

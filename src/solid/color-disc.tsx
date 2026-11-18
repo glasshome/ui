@@ -1,5 +1,4 @@
-import type { Color } from "@kobalte/core/colors";
-import { parseColor } from "@kobalte/core/colors";
+import { type Color, parseColor } from "../lib/color/index.js";
 import { type Component, createSignal, type JSX } from "solid-js";
 import { FOCUS_RING } from "../lib/input-classes.js";
 import { THUMB_COLOR_RING } from "../lib/thumb-classes.js";
@@ -91,22 +90,22 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
         background: discBackground,
         "box-shadow": "inset 0 0 0 1px rgb(255 255 255 / 0.15)",
       }}
-      onPointerDown={(e) => {
+      on:pointerdown={(e) => {
         if (props.disabled || e.button !== 0) return;
         const el = e.currentTarget;
         el.setPointerCapture?.(e.pointerId);
         setDragging(true);
         props.onChange?.(colourAt(e, el));
       }}
-      onPointerMove={(e) => {
+      on:pointermove={(e) => {
         if (dragging()) props.onChange?.(colourAt(e, e.currentTarget));
       }}
-      onPointerUp={(e) => {
+      on:pointerup={(e) => {
         if (!dragging()) return;
         setDragging(false);
         props.onChangeEnd?.(colourAt(e, e.currentTarget));
       }}
-      onPointerCancel={() => {
+      on:pointercancel={() => {
         if (!dragging()) return;
         setDragging(false);
         if (last) props.onChangeEnd?.(last);
@@ -135,7 +134,7 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
           background: value().toString("css"),
           "pointer-events": "none",
         }}
-        onKeyDown={onKeyDown}
+        on:keydown={onKeyDown}
       />
     </div>
   );
@@ -195,21 +194,21 @@ const TemperatureBar: Component<TemperatureBarProps> = (props) => {
         props.class,
       )}
       style={gradient()}
-      onPointerDown={(e) => {
+      on:pointerdown={(e) => {
         if (props.disabled || e.button !== 0) return;
         e.currentTarget.setPointerCapture?.(e.pointerId);
         setDragging(true);
         props.onChange?.(kelvinAt(e, e.currentTarget));
       }}
-      onPointerMove={(e) => {
+      on:pointermove={(e) => {
         if (dragging()) props.onChange?.(kelvinAt(e, e.currentTarget));
       }}
-      onPointerUp={(e) => {
+      on:pointerup={(e) => {
         if (!dragging()) return;
         setDragging(false);
         props.onChangeEnd?.(kelvinAt(e, e.currentTarget));
       }}
-      onPointerCancel={() => {
+      on:pointercancel={() => {
         if (!dragging()) return;
         setDragging(false);
         if (last !== undefined) props.onChangeEnd?.(last);
@@ -236,7 +235,7 @@ const TemperatureBar: Component<TemperatureBarProps> = (props) => {
           translate: "-50% -50%",
           background: kelvinToCss(props.value),
         }}
-        onKeyDown={(e) => {
+        on:keydown={(e) => {
           const step = e.shiftKey ? 500 : 100;
           const d = e.key === "ArrowRight" ? step : e.key === "ArrowLeft" ? -step : 0;
           if (!d || props.disabled) return;

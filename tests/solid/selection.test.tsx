@@ -303,6 +303,17 @@ describe("SelectionScope", () => {
     expect(items[2]).toBeDefined();
   });
 
+  it("does not fly in from an item scrolled out of sight", async () => {
+    const { scope, flyer, select } = renderGroup({
+      scope: { width: "150px", overflow: "hidden" },
+    });
+    scope.scrollLeft = 150;
+    await select(2);
+
+    expect(flights()).toHaveLength(0);
+    expect(flyer.hasAttribute("data-flying")).toBe(false);
+  });
+
   it("lands in layout pixels while an ancestor is mid-zoom", async () => {
     const { scope, flyer, select } = renderGroup({ ancestor: { scale: "0.9" } });
     expect(scope.getBoundingClientRect().width).toBeCloseTo(270);

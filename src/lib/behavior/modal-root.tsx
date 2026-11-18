@@ -14,15 +14,15 @@ import {
   type ValidComponent,
 } from "solid-js";
 import { Portal } from "solid-js/web";
-import { LAYER_ROOT } from "../overlay-classes";
-import { createControllableSignal } from "./controllable";
-import { createDismiss } from "./dismiss";
-import { createFocusScope, focusWithoutTracking } from "./focus-scope";
-import { createHideOutside } from "./hide-outside";
-import { layerStack, registerLayer } from "./layer-stack";
-import { Polymorphic } from "./polymorphic";
-import { createPresence } from "./presence";
-import { callEventHandler, effect, merge } from "./solid";
+import { LAYER_ROOT } from "../overlay-classes.js";
+import { createControllableSignal } from "./controllable.js";
+import { createDismiss } from "./dismiss.js";
+import { activeOf, createFocusScope, focusWithoutTracking } from "./focus-scope.js";
+import { createHideOutside } from "./hide-outside.js";
+import { layerStack, registerLayer } from "./layer-stack.js";
+import { Polymorphic } from "./polymorphic.js";
+import { createPresence } from "./presence.js";
+import { callEventHandler, effect, merge } from "./solid.js";
 
 export type ModalRole = "dialog" | "alertdialog";
 
@@ -228,7 +228,10 @@ export type PointerDownOutsideEvent = CustomEvent<OutsideDetail<PointerEvent>>;
 export type FocusOutsideEvent = CustomEvent<OutsideDetail<FocusEvent>>;
 export type InteractOutsideEvent = PointerDownOutsideEvent | FocusOutsideEvent;
 
-function vetoed<E extends Event>(handler: ((event: E) => void) | undefined, event: E): boolean {
+export function vetoed<E extends Event>(
+  handler: ((event: E) => void) | undefined,
+  event: E,
+): boolean {
   handler?.(event);
   return event.defaultPrevented;
 }
@@ -242,13 +245,16 @@ function isContextMenu(event: PointerEvent): boolean {
 
 const OUTSIDE_EVENT = "interactoutside";
 
-function pointerDownOutside(
-  original: PointerEvent,
-  handle: (event: PointerDownOutsideEvent) => void,
-): PointerDownOutsideEvent {
-  const event: PointerDownOutsideEvent = new CustomEvent(OUTSIDE_EVENT, {
+export function interactOutside<T extends PointerEvent | FocusEvent>(
+  original: T,
+  handle: (event: CustomEvent<OutsideDetail<T>>) => void,
+): CustomEvent<OutsideDetail<T>> {
+  const event = new CustomEvent<OutsideDetail<T>>(OUTSIDE_EVENT, {
     cancelable: true,
-    detail: { originalEvent: original, isContextMenu: isContextMenu(original) },
+    detail: {
+      originalEvent: original,
+      isContextMenu: original.type === "pointerdown" && isContextMenu(original as PointerEvent),
+    },
   });
   const target = original.target;
   // Dispatched on the pressed node so handlers read its target, as Kobalte's did.
@@ -332,7 +338,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
       if (reason === "escape") {
         if (vetoed(local.onEscapeKeyDown, original as KeyboardEvent)) return;
       } else {
-        const event = pointerDownOutside(original as PointerEvent, (e) => {
+        const event = interactOutside(original as PointerEvent, (e) => {
           local.onPointerDownOutside?.(e);
           if (ctx.modal() && e.detail.isContextMenu) e.preventDefault();
           local.onInteractOutside?.(e);
@@ -356,7 +362,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
     initialFocus: (container) => {
       if (!vetoed(local.onOpenAutoFocus, new Event("openautofocus", { cancelable: true })))
         return null;
-      const active = (container.getRootNode() as Document | ShadowRoot).activeElement;
+      const active = activeOf(container);
       return active instanceof HTMLElement && container.contains(active) ? active : container;
     },
   });

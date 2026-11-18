@@ -16,9 +16,13 @@ const WIDTHS = { phone: [390, 844], desktop: [1280, 900] } as const;
 const MATRIX = (["light", "dark"] as const).flatMap((theme) =>
   (Object.keys(WIDTHS) as (keyof typeof WIDTHS)[]).map((width) => [theme, width] as const),
 );
-const CASES = COMPONENTS.flatMap(({ component, scenarios }) =>
+const ALL_CASES = COMPONENTS.flatMap(({ component, scenarios }) =>
   scenarios.map((scenario) => ({ name: `${component} ${scenario.id}`, component, scenario })),
 );
+const usesFinger = (c: (typeof ALL_CASES)[number]) =>
+  (c.scenario.steps ?? []).some((step) => "touch" in step || "hold" in step);
+// A finger leaves the page without a mouse for good: turning touch emulation off reports no pointer and no hover.
+const CASES = [...ALL_CASES.filter((c) => !usesFinger(c)), ...ALL_CASES.filter(usesFinger)];
 
 describe.each(CASES)("$name", ({ component, scenario }) => {
   it.each(MATRIX)("looks as recorded, %s theme, %s width", async (theme, width) => {

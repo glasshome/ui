@@ -84,7 +84,7 @@ async function runScenario(
   const context = await browser.newContext({
     viewport: { width: w, height: h },
     colorScheme: opts.theme,
-    hasTouch: steps.some((s) => "touch" in s),
+    hasTouch: steps.some((s) => "touch" in s || "hold" in s),
   });
   const page = await context.newPage();
   const errors: string[] = [];

@@ -1,4 +1,4 @@
-import { parseColor } from "@kobalte/core/colors";
+import { parseColor } from "../../src/lib/color/index.js";
 import { cleanup, render } from "@solidjs/testing-library";
 import type { JSX } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
@@ -301,7 +301,7 @@ const FIXTURES: Record<string, Fixture> = {
 
 /** Exports that cannot be mounted as a component here, each with why. */
 const SKIPPED: Record<string, string> = {
-  SelectItem: "Kobalte builds it per option through Select's itemComponent with a list item",
+  SelectItem: "Select builds it per option through its itemComponent, inside SelectContent's list",
 };
 
 const isComponent = ([name, value]: [string, unknown]) =>

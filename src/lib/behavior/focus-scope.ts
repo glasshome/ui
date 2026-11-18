@@ -1,6 +1,6 @@
 import { type Accessor, onCleanup, untrack } from "solid-js";
-import { layerStack } from "./layer-stack";
-import { effect } from "./solid";
+import { layerStack } from "./layer-stack.js";
+import { effect } from "./solid.js";
 
 export const CANDIDATES =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [contenteditable]:not([contenteditable="false"]), [tabindex]:not([tabindex="-1"])';
@@ -33,9 +33,20 @@ export interface FocusScope {
   untrap(): void;
 }
 
-type FocusRoot = Document | ShadowRoot;
+const DOCUMENT_NODE = 9;
+const SHADOW_ROOT_NODE = 11;
 
-const activeOf = (el: Element): Element | null => (el.getRootNode() as FocusRoot).activeElement;
+/** The focused element in the node's own root, or null while focus is in another root. */
+export function activeOf(node: Node): Element | null {
+  const root = node.getRootNode();
+  if (root.nodeType === DOCUMENT_NODE) return (root as Document).activeElement;
+  if (root.nodeType !== SHADOW_ROOT_NODE) return null;
+  let host = (root as ShadowRoot).host;
+  for (let up = host.getRootNode(); up.nodeType === SHADOW_ROOT_NODE; up = host.getRootNode())
+    host = (up as ShadowRoot).host;
+  // A shadow root holds focus only while the document's focus sits on its outermost host.
+  return host.ownerDocument.activeElement === host ? (root as ShadowRoot).activeElement : null;
+}
 
 /** Whether `el` holds focus, from its own focus and blur events, which a sealed widget receives without asking the page. */
 export function trackFocus(el: Element): { has: () => boolean; stop: () => void } {

@@ -1,15 +1,25 @@
 import type { Accessor } from "solid-js";
-import { type Align, placeBeside, type Side } from "../anchor-placement";
-import { effect } from "./solid";
+import { type Align, placeBeside, type Side } from "../anchor-placement.js";
+import { effect } from "./solid.js";
+
+/** An element, or a point or box with no element of its own: a context menu opens at the pointer. */
+export interface AnchorLike {
+  getBoundingClientRect(): { left: number; top: number; width: number; height: number };
+  getRootNode?(): Node;
+}
 
 export interface AnchoredOptions {
-  anchor: Accessor<Element | undefined>;
+  anchor: Accessor<AnchorLike | undefined>;
   floating: Accessor<HTMLElement | undefined>;
   open: Accessor<boolean>;
   side?: Accessor<Side>;
   align?: Accessor<Align>;
   offset?: number;
   matchAnchorWidth?: boolean;
+  /** The anchor counts as its top edge and the part never flips: placed below, it covers the anchor. */
+  coverAnchor?: boolean;
+  /** A custom property the part gets the anchor's width in, for styles sized by the anchor. */
+  widthVar?: string;
 }
 
 const SHADOW_ROOT_NODE = 11;
@@ -31,6 +41,7 @@ export function createAnchored(options: AnchoredOptions): void {
       floating.setAttribute(ANCHORED, "");
       const offset = options.offset ?? 0;
       const matchAnchorWidth = options.matchAnchorWidth ?? false;
+      const cover = options.coverAnchor ?? false;
       const written = new Map<string, string>();
       const write = (name: string, value: string) => {
         if (written.get(name) === value) return;
@@ -45,16 +56,19 @@ export function createAnchored(options: AnchoredOptions): void {
           write("margin", "0");
           write("right", "auto");
           write("bottom", "auto");
-          size = { width: floating.offsetWidth, height: floating.offsetHeight };
         }
         const box = anchor.getBoundingClientRect();
+        if (options.widthVar) write(options.widthVar, `${box.width}px`);
+        if (measure) size = { width: floating.offsetWidth, height: floating.offsetHeight };
         const placed = placeBeside(
-          { left: box.left, top: box.top, width: box.width, height: box.height },
+          { left: box.left, top: box.top, width: box.width, height: cover ? 0 : box.height },
           size,
           { width: window.innerWidth, height: window.innerHeight },
-          { side, align, offset, matchAnchorWidth },
+          { side, align, offset, matchAnchorWidth, flip: !cover },
         );
-        write("top", `${placed.top}px`);
+        // A covering part may sit as near the edge as its anchor already does.
+        const top = cover && box.top >= 0 ? Math.min(placed.top, box.top + offset) : placed.top;
+        write("top", `${top}px`);
         write("left", `${placed.left}px`);
         write("max-width", `${placed.maxWidth}px`);
         write("max-height", `${placed.maxHeight}px`);
@@ -74,7 +88,7 @@ export function createAnchored(options: AnchoredOptions): void {
       };
       const onResize = () => place(true);
 
-      const root = typeof anchor.getRootNode === "function" ? anchor.getRootNode() : document;
+      const root = anchor.getRootNode?.() ?? document;
       const scrollTargets: EventTarget[] =
         root.nodeType === SHADOW_ROOT_NODE ? [document, root] : [document];
       for (const target of scrollTargets)

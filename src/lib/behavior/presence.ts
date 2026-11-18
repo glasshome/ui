@@ -1,5 +1,5 @@
 import { type Accessor, createMemo, createSignal } from "solid-js";
-import { effect } from "./solid";
+import { effect } from "./solid.js";
 
 export type PresencePhase = "opening" | "open" | "closing" | "closed";
 export type MotionEvent = AnimationEvent | TransitionEvent;

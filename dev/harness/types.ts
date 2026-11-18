@@ -9,8 +9,14 @@ export type Step =
   | { press: Target }
   | { touch: Target }
   | { hover: Target }
+  /** A secondary-button mouse press, the way a context menu opens. */
+  | { contextMenu: Target }
+  /** A touch held past the long-press threshold, then lifted. */
+  | { hold: Target }
   /** A mouse press at a point of the viewport, for what no role names: the page behind a modal. */
   | { pressAt: { x: number; y: number } }
+  /** A mouse press at the target's centre, moved by `by` px, then released. */
+  | { drag: Target & { by: { x: number; y: number } } }
   | { key: string }
   | { type: string };
 
