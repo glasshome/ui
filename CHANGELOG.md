@@ -18,6 +18,79 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.42.0](https://github.com/glasshome/ui/compare/v1.41.0...v1.42.0) (2026-11-18)
+
+
+### Features
+
+* **behavior:** collections in DOM order with roving focus and typeahead ([7cc959e](https://github.com/glasshome/ui/commit/7cc959e7ef2a1f8685425ddcc697fe63e69295ee))
+* **behavior:** dismiss judged by the composed path, Escape consumed in the layer ([2f43745](https://github.com/glasshome/ui/commit/2f437459966dd12f9f991f3228c6a9ddaf8ac719))
+* **behavior:** focus scope and untracked focus; BottomSheet and shadow-root layers use them ([c45dd5e](https://github.com/glasshome/ui/commit/c45dd5e85d89610d3a7b6e77a53bd9a4f57d8d46))
+* **behavior:** hide outside without inert or a body walker ([8023bfa](https://github.com/glasshome/ui/commit/8023bfafb97c104aefc3d65f227241971a090d73))
+* **behavior:** one controllable-signal helper; BottomSheet, ResponsiveDialog and Switch use it ([16b8f13](https://github.com/glasshome/ui/commit/16b8f1363a9bc46f3726f52efbfdf44fa0dbc8da))
+* **behavior:** one layer stack with the top layer; Kobalte layers, BottomSheet and Spotlight register in it ([8d8b837](https://github.com/glasshome/ui/commit/8d8b8371e83bef1bdf82209c72db470911edd5b6))
+* **behavior:** one polymorphic part ([b768dbd](https://github.com/glasshome/ui/commit/b768dbde2e9fed3904938c3f02f00b7c8a0b31e1))
+* **behavior:** presence ends on the element's own motion or its declared exit ([755329d](https://github.com/glasshome/ui/commit/755329d278df79b6bfda3f4e4741bbded11f986e))
+* **behavior:** script placement; Tooltip leaves Kobalte ([178bef2](https://github.com/glasshome/ui/commit/178bef26927884fa349c4d32e01bb8241d4d4c91))
+* **behavior:** ui owns its overlay foundations (phase 2) ([a2d84ea](https://github.com/glasshome/ui/commit/a2d84ea8f21da2b9de15f9b4a626eb2809bbac2c))
+* **dev:** blocks are harness subjects; Solid 2 effect, merge and omit ([4df4c1a](https://github.com/glasshome/ui/commit/4df4c1a6e700dfa489625fb4f87e59b75bdc2402))
+* **dev:** the StaleVeil reveal scenario toggles by keyboard and STALE_CONTENT is a solid export ([a1a4e8e](https://github.com/glasshome/ui/commit/a1a4e8e5cc8a3ce18f6af96e14e96574019ee407))
+* **dialog:** a kept Dialog stays mounted and dormant between opens ([dce87f7](https://github.com/glasshome/ui/commit/dce87f7be94ed07ad29d1bf2e586ece8c285ce9c))
+* **dialog:** a kept Dialog stays mounted and dormant between opens ([dea8d29](https://github.com/glasshome/ui/commit/dea8d29cac838578df05f75272920437b4a5f0f9))
+* **dialog:** AlertDialog and Sheet on the owned modal root; Kobalte's dialog leaves ui ([19780de](https://github.com/glasshome/ui/commit/19780debd88cc4eb26907adff7a59193e881c33a))
+* **dialog:** modal roots say they are modal ([5c8e41c](https://github.com/glasshome/ui/commit/5c8e41c2a93544d3fadc7cb6cbac651728fd45f2))
+* **dialog:** ui owns the modal root; Dialog leaves Kobalte ([4c4bc5f](https://github.com/glasshome/ui/commit/4c4bc5f4cb6e446868e2f79fe33f8da005edcd72))
+* **dialog:** ui owns the modal root; Dialog, AlertDialog and Sheet leave Kobalte ([d1c5ab2](https://github.com/glasshome/ui/commit/d1c5ab26d59abb283d93b80e30f8e7ad27438e22))
+* **overlays:** scroll containment by CSS; no script writes on html or body ([1fce1a3](https://github.com/glasshome/ui/commit/1fce1a3c44dcaa9c7d70f8a11805a9e2b1d0efbb))
+* **solid:** StaleVeil and STALE_CONTENT, the cue for content that is a moment old ([5c6f7ac](https://github.com/glasshome/ui/commit/5c6f7acf5dbefebad7644447918a14d071db3b83))
+* **solid:** StaleVeil is a 40% veil, and STALE_CONTENT greys what it covers ([671a2ba](https://github.com/glasshome/ui/commit/671a2ba6e6202124c56c6f9e22f89c8799fab6fa))
+* **solid:** StaleVeil, a once-fading dim for content that is a moment old ([a2328d9](https://github.com/glasshome/ui/commit/a2328d9ec438c0c7b45841446ca6837d23fa6e8c))
+* **solid:** the StaleVeil scenarios grey the whole card, as a picture in dash is ([a0b6bec](https://github.com/glasshome/ui/commit/a0b6bec31ecb44c476518312720ee0c7db076bfc))
+* **tabs, toggle-group:** leave Kobalte for the owned collection ([9d5a0b4](https://github.com/glasshome/ui/commit/9d5a0b44fed5427626fd2fa8131dd01ec4e29b88))
+* **tabs, toggle-group:** leave Kobalte for the owned collection ([aca1103](https://github.com/glasshome/ui/commit/aca1103a67b5adfd2c13fac3f56ca3eac08eeb0f))
+
+
+### Bug Fixes
+
+* **behavior:** a top-layer layer falls back where the element has no popover API ([3062f0f](https://github.com/glasshome/ui/commit/3062f0ff92811862f00d78b41b7e6554297f9adb))
+* **bottom-sheet:** a snap with no transform change opens at once ([ee9a85a](https://github.com/glasshome/ui/commit/ee9a85aed3101eaf725fa52509adebc9e88ecc18))
+* **bottom-sheet:** the page is covered as the sheet opens ([43be125](https://github.com/glasshome/ui/commit/43be125476719e57ffab440a52da6ddc4fc3881a))
+* **collection:** a removed item hands its tab stop to a present one ([e99ff4e](https://github.com/glasshome/ui/commit/e99ff4e3da72ac68186ed7530ec0beb2cbcc8073))
+* **collection:** the tab stop follows items as they mount, disable or leave, and returns to the selected item when focus leaves ([184bdaf](https://github.com/glasshome/ui/commit/184bdafb5fbf3e020a7c7d7609b995a9aca0a36d))
+* **dev:** preview and drive build the gallery per run; browser suite never discovers deps mid-run ([#127](https://github.com/glasshome/ui/issues/127)) ([a076786](https://github.com/glasshome/ui/commit/a0767865d5ac7e8cc65c7f865576067caa4f7337))
+* **dev:** select long-list budget counts the layout-shift observer the realm now roots ([#128](https://github.com/glasshome/ui/issues/128)) ([a470fc5](https://github.com/glasshome/ui/commit/a470fc5d0ed5bc57713bb84e242336abcba4cd41))
+* **dialog:** a context-menu press beside a modal leaves it open ([d6c2de5](https://github.com/glasshome/ui/commit/d6c2de577447cf53eb1b9a71c8725cbc0aed5bbc))
+* **dialog:** outside and Escape handlers get Kobalte's event shape back ([7355e6a](https://github.com/glasshome/ui/commit/7355e6a49e6824f608c93f9e45d1e93229d3d620))
+* **dialog:** the exit waits for the duration current when the panel closes ([487e58c](https://github.com/glasshome/ui/commit/487e58c0b5af1045b7d65287264aab3924a2d859))
+* **dialog:** the scrim's pointerdown listener is its own, so modal-root imports without a document; contracts drive the exit with fake timers ([9c03515](https://github.com/glasshome/ui/commit/9c03515a48e2d332dea36de491a55882d5aa1e6f))
+* **dialog:** the topmost modal takes Escape from the whole document ([22b1028](https://github.com/glasshome/ui/commit/22b10288d585d53cdf08e0e036acedac8a1c05bb))
+* **dialog:** the trap lets go before onCloseAutoFocus runs, so focus moved outside stays there ([166d05a](https://github.com/glasshome/ui/commit/166d05a2290e713cd5531293a6d99e47dab9424b))
+* **dismiss:** a modal whose library reads its own Escape is not claimed ([15bc758](https://github.com/glasshome/ui/commit/15bc758dd355fe99d07de9912f71a68ea3432347))
+* **drive:** key scrolls land in one frame so their counts hold on any runner ([60d5021](https://github.com/glasshome/ui/commit/60d5021f13e9995b366b335b36e10eb84b30d7d8))
+* **focus-scope:** focus leaving for a known target returns to the first control again ([4ef8900](https://github.com/glasshome/ui/commit/4ef890023d69c2a5dc1a5a950549beab1b9c3074))
+* **focus-scope:** removing a trapped container that holds focus leaves keys reaching the page ([2de2355](https://github.com/glasshome/ui/commit/2de2355532ced51fbc0168e1b9e7c697e5373ae2))
+* **focus-scope:** Tab wraps through stops beside the container, so focus never leaves the page ([151593e](https://github.com/glasshome/ui/commit/151593ede0796da8a1f3cc719296da8cc6385408))
+* **focus-scope:** Tab wraps through stops beside the container, so focus never leaves the page ([135d835](https://github.com/glasshome/ui/commit/135d835f3f85d00c07820a779f815c552189bd6c))
+* **focus:** hold the scope across an unchanged activation without reordering effects ([d004213](https://github.com/glasshome/ui/commit/d004213f2a10214984689be292e23cbd6e392ac2))
+* **focus:** the scope acts only on a real activation change and a same-tick handoff skips the first trigger ([8608b58](https://github.com/glasshome/ui/commit/8608b588aba3c85ad306bead94cb21c99c0e1777))
+* **hide-outside:** a modal keeps the layers above it in the tree, even when both open in one tick ([8b2abdf](https://github.com/glasshome/ui/commit/8b2abdfe04c320f6fd7b23cf1a5943047ccc1580))
+* **hide-outside:** keep layers marked data-kb-top-layer in the tree ([21bca10](https://github.com/glasshome/ui/commit/21bca10e90b59fad0f632a62eed525be6e08dde3))
+* **hover-card:** the layer follows the card's open state and leaves the stack when it closes ([245af8a](https://github.com/glasshome/ui/commit/245af8a9d200a07a7c0b9bf6d56bd592b65a5212))
+* **overlays:** Escape reaches a tooltip through the dismiss block; a modal that stays open still consumes it ([28716b6](https://github.com/glasshome/ui/commit/28716b6a4546caac877d54a7616a6dddd2074278))
+* **spotlight:** a tour without onSkip claims no Escape ([42f2d27](https://github.com/glasshome/ui/commit/42f2d2776a51bd7f0fbff2e32ecf622a337ed260))
+* **tooltip:** Portal renders in place, Kobalte's removed props return as deprecated and ignored, and the tooltip closes when its trigger leaves ([80e24d0](https://github.com/glasshome/ui/commit/80e24d0bbe35e8c59213ae1dd213f67203751a41))
+
+
+### Performance Improvements
+
+* **anchored:** read the floating size and anchor box before writing placement styles ([f7ea3f5](https://github.com/glasshome/ui/commit/f7ea3f53c0e85511021220362b191a712f4abbf5))
+* **overlays:** an open modal pauses the ambient loops under it ([2477b07](https://github.com/glasshome/ui/commit/2477b07fe6b8280f52490e3f56dba9a61a5d2090))
+
+
+### Reverts
+
+* anchored reads the floating size after the position styles it depends on ([5a11cf2](https://github.com/glasshome/ui/commit/5a11cf2d960129a212f31e322561b853c0cd1fa9))
+
 ## [1.41.0](https://github.com/glasshome/ui/compare/v1.40.0...v1.41.0) (2026-11-16)
 
 
