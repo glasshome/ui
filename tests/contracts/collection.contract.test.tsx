@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { ROOMS, Toolbar } from "../../dev/blocks/collection/scenarios";
 import { findAll, findTarget, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
-import { TYPEAHEAD_MS } from "../../src/lib/behavior/collection";
+import { createTypeahead, TYPEAHEAD_MS } from "../../src/lib/behavior/collection";
 import { useFakeTime } from "../../src/testing";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
@@ -161,5 +161,41 @@ describe("collection contract", () => {
     await input.key("ArrowDown");
     expect(focused(), "loop wraps through the disabled first room").toBe("Attic");
     expect(view.getByRole("button", { name: "Attic" }).getAttribute("tabindex")).toBe("0");
+  });
+
+  it("CO12 createTypeahead matches over texts alone, and ignores keys that type nothing", async () => {
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
+    const texts = ["Bath", "Bedroom", "Den", "Dining"];
+    const results: (number | undefined)[] = [];
+    let current = 0;
+    render(() => {
+      const typer = createTypeahead();
+      const onKey = (event: KeyboardEvent) => {
+        const index = typer.match(event, texts, current);
+        results.push(index);
+        if (index !== undefined && index >= 0) current = index;
+      };
+      return (
+        <button type="button" on:keydown={onKey}>
+          Field
+        </button>
+      );
+    });
+    await settle();
+    await input.key("Tab");
+    await input.type("d");
+    await input.type("i");
+    expect(texts[current], "'di' matches Dining").toBe("Dining");
+    await input.key("Enter");
+    expect(results.at(-1), "Enter types nothing").toBeUndefined();
+    await vi.advanceTimersByTimeAsync(TYPEAHEAD_MS);
+    await input.key(" ");
+    expect(results.at(-1), "a Space on an empty buffer types nothing").toBeUndefined();
+    await input.type("b");
+    expect(texts[current], "a fresh 'b' wraps to Bath").toBe("Bath");
+    await input.type("b");
+    expect(texts[current], "'bb' cycles").toBe("Bedroom");
+    await input.type("z");
+    expect(results.at(-1), "no match").toBe(-1);
   });
 });

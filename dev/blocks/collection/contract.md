@@ -15,3 +15,4 @@ Each line is one browser test in `tests/contracts/collection.contract.test.tsx`,
 | CO9 | items rendered by a `<For>` whose array is re-sorted | arrow moves follow the new order; Home lands on the new first item |
 | CO10 | the item holding the tab stop unmounts while focus is outside | the stop goes to a `preferred` item, else the last highlighted one, else the first enabled; items call `refresh()` as they mount, unmount or change disabled, and focus leaving the root places the stop the same way |
 | CO11 | `disabledFocusable`, as FaceToggle's locked face needs | an `aria-disabled` item stays in the arrow order and can hold the tab stop; only a `:disabled` one is skipped |
+| CO12 | `createTypeahead` over texts with no items in the DOM, as a closed Select's trigger needs | CO3's matching, cycling and reset hold over the texts; a key that types nothing (Enter, a leading Space) returns `undefined` and leaves the buffer |
