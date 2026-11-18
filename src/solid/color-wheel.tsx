@@ -136,10 +136,10 @@ const ColorWheel: Component<ColorWheelProps> = (props) => {
           "clip-path": "circle(50%)",
           mask: `radial-gradient(#0000 ${70 - (thickness() / 100) * 70}%, #000 ${70.5 - (thickness() / 100) * 70}%)`,
         }}
-        onPointerDown={drag.onPointerDown}
-        onPointerMove={drag.onPointerMove}
-        onPointerUp={drag.onPointerUp}
-        onPointerCancel={drag.onPointerCancel}
+        on:pointerdown={drag.onPointerDown}
+        on:pointermove={drag.onPointerMove}
+        on:pointerup={drag.onPointerUp}
+        on:pointercancel={drag.onPointerCancel}
       >
         {/* Always a circle: the thumb rides a circular track, theme corner radius looks broken there. */}
         <span
@@ -164,7 +164,7 @@ const ColorWheel: Component<ColorWheelProps> = (props) => {
             "touch-action": "none",
             background: color().toString("css"),
           }}
-          onKeyDown={onKeyDown}
+          on:keydown={onKeyDown}
           onBlur={onBlur}
         />
       </div>

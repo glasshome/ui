@@ -116,10 +116,10 @@ const Slider: Component<SliderProps> = (props) => {
           disabled() ? "cursor-not-allowed" : "cursor-pointer",
           props.trackClass,
         )}
-        onPointerDown={drag.onPointerDown}
-        onPointerMove={drag.onPointerMove}
-        onPointerUp={drag.onPointerUp}
-        onPointerCancel={drag.onPointerCancel}
+        on:pointerdown={drag.onPointerDown}
+        on:pointermove={drag.onPointerMove}
+        on:pointerup={drag.onPointerUp}
+        on:pointercancel={drag.onPointerCancel}
       >
         <div
           data-slot="slider-fill"
@@ -177,7 +177,7 @@ const Slider: Component<SliderProps> = (props) => {
               class={cn(
                 THUMB_CLASS,
                 FOCUS_RING,
-                "absolute top-0 transition-transform duration-200 ease-out hover:scale-125 active:scale-110",
+                "absolute top-0 transition-transform duration-(--duration-expand) ease-out hover:scale-125 active:scale-110",
                 disabled() && "cursor-not-allowed",
                 props.thumbClass,
               )}
@@ -187,7 +187,7 @@ const Slider: Component<SliderProps> = (props) => {
                 "touch-action": "none",
                 background: props.thumbColors?.[index] ?? "var(--material-control-knob)",
               }}
-              onKeyDown={(e) => range.keyDown(e, index)}
+              on:keydown={(e) => range.keyDown(e, index)}
               onBlur={range.blur}
             />
           )}

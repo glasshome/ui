@@ -121,10 +121,10 @@ const ColorSlider: Component<ColorSliderProps> = (props) => {
         data-disabled={disabledMark()}
         class={cn("relative h-7 w-full", disabled() ? "cursor-not-allowed" : "cursor-pointer")}
         style={{ "forced-color-adjust": "none" }}
-        onPointerDown={drag.onPointerDown}
-        onPointerMove={drag.onPointerMove}
-        onPointerUp={drag.onPointerUp}
-        onPointerCancel={drag.onPointerCancel}
+        on:pointerdown={drag.onPointerDown}
+        on:pointermove={drag.onPointerMove}
+        on:pointerup={drag.onPointerUp}
+        on:pointercancel={drag.onPointerCancel}
       >
         <span
           ref={setThumb}
@@ -154,7 +154,7 @@ const ColorSlider: Component<ColorSliderProps> = (props) => {
             "forced-color-adjust": "none",
             background: color().toString("css"),
           }}
-          onKeyDown={(e) => range.keyDown(e, 0)}
+          on:keydown={(e) => range.keyDown(e, 0)}
           onBlur={range.blur}
         />
       </div>
