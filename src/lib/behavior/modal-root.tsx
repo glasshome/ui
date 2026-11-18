@@ -199,15 +199,50 @@ export interface ModalFrameProps extends Omit<
   mount?: Node;
   exitMs: number;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  onPointerDownOutside?: (event: Event) => void;
-  onInteractOutside?: (event: Event) => void;
+  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
+  onInteractOutside?: (event: InteractOutsideEvent) => void;
   onOpenAutoFocus?: (event: Event) => void;
   onCloseAutoFocus?: (event: Event) => void;
 }
 
-function vetoed(handler: ((event: never) => void) | undefined, event: Event): boolean {
-  handler?.(event as never);
+interface OutsideDetail<T extends Event> {
+  originalEvent: T;
+  isContextMenu: boolean;
+}
+export type PointerDownOutsideEvent = CustomEvent<OutsideDetail<PointerEvent>>;
+export type FocusOutsideEvent = CustomEvent<OutsideDetail<FocusEvent>>;
+export type InteractOutsideEvent = PointerDownOutsideEvent | FocusOutsideEvent;
+
+function vetoed<E extends Event>(handler: ((event: E) => void) | undefined, event: E): boolean {
+  handler?.(event);
   return event.defaultPrevented;
+}
+
+const onMac = (): boolean => typeof navigator !== "undefined" && /^Mac/i.test(navigator.platform);
+
+function isContextMenu(event: PointerEvent): boolean {
+  const ctrl = onMac() ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
+  return event.button === 2 || (ctrl && event.button === 0);
+}
+
+const OUTSIDE_EVENT = "interactoutside";
+
+function pointerDownOutside(
+  original: PointerEvent,
+  handle: (event: PointerDownOutsideEvent) => void,
+): PointerDownOutsideEvent {
+  const event: PointerDownOutsideEvent = new CustomEvent(OUTSIDE_EVENT, {
+    cancelable: true,
+    detail: { originalEvent: original, isContextMenu: isContextMenu(original) },
+  });
+  const target = original.target;
+  // Dispatched on the pressed node so handlers read its target, as Kobalte's did.
+  if (!target) handle(event);
+  else {
+    target.addEventListener(OUTSIDE_EVENT, () => handle(event), { once: true });
+    target.dispatchEvent(event);
+  }
+  return event;
 }
 
 function inside(container: Element, node: Element | undefined): boolean {
@@ -263,14 +298,15 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
   let closedByOutside = false;
   createDismiss({
     layer: handle,
-    onDismiss: (reason) => {
+    onDismiss: (reason, original) => {
       if (reason === "escape") {
-        const event = new KeyboardEvent("keydown", { key: "Escape", cancelable: true });
-        if (vetoed(local.onEscapeKeyDown, event)) return;
+        if (vetoed(local.onEscapeKeyDown, original as KeyboardEvent)) return;
       } else {
-        const event = new CustomEvent("interactoutside", { cancelable: true });
-        local.onPointerDownOutside?.(event);
-        if (vetoed(local.onInteractOutside, event)) return;
+        const event = pointerDownOutside(original as PointerEvent, (e) => {
+          local.onPointerDownOutside?.(e);
+          local.onInteractOutside?.(e);
+        });
+        if (event.defaultPrevented) return;
         closedByOutside = true;
       }
       ctx.close();

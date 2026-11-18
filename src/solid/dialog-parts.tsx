@@ -18,8 +18,11 @@ import {
   type ValidComponent,
 } from "solid-js";
 import {
+  type FocusOutsideEvent,
+  type InteractOutsideEvent,
   ModalDescription,
   type ModalPartProps,
+  type PointerDownOutsideEvent,
   type ModalRole,
   ModalRoot,
   ModalTitle,
@@ -80,12 +83,12 @@ export type ModalContentProps = Omit<ComponentProps<"div">, "style" | "role"> & 
   as?: ValidComponent;
   style?: JSX.CSSProperties | string;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  onPointerDownOutside?: (event: Event) => void;
-  onInteractOutside?: (event: Event) => void;
+  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
+  onInteractOutside?: (event: InteractOutsideEvent) => void;
   onOpenAutoFocus?: (event: Event) => void;
   onCloseAutoFocus?: (event: Event) => void;
   /** @deprecated No effect; focus never leaves an open dialog. */
-  onFocusOutside?: (event: Event) => void;
+  onFocusOutside?: (event: FocusOutsideEvent) => void;
   /** @deprecated No effect; the panel stays mounted through its exit on its own. */
   forceMount?: boolean;
 };

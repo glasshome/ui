@@ -359,4 +359,70 @@ describe("modal root contract", () => {
     await settle();
     expect(document.activeElement).toBe(sibling);
   });
+
+  it("MR13 an outside press hands both handlers one event carrying the pointerdown, its target and isContextMenu", async () => {
+    const seen: { name: string; event: CustomEvent }[] = [];
+    const read: { target: EventTarget | null; original: EventTarget | null; menu: boolean }[] = [];
+    const record =
+      (name: string) =>
+      (e: CustomEvent<{ originalEvent: PointerEvent | FocusEvent; isContextMenu: boolean }>) => {
+        seen.push({ name, event: e });
+        read.push({
+          target: e.target,
+          original: e.detail.originalEvent.target,
+          menu: e.detail.isContextMenu,
+        });
+        e.preventDefault();
+      };
+    render(() => (
+      <Dialog open>
+        <DialogContent
+          onPointerDownOutside={record("pointer")}
+          onInteractOutside={record("interact")}
+        >
+          <DialogTitle>Outside</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    await input.pressAt(CORNER.x, CORNER.y);
+    await settle();
+    const scrim = document.querySelector('[data-slot="dialog-overlay"]');
+    expect(scrim).not.toBeNull();
+    expect(seen.map((entry) => entry.name)).toEqual(["pointer", "interact"]);
+    expect(seen[0]?.event).toBe(seen[1]?.event);
+    expect(seen[0]?.event.detail.originalEvent).toBeInstanceOf(PointerEvent);
+    expect(read).toEqual([
+      { target: scrim, original: scrim, menu: false },
+      { target: scrim, original: scrim, menu: false },
+    ]);
+    expect(dialogs()).toHaveLength(1);
+  });
+
+  it("MR14 onEscapeKeyDown receives the keydown itself, whose target is the focused element", async () => {
+    const keys: { event: KeyboardEvent; target: EventTarget | null; trusted: boolean }[] = [];
+    render(() => (
+      <Dialog open>
+        <DialogContent
+          onEscapeKeyDown={(e: KeyboardEvent) => {
+            keys.push({ event: e, target: e.target, trusted: e.isTrusted });
+            e.preventDefault();
+          }}
+        >
+          <DialogTitle>Keys</DialogTitle>
+          <Button>Inside</Button>
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    const inside = button("Inside");
+    inside.focus();
+    await input.key("Escape");
+    await settle();
+    expect(keys).toHaveLength(1);
+    expect(keys[0]?.event.key).toBe("Escape");
+    expect(keys[0]?.trusted).toBe(true);
+    expect(keys[0]?.target).toBe(inside);
+    expect(dialogs()).toHaveLength(1);
+  });
 });

@@ -6,7 +6,8 @@ export type DismissReason = "escape" | "outside-press";
 
 export interface DismissOptions {
   layer: LayerHandle;
-  onDismiss: (reason: DismissReason) => void;
+  /** `event` is the keydown for `escape` and the pointerdown for `outside-press`. */
+  onDismiss: (reason: DismissReason, event: KeyboardEvent | PointerEvent) => void;
   outsidePress?: Accessor<boolean>;
   escapeFrom?: "layer" | "document";
 }
@@ -44,29 +45,30 @@ function createOutsidePress(options: DismissOptions) {
         if (pending) pending.target.removeEventListener("click", pending.click);
         pending = undefined;
       };
-      const onDown = (event: Event) => {
+      const onDown = (event: PointerEvent) => {
         if (event.currentTarget === document && host && event.target === host) return;
         dropPending();
         if (!outside(event)) return;
         const target = event.currentTarget;
-        if ((event as PointerEvent).pointerType === "touch" && target) {
+        if (event.pointerType === "touch" && target) {
           const click = (e: Event) => {
             pending = undefined;
-            if (outside(e)) options.onDismiss("outside-press");
+            if (outside(e)) options.onDismiss("outside-press", event);
           };
           pending = { target, click };
           target.addEventListener("click", click, { once: true });
         } else {
-          options.onDismiss("outside-press");
+          options.onDismiss("outside-press", event);
         }
       };
 
+      const listener = onDown as EventListener;
       const timer = setTimeout(() => {
-        for (const target of targets) target.addEventListener("pointerdown", onDown, true);
+        for (const target of targets) target.addEventListener("pointerdown", listener, true);
       }, 0);
       return () => {
         clearTimeout(timer);
-        for (const target of targets) target.removeEventListener("pointerdown", onDown, true);
+        for (const target of targets) target.removeEventListener("pointerdown", listener, true);
         dropPending();
       };
     },
@@ -81,7 +83,7 @@ function createTooltipEscape(options: DismissOptions) {
     if (!mine || !mine.escape() || !takesKeys(mine)) return;
     const stack = layerStack.layers();
     if (stack.slice(stack.indexOf(mine) + 1).some((entry) => entry.kind !== "tooltip")) return;
-    options.onDismiss("escape");
+    options.onDismiss("escape", event);
   };
   document.addEventListener("keydown", onKey, true);
   return () => document.removeEventListener("keydown", onKey, true);
@@ -113,11 +115,10 @@ function createEscape(options: DismissOptions) {
               (entry.escape() || (entry.kind === "modal" && !entry.readsOwnEscape)),
           );
         if (!claims) return;
-        event.preventDefault();
         event.stopPropagation();
-        if (!claims.escape()) return;
-        if (claims === mine) options.onDismiss("escape");
-        else claims.dismiss?.();
+        if (claims === mine && claims.escape()) options.onDismiss("escape", event);
+        else if (claims.escape()) claims.dismiss?.();
+        event.preventDefault();
       };
       target.addEventListener("keydown", onKey as EventListener);
       return () => target.removeEventListener("keydown", onKey as EventListener);

@@ -16,3 +16,5 @@ Each line is one browser test in `tests/contracts/modal-root.contract.test.tsx`,
 | MR10 | a `Toaster` beside a modal Dialog that is open, then `toast("Scene saved")` | the panel carries `aria-modal="true"` and the toast's text is in the Chromium AX tree |
 | MR11 | a `data-kb-top-layer` "Wake screen" button on the page, then a modal Dialog opened | the panel carries `aria-modal="true"` and `button "Wake screen"` stays in the Chromium AX tree |
 | MR12 | a controlled modal with no Trigger closes; `onCloseAutoFocus` calls `preventDefault` and focuses an unmarked page button | focus ends on that button after the exit: the trap lets go before the consumer runs |
+| MR13 | `onPointerDownOutside` and `onInteractOutside` on the content, a press on the scrim | both receive the same cancelable `CustomEvent`, pointer handler first; its `target` and `detail.originalEvent.target` are the scrim, `detail.originalEvent` is the `PointerEvent`, `detail.isContextMenu` is false (Kobalte's shape) |
+| MR14 | `onEscapeKeyDown` on the content, Escape with a button inside focused | the handler receives the trusted keydown itself, whose target is that button |
