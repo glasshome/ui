@@ -6,6 +6,7 @@ import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { findAll } from "../../dev/harness/steps";
 import { Within } from "../../dev/harness/Within";
 import { ModalFrame, ModalRoot } from "../../src/lib/behavior/modal-root";
+import { MOTION_EXIT_MS } from "../../src/lib/motion-classes";
 import {
   Button,
   Dialog,
@@ -101,6 +102,7 @@ describe("modal root contract", () => {
   });
 
   it("MR3 defaultOpen starts open, a close reports false, and the trigger reopens it", async () => {
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
     const changes: boolean[] = [];
     render(() => (
       <Dialog defaultOpen onOpenChange={(open) => changes.push(open)}>
@@ -114,7 +116,8 @@ describe("modal root contract", () => {
     await settle();
     expect(dialogs()).toHaveLength(1);
     await input.press(button("Done"));
-    await vi.waitFor(() => expect(dialogs()).toHaveLength(0));
+    await vi.advanceTimersByTimeAsync(MOTION_EXIT_MS.modal);
+    expect(dialogs()).toHaveLength(0);
     await input.press(button("Open"));
     await settle();
     expect(dialogs()).toHaveLength(1);
@@ -316,7 +319,8 @@ describe("modal root contract", () => {
       "true",
     );
     toast("Scene saved");
-    await vi.waitFor(async () => expect(await commands.axTree()).toContain("Scene saved"));
+    await settle();
+    expect(await commands.axTree()).toContain("Scene saved");
     toast.dismiss();
   });
 
@@ -340,6 +344,7 @@ describe("modal root contract", () => {
   });
 
   it("MR12 onCloseAutoFocus that prevents and focuses a page button outside every layer leaves focus there", async () => {
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
     const [open, setOpen] = createSignal(true);
     const { sibling } = page(() => (
       <Dialog open={open()} onOpenChange={setOpen}>
@@ -357,7 +362,8 @@ describe("modal root contract", () => {
     await settle();
     expect(dialogs()[0]?.contains(document.activeElement)).toBe(true);
     setOpen(false);
-    await vi.waitFor(() => expect(dialogs()).toHaveLength(0));
+    await vi.advanceTimersByTimeAsync(MOTION_EXIT_MS.modal);
+    expect(dialogs()).toHaveLength(0);
     await settle();
     expect(document.activeElement).toBe(sibling);
   });
