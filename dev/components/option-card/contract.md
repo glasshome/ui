@@ -11,3 +11,5 @@ Each line is one browser test in `tests/contracts/option-card.contract.test.tsx`
 | OC5 | `busy` | a press changes nothing and runs no `onPick` |
 | OC6 | the picked card has sub-options | they form a `radiogroup` named "<title> options", the current one is `aria-checked="true"`, and a press reports the new one through `onSubChange` |
 | OC7 | inside a closed shadow root | OC2 holds there too |
+| OC8 | an arrow key, then Space | the arrow picks the next card without `onPick`; Space on the picked card runs `onPick` |
+| OC9 | the group's `value` returns to `null` | no card shows picked |

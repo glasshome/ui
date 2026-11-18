@@ -136,4 +136,34 @@ describe("OptionCard contract", () => {
     await pick("Share a code");
     expect(picked()).toEqual(["Share a code"]);
   });
+
+  it("OC8 an arrow key picks the next card without onPick; Space on a card runs it", async () => {
+    const picks: string[] = [];
+    render(() => <Picker onPick={(v) => picks.push(v)} />);
+    await settle();
+    const { run, picked } = helpers(scenarioScope);
+    await run({ key: "Tab" }, { key: "ArrowDown" });
+    expect(picked()).toEqual(["Beta"]);
+    expect(picks).toEqual([]);
+    await run({ key: " " });
+    expect(picks).toEqual(["b"]);
+  });
+
+  it("OC9 a group whose value returns to null shows no card picked", async () => {
+    const [value, setValue] = createSignal<string | null>(null);
+    render(() => (
+      <OptionCardGroup value={value()} onChange={setValue} aria-label="Way in">
+        <OptionCard value="a" title="Alpha" />
+        <OptionCard value="b" title="Beta" />
+      </OptionCardGroup>
+    ));
+    await settle();
+    const { pick, picked, card } = helpers(scenarioScope);
+    await pick("Beta");
+    expect(picked()).toEqual(["Beta"]);
+    setValue(null);
+    await settle();
+    expect(picked()).toEqual([]);
+    expect(card("Beta")?.hasAttribute("data-checked")).toBe(false);
+  });
 });

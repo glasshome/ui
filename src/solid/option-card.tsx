@@ -85,7 +85,7 @@ export function OptionCardGroup(props: {
   return (
     <RadioGroup
       class={cn("gap-2", props.class)}
-      value={props.value ?? undefined}
+      value={props.value ?? ""}
       onChange={props.onChange}
       aria-label={props["aria-label"]}
       aria-labelledby={props["aria-labelledby"]}

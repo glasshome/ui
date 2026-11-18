@@ -25,6 +25,7 @@ type RadioGroupContextValue = {
   disabled: () => boolean;
   required: () => boolean;
   readOnly: () => boolean;
+  defaultValue: () => string;
 };
 
 const RadioGroupContext = createContext<RadioGroupContextValue>();
@@ -87,14 +88,32 @@ const RadioGroup = (props: RadioGroupProps) => {
     name: () => local.name ?? id(),
     isSelectedValue: (value) => value === selected(),
     select: (value) => {
-      if (local.readOnly || local.disabled) return;
-      setSelected(value);
+      if (!local.readOnly && !local.disabled) setSelected(value);
       syncInputs();
     },
     disabled: () => local.disabled ?? false,
     required: () => local.required ?? false,
     readOnly: () => local.readOnly ?? false,
+    defaultValue: () => local.defaultValue ?? "",
   };
+  effect(root, (el) => {
+    if (!el) return;
+    // Space on the checked radio sends no click of its own, so a keyboard pick would never reach onPick.
+    const down = (event: KeyboardEvent) => {
+      arrowKeyHeld = event.key.startsWith("Arrow");
+      const target = event.target;
+      if (event.key === " " && target instanceof HTMLInputElement && target.checked) target.click();
+    };
+    const up = () => {
+      arrowKeyHeld = false;
+    };
+    el.addEventListener("keydown", down, true);
+    el.addEventListener("keyup", up, true);
+    return () => {
+      el.removeEventListener("keydown", down, true);
+      el.removeEventListener("keyup", up, true);
+    };
+  });
   effect(
     () => root()?.closest("form"),
     (form) => {
@@ -179,6 +198,12 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
     "data-checked": checked() ? "" : undefined,
   });
 
+  effect(
+    () => [input(), local.value === group.defaultValue()] as const,
+    ([el, isDefault]) => {
+      if (el) el.defaultChecked = isDefault;
+    },
+  );
   // Bound on the elements, since Solid's delegated handlers never reach inside a closed shadow root.
   effect(item, (node) => {
     if (!node) return;
@@ -281,9 +306,12 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
   );
 };
 
+let arrowKeyHeld = false;
+
 // A press on the label reaches the item twice: once itself, once as the input click it forwards.
+// An arrow key checks the next radio with a click of its own, which picks nothing.
 function isItemActivation(event: MouseEvent): boolean {
-  return event.target instanceof HTMLInputElement;
+  return event.target instanceof HTMLInputElement && !(event.detail === 0 && arrowKeyHeld);
 }
 
 export { isItemActivation, RadioGroup, RadioGroupItem, useRadioGroup };

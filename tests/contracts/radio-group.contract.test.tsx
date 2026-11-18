@@ -108,4 +108,37 @@ describe("RadioGroup contract", () => {
     await run(press("Compact"));
     expect(checked()).toEqual(["Compact"]);
   });
+
+  it("RG8 a form reset checks the default radio and submits it", async () => {
+    let form: HTMLFormElement | undefined;
+    render(() => (
+      <form ref={form}>
+        <RadioGroup name="density" defaultValue="a" aria-label="Pick">
+          <RadioGroupItem value="a">Alpha</RadioGroupItem>
+          <RadioGroupItem value="b">Beta</RadioGroupItem>
+        </RadioGroup>
+      </form>
+    ));
+    await settle();
+    const { run, checked } = helpers(scenarioScope);
+    if (!form) throw new Error("no form");
+    await run(press("Beta"));
+    form.reset();
+    await settle();
+    expect(checked()).toEqual(["Alpha"]);
+    expect([...new FormData(form).entries()]).toEqual([["density", "a"]]);
+  });
+
+  it("RG9 a read-only group keeps its radio checked through an arrow key", async () => {
+    render(() => (
+      <RadioGroup readOnly defaultValue="a" aria-label="Pick">
+        <RadioGroupItem value="a">Alpha</RadioGroupItem>
+        <RadioGroupItem value="b">Beta</RadioGroupItem>
+      </RadioGroup>
+    ));
+    await settle();
+    const { run, checked } = helpers(scenarioScope);
+    await run({ key: "Tab" }, { key: "ArrowDown" });
+    expect(checked()).toEqual(["Alpha"]);
+  });
 });

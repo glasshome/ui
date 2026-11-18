@@ -11,3 +11,5 @@ Each line is one browser test in `tests/contracts/radio-group.contract.test.tsx`
 | RG5 | a disabled item | its radio is disabled, the item carries `data-disabled`, and a press changes nothing |
 | RG6 | inside a form | every radio shares one `name`, and the form submits the checked value under it |
 | RG7 | inside a closed shadow root | RG2 holds there too |
+| RG8 | inside a form that resets | the default radio is checked again and submits |
+| RG9 | `readOnly`, an arrow key on the checked radio | the checked radio stays checked |
