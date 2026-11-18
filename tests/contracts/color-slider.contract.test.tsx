@@ -35,7 +35,7 @@ const range = (el: Element) =>
   ["aria-valuemin", "aria-valuemax", "aria-valuenow"].map((a) => el.getAttribute(a));
 
 describe("ColorSlider contract", () => {
-  it("CS1 a group holds one thumb, named by its label or channel, with the channel's range", async () => {
+  it("CSL1 a group holds one thumb, named by its label or channel, with the channel's range", async () => {
     const { thumb } = await mount("default");
     const hue = thumb("hue");
     expect(hue.closest('[data-slot="color-slider"]')?.getAttribute("role")).toBe("group");
@@ -45,7 +45,7 @@ describe("ColorSlider contract", () => {
     expect(range(thumb("alpha"))).toEqual(["0", "1", "0.5"]);
   });
 
-  it("CS2 the value text names the hue, the colour, or the alpha alone", async () => {
+  it("CSL2 the value text names the hue, the colour, or the alpha alone", async () => {
     const { thumb } = await mount("default");
     expect(thumb("hue").getAttribute("aria-valuetext")).toBe("200°, cyan blue");
     expect(thumb("Saturation").getAttribute("aria-valuetext")).toBe(
@@ -54,7 +54,7 @@ describe("ColorSlider contract", () => {
     expect(thumb("alpha").getAttribute("aria-valuetext")).toBe("50%");
   });
 
-  it("CS3 keys move the channel a step, a page, or to its ends", async () => {
+  it("CSL3 keys move the channel a step, a page, or to its ends", async () => {
     const { now, run } = await mount("keyboard");
     await run({ key: "Tab" }, { key: "ArrowRight" });
     expect(now("Hue")).toBe(201);
@@ -68,7 +68,7 @@ describe("ColorSlider contract", () => {
     expect(now("Hue")).toBe(360);
   });
 
-  it("CS4 a dragged thumb moves the channel, reports the colour, and ends once", async () => {
+  it("CSL4 a dragged thumb moves the channel, reports the colour, and ends once", async () => {
     const changes: Color[] = [];
     const ends: Color[] = [];
     render(() => (
@@ -94,7 +94,7 @@ describe("ColorSlider contract", () => {
     expect(focusedElement()).toBe(thumb("Hue"));
   });
 
-  it("CS5 a disabled colour slider says so and ignores a press or a key", async () => {
+  it("CSL5 a disabled colour slider says so and ignores a press or a key", async () => {
     const { thumb, now, run } = await mount("disabled");
     const hue = thumb("Hue");
     expect(hue.closest('[data-slot="color-slider"]')?.hasAttribute("data-disabled")).toBe(true);
@@ -104,7 +104,7 @@ describe("ColorSlider contract", () => {
     expect(now("Hue")).toBe(180);
   });
 
-  it("CS6 a drag and a key move the hue inside a closed shadow root", async () => {
+  it("CSL6 a drag and a key move the hue inside a closed shadow root", async () => {
     const { now, run, trackWidth } = await mount("in-shadow-root");
     const dragged = Math.round(180 + (60 / trackWidth("Hue")) * 360);
     await run({ drag: { role: "slider", name: "Hue", by: { x: 60, y: 0 } } });

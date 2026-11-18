@@ -23,7 +23,7 @@ async function mount(id: string) {
 }
 
 describe("range contract", () => {
-  it("RG1 arrows step, Shift and PageUp or PageDown move a page, Home and End go to the bounds", async () => {
+  it("RA1 arrows step, Shift and PageUp or PageDown move a page, Home and End go to the bounds", async () => {
     const { now, run } = await mount("keyboard");
     await run({ key: "Tab" }, { key: "ArrowRight" });
     expect(now("Low")).toBe(25);
@@ -40,7 +40,7 @@ describe("range contract", () => {
     expect(now("Low")).toBe(50);
   });
 
-  it("RG2 a thumb pushed at its neighbour stops short and never crosses", async () => {
+  it("RA2 a thumb pushed at its neighbour stops short and never crosses", async () => {
     const { now, run } = await mount("keyboard");
     await run({ key: "Tab" }, { key: "End" }, { key: "ArrowRight" }, { key: "PageUp" });
     expect([now("Low"), now("High")]).toEqual([50, 60]);
@@ -48,7 +48,7 @@ describe("range contract", () => {
     expect([now("Low"), now("High")]).toEqual([50, 60]);
   });
 
-  it("RG3 each key change reports, and the change ends once when focus leaves", async () => {
+  it("RA3 each key change reports, and the change ends once when focus leaves", async () => {
     const { count, run } = await mount("keyboard");
     await run({ key: "Tab" }, { key: "ArrowRight" }, { key: "ArrowRight" });
     expect(count("changes")).toBe(2);
@@ -57,7 +57,7 @@ describe("range contract", () => {
     expect(count("ends")).toBe(1);
   });
 
-  it("RG4 the closest thumb follows a drag, which ends once at release", async () => {
+  it("RA4 the closest thumb follows a drag, which ends once at release", async () => {
     const { now, track, count, run } = await mount("drag");
     const width = track().getBoundingClientRect().width;
     await run({ drag: { role: "slider", name: "High", by: { x: 40, y: 0 } } });
@@ -66,7 +66,7 @@ describe("range contract", () => {
     expect(count("ends")).toBe(1);
   });
 
-  it("RG5 a press with another button moves nothing and ends nothing", async () => {
+  it("RA5 a press with another button moves nothing and ends nothing", async () => {
     const { now, track, count } = await mount("drag");
     const box = track().getBoundingClientRect();
     const [x, y] = [box.right - 4, box.y + box.height / 2];

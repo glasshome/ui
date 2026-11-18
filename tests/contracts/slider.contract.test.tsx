@@ -58,7 +58,7 @@ const Around = (props: { children: JSX.Element }) => (
 );
 
 describe("Slider contract", () => {
-  it("SL1 a group of slider thumbs, each with its range, value and label", async () => {
+  it("SD1 a group of slider thumbs, each with its range, value and label", async () => {
     const { thumb, thumbs, slot } = await mount("default");
     const brightness = thumb("Brightness");
     const group = brightness.closest('[data-slot="slider"]');
@@ -84,7 +84,7 @@ describe("Slider contract", () => {
     );
   });
 
-  it("SL2 arrows step the value, Shift with an arrow moves a page", async () => {
+  it("SD2 arrows step the value, Shift with an arrow moves a page", async () => {
     const { now, run } = await mount("keyboard");
     await run({ press: { role: "slider", name: "Brightness" } });
     await run({ key: "ArrowRight" }, { key: "ArrowUp" });
@@ -99,7 +99,7 @@ describe("Slider contract", () => {
     expect(now("Brightness")).toEqual([39]);
   });
 
-  it("SL3 PageUp and PageDown move a page, Home and End go to the ends", async () => {
+  it("SD3 PageUp and PageDown move a page, Home and End go to the ends", async () => {
     const { now, run } = await mount("keyboard");
     await run({ key: "Tab" });
     await run({ key: "PageUp" });
@@ -112,7 +112,7 @@ describe("Slider contract", () => {
     expect(now("Brightness")).toEqual([0]);
   });
 
-  it("SL4 a dragged thumb follows the pointer, keeps focus, and ends once", async () => {
+  it("SD4 a dragged thumb follows the pointer, keeps focus, and ends once", async () => {
     const ends: number[][] = [];
     render(() => (
       <div class="w-72">
@@ -134,14 +134,14 @@ describe("Slider contract", () => {
     expect(ends).toEqual([[expected]]);
   });
 
-  it("SL5 a press on the track brings the closest thumb there and focuses it", async () => {
+  it("SD5 a press on the track brings the closest thumb there and focuses it", async () => {
     const { thumb, now, run } = await mount("track-press");
     await run({ press: { role: "group" } });
     expect(now("Brightness")).toEqual([50]);
     expect(focusedElement()).toBe(thumb("Brightness"));
   });
 
-  it("SL6 two thumbs never cross, keep their distance, and the fill spans between them", async () => {
+  it("SD6 two thumbs never cross, keep their distance, and the fill spans between them", async () => {
     render(() => (
       <div class="w-72">
         <Slider defaultValue={[20, 30]} minStepsBetweenThumbs={5} aria-label="Range" />
@@ -171,7 +171,7 @@ describe("Slider contract", () => {
     expect(focusedElement()).toBe(high);
   });
 
-  it("SL7 key changes report each step, and end once when focus leaves", async () => {
+  it("SD7 key changes report each step, and end once when focus leaves", async () => {
     const changes: number[][] = [];
     const ends: number[][] = [];
     render(() => (
@@ -194,7 +194,7 @@ describe("Slider contract", () => {
     expect(ends).toEqual([[52]]);
   });
 
-  it("SL8 a disabled slider says so, leaves the tab order, and ignores a press or a key", async () => {
+  it("SD8 a disabled slider says so, leaves the tab order, and ignores a press or a key", async () => {
     const { thumb, now, run } = await mount("disabled");
     const volume = thumb("Brightness");
     expect(volume.closest('[data-slot="slider"]')?.hasAttribute("data-disabled")).toBe(true);
@@ -207,7 +207,7 @@ describe("Slider contract", () => {
     expect(now("Brightness")).toEqual([30]);
   });
 
-  it("SL9 controlled, a change reports the next values and shows only what value says", async () => {
+  it("SD9 controlled, a change reports the next values and shows only what value says", async () => {
     const changes: number[][] = [];
     const [value, setValue] = createSignal([50]);
     render(() => (
@@ -229,7 +229,7 @@ describe("Slider contract", () => {
     expect(now("Brightness")).toEqual([70]);
   });
 
-  it("SL10 a marker sits at its value along the track", async () => {
+  it("SD10 a marker sits at its value along the track", async () => {
     const { thumbs, slot } = await mount("default");
     const [low] = thumbs("Comfort range");
     if (!low) throw new Error("no comfort thumb");
@@ -240,7 +240,7 @@ describe("Slider contract", () => {
     expect(Math.abs(marker.x - (track.left + track.width * 0.55))).toBeLessThan(1);
   });
 
-  it("SL11 a drag and a key move the thumb inside a closed shadow root", async () => {
+  it("SD11 a drag and a key move the thumb inside a closed shadow root", async () => {
     const { thumb, now, run, slot } = await mount("in-shadow-root");
     const width = slot(thumb("Brightness"), "slider-track").getBoundingClientRect().width;
     await run({ drag: { role: "slider", name: "Brightness", by: { x: 60, y: 0 } } });
