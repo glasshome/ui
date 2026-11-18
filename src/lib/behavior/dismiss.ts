@@ -146,20 +146,18 @@ function createEscape(options: DismissOptions) {
       if (!entry || !element) return;
       if (from === "tooltip") return createTooltipEscape(options);
       escapeHandlers.set(entry, (event) => options.onDismiss("escape", event));
-      // The root element, so the key is taken before Kobalte's document listeners hear it.
+      // The root element, so the key is taken before any document listener hears it.
       const target = from === "document" ? document.documentElement : element;
       const onKey = (event: KeyboardEvent) => {
         if (event.key !== "Escape" || event.isComposing || claimedKeys.has(event)) return;
         const mine = layer.layer();
         if (!mine || !takesKeys(mine)) return;
         const stack = layerStack.layers().slice(layerStack.layers().indexOf(mine));
-        const topmost = stack.findLast((other) => other.kind !== "tooltip" && takesKeys(other));
-        if (from === "document" && topmost !== mine && topmost?.readsOwnEscape) return;
         const claims = stack.findLast(
           (other) =>
             other.kind !== "tooltip" &&
             takesKeys(other) &&
-            (other.escape() || (other.kind === "modal" && !other.readsOwnEscape)),
+            (other.escape() || other.kind === "modal"),
         );
         if (!claims) return;
         claimedKeys.add(event);

@@ -50,7 +50,7 @@ interface ResponsiveDialogProps {
   keep?: boolean;
 }
 
-/** Centred kobalte dialog from `sm` up, drag-to-dismiss bottom sheet below it.
+/** Centred dialog from `sm` up, drag-to-dismiss bottom sheet below it.
  *  Both branches render the same parts, so a call site never branches. */
 const ResponsiveDialog: ParentComponent<ResponsiveDialogProps> = (props) => {
   const [open, setOpen] = createControllableSignal<boolean>({
