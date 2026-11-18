@@ -1,4 +1,4 @@
-import type { Accessor } from "solid-js";
+import { type Accessor, onCleanup } from "solid-js";
 import type { LayerHandle } from "./layer-stack";
 import { effect } from "./solid";
 
@@ -16,8 +16,11 @@ const holds = new Map<Element, { count: number; prior: string | null }>();
 
 function hide(element: Element) {
   const held = holds.get(element);
-  if (held) held.count++;
-  else holds.set(element, { count: 1, prior: element.getAttribute("aria-hidden") });
+  if (held) {
+    held.count++;
+    return;
+  }
+  holds.set(element, { count: 1, prior: element.getAttribute("aria-hidden") });
   element.setAttribute("aria-hidden", "true");
 }
 
@@ -52,22 +55,31 @@ function hiddenAround(parent: ParentNode, layers: Element[], live: Element[]): E
 }
 
 export function createHideOutside(options: HideOutsideOptions): void {
+  let hidden: Element[] = [];
+  const releaseAll = () => {
+    for (const child of hidden) release(child);
+    hidden = [];
+  };
   effect(
-    () => [options.active(), options.layer.layer()?.element()] as const,
-    ([active, element]) => {
-      if (!active || !element) return;
-      const parent = branchOf(element).parentNode;
-      if (!parent) return;
-      const layers = [element];
-      for (const above of options.layer.above()) {
-        const aboveElement = above.element();
-        if (aboveElement) layers.push(aboveElement);
-      }
-      const hidden = hiddenAround(parent, layers, Array.from(parent.querySelectorAll(KEPT)));
-      for (const child of hidden) hide(child);
-      return () => {
-        for (const child of hidden) release(child);
+    () => {
+      const element = options.layer.layer()?.element();
+      if (!options.active() || !element) return null;
+      const above = options.layer.above().map((layer) => layer.element());
+      return {
+        element,
+        layers: [element, ...above.filter((layer): layer is HTMLElement => !!layer)],
       };
     },
+    (open) => {
+      if (!open) return releaseAll();
+      const { element, layers } = open;
+      const parent = branchOf(element).parentNode;
+      if (!parent) return releaseAll();
+      const next = hiddenAround(parent, layers, Array.from(parent.querySelectorAll(KEPT)));
+      for (const child of next) hide(child);
+      for (const child of hidden) release(child);
+      hidden = next;
+    },
   );
+  onCleanup(releaseAll);
 }
