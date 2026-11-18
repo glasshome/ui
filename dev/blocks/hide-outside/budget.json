@@ -25,8 +25,8 @@
           "reason": "baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5, Task 12 re-measures"
         },
         "layouts": {
-          "max": 1,
-          "reason": "baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5, Task 12 re-measures"
+          "max": 2,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       },
       "2": {
@@ -125,22 +125,22 @@
           "reason": "baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5, Task 12 re-measures"
         },
         "layouts": {
-          "max": 1,
-          "reason": "baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5, Task 12 re-measures"
+          "max": 2,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 10,
-          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25%: the inner modal opens and hides the outer; predates Phase 1 Next step 5, Task 12 re-measures"
+          "max": 11,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         },
         "largestRecalc": {
           "max": 5,
           "reason": "baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5, Task 12 re-measures"
         },
         "layouts": {
-          "max": 1,
-          "reason": "baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5, Task 12 re-measures"
+          "max": 2,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       },
       "3": {

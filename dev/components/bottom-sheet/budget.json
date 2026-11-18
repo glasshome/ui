@@ -25,8 +25,8 @@
           "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
         },
         "layouts": {
-          "max": 3,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+          "max": 4,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       }
     },
@@ -69,8 +69,8 @@
           "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
         },
         "layouts": {
-          "max": 3,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+          "max": 4,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       },
       "2": {
@@ -83,8 +83,8 @@
           "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
         },
         "layouts": {
-          "max": 1,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+          "max": 2,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       }
     },
@@ -127,8 +127,8 @@
           "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
         },
         "layouts": {
-          "max": 3,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+          "max": 4,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       },
       "2": {
@@ -141,8 +141,8 @@
           "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
         },
         "layouts": {
-          "max": 1,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+          "max": 2,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       }
     },
@@ -185,8 +185,8 @@
           "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
         },
         "layouts": {
-          "max": 3,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+          "max": 4,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       },
       "2": {
@@ -257,8 +257,8 @@
           "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
         },
         "layouts": {
-          "max": 3,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+          "max": 4,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       },
       "2": {
@@ -271,8 +271,8 @@
           "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
         },
         "layouts": {
-          "max": 1,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
+          "max": 2,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       }
     },
