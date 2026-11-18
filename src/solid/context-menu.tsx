@@ -1,132 +1,297 @@
-import { ContextMenu as ContextMenuPrimitive } from "@kobalte/core/context-menu";
-import { usePortalMount } from "./portal-mount.js";
-import { useMenuContext } from "@kobalte/core/menu";
 import {
   type Component,
   type ComponentProps,
+  createContext,
   createSignal,
-  type ParentComponent,
+  createUniqueId,
+  type JSX,
+  onCleanup,
   splitProps,
+  untrack,
+  useContext,
+  type ValidComponent,
 } from "solid-js";
-import { OVERLAY_MOTION } from "../lib/motion-classes.js";
-import {
-  createCoveredRoot,
-  inShadowRoot,
-  ReportCovered,
-  shadowLayer,
-} from "../lib/shadow-layer.js";
+import { Polymorphic } from "../lib/behavior/polymorphic.js";
+import { callEventHandler, effect, merge } from "../lib/behavior/solid.js";
+import { createHold } from "../lib/hold.js";
+import { MOTION_EXIT_MS, OVERLAY_MOTION } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 import {
-  MENU_CONTENT_CLASS,
+  createMenuLevel,
+  type DeprecatedMenuRootProps,
+  MenuArrow,
+  type MenuCheckboxItemProps,
   MenuCheckboxItemPart,
-  MenuContentIndicator,
+  MenuContentPart,
+  type MenuContentProps,
+  MenuGroup,
+  MenuItemIndicator,
+  type MenuItemProps,
   MenuItemPart,
+  type MenuLabelProps,
   MenuLabelPart,
+  MenuLevelProvider,
+  type MenuPlacement,
+  MenuPortal,
+  MenuRadioGroup,
+  type MenuRadioItemProps,
   MenuRadioItemPart,
   MenuSeparatorPart,
+  MenuSub,
   MenuSubContentPart,
+  type MenuSubTriggerProps,
   MenuSubTriggerPart,
+  MenuTextPart,
+  parsePlacement,
+  useMenuLevel,
 } from "./menu-parts.js";
 
-const ContextMenuRoot: Component<ComponentProps<typeof ContextMenuPrimitive>> = (props) => {
-  // Modal in a shadow root, Kobalte would aria-hide the realm's host, menu included.
-  const inShadow = inShadowRoot(usePortalMount());
-  const cover = createCoveredRoot();
-  return (
-    <ReportCovered.Provider value={cover.report}>
-      <ContextMenuPrimitive {...props} modal={inShadow || cover.covered() ? false : props.modal} />
-    </ReportCovered.Provider>
-  );
-};
-const ContextMenu = Object.assign(ContextMenuRoot, ContextMenuPrimitive) as Component<
-  ComponentProps<typeof ContextMenuPrimitive>
-> &
-  typeof ContextMenuPrimitive;
-const ContextMenuGroup = ContextMenuPrimitive.Group;
-const ContextMenuSub = ContextMenuPrimitive.Sub;
-const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
+interface ContextMenuRootProps extends DeprecatedMenuRootProps {
+  onOpenChange?: (open: boolean) => void;
+  placement?: MenuPlacement;
+  gutter?: number;
+  children?: JSX.Element;
+}
 
-const ContextMenuTrigger: Component<ComponentProps<typeof ContextMenuPrimitive.Trigger>> = (
-  props,
-) => {
-  return <ContextMenuPrimitive.Trigger data-slot="context-menu-trigger" {...props} />;
+type Point = { x: number; y: number };
+
+const PointContext = createContext<(point: Point) => void>();
+
+const usePoint = (): ((point: Point) => void) => {
+  const setPoint = useContext(PointContext);
+  if (!setPoint) throw new Error("ContextMenuTrigger renders inside a ContextMenu");
+  return setPoint;
 };
 
-const ContextMenuSubTrigger: ParentComponent<
-  ComponentProps<typeof ContextMenuPrimitive.SubTrigger> & { inset?: boolean }
-> = (props) => <MenuSubTriggerPart slotName="context-menu-sub-trigger" {...props} />;
-
-const ContextMenuSubContent: Component<ComponentProps<typeof ContextMenuPrimitive.SubContent>> = (
-  props,
-) => <MenuSubContentPart slotName="context-menu-sub-content" {...props} />;
-
-const ContextMenuContent: Component<ComponentProps<typeof ContextMenuPrimitive.Content>> = (
-  props,
-) => {
-  const [local, rest] = splitProps(props, [
-    "class",
-    "children",
-    "ref",
-    "onInteractOutside",
-    "onCloseAutoFocus",
-  ]);
-  const menu = useMenuContext();
-  const [panel, setPanel] = createSignal<HTMLElement>();
-  const layer = shadowLayer({
-    content: panel,
-    open: () => menu.isOpen(),
-    dismiss: () => menu.close(true),
-    tree: true,
-    consumer: local,
+const ContextMenuRoot: Component<ContextMenuRootProps> = (props) => {
+  const [isOpen, setIsOpen] = createSignal(false);
+  const setOpen = (next: boolean) => {
+    if (next === untrack(isOpen)) return;
+    setIsOpen(next);
+    props.onOpenChange?.(next);
+  };
+  const [point, setPoint] = createSignal<Point>({ x: 0, y: 0 });
+  const placement = () => parsePlacement(props.placement ?? "right-start");
+  const level = createMenuLevel({
+    open: isOpen,
+    onOpenChange: setOpen,
+    anchor: (trigger) => {
+      const at = point();
+      return {
+        getBoundingClientRect: () => ({ left: at.x, top: at.y, width: 0, height: 0 }),
+        getRootNode: () => trigger?.getRootNode() ?? document,
+      };
+    },
+    side: () => placement()[0],
+    align: () => placement()[1],
+    offset: untrack(() => props.gutter ?? 2),
+    triggerIsArea: true,
   });
   return (
-    <ContextMenuPrimitive.Portal mount={usePortalMount()}>
-      <ContextMenuPrimitive.Content
-        ref={(el: HTMLElement) => {
-          setPanel(el);
-          if (typeof local.ref === "function") local.ref(el);
-        }}
-        onInteractOutside={layer.onInteractOutside}
-        onCloseAutoFocus={layer.onCloseAutoFocus}
-        data-slot="context-menu-content"
-        class={cn(
-          MENU_CONTENT_CLASS,
-          OVERLAY_MOTION,
-          "overflow-x-hidden overflow-y-auto",
-          local.class,
-        )}
-        {...rest}
-      >
-        <MenuContentIndicator>{local.children}</MenuContentIndicator>
-      </ContextMenuPrimitive.Content>
-    </ContextMenuPrimitive.Portal>
+    <PointContext.Provider value={setPoint}>
+      <MenuLevelProvider value={level}>{props.children}</MenuLevelProvider>
+    </PointContext.Provider>
   );
 };
 
-const ContextMenuItem: Component<
-  ComponentProps<typeof ContextMenuPrimitive.Item> & {
-    inset?: boolean;
-    tone?: string;
-    /** @deprecated pass `tone="var(--destructive)"` instead */
-    variant?: "default" | "destructive";
-  }
-> = (props) => <MenuItemPart slotName="context-menu-item" {...props} />;
+type TriggerOwnProps = {
+  disabled?: boolean;
+  id?: string;
+  ref?: unknown;
+  style?: JSX.CSSProperties | string;
+  onContextMenu?: JSX.EventHandlerUnion<HTMLElement, MouseEvent>;
+  onPointerDown?: JSX.EventHandlerUnion<HTMLElement, PointerEvent>;
+  onPointerMove?: JSX.EventHandlerUnion<HTMLElement, PointerEvent>;
+  onPointerUp?: JSX.EventHandlerUnion<HTMLElement, PointerEvent>;
+  onPointerCancel?: JSX.EventHandlerUnion<HTMLElement, PointerEvent>;
+};
 
-const ContextMenuCheckboxItem: ParentComponent<
-  ComponentProps<typeof ContextMenuPrimitive.CheckboxItem>
-> = (props) => <MenuCheckboxItemPart slotName="context-menu-checkbox-item" {...props} />;
+type ContextMenuTriggerProps<T extends ValidComponent = "div"> = TriggerOwnProps & {
+  as?: T;
+} & Omit<ComponentProps<T>, "as" | keyof TriggerOwnProps>;
 
-const ContextMenuRadioItem: ParentComponent<
-  ComponentProps<typeof ContextMenuPrimitive.RadioItem>
-> = (props) => <MenuRadioItemPart slotName="context-menu-radio-item" {...props} />;
+type Bound<E extends Event> = E & { currentTarget: HTMLElement; target: Element };
 
-const ContextMenuLabel: Component<
-  ComponentProps<typeof ContextMenuPrimitive.GroupLabel> & { inset?: boolean }
-> = (props) => <MenuLabelPart slotName="context-menu-label" {...props} />;
+const NO_CALLOUT = "-webkit-touch-callout: none";
 
-const ContextMenuSeparator: Component<ComponentProps<typeof ContextMenuPrimitive.Separator>> = (
-  props,
-) => <MenuSeparatorPart slotName="context-menu-separator" {...props} />;
+function ContextMenuTrigger<T extends ValidComponent = "div">(
+  props: ContextMenuTriggerProps<T>,
+): JSX.Element {
+  const level = useMenuLevel();
+  const menu = level.menu;
+  const setPoint = usePoint();
+  const [local, rest] = splitProps(props as ContextMenuTriggerProps<ValidComponent>, [
+    "as",
+    "id",
+    "ref",
+    "disabled",
+    "style",
+    "onContextMenu",
+    "onPointerDown",
+    "onPointerMove",
+    "onPointerUp",
+    "onPointerCancel",
+  ]);
+  const fallback = createUniqueId();
+  const id = (): string => local.id ?? fallback;
+  effect(id, (value) => {
+    level.setTriggerId(value);
+    return () => level.setTriggerId(undefined);
+  });
+  const disabled = () => local.disabled ?? false;
+  const openAt = (point: Point) => {
+    setPoint(point);
+    menu.show("content");
+  };
+  let pressedAt: Point = { x: 0, y: 0 };
+  const hold = createHold({ onHold: () => openAt(pressedAt) });
+  onCleanup(hold.cancel);
+  const [el, setEl] = createSignal<HTMLElement>();
+
+  // Bound on the element, since Solid's delegated handlers never reach inside a closed shadow root.
+  effect(el, (node) => {
+    if (!node) return;
+    const onMenu = (event: MouseEvent) => {
+      callEventHandler(event as Bound<MouseEvent>, local.onContextMenu);
+      // A fired hold already opened the menu and spent this press.
+      if (disabled() || event.defaultPrevented) return;
+      event.preventDefault();
+      event.stopPropagation();
+      openAt({ x: event.clientX, y: event.clientY });
+    };
+    const onDown = (event: PointerEvent) => {
+      callEventHandler(event as Bound<PointerEvent>, local.onPointerDown);
+      if (disabled() || event.pointerType === "mouse") return;
+      pressedAt = { x: event.clientX, y: event.clientY };
+      hold.down(event);
+    };
+    const onMove = (event: PointerEvent) => {
+      callEventHandler(event as Bound<PointerEvent>, local.onPointerMove);
+      hold.move(event);
+    };
+    const onUp = (event: PointerEvent) => {
+      callEventHandler(event as Bound<PointerEvent>, local.onPointerUp);
+      hold.up();
+    };
+    const onCancel = (event: PointerEvent) => {
+      callEventHandler(event as Bound<PointerEvent>, local.onPointerCancel);
+      hold.cancel();
+    };
+    node.addEventListener("contextmenu", onMenu);
+    node.addEventListener("pointerdown", onDown);
+    node.addEventListener("pointermove", onMove);
+    node.addEventListener("pointerup", onUp);
+    node.addEventListener("pointercancel", onCancel);
+    return () => {
+      node.removeEventListener("contextmenu", onMenu);
+      node.removeEventListener("pointerdown", onDown);
+      node.removeEventListener("pointermove", onMove);
+      node.removeEventListener("pointerup", onUp);
+      node.removeEventListener("pointercancel", onCancel);
+      if (untrack(menu.trigger) === node) menu.setTrigger(undefined);
+    };
+  });
+
+  return (
+    <Polymorphic
+      {...merge({ "data-slot": "context-menu-trigger" }, rest, {
+        as: local.as,
+        defaultAs: "div" as ValidComponent,
+        get id() {
+          return id();
+        },
+        ref: (node: HTMLElement) => {
+          setEl(node);
+          menu.setTrigger(node);
+          if (typeof local.ref === "function") local.ref(node);
+        },
+        get style() {
+          const own = local.style;
+          return typeof own === "string"
+            ? `${NO_CALLOUT}; ${own}`
+            : { "-webkit-touch-callout": "none", ...own };
+        },
+        get "data-disabled"() {
+          return disabled() ? "" : undefined;
+        },
+        get "data-expanded"() {
+          return menu.open() ? "" : undefined;
+        },
+        get "data-closed"() {
+          return menu.open() ? undefined : "";
+        },
+      })}
+    />
+  );
+}
+
+// The panel opens at the pointer with its start corner there, so it unfolds from that corner.
+const ORIGIN_AT_POINTER =
+  "data-[side=right]:origin-top-left data-[side=left]:origin-top-right data-[side=bottom]:origin-top-left data-[side=top]:origin-bottom-left";
+
+const ContextMenuContent: Component<MenuContentProps> = (props) => {
+  const [local, rest] = splitProps(props, ["class"]);
+  return (
+    <MenuContentPart
+      slotName="context-menu-content"
+      motionClass={cn(OVERLAY_MOTION, ORIGIN_AT_POINTER, "overflow-x-hidden overflow-y-auto")}
+      exitMs={MOTION_EXIT_MS.overlay}
+      class={local.class}
+      {...rest}
+    />
+  );
+};
+
+function ContextMenuItem<T extends ValidComponent = "div">(props: MenuItemProps<T>): JSX.Element {
+  return (
+    <MenuItemPart slotName="context-menu-item" {...(props as MenuItemProps<ValidComponent>)} />
+  );
+}
+
+function ContextMenuSubTrigger<T extends ValidComponent = "div">(
+  props: MenuSubTriggerProps<T>,
+): JSX.Element {
+  return (
+    <MenuSubTriggerPart
+      slotName="context-menu-sub-trigger"
+      {...(props as MenuSubTriggerProps<ValidComponent>)}
+    />
+  );
+}
+
+const ContextMenuSubContent: Component<MenuContentProps> = (props) => (
+  <MenuSubContentPart slotName="context-menu-sub-content" {...props} />
+);
+
+function ContextMenuCheckboxItem<T extends ValidComponent = "div">(
+  props: MenuCheckboxItemProps<T>,
+): JSX.Element {
+  return (
+    <MenuCheckboxItemPart
+      slotName="context-menu-checkbox-item"
+      {...(props as MenuCheckboxItemProps<ValidComponent>)}
+    />
+  );
+}
+
+function ContextMenuRadioItem<T extends ValidComponent = "div">(
+  props: MenuRadioItemProps<T>,
+): JSX.Element {
+  return (
+    <MenuRadioItemPart
+      slotName="context-menu-radio-item"
+      {...(props as MenuRadioItemProps<ValidComponent>)}
+    />
+  );
+}
+
+const ContextMenuLabel: Component<MenuLabelProps> = (props) => (
+  <MenuLabelPart slotName="context-menu-label" {...props} />
+);
+
+const ContextMenuSeparator: Component<ComponentProps<"hr">> = (props) => (
+  <MenuSeparatorPart slotName="context-menu-separator" {...props} />
+);
 
 const ContextMenuShortcut: Component<ComponentProps<"span">> = (props) => {
   const [local, rest] = splitProps(props, ["class"]);
@@ -138,6 +303,32 @@ const ContextMenuShortcut: Component<ComponentProps<"span">> = (props) => {
     />
   );
 };
+
+const ContextMenuGroup = MenuGroup;
+const ContextMenuSub = MenuSub;
+const ContextMenuRadioGroup = MenuRadioGroup;
+
+const ContextMenu = Object.assign(ContextMenuRoot, {
+  Root: ContextMenuRoot,
+  Trigger: ContextMenuTrigger,
+  Portal: MenuPortal,
+  Content: ContextMenuContent,
+  Arrow: MenuArrow,
+  Item: ContextMenuItem,
+  CheckboxItem: ContextMenuCheckboxItem,
+  RadioGroup: ContextMenuRadioGroup,
+  RadioItem: ContextMenuRadioItem,
+  Group: ContextMenuGroup,
+  GroupLabel: ContextMenuLabel,
+  Separator: ContextMenuSeparator,
+  Sub: ContextMenuSub,
+  SubTrigger: ContextMenuSubTrigger,
+  SubContent: ContextMenuSubContent,
+  ItemIndicator: MenuItemIndicator,
+  Icon: MenuTextPart,
+  ItemLabel: MenuTextPart,
+  ItemDescription: MenuTextPart,
+});
 
 export {
   ContextMenu,

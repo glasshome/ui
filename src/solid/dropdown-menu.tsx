@@ -1,151 +1,263 @@
-import { DropdownMenu as DropdownMenuPrimitive } from "@kobalte/core/dropdown-menu";
-import { usePortalMount } from "./portal-mount.js";
-import { useMenuContext } from "@kobalte/core/menu";
 import {
   type Component,
   type ComponentProps,
   createSignal,
-  type ParentComponent,
+  createUniqueId,
+  type JSX,
   splitProps,
+  untrack,
+  type ValidComponent,
 } from "solid-js";
-import { MORPH_MOTION } from "../lib/motion-classes.js";
-import {
-  createCoveredRoot,
-  inShadowRoot,
-  ReportCovered,
-  shadowLayer,
-} from "../lib/shadow-layer.js";
+import type { AnchorLike } from "../lib/behavior/anchored.js";
+import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
+import { createControllableSignal } from "../lib/behavior/controllable.js";
+import { createMenuButton } from "../lib/behavior/menu.js";
+import { callEventHandler, effect, merge } from "../lib/behavior/solid.js";
+import { MORPH_MOTION, MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { anchorToTriggerTop } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import {
-  MENU_CONTENT_CLASS,
+  createMenuLevel,
+  type DeprecatedMenuRootProps,
+  MenuArrow,
+  type MenuCheckboxItemProps,
   MenuCheckboxItemPart,
-  MenuContentIndicator,
+  MenuContentPart,
+  type MenuContentProps,
+  MenuGroup,
+  MenuItemIndicator,
+  type MenuItemProps,
   MenuItemPart,
+  type MenuLabelProps,
   MenuLabelPart,
+  MenuLevelProvider,
+  type MenuPlacement,
+  MenuPortal,
+  MenuRadioGroup,
+  type MenuRadioItemProps,
   MenuRadioItemPart,
   MenuSeparatorPart,
+  MenuSub,
   MenuSubContentPart,
+  type MenuSubTriggerProps,
   MenuSubTriggerPart,
+  MenuTextPart,
+  parsePlacement,
+  useMenuLevel,
 } from "./menu-parts.js";
 
-/* The panel covers the trigger (see MORPH_MOTION); statics carried across so
- * `DropdownMenu.Portal` keeps resolving. */
-const DropdownMenuRoot: Component<ComponentProps<typeof DropdownMenuPrimitive>> = (props) => {
-  // Modal in a shadow root, Kobalte would aria-hide the realm's host, menu included.
-  const inShadow = inShadowRoot(usePortalMount());
-  const cover = createCoveredRoot();
-  return (
-    <ReportCovered.Provider value={cover.report}>
-      <DropdownMenuPrimitive
-        gutter={0}
-        getAnchorRect={anchorToTriggerTop}
-        {...props}
-        modal={inShadow || cover.covered() ? false : props.modal}
-      />
-    </ReportCovered.Provider>
-  );
-};
-const DropdownMenu = Object.assign(DropdownMenuRoot, DropdownMenuPrimitive) as Component<
-  ComponentProps<typeof DropdownMenuPrimitive>
-> &
-  typeof DropdownMenuPrimitive;
-const DropdownMenuGroup = DropdownMenuPrimitive.Group;
-const DropdownMenuSub = DropdownMenuPrimitive.Sub;
-const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
+type AnchorRect = { x?: number; y?: number; width?: number; height?: number };
 
-const DropdownMenuTrigger: Component<ComponentProps<typeof DropdownMenuPrimitive.Trigger>> = (
-  props,
-) => {
-  return <DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
-};
+interface DropdownMenuRootProps extends DeprecatedMenuRootProps {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  placement?: MenuPlacement;
+  gutter?: number;
+  /** The box the panel sits beside, read from the trigger; by default the trigger's top edge, so the panel covers it. */
+  getAnchorRect?: (anchor?: HTMLElement) => AnchorRect | undefined;
+  children?: JSX.Element;
+}
 
-const DropdownMenuContent: Component<ComponentProps<typeof DropdownMenuPrimitive.Content>> = (
-  props,
-) => {
-  const [local, others] = splitProps(props, [
-    "class",
-    "children",
-    "ref",
-    "onInteractOutside",
-    "onCloseAutoFocus",
-  ]);
-  const menu = useMenuContext();
-  const [panel, setPanel] = createSignal<HTMLElement>();
-  const layer = shadowLayer({
-    content: panel,
-    open: () => menu.isOpen(),
-    dismiss: () => menu.close(true),
-    trigger: () => menu.triggerRef(),
-    tree: true,
-    consumer: local,
-  });
-  // The morph starts as the trigger's box: its height and radius are read
-  // from the trigger itself, its width is kobalte's anchor width.
-  const writeMorphStart = (el: HTMLElement) => {
-    const trigger = menu.triggerRef();
-    if (!trigger) return;
-    const height = trigger.getBoundingClientRect().height;
-    // A pill's radius is "infinite"; the rendered one is half its height.
-    const radius = Math.min(
-      Number.parseFloat(getComputedStyle(trigger).borderTopLeftRadius) || 0,
-      height / 2,
-    );
-    el.style.setProperty("--morph-h", `${height}px`);
-    el.style.setProperty("--morph-radius", `${radius}px`);
+function rectOf(trigger: HTMLElement, read: (el?: HTMLElement) => AnchorRect | undefined) {
+  const anchor: AnchorLike = {
+    getBoundingClientRect: () => {
+      const rect = read(trigger) ?? {};
+      return {
+        left: rect.x ?? 0,
+        top: rect.y ?? 0,
+        width: rect.width ?? 0,
+        height: rect.height ?? 0,
+      };
+    },
+    getRootNode: () => trigger.getRootNode(),
   };
+  return anchor;
+}
+
+const DropdownMenuRoot: Component<DropdownMenuRootProps> = (props) => {
+  const [open, setOpen] = createControllableSignal<boolean>({
+    value: () => props.open,
+    defaultValue: () => props.defaultOpen ?? false,
+    onChange: (next) => props.onOpenChange?.(next),
+  });
+  const placement = () => parsePlacement(props.placement ?? "bottom-start");
+  const level = createMenuLevel({
+    open,
+    onOpenChange: setOpen,
+    anchor: (trigger) => trigger && rectOf(trigger, props.getAnchorRect ?? anchorToTriggerTop),
+    side: () => placement()[0],
+    align: () => placement()[1],
+    offset: untrack(() => props.gutter ?? 0),
+  });
+  return <MenuLevelProvider value={level}>{props.children}</MenuLevelProvider>;
+};
+
+type TriggerHandlers = {
+  id?: string;
+  ref?: unknown;
+  onPointerDown?: JSX.EventHandlerUnion<HTMLElement, PointerEvent>;
+  onKeyDown?: JSX.EventHandlerUnion<HTMLElement, KeyboardEvent>;
+  onClick?: JSX.EventHandlerUnion<HTMLElement, MouseEvent>;
+};
+
+type Bound<E extends Event> = E & { currentTarget: HTMLElement; target: Element };
+
+function DropdownMenuTrigger<T extends ValidComponent = "button">(
+  props: ButtonRootProps<T>,
+): JSX.Element {
+  const level = useMenuLevel();
+  const menu = level.menu;
+  const [local, rest] = splitProps(props as ButtonRootProps<ValidComponent> & TriggerHandlers, [
+    "id",
+    "ref",
+    "disabled",
+    "onPointerDown",
+    "onKeyDown",
+    "onClick",
+  ]);
+  const fallback = createUniqueId();
+  const id = (): string => local.id ?? fallback;
+  effect(id, (value) => {
+    level.setTriggerId(value);
+    return () => level.setTriggerId(undefined);
+  });
+  const button = createMenuButton(menu, () => local.disabled ?? false);
+  const [el, setEl] = createSignal<HTMLElement>();
+
+  // Bound on the element, since Solid's delegated handlers never reach inside a closed shadow root.
+  effect(el, (node) => {
+    if (!node) return;
+    const down = (event: PointerEvent) => {
+      callEventHandler(event as Bound<PointerEvent>, local.onPointerDown);
+      button.onPointerDown(event);
+    };
+    const key = (event: KeyboardEvent) => {
+      callEventHandler(event as Bound<KeyboardEvent>, local.onKeyDown);
+      button.onKeyDown(event);
+    };
+    node.addEventListener("pointerdown", down);
+    node.addEventListener("keydown", key);
+    return () => {
+      node.removeEventListener("pointerdown", down);
+      node.removeEventListener("keydown", key);
+      if (untrack(menu.trigger) === node) menu.setTrigger(undefined);
+    };
+  });
+
   return (
-    <DropdownMenuPrimitive.Portal mount={usePortalMount()}>
-      <DropdownMenuPrimitive.Content
-        ref={(el: HTMLElement) => {
-          setPanel(el);
-          writeMorphStart(el);
-          if (typeof local.ref === "function") local.ref(el);
-        }}
-        onInteractOutside={layer.onInteractOutside}
-        onCloseAutoFocus={layer.onCloseAutoFocus}
-        data-slot="dropdown-menu-content"
-        class={cn(MENU_CONTENT_CLASS, MORPH_MOTION, local.class)}
-        {...others}
-      >
-        <MenuContentIndicator>{local.children}</MenuContentIndicator>
-      </DropdownMenuPrimitive.Content>
-    </DropdownMenuPrimitive.Portal>
+    <ButtonRoot
+      {...merge({ "data-slot": "dropdown-menu-trigger" }, rest, {
+        get disabled() {
+          return local.disabled;
+        },
+        get id() {
+          return id();
+        },
+        ref: (node: HTMLElement) => {
+          setEl(node);
+          menu.setTrigger(node);
+          if (typeof local.ref === "function") local.ref(node);
+        },
+        "aria-haspopup": "true",
+        get "aria-expanded"() {
+          return menu.open();
+        },
+        get "aria-controls"() {
+          return menu.open() ? level.contentId() : undefined;
+        },
+        get "data-expanded"() {
+          return menu.open() ? "" : undefined;
+        },
+        get "data-closed"() {
+          return menu.open() ? undefined : "";
+        },
+        onClick: (event: Bound<MouseEvent>) => {
+          callEventHandler(event, local.onClick);
+          button.onClick();
+        },
+      })}
+    />
+  );
+}
+
+/* The panel opens as its trigger's box: its height and radius are read from the trigger itself. */
+function writeMorphStart(trigger: HTMLElement | undefined, el: HTMLElement) {
+  if (!trigger) return;
+  const box = trigger.getBoundingClientRect();
+  // A pill's radius is "infinite"; the rendered one is half its height.
+  const radius = Math.min(
+    Number.parseFloat(getComputedStyle(trigger).borderTopLeftRadius) || 0,
+    box.height / 2,
+  );
+  el.style.setProperty("--kb-popper-anchor-width", `${box.width}px`);
+  el.style.setProperty("--morph-h", `${box.height}px`);
+  el.style.setProperty("--morph-radius", `${radius}px`);
+}
+
+const DropdownMenuContent: Component<MenuContentProps> = (props) => {
+  const level = useMenuLevel();
+  return (
+    <MenuContentPart
+      slotName="dropdown-menu-content"
+      motionClass={MORPH_MOTION}
+      exitMs={MOTION_EXIT_MS.anchored}
+      onPanel={(el) => writeMorphStart(untrack(level.menu.trigger), el)}
+      {...props}
+    />
   );
 };
 
-const DropdownMenuItem: Component<
-  ComponentProps<typeof DropdownMenuPrimitive.Item> & {
-    inset?: boolean;
-    tone?: string;
-    /** @deprecated pass `tone="var(--destructive)"` instead */
-    variant?: "default" | "destructive";
-  }
-> = (props) => <MenuItemPart slotName="dropdown-menu-item" {...props} />;
+function DropdownMenuItem<T extends ValidComponent = "div">(props: MenuItemProps<T>): JSX.Element {
+  return (
+    <MenuItemPart slotName="dropdown-menu-item" {...(props as MenuItemProps<ValidComponent>)} />
+  );
+}
 
-const DropdownMenuSubTrigger: ParentComponent<
-  ComponentProps<typeof DropdownMenuPrimitive.SubTrigger> & { inset?: boolean }
-> = (props) => <MenuSubTriggerPart slotName="dropdown-menu-sub-trigger" {...props} />;
+function DropdownMenuSubTrigger<T extends ValidComponent = "div">(
+  props: MenuSubTriggerProps<T>,
+): JSX.Element {
+  return (
+    <MenuSubTriggerPart
+      slotName="dropdown-menu-sub-trigger"
+      {...(props as MenuSubTriggerProps<ValidComponent>)}
+    />
+  );
+}
 
-const DropdownMenuSubContent: ParentComponent<
-  ComponentProps<typeof DropdownMenuPrimitive.SubContent>
-> = (props) => <MenuSubContentPart slotName="dropdown-menu-sub-content" {...props} />;
+const DropdownMenuSubContent: Component<MenuContentProps> = (props) => (
+  <MenuSubContentPart slotName="dropdown-menu-sub-content" {...props} />
+);
 
-const DropdownMenuCheckboxItem: ParentComponent<
-  ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>
-> = (props) => <MenuCheckboxItemPart slotName="dropdown-menu-checkbox-item" {...props} />;
+function DropdownMenuCheckboxItem<T extends ValidComponent = "div">(
+  props: MenuCheckboxItemProps<T>,
+): JSX.Element {
+  return (
+    <MenuCheckboxItemPart
+      slotName="dropdown-menu-checkbox-item"
+      {...(props as MenuCheckboxItemProps<ValidComponent>)}
+    />
+  );
+}
 
-const DropdownMenuRadioItem: ParentComponent<
-  ComponentProps<typeof DropdownMenuPrimitive.RadioItem>
-> = (props) => <MenuRadioItemPart slotName="dropdown-menu-radio-item" {...props} />;
+function DropdownMenuRadioItem<T extends ValidComponent = "div">(
+  props: MenuRadioItemProps<T>,
+): JSX.Element {
+  return (
+    <MenuRadioItemPart
+      slotName="dropdown-menu-radio-item"
+      {...(props as MenuRadioItemProps<ValidComponent>)}
+    />
+  );
+}
 
-const DropdownMenuSeparator: Component<ComponentProps<typeof DropdownMenuPrimitive.Separator>> = (
-  props,
-) => <MenuSeparatorPart slotName="dropdown-menu-separator" {...props} />;
+const DropdownMenuSeparator: Component<ComponentProps<"hr">> = (props) => (
+  <MenuSeparatorPart slotName="dropdown-menu-separator" {...props} />
+);
 
-const DropdownMenuLabel: Component<
-  ComponentProps<typeof DropdownMenuPrimitive.GroupLabel> & { inset?: boolean }
-> = (props) => <MenuLabelPart slotName="dropdown-menu-label" {...props} />;
+const DropdownMenuLabel: Component<MenuLabelProps> = (props) => (
+  <MenuLabelPart slotName="dropdown-menu-label" {...props} />
+);
 
 const DropdownMenuShortcut: Component<ComponentProps<"span">> = (props) => {
   const [local, others] = splitProps(props, ["class"]);
@@ -157,6 +269,32 @@ const DropdownMenuShortcut: Component<ComponentProps<"span">> = (props) => {
     />
   );
 };
+
+const DropdownMenuGroup = MenuGroup;
+const DropdownMenuSub = MenuSub;
+const DropdownMenuRadioGroup = MenuRadioGroup;
+
+const DropdownMenu = Object.assign(DropdownMenuRoot, {
+  Root: DropdownMenuRoot,
+  Trigger: DropdownMenuTrigger,
+  Portal: MenuPortal,
+  Content: DropdownMenuContent,
+  Arrow: MenuArrow,
+  Item: DropdownMenuItem,
+  CheckboxItem: DropdownMenuCheckboxItem,
+  RadioGroup: DropdownMenuRadioGroup,
+  RadioItem: DropdownMenuRadioItem,
+  Group: DropdownMenuGroup,
+  GroupLabel: DropdownMenuLabel,
+  Separator: DropdownMenuSeparator,
+  Sub: DropdownMenuSub,
+  SubTrigger: DropdownMenuSubTrigger,
+  SubContent: DropdownMenuSubContent,
+  ItemIndicator: MenuItemIndicator,
+  Icon: MenuTextPart,
+  ItemLabel: MenuTextPart,
+  ItemDescription: MenuTextPart,
+});
 
 export {
   DropdownMenu,
