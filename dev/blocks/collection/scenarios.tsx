@@ -32,6 +32,7 @@ export function Toolbar(props: {
   dir?: "ltr" | "rtl";
   loop?: boolean;
   focus?: "roving" | "virtual";
+  disabledFocusable?: boolean;
   style?: JSX.CSSProperties;
 }) {
   const [root, setRoot] = createSignal<HTMLElement>();
@@ -43,6 +44,7 @@ export function Toolbar(props: {
     focus: props.focus ?? "roving",
     loop: () => props.loop ?? false,
     dir: () => props.dir ?? "ltr",
+    disabledFocusable: props.disabledFocusable,
   });
   return (
     <div
