@@ -187,7 +187,8 @@ describe("DropdownMenu contract", () => {
 
   it("DM11 a closed menu leaves no menu behind once its exit motion ends", async () => {
     const { scope, trigger } = await opened();
-    await step(input.press(trigger));
+    // The open panel covers its trigger (DM3), so the menu closes from the keyboard.
+    await step(input.key("Escape"));
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
     expect(menus(scope)).toHaveLength(0);
     expect(trigger.hasAttribute("aria-controls")).toBe(false);
