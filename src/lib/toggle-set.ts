@@ -1,6 +1,6 @@
 import { type Accessor, createSignal, createUniqueId, onCleanup } from "solid-js";
 import { type Collection, createCollection } from "./behavior/collection.js";
-import { focusWithoutTracking, hasFocus } from "./behavior/focus-scope.js";
+import { focusWithoutTracking, trackFocus } from "./behavior/focus-scope.js";
 import { effect } from "./behavior/solid.js";
 
 type Orientation = "horizontal" | "vertical";
@@ -65,6 +65,7 @@ export function createToggleItem(
   effect(el, (node) => {
     if (!node) return;
     let mousePressed = false;
+    const focused = trackFocus(node);
     const choose = () => {
       if (item.disabled() || item.locked?.()) return;
       set.toggle(item.value());
@@ -77,7 +78,7 @@ export function createToggleItem(
     };
     const click = (event: MouseEvent) => {
       // WebKit leaves a clicked button unfocused.
-      if (!item.disabled() && !hasFocus(node)) focusWithoutTracking(node);
+      if (!item.disabled() && !focused.has()) focusWithoutTracking(node);
       if (event.detail === 0 || !mousePressed) choose();
       mousePressed = false;
     };
@@ -86,6 +87,7 @@ export function createToggleItem(
     node.addEventListener("click", click);
     node.addEventListener("focus", focus);
     return () => {
+      focused.stop();
       node.removeEventListener("pointerdown", pointerdown);
       node.removeEventListener("click", click);
       node.removeEventListener("focus", focus);

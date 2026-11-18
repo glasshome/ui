@@ -858,6 +858,25 @@
 [data-on][data-selection-highlight][data-landing] {
   visibility: hidden;
 }
+/* Balanced rows (lib/balance-rows.ts): a wrapping row until the column count is known. */
+@layer base {
+  [data-balanced-rows] {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  [data-balanced-rows][data-balanced] {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(var(--balance-columns), minmax(max-content, 1fr));
+  }
+  [data-balance-content] {
+    display: inline-flex;
+    width: max-content;
+    align-items: center;
+    justify-content: center;
+    gap: inherit;
+  }
+}
 /* Its transparent border is part of the segment the old indicator covered. */
 [data-slot="toggle-group-item"] {
   --selection-inset: -1px;

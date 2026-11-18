@@ -13,7 +13,7 @@ import {
 } from "solid-js";
 import { type Collection, createCollection } from "../lib/behavior/collection.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
-import { focusWithoutTracking, hasFocus } from "../lib/behavior/focus-scope.js";
+import { focusWithoutTracking, trackFocus } from "../lib/behavior/focus-scope.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { callEventHandler, effect, merge } from "../lib/behavior/solid.js";
 import { cn } from "../lib/utils.js";
@@ -197,18 +197,24 @@ const AccordionTriggerRoot: Component<AccordionTriggerProps> = (props) => {
     return () => item.setTriggerId(undefined);
   });
 
+  let focused: ReturnType<typeof trackFocus> | undefined;
   effect(el, (node) => {
     if (!node) return;
+    const tracked = trackFocus(node);
+    focused = tracked;
     const focus = () => accordion.collection.highlight(item.value(), "pointer");
     node.addEventListener("focus", focus);
-    return () => node.removeEventListener("focus", focus);
+    return () => {
+      tracked.stop();
+      node.removeEventListener("focus", focus);
+    };
   });
 
   const click: JSX.EventHandler<HTMLButtonElement, MouseEvent> = (event) => {
     callEventHandler(event, local.onClick);
     // WebKit leaves a clicked button unfocused, and the arrows move from the focused trigger.
     const node = el();
-    if (node && !collapsible.disabled() && !hasFocus(node)) focusWithoutTracking(node);
+    if (node && !collapsible.disabled() && !focused?.has()) focusWithoutTracking(node);
   };
 
   return (
