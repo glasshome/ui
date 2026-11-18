@@ -4,27 +4,27 @@
       "0": {
         "elementsRestyled": {
           "max": 27,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 19,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       }
     },
     "guest": {
       "workUnits": {
         "max": 10,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 1,
-        "compareDocumentPosition": 2,
-        "IntersectionObserver": 2,
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -34,55 +34,55 @@
       "0": {
         "elementsRestyled": {
           "max": 27,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 19,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 124,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 117,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 12,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 14,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 12: Kobalte's presence read the closing item's computed style mid-press, which split this restyle in two; the owned step restyles fewer elements in fewer recalcs, in one larger batch"
         },
         "layouts": {
-          "max": 21,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 20,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 59,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 50,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 7,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
-          "max": 20,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 18,
+          "reason": "owned baseline 2026-11-18, max of 6 T50 runs, since the motion's frame count moves a frame or two run to run"
         }
       }
     },
     "guest": {
       "workUnits": {
         "max": 15,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 2,
-        "compareDocumentPosition": 2,
-        "IntersectionObserver": 2,
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -92,97 +92,97 @@
       "0": {
         "elementsRestyled": {
           "max": 22,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 17,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 54,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 59,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, over Kobalte's 54: restyles and layouts follow the frames the open motion draws at the T50 rate, which move a frame or two run to run (Kobalte's layouts ranged 16 to 17)"
         },
         "largestRecalc": {
           "max": 7,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
-          "max": 17,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 19,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 17: restyles and layouts follow the frames the open motion draws at the T50 rate, which move a frame or two run to run (Kobalte's layouts ranged 16 to 17)"
         }
       },
       "2": {
         "elementsRestyled": {
           "max": 15,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 2,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 1: the arrows now move focus (AC5), so the old and the new trigger restyle together where Kobalte moved nothing"
         },
         "layouts": {
           "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       },
       "3": {
         "elementsRestyled": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 33,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, over Kobalte's 1: End now moves focus to Power (AC6), where Kobalte moved nothing"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 2,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 0: End now moves focus to Power (AC6), where Kobalte moved nothing"
         },
         "layouts": {
           "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       },
       "4": {
         "elementsRestyled": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 28,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, over Kobalte's 1: Home now moves focus to Wi-Fi (AC6), where Kobalte moved nothing"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 2,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 0: Home now moves focus to Wi-Fi (AC6), where Kobalte moved nothing"
         },
         "layouts": {
           "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       },
       "5": {
         "elementsRestyled": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 30,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, over Kobalte's 1: ArrowUp now wraps focus to Power (AC5), where Kobalte moved nothing"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 2,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 0: ArrowUp now wraps focus to Power (AC5), where Kobalte moved nothing"
         },
         "layouts": {
           "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 13,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 12,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 1,
-        "compareDocumentPosition": 2,
-        "IntersectionObserver": 2,
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -192,41 +192,41 @@
       "0": {
         "elementsRestyled": {
           "max": 33,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 21,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
           "max": 2,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 59,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 57,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 7,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
-          "max": 19,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 20,
+          "reason": "owned baseline 2026-11-18, max of 6 T50 runs, over Kobalte's 19 from 3 runs: the open motion's frame count moves a frame or two run to run (owned runs ranged 18 to 20)"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 17,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 14,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 3,
-        "compareDocumentPosition": 2,
-        "IntersectionObserver": 2,
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -236,41 +236,41 @@
       "0": {
         "elementsRestyled": {
           "max": 27,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 19,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 12,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 10,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 1,
-        "compareDocumentPosition": 2,
-        "IntersectionObserver": 2,
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -280,69 +280,69 @@
       "0": {
         "elementsRestyled": {
           "max": 22,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 17,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 57,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 52,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 7,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
-          "max": 18,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 17,
+          "reason": "owned baseline 2026-11-18, max of 6 T50 runs, since the motion's frame count moves a frame or two run to run"
         }
       },
       "3": {
         "elementsRestyled": {
           "max": 15,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 2,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 1: ArrowDown now moves focus past the disabled item to Wi-Fi (AC5), so the old and the new trigger restyle together"
         },
         "layouts": {
           "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 13,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 12,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 1,
-        "compareDocumentPosition": 2,
-        "IntersectionObserver": 2,
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -352,29 +352,29 @@
       "0": {
         "elementsRestyled": {
           "max": 29,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 21,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 8,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 104,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, over Kobalte's 8: the press now opens Hub and closes Wi-Fi inside the closed shadow root (AC13), so the step runs both motions where Kobalte did nothing"
         },
         "largestRecalc": {
-          "max": 2,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 14,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 2: the press now opens Hub and closes Wi-Fi inside the closed shadow root (AC13), so the step runs both motions where Kobalte did nothing"
         },
         "layouts": {
-          "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+          "max": 18,
+          "reason": "owned baseline 2026-11-18, max of 6 T50 runs, over Kobalte's 0: the press now opens Hub and closes Wi-Fi inside the closed shadow root (AC13), and the motion's frame count moves a frame or two run to run"
         }
       }
     }
