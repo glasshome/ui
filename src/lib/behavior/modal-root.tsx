@@ -304,6 +304,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
       } else {
         const event = pointerDownOutside(original as PointerEvent, (e) => {
           local.onPointerDownOutside?.(e);
+          if (ctx.modal() && e.detail.isContextMenu) e.preventDefault();
           local.onInteractOutside?.(e);
         });
         if (event.defaultPrevented) return;

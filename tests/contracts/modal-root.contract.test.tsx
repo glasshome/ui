@@ -1,7 +1,7 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal, type JSX } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { commands } from "vitest/browser";
+import { commands, userEvent } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { findAll } from "../../dev/harness/steps";
 import { Within } from "../../dev/harness/Within";
@@ -424,5 +424,32 @@ describe("modal root contract", () => {
     expect(keys[0]?.trusted).toBe(true);
     expect(keys[0]?.target).toBe(inside);
     expect(dialogs()).toHaveLength(1);
+  });
+
+  it("MR15 a context-menu press on the scrim leaves a modal open, and a plain press then closes it", async () => {
+    const [open, setOpen] = createSignal(true);
+    const menus: boolean[] = [];
+    render(() => (
+      <Dialog open={open()} onOpenChange={setOpen}>
+        <DialogContent onPointerDownOutside={(e) => menus.push(e.detail.isContextMenu)}>
+          <DialogTitle>Menu</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    await commands.mouse("move", CORNER.x, CORNER.y);
+    await commands.mouse("down", CORNER.x, CORNER.y, "right");
+    await commands.mouse("up", CORNER.x, CORNER.y, "right");
+    await settle();
+    expect(open()).toBe(true);
+    await userEvent.keyboard("{Control>}");
+    await input.pressAt(CORNER.x, CORNER.y);
+    await userEvent.keyboard("{/Control}");
+    await settle();
+    expect(open()).toBe(true);
+    await input.pressAt(CORNER.x, CORNER.y);
+    await settle();
+    expect(menus).toEqual([true, true, false]);
+    expect(open()).toBe(false);
   });
 });

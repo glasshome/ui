@@ -15,16 +15,13 @@ async function toPage(ctx: Ctx, x: number, y: number) {
 }
 
 /** Real mouse input at a point of the test frame's viewport. */
-export const mouse: BrowserCommand<[action: "move" | "down" | "up", x: number, y: number]> = async (
-  ctx,
-  action,
-  x,
-  y,
-) => {
+export const mouse: BrowserCommand<
+  [action: "move" | "down" | "up", x: number, y: number, button?: "left" | "right"]
+> = async (ctx, action, x, y, button = "left") => {
   const at = await toPage(ctx, x, y);
   await ctx.page.mouse.move(at.x, at.y);
-  if (action === "down") await ctx.page.mouse.down();
-  if (action === "up") await ctx.page.mouse.up();
+  if (action === "down") await ctx.page.mouse.down({ button });
+  if (action === "up") await ctx.page.mouse.up({ button });
 };
 
 // Chromium tracks the fingers down and the touch screen per session, so every pointer command shares one.
