@@ -90,7 +90,7 @@ describe("Accordion contract", () => {
       expect(region.getAnimations(), region.textContent ?? "").toEqual([]);
   });
 
-  it("AC5ArrowDown and ArrowUp move focus between enabled triggers and wrap", async () => {
+  it("AC5 ArrowDown and ArrowUp move focus between enabled triggers and wrap", async () => {
     const { run, expanded, focused } = await mount("disabled-item");
     await run(press("Hub"));
     await run({ key: "ArrowDown" });
