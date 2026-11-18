@@ -1,0 +1,3 @@
+document
+button, Tue, pressed
+button, Mon, not pressed

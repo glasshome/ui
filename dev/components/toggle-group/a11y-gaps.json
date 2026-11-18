@@ -1,0 +1,20 @@
+[
+  {
+    "scenario": "press",
+    "rule": "color-contrast",
+    "item": "2026-11-15-alpha-dimmed-text-fails-contrast",
+    "theme": "dark"
+  },
+  {
+    "scenario": "keyboard-nav",
+    "rule": "color-contrast",
+    "item": "2026-11-15-alpha-dimmed-text-fails-contrast",
+    "theme": "dark"
+  },
+  {
+    "scenario": "multiple",
+    "rule": "color-contrast",
+    "item": "2026-11-15-alpha-dimmed-text-fails-contrast",
+    "theme": "dark"
+  }
+]

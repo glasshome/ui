@@ -9,7 +9,7 @@ Each component that has a folder under `dev/components/<slug>/` can be seen, dri
 | `scenarios.tsx` | `defineScenarios({ component, scenarios })`. Each scenario has an `id` (kebab-case), a `title`, `render`, and optionally `within` (`page`, `dialog`, `sheet`, `shadow-root`), `steps` (pointer and key input) and `keyboard` (the same journey by keyboard only). | `tests/harness/scenarios.test.tsx` |
 | `contract.md` | One table row per behaviour, with an id such as `T1`. A row that fails today says "Gap:" and names its work item. | `tests/harness/contracts-covered.test.ts`: every id has an `it("T1 ...")` in `tests/contracts/<slug>.contract.test.tsx` |
 | `budget.json` | Per scenario: `steps` (per step index: `elementsRestyled`, `largestRecalc` and `layouts`, each `{ max, reason }`) and `guest` (`workUnits` and the four guest DOM call counts). | Host steps: `bun gov ops ui drive --all --t50 --check` (gate `ui-harness`). Guest: `packages/private/widget-realm/tests/dom/ui-scenarios.test.ts` (gate `test-widget-realm`) |
-| `a11y-gaps.json` (optional) | `[{ scenario, rule, item }]`: axe rules a scenario breaks today, each naming its work item. The entry fails once the gap closes. | `tests/harness/a11y.ts` |
+| `a11y-gaps.json` (optional) | `[{ scenario, rule, item, theme? }]`: axe rules a scenario breaks today at some step, in one theme or both, each naming its work item. The entry fails once no step breaks it. | `tests/harness/a11y.ts` |
 
 Every new scenario needs a budget: a missing scenario or step is an overrun.
 

@@ -10,10 +10,13 @@ const frame = () => new Promise<void>((done) => requestAnimationFrame(() => done
 
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
+type Theme = "light" | "dark";
+
 interface Gap {
   scenario: string;
   rule: string;
   item: string;
+  theme?: Theme;
 }
 
 const GAP_FILES = import.meta.glob<Gap[]>(
@@ -21,30 +24,33 @@ const GAP_FILES = import.meta.glob<Gap[]>(
   { eager: true, import: "default" },
 );
 
-/** Axe rules a scenario is known to break today, each naming its work item. */
-export function knownGaps(folder: string, scenario: string): string[] {
+/** Axe rules a scenario is known to break today in this theme, each naming its work item. */
+export function knownGaps(folder: string, scenario: string, theme: Theme): string[] {
   const gaps =
     GAP_FILES[`../../dev/components/${folder}/a11y-gaps.json`] ??
     GAP_FILES[`../../dev/blocks/${folder}/a11y-gaps.json`] ??
     [];
-  return gaps.filter((g) => g.scenario === scenario).map((g) => g.rule);
+  return gaps
+    .filter((g) => g.scenario === scenario && (g.theme ?? theme) === theme)
+    .map((g) => g.rule);
 }
 
-/**
- * Axe over the whole document with the WCAG 2.2 AA rules and target-size.
- * A known gap must still fail, so a gap that closes fails here until its entry goes.
- */
-export async function expectAxeClean(doc: Document, known: string[] = []): Promise<void> {
+/** A known gap must still fail somewhere in its scenario, so a gap that closes fails until its entry goes. */
+export function expectGapsSeen(known: string[], seen: Iterable<string>): void {
+  const found = new Set(seen);
+  const closed = known.filter((rule) => !found.has(rule));
+  if (closed.length > 0)
+    throw new Error(`gap closed, drop its a11y-gaps.json entry: ${closed.join(", ")}`);
+}
+
+/** Axe over the whole document with the WCAG 2.2 AA rules and target-size; returns the known gaps it saw. */
+export async function expectAxeClean(doc: Document, known: string[] = []): Promise<string[]> {
   const { violations } = await axe.run(doc, {
     runOnly: { type: "tag", values: TAGS },
     rules: { "target-size": { enabled: true } },
   });
-  const found = new Set(violations.map((v) => v.id));
-  const closed = known.filter((rule) => !found.has(rule));
-  if (closed.length > 0)
-    throw new Error(`gap closed, drop its a11y-gaps.json entry: ${closed.join(", ")}`);
   const fresh = violations.filter((v) => !known.includes(v.id));
-  if (fresh.length === 0) return;
+  if (fresh.length === 0) return violations.map((v) => v.id);
   const lines = fresh.flatMap((v) =>
     v.nodes.map(
       (n) =>
