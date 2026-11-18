@@ -1,57 +1,42 @@
-import { AlertDialog as AlertDialogPrimitive } from "@kobalte/core/alert-dialog";
 import { usePortalMount } from "./portal-mount.js";
-import { useDialogContext } from "@kobalte/core/dialog";
 import type { VariantProps } from "cva";
 import {
   type Component,
   type ComponentProps,
-  createSignal,
   type JSX,
   type ParentComponent,
   splitProps,
 } from "solid-js";
-import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
+import { ModalFrame, useDialogContext } from "../lib/behavior/modal-root.js";
+import { MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
   createModalDismiss,
   createModalHead,
   createModalParts,
+  createModalRootSkin,
+  createModalTextParts,
   type ModalHeadProps,
   MODAL_ANCHOR,
-  MODAL_DESCRIPTION,
   MODAL_PANEL,
   MODAL_SCRIM,
-  MODAL_TITLE,
   MODAL_WIDTH,
+  type ModalContentProps,
   type ModalDismissProps,
   ModalCover,
   type ModalSize,
 } from "./dialog-parts.js";
 
-const AlertDialog: ParentComponent<ComponentProps<typeof AlertDialogPrimitive>> = (props) => {
-  const mount = usePortalMount();
-  return <AlertDialogPrimitive modal={!inShadowRoot(mount)} {...props} preventScroll={false} />;
-};
+const AlertDialog = createModalRootSkin("alertdialog");
 
-const AlertDialogTrigger: Component<ComponentProps<typeof AlertDialogPrimitive.Trigger>> = (
-  props,
-) => <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />;
+const {
+  Trigger: AlertDialogTrigger,
+  Title: AlertDialogTitle,
+  Description: AlertDialogDescription,
+} = createModalTextParts("alert-dialog");
 
-const AlertDialogOverlay: Component<ComponentProps<typeof AlertDialogPrimitive.Overlay>> = (
-  props,
-) => {
-  const [local, rest] = splitProps(props, ["class"]);
-  return (
-    <AlertDialogPrimitive.Overlay
-      data-slot="alert-dialog-overlay"
-      class={cn(MODAL_SCRIM, local.class)}
-      {...rest}
-    />
-  );
-};
-
-type AlertDialogContentProps = ComponentProps<typeof AlertDialogPrimitive.Content> & {
+type AlertDialogContentProps = ModalContentProps & {
   size?: ModalSize;
   /** Names a panel that has no `AlertDialogTitle`. A registered Title wins. */
   ariaLabel?: string;
@@ -63,46 +48,36 @@ const AlertDialogContent: ParentComponent<AlertDialogContentProps> = (props) => 
     "children",
     "size",
     "ariaLabel",
+    "style",
     "ref",
-    "onInteractOutside",
-    "onCloseAutoFocus",
-    "onOpenAutoFocus",
+    "onFocusOutside",
+    "forceMount",
   ]);
-  const context = useDialogContext();
-  const [panel, setPanel] = createSignal<HTMLElement>();
-  const layer = shadowLayer({
-    content: panel,
-    open: () => context.isOpen(),
-    dismiss: () => context.close(),
-    trapsFocus: true,
-    consumer: local,
-  });
+  const ctx = useDialogContext();
   return (
-    <AlertDialogPrimitive.Portal mount={usePortalMount()}>
-      <ModalCover panel={panel} open={context.isOpen} />
-      <AlertDialogOverlay />
-      <AlertDialogPrimitive.Content
-        ref={(el: HTMLElement) => {
-          setPanel(el);
-          if (typeof local.ref === "function") local.ref(el);
-        }}
-        onInteractOutside={layer.onInteractOutside}
-        onCloseAutoFocus={layer.onCloseAutoFocus}
-        onOpenAutoFocus={layer.onOpenAutoFocus}
-        data-slot="alert-dialog-content"
-        role="alertdialog"
-        aria-label={context.titleId() ? undefined : local.ariaLabel}
-        class={cn(
+    <>
+      <ModalCover panel={ctx.panel} open={ctx.isOpen} />
+      <ModalFrame
+        slot="alert-dialog"
+        mount={usePortalMount()}
+        exitMs={MOTION_EXIT_MS.modal}
+        scrimClass={MODAL_SCRIM}
+        panelClass={cn(
           MODAL_PANEL,
           MODAL_WIDTH[local.size ?? "md"],
           MODAL_ANCHOR[local.size ?? "md"],
           local.class,
         )}
+        panelStyle={typeof local.style === "object" ? local.style : undefined}
+        ariaLabel={local.ariaLabel}
+        ref={(el: HTMLElement) => {
+          if (typeof local.ref === "function") local.ref(el as HTMLDivElement);
+        }}
         {...rest}
       >
         {local.children}
-      </AlertDialogPrimitive.Content>
-    </AlertDialogPrimitive.Portal>
+      </ModalFrame>
+    </>
   );
 };
 
@@ -112,37 +87,13 @@ const {
   Footer: AlertDialogFooter,
 } = createModalParts("alert-dialog");
 
-const AlertDialogTitle: Component<ComponentProps<typeof AlertDialogPrimitive.Title>> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
-  return (
-    <AlertDialogPrimitive.Title
-      data-slot="alert-dialog-title"
-      class={cn(MODAL_TITLE, local.class)}
-      {...rest}
-    />
-  );
-};
-
-const AlertDialogDescription: Component<ComponentProps<typeof AlertDialogPrimitive.Description>> = (
-  props,
-) => {
-  const [local, rest] = splitProps(props, ["class"]);
-  return (
-    <AlertDialogPrimitive.Description
-      data-slot="alert-dialog-description"
-      class={cn(MODAL_DESCRIPTION, local.class)}
-      {...rest}
-    />
-  );
-};
-
 /** An alert dialog is read aloud as a description, and the line carries the consequence. */
 type AlertDialogHeadProps = ModalHeadProps & { line: JSX.Element };
 
 const AlertDialogHead = createModalHead<AlertDialogHeadProps>(
   AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
+  AlertDialogTitle as Component<ComponentProps<"h2">>,
+  AlertDialogDescription as Component<ComponentProps<"p">>,
 );
 
 type AlertDialogButtonProps = ModalDismissProps &

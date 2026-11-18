@@ -1,16 +1,33 @@
-import type { Accessor } from "solid-js";
+import { type Accessor, createContext, createSignal, onCleanup, useContext } from "solid-js";
 import { createDismiss } from "./behavior/dismiss.js";
 import { effect } from "./behavior/solid.js";
-import {
-  createFocusScope,
-  focusWithoutTracking,
-  type InitialFocus,
-} from "./behavior/focus-scope.js";
+import { focusWithoutTracking } from "./behavior/focus-scope.js";
 import { registerLayer } from "./behavior/layer-stack.js";
 
 /** True for a node inside a shadow root, where page-level layer logic sees only the root's host. */
 export const inShadowRoot = (node: Node | undefined): boolean =>
   typeof ShadowRoot !== "undefined" && node?.getRootNode() instanceof ShadowRoot;
+
+export const ReportCovered = createContext<(covered: Accessor<boolean>) => void>();
+
+/**
+ * For a Kobalte root that can be modal: true while one of its layers sits under an owned modal.
+ * Kobalte steps aside only for its own layers, so a modal Kobalte layer would hide the owned modal,
+ * block its pointer events and pull its focus back; the root drops `modal` while covered.
+ */
+export function createCoveredRoot(): {
+  covered: Accessor<boolean>;
+  report: (covered: Accessor<boolean>) => void;
+} {
+  const [reporters, setReporters] = createSignal<readonly Accessor<boolean>[]>([]);
+  return {
+    covered: () => reporters().some((covered) => covered()),
+    report: (covered) => {
+      setReporters((list) => [...list, covered]);
+      onCleanup(() => setReporters((list) => list.filter((other) => other !== covered)));
+    },
+  };
+}
 
 type OutsideEvent = { target: EventTarget | null; preventDefault(): void };
 type AutoFocusEvent = { preventDefault(): void };
@@ -18,9 +35,10 @@ type AutoFocusEvent = { preventDefault(): void };
 export interface LayerHandlers {
   onInteractOutside: (e: OutsideEvent) => void;
   onCloseAutoFocus: (e: AutoFocusEvent) => void;
-  onOpenAutoFocus: (e: AutoFocusEvent) => void;
   /** The shadow root's host while the layer is in one: what the page sees as the target of anything inside. */
   host: () => Element | undefined;
+  /** An owned modal sits above the layer: the modal owns every press and focus until it closes. */
+  covered: Accessor<boolean>;
 }
 
 interface ShadowLayerOptions {
@@ -32,13 +50,9 @@ interface ShadowLayerOptions {
   trigger?: Accessor<Element | undefined>;
   /** Menus: any press outside the layer and the layers above it dismisses it, newest or not, as Kobalte's menus do. */
   tree?: boolean;
-  /** The layer keeps Tab inside itself (dialogs); its initial focus is then ui's, not Kobalte's. */
-  trapsFocus?: boolean;
-  initialFocus?: InitialFocus;
   consumer: {
     onInteractOutside?: (e: never) => void;
     onCloseAutoFocus?: (e: never) => void;
-    onOpenAutoFocus?: (e: never) => void;
   };
 }
 
@@ -54,31 +68,17 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
   const handle = registerLayer({
     element: options.content,
     open: options.open,
-    kind: !options.dismiss
-      ? "tooltip"
-      : options.trapsFocus
-        ? "modal"
-        : options.tree
-          ? "menu"
-          : "popover",
+    kind: !options.dismiss ? "tooltip" : options.tree ? "menu" : "popover",
     escape: () => false,
     readsOwnEscape: true,
     dismiss: options.dismiss,
     trigger: options.trigger,
   });
-  createFocusScope({
-    container: options.content,
-    active: () =>
-      !!options.trapsFocus &&
-      !!options.dismiss &&
-      options.open() &&
-      inShadowRoot(options.content()),
-    trapped: () => true,
-    initialFocus: options.initialFocus ?? "first",
-  });
   effect(options.open, (open) => {
     if (open) dismissedIn = undefined;
   });
+  const covered = () => options.open() && handle.above().some((layer) => layer.kind === "modal");
+  useContext(ReportCovered)?.(covered);
   createDismiss({
     layer: handle,
     outsidePress: () => !!options.dismiss && inShadowRoot(options.content()),
@@ -96,9 +96,10 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
   };
   return {
     host: shadowHost,
+    covered,
     onInteractOutside: (e) => {
       const host = shadowHost();
-      if (host && e.target === host) {
+      if (covered() || (host && e.target === host)) {
         e.preventDefault();
         return;
       }
@@ -119,10 +120,6 @@ export function shadowLayer(options: ShadowLayerOptions): LayerHandlers {
         });
       }
       options.consumer.onCloseAutoFocus?.(e as never);
-    },
-    onOpenAutoFocus: (e) => {
-      if (options.trapsFocus && shadowHost()) e.preventDefault();
-      options.consumer.onOpenAutoFocus?.(e as never);
     },
   };
 }

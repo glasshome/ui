@@ -9,7 +9,12 @@ import {
   useContext,
 } from "solid-js";
 import { INPUT_SURFACE } from "../lib/input-classes.js";
-import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
+import {
+  createCoveredRoot,
+  inShadowRoot,
+  ReportCovered,
+  shadowLayer,
+} from "../lib/shadow-layer.js";
 import { nestedLayerAttrs, Z_CLASS } from "../lib/layers.js";
 import { FIELD_MOTION, MORPH_MOTION, STAGGER } from "../lib/motion-classes.js";
 import { anchorToTriggerTop, FLOATING_PANEL } from "../lib/overlay-classes.js";
@@ -39,16 +44,19 @@ const PopoverRoot: Component<PopoverProps> = (props) => {
   const surface = () => local.surface ?? "overlay";
   // Modal in a shadow root, Kobalte would aria-hide the realm's host, popover included.
   const inShadow = inShadowRoot(usePortalMount());
+  const cover = createCoveredRoot();
   return (
     <PopoverSurfaceContext.Provider value={surface}>
-      <PopoverPrimitive
-        gutter={local.gutter ?? 0}
-        getAnchorRect={local.getAnchorRect ?? anchorToTriggerTop}
-        flip={false}
-        overlap
-        {...rest}
-        modal={inShadow ? false : rest.modal}
-      />
+      <ReportCovered.Provider value={cover.report}>
+        <PopoverPrimitive
+          gutter={local.gutter ?? 0}
+          getAnchorRect={local.getAnchorRect ?? anchorToTriggerTop}
+          flip={false}
+          overlap
+          {...rest}
+          modal={inShadow || cover.covered() ? false : rest.modal}
+        />
+      </ReportCovered.Provider>
     </PopoverSurfaceContext.Provider>
   );
 };
@@ -115,7 +123,7 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
         onCloseAutoFocus={layer.onCloseAutoFocus}
         data-slot="popover-content"
         data-surface={surface()}
-        {...nestedLayerAttrs(popover.isModal())}
+        {...nestedLayerAttrs(popover.isModal() || layer.covered())}
         class={cn(surface() === "field" ? FIELD_PANEL : OVERLAY_PANEL, local.class)}
         {...rest}
       />

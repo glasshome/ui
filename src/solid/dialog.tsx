@@ -5,24 +5,13 @@ import {
   type ComponentProps,
   createEffect,
   createSignal,
-  type JSX,
   onCleanup,
   type ParentComponent,
   splitProps,
-  type ValidComponent,
 } from "solid-js";
 import { overAnchor } from "../lib/anchor-placement.js";
-import {
-  ModalDescription,
-  ModalFrame,
-  type ModalPartProps,
-  ModalRoot,
-  ModalTitle,
-  ModalTrigger,
-  useDialogContext,
-} from "../lib/behavior/modal-root.js";
+import { ModalFrame, useDialogContext } from "../lib/behavior/modal-root.js";
 import { MOTION_EXIT_MS } from "../lib/motion-classes.js";
-import { inShadowRoot } from "../lib/shadow-layer.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -30,52 +19,25 @@ import {
   createModalDismiss,
   createModalHead,
   createModalParts,
+  createModalRootSkin,
+  createModalTextParts,
   MODAL_ANCHOR,
-  MODAL_DESCRIPTION,
   MODAL_PANEL,
   MODAL_SCRIM,
-  MODAL_TITLE,
   MODAL_WIDTH,
+  type ModalContentProps,
   type ModalDismissProps,
   ModalCover,
   type ModalSize,
 } from "./dialog-parts.js";
 
-interface DialogProps {
-  open?: boolean;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  /** Modal toward the page. Defaults to true on the page and false inside a shadow root. */
-  modal?: boolean;
-  /** @deprecated No effect; the panel takes its own id. */
-  id?: string;
-  /** @deprecated No effect; the panel stays mounted through its exit on its own. */
-  forceMount?: boolean;
-  /** @deprecated No effect; a dialog never locks page scroll. */
-  preventScroll?: boolean;
-  /** @deprecated No effect. */
-  translations?: Record<string, string>;
-  children?: JSX.Element;
-}
+const Dialog = createModalRootSkin("dialog");
 
-const Dialog: ParentComponent<DialogProps> = (props) => {
-  const mount = usePortalMount();
-  return (
-    <ModalRoot
-      open={props.open}
-      defaultOpen={props.defaultOpen}
-      onOpenChange={props.onOpenChange}
-      modal={props.modal ?? !inShadowRoot(mount)}
-      role="dialog"
-    >
-      {props.children}
-    </ModalRoot>
-  );
-};
-
-function DialogTrigger<T extends ValidComponent = "button">(props: ModalPartProps<T>): JSX.Element {
-  return <ModalTrigger data-slot="dialog-trigger" {...(props as ModalPartProps<"button">)} />;
-}
+const {
+  Trigger: DialogTrigger,
+  Title: DialogTitle,
+  Description: DialogDescription,
+} = createModalTextParts("dialog");
 
 type DialogCloseProps = ModalDismissProps &
   Partial<Pick<VariantProps<typeof buttonVariants>, "variant" | "size">>;
@@ -100,24 +62,13 @@ const DialogClose: ParentComponent<DialogCloseProps> = (props) => {
   );
 };
 
-type DialogContentProps = Omit<ComponentProps<"div">, "style" | "role"> & {
-  as?: ValidComponent;
-  style?: JSX.CSSProperties | string;
+type DialogContentProps = ModalContentProps & {
   size?: ModalSize;
   /** Names a panel that has no `DialogTitle`. A registered Title wins. */
   ariaLabel?: string;
   /** Opens the panel out of this element (the tile it came from): it grows from the element's box
    *  over it instead of appearing centred, and closes back into it. */
   anchor?: HTMLElement;
-  onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  onPointerDownOutside?: (event: Event) => void;
-  onInteractOutside?: (event: Event) => void;
-  onOpenAutoFocus?: (event: Event) => void;
-  onCloseAutoFocus?: (event: Event) => void;
-  /** @deprecated No effect; focus never leaves an open dialog. */
-  onFocusOutside?: (event: Event) => void;
-  /** @deprecated No effect; the panel stays mounted through its exit on its own. */
-  forceMount?: boolean;
 };
 
 /* Pixel widths of the sizes an anchored panel keeps (Tailwind's max-w-sm/md/lg/3xl/5xl). */
@@ -138,8 +89,6 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
     "anchor",
     "style",
     "ref",
-    "onPointerDownOutside",
-    "onInteractOutside",
     "onFocusOutside",
     "forceMount",
   ]);
@@ -184,10 +133,6 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
         ref={(el: HTMLElement) => {
           if (typeof local.ref === "function") local.ref(el as HTMLDivElement);
         }}
-        onInteractOutside={(event: Event) => {
-          local.onPointerDownOutside?.(event);
-          local.onInteractOutside?.(event);
-        }}
         {...others}
       >
         {local.children}
@@ -197,22 +142,6 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
 };
 
 const { Header: DialogHeader, Body: DialogBody, Footer: DialogFooter } = createModalParts("dialog");
-
-function DialogTitle<T extends ValidComponent = "h2">(props: ModalPartProps<T>): JSX.Element {
-  const [local, others] = splitProps(props as ModalPartProps<"h2">, ["class"]);
-  return <ModalTitle data-slot="dialog-title" class={cn(MODAL_TITLE, local.class)} {...others} />;
-}
-
-function DialogDescription<T extends ValidComponent = "p">(props: ModalPartProps<T>): JSX.Element {
-  const [local, others] = splitProps(props as ModalPartProps<"p">, ["class"]);
-  return (
-    <ModalDescription
-      data-slot="dialog-description"
-      class={cn(MODAL_DESCRIPTION, local.class)}
-      {...others}
-    />
-  );
-}
 
 const DialogHead = createModalHead(
   DialogHeader,

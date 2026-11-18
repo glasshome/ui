@@ -1,18 +1,15 @@
-import { Dialog as DialogPrimitive, useDialogContext } from "@kobalte/core/dialog";
 import { usePortalMount } from "./portal-mount.js";
 import type { VariantProps } from "cva";
 import {
   children,
   type Component,
-  type ComponentProps,
   type JSX,
   type ParentComponent,
   Show,
-  createSignal,
   splitProps,
 } from "solid-js";
+import { ModalFrame, useDialogContext } from "../lib/behavior/modal-root.js";
 import { buttonVariants } from "../lib/button-variants.js";
-import { inShadowRoot, shadowLayer } from "../lib/shadow-layer.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { SCRIM_MOTION } from "../lib/motion-classes.js";
 import {
@@ -25,21 +22,21 @@ import { cn } from "../lib/utils.js";
 import {
   createModalDismiss,
   createModalParts,
-  MODAL_DESCRIPTION,
+  createModalRootSkin,
+  createModalTextParts,
   MODAL_MAX_H,
-  MODAL_TITLE,
+  type ModalContentProps,
   type ModalDismissProps,
   ModalCover,
 } from "./dialog-parts.js";
 
-const Sheet: ParentComponent<ComponentProps<typeof DialogPrimitive>> = (props) => {
-  const mount = usePortalMount();
-  return <DialogPrimitive modal={!inShadowRoot(mount)} {...props} preventScroll={false} />;
-};
+const Sheet = createModalRootSkin("dialog");
 
-const SheetTrigger: Component<ComponentProps<typeof DialogPrimitive.Trigger>> = (props) => (
-  <DialogPrimitive.Trigger data-slot="sheet-trigger" {...props} />
-);
+const {
+  Trigger: SheetTrigger,
+  Title: SheetTitle,
+  Description: SheetDescription,
+} = createModalTextParts("sheet");
 
 type SheetCloseProps = ModalDismissProps &
   Partial<Pick<VariantProps<typeof buttonVariants>, "variant" | "size">>;
@@ -62,25 +59,16 @@ const SheetClose: ParentComponent<SheetCloseProps> = (props) => {
   );
 };
 
-const SheetOverlay: Component<ComponentProps<typeof DialogPrimitive.Overlay>> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
-  return (
-    <DialogPrimitive.Overlay
-      data-slot="sheet-overlay"
-      class={cn(
-        `${SCRIM_MOTION} pointer-events-auto fixed inset-0 select-none ${Z_CLASS.overlay} ${SCRIM_CLASS} ${SCRIM_CONTAIN}`,
-        local.class,
-      )}
-      {...rest}
-    />
-  );
-};
+const SHEET_SCRIM = `${SCRIM_MOTION} pointer-events-auto fixed inset-0 select-none ${Z_CLASS.overlay} ${SCRIM_CLASS} ${SCRIM_CONTAIN}`;
 
 /* A viewport-tall panel would stretch the percentage-sized sheen into a small
  * blob over a flat field; pinned lengths match the ellipse a dialog gets. */
 const SHEET_SURFACE = `${OVERLAY_SURFACE} [--glass-sheen:600px_300px]`;
 
 const SHEET_PANEL = `fixed ${Z_CLASS.overlay} flex flex-col overflow-hidden ${SCROLL_CONTAIN} rounded-lg ${SHEET_SURFACE} transition ease-in-out focus:outline-none focus-visible:outline-none data-[closed]:animate-out data-[expanded]:animate-in data-[closed]:duration-300 data-[expanded]:duration-500`;
+
+/* The data-[closed] duration in SHEET_PANEL. */
+const SHEET_EXIT_MS = 300;
 
 const SHEET_SIDE = {
   right:
@@ -93,7 +81,7 @@ const SHEET_SIDE = {
 
 type SheetSide = keyof typeof SHEET_SIDE;
 
-type SheetContentProps = ComponentProps<typeof DialogPrimitive.Content> & {
+type SheetContentProps = ModalContentProps & {
   /** A modal belongs in `ResponsiveDialog`; this family slides from an edge. */
   side?: SheetSide;
   above?: JSX.Element;
@@ -119,65 +107,42 @@ const SheetContent: ParentComponent<SheetContentProps> = (props) => {
     "side",
     "above",
     "ariaLabel",
+    "style",
     "ref",
-    "onInteractOutside",
-    "onCloseAutoFocus",
+    "onOpenAutoFocus",
+    "onFocusOutside",
+    "forceMount",
   ]);
-  const context = useDialogContext();
-  const [panel, setPanel] = createSignal<HTMLElement>();
-  const layer = shadowLayer({
-    content: panel,
-    open: () => context.isOpen(),
-    dismiss: () => context.close(),
-    trapsFocus: true,
-    initialFocus: "container",
-    consumer: local,
-  });
-
+  const ctx = useDialogContext();
   return (
-    <DialogPrimitive.Portal mount={usePortalMount()}>
-      <ModalCover panel={panel} open={context.isOpen} />
-      <SheetOverlay />
-      <DialogPrimitive.Content
+    <>
+      <ModalCover panel={ctx.panel} open={ctx.isOpen} />
+      <ModalFrame
+        slot="sheet"
+        mount={usePortalMount()}
+        exitMs={SHEET_EXIT_MS}
+        scrimClass={SHEET_SCRIM}
+        panelClass={cn(SHEET_PANEL, SHEET_SIDE[local.side ?? "right"], local.class)}
+        panelStyle={typeof local.style === "object" ? local.style : undefined}
+        ariaLabel={local.ariaLabel}
         ref={(el: HTMLElement) => {
-          setPanel(el);
-          if (typeof local.ref === "function") local.ref(el);
+          if (typeof local.ref === "function") local.ref(el as HTMLDivElement);
         }}
-        onInteractOutside={layer.onInteractOutside}
-        onCloseAutoFocus={layer.onCloseAutoFocus}
-        data-slot="sheet-content"
-        role="dialog"
-        aria-label={context.titleId() ? undefined : local.ariaLabel}
-        class={cn(SHEET_PANEL, SHEET_SIDE[local.side ?? "right"], local.class)}
-        onOpenAutoFocus={(e: Event) => e.preventDefault()}
+        onOpenAutoFocus={(event: Event) => {
+          // The panel takes focus itself, not its first control.
+          if (local.onOpenAutoFocus) local.onOpenAutoFocus(event);
+          else event.preventDefault();
+        }}
         {...rest}
       >
         <SheetAbove above={local.above} />
         {local.children}
-      </DialogPrimitive.Content>
-    </DialogPrimitive.Portal>
+      </ModalFrame>
+    </>
   );
 };
 
 const { Header: SheetHeader, Body: SheetBody, Footer: SheetFooter } = createModalParts("sheet");
-
-const SheetTitle: Component<ComponentProps<typeof DialogPrimitive.Title>> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
-  return (
-    <DialogPrimitive.Title data-slot="sheet-title" class={cn(MODAL_TITLE, local.class)} {...rest} />
-  );
-};
-
-const SheetDescription: Component<ComponentProps<typeof DialogPrimitive.Description>> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
-  return (
-    <DialogPrimitive.Description
-      data-slot="sheet-description"
-      class={cn(MODAL_DESCRIPTION, local.class)}
-      {...rest}
-    />
-  );
-};
 
 export {
   Sheet,

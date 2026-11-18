@@ -199,6 +199,7 @@ export interface ModalFrameProps extends Omit<
   mount?: Node;
   exitMs: number;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
+  onPointerDownOutside?: (event: Event) => void;
   onInteractOutside?: (event: Event) => void;
   onOpenAutoFocus?: (event: Event) => void;
   onCloseAutoFocus?: (event: Event) => void;
@@ -232,6 +233,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
     "mount",
     "exitMs",
     "onEscapeKeyDown",
+    "onPointerDownOutside",
     "onInteractOutside",
     "onOpenAutoFocus",
     "onCloseAutoFocus",
@@ -266,10 +268,9 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
         const event = new KeyboardEvent("keydown", { key: "Escape", cancelable: true });
         if (vetoed(local.onEscapeKeyDown, event)) return;
       } else {
-        if (
-          vetoed(local.onInteractOutside, new CustomEvent("interactoutside", { cancelable: true }))
-        )
-          return;
+        const event = new CustomEvent("interactoutside", { cancelable: true });
+        local.onPointerDownOutside?.(event);
+        if (vetoed(local.onInteractOutside, event)) return;
         closedByOutside = true;
       }
       ctx.close();
@@ -325,7 +326,13 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
       {(_) => {
         onCleanup(() => ctx.setPanel(undefined));
         return (
-          <Portal mount={local.mount}>
+          <Portal
+            mount={local.mount}
+            // A modal Kobalte layer underneath leaves body pointer-events: none behind.
+            ref={(container: HTMLDivElement) => {
+              container.style.pointerEvents = "auto";
+            }}
+          >
             <div
               data-slot={`${local.slot}-overlay`}
               class={local.scrimClass}

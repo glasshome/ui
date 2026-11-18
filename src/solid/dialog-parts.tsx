@@ -17,6 +17,14 @@ import {
   useContext,
   type ValidComponent,
 } from "solid-js";
+import {
+  ModalDescription,
+  type ModalPartProps,
+  type ModalRole,
+  ModalRoot,
+  ModalTitle,
+  ModalTrigger,
+} from "../lib/behavior/modal-root.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { callEventHandler } from "../lib/behavior/solid.js";
 import { busyProps } from "../lib/busy.js";
@@ -29,13 +37,88 @@ import {
   SCROLL_CONTAIN,
 } from "../lib/overlay-classes.js";
 import { coverOnceOpen } from "../lib/page-cover.js";
+import { inShadowRoot } from "../lib/shadow-layer.js";
 import { cn } from "../lib/utils.js";
+import { usePortalMount } from "./portal-mount.js";
 import { SectionIcon } from "./section-card.js";
 
-/* kobalte 0.13.13 builds AlertDialog with Object.assign(DialogRoot, ...), the
- * same object Dialog is built from, so whichever of the two modules a bundle
- * evaluates last owns .Content for both. Every family therefore states its own
- * role instead of trusting the primitive's default. */
+export interface ModalRootSkinProps {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Modal toward the page. Defaults to true on the page and false inside a shadow root. */
+  modal?: boolean;
+  /** @deprecated No effect; the panel takes its own id. */
+  id?: string;
+  /** @deprecated No effect; the panel stays mounted through its exit on its own. */
+  forceMount?: boolean;
+  /** @deprecated No effect; a dialog never locks page scroll. */
+  preventScroll?: boolean;
+  /** @deprecated No effect. */
+  translations?: Record<string, string>;
+  children?: JSX.Element;
+}
+
+export function createModalRootSkin(role: ModalRole): ParentComponent<ModalRootSkinProps> {
+  return (props) => {
+    const mount = usePortalMount();
+    return (
+      <ModalRoot
+        open={props.open}
+        defaultOpen={props.defaultOpen}
+        onOpenChange={props.onOpenChange}
+        modal={props.modal ?? !inShadowRoot(mount)}
+        role={role}
+      >
+        {props.children}
+      </ModalRoot>
+    );
+  };
+}
+
+export type ModalContentProps = Omit<ComponentProps<"div">, "style" | "role"> & {
+  as?: ValidComponent;
+  style?: JSX.CSSProperties | string;
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
+  onPointerDownOutside?: (event: Event) => void;
+  onInteractOutside?: (event: Event) => void;
+  onOpenAutoFocus?: (event: Event) => void;
+  onCloseAutoFocus?: (event: Event) => void;
+  /** @deprecated No effect; focus never leaves an open dialog. */
+  onFocusOutside?: (event: Event) => void;
+  /** @deprecated No effect; the panel stays mounted through its exit on its own. */
+  forceMount?: boolean;
+};
+
+export interface ModalTextParts {
+  Trigger: <T extends ValidComponent = "button">(props: ModalPartProps<T>) => JSX.Element;
+  Title: <T extends ValidComponent = "h2">(props: ModalPartProps<T>) => JSX.Element;
+  Description: <T extends ValidComponent = "p">(props: ModalPartProps<T>) => JSX.Element;
+}
+
+export function createModalTextParts(slot: string): ModalTextParts {
+  return {
+    Trigger: (props) => (
+      <ModalTrigger data-slot={`${slot}-trigger`} {...(props as ModalPartProps<"button">)} />
+    ),
+    Title: (props) => {
+      const [local, rest] = splitProps(props as ModalPartProps<"h2">, ["class"]);
+      return (
+        <ModalTitle data-slot={`${slot}-title`} class={cn(MODAL_TITLE, local.class)} {...rest} />
+      );
+    },
+    Description: (props) => {
+      const [local, rest] = splitProps(props as ModalPartProps<"p">, ["class"]);
+      return (
+        <ModalDescription
+          data-slot={`${slot}-description`}
+          class={cn(MODAL_DESCRIPTION, local.class)}
+          {...rest}
+        />
+      );
+    },
+  };
+}
 
 export type ModalSize = "sm" | "md" | "lg" | "xl" | "full";
 
@@ -87,9 +170,8 @@ const MODAL_HEADER_ACTION = "flex shrink-0 items-center gap-2";
 
 /* The only scroll container.
  * - The inset is the full one and a Header or Footer sibling shortens it, keyed
- *   on data-slot rather than on position: kobalte parks a focus-trap <span> at
- *   each end of the panel, and Sheet's `above` and the sheet handle add more
- *   element siblings, so `first:`/`first-of-type:` all lie.
+ *   on data-slot rather than on position: Sheet's `above` and the sheet handle
+ *   add element siblings, so `first:`/`first-of-type:` lie.
  * - `pan-y pinch-zoom` leaves the single-finger vertical gesture to the sheet's
  *   drag arbitration without taking two-finger zoom away.
  * - The reserved scrollbar lives inside the right inset, so the content column
@@ -285,9 +367,9 @@ export interface ModalLabels {
 
 const ModalLabelsContext = createContext<ModalLabels>();
 
-/** Kobalte wires title/description ids for its own families; the hand-rolled
- *  surfaces (BottomSheet) wire them through this. The part registers the id it
- *  actually rendered, so a caller's own `id` still labels the panel. */
+/** ModalRoot wires title/description ids for its families; BottomSheet wires
+ *  them through this. The part registers the id it actually rendered, so a
+ *  caller's own `id` still labels the panel. */
 export function createModalLabels(): ModalLabels {
   const titleId = createUniqueId();
   const descriptionId = createUniqueId();
