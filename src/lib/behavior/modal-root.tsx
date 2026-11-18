@@ -14,15 +14,15 @@ import {
   type ValidComponent,
 } from "solid-js";
 import { Portal } from "solid-js/web";
-import { LAYER_ROOT } from "../overlay-classes";
-import { createControllableSignal } from "./controllable";
-import { createDismiss } from "./dismiss";
-import { activeOf, createFocusScope, focusWithoutTracking } from "./focus-scope";
-import { createHideOutside } from "./hide-outside";
-import { layerStack, registerLayer } from "./layer-stack";
-import { Polymorphic } from "./polymorphic";
-import { createPresence } from "./presence";
-import { callEventHandler, effect, merge } from "./solid";
+import { LAYER_ROOT } from "../overlay-classes.js";
+import { createControllableSignal } from "./controllable.js";
+import { createDismiss } from "./dismiss.js";
+import { activeOf, createFocusScope, focusWithoutTracking } from "./focus-scope.js";
+import { createHideOutside } from "./hide-outside.js";
+import { layerStack, registerLayer } from "./layer-stack.js";
+import { Polymorphic } from "./polymorphic.js";
+import { createPresence } from "./presence.js";
+import { callEventHandler, effect, merge } from "./solid.js";
 
 export type ModalRole = "dialog" | "alertdialog";
 

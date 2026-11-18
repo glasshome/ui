@@ -1,6 +1,6 @@
 import { type Accessor, onCleanup, untrack } from "solid-js";
-import { layerStack } from "./layer-stack";
-import { effect } from "./solid";
+import { layerStack } from "./layer-stack.js";
+import { effect } from "./solid.js";
 
 export const CANDIDATES =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [contenteditable]:not([contenteditable="false"]), [tabindex]:not([tabindex="-1"])';

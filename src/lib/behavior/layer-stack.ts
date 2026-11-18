@@ -1,5 +1,5 @@
 import { type Accessor, createMemo, createRoot, createSignal } from "solid-js";
-import { effect } from "./solid";
+import { effect } from "./solid.js";
 
 export type LayerKind = "modal" | "popover" | "menu" | "tooltip" | "tour";
 export type TopLayer = "auto" | "manual";

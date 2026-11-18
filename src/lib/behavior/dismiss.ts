@@ -1,6 +1,6 @@
 import type { Accessor } from "solid-js";
-import { type Layer, type LayerHandle, layerStack } from "./layer-stack";
-import { effect } from "./solid";
+import { type Layer, type LayerHandle, layerStack } from "./layer-stack.js";
+import { effect } from "./solid.js";
 
 export type DismissReason = "escape" | "outside-press" | "focus-outside";
 

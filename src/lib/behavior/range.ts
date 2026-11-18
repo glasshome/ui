@@ -1,6 +1,6 @@
 import { type Accessor, createMemo } from "solid-js";
-import { readingDirection } from "../locale";
-import { createControllableSignal } from "./controllable";
+import { readingDirection } from "../locale.js";
+import { createControllableSignal } from "./controllable.js";
 
 function snapValueToStep(value: number, min: number, max: number, step: number): number {
   const remainder = (value - (Number.isNaN(min) ? 0 : min)) % step;

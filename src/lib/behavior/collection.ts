@@ -1,6 +1,6 @@
 import { type Accessor, createSignal, onCleanup } from "solid-js";
-import { activeOf, focusWithoutTracking } from "./focus-scope";
-import { effect } from "./solid";
+import { activeOf, focusWithoutTracking } from "./focus-scope.js";
+import { effect } from "./solid.js";
 
 export const TYPEAHEAD_MS = 1000;
 

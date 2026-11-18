@@ -1,6 +1,6 @@
 import type { Accessor } from "solid-js";
-import { type Align, placeBeside, type Side } from "../anchor-placement";
-import { effect } from "./solid";
+import { type Align, placeBeside, type Side } from "../anchor-placement.js";
+import { effect } from "./solid.js";
 
 /** An element, or a point or box with no element of its own: a context menu opens at the pointer. */
 export interface AnchorLike {

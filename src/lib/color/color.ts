@@ -12,8 +12,8 @@
  * Ported from @internationalized/color by way of Kobalte's colors module (MIT).
  */
 
-import { locale } from "../locale";
-import type { ColorIntlTranslations } from "./intl";
+import { locale } from "../locale.js";
+import type { ColorIntlTranslations } from "./intl.js";
 
 type ColorFormat = "hex" | "hexa" | "rgb" | "rgba" | "hsl" | "hsla" | "hsb" | "hsba";
 type ColorSpace = "rgb" | "hsl" | "hsb";

@@ -1,6 +1,6 @@
 import { type Accessor, onCleanup } from "solid-js";
-import type { LayerHandle } from "./layer-stack";
-import { effect } from "./solid";
+import type { LayerHandle } from "./layer-stack.js";
+import { effect } from "./solid.js";
 
 const KEPT = '[aria-live], [role="status"], [role="alert"], [data-kb-top-layer]';
 const ELEMENT = 1;

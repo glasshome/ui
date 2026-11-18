@@ -1,11 +1,11 @@
 import { type Accessor, createSignal, onCleanup, untrack } from "solid-js";
-import type { Align, Side } from "../anchor-placement";
-import { type AnchorLike, createAnchored } from "./anchored";
-import { createCollection } from "./collection";
-import { createDismiss } from "./dismiss";
-import { focusWithoutTracking } from "./focus-scope";
-import { registerLayer } from "./layer-stack";
-import { effect } from "./solid";
+import type { Align, Side } from "../anchor-placement.js";
+import { type AnchorLike, createAnchored } from "./anchored.js";
+import { createCollection } from "./collection.js";
+import { createDismiss } from "./dismiss.js";
+import { focusWithoutTracking } from "./focus-scope.js";
+import { registerLayer } from "./layer-stack.js";
+import { effect } from "./solid.js";
 
 const MENU_ITEMS = '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]';
 export const SUBMENU_OPEN_DELAY_MS = 100;
