@@ -53,7 +53,7 @@ export function FaceToggle(props: {
       )}
     >
       <span aria-hidden="true" class="relative">
-        <Avatar class="group-data-[pressed]/face-toggle:ring-primary group-data-[pressed]/face-toggle:ring-offset-background size-11 opacity-50 transition-opacity duration-200 group-active/face-toggle:scale-[0.97] group-data-[pressed]/face-toggle:opacity-100 group-data-[pressed]/face-toggle:ring-2 group-data-[pressed]/face-toggle:ring-offset-2">
+        <Avatar class="group-data-[pressed]/face-toggle:ring-primary group-data-[pressed]/face-toggle:ring-offset-background size-11 opacity-50 transition-opacity duration-(--duration-expand) group-active/face-toggle:scale-[0.97] group-data-[pressed]/face-toggle:opacity-100 group-data-[pressed]/face-toggle:ring-2 group-data-[pressed]/face-toggle:ring-offset-2">
           <AvatarFallback>
             <Show when={props.kind === "screen"} fallback={props.name.slice(0, 1)}>
               <Icon icon="lucide:monitor-smartphone" width={18} height={18} />
@@ -81,7 +81,7 @@ export function FaceToggle(props: {
       </span>
       <span
         data-slot="face-toggle-name"
-        class="text-muted-foreground group-data-[pressed]/face-toggle:text-foreground max-w-full truncate transition-colors duration-200"
+        class="text-muted-foreground group-data-[pressed]/face-toggle:text-foreground max-w-full truncate transition-colors duration-(--duration-expand)"
       >
         {props.name}
       </span>

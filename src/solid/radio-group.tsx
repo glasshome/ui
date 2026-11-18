@@ -53,7 +53,7 @@ const RadioGroupItem: Component<
           <RadioGroupPrimitive.ItemControl
             data-slot="radio-group-item-control"
             class={cn(
-              "transition-glass relative flex aspect-square size-7 shrink-0 items-center justify-center overflow-hidden rounded-full duration-200 ease-out active:scale-90",
+              "transition-glass relative flex aspect-square size-7 shrink-0 items-center justify-center overflow-hidden rounded-full duration-(--duration-expand) ease-out active:scale-90",
               FIELD_CHROME,
               "peer-focus-visible:ring-ring/50 peer-focus-visible:ring-[3px] peer-focus-visible:[--glass-edge:var(--ring)]",
               "data-[invalid]:ring-destructive/20 data-[disabled]:opacity-40 data-[invalid]:[--glass-edge:var(--destructive)]",
@@ -63,7 +63,7 @@ const RadioGroupItem: Component<
 						    that animates in. */}
             <RadioGroupPrimitive.ItemIndicator
               data-slot="radio-group-item-indicator"
-              class="glass glass-tint zoom-in-50 fade-in animate-in absolute inset-0 grid place-items-center rounded-full duration-200 [--glass-tone:var(--primary)] [--glass-wash:90%]"
+              class="glass glass-tint zoom-in-50 fade-in animate-in absolute inset-0 grid place-items-center rounded-full duration-(--duration-expand) [--glass-tone:var(--primary)] [--glass-wash:90%]"
             >
               <span
                 data-slot="radio-group-item-dot"

@@ -53,7 +53,7 @@ const Checkbox: Component<ComponentProps<typeof CheckboxPrimitive> & { size?: Ch
             data-slot="checkbox-box"
             data-size={local.size ?? "default"}
             class={cn(
-              "transition-glass box-border inline-flex shrink-0 items-center justify-center overflow-hidden rounded-xs duration-200 ease-out group-active:scale-90",
+              "transition-glass box-border inline-flex shrink-0 items-center justify-center overflow-hidden rounded-xs duration-(--duration-expand) ease-out group-active:scale-90",
               size().box,
               "peer-focus-visible:ring-ring/50 peer-focus-visible:ring-[3px] peer-focus-visible:[--glass-edge:var(--ring)]",
               state.checked()
@@ -70,7 +70,7 @@ const Checkbox: Component<ComponentProps<typeof CheckboxPrimitive> & { size?: Ch
               height={size().px}
               class={cn(
                 size().glyph,
-                "transition-glass duration-200 ease-out",
+                "transition-glass duration-(--duration-expand) ease-out",
                 state.checked() ? "scale-100 opacity-100" : "scale-0 opacity-0",
               )}
             />
