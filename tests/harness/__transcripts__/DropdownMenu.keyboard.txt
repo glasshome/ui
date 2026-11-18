@@ -1,0 +1,3 @@
+document
+menu, Actions, orientated vertically
+menuitem, Copy, position 1, set size 2 | button, Actions, not expanded, has popup menu | polite: Chosen | menuitem, Copy, position 1, set size 2 | button, Actions, not expanded, has popup menu

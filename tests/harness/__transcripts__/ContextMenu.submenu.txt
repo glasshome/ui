@@ -1,0 +1,4 @@
+document
+menu, Canvas, orientated vertically
+menuitem, More, not expanded, has popup menu, position 3, set size 3
+menuitem, Rename, position 1, set size 2 | polite: Chosen

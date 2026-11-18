@@ -1,0 +1,4 @@
+document
+menu, Canvas, orientated vertically
+menuitem, Copy, position 1, set size 3
+polite: Chosen
