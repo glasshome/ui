@@ -6,7 +6,6 @@ import {
   type ComponentProps,
   createContext,
   createSignal,
-  createUniqueId,
   type JSX,
   onCleanup,
   onMount,
@@ -16,14 +15,13 @@ import {
   useContext,
   type ValidComponent,
 } from "solid-js";
-import { type Collection, createCollection } from "../lib/behavior/collection.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
-import { focusWithoutTracking, hasFocus } from "../lib/behavior/focus-scope.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
-import { effect, merge, omit } from "../lib/behavior/solid.js";
+import { merge, omit } from "../lib/behavior/solid.js";
 import { BALANCED_ROWS, balanceRows } from "../lib/balance-rows.js";
 import { TRACK_SURFACE } from "../lib/card-classes.js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
+import { createToggleItem, createToggleSet, type ToggleSet } from "../lib/toggle-set.js";
 import { cn } from "../lib/utils.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
 import { toggleVariants } from "./toggle.js";
@@ -59,12 +57,8 @@ type ToggleGroupProps = Omit<ComponentProps<"div">, "onChange"> &
 // Single-select paints the pressed segment with the selection highlight; multi-select has none.
 type ToggleGroupContextValue = VariantProps<typeof toggleVariants> & {
   sliding: boolean;
-  id: Accessor<string>;
-  orientation: Accessor<Orientation>;
   disabled: Accessor<boolean>;
-  isPressed: (value: string) => boolean;
-  toggle: (value: string) => void;
-  collection: Collection;
+  set: ToggleSet;
 };
 
 const ToggleGroupContext = createContext<ToggleGroupContextValue | null>(null);
@@ -108,8 +102,6 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
   const sliding = () => !props.multiple;
   const orientation = () => props.orientation ?? "horizontal";
   const vertical = () => orientation() === "vertical";
-  const fallbackId = `group-${createUniqueId()}`;
-  const id = () => props.id ?? fallbackId;
   const [values, setValues] = createControllableSignal<string[]>({
     value: () => toList(props.value),
     defaultValue: () => toList(props.defaultValue) ?? [],
@@ -121,23 +113,15 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
   });
   const [root, setRoot] = createSignal<HTMLElement>();
   const [scope, setScope] = createSignal<HTMLElement>();
-  const collection = createCollection({
+  const set = createToggleSet({
     root,
     itemSelector: `${ITEM}[data-key]`,
+    values,
+    setValues,
+    multiple: () => props.multiple ?? false,
     orientation,
-    focus: "roving",
-    loop: () => true,
-    dir: () => (root()?.closest("[dir]")?.getAttribute("dir") === "rtl" ? "rtl" : "ltr"),
-    preferred: values,
+    id: () => props.id,
   });
-
-  const toggle = (value: string) => {
-    const current = values();
-    const pressed = current.includes(value);
-    if (props.multiple)
-      setValues(pressed ? current.filter((v) => v !== value) : [...current, value]);
-    else setValues(pressed ? [] : [value]);
-  };
 
   onMount(() => {
     const el = root();
@@ -156,12 +140,8 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
     get sliding() {
       return sliding();
     },
-    id,
-    orientation,
     disabled: () => props.disabled ?? false,
-    isPressed: (value) => values().includes(value),
-    toggle,
-    collection,
+    set,
   };
 
   return (
@@ -175,7 +155,7 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
         },
         role: "group",
         get id() {
-          return id();
+          return set.id();
         },
         get "data-orientation"() {
           return orientation();
@@ -189,7 +169,7 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
         get "data-scroll"() {
           return props.scroll ? "" : undefined;
         },
-        "on:keydown": (event: KeyboardEvent) => collection.onKeyDown(event),
+        "on:keydown": (event: KeyboardEvent) => set.collection.onKeyDown(event),
         get class() {
           return cn(
             `group/toggle-group w-fit max-w-full items-center gap-y-1 rounded-lg data-[wrapped]:w-full ${TRACK_SURFACE} p-1 data-[variant=outline]:shadow-xs`,
@@ -252,80 +232,24 @@ const ToggleGroupItem: Component<ToggleGroupItemProps> = (props) => {
     "ref",
     "as",
   ]);
-  const fallbackId = `${context.id()}-item-${createUniqueId()}`;
-  const [el, setEl] = createSignal<HTMLElement>();
   const disabled = () => local.disabled || context.disabled();
-  effect(disabled, () => context.collection.refresh());
-  onCleanup(() => context.collection.refresh());
-  const pressed = () => context.isPressed(local.value);
-  const state: ToggleGroupItemState = { pressed };
+  const item = createToggleItem(context.set, { value: () => local.value, disabled });
   const content = children(() => {
     const body = local.children;
-    return typeof body === "function" ? body(state) : body;
-  });
-
-  effect(el, (node) => {
-    if (!node) return;
-    let mousePressed = false;
-    const choose = () => {
-      if (disabled()) return;
-      context.toggle(local.value);
-      context.collection.highlight(local.value, "pointer");
-    };
-    // A mouse toggles on press, so focus lands on an item already toggled and is announced so.
-    const pointerdown = (event: PointerEvent) => {
-      mousePressed = event.pointerType === "mouse" && event.button === 0;
-      if (mousePressed) choose();
-    };
-    const click = (event: MouseEvent) => {
-      // WebKit leaves a clicked button unfocused.
-      if (!disabled() && !hasFocus(node)) focusWithoutTracking(node);
-      if (event.detail === 0 || !mousePressed) choose();
-      mousePressed = false;
-    };
-    const focus = () => context.collection.highlight(local.value, "pointer");
-    node.addEventListener("pointerdown", pointerdown);
-    node.addEventListener("click", click);
-    node.addEventListener("focus", focus);
-    return () => {
-      node.removeEventListener("pointerdown", pointerdown);
-      node.removeEventListener("click", click);
-      node.removeEventListener("focus", focus);
-    };
+    return typeof body === "function" ? body({ pressed: item.pressed }) : body;
   });
 
   return (
     <Polymorphic
-      {...merge({ "data-slot": "toggle-group-item" }, rest, {
+      {...merge({ "data-slot": "toggle-group-item" }, rest, item.props, {
         as: local.as,
         defaultAs: "button" as ValidComponent,
         ref: (node: HTMLElement) => {
-          setEl(node);
+          item.ref(node);
           if (typeof local.ref === "function") local.ref(node as HTMLButtonElement);
         },
         get id() {
-          return local.id ?? fallbackId;
-        },
-        get tabIndex() {
-          return context.collection.tabIndex(local.value);
-        },
-        get disabled() {
-          return disabled();
-        },
-        get "aria-pressed"() {
-          return pressed();
-        },
-        get "data-pressed"() {
-          return pressed() ? "" : undefined;
-        },
-        get "data-disabled"() {
-          return disabled() ? "" : undefined;
-        },
-        get "data-key"() {
-          return local.value;
-        },
-        get "data-orientation"() {
-          return context.orientation();
+          return local.id ?? item.props.id;
         },
         get "data-variant"() {
           return context.variant || local.variant;

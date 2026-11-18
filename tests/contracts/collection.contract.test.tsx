@@ -147,4 +147,19 @@ describe("collection contract", () => {
     await run(press("Remove the kitchen"));
     expect(stops()).toEqual(["Hall"]);
   });
+
+  it("CO11 with disabledFocusable an aria-disabled item stays in the arrow order and can hold the tab stop", async () => {
+    const view = render(() => <Toolbar rooms={ROOMS} loop disabledFocusable />);
+    await settle();
+    const focused = () => focusedElement()?.textContent;
+    await input.key("Tab");
+    expect(focused(), "the first room holds the stop though disabled").toBe("Attic");
+    await input.key("ArrowDown");
+    expect(focused()).toBe("Hall");
+    await input.key("End");
+    expect(focused(), "End reaches the disabled last room").toBe("Yard");
+    await input.key("ArrowDown");
+    expect(focused(), "loop wraps through the disabled first room").toBe("Attic");
+    expect(view.getByRole("button", { name: "Attic" }).getAttribute("tabindex")).toBe("0");
+  });
 });

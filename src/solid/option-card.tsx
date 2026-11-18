@@ -1,4 +1,3 @@
-import { useRadioGroupContext } from "@kobalte/core/radio-group";
 import {
   children,
   createContext,
@@ -15,10 +14,10 @@ import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { Ornament } from "./ornament.js";
 import { PickerRow } from "./picker-row.js";
-import { isItemActivation, RadioGroup, RadioGroupItem } from "./radio-group.js";
+import { isItemActivation, RadioGroup, RadioGroupItem, useRadioGroup } from "./radio-group.js";
 
 /* Tone without .glass-tint: the card holds body copy, which must stay foreground-coloured. */
-const OPTION_CARD_CHROME = `${CARD_SURFACE} group/option-card relative cursor-pointer overflow-hidden rounded-xl transition-glass duration-200 [&:not([style*=--glass-tone])]:[--glass-tone:var(--primary)] [--glass-wash:9%] hover:[--glass-wash:16%] has-[:focus-visible]:[--glass-edge:var(--ring)] has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50 data-[checked]:[--glass-wash:30%] data-[checked]:[--glass-edge:oklch(from_var(--glass-tone)_l_c_h/0.75)] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50`;
+const OPTION_CARD_CHROME = `${CARD_SURFACE} group/option-card relative cursor-pointer overflow-hidden rounded-xl transition-glass duration-(--duration-expand) [&:not([style*=--glass-tone])]:[--glass-tone:var(--primary)] [--glass-wash:9%] hover:[--glass-wash:16%] has-[:focus-visible]:[--glass-edge:var(--ring)] has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50 data-[checked]:[--glass-wash:30%] data-[checked]:[--glass-edge:oklch(from_var(--glass-tone)_l_c_h/0.75)] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50`;
 
 /* Sub-options live inside the card: the card grows (a grid row morphing
  * 0fr -> 1fr on the morph token) while it is picked, and the content settles
@@ -28,7 +27,7 @@ const OPTION_CARD_DRAWER =
 /* Flat: hover is a tint, the current row is the check plus full text colour.
  * The rows start under the title text (card pad + icon + gap, less the row's own pad). */
 const OPTION_CHOICE_ROW =
-  "rounded-sm text-foreground/75 transition-colors hover:bg-foreground/5 aria-checked:text-foreground";
+  "rounded-sm text-foreground/75 transition-colors duration-(--duration-state) hover:bg-foreground/5 aria-checked:text-foreground";
 
 const OPTION_CARD_DRAWER_CONTENT =
   "-translate-y-2 flex flex-col gap-0.5 pr-1 pb-2 pl-[calc(var(--spacing)*3.5+54px)] opacity-0 transition-[opacity,translate] duration-(--duration-expand) ease-(--ease-morph) group-data-[checked]/option-card:translate-y-0 group-data-[checked]/option-card:opacity-100 group-data-[checked]/option-card:delay-[var(--stagger-base,80ms)]";
@@ -86,7 +85,7 @@ export function OptionCardGroup(props: {
   return (
     <RadioGroup
       class={cn("gap-2", props.class)}
-      value={props.value ?? undefined}
+      value={props.value ?? ""}
       onChange={props.onChange}
       aria-label={props["aria-label"]}
       aria-labelledby={props["aria-labelledby"]}
@@ -120,7 +119,7 @@ export function OptionCard(props: {
    *  reveal them while it is picked. */
   children?: JSX.Element;
 }) {
-  const group = useRadioGroupContext();
+  const group = useRadioGroup();
   const checked = () => group.isSelectedValue(props.value);
   const [choices, setChoices] = createSignal<string[]>([]);
   const choice: ChoiceContext = {

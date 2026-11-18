@@ -1,0 +1,2 @@
+document
+radio, Compact, not checked, position 2, set size 4

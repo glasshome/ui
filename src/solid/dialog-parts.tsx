@@ -1,4 +1,4 @@
-import { Button as KobalteButton } from "@kobalte/core/button";
+import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
 import {
   type Accessor,
   children,
@@ -321,7 +321,7 @@ export function createModalHead<P extends ModalHeadProps = ModalHeadProps>(
   };
 }
 
-export type ModalDismissProps = ComponentProps<typeof KobalteButton> & {
+export type ModalDismissProps = ButtonRootProps<ValidComponent> & {
   /** Presses do nothing, the dialog stays open and focus stays put; see Button. */
   busy?: boolean;
 };
@@ -337,7 +337,7 @@ export function createModalDismiss(
     const [local, rest] = splitProps(props, ["onClick", "busy"]);
     const context = useCloser();
     return (
-      <KobalteButton
+      <ButtonRoot
         data-slot={slot}
         onClick={(event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => {
           callEventHandler(event, local.onClick);

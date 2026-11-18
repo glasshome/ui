@@ -1,0 +1,5 @@
+document
+radio, Compact, not checked, position 2, set size 4
+radio, Dense, not checked, position 4, set size 4
+radio, Comfortable, checked, position 1, set size 4
+radio, Dense, not checked, position 4, set size 4
