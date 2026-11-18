@@ -452,4 +452,78 @@ describe("modal root contract", () => {
     expect(menus).toEqual([true, true, false]);
     expect(open()).toBe(false);
   });
+
+  it("MR16 Escape with focus on a data-kb-top-layer button outside the modal closes it, and of two stacked modals only the top", async () => {
+    const wake = document.body.appendChild(document.createElement("button"));
+    wake.setAttribute("data-kb-top-layer", "");
+    wake.textContent = "Wake screen";
+    const [lower, setLower] = createSignal(true);
+    const [upper, setUpper] = createSignal(false);
+    render(() => (
+      <>
+        <Dialog open={lower()} onOpenChange={setLower}>
+          <DialogContent>
+            <DialogTitle>Lower</DialogTitle>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={upper()} onOpenChange={setUpper}>
+          <DialogContent>
+            <DialogTitle>Upper</DialogTitle>
+          </DialogContent>
+        </Dialog>
+      </>
+    ));
+    await settle();
+    wake.focus();
+    expect(document.activeElement).toBe(wake);
+    await input.key("Escape");
+    await settle();
+    expect(lower()).toBe(false);
+
+    setLower(true);
+    await settle();
+    setUpper(true);
+    await settle();
+    wake.focus();
+    await input.key("Escape");
+    await settle();
+    expect([lower(), upper()]).toEqual([true, false]);
+    wake.focus();
+    await input.key("Escape");
+    await settle();
+    expect([lower(), upper()]).toEqual([false, false]);
+    wake.remove();
+  });
+
+  it("MR17 of two stacked modals Escape inside the top one closes only it, and its veto holds", async () => {
+    const [lower, setLower] = createSignal(true);
+    const [upper, setUpper] = createSignal(false);
+    const [veto, setVeto] = createSignal(true);
+    render(() => (
+      <>
+        <Dialog open={lower()} onOpenChange={setLower}>
+          <DialogContent>
+            <DialogTitle>Lower</DialogTitle>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={upper()} onOpenChange={setUpper}>
+          <DialogContent onEscapeKeyDown={(e) => veto() && e.preventDefault()}>
+            <DialogTitle>Upper</DialogTitle>
+            <Button>Inside</Button>
+          </DialogContent>
+        </Dialog>
+      </>
+    ));
+    await settle();
+    setUpper(true);
+    await settle();
+    button("Inside").focus();
+    await input.key("Escape");
+    await settle();
+    expect([lower(), upper()]).toEqual([true, true]);
+    setVeto(false);
+    await input.key("Escape");
+    await settle();
+    expect([lower(), upper()]).toEqual([true, false]);
+  });
 });

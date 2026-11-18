@@ -298,6 +298,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
   let closedByOutside = false;
   createDismiss({
     layer: handle,
+    escapeFrom: "document",
     onDismiss: (reason, original) => {
       if (reason === "escape") {
         if (vetoed(local.onEscapeKeyDown, original as KeyboardEvent)) return;

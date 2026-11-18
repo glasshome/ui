@@ -303,6 +303,17 @@ describe("dismiss contract", () => {
     expect(tip.open()).toBe(true);
   });
 
+  it("DI18 Escape in a lower layer closes the newer one through its own handler", async () => {
+    const lower = stacked({ kind: "popover", top: 20 });
+    const upper = stacked({ kind: "popover", top: 160 });
+    lower.button.focus();
+    await settle();
+    await input.key("Escape");
+    expect(upper.reasons).toEqual(["escape"]);
+    expect(upper.open()).toBe(false);
+    expect(lower.reasons).toEqual([]);
+  });
+
   it("DI17 Escape in a modal that does not close on it stays in the layer", async () => {
     const watched = watchWindow();
     const modal = stacked({ kind: "modal", top: 20, escape: false });

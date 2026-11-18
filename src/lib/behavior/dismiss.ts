@@ -89,39 +89,52 @@ function createTooltipEscape(options: DismissOptions) {
   return () => document.removeEventListener("keydown", onKey, true);
 }
 
+const escapeHandlers = new WeakMap<Layer, (event: KeyboardEvent) => void>();
+const claimedKeys = new WeakSet<Event>();
+
 function createEscape(options: DismissOptions) {
   const { layer } = options;
   effect(
     () =>
       [
+        layer.layer(),
         layer.layer()?.element(),
         layer.layer()?.kind === "tooltip" ? "tooltip" : (options.escapeFrom ?? "layer"),
       ] as const,
-    ([element, from]) => {
-      if (!element) return;
+    ([entry, element, from]) => {
+      if (!entry || !element) return;
       if (from === "tooltip") return createTooltipEscape(options);
-      const target = from === "document" ? document : element;
+      escapeHandlers.set(entry, (event) => options.onDismiss("escape", event));
+      // The root element, so the key is taken before Kobalte's document listeners hear it.
+      const target = from === "document" ? document.documentElement : element;
       const onKey = (event: KeyboardEvent) => {
-        if (event.key !== "Escape" || event.isComposing) return;
+        if (event.key !== "Escape" || event.isComposing || claimedKeys.has(event)) return;
         const mine = layer.layer();
         if (!mine || !takesKeys(mine)) return;
-        const stack = layerStack.layers();
-        const claims = stack
-          .slice(stack.indexOf(mine))
-          .findLast(
-            (entry) =>
-              entry.kind !== "tooltip" &&
-              takesKeys(entry) &&
-              (entry.escape() || (entry.kind === "modal" && !entry.readsOwnEscape)),
-          );
+        const stack = layerStack.layers().slice(layerStack.layers().indexOf(mine));
+        const topmost = stack.findLast((other) => other.kind !== "tooltip" && takesKeys(other));
+        if (from === "document" && topmost !== mine && topmost?.readsOwnEscape) return;
+        const claims = stack.findLast(
+          (other) =>
+            other.kind !== "tooltip" &&
+            takesKeys(other) &&
+            (other.escape() || (other.kind === "modal" && !other.readsOwnEscape)),
+        );
         if (!claims) return;
+        claimedKeys.add(event);
         event.stopPropagation();
-        if (claims === mine && claims.escape()) options.onDismiss("escape", event);
-        else if (claims.escape()) claims.dismiss?.();
+        if (claims.escape()) {
+          const handler = escapeHandlers.get(claims);
+          if (handler) handler(event);
+          else claims.dismiss?.();
+        }
         event.preventDefault();
       };
       target.addEventListener("keydown", onKey as EventListener);
-      return () => target.removeEventListener("keydown", onKey as EventListener);
+      return () => {
+        target.removeEventListener("keydown", onKey as EventListener);
+        escapeHandlers.delete(entry);
+      };
     },
   );
 }
