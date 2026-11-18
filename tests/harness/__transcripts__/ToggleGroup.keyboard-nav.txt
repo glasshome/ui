@@ -1,0 +1,5 @@
+document
+button, Low, pressed
+button, Medium, not pressed
+button, High, not pressed
+button, Low, pressed

@@ -1,0 +1,5 @@
+document
+button, Hall
+button, Kitchen
+button, Office
+button, Hall

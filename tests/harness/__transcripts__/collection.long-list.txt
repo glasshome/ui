@@ -1,0 +1,3 @@
+document
+button, Room 1
+button, Room 40

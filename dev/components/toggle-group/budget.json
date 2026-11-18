@@ -1,0 +1,310 @@
+{
+  "default": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 25,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 20,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 9,
+        "reason": "2026-11-18: lowered to the owned collection's cost, plus 25% and at least one"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 2
+      }
+    }
+  },
+  "press": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 25,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 20,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 87,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 8,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 10,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 12,
+        "reason": "kobalte baseline 2026-11-18, plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 2
+      }
+    }
+  },
+  "keyboard-nav": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 25,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 20,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 87,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 8,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 15,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 10,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      },
+      "4": {
+        "elementsRestyled": {
+          "max": 10,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 14,
+        "reason": "kobalte baseline 2026-11-18, plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 2
+      }
+    }
+  },
+  "multiple": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 5,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 10,
+        "reason": "kobalte baseline 2026-11-18, plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 1
+      }
+    }
+  },
+  "in-dialog": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 89,
+          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+        },
+        "largestRecalc": {
+          "max": 33,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 65,
+          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+        },
+        "largestRecalc": {
+          "max": 8,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 19,
+        "reason": "kobalte baseline 2026-11-18, plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+      },
+      "domCalls": {
+        "getComputedStyle": 33,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 4
+      }
+    }
+  },
+  "in-shadow-root": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 28,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 22,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 88,
+          "reason": "2026-11-18: the press now selects inside a closed shadow root (the Kobalte gap closed), so the highlight slides and the panel swaps; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+        },
+        "largestRecalc": {
+          "max": 8,
+          "reason": "2026-11-18: the press now selects inside a closed shadow root (the Kobalte gap closed), so the highlight slides and the panel swaps; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+        },
+        "layouts": {
+          "max": 3,
+          "reason": "2026-11-18: the press now selects inside a closed shadow root (the Kobalte gap closed), so the highlight slides and the panel swaps; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+        }
+      }
+    }
+  }
+}

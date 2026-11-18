@@ -1,0 +1,4 @@
+document
+button, Add a garage
+button, Hall
+button, Garage

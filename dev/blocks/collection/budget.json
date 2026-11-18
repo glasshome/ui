@@ -1,0 +1,552 @@
+{
+  "vertical": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1393,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1114,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 4,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "4": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 7,
+        "reason": "2026-11-18: first measure of the owned collection in the realm"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "horizontal-rtl": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1392,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1113,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 7,
+        "reason": "2026-11-18: first measure of the owned collection in the realm"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "typeahead": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1392,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1113,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 4,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 5,
+        "reason": "2026-11-18: first measure of the owned collection in the realm"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "inserted-middle": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1389,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1111,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 5,
+        "reason": "2026-11-18: first measure of the owned collection in the realm"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "reordered": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1389,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1111,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 8,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 8,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "4": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 7,
+        "reason": "2026-11-18: first measure of the owned collection in the realm"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "removed-highlighted": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1389,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1111,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 5,
+        "reason": "2026-11-18: first measure of the removal scenario in the realm"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "long-list": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1434,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1147,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 4,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 9,
+        "reason": "2026-11-18: first measure of the owned collection in the realm"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "in-shadow-root": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1394,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1115,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 9,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+        }
+      }
+    }
+  }
+}

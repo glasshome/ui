@@ -5,8 +5,14 @@ import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { BLOCKS, COMPONENTS, kebab } from "../../dev/harness/registry";
 import { runSteps } from "../../dev/harness/steps";
 import type { Scenario } from "../../dev/harness/types";
-import { expectAxeClean, interactiveState, knownGaps, spokenTranscript } from "./a11y";
-import { input } from "./input";
+import {
+  expectAxeClean,
+  expectGapsSeen,
+  interactiveState,
+  knownGaps,
+  spokenTranscript,
+} from "./a11y";
+import { input, trackPointer } from "./input";
 import { mountScenario, settle } from "./mount";
 
 const VIEWPORT = { width: 1024, height: 768 };
@@ -39,17 +45,21 @@ async function mount(component: string, scenario: Scenario) {
 }
 
 describe.each(CASES)("$name", ({ component, scenario }) => {
-  const gaps = knownGaps(kebab(component), scenario.id);
-
   it.each(THEMES)("axe is clean before and after each step, %s theme", async (theme) => {
+    const gaps = knownGaps(kebab(component), scenario.id, theme);
     document.documentElement.classList.toggle("dark", theme === "dark");
     await commands.emulateMedia({ colorScheme: theme });
+    // The previous test leaves the pointer anywhere; hovering a control at mount would make the first pass depend on test order.
+    await commands.mouse("move", innerWidth - 1, innerHeight - 1);
     const { scope } = await mount(component, scenario);
-    await expectAxeClean(document, gaps);
-    await runSteps(scope, scenario.steps ?? [], input, async () => {
+    const seen = await expectAxeClean(document, gaps);
+    const pointer = trackPointer(input);
+    await runSteps(scope, scenario.steps ?? [], pointer.input, async () => {
+      await pointer.rehover();
       await settle();
-      await expectAxeClean(document, gaps);
+      seen.push(...(await expectAxeClean(document, gaps)));
     });
+    expectGapsSeen(gaps, seen);
   });
 
   it("speaks the transcript on file", async () => {

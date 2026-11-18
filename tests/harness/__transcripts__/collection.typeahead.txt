@@ -1,0 +1,4 @@
+document
+button, Bath
+button, Den
+button, Dining

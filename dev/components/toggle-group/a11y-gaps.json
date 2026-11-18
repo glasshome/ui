@@ -1,0 +1,16 @@
+[
+  {
+    "scenario": "press",
+    "rule": "color-contrast",
+    "item": "2026-11-15-alpha-dimmed-text-fails-contrast",
+    "theme": "dark",
+    "hover": true
+  },
+  {
+    "scenario": "multiple",
+    "rule": "color-contrast",
+    "item": "2026-11-15-alpha-dimmed-text-fails-contrast",
+    "theme": "dark",
+    "hover": true
+  }
+]

@@ -1,0 +1,3 @@
+document
+button, Kitchen
+button, Remove the kitchen
