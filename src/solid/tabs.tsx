@@ -256,8 +256,9 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
   ]);
   const [el, setEl] = createSignal<HTMLElement>();
   const disabled = () => local.disabled || ctx.disabled();
+  effect(disabled, () => ctx.collection.refresh());
+  onCleanup(() => ctx.collection.refresh());
   const selected = () => ctx.value() === local.value;
-  onCleanup(() => ctx.collection.release(local.value));
 
   effect(
     () => [local.value, local.id] as const,
@@ -277,10 +278,10 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
       mousePressed = event.pointerType === "mouse" && event.button === 0;
       if (mousePressed) choose();
     };
-    const click = () => {
+    const click = (event: MouseEvent) => {
       // WebKit leaves a clicked button unfocused.
       if (!disabled() && !hasFocus(node)) focusWithoutTracking(node);
-      if (!mousePressed) choose();
+      if (event.detail === 0 || !mousePressed) choose();
       mousePressed = false;
     };
     const focus = () => ctx.collection.highlight(local.value, "pointer");

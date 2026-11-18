@@ -255,8 +255,9 @@ const ToggleGroupItem: Component<ToggleGroupItemProps> = (props) => {
   const fallbackId = `${context.id()}-item-${createUniqueId()}`;
   const [el, setEl] = createSignal<HTMLElement>();
   const disabled = () => local.disabled || context.disabled();
+  effect(disabled, () => context.collection.refresh());
+  onCleanup(() => context.collection.refresh());
   const pressed = () => context.isPressed(local.value);
-  onCleanup(() => context.collection.release(local.value));
   const state: ToggleGroupItemState = { pressed };
   const content = children(() => {
     const body = local.children;
@@ -276,10 +277,10 @@ const ToggleGroupItem: Component<ToggleGroupItemProps> = (props) => {
       mousePressed = event.pointerType === "mouse" && event.button === 0;
       if (mousePressed) choose();
     };
-    const click = () => {
+    const click = (event: MouseEvent) => {
       // WebKit leaves a clicked button unfocused.
       if (!disabled() && !hasFocus(node)) focusWithoutTracking(node);
-      if (!mousePressed) choose();
+      if (event.detail === 0 || !mousePressed) choose();
       mousePressed = false;
     };
     const focus = () => context.collection.highlight(local.value, "pointer");

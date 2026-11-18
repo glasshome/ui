@@ -23,12 +23,14 @@ export interface Collection {
   highlight: (key: string, by: HighlightBy) => void;
   tabIndex: (key: string) => 0 | -1;
   onKeyDown: (event: KeyboardEvent) => void;
-  /** An item calls this as it unmounts, so a removed tab stop passes to a present item. */
-  release: (key: string) => void;
+  /** Items call this as they mount, unmount or change disabled, so the tab stop always sits on a present, enabled item. */
+  refresh: () => void;
 }
 
 const isDisabled = (el: HTMLElement) =>
-  el.getAttribute("aria-disabled") === "true" || el.hasAttribute("data-disabled");
+  el.getAttribute("aria-disabled") === "true" ||
+  el.hasAttribute("data-disabled") ||
+  el.matches(":disabled");
 
 const keyOf = (el: HTMLElement) => el.dataset.key ?? "";
 
@@ -79,24 +81,39 @@ export function createCollection(options: CollectionOptions): Collection {
   function placeStop(root: HTMLElement | undefined, preferred: readonly string[]) {
     if (!root || focusIsWithin(root)) return;
     const items = enabledItems(root);
-    const stop = items.find((el) => preferred.includes(keyOf(el))) ?? items[0];
-    if (stop) setOwn(keyOf(stop));
+    const stop =
+      items.find((el) => preferred.includes(keyOf(el))) ??
+      items.find((el) => keyOf(el) === own()) ??
+      items[0];
+    setOwn(stop ? keyOf(stop) : undefined);
   }
 
-  if (options.focus === "roving")
+  let disposed = false;
+  let queued = false;
+  onCleanup(() => (disposed = true));
+
+  // A microtask, so an unmounting item has left the DOM and a burst of changes places the stop once.
+  function refresh() {
+    if (options.focus !== "roving" || queued) return;
+    queued = true;
+    queueMicrotask(() => {
+      queued = false;
+      if (!disposed) placeStop(options.root(), options.preferred?.() ?? []);
+    });
+  }
+
+  if (options.focus === "roving") {
     effect(
       () => [options.root(), options.preferred?.() ?? []] as const,
       ([root, preferred]) => placeStop(root, preferred),
     );
-
-  let disposed = false;
-  onCleanup(() => (disposed = true));
-
-  function release(key: string) {
-    if (options.focus !== "roving" || own() !== key) return;
-    // The item is still in the DOM while its cleanup runs.
-    queueMicrotask(() => {
-      if (!disposed && own() === key) placeStop(options.root(), options.preferred?.() ?? []);
+    effect(options.root, (root) => {
+      if (!root) return;
+      const leave = (event: FocusEvent) => {
+        if (!(event.relatedTarget instanceof Node && root.contains(event.relatedTarget))) refresh();
+      };
+      root.addEventListener("focusout", leave);
+      return () => root.removeEventListener("focusout", leave);
     });
   }
 
@@ -159,6 +176,6 @@ export function createCollection(options: CollectionOptions): Collection {
     highlight,
     tabIndex: (key) => (options.focus === "roving" && key === highlighted() ? 0 : -1),
     onKeyDown,
-    release,
+    refresh,
   };
 }

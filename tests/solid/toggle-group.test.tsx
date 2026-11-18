@@ -1,6 +1,7 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { userEvent } from "vitest/browser";
+import { commands, userEvent } from "vitest/browser";
+import { createSignal } from "solid-js";
 import { Toggle } from "../../src/solid/toggle.js";
 import { ToggleGroup, ToggleGroupItem } from "../../src/solid/toggle-group.js";
 import { useFakeTime } from "../../src/testing/index.js";
@@ -215,5 +216,40 @@ describe("ToggleGroup", () => {
     expect(scrolledTo).toBe(240);
     expect(root.hasAttribute("data-clip-end")).toBe(true);
     expect(root.hasAttribute("data-clip-start")).toBe(false);
+  });
+
+  it("keeps one tab stop when an empty group is enabled after it mounts", async () => {
+    const [disabled, setDisabled] = createSignal(true);
+    const { container } = render(() => (
+      <ToggleGroup disabled={disabled()}>
+        <ToggleGroupItem value="left">Left</ToggleGroupItem>
+        <ToggleGroupItem value="right">Right</ToggleGroupItem>
+      </ToggleGroup>
+    ));
+    setDisabled(false);
+    await Promise.resolve();
+    const stops = [...container.querySelectorAll('[data-slot="toggle-group-item"]')].filter(
+      (el) => el.getAttribute("tabindex") === "0",
+    );
+    expect(stops.map((el) => el.textContent)).toEqual(["Left"]);
+  });
+
+  it("toggles from the keyboard after a mouse press that was dragged off the item", async () => {
+    const view = render(() => (
+      <ToggleGroup multiple>
+        <ToggleGroupItem value="left">Left</ToggleGroupItem>
+        <ToggleGroupItem value="right">Right</ToggleGroupItem>
+      </ToggleGroup>
+    ));
+    const left = view.getByRole("button", { name: "Left" });
+    const box = left.getBoundingClientRect();
+    await commands.mouse("move", box.x + box.width / 2, box.y + box.height / 2);
+    await commands.mouse("down", box.x + box.width / 2, box.y + box.height / 2);
+    await commands.mouse("move", box.x + box.width / 2, box.bottom + 200);
+    await commands.mouse("up", box.x + box.width / 2, box.bottom + 200);
+    expect(left.hasAttribute("data-pressed")).toBe(true);
+    left.focus();
+    await userEvent.keyboard(" ");
+    expect(left.hasAttribute("data-pressed")).toBe(false);
   });
 });

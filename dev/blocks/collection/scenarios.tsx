@@ -1,4 +1,4 @@
-import { createSignal, For, type JSX, onCleanup } from "solid-js";
+import { createSignal, For, type JSX, onCleanup, onMount } from "solid-js";
 import { createCollection } from "../../../src/lib/behavior/collection";
 import { defineScenarios } from "../../harness/types";
 
@@ -64,7 +64,8 @@ export function Toolbar(props: {
     >
       <For each={props.rooms}>
         {(room) => {
-          onCleanup(() => collection.release(room.key));
+          onMount(() => collection.refresh());
+          onCleanup(() => collection.refresh());
           return (
             <button
               type="button"

@@ -4,6 +4,7 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
+import { userEvent } from "vitest/browser";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../src/solid/tabs.js";
 
 afterEach(cleanup);
@@ -118,5 +119,26 @@ describe("Tabs layout", () => {
     expect(container.querySelector('.host-body [data-slot="tabs-content"]')?.textContent).toBe(
       "content",
     );
+  });
+
+  it("returns Shift+Tab to the selected tab after arrows moved focus in manual mode", async () => {
+    const view = render(() => (
+      <Tabs defaultValue="one" activationMode="manual">
+        <TabsList>
+          <TabsTrigger value="one">One</TabsTrigger>
+          <TabsTrigger value="two">Two</TabsTrigger>
+          <TabsTrigger value="three">Three</TabsTrigger>
+        </TabsList>
+        <TabsContent value="one">first</TabsContent>
+        <TabsContent value="two">second</TabsContent>
+        <TabsContent value="three">third</TabsContent>
+      </Tabs>
+    ));
+    view.getByRole("tab", { name: "One" }).focus();
+    await userEvent.keyboard("{ArrowRight}{ArrowRight}");
+    expect(document.activeElement?.textContent).toBe("Three");
+    await userEvent.keyboard("{Tab}");
+    await userEvent.keyboard("{Shift>}{Tab}{/Shift}");
+    expect(document.activeElement?.textContent).toBe("One");
   });
 });
