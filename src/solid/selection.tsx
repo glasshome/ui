@@ -75,6 +75,16 @@ function itemBox(root: HTMLElement, item: HTMLElement): Box | undefined {
   return box.width > 0 && box.height > 0 ? box : undefined;
 }
 
+/** Whether the box shows inside the root's scrollport; a highlight never flies in from out of sight. */
+function inSight(root: HTMLElement, box: Box): boolean {
+  return (
+    box.y + box.height / 2 > root.scrollTop &&
+    box.y - box.height / 2 < root.scrollTop + root.clientHeight &&
+    box.x + box.width / 2 > root.scrollLeft &&
+    box.x - box.width / 2 < root.scrollLeft + root.clientWidth
+  );
+}
+
 function flyerBox(root: HTMLElement, flyer: HTMLElement): Box {
   const outer = root.getBoundingClientRect();
   const sx = root.offsetWidth > 0 ? outer.width / root.offsetWidth : 1;
@@ -228,7 +238,7 @@ export function SelectionScope(props: SelectionScopeProps) {
           : recent
             ? (recent.box ?? itemBox(scope, recent.item))
             : undefined;
-      if (from) flight.start(from, next);
+      if (from && inSight(scope, from)) flight.start(from, next);
       else flight.settle();
     });
     observer.observe(scope, { subtree: true, attributes: true, attributeFilter: [attribute] });
