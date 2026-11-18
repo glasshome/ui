@@ -344,4 +344,92 @@ describe("dismiss contract", () => {
     expect(popover.reasons).toEqual(["outside-press"]);
     expect(tooltip.open()).toBe(true);
   });
+  it("DI19 with focusOutside, focus landing outside the layer closes it; inside or on its trigger it stays open", async () => {
+    const button = (text: string, parent: HTMLElement = document.body) => {
+      const el = parent.appendChild(document.createElement("button"));
+      el.type = "button";
+      el.textContent = text;
+      return el;
+    };
+    const trigger = button("Trigger");
+    const outside = button("Outside");
+    const element = document.body.appendChild(document.createElement("div"));
+    const inside = button("Inside", element);
+    const [open, setOpen] = createSignal(true);
+    const reasons: DismissReason[] = [];
+    render(() => {
+      const handle = registerLayer({
+        kind: "popover",
+        open,
+        element: () => element,
+        escape: () => true,
+        trigger: () => trigger,
+      });
+      createDismiss({
+        layer: handle,
+        focusOutside: () => true,
+        onDismiss: (why) => {
+          reasons.push(why);
+          setOpen(false);
+        },
+      });
+      return <></>;
+    });
+    outside.focus();
+    expect(reasons).toEqual([]);
+    await settle();
+    inside.focus();
+    trigger.focus();
+    expect(reasons).toEqual([]);
+    outside.focus();
+    expect(reasons).toEqual(["focus-outside"]);
+    expect(open()).toBe(false);
+
+    const plain = stacked({ kind: "popover", top: 20 });
+    await settle();
+    plain.button.focus();
+    outside.focus();
+    expect(plain.reasons).toEqual([]);
+    expect(plain.open()).toBe(true);
+  });
+  it("DI20 a layer in a shadow root closes on a press in its root while a newer layer is open in another", async () => {
+    const sealed = (top: number) => {
+      const host = document.body.appendChild(document.createElement("div"));
+      const root = host.attachShadow({ mode: "closed" });
+      const element = root.appendChild(document.createElement("div"));
+      element.style.cssText = `position:fixed;left:20px;top:${top}px;width:200px;height:80px`;
+      const beside = root.appendChild(document.createElement("div"));
+      beside.style.cssText = `position:fixed;left:300px;top:${top}px;width:120px;height:80px`;
+      const [open, setOpen] = createSignal(true);
+      const reasons: DismissReason[] = [];
+      render(() => {
+        const handle = registerLayer({
+          kind: "popover",
+          open,
+          element: () => element,
+          escape: () => true,
+        });
+        createDismiss({
+          layer: handle,
+          onDismiss: (why) => {
+            reasons.push(why);
+            setOpen(false);
+          },
+        });
+        return <></>;
+      });
+      return { beside, open, reasons };
+    };
+    const older = sealed(20);
+    const page = stacked({ kind: "popover", top: 300 });
+    const newer = sealed(160);
+    await settle();
+    await new Promise((resolve) => setTimeout(resolve, LISTEN_DELAY_MS));
+    const box = older.beside.getBoundingClientRect();
+    await input.pressAt(box.x + box.width / 2, box.y + box.height / 2);
+    await settle();
+    expect(older.reasons).toEqual(["outside-press"]);
+    expect(newer.reasons).toEqual(["outside-press"]);
+    expect(page.open()).toBe(true);
+  });
 });

@@ -1,7 +1,9 @@
-import { cleanup } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
+import { createSignal, type JSX } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { commands } from "vitest/browser";
 import { findTarget } from "../../dev/harness/steps";
+import { createAnchored } from "../../src/lib/behavior/anchored";
 import { input } from "../harness/input";
 import { mountScenario, settle } from "../harness/mount";
 
@@ -25,6 +27,34 @@ async function open(id: string) {
 
 const gapBelow = (anchor: Element, part: Element) =>
   part.getBoundingClientRect().top - anchor.getBoundingClientRect().bottom;
+
+function placedOver(anchorStyle: JSX.CSSProperties) {
+  const [anchor, setAnchor] = createSignal<HTMLElement>();
+  const [floating, setFloating] = createSignal<HTMLElement>();
+  render(() => {
+    createAnchored({
+      anchor,
+      floating,
+      open: () => true,
+      coverAnchor: true,
+      widthVar: "--anchor-width",
+    });
+    return (
+      <>
+        <button ref={setAnchor} type="button" style={{ width: "120px", ...anchorStyle }}>
+          Anchor
+        </button>
+        <div ref={setFloating} style={{ width: "240px", height: "160px" }}>
+          Part
+        </div>
+      </>
+    );
+  });
+  return {
+    anchor: () => anchor()?.getBoundingClientRect() ?? new DOMRect(),
+    part: () => floating() as HTMLElement,
+  };
+}
 
 const frame = () => new Promise<void>((done) => requestAnimationFrame(() => done()));
 
@@ -111,5 +141,28 @@ describe("anchored contract", () => {
     await input.press(anchor);
     await settle();
     expect(part.hasAttribute("data-anchored")).toBe(false);
+  });
+  it("PO8 coverAnchor puts the part over the anchor from its top edge and never flips", async () => {
+    const top = placedOver({ "margin-top": "120px", "margin-left": "40px" });
+    await settle();
+    expect(Math.abs(top.part().getBoundingClientRect().top - top.anchor().top)).toBeLessThanOrEqual(
+      1,
+    );
+    cleanup();
+    const low = placedOver({ position: "fixed", bottom: "24px", left: "40px" });
+    await settle();
+    const box = low.part().getBoundingClientRect();
+    expect(low.part().getAttribute("data-side")).toBe("bottom");
+    expect(box.bottom).toBeLessThanOrEqual(window.innerHeight - EDGE);
+    expect(box.bottom).toBeGreaterThan(low.anchor().top);
+  });
+
+  it("PO9 widthVar carries the anchor's width on the part", async () => {
+    const { part } = placedOver({ "margin-top": "120px" });
+    await settle();
+    expect(part().style.getPropertyValue("--anchor-width")).toBe("120px");
+    window.dispatchEvent(new Event("resize"));
+    await settle();
+    expect(part().style.getPropertyValue("--anchor-width")).toBe("120px");
   });
 });

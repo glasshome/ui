@@ -1,5 +1,5 @@
 import { type Accessor, createSignal, onCleanup } from "solid-js";
-import { focusWithoutTracking } from "./focus-scope";
+import { activeOf, focusWithoutTracking } from "./focus-scope";
 import { effect } from "./solid";
 
 export const TYPEAHEAD_MS = 1000;
@@ -35,7 +35,7 @@ const isDisabled = (el: HTMLElement) =>
 const keyOf = (el: HTMLElement) => el.dataset.key ?? "";
 
 function focusIsWithin(root: HTMLElement): boolean {
-  const active = (root.getRootNode() as Document | ShadowRoot).activeElement;
+  const active = activeOf(root);
   return !!active && root.contains(active);
 }
 

@@ -13,3 +13,4 @@ Each line is one browser test in `tests/contracts/layer-stack.contract.test.tsx`
 | LS7 | a sheet is open and a press lands on an element marked `[data-kb-top-layer]` (the sleep surface) | `containsPath` is true; the sheet stays open |
 | LS8 | a `topLayer: "auto"` layer that the browser closes (a press outside, Escape) | `dismiss` runs once; the next render keeps it closed; in the guest the mirrored node and the guest's state agree |
 | LS9 | a `topLayer` layer closes, or its owner unmounts while it is shown | it leaves the top layer (`:popover-open` no longer matches) |
+| LS10 | a layer with `blockPointer` is open, with a layer above it | `body` takes no pointer events, the layer and the one above it do; when it closes, `body` and both layers are back to their prior values |

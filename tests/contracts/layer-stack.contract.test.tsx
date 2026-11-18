@@ -185,4 +185,17 @@ describe("layer-stack contract", () => {
     expect(layer.element.matches(":popover-open")).toBe(false);
     expect(layerStack.layers()).toHaveLength(0);
   });
+  it("LS10 a pointer-blocking layer takes the page's pointer events and leaves its own and those above", async () => {
+    const lower = mounted({ kind: "popover", escape: () => true, blockPointer: () => true });
+    const upper = mounted({ kind: "popover", escape: () => true });
+    await settle();
+    expect(getComputedStyle(document.body).pointerEvents).toBe("none");
+    expect(getComputedStyle(lower.element).pointerEvents).toBe("auto");
+    expect(getComputedStyle(upper.element).pointerEvents).toBe("auto");
+    lower.setOpen(false);
+    await settle();
+    expect(document.body.hasAttribute("style")).toBe(false);
+    expect(lower.element.style.pointerEvents).toBe("");
+    expect(upper.element.style.pointerEvents).toBe("");
+  });
 });
