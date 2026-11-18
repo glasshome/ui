@@ -301,7 +301,7 @@ const FIXTURES: Record<string, Fixture> = {
 
 /** Exports that cannot be mounted as a component here, each with why. */
 const SKIPPED: Record<string, string> = {
-  SelectItem: "Kobalte builds it per option through Select's itemComponent with a list item",
+  SelectItem: "Select builds it per option through its itemComponent, inside SelectContent's list",
 };
 
 const isComponent = ([name, value]: [string, unknown]) =>

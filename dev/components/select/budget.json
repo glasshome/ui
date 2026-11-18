@@ -305,6 +305,64 @@
       }
     }
   },
+  "in-dialog": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: the browser pass measures this"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: the browser pass measures this"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: the browser pass measures this"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: the browser pass measures this"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: the browser pass measures this"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: the browser pass measures this"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: the browser pass measures this"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: the browser pass measures this"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: the browser pass measures this"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 0,
+        "reason": "PLACEHOLDER: the browser pass measures this"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
   "in-shadow-root": {
     "steps": {
       "0": {
