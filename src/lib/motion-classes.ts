@@ -85,7 +85,7 @@ export const TRAVEL_MOTION =
 /* The longest exit (delay plus duration) each door's data-[closed] classes run;
  * tests/lib/motion-exit.test.tsx holds these to the computed styles. */
 export const MOTION_EXIT_MS: Record<
-  "overlay" | "modal" | "anchored" | "scrim" | "field" | "sheet",
+  "overlay" | "modal" | "anchored" | "scrim" | "field" | "sheet" | "disclosure",
   number
 > = {
   overlay: 120,
@@ -94,4 +94,5 @@ export const MOTION_EXIT_MS: Record<
   scrim: 120,
   field: 120,
   sheet: 500,
+  disclosure: 200,
 };
