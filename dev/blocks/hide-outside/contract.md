@@ -10,3 +10,5 @@ Each line is one browser test in `tests/contracts/hide-outside.contract.test.tsx
 | HO4 | an inner modal opens over an outer one, then closes | the outer is hidden while the inner is open and visible again after |
 | HO5 | open and close | no write on `html` or `body`, no `inert` anywhere |
 | HO6 | a toast or `aria-live` region outside the modal | it stays in the AX tree while the modal is open, and an announcement made then is in the tree |
+| HO7 | a layer marked `data-kb-top-layer` outside the modal (the sleep surface) | it keeps no `aria-hidden` while the modal is open, as focus scope and the layer stack already treat it as above |
+| HO8 | two modals open in the same tick, then a third opens later | the upper of the two keeps no `aria-hidden` and hides the lower; the later one hides the rest and writes nothing on a child already hidden |

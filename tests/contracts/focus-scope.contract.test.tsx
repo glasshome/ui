@@ -353,6 +353,49 @@ describe("focus-scope contract", () => {
     expect(label()).toBe("Trigger");
   });
 
+  it("FO13 removing the container that holds focus leaves keys reaching the page", async () => {
+    const [present, setPresent] = createSignal(true);
+    const [box, setBox] = createSignal<HTMLElement>();
+    render(() => {
+      createFocusScope({ container: box, active: present, trapped: () => true });
+      return (
+        <Show when={present()}>
+          <div ref={setBox} tabindex="-1">
+            <button type="button">Inside</button>
+          </div>
+        </Show>
+      );
+    });
+    await settle();
+    expect(deepActive()).toBe(box());
+    setPresent(false);
+    await settle();
+    const heard: string[] = [];
+    const listen = (event: KeyboardEvent) => heard.push(event.key);
+    document.addEventListener("keydown", listen, true);
+    await input.key("Escape");
+    document.removeEventListener("keydown", listen, true);
+    expect(heard).toEqual(["Escape"]);
+  });
+
+  it("FO14 untrap lets focus leave the container, and deactivating still restores", async () => {
+    const view = setup({
+      initialFocus: "first",
+      children: <button type="button">One</button>,
+    });
+    await input.press(view.trigger);
+    view.setActive(true);
+    await settle();
+    expect(label()).toBe("One");
+    view.holder.scope?.untrap();
+    view.view.getByRole("button", { name: "Outside" }).focus();
+    await settle();
+    expect(label()).toBe("Outside");
+    view.setActive(false);
+    await settle();
+    expect(label()).toBe("Trigger");
+  });
+
   it("focusWithoutTracking reports whether the element took focus", () => {
     const view = render(() => (
       <>
