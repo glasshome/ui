@@ -393,6 +393,7 @@ describe("dismiss contract", () => {
     expect(plain.open()).toBe(true);
   });
   it("DI20 a layer in a shadow root closes on a press in its root while a newer layer is open in another", async () => {
+    useFakeTime({ toFake: TIMERS });
     const sealed = (top: number) => {
       const host = document.body.appendChild(document.createElement("div"));
       const root = host.attachShadow({ mode: "closed" });
@@ -424,7 +425,7 @@ describe("dismiss contract", () => {
     const page = stacked({ kind: "popover", top: 300 });
     const newer = sealed(160);
     await settle();
-    await new Promise((resolve) => setTimeout(resolve, LISTEN_DELAY_MS));
+    await vi.advanceTimersByTimeAsync(LISTEN_DELAY_MS);
     const box = older.beside.getBoundingClientRect();
     await input.pressAt(box.x + box.width / 2, box.y + box.height / 2);
     await settle();

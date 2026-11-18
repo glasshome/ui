@@ -16,7 +16,10 @@ const CLOSE_DELAY_MS = 300;
 const TRIGGER = { role: "link", name: "12 creators" };
 const HOVER: Step = { hover: TRIGGER };
 
+const TIMERS: ("setTimeout" | "clearTimeout")[] = ["setTimeout", "clearTimeout"];
+
 async function mount(id: string) {
+  useFakeTime({ toFake: TIMERS });
   const { scope } = await mountScenario("HoverCard", id);
   return helpers(scope);
 }
@@ -28,8 +31,18 @@ function helpers(scope: () => ParentNode[]) {
       ...root.querySelectorAll<HTMLElement>('[data-slot="hover-card-content"]'),
     ]);
   const run = (...steps: Step[]) => runSteps(scope, steps, input, settle);
-  const expectOpen = () => vi.waitFor(() => expect(cards()).toHaveLength(1));
-  const expectClosed = () => vi.waitFor(() => expect(cards()).toHaveLength(0));
+  const after = async (ms: number) => {
+    await vi.advanceTimersByTimeAsync(ms);
+    await settle();
+  };
+  const expectOpen = async () => {
+    await after(OPEN_DELAY_MS);
+    expect(cards()).toHaveLength(1);
+  };
+  const expectClosed = async () => {
+    await after(CLOSE_DELAY_MS + MOTION_EXIT_MS.overlay);
+    expect(cards()).toHaveLength(0);
+  };
   return { trigger, cards, run, expectOpen, expectClosed };
 }
 
@@ -42,7 +55,7 @@ describe("HoverCard contract", () => {
   });
 
   it("HC2 the pointer resting on the trigger opens the card after the open delay", async () => {
-    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
+    useFakeTime({ toFake: TIMERS });
     render(() => (
       <p style={{ "margin-top": "120px", "margin-left": "40px" }}>
         <HoverCard>
@@ -80,7 +93,7 @@ describe("HoverCard contract", () => {
     const card = cards()[0];
     if (!card) throw new Error("no card");
     await input.hover(card);
-    await new Promise((resolve) => setTimeout(resolve, CLOSE_DELAY_MS + MOTION_EXIT_MS.overlay));
+    await vi.advanceTimersByTimeAsync(CLOSE_DELAY_MS + MOTION_EXIT_MS.overlay);
     expect(cards()).toHaveLength(1);
   });
 
@@ -103,7 +116,7 @@ describe("HoverCard contract", () => {
   it("HC7 a touch on the trigger opens no card", async () => {
     const { cards, run } = await mount("touch");
     await run({ touch: TRIGGER });
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await vi.advanceTimersByTimeAsync(OPEN_DELAY_MS);
     await settle();
     expect(cards()).toHaveLength(0);
   });
@@ -125,6 +138,7 @@ describe("HoverCard contract", () => {
   });
 
   it("HC10 inside a closed shadow root the card opens in the same root", async () => {
+    useFakeTime({ toFake: TIMERS });
     const { scope } = await mountScenario("HoverCard", "in-shadow-root");
     const { cards, run, expectOpen } = helpers(scope);
     await run(HOVER);
