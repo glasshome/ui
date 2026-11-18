@@ -454,7 +454,7 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
   );
 }
 
-interface ItemIndicatorProps {
+export interface ItemIndicatorProps {
   forceMount?: boolean;
   class?: string;
   children?: JSX.Element;
