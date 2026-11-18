@@ -4,41 +4,41 @@
       "0": {
         "elementsRestyled": {
           "max": 4,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 3,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 257,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 250,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 17,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 16,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 5,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 17,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 8,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 91,
+        "getComputedStyle": 1,
         "compareDocumentPosition": 0,
-        "IntersectionObserver": 2,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -48,55 +48,55 @@
       "0": {
         "elementsRestyled": {
           "max": 4,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 3,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 257,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 227,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 17,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 16,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 5,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 62,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 59,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 15,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 17,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 9,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 72,
+        "getComputedStyle": 1,
         "compareDocumentPosition": 0,
-        "IntersectionObserver": 1,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -106,55 +106,55 @@
       "0": {
         "elementsRestyled": {
           "max": 4,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 3,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 257,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 225,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 17,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 16,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 5,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 63,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 62,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 15,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 15,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 8,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 72,
+        "getComputedStyle": 1,
         "compareDocumentPosition": 0,
-        "IntersectionObserver": 1,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -164,55 +164,55 @@
       "0": {
         "elementsRestyled": {
           "max": 68,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 10,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 4,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 194,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 117,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 17,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 16,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 3,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 49,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 38,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 17,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 20,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 12,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 73,
+        "getComputedStyle": 1,
         "compareDocumentPosition": 0,
-        "IntersectionObserver": 1,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
@@ -222,43 +222,43 @@
       "0": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 5,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 7,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 142,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; Kobalte never opened inside a closed root, so its baseline measured a press that did nothing; this is the owned panel opening, under its open in the page"
         },
         "largestRecalc": {
-          "max": 2,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 16,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; Kobalte never opened inside a closed root, so its baseline measured a press that did nothing; this is the owned panel opening, under its open in the page"
         },
         "layouts": {
-          "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 5,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; Kobalte never opened inside a closed root, so its baseline measured a press that did nothing; this is the owned panel opening, under its open in the page"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 2,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 58,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; Kobalte never opened inside a closed root, so its baseline measured a press that did nothing; this is the owned panel closing"
         },
         "largestRecalc": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 15,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; Kobalte never opened inside a closed root, so its baseline measured a press that did nothing; this is the owned panel closing"
         },
         "layouts": {
-          "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; Kobalte never opened inside a closed root, so its baseline measured a press that did nothing; this is the owned panel closing"
         }
       }
     }
@@ -268,55 +268,55 @@
       "0": {
         "elementsRestyled": {
           "max": 5,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 4,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 257,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 229,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 17,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 16,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 5,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 3,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 7,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; the owned panel is fixed and rewrites its top on the scroll's frame, one layout Kobalte's absolute panel skipped"
         },
         "largestRecalc": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 3,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; the owned panel is fixed and rewrites its top on the scroll's frame, one layout Kobalte's absolute panel skipped"
         },
         "layouts": {
-          "max": 0,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; the owned panel is fixed and rewrites its top on the scroll's frame, one layout Kobalte's absolute panel skipped"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 18,
-        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 8,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 111,
+        "getComputedStyle": 1,
         "compareDocumentPosition": 0,
-        "IntersectionObserver": 3,
+        "IntersectionObserver": 0,
         "MutationObserver": 0
       }
     }
