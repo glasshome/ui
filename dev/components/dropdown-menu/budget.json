@@ -3,23 +3,23 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 8,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 6,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 0,
-        "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row, with the DOM call counts beside it"
+        "max": 5,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -33,43 +33,43 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 8,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 6,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 650,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 44,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 5,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 0,
-        "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row, with the DOM call counts beside it"
+        "max": 20,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 0,
+        "getComputedStyle": 1,
         "compareDocumentPosition": 0,
         "IntersectionObserver": 0,
-        "MutationObserver": 0
+        "MutationObserver": 1
       }
     }
   },
@@ -77,57 +77,57 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 8,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 6,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 650,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 44,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 5,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 109,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 45,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 2,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 0,
-        "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row, with the DOM call counts beside it"
+        "max": 27,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 0,
+        "getComputedStyle": 1,
         "compareDocumentPosition": 0,
         "IntersectionObserver": 0,
-        "MutationObserver": 0
+        "MutationObserver": 1
       }
     }
   },
@@ -135,71 +135,71 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 8,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 6,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 658,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 44,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 5,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 158,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 23,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 2,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "3": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 138,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 58,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 3,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 0,
-        "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row, with the DOM call counts beside it"
+        "max": 33,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 0,
+        "getComputedStyle": 1,
         "compareDocumentPosition": 0,
         "IntersectionObserver": 0,
-        "MutationObserver": 0
+        "MutationObserver": 2
       }
     }
   },
@@ -207,43 +207,43 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 74,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 13,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 477,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 44,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 3,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 0,
-        "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row, with the DOM call counts beside it"
+        "max": 24,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
-        "getComputedStyle": 0,
+        "getComputedStyle": 1,
         "compareDocumentPosition": 0,
         "IntersectionObserver": 0,
-        "MutationObserver": 0
+        "MutationObserver": 1
       }
     }
   },
@@ -251,44 +251,44 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 10,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 8,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 255,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 44,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 5,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 120,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 45,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+          "max": 2,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     }

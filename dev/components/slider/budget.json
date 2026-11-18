@@ -3,23 +3,23 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 35,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 28,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 0,
-        "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        "max": 8,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -33,121 +33,121 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 13,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 10,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 23,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 5,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "3": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 5,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "4": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 23,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "5": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 5,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "6": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 5,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "7": {
         "elementsRestyled": {
           "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 0,
-        "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        "max": 5,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -161,37 +161,37 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 13,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 10,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 50,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 0,
-        "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        "max": 5,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -205,37 +205,37 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 13,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 10,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 24,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 0,
-        "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        "max": 5,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -249,37 +249,37 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 13,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 10,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
           "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         }
       }
     },
     "guest": {
       "workUnits": {
-        "max": 0,
-        "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        "max": 5,
+        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -293,44 +293,44 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 15,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; above the Kobalte baseline on the drag step, where Kobalte's delegated pointer handlers never fired in a closed root and the thumb never moved"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 12,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; above the Kobalte baseline on the drag step, where Kobalte's delegated pointer handlers never fired in a closed root and the thumb never moved"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; above the Kobalte baseline on the drag step, where Kobalte's delegated pointer handlers never fired in a closed root and the thumb never moved"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 54,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; above the Kobalte baseline on the drag step, where Kobalte's delegated pointer handlers never fired in a closed root and the thumb never moved"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; above the Kobalte baseline on the drag step, where Kobalte's delegated pointer handlers never fired in a closed root and the thumb never moved"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; above the Kobalte baseline on the drag step, where Kobalte's delegated pointer handlers never fired in a closed root and the thumb never moved"
         }
       },
       "2": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 5,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; above the Kobalte baseline on the drag step, where Kobalte's delegated pointer handlers never fired in a closed root and the thumb never moved"
         },
         "largestRecalc": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 4,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; above the Kobalte baseline on the drag step, where Kobalte's delegated pointer handlers never fired in a closed root and the thumb never moved"
         },
         "layouts": {
-          "max": 0,
-          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+          "max": 1,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures; above the Kobalte baseline on the drag step, where Kobalte's delegated pointer handlers never fired in a closed root and the thumb never moved"
         }
       }
     }
