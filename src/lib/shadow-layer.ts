@@ -10,11 +10,7 @@ export const inShadowRoot = (node: Node | undefined): boolean =>
 
 export const ReportCovered = createContext<(covered: Accessor<boolean>) => void>();
 
-/**
- * For a Kobalte root that can be modal: true while one of its layers sits under an owned modal.
- * Kobalte steps aside only for its own layers, so a modal Kobalte layer would hide the owned modal,
- * block its pointer events and pull its focus back; the root drops `modal` while covered.
- */
+/** True while a layer of this Kobalte root sits under an owned modal; the root drops `modal` then. */
 export function createCoveredRoot(): {
   covered: Accessor<boolean>;
   report: (covered: Accessor<boolean>) => void;

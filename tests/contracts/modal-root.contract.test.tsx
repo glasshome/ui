@@ -5,6 +5,7 @@ import { commands, userEvent } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { findAll } from "../../dev/harness/steps";
 import { Within } from "../../dev/harness/Within";
+import { ModalFrame, ModalRoot } from "../../src/lib/behavior/modal-root";
 import {
   Button,
   Dialog,
@@ -24,6 +25,7 @@ import {
   Toaster,
   toast,
 } from "../../src/solid";
+import { useFakeTime } from "../../src/testing";
 import { input } from "../harness/input";
 import { settle } from "../harness/mount";
 
@@ -525,5 +527,26 @@ describe("modal root contract", () => {
     await input.key("Escape");
     await settle();
     expect([lower(), upper()]).toEqual([true, false]);
+  });
+
+  it("MR18 a panel with no motion leaves after the exit duration current when it closes", async () => {
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
+    const [open, setOpen] = createSignal(true);
+    const [exitMs, setExitMs] = createSignal(100);
+    render(() => (
+      <ModalRoot open={open()} onOpenChange={setOpen}>
+        <ModalFrame slot="probe" panelClass="" scrimClass="" exitMs={exitMs()} ariaLabel="Probe">
+          rows
+        </ModalFrame>
+      </ModalRoot>
+    ));
+    await vi.advanceTimersByTimeAsync(100);
+    expect(dialogs()).toHaveLength(1);
+    setExitMs(400);
+    setOpen(false);
+    await vi.advanceTimersByTimeAsync(200);
+    expect(document.querySelector('[data-slot="probe-content"]')).not.toBeNull();
+    await vi.advanceTimersByTimeAsync(200);
+    expect(document.querySelector('[data-slot="probe-content"]')).toBeNull();
   });
 });

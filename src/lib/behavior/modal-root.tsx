@@ -282,7 +282,9 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
   const presence = createPresence({
     present: ctx.isOpen,
     element: ctx.panel,
-    exitMs: untrack(() => local.exitMs),
+    get exitMs() {
+      return local.exitMs;
+    },
   });
   const expanded = () => presence.phase() === "opening" || presence.phase() === "open";
 
