@@ -49,3 +49,6 @@ export const anchorToTriggerTop = (anchor?: HTMLElement) => {
     ? { x: r.left, y: r.top, width: r.width, height: 0 }
     : { x: 0, y: 0, width: 0, height: 0 };
 };
+
+/* The modal layer's own root. Its box, containment and stacking never change, so going dormant only adds skipping. */
+export const LAYER_ROOT = `pointer-events-none fixed inset-0 ${Z_CLASS.overlay} [contain:layout_paint_style] *:pointer-events-auto data-[dormant]:[content-visibility:hidden] not-supports-[content-visibility:hidden]:data-[dormant]:hidden`;

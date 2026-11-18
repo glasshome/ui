@@ -2,6 +2,7 @@ import {
   type Accessor,
   type ComponentProps,
   createContext,
+  createRenderEffect,
   createSignal,
   createUniqueId,
   type JSX,
@@ -13,6 +14,7 @@ import {
   type ValidComponent,
 } from "solid-js";
 import { Portal } from "solid-js/web";
+import { LAYER_ROOT } from "../overlay-classes";
 import { createControllableSignal } from "./controllable";
 import { createDismiss } from "./dismiss";
 import { createFocusScope, focusWithoutTracking } from "./focus-scope";
@@ -29,6 +31,7 @@ export interface ModalRootProps {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   modal?: boolean;
+  keep?: boolean;
   role?: ModalRole;
   children?: JSX.Element;
 }
@@ -38,6 +41,9 @@ export interface ModalContext {
   close: () => void;
   toggle: () => void;
   modal: Accessor<boolean>;
+  keep: Accessor<boolean>;
+  dormant: Accessor<boolean>;
+  bindDormant: (source: Accessor<boolean>) => void;
   readonly role: ModalRole;
   titleId: Accessor<string | undefined>;
   registerTitle: (id: string) => () => void;
@@ -57,6 +63,11 @@ export function useDialogContext(): ModalContext {
   const context = useContext(ModalContextValue);
   if (!context) throw new Error("Dialog parts must be used within <Dialog>");
   return context;
+}
+
+/** Whether the modal around the caller is closed and kept; false outside one, so a ticker inside can pause. */
+export function useDialogDormant(): Accessor<boolean> {
+  return useContext(ModalContextValue)?.dormant ?? (() => false);
 }
 
 function createRegistry(): [Accessor<string | undefined>, (id: string) => () => void] {
@@ -81,11 +92,15 @@ export function ModalRoot(props: ModalRootProps): JSX.Element {
   const [contentId, registerContent] = createRegistry();
   const [triggerRef, setTriggerRef] = createSignal<HTMLElement>();
   const [panel, setPanel] = createSignal<HTMLElement>();
+  const [dormantSource, setDormantSource] = createSignal<Accessor<boolean>>(() => false);
   const context: ModalContext = {
     isOpen,
     close: () => setOpen(false),
     toggle: () => setOpen(!untrack(isOpen)),
     modal: () => props.modal ?? true,
+    keep: () => props.keep ?? false,
+    dormant: () => dormantSource()(),
+    bindDormant: (source) => setDormantSource(() => source),
     get role() {
       return props.role ?? "dialog";
     },
@@ -255,6 +270,15 @@ function inside(container: Element, node: Element | undefined): boolean {
   return false;
 }
 
+// Skipped content stops ticking: an exit the timeout ended early would freeze mid-way, not at rest.
+function finishMotion(root: Element): void {
+  for (const animation of root.getAnimations?.({ subtree: true }) ?? []) {
+    if (animation.playState !== "running") continue;
+    if (animation.effect?.getComputedTiming().iterations === Infinity) continue;
+    animation.finish();
+  }
+}
+
 export function ModalFrame(props: ModalFrameProps): JSX.Element {
   const ctx = useDialogContext();
   const [local, rest] = splitProps(props, [
@@ -285,7 +309,10 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
     get exitMs() {
       return local.exitMs;
     },
+    keep: ctx.keep,
   });
+  ctx.bindDormant(presence.dormant);
+  onCleanup(() => ctx.bindDormant(() => false));
   const expanded = () => presence.phase() === "opening" || presence.phase() === "open";
 
   const handle = registerLayer({
@@ -369,9 +396,13 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
         return (
           <Portal
             mount={local.mount}
-            // A modal Kobalte layer underneath leaves body pointer-events: none behind.
             ref={(container: HTMLDivElement) => {
-              container.style.pointerEvents = "auto";
+              container.className = LAYER_ROOT;
+              createRenderEffect(() => {
+                const dormant = presence.dormant();
+                if (dormant) finishMotion(container);
+                container.toggleAttribute("data-dormant", dormant);
+              });
             }}
           >
             <div
@@ -392,8 +423,8 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
                 local.ref?.(el);
               }}
               id={id()}
-              role={ctx.role}
-              aria-modal={ctx.modal() ? "true" : undefined}
+              role={presence.dormant() ? undefined : ctx.role}
+              aria-modal={ctx.modal() && !presence.dormant() ? "true" : undefined}
               tabIndex={-1}
               aria-labelledby={ctx.titleId()}
               aria-label={ctx.titleId() ? undefined : local.ariaLabel}

@@ -56,7 +56,7 @@ const AlertDialogContent: ParentComponent<AlertDialogContentProps> = (props) => 
   const ctx = useDialogContext();
   return (
     <>
-      <ModalCover panel={ctx.panel} open={ctx.isOpen} />
+      <ModalCover panel={ctx.panel} open={ctx.isOpen} dormant={ctx.dormant} />
       <ModalFrame
         slot="alert-dialog"
         mount={usePortalMount()}

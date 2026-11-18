@@ -42,6 +42,7 @@ const BROWSER = {
 const WEBKIT_FILES = [
   "tests/contracts/scroll-contain.contract.test.tsx",
   "tests/contracts/anchored.contract.test.tsx",
+  "tests/contracts/modal-root-dormant.contract.test.tsx",
 ];
 
 export default defineConfig({

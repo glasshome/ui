@@ -116,7 +116,7 @@ const SheetContent: ParentComponent<SheetContentProps> = (props) => {
   const ctx = useDialogContext();
   return (
     <>
-      <ModalCover panel={ctx.panel} open={ctx.isOpen} />
+      <ModalCover panel={ctx.panel} open={ctx.isOpen} dormant={ctx.dormant} />
       <ModalFrame
         slot="sheet"
         mount={usePortalMount()}

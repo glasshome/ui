@@ -155,6 +155,7 @@ export {
   DialogTitle,
   DialogTrigger,
 } from "./dialog.js";
+export { useDialogDormant } from "../lib/behavior/modal-root.js";
 export { ConfirmDialog, type ConfirmDialogProps } from "./confirm-dialog.js";
 export type { ModalHeadProps, ModalMedia, ModalSize } from "./dialog-parts.js";
 export type { DockIconButtonProps, DockItem, DockPlacement, DockProps } from "./dock.js";

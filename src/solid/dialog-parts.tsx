@@ -51,6 +51,8 @@ export interface ModalRootSkinProps {
   onOpenChange?: (open: boolean) => void;
   /** Modal toward the page. Defaults to true on the page and false inside a shadow root. */
   modal?: boolean;
+  /** Stays mounted and dormant after it closes, so the next open shows the same nodes instead of building them. */
+  keep?: boolean;
   /** @deprecated No effect; the panel takes its own id. */
   id?: string;
   /** @deprecated No effect; the panel stays mounted through its exit on its own. */
@@ -71,6 +73,7 @@ export function createModalRootSkin(role: ModalRole): ParentComponent<ModalRootS
         defaultOpen={props.defaultOpen}
         onOpenChange={props.onOpenChange}
         modal={props.modal ?? !inShadowRoot(mount)}
+        keep={props.keep}
         role={role}
       >
         {props.children}
@@ -351,10 +354,11 @@ export function createModalDismiss(
 export const ModalCover: Component<{
   panel: Accessor<Element | undefined>;
   open: Accessor<boolean>;
+  dormant: Accessor<boolean>;
 }> = (props) => {
   createEffect(() => {
     const panel = props.panel();
-    if (panel) onCleanup(coverOnceOpen(panel, props.open));
+    if (panel && !props.dormant()) onCleanup(coverOnceOpen(panel, props.open));
   });
   return null;
 };
