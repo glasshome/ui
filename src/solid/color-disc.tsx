@@ -1,5 +1,4 @@
-import type { Color } from "@kobalte/core/colors";
-import { parseColor } from "@kobalte/core/colors";
+import { type Color, parseColor } from "../lib/color/index.js";
 import { type Component, createSignal, type JSX } from "solid-js";
 import { FOCUS_RING } from "../lib/input-classes.js";
 import { THUMB_COLOR_RING } from "../lib/thumb-classes.js";

@@ -1,0 +1,252 @@
+{
+  "default": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 0,
+        "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "keyboard": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      },
+      "4": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      },
+      "5": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 0,
+        "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "drag": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 0,
+        "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "disabled": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 0,
+        "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "in-shadow-root": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "PLACEHOLDER: no browser run yet; the merged-branch pass replaces this with the measured baseline"
+        }
+      }
+    }
+  }
+}

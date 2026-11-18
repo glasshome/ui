@@ -95,6 +95,16 @@ export async function prepare(
       await page.mouse.up();
     };
   }
+  if ("drag" in step) {
+    const { x, y } = await locate(cdp, step.drag);
+    const { by } = step.drag;
+    return async () => {
+      await page.mouse.move(x, y);
+      await page.mouse.down();
+      await page.mouse.move(x + by.x, y + by.y, { steps: 4 });
+      await page.mouse.up();
+    };
+  }
   if ("press" in step) {
     const { x, y } = await locate(cdp, step.press);
     return async () => {
