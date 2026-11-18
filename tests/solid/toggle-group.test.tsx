@@ -134,6 +134,29 @@ describe("ToggleGroup", () => {
     return [...new Set(tops)].map((top) => tops.filter((t) => t === top).length);
   };
 
+  it("overflows nothing on the first frame, before its columns are known", async () => {
+    const view = render(() => (
+      <div style={{ width: "300px" }}>
+        <ToggleGroup value="mode-0" class="w-full">
+          {["mode-0", "mode-1", "mode-2", "mode-3", "mode-4"].map((value) => (
+            <ToggleGroupItem value={value}>
+              <span style={{ display: "inline-block", width: "80px" }}>{value}</span>
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </div>
+    ));
+    await new Promise(requestAnimationFrame);
+    const room = view.container
+      .querySelector('[data-slot="toggle-group"]')
+      ?.getBoundingClientRect();
+    const rights = [...view.container.querySelectorAll('[data-slot="toggle-group-item"]')].map(
+      (item) => item.getBoundingClientRect().right,
+    );
+    expect(room).toBeDefined();
+    for (const right of rights) expect(right).toBeLessThanOrEqual((room?.right ?? 0) + 0.5);
+  });
+
   it("keeps every segment on one row while they fit", async () => {
     expect(await rowsOf(600, 4)).toEqual([4]);
   });

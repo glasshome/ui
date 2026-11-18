@@ -18,10 +18,10 @@ import {
 } from "solid-js";
 import { type Collection, createCollection } from "../lib/behavior/collection.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
-import { focusWithoutTracking, hasFocus } from "../lib/behavior/focus-scope.js";
+import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { effect, merge, omit } from "../lib/behavior/solid.js";
-import { BALANCED_ROWS, balanceRows } from "../lib/balance-rows.js";
+import { BALANCE_CONTENT, BALANCED_ROWS, balanceRows } from "../lib/balance-rows.js";
 import { TRACK_SURFACE } from "../lib/card-classes.js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
 import { cn } from "../lib/utils.js";
@@ -189,6 +189,9 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
         get "data-scroll"() {
           return props.scroll ? "" : undefined;
         },
+        get [BALANCED_ROWS]() {
+          return props.scroll || vertical() || sliding() ? undefined : "";
+        },
         "on:keydown": (event: KeyboardEvent) => collection.onKeyDown(event),
         get class() {
           return cn(
@@ -199,7 +202,7 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
                 ? "flex flex-col items-stretch"
                 : sliding()
                   ? "flex"
-                  : BALANCED_ROWS,
+                  : undefined,
             props.class,
           );
         },
@@ -213,12 +216,13 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
             ref={setScope}
             marker="pressed"
             tone={props.tone}
+            {...{ [BALANCED_ROWS]: props.scroll || vertical() ? undefined : "" }}
             class={
               props.scroll
                 ? "flex w-max flex-nowrap items-center"
                 : vertical()
                   ? "flex w-full flex-col items-stretch gap-y-0.5"
-                  : `w-full items-center gap-y-1 ${BALANCED_ROWS}`
+                  : "w-full items-center gap-y-1"
             }
           >
             {props.children}
@@ -267,6 +271,7 @@ const ToggleGroupItem: Component<ToggleGroupItemProps> = (props) => {
   effect(el, (node) => {
     if (!node) return;
     let mousePressed = false;
+    let focused = false;
     const choose = () => {
       if (disabled()) return;
       context.toggle(local.value);
@@ -279,18 +284,24 @@ const ToggleGroupItem: Component<ToggleGroupItemProps> = (props) => {
     };
     const click = (event: MouseEvent) => {
       // WebKit leaves a clicked button unfocused.
-      if (!disabled() && !hasFocus(node)) focusWithoutTracking(node);
+      if (!disabled() && !focused) focusWithoutTracking(node);
       if (event.detail === 0 || !mousePressed) choose();
       mousePressed = false;
     };
-    const focus = () => context.collection.highlight(local.value, "pointer");
+    const focus = () => {
+      focused = true;
+      context.collection.highlight(local.value, "pointer");
+    };
+    const blur = () => (focused = false);
     node.addEventListener("pointerdown", pointerdown);
     node.addEventListener("click", click);
     node.addEventListener("focus", focus);
+    node.addEventListener("blur", blur);
     return () => {
       node.removeEventListener("pointerdown", pointerdown);
       node.removeEventListener("click", click);
       node.removeEventListener("focus", focus);
+      node.removeEventListener("blur", blur);
     };
   });
 
@@ -350,7 +361,7 @@ const ToggleGroupItem: Component<ToggleGroupItemProps> = (props) => {
       })}
     >
       <SelectionHighlight />
-      {content()}
+      <span {...{ [BALANCE_CONTENT]: "" }}>{content()}</span>
     </Polymorphic>
   );
 };

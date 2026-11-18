@@ -37,8 +37,6 @@ type FocusRoot = Document | ShadowRoot;
 
 const activeOf = (el: Element): Element | null => (el.getRootNode() as FocusRoot).activeElement;
 
-export const hasFocus = (el: Element): boolean => activeOf(el) === el;
-
 export function focusWithoutTracking(
   el: HTMLElement | null | undefined,
   options?: { preventScroll?: boolean },

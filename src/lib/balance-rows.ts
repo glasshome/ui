@@ -1,9 +1,11 @@
 /* A row of segments that runs out of width wraps into a grid whose rows hold an even count
  * (four modes go two by two, five go three and two), never a full row and an orphan. */
 
-/** Classes for the element holding the items: one row, then the balanced grid once `data-wrapped` is set. */
-export const BALANCED_ROWS =
-  "grid grid-flow-col auto-cols-[minmax(max-content,1fr)] data-[wrapped]:grid-flow-row data-[wrapped]:grid-cols-[repeat(var(--balance-columns),minmax(max-content,1fr))]";
+/** Marks the element holding the items: a wrapping row, then the balanced grid once `data-wrapped` is set (globals.css). */
+export const BALANCED_ROWS = "data-balanced-rows";
+
+/** Marks the node inside each item that sizes to its content in either layout. */
+export const BALANCE_CONTENT = "data-balance-content";
 
 const SLACK_PX = 0.5;
 
@@ -26,48 +28,35 @@ function balancedColumns(room: number, widths: number[]): number {
   return Math.ceil(count / Math.ceil(count / Math.max(columns, 1)));
 }
 
+const inline = (sizes: readonly ResizeObserverSize[] | undefined, fallback: number) =>
+  sizes?.[0]?.inlineSize ?? fallback;
+
 /**
  * Lays `items` out in `BALANCED_ROWS`. `sizer` is the element that fills its line once wrapped
- * (it takes `data-wrapped` too); `item` selects the items among `items`' children.
- * Sizes come from a ResizeObserver only, never a layout read: on one row an item that overflows
- * sits at its own width, which the grid then needs.
+ * (it takes `data-wrapped` too); `item` selects the items among `items`' children, each holding
+ * one `BALANCE_CONTENT` node. Sizes come from a ResizeObserver only, never a layout read: an
+ * item's own width is its content node's width plus its padding and border, the same in either
+ * layout, so only the column count waits a frame, and the wrapping row never overflows meanwhile.
  */
 export function balanceRows(sizer: HTMLElement, items: HTMLElement, item: string): () => void {
+  const content = `[${BALANCE_CONTENT}]`;
   const each = () => [...items.querySelectorAll<HTMLElement>(`:scope > ${item}`)];
-  const seen = new Map<Element, number>();
-  let settled = new Map<Element, number>();
-  let own: number[] = [];
+  const own = new WeakMap<Element, number>();
+  const chrome = new WeakMap<Element, number>();
+  let room = 0;
   let columns = 0;
-  let phase: "measure" | "settle" | "settled" = "measure";
   let frame = 0;
 
-  const resize = new ResizeObserver((entries) => {
-    for (const entry of entries) {
-      const width =
-        entry.target === items
-          ? entry.contentRect.width
-          : (entry.borderBoxSize?.[0]?.inlineSize ?? entry.contentRect.width);
-      seen.set(entry.target, width);
+  const widths = (): number[] | undefined => {
+    const out: number[] = [];
+    for (const el of each()) {
+      const inner = el.querySelector(content);
+      const width = inner ? own.get(inner) : undefined;
+      const edge = chrome.get(el);
+      if (width === undefined || edge === undefined) return undefined;
+      out.push(width + edge);
     }
-    if (phase === "settle") return settle();
-    if (phase === "measure" || columns === 0) return decide();
-    const room = seen.get(items) ?? 0;
-    if (Math.abs(room - (settled.get(items) ?? 0)) > SLACK_PX) return apply(room, own);
-    if (changed()) remeasure();
-  });
-
-  const watch = () => {
-    resize.disconnect();
-    resize.observe(items);
-    for (const el of each()) resize.observe(el);
-  };
-
-  const changed = () =>
-    [...seen].some(([el, width]) => Math.abs(width - (settled.get(el) ?? width)) > SLACK_PX);
-
-  const settle = () => {
-    settled = new Map(seen);
-    phase = "settled";
+    return out;
   };
 
   const layout = (next: number) => {
@@ -81,33 +70,39 @@ export function balanceRows(sizer: HTMLElement, items: HTMLElement, item: string
   };
 
   // A layout change inside any ResizeObserver callback resizes what other observers watch and loops, so it waits a frame.
-  const relayout = (next: number, then: "measure" | "settle") => {
-    resize.disconnect();
-    phase = then;
+  const decide = () => {
     cancelAnimationFrame(frame);
     frame = requestAnimationFrame(() => {
-      layout(next);
-      watch();
+      const known = widths();
+      if (!known) return;
+      const next = room > 0 ? balancedColumns(room, known) : 0;
+      if (next !== columns) layout(next);
     });
   };
 
-  const apply = (room: number, widths: number[]) => {
-    const next = room > 0 ? balancedColumns(room, widths) : 0;
-    if (next === columns) return settle();
-    relayout(next, "settle");
-  };
+  const resize = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const border = inline(entry.borderBoxSize, entry.contentRect.width);
+      if (entry.target === items) room = entry.contentRect.width;
+      else if (entry.target.hasAttribute(BALANCE_CONTENT)) own.set(entry.target, border);
+      else chrome.set(entry.target, border - inline(entry.contentBoxSize, entry.contentRect.width));
+    }
+    decide();
+  });
 
-  const decide = () => {
-    const room = seen.get(items) ?? 0;
-    own = each().map((el) => seen.get(el) ?? 0);
-    apply(room, own);
+  const watch = () => {
+    resize.disconnect();
+    resize.observe(items);
+    for (const el of each()) {
+      resize.observe(el);
+      const inner = el.querySelector(content);
+      if (inner) resize.observe(inner);
+    }
   };
-
-  const remeasure = () => relayout(0, "measure");
 
   layout(0);
   watch();
-  const children = new MutationObserver(remeasure);
+  const children = new MutationObserver(watch);
   children.observe(items, { childList: true });
   return () => {
     cancelAnimationFrame(frame);

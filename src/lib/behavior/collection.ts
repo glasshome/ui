@@ -103,12 +103,13 @@ export function createCollection(options: CollectionOptions): Collection {
   }
 
   if (options.focus === "roving") {
-    effect(
-      () => [options.root(), options.preferred?.() ?? []] as const,
-      ([root, preferred]) => placeStop(root, preferred),
-    );
     effect(options.root, (root) => {
       if (!root) return;
+      // One read when the listeners attach, so an item focused before them (autofocus) keeps the stop.
+      const current = (root.getRootNode() as Document | ShadowRoot).activeElement;
+      focused = current && root.contains(current) ? current : null;
+      const item = focused?.closest<HTMLElement>(options.itemSelector);
+      if (item && root.contains(item)) setOwn(keyOf(item));
       const enter = (event: FocusEvent) => {
         focused = event.target instanceof Element ? event.target : null;
       };
@@ -125,6 +126,10 @@ export function createCollection(options: CollectionOptions): Collection {
         root.removeEventListener("focusout", leave);
       };
     });
+    effect(
+      () => [options.root(), options.preferred?.() ?? []] as const,
+      ([root, preferred]) => placeStop(root, preferred),
+    );
   }
 
   let buffer = "";
