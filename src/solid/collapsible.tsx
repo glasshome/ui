@@ -3,6 +3,7 @@ import {
   type Component,
   type ComponentProps,
   createContext,
+  createMemo,
   createSignal,
   createUniqueId,
   onCleanup,
@@ -83,11 +84,13 @@ export const CollapsibleRoot: Component<CollapsibleProps> = (props) => {
     "disabled",
     "forceMount",
   ]);
-  const [open, setOpen] = createControllableSignal<boolean>({
+  const [state, setOpen] = createControllableSignal<boolean>({
     value: () => local.open,
     defaultValue: () => local.defaultOpen ?? false,
     onChange: (next) => local.onOpenChange?.(next),
   });
+  // An accordion item's open state derives from the whole selection; a sibling's change must not wake it.
+  const open = createMemo(state);
   const disabled = () => local.disabled ?? false;
   const [content, setContent] = createSignal<string>();
 

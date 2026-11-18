@@ -80,7 +80,17 @@ describe("Accordion contract", () => {
     expect(expanded()).toEqual(["Hub", "Power"]);
   });
 
-  it("AC5 ArrowDown and ArrowUp move focus between enabled triggers and wrap", async () => {
+  it("AC14 multiple: opening one item runs no motion on the items already open", async () => {
+    const { trigger, regions } = await mount("multiple");
+    await input.press(trigger("Hub"));
+    expect(regions()).toHaveLength(3);
+    const settled = regions().filter((r) => !r.textContent?.startsWith("Hold"));
+    expect(settled).toHaveLength(2);
+    for (const region of settled)
+      expect(region.getAnimations(), region.textContent ?? "").toEqual([]);
+  });
+
+  it("AC5ArrowDown and ArrowUp move focus between enabled triggers and wrap", async () => {
     const { run, expanded, focused } = await mount("disabled-item");
     await run(press("Hub"));
     await run({ key: "ArrowDown" });

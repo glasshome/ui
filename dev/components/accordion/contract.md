@@ -17,3 +17,4 @@ Each line is one browser test in `tests/contracts/accordion.contract.test.tsx`, 
 | AC11 | open and closed items | item, heading, trigger and content of an open item carry `data-expanded`; item, heading and trigger of a closed one carry `data-closed` |
 | AC12 | Escape on a trigger | with `collapsible` or `multiple`, every item closes; otherwise nothing changes |
 | AC13 | inside a closed shadow root | AC2 holds there too. |
+| AC14 | `multiple`, a closed item opens | the items already open run no motion |
