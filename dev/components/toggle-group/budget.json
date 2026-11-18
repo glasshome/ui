@@ -243,8 +243,8 @@
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 3,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 4,
+          "reason": "2026-11-18: the dialog's focus trap puts its two edge stops (fixed 1px spans beside the container) in as it opens, one layout"
         }
       },
       "1": {
