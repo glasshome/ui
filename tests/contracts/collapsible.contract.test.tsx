@@ -4,7 +4,6 @@ import { afterEach, describe, expect, it } from "vitest";
 import { findTarget, runSteps, scenarioScope } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../src/solid";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -117,7 +116,8 @@ describe("Collapsible contract", () => {
     const panel = content() as HTMLElement;
     const height = panel.getBoundingClientRect().height;
     expect(height).toBeGreaterThan(0);
-    expect(panel.style.getPropertyValue("--kb-collapsible-content-height")).toBe(`${height}px`);
+    for (const name of ["--collapsible-content-height", "--kb-collapsible-content-height"])
+      expect(panel.style.getPropertyValue(name), name).toBe(`${height}px`);
   });
 
   it("CL9 forceMount keeps the closed content rendered", async () => {
@@ -135,9 +135,7 @@ describe("Collapsible contract", () => {
   it("CL10 a press opens it inside a closed shadow root", async () => {
     const { button, content, run } = await mount("in-shadow-root");
     await run(trigger);
-    await expectGap(() => {
-      expect(button().getAttribute("aria-expanded"), "expanded in the shadow root").toBe("true");
-      expect(content()).not.toBeNull();
-    }, "expanded in the shadow root: expected 'false' to be 'true'");
+    expect(button().getAttribute("aria-expanded")).toBe("true");
+    expect(content()).not.toBeNull();
   });
 });

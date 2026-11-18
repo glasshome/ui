@@ -11,6 +11,6 @@ Each line is one browser test in `tests/contracts/collapsible.contract.test.tsx`
 | CL5 | `disabled` | the trigger is disabled, root and trigger carry `data-disabled`, and a press changes nothing |
 | CL6 | controlled by `open` and `onOpenChange` | a press reports the next state, and the content follows only `open` |
 | CL7 | `defaultOpen` | the content is rendered at mount and runs no open motion |
-| CL8 | open | the content's `--kb-collapsible-content-height` is its own height, which the open and close motion read |
+| CL8 | open | the content's `--collapsible-content-height` and `--kb-collapsible-content-height` are its own height, which the open and close motion read |
 | CL9 | `forceMount` | closed, the content stays rendered with `data-closed` |
-| CL10 | inside a closed shadow root | CL2 holds there too. Gap: Kobalte toggles from a delegated `onClick`, which the document cannot see inside the root, so a press changes nothing (`2026-11-15-kobalte-collections-dead-in-closed-shadow-roots`) |
+| CL10 | inside a closed shadow root | CL2 holds there too. |

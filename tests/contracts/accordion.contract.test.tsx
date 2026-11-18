@@ -5,7 +5,6 @@ import { afterEach, describe, expect, it } from "vitest";
 import { findAll, findTarget, runSteps, scenarioScope } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../src/solid";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -84,25 +83,24 @@ describe("Accordion contract", () => {
   it("AC5 ArrowDown and ArrowUp move focus between enabled triggers and wrap", async () => {
     const { run, expanded, focused } = await mount("disabled-item");
     await run(press("Hub"));
-    await expectGap(async () => {
-      await run({ key: "ArrowDown" });
-      expect(focused()).toBe("Wi-Fi");
-    }, "expected 'Hub' to be 'Wi-Fi'");
     await run({ key: "ArrowDown" });
+    expect(focused()).toBe("Wi-Fi");
+    await run({ key: "ArrowDown" });
+    expect(focused()).toBe("Hub");
     await run({ key: "ArrowUp" });
+    expect(focused()).toBe("Wi-Fi");
     await run({ key: "ArrowUp" });
+    expect(focused()).toBe("Hub");
     expect(expanded()).toEqual(["Hub"]);
   });
 
   it("AC6 Home and End reach the first and last enabled trigger", async () => {
     const { run, focused } = await mount("keyboard-nav");
     await run(press("Hub"));
-    await expectGap(async () => {
-      await run({ key: "End" });
-      expect(focused()).toBe("Power");
-      await run({ key: "Home" });
-      expect(focused()).toBe("Wi-Fi");
-    }, "expected 'Hub' to be 'Power'");
+    await run({ key: "End" });
+    expect(focused()).toBe("Power");
+    await run({ key: "Home" });
+    expect(focused()).toBe("Wi-Fi");
   });
 
   it("AC7 every enabled trigger is a Tab stop, in item order", async () => {
@@ -182,9 +180,6 @@ describe("Accordion contract", () => {
   it("AC13 a press opens an item inside a closed shadow root", async () => {
     const { run, expanded } = await mount("in-shadow-root");
     await run(press("Hub"));
-    await expectGap(
-      () => expect(expanded(), "expanded in the shadow root").toEqual(["Hub"]),
-      "expanded in the shadow root: expected [ 'Wi-Fi' ] to deeply equal [ 'Hub' ]",
-    );
+    expect(expanded()).toEqual(["Hub"]);
   });
 });

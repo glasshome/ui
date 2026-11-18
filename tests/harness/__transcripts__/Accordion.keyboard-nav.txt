@@ -1,5 +1,6 @@
 document
 button, Wi-Fi, not expanded
-
-
-
+button, Hub, not expanded
+button, Power, not expanded
+button, Wi-Fi, 1 control, expanded
+button, Power, not expanded
