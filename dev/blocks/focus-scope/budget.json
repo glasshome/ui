@@ -25,8 +25,8 @@
           "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
         },
         "layouts": {
-          "max": 1,
-          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+          "max": 2,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       },
       "2": {
@@ -73,12 +73,12 @@
       },
       "5": {
         "elementsRestyled": {
-          "max": 3,
-          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+          "max": 4,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         },
         "largestRecalc": {
-          "max": 1,
-          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+          "max": 2,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         },
         "layouts": {
           "max": 0,
@@ -139,8 +139,8 @@
           "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
         },
         "layouts": {
-          "max": 1,
-          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+          "max": 2,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       },
       "2": {
@@ -197,8 +197,8 @@
           "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
         },
         "layouts": {
-          "max": 1,
-          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+          "max": 2,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         }
       },
       "2": {
@@ -245,12 +245,12 @@
       },
       "5": {
         "elementsRestyled": {
-          "max": 3,
-          "reason": "baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; phase 1 step 5 is open, Task 12 re-measures"
+          "max": 4,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         },
         "largestRecalc": {
-          "max": 1,
-          "reason": "baseline 2026-11-17, max of 3 T50 runs; phase 1 step 5 is open, Task 12 re-measures"
+          "max": 2,
+          "reason": "2026-11-18: the focus trap's two edge stops (fixed 1px spans beside the container) go in as it traps and out as it lets go, one layout and their own restyle each way"
         },
         "layouts": {
           "max": 0,
