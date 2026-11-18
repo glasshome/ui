@@ -12,17 +12,50 @@ async function stopped(animations: Animation[]): Promise<void> {
   while (animations.some(finite)) await frame();
 }
 
-/** Done once two frames in a row start no finite animation, and every one started has run out. */
+// A task queued from a frame callback runs after every other callback of that frame; a message, since a test may fake timers.
+const afterFrame = async () => {
+  await frame();
+  const channel = new MessageChannel();
+  await new Promise<void>((done) => {
+    channel.port1.onmessage = () => done();
+    channel.port2.postMessage(null);
+  });
+  channel.port1.close();
+};
+
+// A DOM that keeps changing, such as a ticking clock, counts as settled after this many frames.
+const CHANGING_FRAMES = 60;
+
+/**
+ * Done once two frames in a row change no DOM and start no finite animation, and every one
+ * started has run out. A ResizeObserver answer applied a frame later is such a change.
+ */
 export async function settle(): Promise<void> {
-  let quiet = 0;
-  while (quiet < 2) {
-    await frame();
-    const now = running();
-    quiet = now.length === 0 ? quiet + 1 : 0;
-    // A cancelled animation rejects `finished`; it has stopped all the same.
-    await Promise.race([
-      Promise.all(now.map((a) => a.finished.catch(() => undefined))),
-      stopped(now),
-    ]);
+  let changed = false;
+  const changes = new MutationObserver(() => (changed = true));
+  for (const root of [document, ...CLOSED_ROOTS])
+    changes.observe(root, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      characterData: true,
+    });
+  try {
+    let quiet = 0;
+    let changing = 0;
+    while (quiet < 2) {
+      await afterFrame();
+      const now = running();
+      if (changed) changing++;
+      quiet = now.length === 0 && (!changed || changing > CHANGING_FRAMES) ? quiet + 1 : 0;
+      changed = false;
+      // A cancelled animation rejects `finished`; it has stopped all the same.
+      await Promise.race([
+        Promise.all(now.map((a) => a.finished.catch(() => undefined))),
+        stopped(now),
+      ]);
+    }
+  } finally {
+    changes.disconnect();
   }
 }

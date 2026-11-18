@@ -3,16 +3,16 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 25,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 58,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "largestRecalc": {
           "max": 24,
           "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 2,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         }
       }
     },
@@ -33,16 +33,16 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 25,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 58,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "largestRecalc": {
           "max": 24,
           "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 2,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         }
       },
       "1": {
@@ -91,16 +91,16 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 25,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 58,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "largestRecalc": {
           "max": 24,
           "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 2,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         }
       },
       "1": {
@@ -177,16 +177,16 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 10,
-          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "max": 19,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "largestRecalc": {
           "max": 8,
           "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 2,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         }
       },
       "1": {
@@ -235,22 +235,22 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 89,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "max": 132,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "largestRecalc": {
           "max": 33,
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "layouts": {
-          "max": 4,
-          "reason": "2026-11-18: the dialog's focus trap puts its two edge stops (fixed 1px spans beside the container) in as it opens, one layout"
+          "max": 5,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 65,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "max": 92,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "largestRecalc": {
           "max": 10,
@@ -279,16 +279,16 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 28,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 60,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "largestRecalc": {
           "max": 26,
           "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 2,
+          "reason": "2026-11-18: a balanced group mounts as a wrapping row and turns into its grid once its items' sizes arrive a frame later, so it never overflows meanwhile (ui#145 review); that turn is one more layout and restyle after mount; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         }
       },
       "1": {

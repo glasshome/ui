@@ -1,8 +1,10 @@
 /* A row of segments that runs out of width wraps into a grid whose rows hold an even count
  * (four modes go two by two, five go three and two), never a full row and an orphan. */
 
-/** Marks the element holding the items: a wrapping row, then the balanced grid once `data-wrapped` is set (globals.css). */
+/** Marks the element holding the items: a wrapping row until the column count is known, then a grid of that many equal columns (globals.css). */
 export const BALANCED_ROWS = "data-balanced-rows";
+
+const BALANCED = "data-balanced";
 
 /** Marks the node inside each item that sizes to its content in either layout. */
 export const BALANCE_CONTENT = "data-balance-content";
@@ -11,10 +13,10 @@ const SLACK_PX = 0.5;
 
 const total = (widths: number[]) => widths.reduce((sum, w) => sum + w, 0);
 
-/** Columns of the balanced grid, from each item's own width; 0 when one row holds them all. */
+/** Columns of the balanced grid, from each item's own width; every item when one row holds them all. */
 function balancedColumns(room: number, widths: number[]): number {
   const count = widths.length;
-  if (count < 2 || total(widths) <= room + SLACK_PX) return 0;
+  if (count < 2 || total(widths) <= room + SLACK_PX) return count;
   let columns = count - 1;
   for (; columns > 1; columns--) {
     let span = 0;
@@ -43,7 +45,6 @@ export function balanceRows(sizer: HTMLElement, items: HTMLElement, item: string
   const each = () => [...items.querySelectorAll<HTMLElement>(`:scope > ${item}`)];
   const own = new WeakMap<Element, number>();
   const chrome = new WeakMap<Element, number>();
-  let room = 0;
   let columns = 0;
   let frame = 0;
 
@@ -59,14 +60,20 @@ export function balanceRows(sizer: HTMLElement, items: HTMLElement, item: string
     return out;
   };
 
-  const layout = (next: number) => {
+  const layout = (next: number, count: number) => {
     columns = next;
+    const wrapped = next > 0 && next < count;
     for (const el of [sizer, items]) {
-      if (next > 0) el.setAttribute("data-wrapped", "");
+      if (wrapped) el.setAttribute("data-wrapped", "");
       else el.removeAttribute("data-wrapped");
     }
-    if (next > 0) items.style.setProperty("--balance-columns", String(next));
-    else items.style.removeProperty("--balance-columns");
+    if (next > 0) {
+      items.setAttribute(BALANCED, "");
+      items.style.setProperty("--balance-columns", String(next));
+    } else {
+      items.removeAttribute(BALANCED);
+      items.style.removeProperty("--balance-columns");
+    }
   };
 
   // A layout change inside any ResizeObserver callback resizes what other observers watch and loops, so it waits a frame.
@@ -75,23 +82,36 @@ export function balanceRows(sizer: HTMLElement, items: HTMLElement, item: string
     frame = requestAnimationFrame(() => {
       const known = widths();
       if (!known) return;
-      const next = room > 0 ? balancedColumns(room, known) : 0;
-      if (next !== columns) layout(next);
+      const space = room();
+      const next = space > 0 ? balancedColumns(space, known) : 0;
+      if (next !== columns) layout(next, known.length);
     });
   };
+
+  const parent = sizer.parentElement;
+  let line = 0;
+  let sizerWidth = 0;
+  let itemsWidth = 0;
+  // The room is the line the sizer may fill, whatever width it fits to now.
+  const room = () => (parent ? line - (sizerWidth - itemsWidth) : itemsWidth);
 
   const resize = new ResizeObserver((entries) => {
     for (const entry of entries) {
       const border = inline(entry.borderBoxSize, entry.contentRect.width);
-      if (entry.target === items) room = entry.contentRect.width;
-      else if (entry.target.hasAttribute(BALANCE_CONTENT)) own.set(entry.target, border);
-      else chrome.set(entry.target, border - inline(entry.contentBoxSize, entry.contentRect.width));
+      if (entry.target === parent) line = entry.contentRect.width;
+      if (entry.target === sizer) sizerWidth = border;
+      if (entry.target === items) itemsWidth = entry.contentRect.width;
+      if (entry.target.hasAttribute(BALANCE_CONTENT)) own.set(entry.target, border);
+      else if (entry.target.parentElement === items)
+        chrome.set(entry.target, border - inline(entry.contentBoxSize, entry.contentRect.width));
     }
     decide();
   });
 
   const watch = () => {
     resize.disconnect();
+    if (parent) resize.observe(parent);
+    resize.observe(sizer);
     resize.observe(items);
     for (const el of each()) {
       resize.observe(el);
@@ -100,7 +120,7 @@ export function balanceRows(sizer: HTMLElement, items: HTMLElement, item: string
     }
   };
 
-  layout(0);
+  layout(0, 0);
   watch();
   const children = new MutationObserver(watch);
   children.observe(items, { childList: true });
