@@ -7,8 +7,8 @@
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 20,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 24,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 1,
@@ -37,8 +37,8 @@
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 20,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 24,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 1,
@@ -51,8 +51,8 @@
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 8,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 10,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 3,
@@ -65,8 +65,8 @@
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 4,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 5,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 1,
@@ -95,8 +95,8 @@
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 20,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 24,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 1,
@@ -109,8 +109,8 @@
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 8,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 10,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 3,
@@ -123,8 +123,8 @@
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 4,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 5,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 0,
@@ -137,8 +137,8 @@
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 4,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 5,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 0,
@@ -151,8 +151,8 @@
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 4,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 5,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 0,
@@ -177,12 +177,12 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 7,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 10,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "largestRecalc": {
-          "max": 5,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 8,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 1,
@@ -191,12 +191,12 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 5,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 10,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "largestRecalc": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 2,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 0,
@@ -205,12 +205,12 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 5,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 10,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "largestRecalc": {
-          "max": 1,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 2,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 0,
@@ -253,8 +253,8 @@
           "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "largestRecalc": {
-          "max": 8,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 10,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 3,
@@ -283,8 +283,8 @@
           "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 22,
-          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 26,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 1,
@@ -297,8 +297,8 @@
           "reason": "2026-11-18: the press now selects inside a closed shadow root (the Kobalte gap closed), so the highlight slides and the panel swaps; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "largestRecalc": {
-          "max": 8,
-          "reason": "2026-11-18: the press now selects inside a closed shadow root (the Kobalte gap closed), so the highlight slides and the panel swaps; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "max": 10,
+          "reason": "2026-11-18: each item holds a content node that sizes to max-content, so balanced rows never overflow on the first frame (ui#145 review); restyling an item restyles that node; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
         },
         "layouts": {
           "max": 3,
