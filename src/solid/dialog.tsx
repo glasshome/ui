@@ -4,7 +4,9 @@ import {
   type Component,
   type ComponentProps,
   createEffect,
+  createMemo,
   createSignal,
+  type JSX,
   onCleanup,
   type ParentComponent,
   splitProps,
@@ -109,14 +111,15 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
     observer.observe(el);
     onCleanup(() => observer.disconnect());
   });
-  const placement = () => {
+  const placement = createMemo<JSX.CSSProperties | undefined>((last) => {
+    if (!ctx.isOpen()) return last;
     viewport();
     const a = local.anchor;
     return a ? overAnchor(a, ANCHORED_WIDTH[local.size ?? "lg"], height()) : undefined;
-  };
+  });
   return (
     <>
-      <ModalCover panel={ctx.panel} open={ctx.isOpen} />
+      <ModalCover panel={ctx.panel} open={ctx.isOpen} dormant={ctx.dormant} />
       <ModalFrame
         slot="dialog"
         mount={usePortalMount()}

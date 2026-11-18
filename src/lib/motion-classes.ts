@@ -32,10 +32,14 @@ export const ANCHORED_MOTION =
  * (globals.css): one door, no per-row index, mount-only. */
 export const STAGGER = "gh-stagger";
 
-/* Modals: rise into place. Sheets keep their slide. */
-export const MODAL_MOTION = `${ARRIVE} data-[expanded]:fade-in-0 data-[expanded]:zoom-in-[0.94] data-[expanded]:slide-in-from-bottom-2 ${LEAVE} data-[closed]:fade-out-0 data-[closed]:zoom-out-[0.96]`;
+/* An exit that holds its last frame: a closed surface still mounted (kept, or waiting
+ * for its unmount) rests invisible instead of snapping back. */
+const REST_CLOSED = "data-[closed]:fill-mode-forwards";
 
-export const SCRIM_MOTION = `${ARRIVE} data-[expanded]:fade-in-0 ${LEAVE} data-[closed]:fade-out-0`;
+/* Modals: rise into place. Sheets keep their slide. */
+export const MODAL_MOTION = `${ARRIVE} data-[expanded]:fade-in-0 data-[expanded]:zoom-in-[0.94] data-[expanded]:slide-in-from-bottom-2 ${LEAVE} ${REST_CLOSED} data-[closed]:fade-out-0 data-[closed]:zoom-out-[0.96]`;
+
+export const SCRIM_MOTION = `${ARRIVE} data-[expanded]:fade-in-0 ${LEAVE} ${REST_CLOSED} data-[closed]:fade-out-0`;
 
 /* Content that swaps in place (tab panel, a row added to a list). */
 export const SETTLE_MOTION =

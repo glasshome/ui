@@ -1,11 +1,13 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal, type JSX } from "solid-js";
+import { createEffect, createSignal, type JSX } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { commands, userEvent } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { findAll } from "../../dev/harness/steps";
 import { Within } from "../../dev/harness/Within";
-import { ModalFrame, ModalRoot } from "../../src/lib/behavior/modal-root";
+import { layerStack } from "../../src/lib/behavior/layer-stack";
+import { ModalFrame, ModalRoot, useDialogContext } from "../../src/lib/behavior/modal-root";
+import { overAnchor } from "../../src/lib/anchor-placement";
 import { MOTION_EXIT_MS } from "../../src/lib/motion-classes";
 import {
   Button,
@@ -18,6 +20,11 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  ResponsiveDialog,
+  ResponsiveDialogClose,
+  ResponsiveDialogContent,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -554,5 +561,365 @@ describe("modal root contract", () => {
     expect(document.querySelector('[data-slot="probe-content"]')).not.toBeNull();
     await vi.advanceTimersByTimeAsync(200);
     expect(document.querySelector('[data-slot="probe-content"]')).toBeNull();
+  });
+});
+
+const EDGE_STOP = 'span[tabindex="0"][aria-hidden="true"]';
+const content = (slot = "dialog") => {
+  const el = document.querySelector(`[data-slot="${slot}-content"]`);
+  if (!(el instanceof HTMLElement)) throw new Error(`no ${slot} content`);
+  return el;
+};
+const layerOf = (panel: HTMLElement) => {
+  const el = panel.parentElement;
+  if (!el) throw new Error("the panel has no layer root");
+  return el;
+};
+
+async function reopen(slot: string, trigger: string) {
+  await input.press(button(trigger));
+  await settle();
+  const panel = content(slot);
+  const scrim = document.querySelector(`[data-slot="${slot}-overlay"]`);
+  await input.press(button("Done"));
+  await settle();
+  const layer = layerOf(panel);
+  expect(layer.hasAttribute("data-dormant")).toBe(true);
+  const added: Node[] = [];
+  const observer = new MutationObserver((records) => {
+    for (const record of records) added.push(...record.addedNodes);
+  });
+  observer.observe(layer, { childList: true, subtree: true, characterData: true });
+  await input.press(button(trigger));
+  await settle();
+  for (const record of observer.takeRecords()) added.push(...record.addedNodes);
+  observer.disconnect();
+  return { panel, scrim, added };
+}
+
+describe("kept modal contract", () => {
+  it("DK1 going dormant writes data-dormant on the layer root, beside only the panel's ARIA and its cover", async () => {
+    const [open, setOpen] = createSignal(true);
+    render(() => (
+      <Dialog keep open={open()} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogTitle>Climate</DialogTitle>
+          <Button>Warmer</Button>
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    const panel = content();
+    const layer = layerOf(panel);
+    expect(panel.hasAttribute("data-covering")).toBe(true);
+    const box = (el: Element) => {
+      const style = getComputedStyle(el);
+      return { position: style.position, contain: style.contain, zIndex: style.zIndex };
+    };
+    const shown = box(layer);
+    setOpen(false);
+    const writes: string[] = [];
+    const who = (node: Node) => (node === layer ? "root" : node === panel ? "panel" : "inside");
+    const observer = new MutationObserver((records) => {
+      for (const record of records) writes.push(`${who(record.target)} ${record.attributeName}`);
+    });
+    observer.observe(layer, { attributes: true, subtree: true });
+    await settle();
+    for (const record of observer.takeRecords())
+      writes.push(`${who(record.target)} ${record.attributeName}`);
+    observer.disconnect();
+    expect(layer.hasAttribute("data-dormant")).toBe(true);
+    expect(writes.toSorted()).toEqual([
+      "panel aria-modal",
+      "panel data-covering",
+      "panel role",
+      "root data-dormant",
+    ]);
+    expect(shown.position).toBe("fixed");
+    expect(box(layer)).toEqual(shown);
+  });
+
+  it("DK2 a dormant Dialog's content leaves the Chromium AX tree, and returns on reopen", async () => {
+    const [open, setOpen] = createSignal(true);
+    render(() => (
+      <Dialog keep open={open()} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogTitle>Kept climate</DialogTitle>
+          <Button>Kept warmer</Button>
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    expect(await commands.axTree()).toContain('button "Kept warmer"');
+    setOpen(false);
+    await settle();
+    expect(layerOf(content()).hasAttribute("data-dormant")).toBe(true);
+    const tree = await commands.axTree();
+    expect(tree).not.toContain("Kept warmer");
+    expect(tree).not.toContain("Kept climate");
+    setOpen(true);
+    await settle();
+    expect(await commands.axTree()).toContain('dialog "Kept climate"');
+  });
+
+  it("DK3 a dormant panel carries no role and no aria-modal, and both return on reopen", async () => {
+    const [open, setOpen] = createSignal(true);
+    render(() => (
+      <Dialog keep open={open()} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogTitle>Climate</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    const panel = content();
+    setOpen(false);
+    await settle();
+    expect(layerOf(panel).hasAttribute("data-dormant")).toBe(true);
+    expect(panel.hasAttribute("role")).toBe(false);
+    expect(panel.hasAttribute("aria-modal")).toBe(false);
+    expect(dialogs()).toHaveLength(0);
+    setOpen(true);
+    await settle();
+    expect(content()).toBe(panel);
+    expect(panel.getAttribute("role")).toBe("dialog");
+    expect(panel.getAttribute("aria-modal")).toBe("true");
+  });
+
+  it("DK4 a dormant Dialog holds no layer, hides, traps and covers nothing, and reopens as it first opened", async () => {
+    const pageRoot = document.body.appendChild(document.createElement("div"));
+    pageRoot.setAttribute("data-page", "");
+    const beside = pageRoot.appendChild(document.createElement("button"));
+    beside.textContent = "Beside";
+    const keptChanges: boolean[] = [];
+    const [kept, setKept] = createSignal(false);
+    const [top, setTop] = createSignal(false);
+    render(() => (
+      <>
+        <Dialog
+          keep
+          open={kept()}
+          onOpenChange={(next) => {
+            keptChanges.push(next);
+            setKept(next);
+          }}
+        >
+          <DialogTrigger as={Button}>Climate</DialogTrigger>
+          <DialogContent>
+            <DialogTitle>Climate</DialogTitle>
+            <Button>Warmer</Button>
+            <DialogClose>Done</DialogClose>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={top()} onOpenChange={setTop}>
+          <DialogContent>
+            <DialogTitle>Rename</DialogTitle>
+            <Button>Save</Button>
+          </DialogContent>
+        </Dialog>
+      </>
+    ));
+    await settle();
+    const trigger = button("Climate");
+    await input.press(trigger);
+    await settle();
+    const panel = content();
+    const first = document.activeElement;
+    expect(panel.contains(first)).toBe(true);
+    expect(pageRoot.hasAttribute("data-covered")).toBe(true);
+
+    await input.press(button("Done"));
+    await settle();
+    const layer = layerOf(panel);
+    expect(layer.hasAttribute("data-dormant")).toBe(true);
+    expect(document.activeElement).toBe(trigger);
+    expect(layerStack.layers()).toEqual([]);
+    expect(beside.hasAttribute("aria-hidden")).toBe(false);
+    expect(layer.querySelectorAll(EDGE_STOP)).toHaveLength(0);
+    expect(pageRoot.hasAttribute("data-covered")).toBe(false);
+
+    setTop(true);
+    await settle();
+    await input.key("Escape");
+    await settle();
+    expect(top()).toBe(false);
+    setTop(true);
+    await settle();
+    await input.pressAt(CORNER.x, CORNER.y);
+    await settle();
+    expect(top()).toBe(false);
+    expect(keptChanges).toEqual([true, false]);
+
+    await input.press(trigger);
+    await settle();
+    expect(content()).toBe(panel);
+    expect(document.activeElement).toBe(first);
+    expect(pageRoot.hasAttribute("data-covered")).toBe(true);
+    await input.press(button("Done"));
+    await settle();
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it("DK5 a kept anchored Dialog is placed over its anchor's box as it is on each open", async () => {
+    const anchor = document.body.appendChild(document.createElement("div"));
+    Object.assign(anchor.style, {
+      position: "fixed",
+      top: "120px",
+      left: "16px",
+      width: "200px",
+      height: "100px",
+    });
+    const [open, setOpen] = createSignal(true);
+    render(() => (
+      <Dialog keep open={open()} onOpenChange={setOpen}>
+        <DialogContent anchor={anchor} ariaLabel="Climate">
+          rows
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    const panel = content();
+    const first = panel.style.left;
+    setOpen(false);
+    await settle();
+    expect(layerOf(panel).hasAttribute("data-dormant")).toBe(true);
+    anchor.style.left = "480px";
+    setOpen(true);
+    await settle();
+    expect(panel.style.left).not.toBe(first);
+    expect(panel.style.left).toBe(overAnchor(anchor, 512, panel.offsetHeight).left);
+  });
+
+  it("DK6 an exit ends at rest, invisible, for a centred and an anchored panel and their scrims", async () => {
+    const anchor = document.body.appendChild(document.createElement("div"));
+    Object.assign(anchor.style, {
+      position: "fixed",
+      top: "120px",
+      left: "16px",
+      width: "200px",
+      height: "100px",
+    });
+    for (const anchored of [false, true]) {
+      const [open, setOpen] = createSignal(true);
+      render(() => (
+        <Dialog keep open={open()} onOpenChange={setOpen}>
+          <DialogContent anchor={anchored ? anchor : undefined} ariaLabel="Climate">
+            rows
+          </DialogContent>
+        </Dialog>
+      ));
+      await settle();
+      const panel = content();
+      const scrim = document.querySelector('[data-slot="dialog-overlay"]');
+      if (!scrim) throw new Error("no scrim");
+      setOpen(false);
+      expect(panel.getAnimations().length + scrim.getAnimations().length).toBeGreaterThan(0);
+      await settle();
+      expect(
+        [getComputedStyle(panel).opacity, getComputedStyle(scrim).opacity],
+        anchored ? "anchored" : "centred",
+      ).toEqual(["0", "0"]);
+      cleanup();
+    }
+  });
+
+  it("DK7 a kept Dialog reopens on the same panel and scrim, adding no node inside them", async () => {
+    render(() => (
+      <Dialog keep>
+        <DialogTrigger as={Button}>Climate</DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Climate</DialogTitle>
+          <Button>Warmer</Button>
+          <DialogClose>Done</DialogClose>
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    const { panel, scrim, added } = await reopen("dialog", "Climate");
+    expect(content()).toBe(panel);
+    expect(document.querySelector('[data-slot="dialog-overlay"]')).toBe(scrim);
+    expect(added.filter((node) => panel.contains(node) || scrim?.contains(node))).toEqual([]);
+    expect(added.filter((node) => !(node instanceof Element && node.matches(EDGE_STOP)))).toEqual(
+      [],
+    );
+  });
+
+  it("DK7 a kept ResponsiveDialog reopens on the same panel and scrim", async () => {
+    render(() => (
+      <ResponsiveDialog keep>
+        <ResponsiveDialogTrigger as={Button}>Climate</ResponsiveDialogTrigger>
+        <ResponsiveDialogContent>
+          <ResponsiveDialogTitle>Climate</ResponsiveDialogTitle>
+          <ResponsiveDialogClose>Done</ResponsiveDialogClose>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
+    ));
+    await settle();
+    const { panel, scrim, added } = await reopen("dialog", "Climate");
+    expect(content()).toBe(panel);
+    expect(document.querySelector('[data-slot="dialog-overlay"]')).toBe(scrim);
+    expect(added.filter((node) => panel.contains(node) || scrim?.contains(node))).toEqual([]);
+  });
+
+  it("DK8 closing a kept Dialog closes a list opened inside it, and leaves no layer while dormant", async () => {
+    const [dialog, setDialog] = createSignal(true);
+    const [list, setList] = createSignal(false);
+    render(() => (
+      <Dialog keep open={dialog()} onOpenChange={setDialog}>
+        <DialogContent>
+          <DialogTitle>Pick</DialogTitle>
+          <Select
+            options={["Apple", "Banana"]}
+            open={list()}
+            onOpenChange={setList}
+            placeholder="Pick one"
+            itemComponent={(item) => <SelectItem item={item.item}>{item.item.rawValue}</SelectItem>}
+          >
+            <SelectTrigger aria-label="Fruit">
+              <SelectValue<string>>{(state) => state.selectedOption()}</SelectValue>
+            </SelectTrigger>
+            <SelectContent />
+          </Select>
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    await input.press(button("Fruit Pick one"));
+    await settle();
+    expect(list()).toBe(true);
+    setDialog(false);
+    await settle();
+    expect(list()).toBe(false);
+    expect(layerOf(content()).hasAttribute("data-dormant")).toBe(true);
+    expect(layerStack.layers()).toEqual([]);
+  });
+
+  it("DK9 content reads whether its layer is dormant", async () => {
+    const seen: boolean[] = [];
+    const Probe = () => {
+      const ctx = useDialogContext();
+      createEffect(() => seen.push(ctx.dormant()));
+      return null;
+    };
+    const [open, setOpen] = createSignal(false);
+    render(() => (
+      <Dialog keep open={open()} onOpenChange={setOpen}>
+        <DialogContent ariaLabel="Climate">
+          <Probe />
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    expect(seen).toEqual([true]);
+    setOpen(true);
+    await settle();
+    expect(seen).toEqual([true, false]);
+    setOpen(false);
+    expect(seen).toEqual([true, false]);
+    await settle();
+    expect(seen).toEqual([true, false, true]);
+    setOpen(true);
+    await settle();
+    expect(seen).toEqual([true, false, true, false]);
   });
 });

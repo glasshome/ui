@@ -46,6 +46,8 @@ interface ResponsiveDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   defaultOpen?: boolean;
+  /** The centred dialog stays mounted and dormant between opens; the bottom sheet ignores it. */
+  keep?: boolean;
 }
 
 /** Centred kobalte dialog from `sm` up, drag-to-dismiss bottom sheet below it.
@@ -64,7 +66,7 @@ const ResponsiveDialog: ParentComponent<ResponsiveDialogProps> = (props) => {
       <Show
         when={isMobile()}
         fallback={
-          <Dialog open={open()} onOpenChange={setOpen}>
+          <Dialog open={open()} onOpenChange={setOpen} keep={props.keep}>
             {props.children}
           </Dialog>
         }
