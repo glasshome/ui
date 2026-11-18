@@ -30,6 +30,8 @@ export interface MenuOptions {
   parent?: Menu;
   /** What the menu sits beside, given its trigger; unset, the trigger itself, as a submenu always does. */
   anchor?: (trigger: HTMLElement | undefined) => AnchorLike | undefined;
+  /** The panel covers its anchor from the anchor's top edge, as createAnchored's coverAnchor. */
+  coverAnchor?: boolean;
   side?: Accessor<Side>;
   align?: Accessor<Align>;
   offset?: number;
@@ -263,6 +265,7 @@ export function createMenu(options: MenuOptions): Menu {
     side: () => options.side?.() ?? (dir() === "rtl" ? "left" : "right"),
     align: () => options.align?.() ?? "start",
     offset: options.offset ?? 0,
+    coverAnchor: options.coverAnchor,
   });
 
   function activate(item: HTMLElement, by: "pointer" | "keyboard") {

@@ -66,7 +66,9 @@ export function createAnchored(options: AnchoredOptions): void {
           { width: window.innerWidth, height: window.innerHeight },
           { side, align, offset, matchAnchorWidth, flip: !cover },
         );
-        write("top", `${placed.top}px`);
+        // A covering part may sit as near the edge as its anchor already does.
+        const top = cover && box.top >= 0 ? Math.min(placed.top, box.top + offset) : placed.top;
+        write("top", `${top}px`);
         write("left", `${placed.left}px`);
         write("max-width", `${placed.maxWidth}px`);
         write("max-height", `${placed.maxHeight}px`);

@@ -14,7 +14,6 @@ import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createMenuButton } from "../lib/behavior/menu.js";
 import { callEventHandler, effect, merge } from "../lib/behavior/solid.js";
 import { MORPH_MOTION, MOTION_EXIT_MS } from "../lib/motion-classes.js";
-import { anchorToTriggerTop } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import {
   createMenuLevel,
@@ -54,7 +53,7 @@ interface DropdownMenuRootProps extends DeprecatedMenuRootProps {
   onOpenChange?: (open: boolean) => void;
   placement?: MenuPlacement;
   gutter?: number;
-  /** The box the panel sits beside, read from the trigger; by default the trigger's top edge, so the panel covers it. */
+  /** The box the panel sits beside, read from the trigger; unset, the panel covers the trigger. */
   getAnchorRect?: (anchor?: HTMLElement) => AnchorRect | undefined;
   children?: JSX.Element;
 }
@@ -85,7 +84,11 @@ const DropdownMenuRoot: Component<DropdownMenuRootProps> = (props) => {
   const level = createMenuLevel({
     open,
     onOpenChange: setOpen,
-    anchor: (trigger) => trigger && rectOf(trigger, props.getAnchorRect ?? anchorToTriggerTop),
+    anchor: (trigger) => {
+      const read = props.getAnchorRect;
+      return read && trigger ? rectOf(trigger, read) : trigger;
+    },
+    coverAnchor: !props.getAnchorRect,
     side: () => placement()[0],
     align: () => placement()[1],
     offset: untrack(() => props.gutter ?? 0),
