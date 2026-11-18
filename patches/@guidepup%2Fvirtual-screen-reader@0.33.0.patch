@@ -1,8 +1,39 @@
 diff --git a/lib/esm/index.mjs b/lib/esm/index.mjs
-index 2fe7338f126cbd288ccf0129fc9ea9fd2063445a..8e4c918f4b52fa284dacf7f155a1686943f64ef3 100644
+index 2fe7338..48c46ef 100644
 --- a/lib/esm/index.mjs
 +++ b/lib/esm/index.mjs
-@@ -2310,7 +2310,7 @@ var Virtual = class {
+@@ -2302,6 +2302,30 @@ var Virtual = class {
+       return;
+     }
+     this.#updateState(newActiveNode, true);
++    this.#announceActiveDescendant(target, tree);
++  }
++  #announceActiveDescendant(owner, tree) {
++    const id = owner.getAttribute?.("aria-activedescendant");
++    const root = owner.getRootNode?.();
++    if (!id || !root || root.activeElement !== owner) {
++      return;
++    }
++    const descendant = tree.find(({ node }) => node === root.getElementById?.(id));
++    if (descendant) {
++      this.#updateState(descendant, true);
++    }
++  }
++  async #announceActiveDescendantChanges(mutations) {
++    await tick();
++    const owners = new Set(
++      mutations.filter((mutation) => mutation.type === "attributes" && mutation.attributeName === "aria-activedescendant").map((mutation) => mutation.target)
++    );
++    if (!owners.size) {
++      return;
++    }
++    this.#invalidateTreeCache();
++    const tree = this.#getAccessibilityTree();
++    owners.forEach((owner) => this.#announceActiveDescendant(owner, tree));
+   }
+   #focusActiveElement() {
+     const target = getElementNode(this.#activeNode);
+@@ -2310,7 +2334,7 @@ var Virtual = class {
    async #announceLiveRegions(mutations) {
      await tick();
      const container = this.#container;
@@ -11,3 +42,11 @@ index 2fe7338f126cbd288ccf0129fc9ea9fd2063445a..8e4c918f4b52fa284dacf7f155a16869
        (mutation) => getLiveSpokenPhrase({
          container,
          mutation
+@@ -2521,6 +2545,7 @@ var Virtual = class {
+       (mutations) => {
+         this.#invalidateTreeCache();
+         this.#announceLiveRegions(mutations);
++        this.#announceActiveDescendantChanges(mutations);
+       }
+     );
+     this.#userEvent = userEvent.setup({

@@ -1,0 +1,3 @@
+document
+listbox, Fruit, orientated vertically, active descendant Apple | option, Apple, not selected, not disabled, position 1, set size 4
+dialog, Scenario, modal | button, Fruit Pick one, not expanded, has popup listbox
