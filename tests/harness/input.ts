@@ -78,6 +78,10 @@ export function trackPointer(base: Input) {
       pointer.pending = centre(el);
       return base.hover(el);
     },
+    contextMenu(el) {
+      pointer.pending = centre(el);
+      return base.contextMenu(el);
+    },
   };
   async function rehover() {
     if (!pointer.pending) return;
