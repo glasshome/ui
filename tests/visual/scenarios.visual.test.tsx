@@ -51,6 +51,8 @@ describe.each(CASES)("$name", ({ component, scenario }) => {
       .element(page.elementLocator(document.body))
       .toMatchScreenshot(`${component}-${scenario.id}-${theme}-${width}`, {
         screenshotOptions: { animations: "disabled", caret: "hide" },
+        // A pressed or focused glass edge sometimes rasterizes one pixel over; a real change differs by more.
+        comparatorOptions: { allowedMismatchedPixels: 150 },
       });
   });
 });
