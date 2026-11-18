@@ -5,6 +5,7 @@ import type { Step, Target } from "./types";
 export interface Input {
   press(el: Element): Promise<void>;
   pressAt(x: number, y: number): Promise<void>;
+  drag(el: Element, by: { x: number; y: number }): Promise<void>;
   touch(el: Element): Promise<void>;
   hover(el: Element): Promise<void>;
   key(key: string): Promise<void>;
@@ -59,6 +60,7 @@ async function runStep(scope: ParentNode[], step: Step, input: Input): Promise<v
   if ("key" in step) return input.key(step.key);
   if ("type" in step) return input.type(step.type);
   if ("pressAt" in step) return input.pressAt(step.pressAt.x, step.pressAt.y);
+  if ("drag" in step) return input.drag(findTarget(scope, step.drag), step.drag.by);
   const [verb, target] = Object.entries(step)[0] as [Pointer, Target];
   return input[verb](findTarget(scope, target));
 }

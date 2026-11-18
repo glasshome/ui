@@ -6,6 +6,8 @@ const centre = (el: Element) => {
   return [box.x + box.width / 2, box.y + box.height / 2] as const;
 };
 
+const DRAG_MOVES = 4;
+
 /** Real input at the element's centre: a selector cannot reach into a closed shadow root, a point can. */
 export const input: Input = {
   async press(el) {
@@ -18,6 +20,15 @@ export const input: Input = {
     await commands.mouse("move", x, y);
     await commands.mouse("down", x, y);
     await commands.mouse("up", x, y);
+  },
+  async drag(el, by) {
+    const [x, y] = centre(el);
+    await commands.mouse("move", x, y);
+    await commands.mouse("down", x, y);
+    for (let i = 1; i <= DRAG_MOVES; i++) {
+      await commands.mouse("move", x + (by.x * i) / DRAG_MOVES, y + (by.y * i) / DRAG_MOVES);
+    }
+    await commands.mouse("up", x + by.x, y + by.y);
   },
   async touch(el) {
     const [x, y] = centre(el);
