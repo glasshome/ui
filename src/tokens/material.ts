@@ -220,6 +220,10 @@ const frostTile = (strength: number) =>
   );
 
 const WASH_SPLIT: Record<WashStyle, number> = { flat: 1, fade: 3, "two-tone": 1 };
+/** A point of the glass face, as percentages, offset by (along, across) the light and turned with it. */
+const lightAt = (cos: number, sin: number, along: number, across: number) =>
+  `${round(50 + along * cos + across * sin)}% ${round(50 + along * sin - across * cos)}%`;
+
 const RIM: Record<RimPosition, [bottom: number, around: number]> = {
   top: [0, 0],
   "top-bottom": [1, 0],
@@ -252,6 +256,8 @@ export function resolveMaterial(
   const clarity = blurMode === "none" ? Math.max(t.clarity, NO_BLUR_CLARITY_FLOOR) : t.clarity;
   const dim = mode === "dark" ? t.darkScale : 1;
   const turn = ((t.lightFrom - LIGHT_HOME) * Math.PI) / 180;
+  const cos = round(Math.cos(turn));
+  const sin = round(Math.sin(turn));
   const [rimBottom, rimAround] = RIM[t.rim];
   return {
     "--material-blur": `${blur}px`,
@@ -269,8 +275,11 @@ export function resolveMaterial(
     "--_material-sheen": `${round(t.sheen * dim)}`,
     "--_material-shadow": `${t.shadow}`,
     "--_material-inset": `${round(t.inset * dim)}`,
-    "--_material-light-cos": `${round(Math.cos(turn))}`,
-    "--_material-light-sin": `${round(Math.sin(turn))}`,
+    "--_material-light-cos": `${cos}`,
+    "--_material-light-sin": `${sin}`,
+    "--_material-sheen-at": lightAt(cos, sin, -28, 42),
+    "--_material-shade-at": lightAt(cos, sin, 32, -50),
+    "--_material-relief-at": lightAt(cos, sin, 0, 12),
     "--_material-rim-bottom": `${rimBottom}`,
     "--_material-rim-around": `${rimAround}`,
     "--_material-glow-out": t.glowAt === "outside" ? "1" : "0",

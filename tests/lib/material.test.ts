@@ -21,6 +21,9 @@ const INERT = {
   "--_material-inset": "0",
   "--_material-light-cos": "1",
   "--_material-light-sin": "0",
+  "--_material-sheen-at": "22% 8%",
+  "--_material-shade-at": "82% 100%",
+  "--_material-relief-at": "50% 38%",
   "--_material-rim-bottom": "0",
   "--_material-rim-around": "0",
   "--_material-glow-out": "1",
@@ -100,6 +103,9 @@ describe("material presets", () => {
     const vars = resolveMaterial({ v: 1, preset: "frosted", dials: { lightFrom: 45 } }, "dynamic");
     expect(vars["--_material-light-cos"]).toBe("0");
     expect(vars["--_material-light-sin"]).toBe("1");
+    expect(vars["--_material-sheen-at"]).toBe("92% 22%");
+    expect(vars["--_material-shade-at"]).toBe("0% 82%");
+    expect(vars["--_material-relief-at"]).toBe("62% 50%");
   });
 
   it("enum terms resolve to switches the recipe multiplies by", () => {
