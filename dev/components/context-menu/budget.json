@@ -1,0 +1,354 @@
+{
+  "closed": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 0,
+        "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row, with the DOM call counts beside it"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "open": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 0,
+        "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row, with the DOM call counts beside it"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "keyboard": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 0,
+        "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row, with the DOM call counts beside it"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "submenu": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      },
+      "3": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 0,
+        "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row, with the DOM call counts beside it"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "long-press": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 0,
+        "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row, with the DOM call counts beside it"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "in-dialog": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 0,
+        "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row, with the DOM call counts beside it"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "in-shadow-root": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "largestRecalc": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "placeholder 2026-11-18: no browser run measured this yet; the phase 3 browser pass measures it and replaces this row"
+        }
+      }
+    }
+  }
+}

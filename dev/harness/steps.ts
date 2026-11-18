@@ -7,6 +7,8 @@ export interface Input {
   pressAt(x: number, y: number): Promise<void>;
   touch(el: Element): Promise<void>;
   hover(el: Element): Promise<void>;
+  contextMenu(el: Element): Promise<void>;
+  hold(el: Element): Promise<void>;
   key(key: string): Promise<void>;
   type(text: string): Promise<void>;
 }
@@ -53,7 +55,7 @@ export function findTarget(scope: ParentNode[], target: Target): Element {
 /** The document plus every closed shadow root a scenario opened; read per step, since lists portal in as they open. */
 export const scenarioScope = (): ParentNode[] => [document, ...CLOSED_ROOTS];
 
-type Pointer = "press" | "touch" | "hover";
+type Pointer = "press" | "touch" | "hover" | "contextMenu" | "hold";
 
 async function runStep(scope: ParentNode[], step: Step, input: Input): Promise<void> {
   if ("key" in step) return input.key(step.key);

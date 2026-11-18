@@ -13,3 +13,4 @@ Each line is one browser test in `tests/contracts/anchored.contract.test.tsx`, n
 | PO7 | open, then closed | while open the part carries `data-anchored`, the marker the widget realm's tap guard reads as a placed panel; the anchor never does; on close the part loses it |
 | PO8 | `coverAnchor` | the part's top edge sits on the anchor's top edge, covering it; at the bottom of the screen it keeps `data-side="bottom"` and shifts up to stay inside the viewport |
 | PO9 | `widthVar` | the part carries that custom property as the anchor's width in px, and keeps it through a resize |
+| PO10 | the anchor is a box with no element, as a context menu's pointer point | the part is placed beside that box as it is beside an element |

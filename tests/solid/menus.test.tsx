@@ -1,4 +1,4 @@
-/* DropdownMenu and ContextMenu share one Kobalte engine, so their Content,
+/* DropdownMenu and ContextMenu share one menu block, so their Content,
  * Item, Sub* and Checkbox/Radio parts are built once in menu-parts.tsx.
  * These tests pin the shared surface (FLOATING_PANEL classes, one selection
  * scope per content) and the destructive tone (no `!`, tone flows through

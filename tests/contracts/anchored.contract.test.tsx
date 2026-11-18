@@ -1,4 +1,4 @@
-import { cleanup, render } from "@solidjs/testing-library";
+import { cleanup, render, screen } from "@solidjs/testing-library";
 import { createSignal, type JSX } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { commands } from "vitest/browser";
@@ -164,5 +164,29 @@ describe("anchored contract", () => {
     window.dispatchEvent(new Event("resize"));
     await settle();
     expect(part().style.getPropertyValue("--anchor-width")).toBe("120px");
+  });
+
+  it("PO10 places the part beside a box that has no element", async () => {
+    const point = { left: 200, top: 150, width: 0, height: 0 };
+    render(() => {
+      const [floating, setFloating] = createSignal<HTMLElement>();
+      createAnchored({
+        anchor: () => ({ getBoundingClientRect: () => point }),
+        floating,
+        open: () => true,
+        side: () => "right",
+        align: () => "start",
+        offset: OFFSET,
+      });
+      return (
+        <div ref={setFloating} role="dialog" aria-label="Part" style={{ width: "120px" }}>
+          Part body
+        </div>
+      );
+    });
+    await settle();
+    const box = screen.getByRole("dialog", { name: "Part" }).getBoundingClientRect();
+    expect(Math.abs(box.left - (point.left + OFFSET))).toBeLessThanOrEqual(1);
+    expect(Math.abs(box.top - point.top)).toBeLessThanOrEqual(1);
   });
 });

@@ -2,8 +2,14 @@ import type { Accessor } from "solid-js";
 import { type Align, placeBeside, type Side } from "../anchor-placement";
 import { effect } from "./solid";
 
+/** An element, or a point or box with no element of its own: a context menu opens at the pointer. */
+export interface AnchorLike {
+  getBoundingClientRect(): { left: number; top: number; width: number; height: number };
+  getRootNode?(): Node;
+}
+
 export interface AnchoredOptions {
-  anchor: Accessor<Element | undefined>;
+  anchor: Accessor<AnchorLike | undefined>;
   floating: Accessor<HTMLElement | undefined>;
   open: Accessor<boolean>;
   side?: Accessor<Side>;
@@ -80,7 +86,7 @@ export function createAnchored(options: AnchoredOptions): void {
       };
       const onResize = () => place(true);
 
-      const root = typeof anchor.getRootNode === "function" ? anchor.getRootNode() : document;
+      const root = anchor.getRootNode?.() ?? document;
       const scrollTargets: EventTarget[] =
         root.nodeType === SHADOW_ROOT_NODE ? [document, root] : [document];
       for (const target of scrollTargets)

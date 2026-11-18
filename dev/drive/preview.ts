@@ -102,7 +102,7 @@ async function shoot(browser: Browser, shot: Shot, afterSteps: boolean, material
   const context = await browser.newContext({
     viewport: { width: w, height: h },
     colorScheme: shot.column.theme,
-    hasTouch: steps.some((s) => "touch" in s),
+    hasTouch: steps.some((s) => "touch" in s || "hold" in s),
   });
   const page = await context.newPage();
   const errors: string[] = [];
