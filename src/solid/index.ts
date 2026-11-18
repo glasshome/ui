@@ -1,8 +1,6 @@
 // Original components
 
-// Color helpers for ColorWheel/ColorSlider consumers, re-exported so they
-// don't need a direct @kobalte/core dependency.
-export { type Color, parseColor } from "@kobalte/core/colors";
+export { type Color, parseColor } from "../lib/color/index.js";
 // Floating glass panel + its shared surface token.
 export { SECTION_ROW_SURFACE } from "../lib/card-classes.js";
 export { copyImage, copyText } from "../lib/clipboard.js";
