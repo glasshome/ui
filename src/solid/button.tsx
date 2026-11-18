@@ -1,21 +1,27 @@
-import { Button as KobalteButton } from "@kobalte/core/button";
 import type { VariantProps } from "cva";
-import { type ComponentProps, type JSX, splitProps } from "solid-js";
+import { type JSX, splitProps, type ValidComponent } from "solid-js";
+import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
 import { busyProps } from "../lib/busy.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 
-type ButtonProps = ComponentProps<typeof KobalteButton> &
+type ButtonProps<T extends ValidComponent = "button"> = ButtonRootProps<T> &
   VariantProps<typeof buttonVariants> & {
     /** Presses do nothing; unlike `disabled` it keeps focus, so the popover or dialog around it stays. */
     busy?: boolean;
+    class?: string;
   };
 
-function Button(props: ButtonProps) {
-  const [local, others] = splitProps(props, ["class", "variant", "size", "busy"] as const);
+function Button<T extends ValidComponent = "button">(props: ButtonProps<T>) {
+  const [local, others] = splitProps(props as ButtonProps<ValidComponent>, [
+    "class",
+    "variant",
+    "size",
+    "busy",
+  ]);
   return (
-    <KobalteButton
+    <ButtonRoot
       data-slot="button"
       {...others}
       class={cn(buttonVariants({ variant: local.variant, size: local.size }), local.class)}

@@ -1,9 +1,19 @@
-import { ToggleGroup as ToggleGroupPrimitive } from "@kobalte/core/toggle-group";
-import { type JSX, onCleanup, onMount, Show } from "solid-js";
+import {
+  createContext,
+  createSignal,
+  type JSX,
+  onCleanup,
+  onMount,
+  Show,
+  useContext,
+} from "solid-js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
+import { createToggleItem, createToggleSet, type ToggleSet } from "../lib/toggle-set.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
+
+const GlyphContext = createContext<ToggleSet>();
 
 /** Tiles that scroll sideways below `sm` and wrap from `sm` up. Tapping the picked tile again clears the pick. */
 export function GlyphTileGroup(props: {
@@ -13,24 +23,36 @@ export function GlyphTileGroup(props: {
   class?: string;
   children: JSX.Element;
 }) {
-  let group: HTMLDivElement | undefined;
+  const [root, setRoot] = createSignal<HTMLDivElement>();
+  const set = createToggleSet({
+    root,
+    itemSelector: '[data-slot="glyph-tile"][data-key]',
+    values: () => (props.value === null ? [] : [props.value]),
+    setValues: (next) => props.onChange(next[0] ?? null),
+    multiple: () => false,
+  });
   onMount(() => {
+    const group = root();
     if (group) onCleanup(trackScroll(group, "[data-pressed]", "data-pressed"));
   });
   return (
-    <ToggleGroupPrimitive
-      ref={group}
-      data-slot="glyph-tile-group"
-      aria-label={props["aria-label"]}
-      value={props.value}
-      onChange={props.onChange}
-      class={cn(
-        `flex snap-x snap-proximity [scrollbar-width:none] gap-2 overflow-x-auto overscroll-x-contain py-0.5 [&::-webkit-scrollbar]:hidden ${SCROLL_TRACK_FADE} sm:flex-wrap sm:overflow-visible`,
-        props.class,
-      )}
-    >
-      {props.children}
-    </ToggleGroupPrimitive>
+    <GlyphContext.Provider value={set}>
+      <div
+        ref={setRoot}
+        role="group"
+        id={set.id()}
+        data-orientation={set.orientation()}
+        data-slot="glyph-tile-group"
+        aria-label={props["aria-label"]}
+        class={cn(
+          `flex snap-x snap-proximity [scrollbar-width:none] gap-2 overflow-x-auto overscroll-x-contain py-0.5 [&::-webkit-scrollbar]:hidden ${SCROLL_TRACK_FADE} sm:flex-wrap sm:overflow-visible`,
+          props.class,
+        )}
+        on:keydown={(event) => set.collection.onKeyDown(event)}
+      >
+        {props.children}
+      </div>
+    </GlyphContext.Provider>
   );
 }
 
@@ -43,9 +65,14 @@ export function GlyphTile(props: {
   badge?: string;
   class?: string;
 }) {
+  const set = useContext(GlyphContext);
+  if (!set) throw new Error("GlyphTile renders inside a GlyphTileGroup");
+  const item = createToggleItem(set, { value: () => props.value, disabled: () => false });
   return (
-    <ToggleGroupPrimitive.Item
-      value={props.value}
+    <button
+      ref={item.ref}
+      type="button"
+      {...item.props}
       data-slot="glyph-tile"
       class={cn(
         FIELD_CHROME,
@@ -72,6 +99,6 @@ export function GlyphTile(props: {
           </span>
         )}
       </Show>
-    </ToggleGroupPrimitive.Item>
+    </button>
   );
 }

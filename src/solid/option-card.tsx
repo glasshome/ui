@@ -1,4 +1,3 @@
-import { useRadioGroupContext } from "@kobalte/core/radio-group";
 import {
   children,
   createContext,
@@ -15,7 +14,7 @@ import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { Ornament } from "./ornament.js";
 import { PickerRow } from "./picker-row.js";
-import { isItemActivation, RadioGroup, RadioGroupItem } from "./radio-group.js";
+import { isItemActivation, RadioGroup, RadioGroupItem, useRadioGroup } from "./radio-group.js";
 
 /* Tone without .glass-tint: the card holds body copy, which must stay foreground-coloured. */
 const OPTION_CARD_CHROME = `${CARD_SURFACE} group/option-card relative cursor-pointer overflow-hidden rounded-xl transition-glass duration-(--duration-expand) [&:not([style*=--glass-tone])]:[--glass-tone:var(--primary)] [--glass-wash:9%] hover:[--glass-wash:16%] has-[:focus-visible]:[--glass-edge:var(--ring)] has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50 data-[checked]:[--glass-wash:30%] data-[checked]:[--glass-edge:oklch(from_var(--glass-tone)_l_c_h/0.75)] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50`;
@@ -120,7 +119,7 @@ export function OptionCard(props: {
    *  reveal them while it is picked. */
   children?: JSX.Element;
 }) {
-  const group = useRadioGroupContext();
+  const group = useRadioGroup();
   const checked = () => group.isSelectedValue(props.value);
   const [choices, setChoices] = createSignal<string[]>([]);
   const choice: ChoiceContext = {
