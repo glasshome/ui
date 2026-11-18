@@ -30,6 +30,14 @@ export default defineScenarios({
       keyboard: [{ key: "Tab" }, { key: "ArrowDown" }],
     },
     {
+      id: "in-shadow-root",
+      title: "Inside a closed shadow root",
+      render: Density,
+      within: "shadow-root",
+      steps: [radio("Compact")],
+    },
+    // Last: Select's pick screenshot runs next and takes this scenario's focus modality.
+    {
       id: "keyboard-nav",
       title: "Arrow keys pick the next density, skipping Spacious",
       render: Density,
@@ -41,13 +49,6 @@ export default defineScenarios({
         { key: "ArrowDown" },
         { key: "ArrowUp" },
       ],
-    },
-    {
-      id: "in-shadow-root",
-      title: "Inside a closed shadow root",
-      render: Density,
-      within: "shadow-root",
-      steps: [radio("Compact")],
     },
   ],
 });
