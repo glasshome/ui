@@ -2,7 +2,7 @@ import { type Accessor, onCleanup, untrack } from "solid-js";
 import { layerStack } from "./layer-stack";
 import { effect } from "./solid";
 
-const CANDIDATES =
+export const CANDIDATES =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [contenteditable]:not([contenteditable="false"]), [tabindex]:not([tabindex="-1"])';
 
 const MARKED_LAYER = "[data-kb-top-layer]";
@@ -35,6 +35,8 @@ export interface FocusScope {
 type FocusRoot = Document | ShadowRoot;
 
 const activeOf = (el: Element): Element | null => (el.getRootNode() as FocusRoot).activeElement;
+
+export const hasFocus = (el: Element): boolean => activeOf(el) === el;
 
 export function focusWithoutTracking(
   el: HTMLElement | null | undefined,
