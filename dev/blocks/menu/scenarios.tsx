@@ -105,9 +105,9 @@ export function ActionsMenu() {
       >
         Actions
       </button>
-      <output aria-label="Chosen" style={{ "margin-left": "16px" }}>
+      <span role="status" aria-label="Chosen" style={{ "margin-left": "16px" }}>
         {chosen()}
-      </output>
+      </span>
       <Panel menu={menu} label="Actions">
         <Row menu={menu} id="copy" label="Copy" onSelect={() => setChosen("Copy")} />
         <Row menu={menu} id="paste" label="Paste" disabled />

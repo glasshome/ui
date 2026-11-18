@@ -41,9 +41,9 @@ export const Canvas = () => {
           </ContextMenuSub>
         </ContextMenuContent>
       </ContextMenu>
-      <output aria-label="Chosen" class="text-muted-foreground text-sm">
+      <span role="status" aria-label="Chosen" class="text-muted-foreground text-sm">
         {chosen()}
-      </output>
+      </span>
     </div>
   );
 };
