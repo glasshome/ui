@@ -18,6 +18,49 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.43.0](https://github.com/glasshome/ui/compare/v1.42.0...v1.43.0) (2026-11-18)
+
+
+### Features
+
+* **anchored:** a placed part carries data-anchored ([9521426](https://github.com/glasshome/ui/commit/9521426b12a6610c2d9e7630ed570c66a3059eb6))
+* **anchored:** overlap places a part over its anchor from the facing edge, never flipping ([f4c58f1](https://github.com/glasshome/ui/commit/f4c58f142f0b10f31dbcc70fbeb07eac697fc92d))
+* **anchored:** place a part beside a box with no element ([8996889](https://github.com/glasshome/ui/commit/89968892bb50a74c5445a2bbc78194f55363055f))
+* **behavior:** the blocks a popover needs: cover the anchor, focus outside, pointer blocking, focus read per root ([2c64bf0](https://github.com/glasshome/ui/commit/2c64bf0e2dd146a1efa777a849051056777378b9))
+* **collection:** createTypeahead matches over texts with no items in the DOM ([ff1cc44](https://github.com/glasshome/ui/commit/ff1cc444584a087b6494cec726c6e68d501da8c5))
+* **color:** own Color and parseColor, ported from @internationalized/color ([3ced1be](https://github.com/glasshome/ui/commit/3ced1be57f4eb83ce5cd2a7dbe0789549bbe437a))
+* **menu:** DropdownMenu and ContextMenu on the owned menu block ([06ab1f5](https://github.com/glasshome/ui/commit/06ab1f5f67336126731f9553f71892933a2ca468))
+* **menu:** owned menu block ([7283fda](https://github.com/glasshome/ui/commit/7283fdaff841e921b5cb793365c668e77ae7f615))
+* **popover:** Popover, HoverCard and Term leave Kobalte ([a05396e](https://github.com/glasshome/ui/commit/a05396ee4d4ec4d383fc4569ef35077d95cb369b))
+* primitives ask the page for no style, order or observer ([3aa6149](https://github.com/glasshome/ui/commit/3aa614943139e4f4db8139bb768f6d3101975af3))
+* primitives ask the page for no style, order or observer ([ff372e0](https://github.com/glasshome/ui/commit/ff372e0964af898b5dbf955eb035d17a6549b6d8))
+* **slider:** own Slider, ColorSlider and ColorWheel on a range block ([474de6c](https://github.com/glasshome/ui/commit/474de6ce25d5dacafca2182eb14dea7cb620fd1f))
+
+
+### Bug Fixes
+
+* **anchored:** a covering panel sits on its anchor near the viewport edge ([a811acd](https://github.com/glasshome/ui/commit/a811acd8e6a61e9df227cc34d4e6af1c1a656fff))
+* **build:** relative imports in behavior and color carry .js, so node16 consumers resolve their types ([b29c2f6](https://github.com/glasshome/ui/commit/b29c2f668f66d1967fca4951ef501bd2d5cf7c84))
+* **focus:** shadow-layer and clipboard read focus through activeOf ([bb896ad](https://github.com/glasshome/ui/commit/bb896ad83cf88705bdd3def53e39a3e152bc199f))
+* **menu:** the build names MenuItemIndicator's props in emitted types ([784dbd9](https://github.com/glasshome/ui/commit/784dbd91bb31983c0be7cb8b8919c3bd4f0bfce0))
+* selection decides after the task that moved the marker ([23ac4bc](https://github.com/glasshome/ui/commit/23ac4bc777545f366e2813e1daaa9d93ae46dc6e))
+* selection decides after the task that moved the marker ([f5fd3b5](https://github.com/glasshome/ui/commit/f5fd3b5d35b32e90177cfc6a8486718427805e90))
+* **selection:** the highlight never flies in from an item out of sight ([10944ea](https://github.com/glasshome/ui/commit/10944eae7c69ce3be638f4327c33935776d4fe9e))
+* **select:** select and menus answer a click with no press behind it ([41fe522](https://github.com/glasshome/ui/commit/41fe5228f083015d25bdd8fdbed4c7fdf30f68ec))
+* **slider:** drags and keys reach the slider family inside a closed shadow root ([51e74fa](https://github.com/glasshome/ui/commit/51e74fadcd5130898be3f19a7cd93e8e0e92019f))
+* **toggle-group, collection:** balanced rows and the roving tab stop read no layout ([b268a0e](https://github.com/glasshome/ui/commit/b268a0e4bf25789efa91b4db8f6faa4bac1abc70))
+* **toggle-group, collection:** balanced rows and the roving tab stop read no layout ([ead1517](https://github.com/glasshome/ui/commit/ead1517623c8fbeb71c6f798aa29b3cf8c437139))
+* **toggle-group:** a group that fits one row keeps its equal columns ([9241334](https://github.com/glasshome/ui/commit/924133471cc2bd9a38de70e30e13348378747fc8))
+* **toggle-group:** balanced rows change layout a frame after their observer reports ([69775fd](https://github.com/glasshome/ui/commit/69775fdaa59609aacdb70a981cf8857996d1f51d))
+* **toggle-group:** balanced rows wrap on the first frame and never overflow ([7cffade](https://github.com/glasshome/ui/commit/7cffadeeb15e622979e7feef98c4e60d3be856e6))
+* **ui:** an arrow key picks a card without onPick, and a radio group survives reset, read-only arrows and a null value ([a1dc740](https://github.com/glasshome/ui/commit/a1dc74063e47bcb5b38182ab346afe2dd13ea981))
+* **ui:** opening an accordion item runs no motion on the items already open ([f7ec780](https://github.com/glasshome/ui/commit/f7ec78069a4fd8b564ef4af7e8336c1bd174284d))
+
+
+### Performance Improvements
+
+* **glass:** light positions computed once per material, not per surface ([#144](https://github.com/glasshome/ui/issues/144)) ([f4446c6](https://github.com/glasshome/ui/commit/f4446c636d91937ad48e28d0d623ed3336cb76ec))
+
 ## [1.42.0](https://github.com/glasshome/ui/compare/v1.41.0...v1.42.0) (2026-11-18)
 
 
