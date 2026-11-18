@@ -102,4 +102,21 @@ describe("placeBeside", () => {
   it("reports the room inside the viewport as max width and max height", () => {
     expect(beside()).toMatchObject({ maxWidth: 968, maxHeight: 768 });
   });
+
+  it("covers the anchor from the edge facing the side with overlap", () => {
+    expect(beside({ overlap: true })).toMatchObject({ side: "bottom", top: 306, left: 390 });
+    expect(beside({ overlap: true, side: "top" })).toMatchObject({ side: "top", top: 274 });
+    expect(beside({ overlap: true, side: "right" })).toMatchObject({ side: "right", left: 406 });
+    expect(beside({ overlap: true, side: "left" })).toMatchObject({ side: "left", left: 374 });
+  });
+
+  it("never flips with overlap, and moves the part back inside the viewport", () => {
+    const placed = beside({ overlap: true, offset: 0 }, { ...ANCHOR, top: 760 });
+    expect(placed).toMatchObject({ side: "bottom", top: 724 });
+  });
+
+  it("keeps the anchor's width with overlap and matchAnchorWidth", () => {
+    const narrow = { width: 50, height: 60 };
+    expect(beside({ overlap: true, matchAnchorWidth: true }, ANCHOR, narrow).left).toBe(400);
+  });
 });

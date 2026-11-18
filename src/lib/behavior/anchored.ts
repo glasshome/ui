@@ -10,6 +10,7 @@ export interface AnchoredOptions {
   align?: Accessor<Align>;
   offset?: number;
   matchAnchorWidth?: boolean;
+  overlap?: boolean;
 }
 
 const SHADOW_ROOT_NODE = 11;
@@ -31,6 +32,7 @@ export function createAnchored(options: AnchoredOptions): void {
       floating.setAttribute(ANCHORED, "");
       const offset = options.offset ?? 0;
       const matchAnchorWidth = options.matchAnchorWidth ?? false;
+      const overlap = options.overlap ?? false;
       const written = new Map<string, string>();
       const write = (name: string, value: string) => {
         if (written.get(name) === value) return;
@@ -52,7 +54,7 @@ export function createAnchored(options: AnchoredOptions): void {
           { left: box.left, top: box.top, width: box.width, height: box.height },
           size,
           { width: window.innerWidth, height: window.innerHeight },
-          { side, align, offset, matchAnchorWidth },
+          { side, align, offset, matchAnchorWidth, overlap },
         );
         write("top", `${placed.top}px`);
         write("left", `${placed.left}px`);

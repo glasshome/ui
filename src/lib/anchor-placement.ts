@@ -16,6 +16,8 @@ export interface AnchorPlace {
   align: Align;
   offset: number;
   matchAnchorWidth: boolean;
+  /** The part covers its anchor from the edge facing `side` (a Select's list over its field), and never flips. */
+  overlap?: boolean;
 }
 export interface Placement {
   left: number;
@@ -32,14 +34,22 @@ const OPPOSITE: Record<Side, Side> = { top: "bottom", bottom: "top", left: "righ
 const crossStart = (align: Align, start: number, size: number, own: number): number =>
   start + { start: 0, center: (size - own) / 2, end: size - own }[align];
 
+const EDGE_FACING: Record<Side, (anchor: Box) => Box> = {
+  bottom: (a) => ({ ...a, height: 0 }),
+  top: (a) => ({ ...a, top: a.top + a.height, height: 0 }),
+  right: (a) => ({ ...a, width: 0 }),
+  left: (a) => ({ ...a, left: a.left + a.width, width: 0 }),
+};
+
 /** Where a part of this size sits beside its anchor: on the chosen side, or the opposite when that
  *  side lacks room and the other has more, aligned along the edge and held 16px inside the viewport. */
 export function placeBeside(
-  anchor: Box,
+  box: Box,
   floating: { width: number; height: number },
   viewport: { width: number; height: number },
   place: AnchorPlace,
 ): Placement {
+  const anchor = place.overlap ? EDGE_FACING[place.side](box) : box;
   const { offset } = place;
   const rooms: Record<Side, number> = {
     bottom: viewport.height - EDGE - (anchor.top + anchor.height + offset),
@@ -50,7 +60,8 @@ export function placeBeside(
   const vertical = place.side === "top" || place.side === "bottom";
   const need = vertical ? floating.height : floating.width;
   const other = OPPOSITE[place.side];
-  const side = rooms[place.side] >= need || rooms[other] <= rooms[place.side] ? place.side : other;
+  const fits = rooms[place.side] >= need || rooms[other] <= rooms[place.side];
+  const side = place.overlap || fits ? place.side : other;
   const maxWidth = viewport.width - 2 * EDGE;
   const maxHeight = viewport.height - 2 * EDGE;
   const width = Math.min(

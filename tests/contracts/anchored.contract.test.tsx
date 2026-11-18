@@ -1,7 +1,9 @@
-import { cleanup } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
+import { createSignal, type JSX } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { commands } from "vitest/browser";
 import { findTarget } from "../../dev/harness/steps";
+import { createAnchored } from "../../src/lib/behavior/anchored";
 import { input } from "../harness/input";
 import { mountScenario, settle } from "../harness/mount";
 
@@ -27,6 +29,41 @@ const gapBelow = (anchor: Element, part: Element) =>
   part.getBoundingClientRect().top - anchor.getBoundingClientRect().bottom;
 
 const frame = () => new Promise<void>((done) => requestAnimationFrame(() => done()));
+
+function overlapping(anchorStyle: JSX.CSSProperties) {
+  const [anchor, setAnchor] = createSignal<HTMLElement>();
+  const [floating, setFloating] = createSignal<HTMLElement>();
+  render(() => {
+    createAnchored({
+      anchor,
+      floating,
+      open: () => true,
+      side: () => "bottom",
+      align: () => "start",
+      offset: 0,
+      overlap: true,
+    });
+    return (
+      <>
+        <button ref={setAnchor} type="button" style={anchorStyle}>
+          Anchor
+        </button>
+        <div
+          ref={setFloating}
+          role="dialog"
+          aria-label="Part"
+          style={{ width: "160px", height: "120px" }}
+        >
+          Part body
+        </div>
+      </>
+    );
+  });
+  const a = anchor();
+  const f = floating();
+  if (!a || !f) throw new Error("not rendered");
+  return { anchor: a, part: f };
+}
 
 describe("anchored contract", () => {
   it("PO1 opens below the trigger, offset from its edge, inside the viewport", async () => {
@@ -111,5 +148,20 @@ describe("anchored contract", () => {
     await input.press(anchor);
     await settle();
     expect(part.hasAttribute("data-anchored")).toBe(false);
+  });
+
+  it("PO8 with overlap covers the trigger from its top edge, and never flips", async () => {
+    const roomy = overlapping({ "margin-top": "120px", "margin-left": "20px" });
+    await settle();
+    const top = roomy.anchor.getBoundingClientRect().top;
+    expect(Math.abs(roomy.part.getBoundingClientRect().top - top)).toBeLessThanOrEqual(1);
+    expect(roomy.part.getAttribute("data-side")).toBe("bottom");
+    cleanup();
+
+    const low = overlapping({ position: "fixed", bottom: "24px", left: "20px" });
+    await settle();
+    const box = low.part.getBoundingClientRect();
+    expect(low.part.getAttribute("data-side")).toBe("bottom");
+    expect(Math.abs(box.bottom - (window.innerHeight - EDGE))).toBeLessThanOrEqual(1);
   });
 });

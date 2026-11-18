@@ -11,3 +11,4 @@ Each line is one browser test in `tests/contracts/anchored.contract.test.tsx`, n
 | PO5 | trigger and part in one closed shadow root | PO1 holds |
 | PO6 | any placement | no `getComputedStyle` call; the part carries no anchor property |
 | PO7 | open, then closed | while open the part carries `data-anchored`, the marker the widget realm's tap guard reads as a placed panel; the anchor never does; on close the part loses it |
+| PO8 | `overlap`, side bottom | the part's top edge is within 1px of the trigger's top plus the offset, so it covers the trigger; with no room below it stays on the side asked and moves up to hold 16px inside the viewport |
