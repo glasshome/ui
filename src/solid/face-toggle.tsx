@@ -86,7 +86,7 @@ export function FaceToggle(props: {
         {props.name}
       </span>
       <Show when={isLocked()}>
-        <span class="sr-only">always sees it</span>
+        <span class="sr-only">{" always sees it"}</span>
       </Show>
     </ToggleGroupPrimitive.Item>
   );
