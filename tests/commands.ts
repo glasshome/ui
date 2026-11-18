@@ -38,7 +38,7 @@ function pointerSession(page: Page) {
 const touchScreen = (cdp: Cdp, on: boolean) =>
   cdp.send("Emulation.setTouchEmulationEnabled", { enabled: on, maxTouchPoints: on ? 5 : 1 });
 
-/** Whether the page's main pointer is a finger (pointer: coarse) or a mouse; it lasts until the next call or finger. */
+/** Whether the page's main pointer is a finger (pointer: coarse); "mouse" turns that off, which headless Chromium reports as no pointer and no hover, never the fresh page's fine mouse. */
 export const pointer: BrowserCommand<[kind: "finger" | "mouse"]> = async (ctx, kind) => {
   await touchScreen(await pointerSession(ctx.page), kind === "finger");
 };

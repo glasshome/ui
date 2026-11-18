@@ -668,6 +668,7 @@ describe("the second shadow-root review's cases", () => {
       ),
       { container: mount },
     );
+    await layersListening();
     await press(subTriggerIn(root));
     await layersListening();
     expect(root.querySelector('[data-slot="dropdown-menu-sub-content"]')).not.toBeNull();
