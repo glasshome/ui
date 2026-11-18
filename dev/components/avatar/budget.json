@@ -1,0 +1,110 @@
+{
+  "fallback": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 5,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 4,
+        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "image": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 15,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 5,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 5,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 4,
+        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "broken": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 5,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 4,
+        "reason": "kobalte baseline 2026-11-18, guest lane total plus 25% and at least one"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
+  "in-shadow-root": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 18,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+        },
+        "largestRecalc": {
+          "max": 7,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 5,
+          "reason": "kobalte baseline 2026-11-18, max of 3 T50 runs"
+        }
+      }
+    }
+  }
+}
