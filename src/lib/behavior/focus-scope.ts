@@ -81,6 +81,7 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
     }
 
     let tab: { shift: boolean } | null = null;
+    let trapping = true;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Tab") tab = { shift: event.shiftKey };
     };
@@ -93,27 +94,26 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
       const mine = layers.findIndex((layer) => layer.element() === container);
       return mine >= 0 && layers.slice(mine + 1).some((above) => within(above.element(), node));
     };
-    const recover = (pressed: { shift: boolean } | null) => {
-      if (!pressed) {
-        focusWithoutTracking(container);
-        return;
-      }
+    const toCandidate = (backward: boolean) => {
       const candidates = Array.from(container.querySelectorAll<HTMLElement>(CANDIDATES));
-      if (pressed.shift) candidates.reverse();
+      if (backward) candidates.reverse();
       if (!firstThatTakesFocus(candidates)) focusWithoutTracking(container);
     };
     const onFocusOut = (event: FocusEvent) => {
       const next = event.relatedTarget;
       if (next instanceof Node && (container.contains(next) || isAbove(next))) return;
       if (next !== null) {
-        recover(tab);
+        toCandidate(tab?.shift ?? false);
         return;
       }
       // Chromium fires focusout while removing the focused node; refocusing then strands keys on a detached node.
       const pressed = tab;
       queueMicrotask(() => {
         const current = activeOf(container);
-        if (container.isConnected && !(current && container.contains(current))) recover(pressed);
+        if (trapping && container.isConnected && !(current && container.contains(current))) {
+          if (pressed) toCandidate(pressed.shift);
+          else focusWithoutTracking(container);
+        }
       });
     };
     if (trapped) {
@@ -123,6 +123,7 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
     }
 
     return () => {
+      trapping = false;
       container.removeEventListener("keydown", onKeyDown);
       container.removeEventListener("keyup", onKeyUp);
       container.removeEventListener("focusout", onFocusOut);
