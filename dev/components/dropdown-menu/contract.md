@@ -15,3 +15,4 @@ Each line is one browser test in `tests/contracts/dropdown-menu.contract.test.ts
 | DM9 | open inside a dialog; Escape; a press on the dialog's body | Escape closes the menu alone and the dialog stays open; a press on the dialog's body closes the menu and keeps the dialog open |
 | DM10 | trigger inside a closed shadow root | the menu opens in the same root and an item chooses |
 | DM11 | the menu closes | it unmounts after its exit motion; nothing named "Actions" with role `menu` remains |
+| DM12 | a click with no pointer press before it, as assistive technology sends, on the trigger, then on Copy | the menu opens; Copy is chosen and the menu closes |

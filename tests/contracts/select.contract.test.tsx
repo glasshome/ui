@@ -241,4 +241,14 @@ describe("Select contract", () => {
       Math.abs(panel.getBoundingClientRect().top - trigger().getBoundingClientRect().top),
     ).toBeLessThanOrEqual(1);
   });
+
+  it("S19 a click with no press behind it, as assistive technology sends, opens the list and picks", async () => {
+    const { trigger, option, listboxes, closed } = await mount();
+    (trigger() as HTMLElement).click();
+    await settle();
+    expect(listboxes()).toHaveLength(1);
+    (option("Cherry") as HTMLElement).click();
+    await closed();
+    expect(trigger().textContent).toContain("Cherry");
+  });
 });

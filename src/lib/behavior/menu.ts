@@ -288,11 +288,13 @@ export function createMenu(options: MenuOptions): Menu {
   effect(content, (el) => {
     if (!el) return;
     let pressedInside = false;
+    let pointerPressed = false;
     const release = () => {
       pressedInside = false;
     };
     const onDown = () => {
       pressedInside = true;
+      pointerPressed = true;
       window.addEventListener("pointerup", release, { once: true });
     };
     // Only a press that began inside the panel chooses: the press that opened it ends here too.
@@ -343,6 +345,17 @@ export function createMenu(options: MenuOptions): Menu {
       if (!inGrace(event)) leaveItem(el);
     };
     const onEnter = () => parent?.unhighlight();
+    // Enter on a link row also clicks it; that click is the same activation.
+    let linkKeyed = false;
+    // A click with no pointer press before it comes from assistive technology.
+    const onClick = (event: MouseEvent) => {
+      const skip = linkKeyed || pointerPressed;
+      linkKeyed = false;
+      pointerPressed = false;
+      if (skip) return;
+      const item = itemOf(event.target);
+      if (item) activate(item, "keyboard");
+    };
     const onFocusIn = (event: FocusEvent) => {
       const key = itemOf(event.target)?.dataset.key;
       if (key && untrack(active) !== key) highlight(key);
@@ -355,6 +368,7 @@ export function createMenu(options: MenuOptions): Menu {
       if (item && entry && !entry.disabled()) {
         if ((event.key === "Enter" || event.key === " ") && !event.repeat) {
           if (event.key === " " || !item.matches("a[href]")) event.preventDefault();
+          else linkKeyed = true;
           return activate(item, "keyboard");
         }
         if (event.key === openKeys() && entry.submenu) {
@@ -390,6 +404,7 @@ export function createMenu(options: MenuOptions): Menu {
     el.addEventListener("pointerenter", onEnter);
     el.addEventListener("focusin", onFocusIn);
     el.addEventListener("keydown", onKey);
+    el.addEventListener("click", onClick);
     return () => {
       el.removeEventListener("pointerdown", onDown, true);
       el.removeEventListener("pointerup", onUp);
@@ -398,6 +413,7 @@ export function createMenu(options: MenuOptions): Menu {
       el.removeEventListener("pointerenter", onEnter);
       el.removeEventListener("focusin", onFocusIn);
       el.removeEventListener("keydown", onKey);
+      el.removeEventListener("click", onClick);
       window.removeEventListener("pointerup", release);
       setActive(undefined);
       // An outside press on nothing focusable leaves focus nowhere; it goes back to the trigger.
@@ -437,8 +453,10 @@ export function createMenuButton(menu: Menu, disabled: Accessor<boolean>): MenuB
         event.currentTarget?.addEventListener("mousedown", keepFocus, { once: true });
       toggle();
     },
+    // A click with no pointer press before it comes from assistive technology.
     onClick() {
-      if (!disabled() && pointerType === "touch") toggle();
+      if (!disabled() && (pointerType === "touch" || pointerType === "")) toggle();
+      pointerType = "";
     },
     onKeyDown(event) {
       pointerType = "";

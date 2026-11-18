@@ -542,8 +542,10 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
   effect(ctx.trigger, (el) => {
     if (!el) return;
     let touch: { x: number; y: number } | undefined;
+    let pressed = false;
     const onPointerDown = (event: PointerEvent) => {
       touch = undefined;
+      pressed = true;
       if (ctx.blocked()) return;
       if (event.pointerType === "touch") {
         touch = { x: event.clientX, y: event.clientY };
@@ -560,10 +562,15 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
     };
     const onPointerCancel = () => {
       touch = undefined;
+      pressed = false;
     };
+    // A click with no pointer press before it comes from assistive technology.
     const onClick = () => {
-      if (!touch) return;
+      const tapped = touch !== undefined;
+      const unpressed = !pressed;
       touch = undefined;
+      pressed = false;
+      if (!tapped && (!unpressed || ctx.blocked())) return;
       if (ctx.open()) ctx.close("commit");
       else ctx.show("first");
     };
@@ -760,7 +767,9 @@ const SelectContent: Component<SelectContentProps> = (props) => {
   };
 
   let press: { x: number; y: number; type: string; moved: boolean } | undefined;
+  let pointerPressed = false;
   const onPointerDown = (event: PointerEvent) => {
+    pointerPressed = true;
     press =
       event.button === 0
         ? { x: event.clientX, y: event.clientY, type: event.pointerType, moved: false }
@@ -783,6 +792,15 @@ const SelectContent: Component<SelectContentProps> = (props) => {
   };
   const onPointerCancel = () => {
     press = undefined;
+    pointerPressed = false;
+  };
+  // A click with no pointer press before it comes from assistive technology.
+  const onClick = (event: MouseEvent) => {
+    const pressed = pointerPressed;
+    pointerPressed = false;
+    if (pressed || !ctx.open()) return;
+    const key = keyAt(event.target);
+    if (key) ctx.choose(key);
   };
   const onKeyDown = (event: KeyboardEvent) => {
     if (!ctx.open()) return;
@@ -867,6 +885,7 @@ const SelectContent: Component<SelectContentProps> = (props) => {
             on:pointermove={onPointerMove}
             on:pointerup={onPointerUp}
             on:pointercancel={onPointerCancel}
+            on:click={onClick}
           >
             <For each={ctx.nodes()}>
               {(node) => (node.type === "section" ? <Section node={node} /> : <Row node={node} />)}

@@ -22,3 +22,4 @@ Each line is one browser test in `tests/contracts/select.contract.test.tsx`, nam
 | S16 | a touch press on an option that moves past the tap slop before it lifts | nothing is picked and the list stays open; a still tap picks |
 | S17 | typing or Left and Right on the closed, focused trigger | the matching, previous or next option is picked without opening the list |
 | S18 | the list opens on a picked value | focus sits on the listbox, which names the highlighted option in `aria-activedescendant`; the picked option is the highlighted one; the list covers the trigger, its top on the trigger's top |
+| S19 | a click with no pointer press before it, as assistive technology sends, on the trigger, then on an option | the list opens, and the option is picked |

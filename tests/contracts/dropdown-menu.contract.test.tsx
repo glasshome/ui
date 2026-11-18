@@ -193,4 +193,15 @@ describe("DropdownMenu contract", () => {
     expect(menus(scope)).toHaveLength(0);
     expect(trigger.hasAttribute("aria-controls")).toBe(false);
   });
+
+  it("DM12 a click with no press behind it, as assistive technology sends, opens the menu and chooses", async () => {
+    const { scope, trigger } = await mount();
+    trigger.click();
+    await settle();
+    expect(menus(scope)).toHaveLength(1);
+    item(scope, "Copy").click();
+    await settle();
+    expect(chosen(scope)).toBe("Copy");
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
+  });
 });
