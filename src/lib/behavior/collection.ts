@@ -36,11 +36,6 @@ const isDisabled = (el: HTMLElement) =>
 
 const keyOf = (el: HTMLElement) => el.dataset.key ?? "";
 
-function focusIsWithin(root: HTMLElement): boolean {
-  const active = (root.getRootNode() as Document | ShadowRoot).activeElement;
-  return !!active && root.contains(active);
-}
-
 function step(
   items: HTMLElement[],
   from: number,
@@ -83,6 +78,11 @@ export function createCollection(options: CollectionOptions): Collection {
   const enabledItems = (root: HTMLElement) =>
     [...root.querySelectorAll<HTMLElement>(options.itemSelector)].filter((el) => !skipped(el));
 
+  // Tracked from focus events, which a sealed widget already receives; reading activeElement asks the page.
+  let focused: Element | null = null;
+  const focusIsWithin = (root: HTMLElement) =>
+    !!focused && focused.isConnected && root.contains(focused);
+
   function placeStop(root: HTMLElement | undefined, preferred: readonly string[]) {
     if (!root || focusIsWithin(root)) return;
     const items = enabledItems(root);
@@ -108,18 +108,33 @@ export function createCollection(options: CollectionOptions): Collection {
   }
 
   if (options.focus === "roving") {
+    effect(options.root, (root) => {
+      if (!root) return;
+      // One read when the listeners attach, so an item focused before them (autofocus) keeps the stop.
+      const current = (root.getRootNode() as Document | ShadowRoot).activeElement;
+      focused = current && root.contains(current) ? current : null;
+      const item = focused?.closest<HTMLElement>(options.itemSelector);
+      if (item && root.contains(item)) setOwn(keyOf(item));
+      const enter = (event: FocusEvent) => {
+        focused = event.target instanceof Element ? event.target : null;
+      };
+      const leave = (event: FocusEvent) => {
+        const next = event.relatedTarget;
+        if (next instanceof Element && root.contains(next)) return;
+        focused = null;
+        refresh();
+      };
+      root.addEventListener("focusin", enter);
+      root.addEventListener("focusout", leave);
+      return () => {
+        root.removeEventListener("focusin", enter);
+        root.removeEventListener("focusout", leave);
+      };
+    });
     effect(
       () => [options.root(), options.preferred?.() ?? []] as const,
       ([root, preferred]) => placeStop(root, preferred),
     );
-    effect(options.root, (root) => {
-      if (!root) return;
-      const leave = (event: FocusEvent) => {
-        if (!(event.relatedTarget instanceof Node && root.contains(event.relatedTarget))) refresh();
-      };
-      root.addEventListener("focusout", leave);
-      return () => root.removeEventListener("focusout", leave);
-    });
   }
 
   let buffer = "";

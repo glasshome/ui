@@ -106,7 +106,7 @@ describe("ToggleGroup", () => {
     expect(item?.firstElementChild?.hasAttribute("data-selection-highlight")).toBe(true);
   });
 
-  const rowsOf = (width: number, count: number, multiple = false) => {
+  const rowsOf = async (width: number, count: number, multiple = false) => {
     const values = Array.from({ length: count }, (_, i) => `mode-${i}`);
     const items = () =>
       values.map((value) => (
@@ -127,22 +127,46 @@ describe("ToggleGroup", () => {
         )}
       </div>
     ));
+    for (let i = 0; i < 2; i++) await new Promise(requestAnimationFrame);
     const tops = [...view.container.querySelectorAll('[data-slot="toggle-group-item"]')].map(
       (item) => Math.round(item.getBoundingClientRect().top),
     );
     return [...new Set(tops)].map((top) => tops.filter((t) => t === top).length);
   };
 
-  it("keeps every segment on one row while they fit", () => {
-    expect(rowsOf(600, 4)).toEqual([4]);
+  it("overflows nothing on the first frame, before its columns are known", async () => {
+    const view = render(() => (
+      <div style={{ width: "300px" }}>
+        <ToggleGroup value="mode-0" class="w-full">
+          {["mode-0", "mode-1", "mode-2", "mode-3", "mode-4"].map((value) => (
+            <ToggleGroupItem value={value}>
+              <span style={{ display: "inline-block", width: "80px" }}>{value}</span>
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </div>
+    ));
+    await new Promise(requestAnimationFrame);
+    const room = view.container
+      .querySelector('[data-slot="toggle-group"]')
+      ?.getBoundingClientRect();
+    const rights = [...view.container.querySelectorAll('[data-slot="toggle-group-item"]')].map(
+      (item) => item.getBoundingClientRect().right,
+    );
+    expect(room).toBeDefined();
+    for (const right of rights) expect(right).toBeLessThanOrEqual((room?.right ?? 0) + 0.5);
   });
 
-  it("wraps four segments two by two, never three and an orphan", () => {
-    expect(rowsOf(400, 4)).toEqual([2, 2]);
+  it("keeps every segment on one row while they fit", async () => {
+    expect(await rowsOf(600, 4)).toEqual([4]);
   });
 
-  it("wraps five segments that fit three to a row as three and two", () => {
-    expect(rowsOf(540, 5)).toEqual([3, 2]);
+  it("wraps four segments two by two, never three and an orphan", async () => {
+    expect(await rowsOf(400, 4)).toEqual([2, 2]);
+  });
+
+  it("wraps five segments that fit three to a row as three and two", async () => {
+    expect(await rowsOf(540, 5)).toEqual([3, 2]);
   });
 
   it("wraps again when a label widens after mount, as a late icon does", async () => {
@@ -174,8 +198,83 @@ describe("ToggleGroup", () => {
     expect(root?.hasAttribute("data-wrapped")).toBe(true);
   });
 
-  it("balances a multi-select group's rows too", () => {
-    expect(rowsOf(400, 4, true)).toEqual([2, 2]);
+  it("rebalances as its container narrows and widens, with no ResizeObserver loop error", async () => {
+    const errors: string[] = [];
+    const onError = (e: ErrorEvent) => errors.push(e.message);
+    window.addEventListener("error", onError);
+    const [width, setWidth] = createSignal(600);
+    const view = render(() => (
+      <div style={{ width: `${width()}px` }}>
+        <ToggleGroup value="a" class="w-full">
+          {["a", "b", "c", "d", "e"].map((value) => (
+            <ToggleGroupItem value={value}>
+              <span style={{ display: "inline-block", width: "80px" }}>{value}</span>
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </div>
+    ));
+    const rows = async () => {
+      for (let i = 0; i < 3; i++) await new Promise(requestAnimationFrame);
+      const tops = [...view.container.querySelectorAll('[data-slot="toggle-group-item"]')].map(
+        (item) => Math.round(item.getBoundingClientRect().top),
+      );
+      return [...new Set(tops)].map((top) => tops.filter((t) => t === top).length);
+    };
+    expect(await rows()).toEqual([5]);
+    setWidth(400);
+    expect(await rows()).toEqual([3, 2]);
+    setWidth(310);
+    expect(await rows()).toEqual([2, 2, 1]);
+    setWidth(200);
+    expect(await rows()).toEqual([1, 1, 1, 1, 1]);
+    setWidth(400);
+    expect(await rows()).toEqual([3, 2]);
+    setWidth(600);
+    expect(await rows()).toEqual([5]);
+    window.removeEventListener("error", onError);
+    expect(errors).toEqual([]);
+  });
+
+  it("wraps under a page that watches its own size, with no ResizeObserver loop error", async () => {
+    const errors: string[] = [];
+    const onError = (e: ErrorEvent) => errors.push(e.message);
+    window.addEventListener("error", onError);
+    const [width, setWidth] = createSignal(600);
+    let outer: HTMLDivElement | undefined;
+    const view = render(() => (
+      <div ref={outer} style={{ width: `${width()}px` }}>
+        <ToggleGroup value="a" class="w-full">
+          {["a", "b", "c", "d"].map((value) => (
+            <ToggleGroupItem value={value}>
+              <span style={{ display: "inline-block", width: "80px" }}>{value}</span>
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </div>
+    ));
+    const heights: number[] = [];
+    const page = new ResizeObserver((entries) => {
+      for (const entry of entries) heights.push(Math.round(entry.contentRect.height));
+    });
+    if (outer) page.observe(outer);
+    const frames = async () => {
+      for (let i = 0; i < 3; i++) await new Promise(requestAnimationFrame);
+    };
+    await frames();
+    setWidth(300);
+    await frames();
+    page.disconnect();
+    window.removeEventListener("error", onError);
+
+    const root = view.container.querySelector('[data-slot="toggle-group"]');
+    expect(root?.hasAttribute("data-wrapped")).toBe(true);
+    expect(new Set(heights).size).toBeGreaterThan(1);
+    expect(errors).toEqual([]);
+  });
+
+  it("balances a multi-select group's rows too", async () => {
+    expect(await rowsOf(400, 4, true)).toEqual([2, 2]);
   });
 
   it("in scroll mode keeps one row and still picks on a tap", async () => {
@@ -232,6 +331,27 @@ describe("ToggleGroup", () => {
       (el) => el.getAttribute("tabindex") === "0",
     );
     expect(stops.map((el) => el.textContent)).toEqual(["Left"]);
+  });
+
+  it("hands the tab stop on when the focused segment leaves the page", async () => {
+    const [values, setValues] = createSignal(["left", "middle", "right"]);
+    const view = render(() => (
+      <ToggleGroup multiple>
+        {values().map((value) => (
+          <ToggleGroupItem value={value}>{value}</ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+    ));
+    view.getByRole("button", { name: "left" }).focus();
+    await userEvent.keyboard("{ArrowRight}");
+    expect(document.activeElement?.textContent).toBe("middle");
+    setValues(["left", "right"]);
+    await Promise.resolve();
+    await new Promise(requestAnimationFrame);
+    const stops = [...view.container.querySelectorAll('[data-slot="toggle-group-item"]')].filter(
+      (el) => el.getAttribute("tabindex") === "0",
+    );
+    expect(stops.map((el) => el.textContent)).toEqual(["left"]);
   });
 
   it("toggles from the keyboard after a mouse press that was dragged off the item", async () => {

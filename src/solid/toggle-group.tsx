@@ -18,7 +18,7 @@ import {
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { merge, omit } from "../lib/behavior/solid.js";
-import { BALANCED_ROWS, balanceRows } from "../lib/balance-rows.js";
+import { BALANCE_CONTENT, BALANCED_ROWS, balanceRows } from "../lib/balance-rows.js";
 import { TRACK_SURFACE } from "../lib/card-classes.js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
 import { createToggleItem, createToggleSet, type ToggleSet } from "../lib/toggle-set.js";
@@ -169,6 +169,9 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
         get "data-scroll"() {
           return props.scroll ? "" : undefined;
         },
+        get [BALANCED_ROWS]() {
+          return props.scroll || vertical() || sliding() ? undefined : "";
+        },
         "on:keydown": (event: KeyboardEvent) => set.collection.onKeyDown(event),
         get class() {
           return cn(
@@ -179,7 +182,7 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
                 ? "flex flex-col items-stretch"
                 : sliding()
                   ? "flex"
-                  : BALANCED_ROWS,
+                  : undefined,
             props.class,
           );
         },
@@ -193,12 +196,13 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
             ref={setScope}
             marker="pressed"
             tone={props.tone}
+            {...{ [BALANCED_ROWS]: props.scroll || vertical() ? undefined : "" }}
             class={
               props.scroll
                 ? "flex w-max flex-nowrap items-center"
                 : vertical()
                   ? "flex w-full flex-col items-stretch gap-y-0.5"
-                  : `w-full items-center gap-y-1 ${BALANCED_ROWS}`
+                  : "w-full items-center gap-y-1"
             }
           >
             {props.children}
@@ -274,7 +278,7 @@ const ToggleGroupItem: Component<ToggleGroupItemProps> = (props) => {
       })}
     >
       <SelectionHighlight />
-      {content()}
+      <span {...{ [BALANCE_CONTENT]: "" }}>{content()}</span>
     </Polymorphic>
   );
 };

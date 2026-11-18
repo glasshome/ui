@@ -11,7 +11,7 @@ import {
   useContext,
 } from "solid-js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
-import { hasFocus } from "../lib/behavior/focus-scope.js";
+import { trackFocus } from "../lib/behavior/focus-scope.js";
 import { callEventHandler, effect } from "../lib/behavior/solid.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
@@ -204,12 +204,18 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
       if (el) el.defaultChecked = isDefault;
     },
   );
+  let inputFocus: ReturnType<typeof trackFocus> | undefined;
+  effect(input, (el) => {
+    if (!el) return;
+    const tracked = trackFocus(el);
+    inputFocus = tracked;
+    return tracked.stop;
+  });
   // Bound on the elements, since Solid's delegated handlers never reach inside a closed shadow root.
   effect(item, (node) => {
     if (!node) return;
     const pointerdown = (event: PointerEvent) => {
-      const el = input();
-      if (el && hasFocus(el)) event.preventDefault();
+      if (inputFocus?.has()) event.preventDefault();
     };
     const click = (event: MouseEvent) =>
       callEventHandler(

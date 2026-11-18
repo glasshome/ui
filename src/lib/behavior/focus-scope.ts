@@ -37,7 +37,21 @@ type FocusRoot = Document | ShadowRoot;
 
 const activeOf = (el: Element): Element | null => (el.getRootNode() as FocusRoot).activeElement;
 
-export const hasFocus = (el: Element): boolean => activeOf(el) === el;
+/** Whether `el` holds focus, from its own focus and blur events, which a sealed widget receives without asking the page. */
+export function trackFocus(el: Element): { has: () => boolean; stop: () => void } {
+  let has = false;
+  const on = () => (has = true);
+  const off = () => (has = false);
+  el.addEventListener("focus", on);
+  el.addEventListener("blur", off);
+  return {
+    has: () => has,
+    stop: () => {
+      el.removeEventListener("focus", on);
+      el.removeEventListener("blur", off);
+    },
+  };
+}
 
 export function focusWithoutTracking(
   el: HTMLElement | null | undefined,
