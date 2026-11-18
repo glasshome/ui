@@ -396,6 +396,44 @@ describe("focus-scope contract", () => {
     expect(label()).toBe("Trigger");
   });
 
+  it("FO15 with nothing after the scope, Tab and Shift+Tab wrap inside the page, even when no key reaches the container", async () => {
+    const [box, setBox] = createSignal<HTMLElement>();
+    const swallow = (event: KeyboardEvent) => event.stopPropagation();
+    render(() => {
+      createFocusScope({
+        container: box,
+        active: () => true,
+        trapped: () => true,
+        initialFocus: "first",
+      });
+      return (
+        <div ref={setBox} tabindex="-1">
+          <button type="button" on:keydown={swallow}>
+            One
+          </button>
+          <button type="button" on:keydown={swallow}>
+            Two
+          </button>
+        </div>
+      );
+    });
+    await settle();
+    expect(label()).toBe("One");
+    await shiftTab();
+    await settle();
+    expect(label()).toBe("Two");
+    await userEvent.keyboard("{Tab}");
+    await settle();
+    expect(label()).toBe("One");
+    await userEvent.keyboard("{Tab}");
+    await settle();
+    expect(label()).toBe("Two");
+    await userEvent.keyboard("{Tab}");
+    await settle();
+    expect(label()).toBe("One");
+    expect(document.hasFocus()).toBe(true);
+  });
+
   it("focusWithoutTracking reports whether the element took focus", () => {
     const view = render(() => (
       <>

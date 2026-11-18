@@ -63,6 +63,25 @@ function initialTarget(container: HTMLElement, initial: InitialFocus): HTMLEleme
 // A deactivation restores after a microtask, so a scope that activates in the same tick can inherit the target.
 let pendingRestore: { target: Element | null } | undefined;
 
+// Tab stops beside the container: the browser's own order reaches them, so focus wraps without leaving the page and without hearing the key.
+function edge(container: HTMLElement, onFocus: () => void): HTMLSpanElement {
+  const span = container.ownerDocument.createElement("span");
+  span.tabIndex = 0;
+  span.setAttribute("aria-hidden", "true");
+  Object.assign(span.style, {
+    position: "fixed",
+    top: "0",
+    left: "0",
+    width: "1px",
+    height: "1px",
+    overflow: "hidden",
+    clipPath: "inset(50%)",
+    whiteSpace: "nowrap",
+  });
+  span.addEventListener("focus", onFocus);
+  return span;
+}
+
 export function createFocusScope(options: FocusScopeOptions): FocusScope {
   let skipNext = false;
   let held:
@@ -105,8 +124,11 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
       if (backward) candidates.reverse();
       if (!firstThatTakesFocus(candidates)) focusWithoutTracking(container);
     };
+    const before = edge(container, () => toCandidate(true));
+    const after = edge(container, () => toCandidate(false));
     const onFocusOut = (event: FocusEvent) => {
       const next = event.relatedTarget;
+      if (next === before || next === after) return;
       if (next instanceof Node && (container.contains(next) || isAbove(next))) return;
       if (next !== null) {
         toCandidate(tab?.shift ?? false);
@@ -126,10 +148,14 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
       container.addEventListener("keydown", onKeyDown);
       container.addEventListener("keyup", onKeyUp);
       container.addEventListener("focusout", onFocusOut);
+      container.before(before);
+      container.after(after);
     }
 
     const untrap = () => {
       trapping = false;
+      before.remove();
+      after.remove();
       container.removeEventListener("keydown", onKeyDown);
       container.removeEventListener("keyup", onKeyUp);
       container.removeEventListener("focusout", onFocusOut);
