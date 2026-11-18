@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { CDPSession, Page } from "playwright";
+import { HOLD_GRACE_MS, HOLD_MS } from "../../src/lib/hold";
 import type { IndexedComponent, Step, Target } from "../harness/types";
 import { PKG } from "./serve";
 
@@ -105,6 +106,22 @@ export async function prepare(
   if ("touch" in step) {
     const { x, y } = await locate(cdp, step.touch);
     return () => page.touchscreen.tap(x, y);
+  }
+  if ("contextMenu" in step) {
+    const { x, y } = await locate(cdp, step.contextMenu);
+    return async () => {
+      await page.mouse.move(x, y);
+      await page.mouse.down({ button: "right" });
+      await page.mouse.up({ button: "right" });
+    };
+  }
+  if ("hold" in step) {
+    const { x, y } = await locate(cdp, step.hold);
+    return async () => {
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y }] });
+      await page.waitForTimeout(HOLD_MS + HOLD_GRACE_MS);
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    };
   }
   const { x, y } = await locate(cdp, step.hover);
   return () => page.mouse.move(x, y);
