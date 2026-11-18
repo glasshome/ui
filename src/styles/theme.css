@@ -265,6 +265,9 @@
   --_material-inset: 0;
   --_material-light-cos: 1;
   --_material-light-sin: 0;
+  --_material-sheen-at: 22% 8%;
+  --_material-shade-at: 82% 100%;
+  --_material-relief-at: 50% 38%;
   --_material-rim-bottom: 0;
   --_material-rim-around: 0;
   --_material-glow-out: 1;
