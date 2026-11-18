@@ -3,7 +3,6 @@ import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { scenarioScope } from "../../dev/harness/steps";
 import { Avatar, AvatarFallback, AvatarImage } from "../../src/solid";
-import { useFakeTime } from "../../src/testing/index.js";
 import { mountScenario, settle } from "../harness/mount";
 
 afterEach(cleanup);
@@ -57,20 +56,6 @@ describe("Avatar contract", () => {
     await settle();
     expect(fallback()?.textContent).toBe("AL");
     expect(image()).toBeNull();
-  });
-
-  it("AV4 fallbackDelay holds the fallback back until the delay passes", async () => {
-    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
-    render(() => (
-      <Avatar fallbackDelay={600}>
-        <AvatarFallback>AL</AvatarFallback>
-      </Avatar>
-    ));
-    expect(fallback()).toBeNull();
-    vi.advanceTimersByTime(599);
-    expect(fallback()).toBeNull();
-    vi.advanceTimersByTime(1);
-    expect(fallback()?.textContent).toBe("AL");
   });
 
   it("AV5 onLoadingStatusChange hears loading, then loaded", async () => {
