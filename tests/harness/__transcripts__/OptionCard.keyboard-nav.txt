@@ -1,0 +1,4 @@
+document
+radio, Send an invite They pick a password., not checked, position 1, set size 3
+radio, Share a code, not checked, position 2, set size 3
+radio, Send an invite They pick a password., not checked, position 1, set size 3
