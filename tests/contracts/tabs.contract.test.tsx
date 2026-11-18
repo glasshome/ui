@@ -2,7 +2,6 @@ import { cleanup } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it } from "vitest";
 import { findAll, findTarget, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -38,12 +37,8 @@ describe("Tabs contract", () => {
     expect(findAll(scope(), { role: "tabpanel" })).toHaveLength(1);
     expect(tab("Lights").getAttribute("aria-controls")).toBe(panel().id);
     expect(panel().textContent).toBe("Three lights are on.");
-    await expectGap(
-      () =>
-        expect(panel().getAttribute("aria-labelledby"), "panel named by its tab").toBe(
-          tab("Lights").id,
-        ),
-      "panel named by its tab: expected null to be",
+    expect(panel().getAttribute("aria-labelledby"), "panel named by its tab").toBe(
+      tab("Lights").id,
     );
   });
 
@@ -106,9 +101,6 @@ describe("Tabs contract", () => {
     };
     await pressMedia("in-dialog");
     cleanup();
-    await expectGap(
-      () => pressMedia("in-shadow-root"),
-      "in-shadow-root: Media selected: expected 'false' to be 'true'",
-    );
+    await pressMedia("in-shadow-root");
   });
 });

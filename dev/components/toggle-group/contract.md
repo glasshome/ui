@@ -13,4 +13,4 @@ Each line is one browser test in `tests/contracts/toggle-group.contract.test.tsx
 | TG7 | Home or End | focus moves to the first or last enabled item |
 | TG8 | Tab from before the group | focus lands on the pressed item; a second Tab leaves the group |
 | TG9 | Enter or Space on a focused item | the item toggles |
-| TG10 | inside a dialog or a closed shadow root | TG2 holds there too. Gap: in a closed shadow root the press selects nothing (`2026-11-15-kobalte-collections-dead-in-closed-shadow-roots`) |
+| TG10 | inside a dialog or a closed shadow root | TG2 holds there too |

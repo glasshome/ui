@@ -2,7 +2,6 @@ import { cleanup } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it } from "vitest";
 import { findAll, findTarget, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
-import { expectGap } from "../harness/gap";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -109,9 +108,6 @@ describe("ToggleGroup contract", () => {
     };
     await pressHigh("in-dialog");
     cleanup();
-    await expectGap(
-      () => pressHigh("in-shadow-root"),
-      "in-shadow-root: expected [ 'Medium' ] to deeply equal [ 'High' ]",
-    );
+    await pressHigh("in-shadow-root");
   });
 });
