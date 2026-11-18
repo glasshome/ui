@@ -4,7 +4,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SelectionHighlight, SelectionScope } from "../../src/solid/selection.js";
 import { useFakeTime } from "../../src/testing/index.js";
 
-const realAnimate = Object.getOwnPropertyDescriptor(Element.prototype, "animate");
 let seen = new Set<Animation>();
 
 beforeEach(() => {
@@ -14,24 +13,24 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.useRealTimers();
-  // test-change-ok puts back the real animate after the one test that needs it to throw
-  if (realAnimate) Object.defineProperty(Element.prototype, "animate", realAnimate);
 });
 
 async function flush() {
   for (let i = 0; i < 4; i++) await Promise.resolve();
 }
 
+// test-change-ok the flight runs as CSS keyframes now, so a flight is the glide CSSAnimation it starts
 function record() {
   for (const a of document.getAnimations()) {
-    if (!(a instanceof CSSAnimation || a instanceof CSSTransition)) seen.add(a);
+    if (a instanceof CSSAnimation && a.animationName.startsWith("selection-")) seen.add(a);
   }
 }
 
 const animations = () => [...seen];
-const keyframesOf = (a: Animation) => (a.effect as KeyframeEffect).getKeyframes();
-const translateOf = (a: Animation) => keyframesOf(a)[0]?.translate;
-const flights = () => animations().filter((a) => translateOf(a) !== undefined);
+const flights = () =>
+  animations().filter((a) => (a as CSSAnimation).animationName.startsWith("selection-glide"));
+const fromOf = (flyer: HTMLElement) => flyer.style.getPropertyValue("--selection-from");
+const frame = () => new Promise<void>((done) => requestAnimationFrame(() => done()));
 
 function asTranslate(value: string) {
   const probe = document.createElement("div");
@@ -162,8 +161,7 @@ describe("SelectionScope", () => {
     expect(flights()).toHaveLength(1);
     expect(flyer.hasAttribute("data-flying")).toBe(true);
     // centres: 40 to 230, sizes 80 to 140; placed by translate, which lays nothing out
-    expect(translateOf(flights()[0] as Animation)).toBe(asTranslate("-30px 0px"));
-    expect(keyframesOf(flights()[0] as Animation)[1]?.translate).toBe(asTranslate("160px 0px"));
+    expect(fromOf(flyer)).toBe("-30px 0px");
     expect(flyer.style.translate).toBe(asTranslate("160px 0px"));
     expect(flyer.style.width).toBe("140px");
     expect(flyer.style.left).toBe("");
@@ -181,14 +179,14 @@ describe("SelectionScope", () => {
 
     expect(flights()).toHaveLength(2);
     // flyer centre 155 to item centre 120, whose box starts at 80
-    expect(translateOf(flights()[1] as Animation)).toBe(asTranslate("115px 0px"));
+    expect(fromOf(flyer)).toBe("115px 0px");
   });
 
   it("hands off to the resting highlight when the flight finishes", async () => {
     const { items, flyer, select } = renderGroup();
     await select(1);
     for (const a of animations()) a.finish();
-    await flush();
+    await frame();
 
     expect(flyer.hasAttribute("data-flying")).toBe(false);
     expect(items[1]?.querySelector("[data-landing]")).toBeNull();
@@ -227,11 +225,13 @@ describe("SelectionScope", () => {
   });
 
   it("does not fly when motion is reduced", async () => {
-    const { flyer, select } = renderGroup({ duration: "0ms" });
+    const { items, flyer, select } = renderGroup({ duration: "0ms" });
     await select(2);
+    await frame();
+    await frame();
 
-    expect(animations()).toHaveLength(0);
     expect(flyer.hasAttribute("data-flying")).toBe(false);
+    expect(items[2]?.querySelector("[data-landing]")).toBeNull();
   });
 
   it("ignores other attributes and its own writes", async () => {
@@ -275,18 +275,7 @@ describe("SelectionScope", () => {
     await select(2);
 
     // flyer centre 80 to item centre 230, whose box starts at 160
-    expect(translateOf(flights()[1] as Animation)).toBe(asTranslate("10px 0px"));
-  });
-
-  it("leaves no highlight hidden when the flight cannot start", async () => {
-    const { items, flyer, select } = renderGroup();
-    Element.prototype.animate = () => {
-      throw new Error("no animations here");
-    };
-    await select(1);
-
-    expect(flyer.hasAttribute("data-flying")).toBe(false);
-    expect(items[1]?.querySelector("[data-landing]")).toBeNull();
+    expect(fromOf(flyer)).toBe("10px 0px");
   });
 
   it("places the flyer in the content of a scope that scrolls", async () => {
@@ -378,6 +367,31 @@ describe("SelectionScope", () => {
     expect(flyer?.style.getPropertyValue("--selection-tone")).toBe("rgb(200, 0, 0)");
     expect(flyer?.style.getPropertyValue("--selection-radius")).toBe("6px");
     expect(flyer?.style.borderRadius).toBe("");
+  });
+
+  it("gives the flyer the scope's radius and the target's own tone", async () => {
+    const { container } = render(() => (
+      <SelectionScope
+        marker="pressed"
+        radius="10px"
+        style={{ display: "flex", width: "200px", height: "40px", "--duration-slide": "220ms" }}
+      >
+        <Item label="One" pressed style={sized(80)} />
+        <Item
+          label="Delete"
+          style={{ ...sized(80), "--selection-tone": "rgb(200, 0, 0)", "border-radius": "6px" }}
+        />
+      </SelectionScope>
+    ));
+    const scope = container.firstElementChild as HTMLElement;
+    const items = [...scope.querySelectorAll("button")];
+    items[0]?.removeAttribute("data-pressed");
+    items[1]?.setAttribute("data-pressed", "");
+    await flush();
+
+    const flyer = scope.querySelector<HTMLElement>("[data-selection-flyer]");
+    expect(flyer?.style.getPropertyValue("--selection-radius")).toBe("10px");
+    expect(flyer?.style.getPropertyValue("--selection-tone")).toBe("rgb(200, 0, 0)");
   });
 
   it("settles on an engine that reports same-value custom property writes", async () => {

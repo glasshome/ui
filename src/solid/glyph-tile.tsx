@@ -33,7 +33,7 @@ export function GlyphTileGroup(props: {
   });
   onMount(() => {
     const group = root();
-    if (group) onCleanup(trackScroll(group, "[data-pressed]", "data-pressed"));
+    if (group) onCleanup(trackScroll(group, "[data-pressed]", () => props.value));
   });
   return (
     <GlyphContext.Provider value={set}>

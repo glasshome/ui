@@ -11,6 +11,9 @@ export interface ToggleSet {
   isPressed: (value: string) => boolean;
   toggle: (value: string) => void;
   collection: Collection;
+  /** Changes as items mount and unmount. */
+  members: Accessor<number>;
+  joined: (delta: 1 | -1) => void;
 }
 
 /** The shared core of a row of toggles: which are pressed, what a press does, and the roving focus between them. */
@@ -26,6 +29,7 @@ export function createToggleSet(options: {
 }): ToggleSet {
   const orientation = options.orientation ?? (() => "horizontal" as const);
   const fallbackId = `group-${createUniqueId()}`;
+  const [members, setMembers] = createSignal(0);
   const collection = createCollection({
     root: options.root,
     itemSelector: options.itemSelector,
@@ -48,6 +52,8 @@ export function createToggleSet(options: {
       } else options.setValues(pressed ? [] : [value]);
     },
     collection,
+    members,
+    joined: (delta) => setMembers((n) => n + delta),
   };
 }
 
@@ -64,6 +70,7 @@ export function createToggleItem(
 
   effect(el, (node) => {
     if (!node) return;
+    set.joined(1);
     let mousePressed = false;
     const focused = trackFocus(node);
     const choose = () => {
@@ -87,6 +94,7 @@ export function createToggleItem(
     node.addEventListener("click", click);
     node.addEventListener("focus", focus);
     return () => {
+      set.joined(-1);
       focused.stop();
       node.removeEventListener("pointerdown", pointerdown);
       node.removeEventListener("click", click);

@@ -100,13 +100,15 @@ function anchoredBox(
   return { left: x, top: y, width: w, height: h };
 }
 
+/** The corner a control takes (rounded-lg is --radius), clamped to a capsule at its height; read from the theme so opening a panel asks the page for no style. */
+export const controlRadius = (height: number): string => `min(var(--radius), ${height / 2}px)`;
+
 /** A panel that grows out of the element that opened it. The --morph-* values start the panel
  *  clipped to the element's box (MORPH_MOTION's keyframes), so it unrolls out of it. */
 export function overAnchor(anchor: HTMLElement, width: number, height?: number): JSX.CSSProperties {
   const box = anchor.getBoundingClientRect();
   const vh = window.innerHeight;
   const placed = anchoredBox(box, { width: window.innerWidth, height: vh }, width, height);
-  const radius = getComputedStyle(anchor).borderTopLeftRadius || "0px";
   return {
     left: `${placed.left}px`,
     top: `${placed.top}px`,
@@ -119,6 +121,6 @@ export function overAnchor(anchor: HTMLElement, width: number, height?: number):
     "--morph-y": `${box.top - placed.top}px`,
     "--morph-w": `${box.width}px`,
     "--morph-h": `${box.height}px`,
-    "--morph-radius": radius,
+    "--morph-radius": controlRadius(box.height),
   } as JSX.CSSProperties;
 }

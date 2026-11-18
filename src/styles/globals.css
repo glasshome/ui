@@ -890,6 +890,45 @@
 }
 [data-selection-flyer][data-flying] {
   display: block;
+  animation-name: selection-glide-a, selection-squash-a;
+  animation-duration: var(--duration-slide);
+  animation-timing-function: ease-in-out;
+}
+/* A second name per flight restarts the keyframes when a flight redirects mid-air. */
+[data-selection-flyer][data-flying="b"] {
+  animation-name: selection-glide-b, selection-squash-b;
+}
+@keyframes selection-glide-a {
+  from {
+    translate: var(--selection-from);
+  }
+}
+@keyframes selection-glide-b {
+  from {
+    translate: var(--selection-from);
+  }
+}
+@keyframes selection-squash-a {
+  from {
+    scale: var(--selection-scale-from);
+  }
+  50% {
+    scale: var(--selection-scale-peak);
+  }
+  to {
+    scale: 1 1;
+  }
+}
+@keyframes selection-squash-b {
+  from {
+    scale: var(--selection-scale-from);
+  }
+  50% {
+    scale: var(--selection-scale-peak);
+  }
+  to {
+    scale: 1 1;
+  }
 }
 
 /* Icon: the box a glyph sits in, sized by its width/height attributes. */

@@ -1,6 +1,7 @@
 import {
   type ComponentProps,
   createContext,
+  createSignal,
   type JSX,
   onCleanup,
   onMount,
@@ -8,26 +9,50 @@ import {
   splitProps,
   useContext,
 } from "solid-js";
+import { effect } from "../lib/behavior/solid.js";
 import { cn } from "../lib/utils.js";
 
 /** The attribute (without `data-`) that marks the active item: Kobalte's, or the caller's own. */
 export type SelectionMarker = "pressed" | "selected" | "highlighted" | "lit";
 
-const SelectionContext = createContext<SelectionMarker>();
+interface SelectionContextValue {
+  marker: SelectionMarker;
+  report: (item: HTMLElement, active: boolean) => void;
+  watchMarker: () => void;
+}
+
+const SelectionContext = createContext<SelectionContextValue>();
 
 /**
  * The glass behind an item while it is the active one. Render it as the first child of every
  * item inside a `SelectionScope`; CSS shows the one whose item carries the scope's marker, so
  * layout keeps it in place and nothing measures it at rest. Renders nothing outside a scope.
+ * Pass `active` when the item knows it carries the marker; without it the scope watches the
+ * marker attribute instead, which costs a MutationObserver.
  */
-export function SelectionHighlight() {
-  const marker = useContext(SelectionContext);
+export function SelectionHighlight(props: { active?: boolean }) {
+  const scope = useContext(SelectionContext);
+  let span: HTMLSpanElement | undefined;
+  const [item, setItem] = createSignal<HTMLElement>();
+  onMount(() => setItem(span?.parentElement ?? undefined));
+  if (scope && props.active === undefined) scope.watchMarker();
+  effect(
+    () => [item(), props.active] as const,
+    ([item, active]) => {
+      if (!scope || !item || active === undefined) return;
+      scope.report(item, active);
+      return () => {
+        if (active) scope.report(item, false);
+      };
+    },
+  );
   return (
-    <Show when={marker}>
+    <Show when={scope}>
       {(on) => (
         <span
+          ref={span}
           data-selection-highlight=""
-          data-on={on()}
+          data-on={on().marker}
           data-sliding-indicator=""
           aria-hidden="true"
           class="glass glass-tint"
@@ -37,7 +62,6 @@ export function SelectionHighlight() {
   );
 }
 
-const DEFAULT_DURATION_MS = 220;
 // Kobalte clears a menu row's highlight on pointerleave and sets the next on pointermove.
 const GAP_MS = 100;
 // Squash-and-stretch as a pixel budget per axis, so a big item does not deform more.
@@ -47,14 +71,6 @@ const DEFORM_MAX = 0.14;
 
 /** Centre and size in the scope's own content pixels. */
 type Box = { x: number; y: number; width: number; height: number };
-
-function durationMs(root: HTMLElement): number {
-  const raw = getComputedStyle(root).getPropertyValue("--duration-slide").trim();
-  if (!raw) return DEFAULT_DURATION_MS;
-  const value = Number.parseFloat(raw);
-  if (Number.isNaN(value)) return DEFAULT_DURATION_MS;
-  return raw.endsWith("ms") ? value : value * 1000;
-}
 
 function boxIn(root: HTMLElement, el: Element, size: { width: number; height: number }): Box {
   const outer = root.getBoundingClientRect();
@@ -109,47 +125,46 @@ function writeStyle(el: HTMLElement, name: string, value: string) {
   if (el.style.getPropertyValue(name) !== value) el.style.setProperty(name, value);
 }
 
-/** One flight at a time; every way a flight ends goes through `settle`. */
-function createFlight(root: HTMLElement, flyer: HTMLElement) {
-  let generation = 0;
-  let running: Animation[] = [];
+/** The corner and tone the flyer takes from its target, without asking the page for a style. */
+function lookOf(item: HTMLElement, radius: string | undefined) {
+  if (radius === undefined) {
+    const look = getComputedStyle(item);
+    return {
+      radius: look.borderRadius,
+      tone: look.getPropertyValue("--selection-tone").trim(),
+    };
+  }
+  return { radius, tone: item.style.getPropertyValue("--selection-tone").trim() };
+}
+
+/**
+ * One flight at a time, run by CSS keyframes on the token duration; every way a flight ends goes
+ * through `settle`. Each flight flips the phase, so a new flight restarts the keyframes.
+ */
+function createFlight(root: HTMLElement, flyer: HTMLElement, radius: () => string | undefined) {
+  let phase: "a" | "b" = "b";
   let landing: Element | undefined;
 
-  const stop = () => {
-    for (const animation of running) animation.cancel();
-    running = [];
+  const settle = () => {
     landing?.removeAttribute("data-landing");
     landing = undefined;
-  };
-
-  const settle = (of = generation) => {
-    if (of !== generation) return;
-    stop();
     flyer.removeAttribute("data-flying");
   };
 
+  const ended = (event: AnimationEvent) => {
+    if (event.animationName === `selection-glide-${phase}`) settle();
+  };
+  flyer.addEventListener("animationend", ended);
+  flyer.addEventListener("animationcancel", ended);
+
   const start = (from: Box, item: HTMLElement) => {
-    generation += 1;
-    const current = generation;
-    stop();
     const target = highlightOf(item);
     const to = itemBox(root, item);
-    const duration = durationMs(root);
-    if (!target || !to || duration <= 0) return settle(current);
+    if (!target || !to) return settle();
 
-    // Read before any write: a computed border-radius after a size write forces a second layout.
-    const look = getComputedStyle(item);
-    const radius = look.borderRadius;
-    const tone = look.getPropertyValue("--selection-tone").trim();
+    const look = lookOf(item, radius());
     const left = to.x - to.width / 2;
     const top = to.y - to.height / 2;
-    const rest = `${left}px ${top}px`;
-    writeStyle(flyer, "width", `${to.width}px`);
-    writeStyle(flyer, "height", `${to.height}px`);
-    writeStyle(flyer, "translate", rest);
-    writeStyle(flyer, "--selection-radius", radius);
-    writeStyle(flyer, "--selection-tone", tone);
-
     const dx = from.x - to.x;
     const dy = from.y - to.y;
     const kx = from.width / to.width;
@@ -164,23 +179,20 @@ function createFlight(root: HTMLElement, flyer: HTMLElement) {
       peakY *= alongX ? pinch : stretch;
     }
 
+    writeStyle(flyer, "width", `${to.width}px`);
+    writeStyle(flyer, "height", `${to.height}px`);
+    writeStyle(flyer, "translate", `${left}px ${top}px`);
+    writeStyle(flyer, "--selection-radius", look.radius);
+    writeStyle(flyer, "--selection-tone", look.tone);
+    writeStyle(flyer, "--selection-from", `${left + dx}px ${top + dy}px`);
+    writeStyle(flyer, "--selection-scale-from", `${kx} ${ky}`);
+    writeStyle(flyer, "--selection-scale-peak", `${peakX} ${peakY}`);
+
+    landing?.removeAttribute("data-landing");
     landing = target;
     target.setAttribute("data-landing", "");
-    flyer.setAttribute("data-flying", "");
-    const timing: KeyframeAnimationOptions = { duration, easing: "ease-in-out" };
-    const end = () => settle(current);
-    try {
-      running = [
-        flyer.animate([{ translate: `${left + dx}px ${top + dy}px` }, { translate: rest }], timing),
-        flyer.animate(
-          [{ scale: `${kx} ${ky}` }, { scale: `${peakX} ${peakY}` }, { scale: "1 1" }],
-          timing,
-        ),
-      ];
-    } catch {
-      return end();
-    }
-    Promise.all(running.map((animation) => animation.finished)).then(end, end);
+    phase = phase === "a" ? "b" : "a";
+    flyer.setAttribute("data-flying", phase);
   };
 
   return { settle, start, flying: () => flyer.hasAttribute("data-flying") };
@@ -190,6 +202,11 @@ interface SelectionScopeProps extends Omit<ComponentProps<"div">, "style"> {
   marker: SelectionMarker;
   /** CSS colour for the highlight's glass. Default `var(--material-accent)`. */
   tone?: string;
+  /**
+   * The items' corner radius as CSS, which the flyer takes in flight. Without it the scope reads
+   * each target's computed corner and tone per flight; that read goes in 2.0.0, where it is required.
+   */
+  radius?: string;
   style?: JSX.CSSProperties;
 }
 
@@ -198,7 +215,15 @@ interface SelectionScopeProps extends Omit<ComponentProps<"div">, "style"> {
  * one flyer animates from the old item to the new one and hands off to its resting highlight.
  */
 export function SelectionScope(props: SelectionScopeProps) {
-  const [local, rest] = splitProps(props, ["marker", "tone", "class", "style", "children", "ref"]);
+  const [local, rest] = splitProps(props, [
+    "marker",
+    "tone",
+    "radius",
+    "class",
+    "style",
+    "children",
+    "ref",
+  ]);
   let root: HTMLDivElement | undefined;
   let flyer: HTMLSpanElement | undefined;
   const setRoot = (el: HTMLDivElement) => {
@@ -207,17 +232,31 @@ export function SelectionScope(props: SelectionScopeProps) {
     if (typeof forwarded === "function") forwarded(el);
   };
 
+  let move: ((next: HTMLElement | undefined) => void) | undefined;
+  let watching = false;
+  let watch: (() => void) | undefined;
+  const reported = new Set<HTMLElement>();
+  const report = (item: HTMLElement, active: boolean) => {
+    if (active) reported.add(item);
+    else reported.delete(item);
+    move?.(active ? item : [...reported].at(-1));
+  };
+  const watchMarker = () => {
+    if (watching) return;
+    watching = true;
+    watch?.();
+  };
+
   onMount(() => {
     const scope = root;
     const travel = flyer;
     if (!scope || !travel) return;
     const attribute = `data-${local.marker}`;
-    const flight = createFlight(scope, travel);
-    let active = activeIn(scope, attribute);
+    const flight = createFlight(scope, travel, () => local.radius);
+    let active = [...reported].at(-1) ?? activeIn(scope, attribute);
     let left: { item: HTMLElement; box: Box | undefined; at: number } | undefined;
 
-    const observer = new MutationObserver(() => {
-      const next = activeIn(scope, attribute);
+    move = (next) => {
       if (next === active) return;
       const previous = active;
       active = next;
@@ -240,10 +279,18 @@ export function SelectionScope(props: SelectionScopeProps) {
             : undefined;
       if (from && inSight(scope, from)) flight.start(from, next);
       else flight.settle();
-    });
-    observer.observe(scope, { subtree: true, attributes: true, attributeFilter: [attribute] });
+    };
+
+    let observer: MutationObserver | undefined;
+    watch = () => {
+      observer = new MutationObserver(() => move?.(activeIn(scope, attribute)));
+      observer.observe(scope, { subtree: true, attributes: true, attributeFilter: [attribute] });
+    };
+    if (watching) watch();
     onCleanup(() => {
-      observer.disconnect();
+      observer?.disconnect();
+      move = undefined;
+      watch = undefined;
       flight.settle();
     });
   });
@@ -256,7 +303,17 @@ export function SelectionScope(props: SelectionScopeProps) {
       style={local.tone ? { ...local.style, "--selection-tone": local.tone } : local.style}
       {...rest}
     >
-      <SelectionContext.Provider value={local.marker}>{local.children}</SelectionContext.Provider>
+      <SelectionContext.Provider
+        value={{
+          get marker() {
+            return local.marker;
+          },
+          report,
+          watchMarker,
+        }}
+      >
+        {local.children}
+      </SelectionContext.Provider>
       <span
         ref={flyer}
         data-selection-flyer=""

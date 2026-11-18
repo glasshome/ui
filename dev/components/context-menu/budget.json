@@ -20,12 +20,6 @@
       "workUnits": {
         "max": 4,
         "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 0
       }
     }
   },
@@ -64,12 +58,6 @@
       "workUnits": {
         "max": 14,
         "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 1
       }
     }
   },
@@ -136,12 +124,6 @@
       "workUnits": {
         "max": 17,
         "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 1
       }
     }
   },
@@ -208,12 +190,6 @@
       "workUnits": {
         "max": 25,
         "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 2
       }
     }
   },
@@ -252,12 +228,6 @@
       "workUnits": {
         "max": 14,
         "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 1
       }
     }
   },
@@ -296,12 +266,6 @@
       "workUnits": {
         "max": 18,
         "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 1
       }
     }
   },

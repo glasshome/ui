@@ -15,7 +15,7 @@ import {
 } from "solid-js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { CARD_SURFACE } from "../lib/card-classes.js";
-import { DOCK_SLOT_SHAPE } from "../lib/dock-slot-classes.js";
+import { DOCK_SLOT_RADIUS, DOCK_SLOT_SHAPE } from "../lib/dock-slot-classes.js";
 import {
   DOCK_ARRIVE_MOTION,
   DOCK_EDIT_MOTION,
@@ -119,7 +119,7 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
         data-arrived={local.arrived ? "" : undefined}
         {...rest}
       >
-        <SelectionHighlight />
+        <SelectionHighlight active={local.lit ?? false} />
         <Show when={local.arrived}>
           <span data-slot="dock-item-arrival" aria-hidden="true" class={DOCK_ARRIVE_MOTION} />
         </Show>
@@ -511,6 +511,7 @@ const Dock: Component<DockProps> = (props) => {
         >
           <SelectionScope
             marker="lit"
+            radius={DOCK_SLOT_RADIUS}
             class={cn("flex items-center gap-0.5 sm:gap-1", vertical() && "flex-col")}
           >
             <Index each={local.items}>

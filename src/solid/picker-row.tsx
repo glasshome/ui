@@ -27,6 +27,8 @@ type PickerRowProps = Omit<ComponentProps<"button">, "title"> & {
   subtitle?: JSX.Element;
   meta?: JSX.Element;
   selected: boolean;
+  /** The row the keys point at; it carries `data-highlighted` and the selection glass. */
+  highlighted?: boolean;
   multi: boolean;
   dimmed?: boolean;
 };
@@ -39,6 +41,7 @@ export function PickerRow(props: PickerRowProps) {
     "subtitle",
     "meta",
     "selected",
+    "highlighted",
     "multi",
     "dimmed",
     "class",
@@ -56,9 +59,10 @@ export function PickerRow(props: PickerRowProps) {
         local.class,
       )}
       style={{ "min-height": `${PICKER_ROW_HEIGHT}px` }}
+      data-highlighted={local.highlighted ? "" : undefined}
       {...rest}
     >
-      <SelectionHighlight />
+      <SelectionHighlight active={local.highlighted} />
       <Show when={local.icon}>
         {(icon) => (
           <div

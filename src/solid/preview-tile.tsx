@@ -33,7 +33,7 @@ export function PreviewTileGroup(props: {
 }) {
   let group: HTMLElement | undefined;
   onMount(() => {
-    if (props.scroll && group) onCleanup(trackScroll(group, "[data-checked]", "data-checked"));
+    if (props.scroll && group) onCleanup(trackScroll(group, "[data-checked]", () => props.value));
   });
   return (
     <RadioGroup

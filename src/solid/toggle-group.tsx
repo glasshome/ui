@@ -21,6 +21,7 @@ import { merge, omit } from "../lib/behavior/solid.js";
 import { BALANCE_CONTENT, BALANCED_ROWS, balanceRows } from "../lib/balance-rows.js";
 import { TRACK_SURFACE } from "../lib/card-classes.js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
+import { SEGMENT_RADIUS } from "../lib/segment-classes.js";
 import { createToggleItem, createToggleSet, type ToggleSet } from "../lib/toggle-set.js";
 import { cn } from "../lib/utils.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
@@ -126,8 +127,8 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
   onMount(() => {
     const el = root();
     if (!el) return;
-    if (props.scroll) onCleanup(trackScroll(el, "[data-pressed]", "data-pressed"));
-    else if (!vertical()) onCleanup(balanceRows(el, scope() ?? el, ITEM));
+    if (props.scroll) onCleanup(trackScroll(el, "[data-pressed]", values));
+    else if (!vertical()) onCleanup(balanceRows(el, scope() ?? el, ITEM, set.members));
   });
 
   const context: ToggleGroupContextValue = {
@@ -195,6 +196,7 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
           <SelectionScope
             ref={setScope}
             marker="pressed"
+            radius={SEGMENT_RADIUS}
             tone={props.tone}
             {...{ [BALANCED_ROWS]: props.scroll || vertical() ? undefined : "" }}
             class={
@@ -277,7 +279,7 @@ const ToggleGroupItem: Component<ToggleGroupItemProps> = (props) => {
         },
       })}
     >
-      <SelectionHighlight />
+      <SelectionHighlight active={item.pressed()} />
       <span {...{ [BALANCE_CONTENT]: "" }}>{content()}</span>
     </Polymorphic>
   );

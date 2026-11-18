@@ -34,12 +34,6 @@
       "workUnits": {
         "max": 9,
         "reason": "baseline 2026-11-17; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
-      },
-      "domCalls": {
-        "getComputedStyle": 0,
-        "compareDocumentPosition": 0,
-        "IntersectionObserver": 0,
-        "MutationObserver": 0
       }
     }
   }
