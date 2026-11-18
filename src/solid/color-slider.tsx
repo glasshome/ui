@@ -1,8 +1,16 @@
-import { ColorSlider as KColorSlider } from "@kobalte/core/color-slider";
-import type { Color, ColorChannel } from "@kobalte/core/colors";
 import type { Component } from "solid-js";
-import { splitProps } from "solid-js";
+import { createSignal } from "solid-js";
+import { createControllableSignal } from "../lib/behavior/controllable.js";
+import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
+import { alongTrack, createDrag, createRange } from "../lib/behavior/range.js";
+import {
+  type Color,
+  type ColorChannel,
+  COLOR_INTL_TRANSLATIONS,
+  parseColor,
+} from "../lib/color/index.js";
 import { FOCUS_RING } from "../lib/input-classes.js";
+import { readingDirection } from "../lib/locale.js";
 import { THUMB_CLASS, THUMB_COLOR_RING, THUMB_RAIL_PAD } from "../lib/thumb-classes.js";
 import { cn } from "../lib/utils.js";
 
@@ -17,81 +25,140 @@ interface ColorSliderProps {
   "aria-label"?: string;
 }
 
-const ColorSlider: Component<ColorSliderProps> = (props) => {
-  const [local] = splitProps(props, [
-    "value",
-    "defaultValue",
-    "channel",
-    "onChange",
-    "onChangeEnd",
-    "disabled",
-    "class",
-    "aria-label",
-  ]);
+const rtl = readingDirection === "rtl";
+const START = rtl ? "right" : "left";
+const THUMB_SHIFT = rtl ? "translateX(50%)" : "translateX(-50%)";
+const RED = parseColor("hsl(0, 100%, 50%)");
 
-  // Kobalte paints the channel gradient on the (half-thumb padded) track, which
-  // leaves naked strips at the ends, so we rebuild it on the full-width root.
+const valueText = (color: Color, channel: ColorChannel) => {
+  const formatted = color.formatChannelValue(channel);
+  if (channel === "alpha") return formatted;
+  if (channel === "hue") {
+    const hue = parseColor(`hsl(${color.getChannelValue("hue")}, 100%, 50%)`);
+    return `${formatted}, ${hue.getHueName(COLOR_INTL_TRANSLATIONS)}`;
+  }
+  return `${formatted}, ${color.withChannelValue("alpha", 1).getColorName(COLOR_INTL_TRANSLATIONS)}`;
+};
+
+const ColorSlider: Component<ColorSliderProps> = (props) => {
+  const disabled = () => props.disabled ?? false;
+  const [color, setColor] = createControllableSignal({
+    value: () => props.value,
+    defaultValue: () => props.defaultValue ?? RED,
+    onChange: (next) => props.onChange?.(next),
+  });
+  const channelRange = () => color().getChannelRange(props.channel);
+  const range = createRange({
+    values: () => [color().getChannelValue(props.channel)],
+    defaultValues: () => [color().getChannelValue(props.channel)],
+    min: () => channelRange().minValue,
+    max: () => channelRange().maxValue,
+    step: () => channelRange().step,
+    disabled,
+    onChange: ([v = 0]) => setColor(color().withChannelValue(props.channel, v)),
+    onChangeEnd: ([v = 0]) => props.onChangeEnd?.(color().withChannelValue(props.channel, v)),
+  });
+  const percent = () => range.fraction(range.values()[0] ?? 0) * 100;
+  const [thumb, setThumb] = createSignal<HTMLElement>();
+  let grab = 0;
+
+  const drag = createDrag({
+    disabled,
+    start: (e, rect) => {
+      const at = alongTrack(e, rect);
+      if (thumb()?.contains(e.target as Node)) {
+        grab = at - percent() / 100;
+      } else {
+        const { minValue, maxValue } = channelRange();
+        grab = 0;
+        range.setThumb(0, minValue + at * (maxValue - minValue));
+      }
+      focusWithoutTracking(thumb());
+    },
+    move: (e, rect) => range.setThumb(0, range.valueAt(alongTrack(e, rect) - grab)),
+    end: range.dragEnd,
+  });
+
+  // The channel gradient runs under the whole root, thumb padding included, so the ends show no bare strip.
   const gradient = () => {
-    const color = local.value ?? local.defaultValue;
-    if (!color) return undefined;
-    const channel = local.channel;
+    const c = color();
+    const channel = props.channel;
     if (channel === "hue") {
       const stops = [0, 60, 120, 180, 240, 300, 360]
-        .map((h) => color.withChannelValue("hue", h).toString("css"))
+        .map((h) => c.withChannelValue("hue", h).toString("css"))
         .join(", ");
       return `linear-gradient(to right, ${stops})`;
     }
-    const { minValue, maxValue } = color.getChannelRange(channel);
-    const start = color.withChannelValue(channel, minValue).toString("css");
-    const end = color.withChannelValue(channel, maxValue).toString("css");
+    const { minValue, maxValue } = c.getChannelRange(channel);
+    const start = c.withChannelValue(channel, minValue).toString("css");
+    const end = c.withChannelValue(channel, maxValue).toString("css");
     if (channel === "lightness") {
-      const middle = color.withChannelValue(channel, (maxValue - minValue) / 2).toString("css");
+      const middle = c.withChannelValue(channel, (maxValue - minValue) / 2).toString("css");
       return `linear-gradient(to right, ${start}, ${middle}, ${end})`;
     }
     return `linear-gradient(to right, ${start}, ${end})`;
   };
 
+  const disabledMark = () => (disabled() ? "" : undefined);
+
   return (
-    <KColorSlider
-      value={local.value}
-      defaultValue={local.defaultValue}
-      channel={local.channel}
-      onChange={local.onChange}
-      onChangeEnd={local.onChangeEnd}
-      disabled={local.disabled}
+    <div
+      role="group"
       data-slot="color-slider"
+      data-orientation="horizontal"
+      data-disabled={disabledMark()}
       class={cn(
         "relative flex w-full touch-none items-center rounded-xl select-none",
         THUMB_RAIL_PAD,
-        local.disabled && "cursor-not-allowed opacity-50",
-        local.class,
+        disabled() && "cursor-not-allowed opacity-50",
+        props.class,
       )}
       style={{ background: gradient() }}
     >
-      <KColorSlider.Track
+      <div
         data-slot="color-slider-track"
-        class={cn("relative h-7 w-full", local.disabled ? "cursor-not-allowed" : "cursor-pointer")}
-        // Kobalte paints the channel gradient as an inline background here, which
-        // no class can beat; clearing it inline is what keeps the root's
-        // full-width gradient the only one.
-        style={{ background: "none" }}
+        data-orientation="horizontal"
+        data-disabled={disabledMark()}
+        class={cn("relative h-7 w-full", disabled() ? "cursor-not-allowed" : "cursor-pointer")}
+        style={{ "forced-color-adjust": "none" }}
+        onPointerDown={drag.onPointerDown}
+        onPointerMove={drag.onPointerMove}
+        onPointerUp={drag.onPointerUp}
+        onPointerCancel={drag.onPointerCancel}
       >
-        <KColorSlider.Thumb
+        <span
+          ref={setThumb}
+          role="slider"
           data-slot="color-slider-thumb"
+          data-orientation="horizontal"
+          data-disabled={disabledMark()}
+          tabIndex={disabled() ? undefined : 0}
+          aria-label={props["aria-label"] ?? props.channel}
+          aria-valuemin={channelRange().minValue}
+          aria-valuemax={channelRange().maxValue}
+          aria-valuenow={range.values()[0]}
+          aria-valuetext={valueText(color(), props.channel)}
+          aria-orientation="horizontal"
+          aria-disabled={disabled() || undefined}
           class={cn(
             THUMB_CLASS,
             FOCUS_RING,
             THUMB_COLOR_RING,
             "absolute top-0",
-            local.disabled && "cursor-not-allowed",
+            disabled() && "cursor-not-allowed",
           )}
-          aria-label={local["aria-label"] ?? local.channel}
-          style={{ background: "var(--kb-color-current)" }}
-        >
-          <KColorSlider.Input />
-        </KColorSlider.Thumb>
-      </KColorSlider.Track>
-    </KColorSlider>
+          style={{
+            [START]: `calc(${percent()}%)`,
+            transform: THUMB_SHIFT,
+            "touch-action": "none",
+            "forced-color-adjust": "none",
+            background: color().toString("css"),
+          }}
+          onKeyDown={(e) => range.keyDown(e, 0)}
+          onBlur={range.blur}
+        />
+      </div>
+    </div>
   );
 };
 

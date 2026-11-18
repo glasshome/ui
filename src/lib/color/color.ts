@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  *
- * Ported from @internationalized/color by way of @kobalte/core's colors module (MIT).
+ * Ported from @internationalized/color by way of Kobalte's colors module (MIT).
  */
 
 import { locale } from "../locale";
