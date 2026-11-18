@@ -213,19 +213,24 @@ const AccordionTriggerRoot: Component<AccordionTriggerProps> = (props) => {
 
   return (
     <CollapsibleTriggerRoot
-      {...merge(others, {
-        get id() {
-          return id();
+      {...merge(
+        {
+          get "data-key"() {
+            return item.value();
+          },
         },
-        get "data-key"() {
-          return item.value();
+        others,
+        {
+          get id() {
+            return id();
+          },
+          onClick: click,
+          ref: (node: HTMLButtonElement) => {
+            setEl(node);
+            if (typeof local.ref === "function") local.ref(node);
+          },
         },
-        onClick: click,
-        ref: (node: HTMLButtonElement) => {
-          setEl(node);
-          if (typeof local.ref === "function") local.ref(node);
-        },
-      })}
+      )}
     />
   );
 };

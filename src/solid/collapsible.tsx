@@ -172,8 +172,16 @@ export const CollapsibleTriggerRoot: Component<CollapsibleTriggerProps> = (props
           get "aria-disabled"() {
             return !native() && ctx.disabled() ? true : undefined;
           },
+          get "data-disabled"() {
+            return ctx.disabled() ? "" : undefined;
+          },
+          get "data-expanded"() {
+            return ctx.open() ? "" : undefined;
+          },
+          get "data-closed"() {
+            return ctx.open() ? undefined : "";
+          },
         },
-        ctx.markers,
         others,
         {
           as: local.as,
