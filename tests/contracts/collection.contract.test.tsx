@@ -139,4 +139,12 @@ describe("collection contract", () => {
     await run(key("Home"));
     expect(focused()).toBe("Office");
   });
+
+  it("CO10 removing the item that holds the tab stop hands it to the first enabled item", async () => {
+    const { run, stops } = await mount("removed-highlighted");
+    await run(press("Kitchen"));
+    expect(stops()).toEqual(["Kitchen"]);
+    await run(press("Remove the kitchen"));
+    expect(stops()).toEqual(["Hall"]);
+  });
 });

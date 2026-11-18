@@ -1,4 +1,4 @@
-import { createSignal, For, type JSX } from "solid-js";
+import { createSignal, For, type JSX, onCleanup } from "solid-js";
 import { createCollection } from "../../../src/lib/behavior/collection";
 import { defineScenarios } from "../../harness/types";
 
@@ -63,20 +63,23 @@ export function Toolbar(props: {
       on:keydown={collection.onKeyDown}
     >
       <For each={props.rooms}>
-        {(room) => (
-          <button
-            type="button"
-            id={`room-${room.key}`}
-            data-key={room.key}
-            aria-disabled={room.disabled ? "true" : undefined}
-            tabindex={virtual() ? -1 : collection.tabIndex(room.key)}
-            data-highlighted={collection.highlighted() === room.key ? "" : undefined}
-            on:click={() => !room.disabled && collection.highlight(room.key, "pointer")}
-            on:focus={() => collection.highlight(room.key, "pointer")}
-          >
-            {room.label}
-          </button>
-        )}
+        {(room) => {
+          onCleanup(() => collection.release(room.key));
+          return (
+            <button
+              type="button"
+              id={`room-${room.key}`}
+              data-key={room.key}
+              aria-disabled={room.disabled ? "true" : undefined}
+              tabindex={virtual() ? -1 : collection.tabIndex(room.key)}
+              data-highlighted={collection.highlighted() === room.key ? "" : undefined}
+              on:click={() => !room.disabled && collection.highlight(room.key, "pointer")}
+              on:focus={() => collection.highlight(room.key, "pointer")}
+            >
+              {room.label}
+            </button>
+          );
+        }}
       </For>
     </div>
   );
@@ -141,6 +144,17 @@ export default defineScenarios({
       title: "Re-sorted rooms are walked in their new order",
       render: () => <Edited edit={(rooms) => [...rooms].reverse()} label="Reverse" />,
       steps: [press("Reverse"), press("Kitchen"), { key: "ArrowDown" }, { key: "Home" }],
+    },
+    {
+      id: "removed-highlighted",
+      title: "Removing the room that held the tab stop hands it to another",
+      render: () => (
+        <Edited
+          edit={(rooms) => rooms.filter((r) => r.key !== "kitchen")}
+          label="Remove the kitchen"
+        />
+      ),
+      steps: [press("Kitchen"), press("Remove the kitchen")],
     },
     {
       id: "long-list",

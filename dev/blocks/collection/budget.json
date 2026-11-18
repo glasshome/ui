@@ -387,6 +387,64 @@
       }
     }
   },
+  "removed-highlighted": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 1389,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 1111,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        },
+        "largestRecalc": {
+          "max": 2,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 5,
+        "reason": "2026-11-18: first measure of the removal scenario in the realm"
+      },
+      "domCalls": {
+        "getComputedStyle": 0,
+        "compareDocumentPosition": 0,
+        "IntersectionObserver": 0,
+        "MutationObserver": 0
+      }
+    }
+  },
   "long-list": {
     "steps": {
       "0": {

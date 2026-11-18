@@ -257,6 +257,7 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
   const [el, setEl] = createSignal<HTMLElement>();
   const disabled = () => local.disabled || ctx.disabled();
   const selected = () => ctx.value() === local.value;
+  onCleanup(() => ctx.collection.release(local.value));
 
   effect(
     () => [local.value, local.id] as const,

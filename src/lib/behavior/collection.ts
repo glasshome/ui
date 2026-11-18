@@ -23,6 +23,8 @@ export interface Collection {
   highlight: (key: string, by: HighlightBy) => void;
   tabIndex: (key: string) => 0 | -1;
   onKeyDown: (event: KeyboardEvent) => void;
+  /** An item calls this as it unmounts, so a removed tab stop passes to a present item. */
+  release: (key: string) => void;
 }
 
 const isDisabled = (el: HTMLElement) =>
@@ -74,16 +76,29 @@ export function createCollection(options: CollectionOptions): Collection {
   const enabledItems = (root: HTMLElement) =>
     [...root.querySelectorAll<HTMLElement>(options.itemSelector)].filter((el) => !isDisabled(el));
 
+  function placeStop(root: HTMLElement | undefined, preferred: readonly string[]) {
+    if (!root || focusIsWithin(root)) return;
+    const items = enabledItems(root);
+    const stop = items.find((el) => preferred.includes(keyOf(el))) ?? items[0];
+    if (stop) setOwn(keyOf(stop));
+  }
+
   if (options.focus === "roving")
     effect(
       () => [options.root(), options.preferred?.() ?? []] as const,
-      ([root, preferred]) => {
-        if (!root || focusIsWithin(root)) return;
-        const items = enabledItems(root);
-        const stop = items.find((el) => preferred.includes(keyOf(el))) ?? items[0];
-        if (stop) setOwn(keyOf(stop));
-      },
+      ([root, preferred]) => placeStop(root, preferred),
     );
+
+  let disposed = false;
+  onCleanup(() => (disposed = true));
+
+  function release(key: string) {
+    if (options.focus !== "roving" || own() !== key) return;
+    // The item is still in the DOM while its cleanup runs.
+    queueMicrotask(() => {
+      if (!disposed && own() === key) placeStop(options.root(), options.preferred?.() ?? []);
+    });
+  }
 
   let buffer = "";
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -144,5 +159,6 @@ export function createCollection(options: CollectionOptions): Collection {
     highlight,
     tabIndex: (key) => (options.focus === "roving" && key === highlighted() ? 0 : -1),
     onKeyDown,
+    release,
   };
 }

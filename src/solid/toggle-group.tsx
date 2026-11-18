@@ -256,6 +256,7 @@ const ToggleGroupItem: Component<ToggleGroupItemProps> = (props) => {
   const [el, setEl] = createSignal<HTMLElement>();
   const disabled = () => local.disabled || context.disabled();
   const pressed = () => context.isPressed(local.value);
+  onCleanup(() => context.collection.release(local.value));
   const state: ToggleGroupItemState = { pressed };
   const content = children(() => {
     const body = local.children;

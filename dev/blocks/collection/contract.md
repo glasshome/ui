@@ -13,3 +13,4 @@ Each line is one browser test in `tests/contracts/collection.contract.test.tsx`,
 | CO7 | a keyboard move in a long list | the highlighted item scrolls into the list's view |
 | CO8 | inside a closed shadow root | CO1 and CO4 hold |
 | CO9 | items rendered by a `<For>` whose array is re-sorted | arrow moves follow the new order; Home lands on the new first item |
+| CO10 | the item holding the tab stop unmounts while focus is outside | the first enabled item (or a `preferred` one) takes the tab stop; each item calls `release(key)` on cleanup |
