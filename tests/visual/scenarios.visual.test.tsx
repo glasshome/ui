@@ -1,6 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { commands, page } from "vitest/browser";
 import { COMPONENTS } from "../../dev/harness/registry";
 import { ScenarioStage } from "../../dev/harness/ScenarioStage";
 import { runSteps, scenarioScope } from "../../dev/harness/steps";
@@ -24,6 +24,8 @@ describe.each(CASES)("$name", ({ component, scenario }) => {
   it.each(MATRIX)("looks as recorded, %s theme, %s width", async (theme, width) => {
     const [w, h] = WIDTHS[width];
     await page.viewport(w, h);
+    // The last scenario's pointer would otherwise hover whatever this one draws under it.
+    await commands.mouse("move", w - 1, h - 1);
     document.documentElement.classList.toggle("dark", theme === "dark");
     render(() => (
       <div class="bg-background text-foreground min-h-screen">
