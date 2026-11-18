@@ -1,6 +1,7 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal, type JSX } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { commands } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { findAll } from "../../dev/harness/steps";
 import { Within } from "../../dev/harness/Within";
@@ -20,6 +21,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Toaster,
+  toast,
 } from "../../src/solid";
 import { input } from "../harness/input";
 import { settle } from "../harness/mount";
@@ -252,5 +255,85 @@ describe("modal root contract", () => {
     await settle();
     expect(dialog()).toBe(false);
     expect(popover()).toBe(true);
+  });
+  it("MR9 a modal panel says it is modal, and a non-modal one says nothing", async () => {
+    render(() => (
+      <Dialog open>
+        <DialogContent>
+          <DialogTitle>Modal</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    expect(findAll(scope(), { role: "dialog", name: "Modal" })[0]?.getAttribute("aria-modal")).toBe(
+      "true",
+    );
+    cleanup();
+
+    render(() => (
+      <Dialog open modal={false}>
+        <DialogContent>
+          <DialogTitle>Loose</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    expect(findAll(scope(), { role: "dialog", name: "Loose" })[0]?.hasAttribute("aria-modal")).toBe(
+      false,
+    );
+    cleanup();
+
+    render(() => (
+      <Within mode="shadow-root">
+        <Dialog open>
+          <DialogContent>
+            <DialogTitle>Sealed</DialogTitle>
+          </DialogContent>
+        </Dialog>
+      </Within>
+    ));
+    await settle();
+    expect(
+      findAll(scope(), { role: "dialog", name: "Sealed" })[0]?.hasAttribute("aria-modal"),
+    ).toBe(false);
+  });
+
+  it("MR10 a toast raised while a modal is open is in the AX tree", async () => {
+    render(() => (
+      <>
+        <Toaster />
+        <Dialog open>
+          <DialogContent>
+            <DialogTitle>Busy</DialogTitle>
+          </DialogContent>
+        </Dialog>
+      </>
+    ));
+    await settle();
+    expect(findAll(scope(), { role: "dialog", name: "Busy" })[0]?.getAttribute("aria-modal")).toBe(
+      "true",
+    );
+    toast("Scene saved");
+    await vi.waitFor(async () => expect(await commands.axTree()).toContain("Scene saved"));
+    toast.dismiss();
+  });
+
+  it("MR11 a data-kb-top-layer button outside an open modal stays in the AX tree", async () => {
+    const wake = document.body.appendChild(document.createElement("button"));
+    wake.setAttribute("data-kb-top-layer", "");
+    wake.textContent = "Wake screen";
+    render(() => (
+      <Dialog open>
+        <DialogContent>
+          <DialogTitle>Asleep</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    ));
+    await settle();
+    expect(
+      findAll(scope(), { role: "dialog", name: "Asleep" })[0]?.getAttribute("aria-modal"),
+    ).toBe("true");
+    expect(await commands.axTree()).toContain('button "Wake screen"');
+    wake.remove();
   });
 });

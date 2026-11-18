@@ -1,2 +1,2 @@
 document
-dialog, Scenario | tab, Media, selected, 1 control, position 3, set size 3
+dialog, Scenario, modal | tab, Media, selected, 1 control, position 3, set size 3

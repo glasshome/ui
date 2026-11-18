@@ -352,6 +352,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
               }}
               id={id()}
               role={ctx.role}
+              aria-modal={ctx.modal() ? "true" : undefined}
               tabIndex={-1}
               aria-labelledby={ctx.titleId()}
               aria-label={ctx.titleId() ? undefined : local.ariaLabel}
