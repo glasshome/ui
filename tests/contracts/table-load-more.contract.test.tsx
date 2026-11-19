@@ -1,6 +1,7 @@
 import { cleanup } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { findAll } from "../../dev/harness/steps";
+import { frames } from "../frames.js";
 import { press } from "../press.js";
 import { mountScenario, settle } from "../harness/mount";
 
@@ -8,9 +9,6 @@ afterEach(cleanup);
 
 const rows = (scope: ParentNode[]) => findAll(scope, { role: "listitem" }).length;
 const more = (scope: ParentNode[]) => findAll(scope, { role: "button", name: "Show more" });
-const frames = async (n: number) => {
-  for (let i = 0; i < n; i++) await new Promise((done) => requestAnimationFrame(done));
-};
 
 describe("TableLoadMore contract", () => {
   it("TL1 one page of rows and a Show more button", async () => {

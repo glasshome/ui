@@ -1,8 +1,8 @@
 import { render } from "@solidjs/testing-library";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { Dock, type DockPlacement } from "../../src/solid/dock.js";
 import { ToggleGroup, ToggleGroupItem } from "../../src/solid/toggle-group.js";
-import { useFakeTime } from "../../src/testing/index.js";
+import { frames } from "../frames.js";
 
 const items = (n: number) =>
   Array.from({ length: n }, (_, i) => ({
@@ -17,8 +17,7 @@ const OVERFLOWING_BOX = 340;
 
 const rectOf = (el: Element | null | undefined) => el?.getBoundingClientRect() as DOMRect;
 
-function mount(placement: DockPlacement, open: boolean, box = { width: 800, height: 600 }) {
-  useFakeTime();
+async function mount(placement: DockPlacement, open: boolean, box = { width: 800, height: 600 }) {
   const view = render(() => (
     <div
       class="reduce-motion flex items-start"
@@ -36,29 +35,28 @@ function mount(placement: DockPlacement, open: boolean, box = { width: 800, heig
       />
     </div>
   ));
-  vi.advanceTimersToNextFrame();
+  await frames(2);
   const surface = rectOf(view.container.querySelector('[data-slot="dock-surface"]'));
   const companion = rectOf(view.container.querySelector('[data-slot="dock-companion"]'));
   return { view, surface, companion };
 }
 
 describe("Dock companion", () => {
-  it("sits above a bottom dock", () => {
-    const { surface, companion } = mount("bottom", true);
+  it("sits above a bottom dock", async () => {
+    const { surface, companion } = await mount("bottom", true);
     expect(companion.bottom).toBeLessThanOrEqual(surface.top);
     expect(companion.left).toBeGreaterThanOrEqual(surface.left - companion.width);
   });
 
   for (const placement of ["left", "right"] as const)
-    it(`stacks under a ${placement} dock, so the edge it takes keeps its width`, () => {
-      const { surface, companion } = mount(placement, true);
+    it(`stacks under a ${placement} dock, so the edge it takes keeps its width`, async () => {
+      const { surface, companion } = await mount(placement, true);
       expect(companion.top).toBeGreaterThanOrEqual(surface.bottom);
       expect(companion.left).toBeCloseTo(surface.left, 0);
       expect(companion.right).toBeCloseTo(surface.right, 0);
     });
 
-  it("leaves a side dock less height, so the strip pages and the pair stays on screen", () => {
-    useFakeTime();
+  it("leaves a side dock less height, so the strip pages and the pair stays on screen", async () => {
     const view = render(() => (
       <div class="reduce-motion" style={{ width: "800px", height: `${OVERFLOWING_BOX}px` }}>
         <Dock
@@ -73,8 +71,7 @@ describe("Dock companion", () => {
         />
       </div>
     ));
-    vi.advanceTimersToNextFrame();
-    vi.advanceTimersToNextFrame();
+    await frames(3);
     const companion = rectOf(view.container.querySelector('[data-slot="dock-companion"]'));
     const dock = rectOf(view.container.querySelector('[data-slot="dock"]'));
     expect(view.container.querySelector('[data-slot="dock-pages"]')).not.toBeNull();
@@ -89,10 +86,10 @@ describe("Dock companion", () => {
     expect(cut).toEqual([]);
   });
 
-  it("takes no room and no input while closed", () => {
-    const { view } = mount("bottom", false);
+  it("takes no room and no input while closed", async () => {
+    const { view } = await mount("bottom", false);
     const bare = render(() => <Dock items={items(3)} />);
-    vi.advanceTimersToNextFrame();
+    await frames(2);
     const height = (root: HTMLElement) => rectOf(root.querySelector('[data-slot="dock"]')).height;
     const reveal = view.container.querySelector('[data-slot="dock-companion-reveal"]');
     expect(rectOf(reveal).height).toBe(0);
@@ -102,30 +99,28 @@ describe("Dock companion", () => {
 });
 
 describe("Side dock pages", () => {
-  it("keep the dock as wide as an unpaged one", () => {
-    useFakeTime();
-    const width = (count: number) => {
+  it("keep the dock as wide as an unpaged one", async () => {
+    const width = async (count: number) => {
       const view = render(() => (
         <div class="flex items-start" style={{ height: `${OVERFLOWING_BOX}px` }}>
           <Dock items={items(count)} placement="left" />
         </div>
       ));
-      vi.advanceTimersToNextFrame();
+      await frames(2);
       return {
         paged: view.container.querySelector('[data-slot="dock-pages"]') !== null,
         width: rectOf(view.container.querySelector('[data-slot="dock-surface"]')).width,
       };
     };
-    const few = width(2);
-    const many = width(12);
+    const few = await width(2);
+    const many = await width(12);
     expect([few.paged, many.paged]).toEqual([false, true]);
     expect(many.width).toBeCloseTo(few.width, 0);
   });
 });
 
 describe("Dock lead", () => {
-  it("stays in the glass before the strip while the strip pages", () => {
-    useFakeTime();
+  it("stays in the glass before the strip while the strip pages", async () => {
     const view = render(() => (
       <div style={{ width: `${OVERFLOWING_BOX}px` }}>
         <Dock
@@ -138,7 +133,7 @@ describe("Dock lead", () => {
         />
       </div>
     ));
-    vi.advanceTimersToNextFrame();
+    await frames(2);
     const lead = rectOf(view.container.querySelector('[data-slot="dock-lead"]'));
     const bar = rectOf(view.container.querySelector('[data-slot="dock-bar"]'));
     const surface = rectOf(view.container.querySelector('[data-slot="dock-surface"]'));

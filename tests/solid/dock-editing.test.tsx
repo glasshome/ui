@@ -3,6 +3,7 @@ import { createSignal, type JSX } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cdp, userEvent } from "vitest/browser";
 import { Dock, type DockItem } from "../../src/solid/dock.js";
+import { frames } from "../frames.js";
 
 const items = (n: number, onClick: () => void = () => {}): DockItem[] =>
   Array.from({ length: n }, (_, i) => ({
@@ -245,7 +246,7 @@ describe("Dock edit chrome", () => {
       () => <Dock items={order()} editing onReorder={() => setOrder(order())} />,
       { width: `${OVERFLOWING_BOX}px` },
     );
-    await new Promise(requestAnimationFrame);
+    await frames(2);
     const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]') as HTMLElement;
     const dots = container.querySelectorAll('[data-slot="dock-pages"] button');
     expect(bar.scrollLeft).toBe(0);

@@ -3,6 +3,7 @@ import { createSignal } from "solid-js";
 import { describe, expect, it, vi } from "vitest";
 import { Dock, type DockPlacement } from "../../src/solid/dock.js";
 import { useFakeTime } from "../../src/testing/index.js";
+import { frames } from "../frames.js";
 
 const items = (n: number) =>
   Array.from({ length: n }, (_, i) => ({
@@ -30,20 +31,19 @@ function insideStrip(container: HTMLElement, id: string, axis: "x" | "y"): boole
 const scrolled = (el: HTMLElement) =>
   new Promise<void>((resolve) => el.addEventListener("scrollend", () => resolve(), { once: true }));
 
-function mountSide(placement: DockPlacement, count: number, height = 600) {
-  useFakeTime();
+async function mountSide(placement: DockPlacement, count: number, height = 600) {
   const view = render(() => (
     <div style={{ height: `${height}px`, width: "200px" }}>
       <Dock items={items(count)} placement={placement} />
     </div>
   ));
-  vi.advanceTimersToNextFrame();
+  await frames(2);
   return view;
 }
 
 describe("Dock placement", () => {
-  it("lays items in a column on a side edge and says where it sits", () => {
-    const { container } = mountSide("left", 3);
+  it("lays items in a column on a side edge and says where it sits", async () => {
+    const { container } = await mountSide("left", 3);
     const dock = container.querySelector('[data-slot="dock"]');
     expect(dock?.getAttribute("data-placement")).toBe("left");
     const rects = [...container.querySelectorAll('[data-slot="dock-item"]')].map(rectOf);
@@ -52,14 +52,13 @@ describe("Dock placement", () => {
     expect(rects[1]?.top).toBeGreaterThan(rects[0]?.top ?? 0);
   });
 
-  it("keeps the bottom dock a row", () => {
-    useFakeTime();
+  it("keeps the bottom dock a row", async () => {
     const { container } = render(() => (
       <div style={{ width: "400px" }}>
         <Dock items={items(3)} />
       </div>
     ));
-    vi.advanceTimersToNextFrame();
+    await frames(2);
     const rects = [...container.querySelectorAll('[data-slot="dock-item"]')].map(rectOf);
     expect(container.querySelector('[data-slot="dock"]')?.getAttribute("data-placement")).toBe(
       "bottom",
@@ -68,8 +67,8 @@ describe("Dock placement", () => {
     expect(rects[1]?.left).toBeGreaterThan(rects[0]?.left ?? 0);
   });
 
-  it("pages a side dock vertically, one dot per page, the first one current", () => {
-    const { container } = mountSide("left", 12, OVERFLOWING_BOX);
+  it("pages a side dock vertically, one dot per page, the first one current", async () => {
+    const { container } = await mountSide("left", 12, OVERFLOWING_BOX);
     const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]');
     expect(bar?.className).toContain("snap-y");
     expect((bar?.scrollHeight ?? 0) > (bar?.clientHeight ?? 0)).toBe(true);
@@ -80,8 +79,8 @@ describe("Dock placement", () => {
 
   it.each(["left", "right"] as const)(
     "draws a %s dock's dot column behind the icons, 10px in from the glass edge",
-    (side) => {
-      const view = mountSide(side, 12, OVERFLOWING_BOX);
+    async (side) => {
+      const view = await mountSide(side, 12, OVERFLOWING_BOX);
       const slot = (name: string) => view.container.querySelector(`[data-slot="${name}"]`);
       const dots = slot("dock-pages") as HTMLElement;
       const dot = rectOf(view.container.querySelector('[data-slot="dock-pages"] button'));
@@ -106,7 +105,7 @@ describe("Dock placement", () => {
         <Dock items={items(12)} placement="right" />
       </div>
     ));
-    await new Promise(requestAnimationFrame);
+    await frames(2);
     const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]') as HTMLElement;
     const dots = container.querySelectorAll<HTMLElement>('[data-slot="dock-pages"] button');
     const turned = scrolled(bar);
@@ -116,14 +115,13 @@ describe("Dock placement", () => {
     expect(dots[1]?.getAttribute("aria-current")).toBe("true");
   });
 
-  it("sits flush and full height when docked on a side edge", () => {
-    useFakeTime();
+  it("sits flush and full height when docked on a side edge", async () => {
     const { container } = render(() => (
       <div style={{ height: "600px", width: "200px" }}>
         <Dock items={items(3)} placement="left" dockMode="docked" />
       </div>
     ));
-    vi.advanceTimersToNextFrame();
+    await frames(2);
     const surface = container.querySelector<HTMLElement>('[data-slot="dock-surface"]');
     expect(rectOf(surface).height).toBe(600);
     expect(getComputedStyle(surface as Element).borderTopLeftRadius).toBe("0px");
@@ -159,7 +157,7 @@ describe("Dock arrival", () => {
         <Dock items={items(12)} arrivedIds={arrived()} />
       </div>
     ));
-    await new Promise(requestAnimationFrame);
+    await frames(2);
     const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]') as HTMLElement;
     expect(insideStrip(container, "d11", "x")).toBe(false);
 
@@ -176,7 +174,7 @@ describe("Dock arrival", () => {
         <Dock items={items(12)} placement="left" arrivedIds={arrived()} />
       </div>
     ));
-    await new Promise(requestAnimationFrame);
+    await frames(2);
     const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]') as HTMLElement;
     const turned = scrolled(bar);
     setArrived(["d11"]);
