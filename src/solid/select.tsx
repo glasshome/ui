@@ -34,7 +34,7 @@ import { effect, merge } from "../lib/behavior/solid.js";
 import { CONTROL_H, INPUT_SURFACE } from "../lib/input-classes.js";
 import { nestedLayerAttrs, Z_CLASS } from "../lib/layers.js";
 import { MENU_ITEM, MENU_ITEM_RADIUS, MENU_LABEL, MENU_SEPARATOR } from "../lib/menu-classes.js";
-import { FIELD_MOTION, MOTION_EXIT_MS, STAGGER } from "../lib/motion-classes.js";
+import { FIELD_MOTION, MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { PICKER_LIST, PICKER_TRIGGER } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -883,7 +883,7 @@ const SelectContent: Component<SelectContentProps> = (props) => {
             aria-labelledby={ctx.listboxLabelledBy()}
             aria-multiselectable={ctx.multiple() ? "true" : undefined}
             aria-activedescendant={ctx.optionId(collection.highlighted())}
-            class={cn(STAGGER, local.listboxClass)}
+            class={local.listboxClass}
             on:keydown={onKeyDown}
             on:pointerdown={onPointerDown}
             on:pointermove={onPointerMove}

@@ -19,13 +19,6 @@ function samePos(a: Pos, b: Pos): boolean {
   );
 }
 
-function readTranslate(el: HTMLElement): [number, number] {
-  const t = getComputedStyle(el).translate;
-  if (!t || t === "none") return [0, 0];
-  const [x = "0", y = "0"] = t.split(" ");
-  return [Number.parseFloat(x) || 0, Number.parseFloat(y) || 0];
-}
-
 /**
  * The sliding "moving background": a tinted indicator that measures the active item
  * among its children and animates its position/size behind it. Reusable across
@@ -185,26 +178,21 @@ export function SlidingIndicator(props: SlidingIndicatorProps) {
     // not just a direct child. Add the container's own scroll so the indicator,
     // which scrolls with the content, lands at the content offset; subtract the
     // border so it aligns to the padding box (where the absolute indicator anchors).
-    // A row arriving through gh-stagger is still translated: bounding rects
-    // include that travel, its resting place does not.
     // An ancestor mid-zoom (a dialog opening) scales every rect and ends without
     // a resize, so rects convert back to layout pixels by the container's ratio.
     const sx = containerRef.offsetWidth > 0 ? cr.width / containerRef.offsetWidth : 1;
     const sy = containerRef.offsetHeight > 0 ? cr.height / containerRef.offsetHeight : 1;
-    const [tx, ty] = readTranslate(el);
     place(
       el,
       horizontal()
         ? {
-            offset:
-              (er.left - cr.left) / sx - tx - containerRef.clientLeft + containerRef.scrollLeft,
+            offset: (er.left - cr.left) / sx - containerRef.clientLeft + containerRef.scrollLeft,
             size: er.width / sx,
             cross: er.height / sy,
-            crossOffset:
-              (er.top - cr.top) / sy - ty - containerRef.clientTop + containerRef.scrollTop,
+            crossOffset: (er.top - cr.top) / sy - containerRef.clientTop + containerRef.scrollTop,
           }
         : {
-            offset: (er.top - cr.top) / sy - ty - containerRef.clientTop + containerRef.scrollTop,
+            offset: (er.top - cr.top) / sy - containerRef.clientTop + containerRef.scrollTop,
             size: er.height / sy,
             cross: er.width / sx,
             crossOffset: 0,

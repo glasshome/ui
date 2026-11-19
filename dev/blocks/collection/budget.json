@@ -4,71 +4,71 @@
       "0": {
         "elementsRestyled": {
           "max": 1393,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1114,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 4,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "2": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "3": {
         "elementsRestyled": {
           "max": 5,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "4": {
         "elementsRestyled": {
           "max": 5,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -90,57 +90,57 @@
       "0": {
         "elementsRestyled": {
           "max": 1392,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1113,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "2": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "3": {
         "elementsRestyled": {
           "max": 5,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -162,57 +162,57 @@
       "0": {
         "elementsRestyled": {
           "max": 1392,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1113,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 4,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "2": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "3": {
         "elementsRestyled": {
           "max": 5,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -234,57 +234,57 @@
       "0": {
         "elementsRestyled": {
           "max": 1389,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1111,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 5,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "2": {
         "elementsRestyled": {
           "max": 5,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "3": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -306,71 +306,71 @@
       "0": {
         "elementsRestyled": {
           "max": 1389,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1111,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 8,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 4,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "2": {
         "elementsRestyled": {
           "max": 8,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "3": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "4": {
         "elementsRestyled": {
           "max": 5,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -392,21 +392,21 @@
       "0": {
         "elementsRestyled": {
           "max": 1389,
-          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1111,
-          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 5,
-          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+          "max": 7,
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
@@ -420,15 +420,15 @@
       "2": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the removal scenario; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -450,43 +450,43 @@
       "0": {
         "elementsRestyled": {
           "max": 1434,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1147,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 4,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "2": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -508,43 +508,43 @@
       "0": {
         "elementsRestyled": {
           "max": 1394,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1115,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 5,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "2": {
         "elementsRestyled": {
           "max": 9,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "2026-11-18: first measure of the owned collection; step 0 restyles the BusyPage fixture once"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     }

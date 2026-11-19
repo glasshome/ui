@@ -3,16 +3,16 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 37,
-          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 35,
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 18,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 2,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -27,16 +27,16 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 47,
-          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 48,
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 27,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 2,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -51,72 +51,72 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 35,
-          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 37,
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 18,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 2,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 12,
-          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 4,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "2": {
         "elementsRestyled": {
           "max": 115,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 10,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 4,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "3": {
         "elementsRestyled": {
           "max": 110,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 10,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 4,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "4": {
         "elementsRestyled": {
-          "max": 0,
-          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 1,
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 0,
-          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 0,
-          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -131,30 +131,30 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 35,
-          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 37,
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 18,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 2,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 102,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 10,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 5,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -169,8 +169,8 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 98,
-          "reason": "owned baseline 2026-11-16, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures"
+          "max": 99,
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 31,
@@ -178,21 +178,21 @@
         },
         "layouts": {
           "max": 5,
-          "reason": "2026-11-18: the dialog's focus trap puts its two edge stops (fixed 1px spans beside the container) in as it opens, one layout"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 92,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "max": 83,
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 12,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 5,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -207,30 +207,30 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 38,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "max": 35,
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 20,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 2,
-          "reason": "2026-11-18: lowered to the owned collection's cost, max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
-          "max": 103,
-          "reason": "2026-11-18: the press now selects inside a closed shadow root (the Kobalte gap closed), so the highlight slides and the panel swaps; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "max": 104,
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 10,
-          "reason": "2026-11-18: the press now selects inside a closed shadow root (the Kobalte gap closed), so the highlight slides and the panel swaps; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 5,
-          "reason": "2026-11-18: the press now selects inside a closed shadow root (the Kobalte gap closed), so the highlight slides and the panel swaps; max of 3 T50 runs, elementsRestyled plus 25%, the others exact"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     }

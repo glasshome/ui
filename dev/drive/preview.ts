@@ -109,7 +109,7 @@ async function shoot(browser: Browser, shot: Shot, afterSteps: boolean, material
   page.on("pageerror", (e) => errors.push(String(e)));
   await serveGallery(page, shot.build.dir);
   const cdp = await context.newCDPSession(page);
-  const settle = await createSettler(page, cdp);
+  const settle = await createSettler(cdp);
   const hash = stageHash(shot.component.slug, shot.scenario.id, shot.column.theme, material);
   await page.goto(`${ORIGIN}/stage.html${hash}`);
   await page.locator("[data-scenario]").waitFor({ state: "attached", timeout: 30_000 });

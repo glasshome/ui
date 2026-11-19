@@ -33,7 +33,7 @@ import { createPresence } from "../lib/behavior/presence.js";
 import { effect, merge } from "../lib/behavior/solid.js";
 import { INPUT_SURFACE } from "../lib/input-classes.js";
 import { nestedLayerAttrs, Z_CLASS } from "../lib/layers.js";
-import { FIELD_MOTION, MORPH_MOTION, MOTION_EXIT_MS, STAGGER } from "../lib/motion-classes.js";
+import { FIELD_MOTION, MORPH_MOTION, MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { inShadowRoot } from "../lib/shadow-layer.js";
 import { cn } from "../lib/utils.js";
@@ -49,7 +49,7 @@ const ANCHOR_WIDTH = "--kb-popper-anchor-width";
  * by the panel, so the panel edge and the trigger edge are one rectangle. */
 const FIELD_PANEL = `${INPUT_SURFACE} ${FIELD_MOTION} relative ${Z_CLASS.overlay} w-[var(--kb-popper-anchor-width)] overflow-hidden rounded-md text-popover-foreground outline-hidden`;
 
-const OVERLAY_PANEL = `${FLOATING_PANEL} ${MORPH_MOTION} ${STAGGER} w-72 p-4`;
+const OVERLAY_PANEL = `${FLOATING_PANEL} ${MORPH_MOTION} w-72 p-4`;
 
 interface PopoverProps {
   open?: boolean;
