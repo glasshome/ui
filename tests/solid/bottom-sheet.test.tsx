@@ -3,6 +3,7 @@ import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   BottomSheet,
+  BottomSheetBody,
   BottomSheetClose,
   BottomSheetContent,
   BottomSheetPortal,
@@ -143,5 +144,27 @@ describe("BottomSheet motion", () => {
     const panel = document.querySelector<HTMLElement>('[data-slot="bottom-sheet-content"]');
     expect(panel?.getAttribute("data-state")).toBe("opening");
     await vi.waitFor(() => expect(panel?.getAttribute("data-state")).toBe("open"));
+  });
+});
+
+describe("BottomSheet body", () => {
+  it("marks its body scrolled once the content leaves the top, and clears it back at the top", async () => {
+    render(() => (
+      <BottomSheet open>
+        <BottomSheetPortal>
+          <BottomSheetContent ariaLabel="Sheet">
+            <BottomSheetBody>
+              <div style={{ height: "3000px", flex: "none" }}>tall</div>
+            </BottomSheetBody>
+          </BottomSheetContent>
+        </BottomSheetPortal>
+      </BottomSheet>
+    ));
+    const body = document.querySelector<HTMLElement>('[data-slot="bottom-sheet-body"]');
+    await vi.waitFor(() => expect(body?.hasAttribute("data-scrolled")).toBe(false));
+    body?.scrollTo({ top: 120 });
+    await vi.waitFor(() => expect(body?.hasAttribute("data-scrolled")).toBe(true));
+    body?.scrollTo({ top: 0 });
+    await vi.waitFor(() => expect(body?.hasAttribute("data-scrolled")).toBe(false));
   });
 });

@@ -706,7 +706,9 @@ html[data-motion="live"] [data-motion-reader] {
 .bs-content[data-state="closing"] {
   animation: bs-slide-down var(--bs-duration) var(--bs-ease) forwards;
 }
-.bs-content [data-sheet-scroll]:not([data-sheet-scrolled]) {
+/* A body at its top leaves a downward swipe to the sheet's drag, since a touchmove listener may be passive.
+   Widgets ship this sheet, so it keeps to syntax the sealed realm's CSS scanner accepts. */
+.bs-content [data-slot$="-body"]:not([data-scrolled]) {
   touch-action: pan-down pinch-zoom;
 }
 .bs-content[data-reduced-motion] {
