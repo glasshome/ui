@@ -246,7 +246,8 @@ describe("Dock edit chrome", () => {
       () => <Dock items={order()} editing onReorder={() => setOrder(order())} />,
       { width: `${OVERFLOWING_BOX}px` },
     );
-    await frames(2);
+    // test-change-ok the dock pages in the frame after its observer reports, never inside the callback
+    await frames(3);
     const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]') as HTMLElement;
     const dots = container.querySelectorAll('[data-slot="dock-pages"] button');
     expect(bar.scrollLeft).toBe(0);

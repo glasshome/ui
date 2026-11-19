@@ -360,40 +360,27 @@ const Dock: Component<DockProps> = (props) => {
     ),
   );
 
-  // Paged inside the observer, which runs before paint: the first dock anyone sees
-  // already has its pages, so the dot row never shifts it later.
   onMount(() => {
     const box = containerRef.closest('[data-slot="dock"]');
     if (!box || !surfaceRef) return;
     const surface = surfaceRef;
-    let watchingBox = true;
     let frame = 0;
+    const measured = () =>
+      `${along(room)} ${along(surfaceSize?.border) - along(surfaceSize?.content)} ${along(companionSize)}`;
     const observer = new ResizeObserver((entries) => {
-      let changed = false;
+      const before = measured();
       for (const entry of entries) {
         const [content] = entry.contentBoxSize;
         const [border] = entry.borderBoxSize;
         if (!content || !border) continue;
-        if (entry.target === box) {
-          changed ||= along(content) !== along(room);
-          room = content;
-        } else {
-          changed = true;
-          if (entry.target === surface) surfaceSize = { content, border };
-          else companionSize = border;
-        }
+        if (entry.target === box) room = content;
+        else if (entry.target === surface) surfaceSize = { content, border };
+        else companionSize = border;
       }
-      if (!changed) return;
-      // Paging grows the box across its axis, which a watched box would report as a resize loop.
-      if (watchingBox) {
-        observer.unobserve(box);
-        watchingBox = false;
-        frame = requestAnimationFrame(() => {
-          observer.observe(box);
-          watchingBox = true;
-        });
-      }
-      checkOverflow();
+      if (measured() === before) return;
+      // Paging resizes what other observers on the page watch; inside this callback that is a resize loop.
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(checkOverflow);
     });
     observer.observe(box);
     observer.observe(surface, { box: "border-box" });
