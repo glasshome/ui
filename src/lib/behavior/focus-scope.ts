@@ -76,8 +76,6 @@ export function focusedIn(node: Node): Element | null {
   return at === at.ownerDocument.body ? null : at;
 }
 
-export const activeOf = focusedIn;
-
 /** Whether focus sits on nothing, or still inside `el`, so a closing panel may hand it back. */
 export function focusFell(el: Element): boolean {
   const inner = focusedIn(el);
