@@ -18,6 +18,41 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.44.0](https://github.com/glasshome/ui/compare/v1.43.0...v1.44.0) (2026-11-19)
+
+
+### Features
+
+* **data-table:** TableFilterSelect takes a JSX label and an icon ([d35ba33](https://github.com/glasshome/ui/commit/d35ba337a0d54c0796238e39f0340eec4323ffa8))
+* **data-table:** TableFilterSelect takes a JSX label and an icon; stacked toggle items keep their height ([5b1d8d9](https://github.com/glasshome/ui/commit/5b1d8d9e83534fd5e1f52525eb10c588aa990810))
+
+
+### Bug Fixes
+
+* **bottom-sheet:** a body at its top hands a downward swipe to the drag again ([c1bec4f](https://github.com/glasshome/ui/commit/c1bec4f6cc6ae0bb5841ab03a874781ec1a9dfb4))
+* **bottom-sheet:** a body at its top hands a downward swipe to the drag again ([d514cb4](https://github.com/glasshome/ui/commit/d514cb4d59e0cfbde314508cd6f2fad70774796d))
+* **bottom-sheet:** a released drag settles at once under reduced motion ([f76f255](https://github.com/glasshome/ui/commit/f76f255112432181376766924110121c5acb11d0))
+* **bottom-sheet:** drag arbitration reads scroll geometry, never computed overflow ([07049a2](https://github.com/glasshome/ui/commit/07049a240446883d753504960eff3f5b5329d270))
+* **bottom-sheet:** drag from anywhere on the sheet, even where touchmove is passive ([28119ed](https://github.com/glasshome/ui/commit/28119ed5827496b6120632c76332ec84a3f9465a))
+* **bottom-sheet:** drag from anywhere, clip content, no grey edge ([5ba6e5f](https://github.com/glasshome/ui/commit/5ba6e5fc66a102435e15b8abf8c5310f26b0b590))
+* **bottom-sheet:** the sheet clips what it holds, and the drag moves in the pointermove itself ([56a4197](https://github.com/glasshome/ui/commit/56a4197dc7895b7928c81bb4fa9834da42e9acfc))
+* **data-table:** TableFilterSelect tests find the trigger by its label; label is a render function, not a slot ([0a5fe08](https://github.com/glasshome/ui/commit/0a5fe08c04ef9a1b0b356113987a8b52120b776e))
+* **data-table:** TableLoadMore watches its end only once the page scrolls, through one shared observer ([a70c8ba](https://github.com/glasshome/ui/commit/a70c8baf465511b636640e52e8dd8e7bed8f16f1))
+* **dialog:** a modal Body observes its top only once it scrolls ([ac08199](https://github.com/glasshome/ui/commit/ac08199aa58e09a4cbb1dbd63512d3703d3963cd))
+* **dialog:** a modal Body observes its top only once it scrolls ([8fd2e8b](https://github.com/glasshome/ui/commit/8fd2e8be4ad20afa77f29616dd1828303d915e39))
+* **dock:** measure the room from a ResizeObserver, never a style read ([91136f9](https://github.com/glasshome/ui/commit/91136f98b8cc8558880a50f5425e5bda9ead0d3f))
+* **dock:** page in the frame after the observer reports, never inside its callback ([37719b2](https://github.com/glasshome/ui/commit/37719b2c8d19c65218a9923af1c325ee831c26cf))
+* **focus:** one focusin tracker per root answers where focus sits ([505aa17](https://github.com/glasshome/ui/commit/505aa173e6ceddddfaec0ed37d060e1253a9ad23))
+* **toggle-group:** stacked items keep their control height ([2c99dd4](https://github.com/glasshome/ui/commit/2c99dd41f6391b0ee879735bf6cfcf6914dfc97c))
+
+
+### Performance Improvements
+
+* guest DOM calls off the scenario path, focus from one tracker ([da830b2](https://github.com/glasshome/ui/commit/da830b2ece0f1f333cfb66cde49ee689e61c7f08))
+* **motion:** rows arrive with their panel; the drive stops polling per frame ([94443ac](https://github.com/glasshome/ui/commit/94443ac3fb2d5cd970d62be90e969bccdf362124))
+* **motion:** rows arrive with their panel; the row stagger is gone ([acb223d](https://github.com/glasshome/ui/commit/acb223d8f3f8db296e0691f53a2af9abb1ec1ae6))
+* **selection:** read the scope's frame once per flight ([e3795d9](https://github.com/glasshome/ui/commit/e3795d927b8284d89df0d8991305a9b2e7cfdb57))
+
 ## [1.43.0](https://github.com/glasshome/ui/compare/v1.42.0...v1.43.0) (2026-11-18)
 
 
