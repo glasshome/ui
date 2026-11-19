@@ -94,7 +94,7 @@ async function runScenario(
   });
   await serveGallery(page, opts.build);
   const cdp = await context.newCDPSession(page);
-  const settle = await createSettler(page, cdp);
+  const settle = await createSettler(cdp);
 
   const out = mkdtempSync(join(opts.out, `${component.slug}-${scenario.id}-`));
   const timeline: TimelineEntry[] = [];
