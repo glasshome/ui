@@ -627,11 +627,11 @@ html[data-motion="live"] [data-motion-reader] {
   .animate-out {
     --tw-animation-duration: 1ms;
   }
-  /* As .reduce-motion does: a literal duration-* class bypasses the scale. Never 0, so transitionend still fires. */
+  /* A literal duration-* class bypasses the scale. 0, as the scale is: no transition starts at all. */
   *,
   ::before,
   ::after {
-    transition-duration: 0.01ms !important;
+    transition-duration: 0s !important;
   }
 }
 
