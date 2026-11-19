@@ -41,8 +41,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 113,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 119,
+          "reason": "2026-11-19: raised to the CI runner's counts over three runs at 2.5x to 4.72x T50 rates, plus 25% on elements restyled; motion steps restyle and lay out once a frame drawn"
         },
         "largestRecalc": {
           "max": 9,
@@ -55,8 +55,8 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 107,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 113,
+          "reason": "2026-11-19: raised to the CI runner's counts over three runs at 2.5x to 4.72x T50 rates, plus 25% on elements restyled; motion steps restyle and lay out once a frame drawn"
         },
         "largestRecalc": {
           "max": 9,
