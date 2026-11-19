@@ -15,6 +15,7 @@ import {
   TABLE_HEAD_LABEL_CLASS,
   TABLE_SCROLL_CLASS,
   TableEmpty,
+  TableFilterSelect,
   TableLoadMore,
   TableSkeleton,
   TableSortHeader,
@@ -185,5 +186,40 @@ describe("a long table drawn a page at a time", () => {
     setFilter("row");
     expect(rows()).toBe(50);
     expect(more()).not.toBeNull();
+  });
+});
+
+describe("TableFilterSelect", () => {
+  it("renders a JSX label in the trigger and in each item, with the icon it is given", async () => {
+    const { container } = render(() => (
+      <TableFilterSelect
+        options={["a", "b"]}
+        value="a"
+        onChange={() => {}}
+        label={(value) => <em data-label={value}>Option {value}</em>}
+        ariaLabel="Letter"
+        icon="lucide:globe"
+      />
+    ));
+    const trigger = container.querySelector<HTMLElement>('[aria-label="Letter"]');
+    expect(trigger?.querySelector("em")?.dataset.label).toBe("a");
+    expect(trigger?.querySelector("svg")?.dataset.icon).toBe("lucide:globe");
+    await userEvent.click(trigger as HTMLElement);
+    const items = document.querySelectorAll<HTMLElement>('[role="option"] em');
+    expect(Array.from(items).map((el) => el.dataset.label)).toEqual(["a", "b"]);
+  });
+
+  it("falls back to the funnel icon", () => {
+    const { container } = render(() => (
+      <TableFilterSelect
+        options={["a"]}
+        value="a"
+        onChange={() => {}}
+        label={(value) => value}
+        ariaLabel="Letter"
+      />
+    ));
+    const icon = container.querySelector('[aria-label="Letter"] svg');
+    expect((icon as SVGElement | null)?.dataset.icon).toBe("lucide:funnel");
   });
 });

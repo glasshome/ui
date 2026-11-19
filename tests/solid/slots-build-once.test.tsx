@@ -286,6 +286,7 @@ const FIXTURES: Record<string, Fixture> = {
   StackedBar: { props: { segments: [] } },
   TableFilterSelect: {
     props: { options: [], value: "", onChange: noop, label: (v: string) => v, ariaLabel: "a" },
+    notSlots: { label: "a render function, called once per option" },
   },
   TabsContent: { wrap: inTabs, props: { value: "a" } },
   TabsList: { wrap: inTabs },
