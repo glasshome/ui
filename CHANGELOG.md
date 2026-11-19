@@ -18,6 +18,15 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.44.1](https://github.com/glasshome/ui/compare/v1.44.0...v1.44.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* **motion:** reduced motion starts no transition at all, as the zeroed scale does ([50c8b54](https://github.com/glasshome/ui/commit/50c8b54d0ed26fab8fba8cbb077dbe060769b079))
+* **motion:** reduced motion stops every transition, a literal duration class included ([912daab](https://github.com/glasshome/ui/commit/912daab5605b6c14dd0962406104f4e5b39b516d))
+* **motion:** reduced motion stops every transition, a literal duration class included ([4aa8ce1](https://github.com/glasshome/ui/commit/4aa8ce1a3932915047238f49a24ea7abe10e5e98))
+
 ## [1.44.0](https://github.com/glasshome/ui/compare/v1.43.0...v1.44.0) (2026-11-19)
 
 
