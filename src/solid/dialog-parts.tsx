@@ -238,9 +238,6 @@ export function createModalParts(slot: string): ModalParts {
     );
   };
 
-  /* data-sheet-scroll is the bottom sheet's drag arbitration marker: a Body
-   * inside a sheet must yield the gesture to its own scroll, whichever family
-   * rendered it. */
   const Body: Component<ModalBodyProps> = (props) => {
     const [local, rest] = splitProps(props, ["class", "as", "ref"]);
     let el: HTMLElement | undefined;
@@ -257,7 +254,6 @@ export function createModalParts(slot: string): ModalParts {
           if (typeof local.ref === "function") local.ref(node as HTMLDivElement);
         }}
         data-slot={`${slot}-body`}
-        data-sheet-scroll=""
         class={cn(MODAL_BODY, local.class)}
         {...rest}
       />

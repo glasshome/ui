@@ -11,6 +11,7 @@ import type { SheetState } from "./state-machine.js";
 import { VelocityTracker } from "./velocity.js";
 
 const TRANSITION_CSS = `transform ${TRANSITION_MS}ms ${EASE}`;
+const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 interface DragHandle {
   destroy: () => void;
@@ -136,7 +137,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
   };
 
   const settleClose = () => {
-    el.style.transition = TRANSITION_CSS;
+    el.style.transition = reducedMotion() ? "none" : TRANSITION_CSS;
     el.style.animation = "none";
     el.style.transform = "translate3d(0, 100%, 0)";
     requestClose();
@@ -144,7 +145,8 @@ export function attachDrag(opts: DragOptions): DragHandle {
 
   const settleSnap = () => {
     setState("snapping");
-    if (shownDy === 0) {
+    if (shownDy === 0 || reducedMotion()) {
+      shownDy = 0;
       el.style.transition = "";
       el.style.animation = "";
       el.style.transform = "";

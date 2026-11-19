@@ -72,11 +72,25 @@ const DEFORM_MAX = 0.14;
 /** Centre and size in the scope's own content pixels. */
 type Box = { x: number; y: number; width: number; height: number };
 
-function boxIn(root: HTMLElement, el: Element, size: { width: number; height: number }): Box {
+/** The root's place on screen and its scale, which a transformed ancestor sets. */
+function frameOf(root: HTMLElement) {
   const outer = root.getBoundingClientRect();
-  const sx = root.offsetWidth > 0 ? outer.width / root.offsetWidth : 1;
-  const sy = root.offsetHeight > 0 ? outer.height / root.offsetHeight : 1;
-  const rect = el.getBoundingClientRect();
+  const width = root.offsetWidth;
+  const height = root.offsetHeight;
+  return {
+    outer,
+    sx: width > 0 ? outer.width / width : 1,
+    sy: height > 0 ? outer.height / height : 1,
+  };
+}
+
+function boxIn(
+  root: HTMLElement,
+  rect: DOMRect,
+  size: { width: number; height: number },
+  frame = frameOf(root),
+): Box {
+  const { outer, sx, sy } = frame;
   return {
     x: (rect.left + rect.width / 2 - outer.left) / sx - root.clientLeft + root.scrollLeft,
     y: (rect.top + rect.height / 2 - outer.top) / sy - root.clientTop + root.scrollTop,
@@ -87,26 +101,27 @@ function boxIn(root: HTMLElement, el: Element, size: { width: number; height: nu
 
 function itemBox(root: HTMLElement, item: HTMLElement): Box | undefined {
   if (!item.isConnected) return undefined;
-  const box = boxIn(root, item, { width: item.offsetWidth, height: item.offsetHeight });
+  const size = { width: item.offsetWidth, height: item.offsetHeight };
+  const box = boxIn(root, item.getBoundingClientRect(), size);
   return box.width > 0 && box.height > 0 ? box : undefined;
 }
 
 /** Whether the box shows inside the root's scrollport; a highlight never flies in from out of sight. */
 function inSight(root: HTMLElement, box: Box): boolean {
+  const top = root.scrollTop;
+  const left = root.scrollLeft;
   return (
-    box.y + box.height / 2 > root.scrollTop &&
-    box.y - box.height / 2 < root.scrollTop + root.clientHeight &&
-    box.x + box.width / 2 > root.scrollLeft &&
-    box.x - box.width / 2 < root.scrollLeft + root.clientWidth
+    box.y + box.height / 2 > top &&
+    box.y - box.height / 2 < top + root.clientHeight &&
+    box.x + box.width / 2 > left &&
+    box.x - box.width / 2 < left + root.clientWidth
   );
 }
 
 function flyerBox(root: HTMLElement, flyer: HTMLElement): Box {
-  const outer = root.getBoundingClientRect();
-  const sx = root.offsetWidth > 0 ? outer.width / root.offsetWidth : 1;
-  const sy = root.offsetHeight > 0 ? outer.height / root.offsetHeight : 1;
+  const frame = frameOf(root);
   const rect = flyer.getBoundingClientRect();
-  return boxIn(root, flyer, { width: rect.width / sx, height: rect.height / sy });
+  return boxIn(root, rect, { width: rect.width / frame.sx, height: rect.height / frame.sy }, frame);
 }
 
 function highlightOf(item: Element): Element | null {

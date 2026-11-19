@@ -1,0 +1,48 @@
+{
+  "fits": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 49,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs (39) plus 25%"
+        },
+        "largestRecalc": { "max": 39, "reason": "baseline 2026-11-19, max of 3 T50 runs" },
+        "layouts": { "max": 1, "reason": "baseline 2026-11-19, max of 3 T50 runs" }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 232,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs (185) plus 25%"
+        },
+        "largestRecalc": { "max": 21, "reason": "baseline 2026-11-19, max of 3 T50 runs" },
+        "layouts": { "max": 3, "reason": "baseline 2026-11-19, max of 3 T50 runs" }
+      }
+    },
+    "guest": {
+      "workUnits": { "max": 15, "reason": "baseline 2026-11-19 (12), plus 25% and at least one" }
+    }
+  },
+  "pages": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 399,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs (319) plus 25%"
+        },
+        "largestRecalc": { "max": 203, "reason": "baseline 2026-11-19, max of 3 T50 runs" },
+        "layouts": { "max": 3, "reason": "baseline 2026-11-19, max of 3 T50 runs" }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 7,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs (5) plus 25%"
+        },
+        "largestRecalc": { "max": 2, "reason": "baseline 2026-11-19, max of 3 T50 runs" },
+        "layouts": { "max": 1, "reason": "baseline 2026-11-19, max of 3 T50 runs" }
+      }
+    },
+    "guest": {
+      "workUnits": { "max": 47, "reason": "baseline 2026-11-19 (37), plus 25% and at least one" }
+    }
+  }
+}

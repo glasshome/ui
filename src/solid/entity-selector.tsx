@@ -473,7 +473,6 @@ export function EntitySelector(props: EntitySelectorProps) {
         role="listbox"
         aria-multiselectable={!isSingle()}
         aria-label={`${props.domain} entities`}
-        data-sheet-scroll=""
         class={cn(
           "min-h-0 flex-1 touch-pan-y overscroll-contain px-1 py-1",
           PICKER_LIST,

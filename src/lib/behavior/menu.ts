@@ -1,9 +1,10 @@
 import { type Accessor, createSignal, onCleanup, untrack } from "solid-js";
 import type { Align, Side } from "../anchor-placement.js";
+import type { Box } from "../anchor-placement.js";
 import { type AnchorLike, createAnchored } from "./anchored.js";
 import { createCollection } from "./collection.js";
 import { createDismiss } from "./dismiss.js";
-import { focusWithoutTracking } from "./focus-scope.js";
+import { focusedIn, focusFell, focusWithoutTracking } from "./focus-scope.js";
 import { registerLayer } from "./layer-stack.js";
 import { effect } from "./solid.js";
 
@@ -45,6 +46,8 @@ export interface Menu {
   open: Accessor<boolean>;
   dir: Accessor<Dir>;
   content: Accessor<HTMLElement | undefined>;
+  /** Where the open panel sits, as it was placed. */
+  placed: () => Box | undefined;
   setContent: (el: HTMLElement | undefined) => void;
   trigger: Accessor<HTMLElement | undefined>;
   setTrigger: (el: HTMLElement | undefined) => void;
@@ -71,9 +74,6 @@ export interface MenuButton {
 const isDisabled = (el: Element) =>
   el.getAttribute("aria-disabled") === "true" || el.hasAttribute("data-disabled");
 
-const activeIn = (el: Element): Element | null =>
-  (el.getRootNode() as Document | ShadowRoot).activeElement;
-
 function inside(point: Point, polygon: Point[]): boolean {
   let hit = false;
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
@@ -89,16 +89,18 @@ function inside(point: Point, polygon: Point[]): boolean {
 }
 
 /** The pointer's exit point fanned out to the submenu's whole panel. */
-function graceArea(exit: Point, panel: DOMRect, side: "left" | "right"): Point[] {
+function graceArea(exit: Point, panel: Box, side: "left" | "right"): Point[] {
   const toRight = side === "right";
-  const near = toRight ? panel.left : panel.right;
-  const far = toRight ? panel.right : panel.left;
+  const right = panel.left + panel.width;
+  const bottom = panel.top + panel.height;
+  const near = toRight ? panel.left : right;
+  const far = toRight ? right : panel.left;
   return [
     { x: exit.x + (toRight ? -5 : 5), y: exit.y },
     { x: near, y: panel.top },
     { x: far, y: panel.top },
-    { x: far, y: panel.bottom },
-    { x: near, y: panel.bottom },
+    { x: far, y: bottom },
+    { x: near, y: bottom },
   ];
 }
 
@@ -161,7 +163,7 @@ export function createMenu(options: MenuOptions): Menu {
 
   const holdsFocus = (): boolean => {
     const el = content();
-    const focused = el ? activeIn(el) : null;
+    const focused = el ? focusedIn(el) : null;
     if (el && focused && el.contains(focused)) return true;
     return [...children].some((child) => child.holdsFocus());
   };
@@ -203,6 +205,7 @@ export function createMenu(options: MenuOptions): Menu {
     open,
     dir,
     content,
+    placed: () => anchored.placed(),
     setContent,
     trigger,
     setTrigger,
@@ -258,7 +261,7 @@ export function createMenu(options: MenuOptions): Menu {
   });
   createDismiss({ layer, onDismiss: (reason) => hide(reason === "escape") });
 
-  createAnchored({
+  const anchored = createAnchored({
     anchor: () => (options.anchor ? options.anchor(trigger()) : trigger()),
     floating: content,
     open,
@@ -278,7 +281,7 @@ export function createMenu(options: MenuOptions): Menu {
 
   function leaveItem(el: HTMLElement) {
     setActive(undefined);
-    const focused = activeIn(el);
+    const focused = focusedIn(el);
     if (focused && el.contains(focused)) focusWithoutTracking(el);
   }
 
@@ -312,7 +315,7 @@ export function createMenu(options: MenuOptions): Menu {
       const entry = item && entryOf(item);
       if (!item || !entry) return;
       if (entry.disabled()) return leaveItem(el);
-      if (untrack(active) !== item.dataset.key || activeIn(item) !== item) focusItem(item);
+      if (untrack(active) !== item.dataset.key || focusedIn(item) !== item) focusItem(item);
       const sub = entry.submenu;
       if (sub && !untrack(sub.open) && openTimer === undefined) {
         openTimer = setTimeout(() => {
@@ -329,15 +332,12 @@ export function createMenu(options: MenuOptions): Menu {
       cancelOpenTimer();
       const sub = entryOf(item)?.submenu;
       const panel = sub && untrack(sub.open) ? sub.content() : undefined;
-      if (panel) {
+      const box = panel && sub?.placed();
+      if (panel && box) {
         clearGrace();
         const side = panel.getAttribute("data-side") === "left" ? "left" : "right";
         grace = {
-          area: graceArea(
-            { x: event.clientX, y: event.clientY },
-            panel.getBoundingClientRect(),
-            side,
-          ),
+          area: graceArea({ x: event.clientX, y: event.clientY }, box, side),
           timer: setTimeout(clearGrace, POINTER_GRACE_MS),
         };
         return;
@@ -417,20 +417,12 @@ export function createMenu(options: MenuOptions): Menu {
       window.removeEventListener("pointerup", release);
       setActive(undefined);
       // An outside press on nothing focusable leaves focus nowhere; it goes back to the trigger.
-      if (!focusLost(el) || (parent && !untrack(parent.open))) return;
+      if (!focusFell(el) || (parent && !untrack(parent.open))) return;
       focusWithoutTracking(trigger());
     };
   });
 
   return menu;
-}
-
-function focusLost(el: HTMLElement): boolean {
-  const doc = el.ownerDocument;
-  const focused = doc.activeElement;
-  if (!focused || focused === doc.body) return true;
-  const inner = activeIn(el);
-  return inner !== null && el.contains(inner);
 }
 
 /** The APG menu button: a mouse press toggles, a finger toggles on its click, Enter, Space and ArrowDown open on the first item, ArrowUp on the last. */

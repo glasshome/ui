@@ -56,6 +56,12 @@ export default defineScenarios({
       steps: [OPEN, { pressAt: OUTSIDE }],
     },
     {
+      id: "drag",
+      title: "A quick drag down on its body closes it",
+      render: () => <Sheet />,
+      steps: [OPEN, { drag: { role: "heading", name: "Sheet", by: { x: 0, y: 24 } } }],
+    },
+    {
       id: "nested-select",
       title: "A select opens above it and leaves it open",
       render: () => <Sheet fruit />,

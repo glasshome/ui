@@ -17,7 +17,7 @@ import { Portal } from "solid-js/web";
 import { LAYER_ROOT } from "../overlay-classes.js";
 import { createControllableSignal } from "./controllable.js";
 import { createDismiss } from "./dismiss.js";
-import { activeOf, createFocusScope, focusWithoutTracking } from "./focus-scope.js";
+import { focusedIn, createFocusScope, focusWithoutTracking } from "./focus-scope.js";
 import { createHideOutside } from "./hide-outside.js";
 import { layerStack, registerLayer } from "./layer-stack.js";
 import { Polymorphic } from "./polymorphic.js";
@@ -362,7 +362,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
     initialFocus: (container) => {
       if (!vetoed(local.onOpenAutoFocus, new Event("openautofocus", { cancelable: true })))
         return null;
-      const active = activeOf(container);
+      const active = focusedIn(container);
       return active instanceof HTMLElement && container.contains(active) ? active : container;
     },
   });

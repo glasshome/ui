@@ -21,7 +21,7 @@ import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js
 import { createCollection, createTypeahead } from "../lib/behavior/collection.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createDismiss } from "../lib/behavior/dismiss.js";
-import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
+import { focusFell, focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { registerLayer } from "../lib/behavior/layer-stack.js";
 import {
   type InteractOutsideEvent,
@@ -191,18 +191,7 @@ const useSelectList = (): SelectListValue => {
 
 const ITEM = '[role="option"][data-key]';
 const TAP_SLOP_PX = 10;
-const SHADOW_ROOT_NODE = 11;
-
 const flag = (on: boolean) => (on ? "" : undefined);
-
-function focusFellToPage(near: Element): boolean {
-  const root = near.getRootNode();
-  const shadow = root.nodeType === SHADOW_ROOT_NODE ? (root as ShadowRoot) : undefined;
-  const active = shadow ? shadow.activeElement : document.activeElement;
-  if (active && active !== document.body) return false;
-  const outer = document.activeElement;
-  return !outer || outer === document.body || outer === shadow?.host;
-}
 
 function read<T, V>(option: T, by: Field<T, V> | undefined): unknown {
   if (by === undefined || option === null || option === undefined) return undefined;
@@ -375,7 +364,7 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
       const near = trigger();
       if (!refocusIfLost || !near) return;
       refocusIfLost = false;
-      if (focusFellToPage(near)) focusTrigger();
+      if (focusFell(near)) focusTrigger();
     },
     setCloseAutoFocus: (handler) => {
       closeAutoFocus = handler;

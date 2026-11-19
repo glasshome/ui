@@ -1,11 +1,16 @@
 import type { Accessor } from "solid-js";
-import { type Align, placeBeside, type Side } from "../anchor-placement.js";
+import { type Align, type Box, placeBeside, type Side } from "../anchor-placement.js";
 import { effect } from "./solid.js";
 
 /** An element, or a point or box with no element of its own: a context menu opens at the pointer. */
 export interface AnchorLike {
-  getBoundingClientRect(): { left: number; top: number; width: number; height: number };
+  getBoundingClientRect: () => Box;
   getRootNode?(): Node;
+}
+
+export interface Anchored {
+  /** Where the part was last placed, from the measure that placed it. */
+  placed: () => Box | undefined;
 }
 
 export interface AnchoredOptions {
@@ -26,7 +31,8 @@ const SHADOW_ROOT_NODE = 11;
 // The widget realm's tap guard reads this marker as a placed panel.
 const ANCHORED = "data-anchored";
 
-export function createAnchored(options: AnchoredOptions): void {
+export function createAnchored(options: AnchoredOptions): Anchored {
+  let last: Box | undefined;
   effect(
     () =>
       [
@@ -70,6 +76,12 @@ export function createAnchored(options: AnchoredOptions): void {
         const top = cover && box.top >= 0 ? Math.min(placed.top, box.top + offset) : placed.top;
         write("top", `${top}px`);
         write("left", `${placed.left}px`);
+        last = {
+          left: placed.left,
+          top,
+          width: Math.min(size.width, placed.maxWidth),
+          height: Math.min(size.height, placed.maxHeight),
+        };
         write("max-width", `${placed.maxWidth}px`);
         write("max-height", `${placed.maxHeight}px`);
         if (matchAnchorWidth) write("min-width", `${box.width}px`);
@@ -100,7 +112,9 @@ export function createAnchored(options: AnchoredOptions): void {
         window.removeEventListener("resize", onResize);
         if (frame !== undefined) cancelAnimationFrame(frame);
         floating.removeAttribute(ANCHORED);
+        last = undefined;
       };
     },
   );
+  return { placed: () => last };
 }

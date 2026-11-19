@@ -1,5 +1,5 @@
 import { type Accessor, createSignal, onCleanup } from "solid-js";
-import { activeOf, focusWithoutTracking } from "./focus-scope.js";
+import { focusedIn, focusWithoutTracking } from "./focus-scope.js";
 import { effect } from "./solid.js";
 
 export const TYPEAHEAD_MS = 1000;
@@ -100,10 +100,10 @@ export function createCollection(options: CollectionOptions): Collection {
   const enabledItems = (root: HTMLElement) =>
     [...root.querySelectorAll<HTMLElement>(options.itemSelector)].filter((el) => !skipped(el));
 
-  // Tracked from focus events, which a sealed widget already receives; reading activeElement asks the page.
-  let focused: Element | null = null;
-  const focusIsWithin = (root: HTMLElement) =>
-    !!focused && focused.isConnected && root.contains(focused);
+  const focusIsWithin = (root: HTMLElement) => {
+    const focused = focusedIn(root);
+    return !!focused && root.contains(focused);
+  };
 
   function placeStop(root: HTMLElement | undefined, preferred: readonly string[]) {
     if (!root || focusIsWithin(root)) return;
@@ -132,26 +132,17 @@ export function createCollection(options: CollectionOptions): Collection {
   if (options.focus === "roving") {
     effect(options.root, (root) => {
       if (!root) return;
-      // One read when the listeners attach, so an item focused before them (autofocus) keeps the stop.
-      const current = activeOf(root);
-      focused = current && root.contains(current) ? current : null;
-      const item = focused?.closest<HTMLElement>(options.itemSelector);
+      // An item focused before the collection mounts (autofocus) keeps the stop.
+      const current = focusedIn(root);
+      const item = current?.closest<HTMLElement>(options.itemSelector);
       if (item && root.contains(item)) setOwn(keyOf(item));
-      const enter = (event: FocusEvent) => {
-        focused = event.target instanceof Element ? event.target : null;
-      };
       const leave = (event: FocusEvent) => {
         const next = event.relatedTarget;
         if (next instanceof Element && root.contains(next)) return;
-        focused = null;
         refresh();
       };
-      root.addEventListener("focusin", enter);
       root.addEventListener("focusout", leave);
-      return () => {
-        root.removeEventListener("focusin", enter);
-        root.removeEventListener("focusout", leave);
-      };
+      return () => root.removeEventListener("focusout", leave);
     });
     effect(
       () => [options.root(), options.preferred?.() ?? []] as const,

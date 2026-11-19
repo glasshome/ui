@@ -1,8 +1,8 @@
 import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { describe, expect, it, onTestFinished, vi } from "vitest";
+import { describe, expect, it, onTestFinished } from "vitest";
 import { Dock } from "../../src/solid/dock.js";
-import { useFakeTime } from "../../src/testing/index.js";
+import { frames } from "../frames.js";
 import { setViewportWidth } from "../viewport.js";
 
 describe("Dock paging", () => {
@@ -18,13 +18,12 @@ describe("Dock paging", () => {
   const OVERFLOWING_BOX = 340;
 
   it("shows no page dots while every item fits", async () => {
-    useFakeTime();
     const { container } = render(() => (
       <div style={{ width: "400px" }}>
         <Dock items={items(3)} />
       </div>
     ));
-    vi.advanceTimersToNextFrame();
+    await frames(2);
 
     expect(container.querySelector('[data-slot="dock-pages"]')).toBeNull();
   });
@@ -38,26 +37,25 @@ describe("Dock paging", () => {
         <Dock items={items(10)} />
       </div>
     ));
-    await new Promise(requestAnimationFrame);
+    await frames(2);
     expect(container.querySelector<HTMLElement>('[data-slot="dock-bar"]')?.style.width).not.toBe(
       "",
     );
     setBox(1200);
     await setViewportWidth(1000);
-    await new Promise(requestAnimationFrame);
+    await frames(2);
 
     expect(container.querySelector('[data-slot="dock-pages"]')).toBeNull();
     expect(container.querySelector<HTMLElement>('[data-slot="dock-bar"]')?.style.width).toBe("");
   });
 
   it("shows a dot per page once the strip overflows, the first one current", async () => {
-    useFakeTime();
     const { container } = render(() => (
       <div style={{ width: `${OVERFLOWING_BOX}px` }}>
         <Dock items={items(12)} />
       </div>
     ));
-    vi.advanceTimersToNextFrame();
+    await frames(2);
 
     const dots = container.querySelectorAll('[data-slot="dock-pages"] button');
     expect(dots).toHaveLength(3);
@@ -66,13 +64,12 @@ describe("Dock paging", () => {
   });
 
   it("snaps the strip instead of free-scrolling it", async () => {
-    useFakeTime();
     const { container } = render(() => (
       <div style={{ width: `${OVERFLOWING_BOX}px` }}>
         <Dock items={items(12)} />
       </div>
     ));
-    vi.advanceTimersToNextFrame();
+    await frames(2);
 
     const bar = container.querySelector('[data-slot="dock-bar"]');
     expect(bar?.className).toContain("snap-x");

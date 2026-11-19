@@ -246,33 +246,31 @@ const Dock: Component<DockProps> = (props) => {
   const scrollPos = (el: HTMLElement) => (vertical() ? el.scrollTop : el.scrollLeft);
   const edgeStart = (rect: DOMRect) => (vertical() ? rect.top : rect.left);
 
-  const gapSize = () => {
-    if (!containerRef) return 0;
-    const style = getComputedStyle(containerRef);
-    return Number.parseFloat(vertical() ? style.rowGap : style.columnGap) || 0;
-  };
   const itemSize = () => {
     const rect = containerRef?.querySelector('[data-slot="dock-item"]')?.getBoundingClientRect();
     return (vertical() ? rect?.height : rect?.width) ?? 0;
   };
-
-  const padAlong = (el: Element) => {
-    const style = getComputedStyle(el);
-    const [a, b] = vertical()
-      ? [style.paddingTop, style.paddingBottom]
-      : [style.paddingLeft, style.paddingRight];
-    return (Number.parseFloat(a) || 0) + (Number.parseFloat(b) || 0);
+  // Slots sit evenly, so the strip's length gives the gap without a style read.
+  const gapSize = (scroll: number, item: number) => {
+    const slots = local.items.length + (local.editing && local.onAdd ? 1 : 0);
+    return slots > 1 ? Math.max(0, (scroll - slots * item) / (slots - 1)) : 0;
   };
+
+  let room: ResizeObserverSize | undefined;
+  let surfaceSize: { content: ResizeObserverSize; border: ResizeObserverSize } | undefined;
+  let companionSize: ResizeObserverSize | undefined;
+  const along = (size: ResizeObserverSize | undefined) =>
+    (vertical() ? size?.blockSize : size?.inlineSize) ?? 0;
 
   // The room the app gave the dock. Never the surface: it shrink-wraps this strip,
   // so measuring it asks the strip how big the strip is.
   const availableSpan = () => {
-    const box = containerRef?.closest<HTMLElement>('[data-slot="dock"]');
-    if (!box || !surfaceRef) return 0;
+    if (!room || !surfaceSize) return 0;
+    const chrome = along(surfaceSize.border) - along(surfaceSize.content);
     const lead = leadRef ? (vertical() ? leadRef.offsetHeight : leadRef.offsetWidth) : 0;
     // A side dock's companion stacks along the edge, so the strip gives up its height.
-    const companion = vertical() && local.companionOpen ? (companionRef?.offsetHeight ?? 0) : 0;
-    return viewSize(box) - padAlong(box) - padAlong(surfaceRef) - lead - companion;
+    const companion = vertical() && local.companionOpen ? along(companionSize) : 0;
+    return along(room) - chrome - lead - companion;
   };
 
   const checkOverflow = () => {
@@ -281,9 +279,11 @@ const Dock: Component<DockProps> = (props) => {
     const other = vertical() ? "width" : "height";
     containerRef.style.removeProperty(other);
     const available = availableSpan();
-    const overflowing = available > 0 && scrollSize(containerRef) > available + 1;
+    const scroll = scrollSize(containerRef);
+    const overflowing = available > 0 && scroll > available + 1;
     if (overflowing) {
-      const trimmed = stripWidth(available, itemSize(), gapSize());
+      const item = itemSize();
+      const trimmed = stripWidth(available, item, gapSize(scroll, item));
       if (trimmed > 0) containerRef.style[side] = `${trimmed}px`;
     } else if (containerRef.style[side]) {
       containerRef.style[side] = "";
@@ -298,9 +298,9 @@ const Dock: Component<DockProps> = (props) => {
   const goToPage = (next: number) => {
     if (!containerRef) return;
     const to = pageOffset(next, viewportSpan(), scrollSize(containerRef));
-    containerRef.scrollTo(
-      vertical() ? { top: to, behavior: "smooth" } : { left: to, behavior: "smooth" },
-    );
+    // The strip's scroll-smooth class carries the motion.
+    if (vertical()) containerRef.scrollTop = to;
+    else containerRef.scrollLeft = to;
   };
 
   const turnToItem = (index: number) => {
@@ -360,31 +360,31 @@ const Dock: Component<DockProps> = (props) => {
     ),
   );
 
-  // Measured in the next frame's callbacks, which run before it paints: the first
-  // dock anyone sees already has its pages, so the dot row never shifts it later.
   onMount(() => {
-    let resizeFrame = 0;
-    const onResize = () => {
-      cancelAnimationFrame(resizeFrame);
-      resizeFrame = requestAnimationFrame(checkOverflow);
-    };
-    window.addEventListener("resize", onResize);
-    onCleanup(() => {
-      cancelAnimationFrame(resizeFrame);
-      window.removeEventListener("resize", onResize);
-    });
-  });
-
-  // The companion's own content can change height while open, under a side dock that is the strip's room.
-  onMount(() => {
-    if (!companionRef) return;
+    const box = containerRef.closest('[data-slot="dock"]');
+    if (!box || !surfaceRef) return;
+    const surface = surfaceRef;
     let frame = 0;
-    const observer = new ResizeObserver(() => {
-      if (!vertical() || !local.companionOpen) return;
+    const measured = () =>
+      `${along(room)} ${along(surfaceSize?.border) - along(surfaceSize?.content)} ${along(companionSize)}`;
+    const observer = new ResizeObserver((entries) => {
+      const before = measured();
+      for (const entry of entries) {
+        const [content] = entry.contentBoxSize;
+        const [border] = entry.borderBoxSize;
+        if (!content || !border) continue;
+        if (entry.target === box) room = content;
+        else if (entry.target === surface) surfaceSize = { content, border };
+        else companionSize = border;
+      }
+      if (measured() === before) return;
+      // Paging resizes what other observers on the page watch; inside this callback that is a resize loop.
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(checkOverflow);
     });
-    observer.observe(companionRef);
+    observer.observe(box);
+    observer.observe(surface, { box: "border-box" });
+    if (companionRef) observer.observe(companionRef, { box: "border-box" });
     onCleanup(() => {
       cancelAnimationFrame(frame);
       observer.disconnect();

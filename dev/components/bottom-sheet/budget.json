@@ -141,6 +141,58 @@
       }
     }
   },
+  "drag": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "2026-11-19: the open scenario's mount, which this one shares"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "2026-11-19: the open scenario's mount, which this one shares"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-19: the open scenario's mount, which this one shares"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 350,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs (280) plus 25%"
+        },
+        "largestRecalc": {
+          "max": 17,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 4,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 284,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs (227) plus 25%"
+        },
+        "largestRecalc": {
+          "max": 6,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 13,
+        "reason": "baseline 2026-11-19 (10), plus 25% and at least one"
+      }
+    }
+  },
   "nested-select": {
     "steps": {
       "0": {
