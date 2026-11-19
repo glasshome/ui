@@ -4,29 +4,29 @@
       "0": {
         "elementsRestyled": {
           "max": 1384,
-          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%; phase 1 step 5 is open, Task 12 re-measures"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1107,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 2,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -48,29 +48,29 @@
       "0": {
         "elementsRestyled": {
           "max": 1384,
-          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%; phase 1 step 5 is open, Task 12 re-measures"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1107,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 2,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -92,43 +92,43 @@
       "0": {
         "elementsRestyled": {
           "max": 1387,
-          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%; phase 1 step 5 is open, Task 12 re-measures"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1109,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 8,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 3,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 2,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "2": {
         "elementsRestyled": {
           "max": 3,
-          "reason": "2026-11-17, the key scroll lands in one frame (the driver turns smooth scrolling off): 2 at rates 1, 4.27 and 4.8, plus 25%"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1,
-          "reason": "2026-11-17, one-frame key scroll: 1 at rates 1, 4.27 and 4.8"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "2026-11-17, one-frame key scroll: one placement layout at rates 1, 4.27 and 4.8"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -150,29 +150,29 @@
       "0": {
         "elementsRestyled": {
           "max": 1384,
-          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%; phase 1 step 5 is open, Task 12 re-measures"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1107,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 7,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 2,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -194,29 +194,29 @@
       "0": {
         "elementsRestyled": {
           "max": 1387,
-          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%; phase 1 step 5 is open, Task 12 re-measures"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1109,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 8,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 2,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 2,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
@@ -238,29 +238,29 @@
       "0": {
         "elementsRestyled": {
           "max": 1385,
-          "reason": "baseline 2026-11-17: the mount restyles the 1,000-element page fixture once, max of 3 T50 runs plus 25%; phase 1 step 5 is open, Task 12 re-measures"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 1108,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 1,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       },
       "1": {
         "elementsRestyled": {
           "max": 9,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs plus 25% and at least one, since counts move with the T50 rate the host measures; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 4,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
           "max": 2,
-          "reason": "owned baseline 2026-11-17, max of 3 T50 runs; predates Phase 1 Next step 5"
+          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
     },
