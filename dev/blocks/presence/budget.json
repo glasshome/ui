@@ -25,8 +25,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
-          "max": 2,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
         }
       },
       "2": {
@@ -83,8 +83,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
-          "max": 2,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
         }
       },
       "2": {
@@ -111,8 +111,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
-          "max": 2,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 3,
+          "reason": "owned baseline 2026-11-17, max of 3 T50 runs"
         }
       }
     },

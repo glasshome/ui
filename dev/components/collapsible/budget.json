@@ -73,8 +73,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
-          "max": 18,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 20,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 19: restyles and layouts follow the frames the open motion draws at the T50 rate, which move a frame or two run to run (Kobalte's layouts ranged 17 to 19)"
         }
       },
       "2": {
@@ -87,8 +87,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
-          "max": 17,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 18,
+          "reason": "owned baseline 2026-11-18, max of 6 T50 runs, since the close motion's frame count moved 15 to 18 run to run under the 3 runs' rate (Kobalte's was 20)"
         }
       }
     },
@@ -163,8 +163,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
-          "max": 17,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 20,
+          "reason": "owned baseline 2026-11-18, max of 3 T50 runs, over Kobalte's 0: the press now opens the content inside the closed shadow root (CL10), so the step runs the open motion where Kobalte did nothing"
         }
       }
     }

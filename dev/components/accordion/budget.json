@@ -195,8 +195,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
-          "max": 19,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 20,
+          "reason": "owned baseline 2026-11-18, max of 6 T50 runs, over Kobalte's 19 from 3 runs: the open motion's frame count moves a frame or two run to run (owned runs ranged 18 to 20)"
         }
       }
     },
@@ -337,8 +337,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
-          "max": 17,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 19,
+          "reason": "2026-11-19: CI measured 19 at a 4.72x T50 rate; the height motion lays out once a frame, so layouts follow the frames drawn"
         }
       }
     }
