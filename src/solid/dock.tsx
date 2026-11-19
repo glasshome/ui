@@ -87,6 +87,18 @@ interface DockIconButtonProps extends ComponentProps<"button"> {
 
 const DOCK_PAGE_MS = 300;
 
+const boxSizes = (el: HTMLElement) => {
+  const style = getComputedStyle(el);
+  const px = (value: string) => Number.parseFloat(value) || 0;
+  return {
+    content: {
+      inlineSize: el.clientWidth - px(style.paddingLeft) - px(style.paddingRight),
+      blockSize: el.clientHeight - px(style.paddingTop) - px(style.paddingBottom),
+    },
+    border: { inlineSize: el.offsetWidth, blockSize: el.offsetHeight },
+  };
+};
+
 const DockIconButton: Component<DockIconButtonProps> = (props) => {
   // Kobalte's button root narrows `type`; Solid's ComponentProps<"button"> also
   // admits "menu", so it is split off rather than spread.
@@ -206,8 +218,6 @@ const Dock: Component<DockProps> = (props) => {
   const [page, setPage] = createSignal(0);
   // The strip's length along the dock's axis: width at the bottom, height on a side edge.
   const [viewportSpan, setViewportSpan] = createSignal(0);
-  // Paging lands a frame after the first measure; until then the dock is see-through, so it never jumps.
-  const [placed, setPlaced] = createSignal(false);
 
   // A memo: the items list is rebuilt on every hover change, and only a new active item may scroll the strip.
   const activeIndex = createMemo(() => {
@@ -281,21 +291,19 @@ const Dock: Component<DockProps> = (props) => {
     const other = vertical() ? "width" : "height";
     containerRef.style.removeProperty(other);
     const available = availableSpan();
+    // Every read before any write: a read after a write lays the page out again.
     const scroll = scrollSize(containerRef);
+    const position = scrollPos(containerRef);
     const overflowing = available > 0 && scroll > available + 1;
-    if (overflowing) {
-      const item = itemSize();
-      const trimmed = stripWidth(available, item, gapSize(scroll, item));
-      if (trimmed > 0) containerRef.style[side] = `${trimmed}px`;
-    } else if (containerRef.style[side]) {
-      containerRef.style[side] = "";
-    }
+    const item = overflowing ? itemSize() : 0;
+    const trimmed = overflowing ? stripWidth(available, item, gapSize(scroll, item)) : 0;
+    const viewport = overflowing ? (trimmed > 0 ? trimmed : viewSize(containerRef)) : scroll;
+    if (trimmed > 0) containerRef.style[side] = `${trimmed}px`;
+    else if (!overflowing && containerRef.style[side]) containerRef.style[side] = "";
     setNeedsScroll(overflowing);
-    const viewport = viewSize(containerRef);
     setViewportSpan(viewport);
-    setPages(pageCount(scrollSize(containerRef), viewport));
-    setPage(pageOf(scrollPos(containerRef), viewport));
-    if (room && surfaceSize) setPlaced(true);
+    setPages(pageCount(scroll, viewport));
+    setPage(pageOf(position, viewport));
   };
 
   const goToPage = (next: number) => {
@@ -364,9 +372,14 @@ const Dock: Component<DockProps> = (props) => {
   );
 
   onMount(() => {
-    const box = containerRef.closest('[data-slot="dock"]');
+    const box = containerRef.closest<HTMLElement>('[data-slot="dock"]');
     if (!box || !surfaceRef) return;
     const surface = surfaceRef;
+    // Pages before the first paint, so the dock never appears and then grows a dot row.
+    room = boxSizes(box).content;
+    surfaceSize = boxSizes(surface);
+    if (companionRef) companionSize = boxSizes(companionRef).border;
+    checkOverflow();
     let frame = 0;
     const measured = () =>
       `${along(room)} ${along(surfaceSize?.border) - along(surfaceSize?.content)} ${along(companionSize)}`;
@@ -416,10 +429,8 @@ const Dock: Component<DockProps> = (props) => {
     <div
       data-slot="dock"
       data-placement={placement()}
-      data-placed={placed() ? "" : undefined}
       class={cn(
         "flex max-w-full items-center justify-center",
-        !placed() && "opacity-0",
         vertical() ? "h-full max-h-full flex-col" : "flex-col-reverse",
         dockMode() === "floating" ? "p-1 sm:p-2" : "",
         local.class,
