@@ -1,6 +1,7 @@
 import { type Accessor, createSignal, onCleanup, untrack } from "solid-js";
 import type { Align, Side } from "../anchor-placement.js";
-import { type AnchorLike, type Box, createAnchored } from "./anchored.js";
+import type { Box } from "../anchor-placement.js";
+import { type AnchorLike, createAnchored } from "./anchored.js";
 import { createCollection } from "./collection.js";
 import { createDismiss } from "./dismiss.js";
 import { focusedIn, focusFell, focusWithoutTracking } from "./focus-scope.js";
