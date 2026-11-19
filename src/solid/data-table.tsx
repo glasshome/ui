@@ -292,7 +292,27 @@ export function TableError(props: { message: JSX.Element; onRetry: () => void })
   );
 }
 
-/** The end of a long table: asks for the next page as it nears the viewport, or on press. */
+const nearEnd = new Map<Element, () => void>();
+let endWatcher: IntersectionObserver | undefined;
+
+// One observer serves every table's end, so a page of tables pays for one.
+function watchNearEnd(target: Element, onNear: () => void): () => void {
+  endWatcher ??= new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) if (entry.isIntersecting) nearEnd.get(entry.target)?.();
+    },
+    { rootMargin: "400px" },
+  );
+  const watcher = endWatcher;
+  nearEnd.set(target, onNear);
+  watcher.observe(target);
+  return () => {
+    nearEnd.delete(target);
+    watcher.unobserve(target);
+  };
+}
+
+/** The end of a long table: once the page scrolls, asks for the next page as it nears the viewport; or on press. */
 export function TableLoadMore(props: {
   hasMore: boolean;
   loading?: boolean;
@@ -302,26 +322,29 @@ export function TableLoadMore(props: {
 }) {
   let sentinel: HTMLDivElement | undefined;
   onMount(() => {
-    if (!sentinel || typeof IntersectionObserver === "undefined") return;
     const target = sentinel;
+    if (!target || typeof IntersectionObserver === "undefined") return;
     let frame = 0;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries[0]?.isIntersecting || !props.hasMore || props.loading) return;
-        props.onLoadMore();
-        // A page too short to push the sentinel out of view never fires again on its own.
-        cancelAnimationFrame(frame);
-        frame = requestAnimationFrame(() => {
-          observer.unobserve(target);
-          observer.observe(target);
-        });
-      },
-      { rootMargin: "400px" },
-    );
-    observer.observe(target);
-    onCleanup(() => {
+    let unwatch: (() => void) | undefined;
+    const onNear = () => {
+      if (!props.hasMore || props.loading) return;
+      props.onLoadMore();
+      // A page too short to push the sentinel out of view never fires again on its own.
       cancelAnimationFrame(frame);
-      observer.disconnect();
+      frame = requestAnimationFrame(() => {
+        unwatch?.();
+        unwatch = watchNearEnd(target, onNear);
+      });
+    };
+    // A table nobody scrolls never pays for an observer.
+    const arm = () => {
+      unwatch ??= watchNearEnd(target, onNear);
+    };
+    window.addEventListener("scroll", arm, { capture: true, passive: true, once: true });
+    onCleanup(() => {
+      window.removeEventListener("scroll", arm, { capture: true });
+      cancelAnimationFrame(frame);
+      unwatch?.();
     });
   });
   return (
