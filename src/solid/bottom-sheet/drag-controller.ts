@@ -215,6 +215,17 @@ export function attachDrag(opts: DragOptions): DragHandle {
     if (movedPastDeadZone) e.preventDefault();
   };
 
+  // A scroller at its top leaves a downward swipe to the drag through touch-action (theme.css), since a touchmove listener may be passive.
+  const onScroll = (e: Event) => {
+    const box = e.target;
+    if (!(box instanceof Element) || !box.hasAttribute("data-sheet-scroll")) return;
+    const scrolled = box.scrollTop > 0;
+    if (scrolled !== box.hasAttribute("data-sheet-scrolled")) {
+      box.toggleAttribute("data-sheet-scrolled", scrolled);
+    }
+  };
+
+  el.addEventListener("scroll", onScroll, { capture: true, passive: true });
   el.addEventListener("pointerdown", onPointerDown);
   el.addEventListener("pointermove", onPointerMove);
   el.addEventListener("pointerup", onPointerUp);
@@ -223,6 +234,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
 
   return {
     destroy() {
+      el.removeEventListener("scroll", onScroll, { capture: true });
       el.removeEventListener("pointerdown", onPointerDown);
       el.removeEventListener("pointermove", onPointerMove);
       el.removeEventListener("pointerup", onPointerUp);

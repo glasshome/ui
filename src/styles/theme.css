@@ -706,6 +706,9 @@ html[data-motion="live"] [data-motion-reader] {
 .bs-content[data-state="closing"] {
   animation: bs-slide-down var(--bs-duration) var(--bs-ease) forwards;
 }
+.bs-content [data-sheet-scroll]:not([data-sheet-scrolled]) {
+  touch-action: pan-down pinch-zoom;
+}
 .bs-content[data-reduced-motion] {
   animation-duration: 0ms !important;
 }
