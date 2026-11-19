@@ -163,8 +163,8 @@
           "reason": "baseline 2026-11-19, max of 3 T50 runs (280) plus 25%"
         },
         "largestRecalc": {
-          "max": 17,
-          "reason": "baseline 2026-11-19, max of 3 T50 runs"
+          "max": 18,
+          "reason": "2026-11-19: the modal Body's top sentinel adds one element to the opening sheet's recalc, as in the open scenario; max of 3 T50 runs"
         },
         "layouts": {
           "max": 4,
