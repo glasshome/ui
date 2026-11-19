@@ -87,6 +87,31 @@ describe("Dock companion", () => {
     expect(cut).toEqual([]);
   });
 
+  it("shows a paging dock only once its pages land, so the dock anyone sees never grows a dot row", async () => {
+    const view = render(() => (
+      <div class="reduce-motion" style={{ width: `${OVERFLOWING_BOX}px` }}>
+        <Dock items={items(12)} />
+      </div>
+    ));
+    const dock = view.container.querySelector<HTMLElement>('[data-slot="dock"]') as HTMLElement;
+    const shown: { height: number; dots: boolean }[] = [];
+    const unplacedOpacities: string[] = [];
+    for (let i = 0; i < 4; i++) {
+      await frames(1);
+      if (dock.hasAttribute("data-placed"))
+        shown.push({
+          height: rectOf(dock).height,
+          dots: dock.querySelector('[data-slot="dock-pages"]') !== null,
+        });
+      else unplacedOpacities.push(getComputedStyle(dock).opacity);
+    }
+    expect(unplacedOpacities.every((opacity) => opacity === "0")).toBe(true);
+    expect(shown.length).toBeGreaterThan(0);
+    for (const frame of shown) expect(frame).toEqual({ ...shown[0], dots: true });
+    await frames(1);
+    expect(getComputedStyle(dock).opacity).toBe("1");
+  });
+
   it("pages a narrow dock under an app that watches its size, without a resize loop", async () => {
     const loops: string[] = [];
     const onError = (event: ErrorEvent) => {
