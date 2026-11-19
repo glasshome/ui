@@ -1,4 +1,5 @@
 import { render } from "@solidjs/testing-library";
+import { createSignal } from "solid-js";
 import { describe, expect, it } from "vitest";
 import { Dock, type DockPlacement } from "../../src/solid/dock.js";
 import { ToggleGroup, ToggleGroupItem } from "../../src/solid/toggle-group.js";
@@ -84,6 +85,46 @@ describe("Dock companion", () => {
       rectOf,
     ).filter((item) => item.top < bar.bottom - 1 && item.bottom > bar.bottom + 1);
     expect(cut).toEqual([]);
+  });
+
+  it("pages a narrow dock under an app that watches its size, without a resize loop", async () => {
+    const loops: string[] = [];
+    const onError = (event: ErrorEvent) => {
+      if (event.message.includes("ResizeObserver")) loops.push(event.message);
+    };
+    window.addEventListener("error", onError);
+    const app = new ResizeObserver(() => {});
+    try {
+      const [open, setOpen] = createSignal(false);
+      render(() => (
+        <div
+          ref={(el) => app.observe(el)}
+          class="reduce-motion"
+          style={{ width: `${OVERFLOWING_BOX}px` }}
+        >
+          <Dock
+            items={items(12)}
+            editing
+            onAdd={() => {}}
+            companion={
+              <button type="button" style={{ "white-space": "nowrap" }}>
+                Done
+              </button>
+            }
+            companionOpen={open()}
+          />
+        </div>
+      ));
+      await frames(3);
+      setOpen(true);
+      await frames(4);
+      setOpen(false);
+      await frames(4);
+    } finally {
+      app.disconnect();
+      window.removeEventListener("error", onError);
+    }
+    expect(loops).toEqual([]);
   });
 
   it("takes no room and no input while closed", async () => {
