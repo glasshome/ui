@@ -627,6 +627,12 @@ html[data-motion="live"] [data-motion-reader] {
   .animate-out {
     --tw-animation-duration: 1ms;
   }
+  /* As .reduce-motion does: a literal duration-* class bypasses the scale. Never 0, so transitionend still fires. */
+  *,
+  ::before,
+  ::after {
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Performance: disable all backdrop-filter when reduce-blur is active */
