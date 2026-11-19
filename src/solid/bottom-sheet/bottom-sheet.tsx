@@ -328,8 +328,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
         }}
         class={cn(
           "bs-content",
-          `fixed inset-x-0 bottom-0 flex ${MODAL_MAX_H} flex-col ${SCROLL_CONTAIN} rounded-t-xl ${OVERLAY_SURFACE_OPAQUE} outline-none [--glass-edge:transparent]`,
-          "after:absolute after:inset-x-0 after:top-full after:h-1/2 after:bg-inherit",
+          `fixed inset-x-0 bottom-0 flex ${MODAL_MAX_H} flex-col ${SCROLL_CONTAIN} overflow-hidden rounded-t-xl ${OVERLAY_SURFACE_OPAQUE} outline-none [--glass-edge:transparent]`,
           local.class,
         )}
       >

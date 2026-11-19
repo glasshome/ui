@@ -38,8 +38,6 @@ export function attachDrag(opts: DragOptions): DragHandle {
   let startX = 0;
   let pointerTarget: Element | null = null;
   let dy = 0;
-  let raf = 0;
-  let pendingDy: number | null = null;
   let movedPastDeadZone = false;
   let dragAborted = false;
   let height = 0;
@@ -51,19 +49,11 @@ export function attachDrag(opts: DragOptions): DragHandle {
     return s === "open" || s === "pressing";
   };
 
-  const flushFrame = () => {
-    raf = 0;
-    if (pendingDy === null) return;
-    const value = pendingDy;
-    pendingDy = null;
+  // Written in the move itself: pointermove is already frame-aligned, and a guest's rAF costs a second trip through the realm.
+  const follow = (value: number) => {
     const applied = value < 0 ? dampen(-value) * -1 : value;
     shownDy = applied;
     el.style.transform = `translate3d(0, ${applied}px, 0)`;
-  };
-
-  const schedule = (newDy: number) => {
-    pendingDy = newDy;
-    if (raf === 0) raf = requestAnimationFrame(flushFrame);
   };
 
   const onPointerDown = (e: PointerEvent) => {
@@ -122,15 +112,10 @@ export function attachDrag(opts: DragOptions): DragHandle {
     }
     tracker.add(totalDy, e.timeStamp);
     dy = totalDy;
-    schedule(dy);
+    follow(dy);
   };
 
   const cleanupDrag = () => {
-    if (raf !== 0) {
-      cancelAnimationFrame(raf);
-      raf = 0;
-    }
-    pendingDy = null;
     pointerId = null;
     pointerTarget = null;
     dragAborted = false;
