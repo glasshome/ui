@@ -183,7 +183,10 @@ const MODAL_HEADER_ACTION = "flex shrink-0 items-center gap-2";
  * - The reserved scrollbar lives inside the right inset, so the content column
  *   ends where the Header's and Footer's do. */
 const MODAL_BODY =
-  "gh-scroll flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain [touch-action:pan-y_pinch-zoom] [scrollbar-gutter:stable] pl-6 pr-[calc(var(--spacing)*6-var(--scrollbar-gutter,var(--scrollbar-w)))] pt-6 pb-6 [[data-slot$='-header']~&]:pt-3 [&:has(~[data-slot$='-footer'])]:pb-3 in-data-[slot=bottom-sheet-content]:pl-4 in-data-[slot=bottom-sheet-content]:pr-[calc(var(--spacing)*4-var(--scrollbar-gutter,var(--scrollbar-w)))] [[data-slot=bottom-sheet-handle]+&]:pt-1";
+  "gh-scroll relative flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain [touch-action:pan-y_pinch-zoom] [scrollbar-gutter:stable] pl-6 pr-[calc(var(--spacing)*6-var(--scrollbar-gutter,var(--scrollbar-w)))] pt-6 pb-6 [[data-slot$='-header']~&]:pt-3 [&:has(~[data-slot$='-footer'])]:pb-3 in-data-[slot=bottom-sheet-content]:pl-4 in-data-[slot=bottom-sheet-content]:pr-[calc(var(--spacing)*4-var(--scrollbar-gutter,var(--scrollbar-w)))] [[data-slot=bottom-sheet-handle]+&]:pt-1";
+
+// Out of flow, so content keeps its gap and its first child; it marks where the scroll starts.
+const MODAL_BODY_TOP = "pointer-events-none absolute inset-x-0 top-0 h-px";
 
 const MODAL_FOOTER =
   "flex shrink-0 flex-col-reverse gap-2 px-6 pt-3 pb-6 sm:flex-row sm:justify-end in-data-[slot=bottom-sheet-content]:px-4";
@@ -239,11 +242,26 @@ export function createModalParts(slot: string): ModalParts {
   };
 
   const Body: Component<ModalBodyProps> = (props) => {
-    const [local, rest] = splitProps(props, ["class", "as", "ref"]);
+    const [local, rest] = splitProps(props, ["class", "as", "ref", "children"]);
     let el: HTMLElement | undefined;
+    let top: HTMLSpanElement | undefined;
     // Overlay scrollbars reserve no gutter, so the right inset subtracts what the platform actually reserved.
     onMount(() => {
       if (el) el.style.setProperty("--scrollbar-gutter", `${el.offsetWidth - el.clientWidth}px`);
+    });
+    // data-scrolled comes from an observer: a scrollTop read in a sealed widget is a blocking call to the page.
+    onMount(() => {
+      const box = el;
+      if (!box || !top) return;
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[entries.length - 1];
+          if (entry) box.toggleAttribute("data-scrolled", entry.intersectionRatio < 0.99);
+        },
+        { root: box, threshold: [0.99] },
+      );
+      observer.observe(top);
+      onCleanup(() => observer.disconnect());
     });
     return (
       <Polymorphic
@@ -256,7 +274,10 @@ export function createModalParts(slot: string): ModalParts {
         data-slot={`${slot}-body`}
         class={cn(MODAL_BODY, local.class)}
         {...rest}
-      />
+      >
+        <span ref={top} aria-hidden="true" class={MODAL_BODY_TOP} />
+        {local.children}
+      </Polymorphic>
     );
   };
 
