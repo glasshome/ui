@@ -627,6 +627,12 @@ html[data-motion="live"] [data-motion-reader] {
   .animate-out {
     --tw-animation-duration: 1ms;
   }
+  /* A literal duration-* class bypasses the scale. 0, as the scale is: no transition starts at all. */
+  *,
+  ::before,
+  ::after {
+    transition-duration: 0s !important;
+  }
 }
 
 /* Performance: disable all backdrop-filter when reduce-blur is active */

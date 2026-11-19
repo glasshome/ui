@@ -1,11 +1,13 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
+import { commands } from "vitest/browser";
 import {
   BottomSheet,
   BottomSheetBody,
   BottomSheetClose,
   BottomSheetContent,
+  BottomSheetOverlay,
   BottomSheetPortal,
   BottomSheetTitle,
   BottomSheetTrigger,
@@ -144,6 +146,29 @@ describe("BottomSheet motion", () => {
     const panel = document.querySelector<HTMLElement>('[data-slot="bottom-sheet-content"]');
     expect(panel?.getAttribute("data-state")).toBe("opening");
     await vi.waitFor(() => expect(panel?.getAttribute("data-state")).toBe("open"));
+  });
+
+  it("times no transition under reduced motion, a literal duration class included", async () => {
+    await commands.emulateMedia({ reducedMotion: "reduce" });
+    onTestFinished(() => commands.emulateMedia({ reducedMotion: "no-preference" }));
+    render(() => (
+      <BottomSheet open>
+        <BottomSheetPortal>
+          <BottomSheetOverlay />
+          <BottomSheetContent ariaLabel="Sheet">body</BottomSheetContent>
+        </BottomSheetPortal>
+      </BottomSheet>
+    ));
+    const scrim = document.querySelector<HTMLElement>('[data-slot="bottom-sheet-overlay"]');
+    expect(scrim).not.toBeNull();
+    const parts = [scrim, ...document.querySelectorAll('[data-slot="bottom-sheet-content"] *')];
+    for (const el of parts) {
+      if (!el) continue;
+      const longest = Math.max(
+        ...getComputedStyle(el).transitionDuration.split(",").map(parseFloat),
+      );
+      expect(longest, el.outerHTML.slice(0, 80)).toBeLessThan(0.001);
+    }
   });
 });
 
