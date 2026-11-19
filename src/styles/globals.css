@@ -284,14 +284,23 @@
  * and inline style knobs still win. Rim shadows are declared on .glass (not
  * :root) so calc(var(--glass-rim)) resolves per element, not frozen at :root. */
 :root {
-  /* biome-ignore-start lint/correctness/noMissingVarFunction: transition-property takes property names, and these are the registered knobs */
   --glass-transition:
-    --glass-tone, --glass-wash, --glass-light, --glass-shade, --glass-rim, --glass-lift,
-    --glass-glow, --glass-drop, --glass-text, --material-depth, --material-tint, --_material-edge,
-    --_material-sheen, --_material-shadow, --material-edge-width, --material-edge-ink,
-    --material-edge-accent, --material-glow, color, background-color, border-color, box-shadow,
-    opacity, transform, translate, scale, width, height;
-  /* biome-ignore-end lint/correctness/noMissingVarFunction: see above */
+    color, background-color, border-color, box-shadow, opacity, transform, translate, scale, width,
+    height;
+}
+
+/* WebKit before 17.4 resolves rem against 1px once a registered knob transitions, shrinking the surface. */
+@supports (transition-behavior: allow-discrete) {
+  :root {
+    /* biome-ignore-start lint/correctness/noMissingVarFunction: transition-property takes property names */
+    --glass-transition:
+      --glass-tone, --glass-wash, --glass-light, --glass-shade, --glass-rim, --glass-lift,
+      --glass-glow, --glass-drop, --glass-text, --material-depth, --material-tint, --_material-edge,
+      --_material-sheen, --_material-shadow, --material-edge-width, --material-edge-ink,
+      --material-edge-accent, --material-glow, color, background-color, border-color, box-shadow,
+      opacity, transform, translate, scale, width, height;
+    /* biome-ignore-end lint/correctness/noMissingVarFunction: see above */
+  }
 }
 
 @layer utilities {
