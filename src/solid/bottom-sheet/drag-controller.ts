@@ -38,8 +38,6 @@ export function attachDrag(opts: DragOptions): DragHandle {
   let startX = 0;
   let pointerTarget: Element | null = null;
   let dy = 0;
-  let raf = 0;
-  let pendingDy: number | null = null;
   let movedPastDeadZone = false;
   let dragAborted = false;
   let height = 0;
@@ -51,19 +49,11 @@ export function attachDrag(opts: DragOptions): DragHandle {
     return s === "open" || s === "pressing";
   };
 
-  const flushFrame = () => {
-    raf = 0;
-    if (pendingDy === null) return;
-    const value = pendingDy;
-    pendingDy = null;
+  // Written in the move itself: pointermove is already frame-aligned, and a guest's rAF costs a second trip through the realm.
+  const follow = (value: number) => {
     const applied = value < 0 ? dampen(-value) * -1 : value;
     shownDy = applied;
     el.style.transform = `translate3d(0, ${applied}px, 0)`;
-  };
-
-  const schedule = (newDy: number) => {
-    pendingDy = newDy;
-    if (raf === 0) raf = requestAnimationFrame(flushFrame);
   };
 
   const onPointerDown = (e: PointerEvent) => {
@@ -122,15 +112,10 @@ export function attachDrag(opts: DragOptions): DragHandle {
     }
     tracker.add(totalDy, e.timeStamp);
     dy = totalDy;
-    schedule(dy);
+    follow(dy);
   };
 
   const cleanupDrag = () => {
-    if (raf !== 0) {
-      cancelAnimationFrame(raf);
-      raf = 0;
-    }
-    pendingDy = null;
     pointerId = null;
     pointerTarget = null;
     dragAborted = false;
@@ -215,6 +200,17 @@ export function attachDrag(opts: DragOptions): DragHandle {
     if (movedPastDeadZone) e.preventDefault();
   };
 
+  // A scroller at its top leaves a downward swipe to the drag through touch-action (theme.css), since a touchmove listener may be passive.
+  const onScroll = (e: Event) => {
+    const box = e.target;
+    if (!(box instanceof Element) || !box.hasAttribute("data-sheet-scroll")) return;
+    const scrolled = box.scrollTop > 0;
+    if (scrolled !== box.hasAttribute("data-sheet-scrolled")) {
+      box.toggleAttribute("data-sheet-scrolled", scrolled);
+    }
+  };
+
+  el.addEventListener("scroll", onScroll, { capture: true, passive: true });
   el.addEventListener("pointerdown", onPointerDown);
   el.addEventListener("pointermove", onPointerMove);
   el.addEventListener("pointerup", onPointerUp);
@@ -223,6 +219,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
 
   return {
     destroy() {
+      el.removeEventListener("scroll", onScroll, { capture: true });
       el.removeEventListener("pointerdown", onPointerDown);
       el.removeEventListener("pointermove", onPointerMove);
       el.removeEventListener("pointerup", onPointerUp);

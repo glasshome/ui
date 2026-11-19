@@ -259,7 +259,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
   createEffect(() => {
     const node = ctx.contentRef();
     if (!node) return;
-    if (ctx.state() === "closed") return;
+    if (!present()) return;
     const handle = watchKeyboard(node);
     onCleanup(() => handle.destroy());
   });
@@ -323,13 +323,12 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
           "--bs-duration": `${TRANSITION_MS}ms`,
           "--bs-ease": EASE,
           "will-change": "transform",
-          "touch-action": "pan-y",
+          "touch-action": "none",
           "-webkit-tap-highlight-color": "transparent",
         }}
         class={cn(
           "bs-content",
-          `fixed inset-x-0 bottom-0 flex ${MODAL_MAX_H} flex-col ${SCROLL_CONTAIN} rounded-t-xl ${OVERLAY_SURFACE_OPAQUE} outline-none`,
-          "after:absolute after:inset-x-0 after:top-full after:h-1/2 after:bg-inherit",
+          `fixed inset-x-0 bottom-0 flex ${MODAL_MAX_H} flex-col ${SCROLL_CONTAIN} overflow-hidden rounded-t-xl ${OVERLAY_SURFACE_OPAQUE} outline-none [--glass-edge:transparent]`,
           local.class,
         )}
       >

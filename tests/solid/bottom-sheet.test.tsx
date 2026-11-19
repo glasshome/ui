@@ -98,7 +98,7 @@ describe("BottomSheet content style", () => {
     ));
     const panel = document.querySelector<HTMLElement>('[data-slot="bottom-sheet-content"]');
     expect(panel?.style.getPropertyValue("--glass-tone")).toBe("red");
-    expect(panel?.style.getPropertyValue("touch-action")).toBe("pan-y");
+    expect(panel?.style.getPropertyValue("touch-action")).toBe("none");
   });
 });
 
