@@ -1,7 +1,6 @@
 import { createMemo, createSignal, For, Show } from "solid-js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { MENU_ITEM, MENU_ITEM_RADIUS } from "../lib/menu-classes.js";
-import { STAGGER } from "../lib/motion-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
 import { useEntityData } from "./entity-data.js";
@@ -193,7 +192,7 @@ export function AreaPicker(props: AreaPickerProps) {
           <SelectionScope
             marker="highlighted"
             radius={MENU_ITEM_RADIUS}
-            class={cn("flex flex-col gap-0.5 p-1", STAGGER, PICKER_LIST)}
+            class={cn("flex flex-col gap-0.5 p-1", PICKER_LIST)}
             onMouseLeave={() => setHovered(null)}
           >
             <Show when={filtered().length === 0 && missing().length === 0}>

@@ -29,7 +29,6 @@ import {
   MENU_LABEL,
   MENU_SEPARATOR,
 } from "../lib/menu-classes.js";
-import { STAGGER } from "../lib/motion-classes.js";
 import { FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -43,7 +42,7 @@ const MENU_CONTENT_CLASS = cn(FLOATING_PANEL, "min-w-[8rem] overflow-hidden p-1"
 /** Every menu content and sub content wraps its rows in one selection scope, keyed off the highlighted row. */
 const MenuContentIndicator: ParentComponent = (props) => (
   // The one element between role="menu" and its rows: an unnamed div there breaks the menu's ownership in the a11y tree.
-  <SelectionScope role="none" class={STAGGER} marker="highlighted" radius={MENU_ITEM_RADIUS}>
+  <SelectionScope role="none" marker="highlighted" radius={MENU_ITEM_RADIUS}>
     {props.children}
   </SelectionScope>
 );
@@ -269,18 +268,6 @@ function toneStyle(tone: string | undefined) {
   return tone ? { "--selection-tone": tone, color: glassToneText(tone) } : undefined;
 }
 
-/* True order among the menu's rows, labels and separators, for the stagger:
- * nth-child restarts inside a group, the DOM order does not. Refs fire before
- * insertion, hence the microtask. */
-function writeRowIndex(el: HTMLElement) {
-  queueMicrotask(() => {
-    const menu = el.closest('[role="menu"], [role="listbox"]');
-    if (!menu) return;
-    const i = Array.from(menu.querySelectorAll("[data-stagger-row]")).indexOf(el);
-    if (i >= 0) el.style.setProperty("--i", String(i));
-  });
-}
-
 interface RowOwnProps {
   disabled?: boolean;
   closeOnSelect?: boolean;
@@ -392,7 +379,6 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
         as: local.as,
         defaultAs: "div" as ValidComponent,
         ref: (el: HTMLElement) => {
-          writeRowIndex(el);
           submenu?.menu.setTrigger(el);
           if (typeof local.ref === "function") local.ref(el);
         },
@@ -434,7 +420,6 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
         get "data-indeterminate"() {
           return indeterminate() ? "" : undefined;
         },
-        "data-stagger-row": "",
         get "data-slot"() {
           return local.slotName;
         },
@@ -511,14 +496,12 @@ export const MenuLabelPart: Component<MenuLabelProps & { slotName: string }> = (
         as: local.as,
         defaultAs: "span" as ValidComponent,
         ref: (el: HTMLElement) => {
-          writeRowIndex(el);
           if (typeof local.ref === "function") local.ref(el);
         },
         get id() {
           return id();
         },
         "aria-hidden": "true",
-        "data-stagger-row": "",
         get "data-slot"() {
           return local.slotName;
         },
@@ -598,11 +581,9 @@ export const MenuSeparatorPart: Component<MenuSeparatorProps> = (props) => {
     <hr
       {...rest}
       ref={(el) => {
-        writeRowIndex(el);
         if (typeof local.ref === "function") local.ref(el);
       }}
       data-orientation="horizontal"
-      data-stagger-row=""
       data-slot={local.slotName}
       class={cn(MENU_SEPARATOR, local.class)}
     />

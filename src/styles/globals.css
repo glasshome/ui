@@ -783,49 +783,6 @@
   }
 }
 
-/* Children arrive one after another. Mount-only (a CSS animation runs when
- * the child is inserted), so a live re-render never re-staggers; a child
- * added later takes its own slot, capped so a long list never waits. The
- * travel is `translate`, never `transform`, so a positioned child (the
- * sliding indicator) keeps its own transform. A group is transparent: its
- * rows take slots, it does not. Slots come from --i: nth-child below for a
- * flat list, or written inline by a part that knows its true order. */
-@keyframes stagger-in {
-  from {
-    opacity: 0;
-    /* Upward: a child of a scroll container must not extend its scrollable
-		 * height mid-animation, and rows trail a downward-growing edge. */
-    translate: 0 -8px;
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-.gh-stagger > :not([role="group"], [data-selection-flyer]),
-.gh-stagger > [role="group"] > * {
-  animation: stagger-in calc(var(--duration-morph) * 0.5) var(--ease-emphasis) both;
-  animation-delay: calc(var(--stagger-base, 80ms) + var(--i, 0) * var(--stagger-step, 60ms));
-}
-.gh-stagger > :nth-child(2) {
-  --i: 1;
-}
-.gh-stagger > :nth-child(3) {
-  --i: 2;
-}
-.gh-stagger > :nth-child(4) {
-  --i: 3;
-}
-.gh-stagger > :nth-child(5) {
-  --i: 4;
-}
-.gh-stagger > :nth-child(6) {
-  --i: 5;
-}
-.gh-stagger > :nth-child(n + 7) {
-  --i: 6;
-}
-
 /* Selection (solid/selection.tsx). Plain CSS on data attributes: a published widget compiles its
  * utilities from the ui source it was built against, so a new utility here would be missing there. */
 [data-selection-highlight],

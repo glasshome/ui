@@ -621,8 +621,6 @@ html[data-motion="live"] [data-motion-reader] {
     --duration-arrive: 0ms;
     --duration-jiggle: 0ms;
     --duration-slide: 0ms;
-    --stagger-base: 0ms;
-    --stagger-step: 0ms;
   }
   /* tw-animate enter/exit classes carry their own fallback duration. */
   .animate-in,

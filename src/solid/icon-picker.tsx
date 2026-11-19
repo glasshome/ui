@@ -1,6 +1,5 @@
 import { createMemo, createSignal, For, Show } from "solid-js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
-import { STAGGER } from "../lib/motion-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
 import { CHIP, ICON_PILL_TINT } from "../lib/pill-classes.js";
 import { cn } from "../lib/utils.js";
@@ -427,7 +426,7 @@ export function IconPicker(props: IconPickerProps) {
             <Show when={!loading() && search().trim() && displayIcons().length === 0}>
               <div class="text-muted-foreground py-4 text-center text-sm">No icons found</div>
             </Show>
-            <div class={cn("grid grid-cols-6 gap-1", STAGGER)}>
+            <div class="grid grid-cols-6 gap-1">
               <For each={displayIcons()}>
                 {(icon) => (
                   <button

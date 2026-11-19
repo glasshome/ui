@@ -269,8 +269,8 @@ Held by the `dialog-anatomy` gate in apps and in this package.
 
 ## Motion (the pillar)
 
-Motion is one system, not per-component flair. Four rules, all held by
-`lib/motion-classes.ts`, `.gh-stagger` and the `--glass-*` transition in
+Motion is one system, not per-component flair. The rules are held by
+`lib/motion-classes.ts` and the `--glass-*` transition in
 `globals.css`, on the theme tokens `--duration-*` / `--ease-*` (zeroed under
 `prefers-reduced-motion`):
 
@@ -284,9 +284,12 @@ Motion is one system, not per-component flair. Four rules, all held by
    a card with sub-options grows to reveal them (OptionCard's drawer), an
    indicator slides and stretches (SelectionScope, position bars). Nothing is
    swapped in below or beside its origin.
-3. **Children arrive one after another.** The rows behind a growing edge stagger
-   in (`STAGGER` = `.gh-stagger`, base 80ms, 60ms per row, capped), so a panel is
-   read top to bottom as it opens. Mount-only: live re-renders never re-stagger.
+3. **Children arrive with their panel.** Rows never animate one by one: the
+   panel's own motion carries them. Animations that run beside each other and
+   end at different times keep the main thread drawing every frame, and each of
+   those frames restyles every animating element. New motion
+   animates `transform`, `translate`, `scale` or `opacity`, which the compositor
+   runs; `clip-path` and registered custom properties run on the main thread.
 4. **Leaving is the same path, faster.** Contract on `--ease-contract` at half
    the arrival time. Pressables dip (`PRESS_DIP`).
 5. **Ambient motion is an event.** A wallpaper or decorative loop runs for a
