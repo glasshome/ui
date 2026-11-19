@@ -1,16 +1,9 @@
-// Decides drag vs scroll. Walks event.target ancestors; if any scrollable
-// ancestor can still scroll in the drag direction, yield to scroll.
-// Markers: data-sheet-no-drag (abort), data-sheet-scroll (force scrollable).
+// Decides drag vs scroll. Walks event.target ancestors; if any can still scroll in the drag
+// direction, yield to scroll. Marker: data-sheet-no-drag (abort).
 
 type Direction = "down" | "up";
 
-function isScrollableAxis(el: Element): boolean {
-  if (el.hasAttribute("data-sheet-scroll")) return true;
-  const overflowY = getComputedStyle(el).overflowY;
-  if (overflowY !== "auto" && overflowY !== "scroll" && overflowY !== "overlay") return false;
-  return el.scrollHeight > el.clientHeight;
-}
-
+// Geometry alone: only a scroller holds a scrollTop, and a false "up" costs just the rubber band.
 function canScrollFurther(el: Element, dir: Direction): boolean {
   if (dir === "down") return el.scrollTop > 0;
   return el.scrollTop + el.clientHeight < el.scrollHeight - 1;
@@ -32,7 +25,7 @@ export function shouldDrag(target: Element | null, root: Element, dy: number, dx
   const dir: Direction = dy > 0 ? "down" : "up";
   let cur: Element | null = target;
   while (cur && cur !== root.parentElement) {
-    if (isScrollableAxis(cur) && canScrollFurther(cur, dir)) return false;
+    if (canScrollFurther(cur, dir)) return false;
     if (cur === root) break;
     cur = cur.parentElement;
   }
