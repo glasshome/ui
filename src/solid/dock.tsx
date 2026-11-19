@@ -206,6 +206,8 @@ const Dock: Component<DockProps> = (props) => {
   const [page, setPage] = createSignal(0);
   // The strip's length along the dock's axis: width at the bottom, height on a side edge.
   const [viewportSpan, setViewportSpan] = createSignal(0);
+  // Paging lands a frame after the first measure; until then the dock is see-through, so it never jumps.
+  const [placed, setPlaced] = createSignal(false);
 
   // A memo: the items list is rebuilt on every hover change, and only a new active item may scroll the strip.
   const activeIndex = createMemo(() => {
@@ -293,6 +295,7 @@ const Dock: Component<DockProps> = (props) => {
     setViewportSpan(viewport);
     setPages(pageCount(scrollSize(containerRef), viewport));
     setPage(pageOf(scrollPos(containerRef), viewport));
+    if (room && surfaceSize) setPlaced(true);
   };
 
   const goToPage = (next: number) => {
@@ -413,8 +416,10 @@ const Dock: Component<DockProps> = (props) => {
     <div
       data-slot="dock"
       data-placement={placement()}
+      data-placed={placed() ? "" : undefined}
       class={cn(
         "flex max-w-full items-center justify-center",
+        !placed() && "opacity-0",
         vertical() ? "h-full max-h-full flex-col" : "flex-col-reverse",
         dockMode() === "floating" ? "p-1 sm:p-2" : "",
         local.class,
