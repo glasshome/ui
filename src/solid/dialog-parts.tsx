@@ -249,11 +249,12 @@ export function createModalParts(slot: string): ModalParts {
     onMount(() => {
       if (el) el.style.setProperty("--scrollbar-gutter", `${el.offsetWidth - el.clientWidth}px`);
     });
-    // data-scrolled comes from an observer: a scrollTop read in a sealed widget is a blocking call to the page.
-    onMount(() => {
+    // data-scrolled comes from an observer, since a sealed widget cannot read scrollTop; made on the first scroll, as an observer costs a call to the page.
+    let observer: IntersectionObserver | undefined;
+    const watchTop = () => {
       const box = el;
-      if (!box || !top) return;
-      const observer = new IntersectionObserver(
+      if (!box || !top || observer) return;
+      observer = new IntersectionObserver(
         (entries) => {
           const entry = entries[entries.length - 1];
           if (entry) box.toggleAttribute("data-scrolled", entry.intersectionRatio < 0.99);
@@ -261,7 +262,11 @@ export function createModalParts(slot: string): ModalParts {
         { root: box, threshold: [0.99] },
       );
       observer.observe(top);
-      onCleanup(() => observer.disconnect());
+    };
+    onMount(() => el?.addEventListener("scroll", watchTop, { once: true, passive: true }));
+    onCleanup(() => {
+      el?.removeEventListener("scroll", watchTop);
+      observer?.disconnect();
     });
     return (
       <Polymorphic
