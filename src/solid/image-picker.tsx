@@ -8,7 +8,7 @@ import {
   Show,
   Switch,
 } from "solid-js";
-import { activeOf, focusWithoutTracking } from "../lib/behavior/focus-scope.js";
+import { focusedIn, focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
 import { SECTION_INNER_RADIUS } from "../lib/section-tokens.js";
@@ -220,7 +220,7 @@ function ImageGallery(
 
   // A control that disables or leaves drops focus to the page, which a sealed dialog's trap moves outside, closing the gallery.
   const holdFocus = () => focusWithoutTracking(panel);
-  const focused = () => (panel ? activeOf(panel) : null);
+  const focused = () => (panel ? focusedIn(panel) : null);
   const focusLost = () => {
     const at = focused();
     return !at || at === document.body;

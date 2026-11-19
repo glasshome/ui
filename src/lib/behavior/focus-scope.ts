@@ -36,16 +36,59 @@ export interface FocusScope {
 const DOCUMENT_NODE = 9;
 const SHADOW_ROOT_NODE = 11;
 
-/** The focused element in the node's own root, or null while focus is in another root. */
-export function activeOf(node: Node): Element | null {
-  const root = node.getRootNode();
-  if (root.nodeType === DOCUMENT_NODE) return (root as Document).activeElement;
-  if (root.nodeType !== SHADOW_ROOT_NODE) return null;
-  let host = (root as ShadowRoot).host;
+const outermostHost = (root: ShadowRoot): Element => {
+  let host = root.host;
   for (let up = host.getRootNode(); up.nodeType === SHADOW_ROOT_NODE; up = host.getRootNode())
     host = (up as ShadowRoot).host;
+  return host;
+};
+
+function readFocus(root: Node): Element | null {
+  if (root.nodeType === DOCUMENT_NODE) return (root as Document).activeElement;
+  const host = outermostHost(root as ShadowRoot);
   // A shadow root holds focus only while the document's focus sits on its outermost host.
   return host.ownerDocument.activeElement === host ? (root as ShadowRoot).activeElement : null;
+}
+
+const focusByRoot = new WeakMap<Node, { at: Element | null }>();
+
+/** The focused element in the node's own root, kept from focusin and focusout, which a sealed widget receives without asking the page. */
+export function focusedIn(node: Node): Element | null {
+  const root = node.getRootNode();
+  if (root.nodeType !== DOCUMENT_NODE && root.nodeType !== SHADOW_ROOT_NODE) return null;
+  let tracked = focusByRoot.get(root);
+  if (!tracked) {
+    // One read when the listeners attach; a focus move runs its events inside the call that makes it.
+    const seen = { at: readFocus(root) };
+    root.addEventListener(
+      "focusin",
+      (e) => {
+        seen.at = e.target instanceof Element ? e.target : null;
+      },
+      true,
+    );
+    root.addEventListener("focusout", () => (seen.at = null), true);
+    focusByRoot.set(root, seen);
+    tracked = seen;
+  }
+  const at = tracked.at;
+  if (!at?.isConnected || at.getRootNode() !== root) return null;
+  return at === at.ownerDocument.body ? null : at;
+}
+
+export const activeOf = focusedIn;
+
+/** Whether focus sits on nothing, or still inside `el`, so a closing panel may hand it back. */
+export function focusFell(el: Element): boolean {
+  const inner = focusedIn(el);
+  if (inner) return el.contains(inner);
+  const root = el.getRootNode();
+  if (root.nodeType === DOCUMENT_NODE) return true;
+  // A panel already taken out of the page answers from the page's own focus.
+  if (root.nodeType !== SHADOW_ROOT_NODE) return !focusedIn(el.ownerDocument);
+  const host = outermostHost(root as ShadowRoot);
+  const page = focusedIn(host);
+  return !page || page === host;
 }
 
 /** Whether `el` holds focus, from its own focus and blur events, which a sealed widget receives without asking the page. */
@@ -70,7 +113,7 @@ export function focusWithoutTracking(
 ): boolean {
   if (!el) return false;
   untrack(() => el.focus({ preventScroll: options?.preventScroll ?? true }));
-  return activeOf(el) === el;
+  return focusedIn(el) === el;
 }
 
 // Scopes in activation order: a later one sits above the earlier ones.
@@ -121,7 +164,7 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
     trapped: boolean,
   ): { release: () => void; untrap: () => void } => {
     skipNext = false;
-    const previous = pendingRestore ? pendingRestore.target : activeOf(container);
+    const previous = pendingRestore ? pendingRestore.target : focusedIn(container);
     pendingRestore = undefined;
     activeScopes.push(container);
 
@@ -164,7 +207,7 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
       // Chromium fires focusout while removing the focused node; refocusing then strands keys on a detached node.
       const pressed = tab;
       queueMicrotask(() => {
-        const current = activeOf(container);
+        const current = focusedIn(container);
         if (trapping && container.isConnected && !(current && container.contains(current))) {
           if (pressed) toCandidate(pressed.shift);
           else focusWithoutTracking(container);
@@ -197,7 +240,7 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
       queueMicrotask(() => {
         if (pendingRestore !== pending) return;
         pendingRestore = undefined;
-        const current = activeOf(container);
+        const current = focusedIn(container);
         const tookOver = activeScopes.some((scope) => current && scope.contains(current));
         if (!tookOver && previous instanceof HTMLElement && previous.isConnected) {
           focusWithoutTracking(previous);

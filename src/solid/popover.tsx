@@ -18,7 +18,12 @@ import { type Align, controlRadius, type Side } from "../lib/anchor-placement.js
 import { createAnchored } from "../lib/behavior/anchored.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createDismiss } from "../lib/behavior/dismiss.js";
-import { activeOf, createFocusScope, focusWithoutTracking } from "../lib/behavior/focus-scope.js";
+import {
+  createFocusScope,
+  focusedIn,
+  focusFell,
+  focusWithoutTracking,
+} from "../lib/behavior/focus-scope.js";
 import { createHideOutside } from "../lib/behavior/hide-outside.js";
 import { registerLayer } from "../lib/behavior/layer-stack.js";
 import {
@@ -250,13 +255,6 @@ interface PopoverContentProps extends Omit<ComponentProps<"div">, "ref"> {
   forceMount?: boolean;
 }
 
-function focusLostFrom(panel: HTMLElement): boolean {
-  const page = document.activeElement;
-  if (!page || page === document.body) return true;
-  const active = activeOf(panel);
-  return active !== null && panel.contains(active);
-}
-
 const PopoverContent: Component<PopoverContentProps> = (props) => {
   const ctx = usePopover();
   const [local, rest] = splitProps(props, [
@@ -351,7 +349,7 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
     initialFocus: (container) => {
       if (!vetoed(local.onOpenAutoFocus, new Event("openautofocus", { cancelable: true })))
         return null;
-      const active = activeOf(container);
+      const active = focusedIn(container);
       return active instanceof HTMLElement && container.contains(active) ? active : container;
     },
   });
@@ -379,7 +377,7 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
       }
       // After the press's own focus change: the trigger takes focus only if nothing else did.
       setTimeout(() => {
-        if (trigger.isConnected && focusLostFrom(from)) focusWithoutTracking(trigger);
+        if (trigger.isConnected && focusFell(from)) focusWithoutTracking(trigger);
       }, 0);
     },
   );
