@@ -79,7 +79,6 @@ export function TableFilterSelect(props: {
       )}
     >
       <SelectTrigger
-        data-slot="table-filter-select"
         class={cn("h-9 w-auto gap-1.5 text-xs", props.class)}
         aria-label={props.ariaLabel}
       >

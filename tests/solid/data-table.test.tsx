@@ -201,7 +201,7 @@ describe("TableFilterSelect", () => {
         icon="lucide:globe"
       />
     ));
-    const trigger = container.querySelector<HTMLElement>('[data-slot="table-filter-select"]');
+    const trigger = container.querySelector<HTMLElement>('[aria-label="Letter"]');
     expect(trigger?.querySelector("em")?.dataset.label).toBe("a");
     expect(trigger?.querySelector("svg")?.dataset.icon).toBe("lucide:globe");
     await userEvent.click(trigger as HTMLElement);
@@ -219,7 +219,7 @@ describe("TableFilterSelect", () => {
         ariaLabel="Letter"
       />
     ));
-    const icon = container.querySelector('[data-slot="table-filter-select"] svg');
+    const icon = container.querySelector('[aria-label="Letter"] svg');
     expect((icon as SVGElement | null)?.dataset.icon).toBe("lucide:funnel");
   });
 });
