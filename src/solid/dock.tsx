@@ -87,15 +87,27 @@ interface DockIconButtonProps extends ComponentProps<"button"> {
 
 const DOCK_PAGE_MS = 300;
 
+// The sizes a ResizeObserver would report, for a measure that cannot wait for it.
 const boxSizes = (el: HTMLElement) => {
   const style = getComputedStyle(el);
   const px = (value: string) => Number.parseFloat(value) || 0;
+  const edges = (a: "Left" | "Top", b: "Right" | "Bottom") =>
+    px(style[`padding${a}`]) +
+    px(style[`padding${b}`]) +
+    px(style[`border${a}Width`]) +
+    px(style[`border${b}Width`]);
+  const inline = edges("Left", "Right");
+  const block = edges("Top", "Bottom");
+  const width = px(style.width);
+  const height = px(style.height);
+  if (style.boxSizing === "border-box")
+    return {
+      content: { inlineSize: width - inline, blockSize: height - block },
+      border: { inlineSize: width, blockSize: height },
+    };
   return {
-    content: {
-      inlineSize: el.clientWidth - px(style.paddingLeft) - px(style.paddingRight),
-      blockSize: el.clientHeight - px(style.paddingTop) - px(style.paddingBottom),
-    },
-    border: { inlineSize: el.offsetWidth, blockSize: el.offsetHeight },
+    content: { inlineSize: width, blockSize: height },
+    border: { inlineSize: width + inline, blockSize: height + block },
   };
 };
 
@@ -202,8 +214,8 @@ const Dock: Component<DockProps> = (props) => {
   createEffect(() => {
     const h = local.hold;
     if (!h) return;
-    const w = surfaceRef?.clientWidth ?? 0;
-    const ht = surfaceRef?.clientHeight ?? 0;
+    const w = surfaceSize?.border.inlineSize ?? 0;
+    const ht = surfaceSize?.border.blockSize ?? 0;
     // Reaches the farthest corner exactly at full scale, so the fill ends as the hold does.
     setHoldPoint({
       x: h.x,
