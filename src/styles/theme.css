@@ -690,9 +690,7 @@ html[data-motion="live"] [data-motion-reader] {
     transform: translate3d(0, 100%, 0);
   }
 }
-/* --bs-duration and --bs-ease are published inline by BottomSheetContent from
-   bottom-sheet/constants.ts; --modal-max-h comes from MODAL_MAX_H, the height
-   cap every modal panel shares. */
+/* Timing matches bottom-sheet/constants.ts as literals: a var() animation here can restyle the whole sheet subtree. */
 .bs-content {
   transform: translate3d(0, 100%, 0);
   bottom: var(--bs-keyboard-offset, 0);
@@ -701,7 +699,7 @@ html[data-motion="live"] [data-motion-reader] {
   max-height: calc(var(--modal-max-h) - var(--bs-keyboard-offset, 0px));
 }
 .bs-content[data-state="opening"] {
-  animation: bs-slide-up var(--bs-duration) var(--bs-ease) forwards;
+  animation: bs-slide-up 500ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
 }
 .bs-content[data-state="open"],
 .bs-content[data-state="pressing"],
@@ -710,7 +708,7 @@ html[data-motion="live"] [data-motion-reader] {
   transform: translate3d(0, 0, 0);
 }
 .bs-content[data-state="closing"] {
-  animation: bs-slide-down var(--bs-duration) var(--bs-ease) forwards;
+  animation: bs-slide-down 500ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
 }
 /* A body at its top leaves a downward swipe to the sheet's drag, since a touchmove listener may be passive.
    Widgets ship this sheet, so it keeps to syntax the sealed realm's CSS scanner accepts. */
