@@ -10,6 +10,8 @@ provideIcons({ bundled: {} });
 installDenyFetch();
 
 await commands.animationRate();
+// The file before leaves the pointer anywhere; a control mounted under it starts hovered.
+await commands.mouse("move", innerWidth - 1, innerHeight - 1);
 
 declare module "vitest/browser" {
   interface BrowserCommands {
