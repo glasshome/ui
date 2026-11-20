@@ -1,4 +1,4 @@
-import { hasNoDragAncestor, shouldDrag } from "./arbitration.js";
+import { hasNoDragAncestor, scrollerAhead, shouldDrag } from "./arbitration.js";
 import {
   CLOSE_DISTANCE_RATIO,
   CLOSE_VELOCITY_PX_PER_MS,
@@ -12,6 +12,8 @@ import { VelocityTracker } from "./velocity.js";
 
 const TRANSITION_CSS = `transform ${TRANSITION_MS}ms ${EASE}`;
 const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+const FLING_DECAY_PER_MS = 0.998;
+const FLING_STOP_PX_PER_MS = 0.02;
 
 interface DragHandle {
   destroy: () => void;
@@ -43,6 +45,9 @@ export function attachDrag(opts: DragOptions): DragHandle {
   let height = 0;
   let lastTotalDy = 0;
   let shownDy = 0;
+  let scroller: Element | null = null;
+  let scrollStart = 0;
+  let fling = 0;
 
   const isDraggableState = (): boolean => {
     const s = getState();
@@ -56,7 +61,45 @@ export function attachDrag(opts: DragOptions): DragHandle {
     el.style.transform = `translate3d(0, ${applied}px, 0)`;
   };
 
+  const stopFling = () => {
+    if (fling) cancelAnimationFrame(fling);
+    fling = 0;
+  };
+
+  const flingScroll = (box: Element, velocity: number) => {
+    if (reducedMotion() || Math.abs(velocity) < FLING_STOP_PX_PER_MS) return;
+    let v = velocity;
+    let at = box.scrollTop;
+    let last = performance.now();
+    const step = (now: number) => {
+      const dt = now - last;
+      last = now;
+      at += v * dt;
+      v *= FLING_DECAY_PER_MS ** dt;
+      box.scrollTop = at;
+      fling = Math.abs(v) < FLING_STOP_PX_PER_MS ? 0 : requestAnimationFrame(step);
+    };
+    fling = requestAnimationFrame(step);
+  };
+
+  // WebKit drops pan-down, so the body there takes touch-action none and the sheet scrolls it under the finger.
+  const takeScroll = (target: Element | null, totalDy: number): Element | null => {
+    const box = scrollerAhead(target, el, totalDy);
+    if (!box || getComputedStyle(box).touchAction !== "none") return null;
+    scroller = box;
+    scrollStart = box.scrollTop;
+    if (pointerId !== null) {
+      try {
+        el.setPointerCapture(pointerId);
+      } catch {
+        /* pointer already released */
+      }
+    }
+    return box;
+  };
+
   const onPointerDown = (e: PointerEvent) => {
+    stopFling();
     if (e.button !== 0 && e.pointerType !== "touch") return;
     if (!isDraggableState()) return;
     if (pointerId !== null) return; // ignore secondary pointers
@@ -100,12 +143,21 @@ export function attachDrag(opts: DragOptions): DragHandle {
     const totalDy = e.clientY - startY;
     const totalDx = e.clientX - startX;
     lastTotalDy = totalDy;
+    if (scroller) {
+      tracker.add(totalDy, e.timeStamp);
+      scroller.scrollTop = scrollStart - totalDy;
+      return;
+    }
 
     if (!movedPastDeadZone) {
       if (Math.abs(totalDy) + Math.abs(totalDx) < DEAD_ZONE_PX) return;
       if (!shouldDrag(pointerTarget, el, totalDy, totalDx)) {
-        dragAborted = true;
         if (getState() === "pressing") setState("open");
+        const box = Math.abs(totalDy) >= Math.abs(totalDx) && takeScroll(pointerTarget, totalDy);
+        if (box) {
+          tracker.add(totalDy, e.timeStamp);
+          box.scrollTop = scrollStart - totalDy;
+        } else dragAborted = true;
         return;
       }
       commitDrag();
@@ -119,6 +171,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
     pointerId = null;
     pointerTarget = null;
     dragAborted = false;
+    scroller = null;
   };
 
   const settleClose = () => {
@@ -168,6 +221,15 @@ export function attachDrag(opts: DragOptions): DragHandle {
     const wasDragging = movedPastDeadZone;
     safeReleaseCapture();
 
+    if (scroller) {
+      const box = scroller;
+      const velocity = tracker.compute(e.timeStamp);
+      if (Math.abs(lastTotalDy) > DEAD_ZONE_PX) suppressNextClick();
+      cleanupDrag();
+      flingScroll(box, -velocity);
+      return;
+    }
+
     if (!wasDragging) {
       cleanupDrag();
       setState("open");
@@ -195,9 +257,8 @@ export function attachDrag(opts: DragOptions): DragHandle {
     else setState("open");
   };
 
-  // preventDefault while drag committed — stops browser converting to scroll.
   const onTouchMove = (e: TouchEvent) => {
-    if (movedPastDeadZone) e.preventDefault();
+    if (movedPastDeadZone || scroller) e.preventDefault();
   };
 
   el.addEventListener("pointerdown", onPointerDown);
@@ -213,6 +274,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
       el.removeEventListener("pointerup", onPointerUp);
       el.removeEventListener("pointercancel", onPointerCancel);
       el.removeEventListener("touchmove", onTouchMove);
+      stopFling();
       cleanupDrag();
     },
   };
