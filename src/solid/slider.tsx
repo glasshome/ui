@@ -66,14 +66,19 @@ const Slider: Component<SliderProps> = (props) => {
   const drag = createDrag({
     disabled,
     start: (e, rect) => {
-      const thumb = (e.target as Element).closest('[data-slot="slider-thumb"]');
-      const pressed = thumbs().findIndex((el) => el === thumb);
+      const pressed = thumbs().findIndex(
+        (el) => el === (e.target as Element).closest('[data-slot="slider-thumb"]'),
+      );
       const at = alongTrack(e, rect);
+      const raw = min() + at * (max() - min());
       if (pressed >= 0) {
-        active = pressed;
-        grab = at - range.fraction(range.values()[pressed] ?? 0);
+        const under = thumbs().flatMap((el, i) => {
+          const box = el.getBoundingClientRect();
+          return e.clientX >= box.left && e.clientX <= box.right ? [i] : [];
+        });
+        active = range.closestThumb(raw, under.length > 0 ? under : [pressed]);
+        grab = at - range.fraction(range.values()[active] ?? 0);
       } else {
-        const raw = min() + at * (max() - min());
         grab = 0;
         active = range.closestThumb(raw);
         range.setThumb(active, raw);

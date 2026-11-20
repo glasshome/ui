@@ -74,7 +74,7 @@ export interface Range {
   fraction: (value: number) => number;
   valueAt: (fraction: number) => number;
   setThumb: (index: number, value: number) => void;
-  closestThumb: (value: number) => number;
+  closestThumb: (value: number, among?: number[]) => number;
   keyDown: (e: KeyboardEvent, index: number) => void;
   blur: () => void;
   dragEnd: () => void;
@@ -132,11 +132,13 @@ export function createRange(options: RangeOptions): Range {
     return Math.min(max, Math.max(min, Math.round((raw - min) / step) * step + min));
   };
 
-  const closestThumb = (value: number) => {
-    const distances = values().map((v) => Math.abs(v - value));
+  const closestThumb = (value: number, among?: number[]) => {
+    const pool = among ?? values().map((_, i) => i);
+    const distances = pool.map((i) => Math.abs((values()[i] ?? 0) - value));
     const closest = Math.min(...distances);
-    const first = distances.indexOf(closest);
-    return value < (values()[first] ?? 0) ? first : distances.lastIndexOf(closest);
+    const near = pool.filter((_, k) => distances[k] === closest);
+    const first = near[0] ?? 0;
+    return value < (values()[first] ?? 0) ? first : (near[near.length - 1] ?? first);
   };
 
   const ACTIONS: Record<RangeKey, (index: number) => void> = {
