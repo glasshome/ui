@@ -83,8 +83,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
-          "max": 1,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 2,
+          "reason": "2026-11-20: the exit ends by a 120 ms timer and no animation, so its unmount lays out inside the step only when the host is slow; the drive now draws two frames before it settles, which puts the timer inside more often"
         }
       }
     },
@@ -199,8 +199,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         },
         "layouts": {
-          "max": 1,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 2,
+          "reason": "2026-11-20: the exit ends by a 120 ms timer and no animation, so its unmount lays out inside the step only when the host is slow; the drive now draws two frames before it settles, which puts the timer inside more often"
         }
       }
     },

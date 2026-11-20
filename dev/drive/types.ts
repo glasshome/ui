@@ -41,6 +41,8 @@ export interface StepReport {
   ax: string;
   focus: string[];
   markers: MarkerRow[];
+  /** Properties the step's animations interpolate off the compositor, sorted. */
+  mainThreadMotion: string[];
   perf: StepPerf;
 }
 

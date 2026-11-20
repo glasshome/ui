@@ -17,8 +17,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 134,
-          "reason": "2026-11-19: raised to the CI runner's counts over three runs at 2.5x to 4.72x T50 rates, plus 25% on elements restyled; motion steps restyle and lay out once a frame drawn"
+          "max": 74,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 16,
@@ -30,6 +30,7 @@
         }
       }
     },
+    "mainThreadMotion": ["clipPath"],
     "guest": {
       "workUnits": {
         "max": 8,
@@ -55,8 +56,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 134,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 74,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 16,
@@ -69,8 +70,8 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 40,
-          "reason": "2026-11-19: raised to the CI runner's counts over three runs at 2.5x to 4.72x T50 rates, plus 25% on elements restyled; motion steps restyle and lay out once a frame drawn"
+          "max": 37,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 15,
@@ -82,6 +83,7 @@
         }
       }
     },
+    "mainThreadMotion": ["clipPath"],
     "guest": {
       "workUnits": {
         "max": 9,
@@ -107,8 +109,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 134,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 74,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 16,
@@ -121,8 +123,8 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 47,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 39,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 15,
@@ -134,6 +136,7 @@
         }
       }
     },
+    "mainThreadMotion": ["clipPath"],
     "guest": {
       "workUnits": {
         "max": 8,
@@ -145,8 +148,8 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 73,
-          "reason": "2026-11-19: raised to the CI runner's counts over three runs at 2.5x to 4.72x T50 rates, plus 25% on elements restyled; motion steps restyle and lay out once a frame drawn"
+          "max": 53,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 10,
@@ -159,8 +162,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 90,
-          "reason": "2026-11-19: raised to the CI runner's counts over three runs at 2.5x to 4.72x T50 rates, plus 25% on elements restyled; motion steps restyle and lay out once a frame drawn"
+          "max": 68,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 16,
@@ -186,6 +189,7 @@
         }
       }
     },
+    "mainThreadMotion": ["clipPath"],
     "guest": {
       "workUnits": {
         "max": 12,
@@ -211,8 +215,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 138,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 78,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 16,
@@ -225,8 +229,8 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 43,
-          "reason": "2026-11-19: raised to the CI runner's counts over three runs at 2.5x to 4.72x T50 rates, plus 25% on elements restyled; motion steps restyle and lay out once a frame drawn"
+          "max": 39,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 15,
@@ -237,7 +241,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
-    }
+    },
+    "mainThreadMotion": ["clipPath"]
   },
   "scroll-follows": {
     "steps": {
@@ -257,8 +262,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 130,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 74,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 16,
@@ -284,6 +289,7 @@
         }
       }
     },
+    "mainThreadMotion": ["clipPath"],
     "guest": {
       "workUnits": {
         "max": 8,

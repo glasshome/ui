@@ -28,6 +28,7 @@ function step(index: number, over: Partial<StepReport> = {}): StepReport {
     screenshot: `/tmp/step-${index}.png`,
     ax: AX,
     focus: ["tablist", 'tab "Lights"'],
+    mainThreadMotion: [],
     markers: [{ part: 'tab "Lights"', attrs: { "data-selected": "" } }],
     perf: PERF,
     ...over,

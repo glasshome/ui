@@ -19,6 +19,7 @@ type StepBudget = Record<(typeof GATED)[number], Limit>;
 
 interface ScenarioBudget {
   steps: Record<string, StepBudget>;
+  mainThreadMotion?: string[];
   guest?: unknown;
 }
 
@@ -35,11 +36,18 @@ export function readBudget(slug: string): Budget {
 export function checkBudget(report: RunReport, budget: Budget): string[] {
   const scenario = budget[report.scenario];
   if (!scenario) return [`${report.scenario} has no budget`];
-  return report.steps.flatMap(({ index, perf }) => {
+  const allowed = scenario.mainThreadMotion ?? [];
+  return report.steps.flatMap(({ index, perf, mainThreadMotion }) => {
     const limits = scenario.steps[String(index)];
     if (!limits) return [`${report.scenario} step ${index} has no budget`];
-    return GATED.filter((field) => perf[field] > limits[field].max).map(
-      (field) => `${report.scenario} step ${index} ${field} ${perf[field]} > ${limits[field].max}`,
-    );
+    return [
+      ...GATED.filter((field) => perf[field] > limits[field].max).map(
+        (field) =>
+          `${report.scenario} step ${index} ${field} ${perf[field]} > ${limits[field].max}`,
+      ),
+      ...mainThreadMotion
+        .filter((property) => !allowed.includes(property))
+        .map((p) => `${report.scenario} step ${index} animates ${p} on the main thread`),
+    ];
   });
 }
