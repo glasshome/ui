@@ -18,6 +18,14 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.44.2](https://github.com/glasshome/ui/compare/v1.44.1...v1.44.2) (2026-11-20)
+
+
+### Bug Fixes
+
+* **glass:** WebKit before 17.4 transitions only plain properties ([bbb0f89](https://github.com/glasshome/ui/commit/bbb0f89da0d703b7f0493f4b6ac63cadee2795ea))
+* **glass:** WebKit before 17.4 transitions only plain properties ([b6d43a7](https://github.com/glasshome/ui/commit/b6d43a7ae20f642f83ce81a8aca918bf828f125f))
+
 ## [1.44.1](https://github.com/glasshome/ui/compare/v1.44.0...v1.44.1) (2026-11-19)
 
 
