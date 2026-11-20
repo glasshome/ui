@@ -18,6 +18,14 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.44.4](https://github.com/glasshome/ui/compare/v1.44.3...v1.44.4) (2026-11-20)
+
+
+### Bug Fixes
+
+* **bottom-sheet:** time the slide with literals so closing restyles only the sheet ([2795ad1](https://github.com/glasshome/ui/commit/2795ad1bb8e4f96de6d850333f5355693ba265d9))
+* **bottom-sheet:** time the slide with literals so closing restyles only the sheet ([ea1965c](https://github.com/glasshome/ui/commit/ea1965ce01d85f709162c7bdfad0ffd11f91f1de))
+
 ## [1.44.3](https://github.com/glasshome/ui/compare/v1.44.2...v1.44.3) (2026-11-20)
 
 
