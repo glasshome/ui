@@ -66,21 +66,14 @@ const Slider: Component<SliderProps> = (props) => {
   const drag = createDrag({
     disabled,
     start: (e, rect) => {
-      const pressed = thumbs().findIndex(
-        (el) => el === (e.target as Element).closest('[data-slot="slider-thumb"]'),
-      );
+      const onThumb = (e.target as Element).closest('[data-slot="slider-thumb"]') !== null;
       const at = alongTrack(e, rect);
       const raw = min() + at * (max() - min());
-      if (pressed >= 0) {
-        const under = thumbs().flatMap((el, i) => {
-          const box = el.getBoundingClientRect();
-          return e.clientX >= box.left && e.clientX <= box.right ? [i] : [];
-        });
-        active = range.closestThumb(raw, under.length > 0 ? under : [pressed]);
+      active = range.closestThumb(raw);
+      if (onThumb) {
         grab = at - range.fraction(range.values()[active] ?? 0);
       } else {
         grab = 0;
-        active = range.closestThumb(raw);
         range.setThumb(active, raw);
       }
       focusWithoutTracking(thumbs()[active]);
