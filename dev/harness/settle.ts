@@ -27,8 +27,8 @@ const afterFrame = async () => {
 const CHANGING_FRAMES = 60;
 
 /**
- * Done once two frames in a row change no DOM and start no finite animation, and every one
- * started has run out. A ResizeObserver answer applied a frame later is such a change.
+ * Done once two frames in a row change no DOM, scroll nothing and start no finite animation, and
+ * every one started has run out. A ResizeObserver answer applied a frame later is such a change.
  */
 export async function settle(): Promise<void> {
   let changed = false;
@@ -40,6 +40,9 @@ export async function settle(): Promise<void> {
       attributes: true,
       characterData: true,
     });
+  const scrolled = () => (changed = true);
+  for (const root of [document, ...CLOSED_ROOTS])
+    root.addEventListener("scroll", scrolled, { capture: true, passive: true });
   try {
     let quiet = 0;
     let changing = 0;
@@ -57,5 +60,7 @@ export async function settle(): Promise<void> {
     }
   } finally {
     changes.disconnect();
+    for (const root of [document, ...CLOSED_ROOTS])
+      root.removeEventListener("scroll", scrolled, { capture: true });
   }
 }

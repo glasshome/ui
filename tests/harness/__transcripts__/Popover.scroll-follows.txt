@@ -1,2 +1,2 @@
 document
-
+dialog | button, Lights
