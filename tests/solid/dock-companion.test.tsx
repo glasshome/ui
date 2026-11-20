@@ -16,6 +16,9 @@ const items = (n: number) =>
 /* Room for five of twelve items at the sm sizes, so three pages. */
 const OVERFLOWING_BOX = 340;
 
+/* Every slot has a dot; the ones past the last page draw nothing and take no input. */
+const PAGE_DOTS = '[data-slot="dock-page"]:not([inert])';
+
 const rectOf = (el: Element | null | undefined) => el?.getBoundingClientRect() as DOMRect;
 
 async function mount(placement: DockPlacement, open: boolean, box = { width: 800, height: 600 }) {
@@ -75,7 +78,7 @@ describe("Dock companion", () => {
     await frames(3);
     const companion = rectOf(view.container.querySelector('[data-slot="dock-companion"]'));
     const dock = rectOf(view.container.querySelector('[data-slot="dock"]'));
-    expect(view.container.querySelector('[data-slot="dock-pages"]')).not.toBeNull();
+    expect(view.container.querySelector(PAGE_DOTS)).not.toBeNull();
     const surface = rectOf(view.container.querySelector('[data-slot="dock-surface"]'));
     const bar = rectOf(view.container.querySelector('[data-slot="dock-bar"]'));
     expect(companion.bottom).toBeLessThanOrEqual(dock.bottom + 1);
@@ -149,7 +152,7 @@ describe("Side dock pages", () => {
       ));
       await frames(2);
       return {
-        paged: view.container.querySelector('[data-slot="dock-pages"]') !== null,
+        paged: view.container.querySelector(PAGE_DOTS) !== null,
         width: rectOf(view.container.querySelector('[data-slot="dock-surface"]')).width,
       };
     };
@@ -178,7 +181,7 @@ describe("Dock lead", () => {
     const lead = rectOf(view.container.querySelector('[data-slot="dock-lead"]'));
     const bar = rectOf(view.container.querySelector('[data-slot="dock-bar"]'));
     const surface = rectOf(view.container.querySelector('[data-slot="dock-surface"]'));
-    expect(view.container.querySelector('[data-slot="dock-pages"]')).not.toBeNull();
+    expect(view.container.querySelector(PAGE_DOTS)).not.toBeNull();
     expect(lead.right).toBeLessThanOrEqual(bar.left);
     expect(bar.right).toBeLessThanOrEqual(surface.right + 1);
     expect(surface.width).toBeLessThanOrEqual(OVERFLOWING_BOX);

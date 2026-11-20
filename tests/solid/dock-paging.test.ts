@@ -1,35 +1,7 @@
 import { describe, expect, it } from "vitest";
-import {
-  edgeZone,
-  moveId,
-  pageCount,
-  pageOf,
-  pageOffset,
-  slotAt,
-  stripWidth,
-} from "../../src/solid/dock-paging.js";
+import { edgeZone, moveId, pageOf, pageOffset, slotAt } from "../../src/solid/dock-paging.js";
 
 describe("dock paging", () => {
-  it("one page while everything fits", () => {
-    expect(pageCount(400, 400)).toBe(1);
-    expect(pageCount(320, 400)).toBe(1);
-  });
-
-  it("counts a page per viewport of strip, the last one part-full", () => {
-    expect(pageCount(800, 400)).toBe(2);
-    expect(pageCount(900, 400)).toBe(3);
-  });
-
-  it("a strip a sub-pixel over its viewport is still one page", () => {
-    expect(pageCount(726, 725.606)).toBe(1);
-    expect(pageCount(401, 400)).toBe(1);
-  });
-
-  it("an unmeasured strip has a single page", () => {
-    expect(pageCount(0, 0)).toBe(1);
-    expect(pageCount(800, 0)).toBe(1);
-  });
-
   it("reads the page from where the strip is scrolled", () => {
     expect(pageOf(0, 400)).toBe(0);
     expect(pageOf(180, 400)).toBe(0);
@@ -42,20 +14,6 @@ describe("dock paging", () => {
     expect(pageOffset(1, 400, 900)).toBe(400);
     expect(pageOffset(2, 400, 900)).toBe(500);
     expect(pageOffset(9, 400, 900)).toBe(500);
-  });
-
-  it("trims the strip to the last whole item", () => {
-    expect(stripWidth(222, 40, 2)).toBe(208);
-    expect(stripWidth(208, 40, 2)).toBe(208);
-  });
-
-  it("keeps one item when not even one fits", () => {
-    expect(stripWidth(30, 40, 2)).toBe(30);
-  });
-
-  it("leaves an unmeasured strip alone", () => {
-    expect(stripWidth(222, 0, 2)).toBe(222);
-    expect(stripWidth(0, 40, 2)).toBe(0);
   });
 });
 
