@@ -47,6 +47,14 @@ async function pressAt(x: number, y: number) {
   await settle();
 }
 
+/** The thumbs overlap at their minimum distance, so the lower one is grabbed where the upper one is not on top of it. */
+async function dragFrom(from: { x: number; y: number }, dx: number) {
+  await commands.mouse("move", from.x, from.y);
+  await commands.mouse("down", from.x, from.y);
+  for (let i = 1; i <= 4; i++) await commands.mouse("move", from.x + (dx * i) / 4, from.y);
+  await commands.mouse("up", from.x + dx, from.y);
+}
+
 const shifted = (key: string) => userEvent.keyboard(`{Shift>}{${key}}{/Shift}`);
 
 const Around = (props: { children: JSX.Element }) => (
@@ -160,9 +168,15 @@ describe("Slider contract", () => {
     await settle();
     await run({ key: "End" });
     expect(now("Range")).toEqual([25, 30]);
+    expect(centre(low).x).toBeCloseTo(track.left + track.width * 0.25, 0);
     await run({ key: "ArrowRight" });
     expect(now("Range")).toEqual([25, 30]);
-    await input.drag(low, { x: 200, y: 0 });
+    const grip = {
+      x: (low.getBoundingClientRect().left + high.getBoundingClientRect().left) / 2,
+      y: centre(low).y,
+    };
+    expect(document.elementFromPoint(grip.x, grip.y)).toBe(low);
+    await dragFrom(grip, 200);
     await settle();
     expect(now("Range")).toEqual([25, 30]);
     const right = track.right - 1;
