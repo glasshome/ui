@@ -72,7 +72,7 @@ describe("Dock placement", () => {
     const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]');
     expect(bar?.className).toContain("snap-y");
     expect((bar?.scrollHeight ?? 0) > (bar?.clientHeight ?? 0)).toBe(true);
-    const dots = container.querySelectorAll('[data-slot="dock-pages"] button');
+    const dots = container.querySelectorAll('[data-slot="dock-page"]:not([inert])');
     expect(dots).toHaveLength(3);
     expect(dots[0]?.getAttribute("aria-current")).toBe("true");
   });

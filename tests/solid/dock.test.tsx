@@ -5,6 +5,9 @@ import { Dock } from "../../src/solid/dock.js";
 import { frames } from "../frames.js";
 import { setViewportWidth } from "../viewport.js";
 
+/* Every slot has a dot; the ones past the last page draw nothing and take no input. */
+const PAGE_DOTS = '[data-slot="dock-page"]:not([inert])';
+
 describe("Dock paging", () => {
   const items = (n: number) =>
     Array.from({ length: n }, (_, i) => ({
@@ -25,7 +28,7 @@ describe("Dock paging", () => {
     ));
     await frames(2);
 
-    expect(container.querySelector('[data-slot="dock-pages"]')).toBeNull();
+    expect(container.querySelectorAll(PAGE_DOTS)).toHaveLength(0);
   });
 
   it("takes the room it has from the box the app gave it, not from its own surface", async () => {
@@ -38,15 +41,12 @@ describe("Dock paging", () => {
       </div>
     ));
     await frames(2);
-    expect(container.querySelector<HTMLElement>('[data-slot="dock-bar"]')?.style.width).not.toBe(
-      "",
-    );
+    expect(container.querySelectorAll(PAGE_DOTS).length).toBeGreaterThan(1);
     setBox(1200);
     await setViewportWidth(1000);
     await frames(2);
 
-    expect(container.querySelector('[data-slot="dock-pages"]')).toBeNull();
-    expect(container.querySelector<HTMLElement>('[data-slot="dock-bar"]')?.style.width).toBe("");
+    expect(container.querySelectorAll(PAGE_DOTS)).toHaveLength(0);
   });
 
   it("shows a dot per page once the strip overflows, the first one current", async () => {
@@ -57,7 +57,7 @@ describe("Dock paging", () => {
     ));
     await frames(2);
 
-    const dots = container.querySelectorAll('[data-slot="dock-pages"] button');
+    const dots = container.querySelectorAll(PAGE_DOTS);
     expect(dots).toHaveLength(3);
     expect(dots[0]?.getAttribute("aria-current")).toBe("true");
     expect(dots[1]?.getAttribute("aria-current")).toBeNull();
@@ -75,6 +75,37 @@ describe("Dock paging", () => {
     expect(bar?.className).toContain("snap-x");
     expect(container.querySelector('[data-slot="dock-item"]')?.className).toContain("snap-start");
   });
+
+  it.each(["bottom", "left", "right"] as const)(
+    "draws a %s dock's pages in its first frame and never moves them after",
+    async (placement) => {
+      const side = placement !== "bottom";
+      const { container } = render(() => (
+        <div
+          style={{ width: side ? "200px" : `${OVERFLOWING_BOX}px`, height: side ? "340px" : "" }}
+        >
+          <Dock items={items(12)} placement={placement} />
+        </div>
+      ));
+      const look = () => {
+        const box = (slot: string) => {
+          const r = container.querySelector(`[data-slot="${slot}"]`)?.getBoundingClientRect();
+          return [r?.left, r?.top, r?.width, r?.height].map((n) => Math.round(n ?? 0));
+        };
+        const drawn = [...container.querySelectorAll('[data-slot="dock-page"]')].filter((dot) => {
+          const r = dot.getBoundingClientRect();
+          return r.width > 0 && r.height > 0;
+        }).length;
+        return { surface: box("dock-surface"), bar: box("dock-bar"), drawn };
+      };
+      const first = look();
+      expect(first.drawn).toBe(3);
+      for (let i = 0; i < 4; i++) {
+        await frames(1);
+        expect(look()).toEqual(first);
+      }
+    },
+  );
 });
 
 describe("Dock hold", () => {

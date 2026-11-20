@@ -25,7 +25,7 @@ import {
 import { cn } from "../lib/utils.js";
 import { Badge } from "./badge.js";
 import { createDockReorder, DockMoveGrip } from "./dock-edit.js";
-import { pageCount, pageOf, pageOffset, stripWidth } from "./dock-paging.js";
+import { pageOf, pageOffset } from "./dock-paging.js";
 import { Icon } from "./icon.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js";
@@ -46,7 +46,8 @@ interface DockItem {
 
 type DockPlacement = "bottom" | "left" | "right";
 
-interface DockProps extends ComponentProps<"div"> {
+interface DockProps extends Omit<ComponentProps<"div">, "style"> {
+  style?: JSX.CSSProperties;
   items: DockItem[];
   dockMode?: "floating" | "docked";
   /** The viewport edge the dock sits on; a side edge pages its strip vertically. */
@@ -175,6 +176,7 @@ const Dock: Component<DockProps> = (props) => {
     "lead",
     "companion",
     "companionOpen",
+    "style",
   ]);
   const placement = () => local.placement ?? "bottom";
   const vertical = () => placement() !== "bottom";
@@ -182,16 +184,16 @@ const Dock: Component<DockProps> = (props) => {
   // The drain plays where the fill grew, so the point outlives the hold.
   const [holdPoint, setHoldPoint] = createSignal({ x: 0, y: 0, r: 0 });
   let surfaceRef: HTMLDivElement | undefined;
+  let surfaceSize: ResizeObserverSize | undefined;
   let dotsRef: HTMLDivElement | undefined;
-  let leadRef: HTMLDivElement | undefined;
   let companionRef: HTMLDivElement | undefined;
   const lead = children(() => local.lead);
   const companion = children(() => local.companion);
   createEffect(() => {
     const h = local.hold;
     if (!h) return;
-    const w = surfaceRef?.clientWidth ?? 0;
-    const ht = surfaceRef?.clientHeight ?? 0;
+    const w = surfaceSize?.inlineSize ?? 0;
+    const ht = surfaceSize?.blockSize ?? 0;
     // Reaches the farthest corner exactly at full scale, so the fill ends as the hold does.
     setHoldPoint({
       x: h.x,
@@ -201,11 +203,12 @@ const Dock: Component<DockProps> = (props) => {
   });
   const dockMode = () => local.dockMode ?? "floating";
   let containerRef!: HTMLDivElement;
-  const [needsScroll, setNeedsScroll] = createSignal(false);
   const [pages, setPages] = createSignal(1);
+  const needsScroll = () => pages() > 1;
   const [page, setPage] = createSignal(0);
   // The strip's length along the dock's axis: width at the bottom, height on a side edge.
   const [viewportSpan, setViewportSpan] = createSignal(0);
+  const slots = () => local.items.length + (local.editing && local.onAdd ? 1 : 0);
 
   // A memo: the items list is rebuilt on every hover change, and only a new active item may scroll the strip.
   const activeIndex = createMemo(() => {
@@ -242,58 +245,11 @@ const Dock: Component<DockProps> = (props) => {
   };
 
   const scrollSize = (el: HTMLElement) => (vertical() ? el.scrollHeight : el.scrollWidth);
-  const viewSize = (el: HTMLElement) => (vertical() ? el.clientHeight : el.clientWidth);
   const scrollPos = (el: HTMLElement) => (vertical() ? el.scrollTop : el.scrollLeft);
   const edgeStart = (rect: DOMRect) => (vertical() ? rect.top : rect.left);
 
-  const itemSize = () => {
-    const rect = containerRef?.querySelector('[data-slot="dock-item"]')?.getBoundingClientRect();
-    return (vertical() ? rect?.height : rect?.width) ?? 0;
-  };
-  // Slots sit evenly, so the strip's length gives the gap without a style read.
-  const gapSize = (scroll: number, item: number) => {
-    const slots = local.items.length + (local.editing && local.onAdd ? 1 : 0);
-    return slots > 1 ? Math.max(0, (scroll - slots * item) / (slots - 1)) : 0;
-  };
-
-  let room: ResizeObserverSize | undefined;
-  let surfaceSize: { content: ResizeObserverSize; border: ResizeObserverSize } | undefined;
-  let companionSize: ResizeObserverSize | undefined;
   const along = (size: ResizeObserverSize | undefined) =>
     (vertical() ? size?.blockSize : size?.inlineSize) ?? 0;
-
-  // The room the app gave the dock. Never the surface: it shrink-wraps this strip,
-  // so measuring it asks the strip how big the strip is.
-  const availableSpan = () => {
-    if (!room || !surfaceSize) return 0;
-    const chrome = along(surfaceSize.border) - along(surfaceSize.content);
-    const lead = leadRef ? (vertical() ? leadRef.offsetHeight : leadRef.offsetWidth) : 0;
-    // A side dock's companion stacks along the edge, so the strip gives up its height.
-    const companion = vertical() && local.companionOpen ? along(companionSize) : 0;
-    return along(room) - chrome - lead - companion;
-  };
-
-  const checkOverflow = () => {
-    if (!containerRef) return;
-    const side = vertical() ? "height" : "width";
-    const other = vertical() ? "width" : "height";
-    containerRef.style.removeProperty(other);
-    const available = availableSpan();
-    const scroll = scrollSize(containerRef);
-    const overflowing = available > 0 && scroll > available + 1;
-    if (overflowing) {
-      const item = itemSize();
-      const trimmed = stripWidth(available, item, gapSize(scroll, item));
-      if (trimmed > 0) containerRef.style[side] = `${trimmed}px`;
-    } else if (containerRef.style[side]) {
-      containerRef.style[side] = "";
-    }
-    setNeedsScroll(overflowing);
-    const viewport = viewSize(containerRef);
-    setViewportSpan(viewport);
-    setPages(pageCount(scrollSize(containerRef), viewport));
-    setPage(pageOf(scrollPos(containerRef), viewport));
-  };
 
   const goToPage = (next: number) => {
     if (!containerRef) return;
@@ -360,81 +316,112 @@ const Dock: Component<DockProps> = (props) => {
     ),
   );
 
+  // CSS draws the paging; the observer only tells the scripts what it drew.
+  let observer: ResizeObserver | undefined;
+  const watched = new Map<Element, ResizeObserverOptions | undefined>();
+  const dotDrawn = new Map<Element, boolean>();
+  let leadEl: Element | undefined;
+  const [leadSize, setLeadSize] = createSignal<ResizeObserverSize>();
+  const [companionSize, setCompanionSize] = createSignal<ResizeObserverSize>();
+  const countPages = () => setPages(Math.max(1, [...dotDrawn.values()].filter(Boolean).length));
+  const watch = (el: Element, options?: ResizeObserverOptions) => {
+    watched.set(el, options);
+    observer?.observe(el, options);
+    onCleanup(() => {
+      watched.delete(el);
+      observer?.unobserve(el);
+    });
+  };
+  const watchDot = (el: Element) => {
+    dotDrawn.set(el, false);
+    watch(el, { box: "border-box" });
+    onCleanup(() => {
+      dotDrawn.delete(el);
+      countPages();
+    });
+  };
+  const watchLead = (el: Element) => {
+    leadEl = el;
+    watch(el, { box: "border-box" });
+    onCleanup(() => {
+      leadEl = undefined;
+      setLeadSize(undefined);
+    });
+  };
+
   onMount(() => {
-    const box = containerRef.closest('[data-slot="dock"]');
-    if (!box || !surfaceRef) return;
-    const surface = surfaceRef;
     let frame = 0;
-    const measured = () =>
-      `${along(room)} ${along(surfaceSize?.border) - along(surfaceSize?.content)} ${along(companionSize)}`;
-    const observer = new ResizeObserver((entries) => {
-      const before = measured();
+    let lead: ResizeObserverSize | undefined;
+    let companion: ResizeObserverSize | undefined;
+    observer = new ResizeObserver((entries) => {
+      let dots = false;
+      let room = false;
       for (const entry of entries) {
         const [content] = entry.contentBoxSize;
         const [border] = entry.borderBoxSize;
         if (!content || !border) continue;
-        if (entry.target === box) room = content;
-        else if (entry.target === surface) surfaceSize = { content, border };
-        else companionSize = border;
+        if (entry.target === surfaceRef) surfaceSize = border;
+        else if (entry.target === containerRef) setViewportSpan(along(content));
+        else if (dotDrawn.has(entry.target)) {
+          dotDrawn.set(entry.target, border.inlineSize > 0 && border.blockSize > 0);
+          dots = true;
+        } else if (entry.target === leadEl) {
+          lead = border;
+          room = true;
+        } else if (entry.target === companionRef) {
+          companion = border;
+          room = true;
+        }
       }
-      if (measured() === before) return;
-      // Paging resizes what other observers on the page watch; inside this callback that is a resize loop.
+      if (dots) countPages();
+      if (!room) return;
+      // The lead and companion resize the strip, which other observers on the page watch: inside this callback that is a resize loop.
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(checkOverflow);
+      frame = requestAnimationFrame(() => {
+        setLeadSize(leadEl ? lead : undefined);
+        setCompanionSize(companion);
+      });
     });
-    observer.observe(box);
-    observer.observe(surface, { box: "border-box" });
-    if (companionRef) observer.observe(companionRef, { box: "border-box" });
+    for (const [el, options] of watched) observer.observe(el, options);
     onCleanup(() => {
       cancelAnimationFrame(frame);
-      observer.disconnect();
+      observer?.disconnect();
     });
   });
-
-  // The box pads by mode and the strip runs along the edge, so either switching changes the room it has.
-  createEffect(
-    on(
-      [
-        () => local.items.length,
-        dockMode,
-        vertical,
-        () => Boolean(lead()),
-        () => local.companionOpen,
-        gripShown,
-      ],
-      () => {
-        const frame = requestAnimationFrame(checkOverflow);
-        onCleanup(() => cancelAnimationFrame(frame));
-      },
-    ),
-  );
 
   return (
     <div
       data-slot="dock"
       data-placement={placement()}
+      data-grip={gripShown() ? "" : undefined}
       class={cn(
         "flex max-w-full items-center justify-center",
-        vertical() ? "h-full max-h-full flex-col" : "flex-col-reverse",
+        // A side dock writes vertically (globals.css), so its row runs down the edge. Its room
+        // is its length along the edge, so a bottom dock in a row takes the row's width.
+        vertical() ? "h-full max-h-full" : "grow flex-col-reverse",
         dockMode() === "floating" ? "p-1 sm:p-2" : "",
         local.class,
       )}
+      style={{
+        "--dock-slots": slots(),
+        "--dock-lead": `${along(leadSize())}px`,
+        "--dock-companion": `${vertical() && local.companionOpen ? along(companionSize()) : 0}px`,
+        ...local.style,
+      }}
       {...rest}
     >
       <div
-        ref={surfaceRef}
+        ref={(el) => {
+          surfaceRef = el;
+          watch(el, { box: "border-box" });
+        }}
         data-slot="dock-surface"
         class={cn(
           // isolate: the layers behind the icons stay inside the dock even with blur off.
-          "pointer-events-auto relative isolate flex max-w-full items-center justify-center p-1.5 sm:p-2",
+          "pointer-events-auto relative isolate flex max-w-full items-center justify-center",
           vertical() && "max-h-full min-h-0 flex-col",
           // A flush side dock runs the whole edge, less what the companion takes.
           vertical() && dockMode() === "docked" && "flex-1",
-          // Room for the page dots inside the glass; outside it they sit on the screen edge and get
-          // clipped. A side dock's dots sit behind its icons, so paging never widens or shifts it.
-          pages() > 1 && placement() === "bottom" && "pb-4 sm:pb-5",
-          // The grip takes the start of the dock's length, so the items stay centred across it.
-          gripShown() && (vertical() ? "pt-5 sm:pt-6" : "pl-5 sm:pl-6"),
           CARD_SURFACE,
           "[--glass-lift:0.55]",
           dockMode() === "floating"
@@ -473,7 +460,7 @@ const Dock: Component<DockProps> = (props) => {
         </Show>
         <Show when={lead()}>
           <div
-            ref={leadRef}
+            ref={watchLead}
             data-slot="dock-lead"
             class={cn(
               "flex shrink-0 items-center gap-0.5 sm:gap-1",
@@ -488,7 +475,10 @@ const Dock: Component<DockProps> = (props) => {
           </div>
         </Show>
         <div
-          ref={containerRef}
+          ref={(el) => {
+            containerRef = el;
+            watch(el);
+          }}
           data-slot="dock-bar"
           data-reordering={reorder.dragId() ? "" : undefined}
           onScroll={() => {
@@ -505,9 +495,6 @@ const Dock: Component<DockProps> = (props) => {
               : "overflow-visible",
             !needsScroll() && "justify-center",
           )}
-          style={{
-            [vertical() ? "min-height" : "min-width"]: needsScroll() ? "auto" : "fit-content",
-          }}
         >
           <SelectionScope
             marker="lit"
@@ -582,39 +569,38 @@ const Dock: Component<DockProps> = (props) => {
         <Show when={gripShown()}>
           <DockMoveGrip placement={placement()} onMove={(next) => local.onMovePlacement?.(next)} />
         </Show>
-        <Show when={pages() > 1}>
-          <div
-            ref={dotsRef}
-            data-slot="dock-pages"
-            class={cn(
-              "pointer-events-auto absolute flex justify-center gap-1.5",
-              {
-                bottom: "inset-x-0 bottom-1.5",
-                // 10px from the glass rim, which draws a 1px border.
-                left: "inset-y-0 left-[9px] -z-1 flex-col items-center",
-                right: "inset-y-0 right-[9px] -z-1 flex-col items-center",
-              }[placement()],
+        <div
+          ref={dotsRef}
+          data-slot="dock-pages"
+          class={cn(
+            "pointer-events-auto absolute flex justify-center",
+            {
+              bottom: "inset-x-0 bottom-1.5",
+              // 10px from the glass rim, which draws a 1px border.
+              left: "inset-y-0 left-[9px] -z-1 flex-col items-center",
+              right: "inset-y-0 right-[9px] -z-1 flex-col items-center",
+            }[placement()],
+          )}
+        >
+          <Index each={Array.from({ length: slots() })}>
+            {(_, i) => (
+              <button
+                ref={watchDot}
+                type="button"
+                data-slot="dock-page"
+                aria-label={`Page ${i + 1}`}
+                aria-current={page() === i ? "true" : undefined}
+                inert={i >= pages() || pages() < 2}
+                onClick={() => goToPage(i)}
+                style={{ "--dock-page": i }}
+                class={cn(
+                  "transition-glass rounded-full",
+                  page() === i ? "bg-foreground/70" : "bg-foreground/25",
+                )}
+              />
             )}
-          >
-            <Index each={Array.from({ length: pages() })}>
-              {(_, i) => (
-                <button
-                  type="button"
-                  aria-label={`Page ${i + 1}`}
-                  aria-current={page() === i ? "true" : undefined}
-                  onClick={() => goToPage(i)}
-                  class={cn(
-                    "transition-glass rounded-full",
-                    vertical() ? "w-1" : "h-1.5",
-                    page() === i
-                      ? cn("bg-foreground/70", vertical() ? "h-4" : "w-4")
-                      : cn("bg-foreground/25", vertical() ? "h-1" : "w-1.5"),
-                  )}
-                />
-              )}
-            </Index>
-          </div>
-        </Show>
+          </Index>
+        </div>
       </div>
       <Show when={companion()}>
         <div
@@ -629,7 +615,13 @@ const Dock: Component<DockProps> = (props) => {
           )}
         >
           <div class="min-h-0 min-w-0 overflow-hidden">
-            <div ref={companionRef} class={vertical() ? "pt-2" : "px-2 pt-2 pb-1"}>
+            <div
+              ref={(el) => {
+                companionRef = el;
+                watch(el, { box: "border-box" });
+              }}
+              class={vertical() ? "pt-2" : "px-2 pt-2 pb-1"}
+            >
               <div
                 data-slot="dock-companion"
                 data-placement={placement()}

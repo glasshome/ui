@@ -1,11 +1,3 @@
-/** A page is one strip-width of items. The last one is whatever is left.
- *  The tolerance keeps a strip a sub-pixel over its viewport on one page: both
- *  numbers are rounded reads of the same box. */
-export function pageCount(scrollWidth: number, viewport: number): number {
-  if (viewport <= 0) return 1;
-  return Math.max(1, Math.ceil((scrollWidth - 1) / viewport));
-}
-
 /** The page a scroll position sits on, counting a half-page as turned. */
 export function pageOf(scrollLeft: number, viewport: number): number {
   if (viewport <= 0) return 0;
@@ -16,13 +8,6 @@ export function pageOf(scrollLeft: number, viewport: number): number {
 export function pageOffset(page: number, viewport: number, scrollWidth: number): number {
   const max = Math.max(0, scrollWidth - viewport);
   return Math.min(max, Math.max(0, page * viewport));
-}
-
-/** The strip shows whole items: a half-drawn icon at the edge reads as damage, not as a hint. */
-export function stripWidth(available: number, itemWidth: number, gap: number): number {
-  if (available <= 0 || itemWidth <= 0) return available;
-  const count = Math.max(1, Math.floor((available + gap) / (itemWidth + gap)));
-  return Math.min(available, count * itemWidth + (count - 1) * gap);
 }
 
 /** Where a dragged item lands: the slot whose midpoint is nearest the pointer. */

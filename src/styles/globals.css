@@ -903,3 +903,105 @@ svg[data-slot="icon"] {
   vertical-align: 0;
   flex-shrink: 0;
 }
+
+/* Dock paging from its slot count and its room alone: the first frame already
+ * holds the whole-item strip, the bottom dot room and the dots, with no measure. */
+@layer components {
+  [data-slot="dock"] {
+    --dock-item: calc(var(--spacing) * 11);
+    --dock-gap: calc(var(--spacing) * 0.5);
+    --dock-pad: calc(var(--spacing) * 1.5);
+    --dock-pad-start: var(--dock-pad);
+    --dock-dot-room: calc(var(--spacing) * 4);
+    --dock-pitch: calc(var(--dock-item) + var(--dock-gap));
+    --dock-content: calc(var(--dock-slots, 0) * var(--dock-pitch) - var(--dock-gap));
+    --dock-chrome: calc(
+      var(--dock-pad-start) + var(--dock-pad) + var(--dock-lead, 0px) + var(--dock-companion, 0px)
+    );
+    /* 1px of slack: a room laid out at exactly the content's length rounds a hair short. */
+    --dock-strip: min(
+      var(--dock-content),
+      max(
+        min(var(--dock-item), var(--dock-room)),
+        round(down, var(--dock-room) + var(--dock-gap) + 1px, var(--dock-pitch)) - var(--dock-gap)
+      )
+    );
+    --dock-hidden: calc(var(--dock-content) - var(--dock-strip));
+    container-type: inline-size;
+    contain-intrinsic-inline-size: calc(var(--dock-content) + var(--dock-chrome));
+    @variant sm {
+      --dock-item: calc(var(--spacing) * 12);
+      --dock-gap: var(--spacing);
+      --dock-pad: calc(var(--spacing) * 2);
+      --dock-dot-room: calc(var(--spacing) * 5);
+    }
+    &[data-grip] {
+      --dock-pad-start: calc(var(--spacing) * 5);
+      @variant sm {
+        --dock-pad-start: calc(var(--spacing) * 6);
+      }
+    }
+    & > [data-slot="dock-surface"] {
+      padding: var(--dock-pad);
+    }
+    & > [data-slot="dock-surface"] > [data-slot="dock-bar"] {
+      flex-shrink: 0;
+    }
+  }
+  [data-slot="dock-page"] {
+    --dock-dot-left: calc(
+      var(--dock-content) + var(--dock-gap) - var(--dock-page) *
+        (var(--dock-strip) + var(--dock-gap))
+    );
+    /* Nothing past the last page that holds a slot, and nothing at all while every slot fits. */
+    --dock-dot-on: max(0px, min(var(--dock-dot-left), var(--dock-hidden)));
+  }
+
+  [data-slot="dock"][data-placement="bottom"] {
+    --dock-room: calc(100cqw - var(--dock-chrome));
+    & > [data-slot="dock-surface"] {
+      padding-left: var(--dock-pad-start);
+      padding-bottom: max(var(--dock-pad), min(var(--dock-hidden), var(--dock-dot-room)));
+    }
+    & > [data-slot="dock-surface"] > [data-slot="dock-bar"] {
+      width: var(--dock-strip);
+    }
+    & > [data-slot="dock-surface"] > [data-slot="dock-pages"] > [data-slot="dock-page"] {
+      --dock-dot-length: calc(var(--spacing) * 1.5);
+      width: min(var(--dock-dot-on), var(--dock-dot-length));
+      height: calc(var(--spacing) * 1.5);
+      &[aria-current] {
+        --dock-dot-length: calc(var(--spacing) * 4);
+      }
+      &:not(:first-child) {
+        margin-left: min(var(--dock-dot-on), calc(var(--spacing) * 1.5));
+      }
+    }
+  }
+
+  /* A side dock writes vertically so its inline-size container is its height. */
+  [data-slot="dock"]:not([data-placement="bottom"]) {
+    --dock-room: calc(100cqh - var(--dock-chrome));
+    writing-mode: vertical-lr;
+    & > * {
+      writing-mode: horizontal-tb;
+    }
+    & > [data-slot="dock-surface"] {
+      padding-top: var(--dock-pad-start);
+    }
+    & > [data-slot="dock-surface"] > [data-slot="dock-bar"] {
+      height: var(--dock-strip);
+    }
+    & > [data-slot="dock-surface"] > [data-slot="dock-pages"] > [data-slot="dock-page"] {
+      --dock-dot-length: var(--spacing);
+      width: var(--spacing);
+      height: min(var(--dock-dot-on), var(--dock-dot-length));
+      &[aria-current] {
+        --dock-dot-length: calc(var(--spacing) * 4);
+      }
+      &:not(:first-child) {
+        margin-top: min(var(--dock-dot-on), calc(var(--spacing) * 1.5));
+      }
+    }
+  }
+}
