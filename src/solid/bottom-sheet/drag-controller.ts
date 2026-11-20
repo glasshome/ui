@@ -14,6 +14,9 @@ const TRANSITION_CSS = `transform ${TRANSITION_MS}ms ${EASE}`;
 const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const FLING_DECAY_PER_MS = 0.998;
 const FLING_STOP_PX_PER_MS = 0.02;
+// theme.css gives an unscrolled body touch-action none where pan-down is unsupported; unscrolled means scrollTop 0.
+const BODY_HELD_BY_SHEET = '[data-slot$="-body"]:not([data-scrolled])';
+const panDownDropped = () => !CSS.supports("touch-action", "pan-down");
 
 interface DragHandle {
   destroy: () => void;
@@ -46,7 +49,6 @@ export function attachDrag(opts: DragOptions): DragHandle {
   let lastTotalDy = 0;
   let shownDy = 0;
   let scroller: Element | null = null;
-  let scrollStart = 0;
   let fling = 0;
 
   const isDraggableState = (): boolean => {
@@ -66,10 +68,10 @@ export function attachDrag(opts: DragOptions): DragHandle {
     fling = 0;
   };
 
-  const flingScroll = (box: Element, velocity: number) => {
+  const flingScroll = (box: Element, from: number, velocity: number) => {
     if (reducedMotion() || Math.abs(velocity) < FLING_STOP_PX_PER_MS) return;
     let v = velocity;
-    let at = box.scrollTop;
+    let at = from;
     let last = performance.now();
     const step = (now: number) => {
       const dt = now - last;
@@ -82,12 +84,11 @@ export function attachDrag(opts: DragOptions): DragHandle {
     fling = requestAnimationFrame(step);
   };
 
-  // WebKit drops pan-down, so the body there takes touch-action none and the sheet scrolls it under the finger.
+  // WebKit drops pan-down, so the sheet scrolls its body under the finger there.
   const takeScroll = (target: Element | null, totalDy: number): Element | null => {
     const box = scrollerAhead(target, el, totalDy);
-    if (!box || getComputedStyle(box).touchAction !== "none") return null;
+    if (!box || !panDownDropped() || !box.matches(BODY_HELD_BY_SHEET)) return null;
     scroller = box;
-    scrollStart = box.scrollTop;
     if (pointerId !== null) {
       try {
         el.setPointerCapture(pointerId);
@@ -145,7 +146,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
     lastTotalDy = totalDy;
     if (scroller) {
       tracker.add(totalDy, e.timeStamp);
-      scroller.scrollTop = scrollStart - totalDy;
+      scroller.scrollTop = -totalDy;
       return;
     }
 
@@ -156,7 +157,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
         const box = Math.abs(totalDy) >= Math.abs(totalDx) && takeScroll(pointerTarget, totalDy);
         if (box) {
           tracker.add(totalDy, e.timeStamp);
-          box.scrollTop = scrollStart - totalDy;
+          box.scrollTop = -totalDy;
         } else dragAborted = true;
         return;
       }
@@ -225,8 +226,9 @@ export function attachDrag(opts: DragOptions): DragHandle {
       const box = scroller;
       const velocity = tracker.compute(e.timeStamp);
       if (Math.abs(lastTotalDy) > DEAD_ZONE_PX) suppressNextClick();
+      const at = Math.max(0, -lastTotalDy);
       cleanupDrag();
-      flingScroll(box, -velocity);
+      flingScroll(box, at, -velocity);
       return;
     }
 
