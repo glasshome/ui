@@ -38,7 +38,8 @@ const decimal = new Intl.NumberFormat(locale, { style: "decimal" });
 const rtl = readingDirection === "rtl";
 const START = rtl ? "right" : "left";
 const END = rtl ? "left" : "right";
-const THUMB_SHIFT = rtl ? "translateX(50%)" : "translateX(-50%)";
+// `translate` (not `transform`) sits outside the hover scale, so a scaled thumb stays centred on its value.
+const THUMB_SHIFT = rtl ? "50% 0" : "-50% 0";
 
 const Slider: Component<SliderProps> = (props) => {
   const min = () => props.min ?? 0;
@@ -181,7 +182,7 @@ const Slider: Component<SliderProps> = (props) => {
               )}
               style={{
                 [START]: `calc(${percents()[index] ?? 0}%)`,
-                transform: THUMB_SHIFT,
+                translate: THUMB_SHIFT,
                 "touch-action": "none",
                 background: props.thumbColors?.[index] ?? "var(--material-control-knob)",
               }}
