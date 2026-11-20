@@ -308,7 +308,7 @@ export function createMenu(options: MenuOptions): Menu {
       if (pressed && item && event.button === 0) activate(item, "pointer");
     };
     const onMove = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse") return;
+      if (event.pointerType !== "mouse" || !untrack(open)) return;
       if (inGrace(event)) return;
       clearGrace();
       const item = itemOf(event.target);
