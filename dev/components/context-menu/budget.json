@@ -107,7 +107,7 @@
       },
       "3": {
         "elementsRestyled": {
-          "max": 50,
+          "max": 54,
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
@@ -173,7 +173,7 @@
       },
       "3": {
         "elementsRestyled": {
-          "max": 89,
+          "max": 93,
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
@@ -301,7 +301,7 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 73,
+          "max": 77,
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {

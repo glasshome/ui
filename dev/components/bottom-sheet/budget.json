@@ -128,7 +128,7 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 48,
+          "max": 74,
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
@@ -141,13 +141,6 @@
         }
       }
     },
-    "mainThreadMotion": [
-      "--glass-wash",
-      "borderBottomColor",
-      "borderLeftColor",
-      "borderRightColor",
-      "borderTopColor"
-    ],
     "guest": {
       "workUnits": {
         "max": 10,

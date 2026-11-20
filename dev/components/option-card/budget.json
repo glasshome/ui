@@ -69,7 +69,7 @@
       },
       "3": {
         "elementsRestyled": {
-          "max": 269,
+          "max": 277,
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
