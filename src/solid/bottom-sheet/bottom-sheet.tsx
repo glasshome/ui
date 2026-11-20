@@ -38,7 +38,6 @@ import {
   ModalLabelsProvider,
   useModalLabels,
 } from "../dialog-parts.js";
-import { EASE, TRANSITION_MS } from "./constants.js";
 import { attachDrag } from "./drag-controller.js";
 import { createDismiss } from "../../lib/behavior/dismiss.js";
 import { createFocusScope, type InitialFocus } from "../../lib/behavior/focus-scope.js";
@@ -320,8 +319,6 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
         style={{
           ...(typeof local.style === "object" ? local.style : {}),
           "z-index": Z.sheet,
-          "--bs-duration": `${TRANSITION_MS}ms`,
-          "--bs-ease": EASE,
           "will-change": "transform",
           "touch-action": "none",
           "-webkit-tap-highlight-color": "transparent",
