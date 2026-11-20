@@ -2,7 +2,16 @@ import tailwindcss from "@tailwindcss/vite";
 import { playwright } from "@vitest/browser-playwright";
 import solid from "vite-plugin-solid";
 import { defineConfig } from "vitest/config";
-import { frameAxTree, compose, emulateMedia, mouse, pointer, touch, wheel } from "./tests/commands";
+import {
+  animationRate,
+  frameAxTree,
+  compose,
+  emulateMedia,
+  mouse,
+  pointer,
+  touch,
+  wheel,
+} from "./tests/commands";
 
 // Forked workers inherit it, so a direct run matches the gate; bun test is UTC already.
 process.env.TZ = "UTC";
@@ -35,7 +44,16 @@ const BROWSER = {
     contextOptions: { permissions: ["clipboard-read", "clipboard-write"] },
   }),
   instances: [{ browser: "chromium" as const }],
-  commands: { axTree: frameAxTree, compose, emulateMedia, mouse, pointer, touch, wheel },
+  commands: {
+    animationRate,
+    axTree: frameAxTree,
+    compose,
+    emulateMedia,
+    mouse,
+    pointer,
+    touch,
+    wheel,
+  },
 };
 
 // Engines that differ on one CSS behaviour; Chromium runs these files too.

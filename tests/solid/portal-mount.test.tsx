@@ -1,3 +1,4 @@
+import "../real-time-animations";
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { DelegatedEvents, delegateEvents } from "solid-js/web";

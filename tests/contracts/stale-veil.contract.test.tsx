@@ -1,3 +1,4 @@
+import "../real-time-animations";
 import { cleanup } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it } from "vitest";
 import { commands } from "vitest/browser";

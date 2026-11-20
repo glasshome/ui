@@ -171,6 +171,35 @@ describe("Slider contract", () => {
     expect(focusedElement()).toBe(high);
   });
 
+  it("SD6b a press where thumbs overlap takes the thumb nearest the pointer", async () => {
+    render(() => (
+      <div class="w-72">
+        <Slider defaultValue={[25, 30]} minStepsBetweenThumbs={5} aria-label="Range" />
+      </div>
+    ));
+    await settle();
+    const { thumbs, now, slot } = helpers(scenarioScope);
+    const [low, high] = thumbs("Range");
+    if (!low || !high) throw new Error("two thumbs");
+    const track = slot(low, "slider-track").getBoundingClientRect();
+    const y = centre(low).y;
+    const at = (value: number) => track.left + (track.width * value) / 100;
+    expect(at(30) - at(25)).toBeLessThan(low.getBoundingClientRect().width / 2);
+    await commands.mouse("move", at(25), y);
+    await commands.mouse("down", at(25), y);
+    await commands.mouse("move", at(25) + 100, y);
+    await commands.mouse("up", at(25) + 100, y);
+    await settle();
+    expect(now("Range")).toEqual([25, 30]);
+    await commands.mouse("move", at(30), y);
+    await commands.mouse("down", at(30), y);
+    await commands.mouse("move", at(30) + 40, y);
+    await commands.mouse("up", at(30) + 40, y);
+    await settle();
+    expect(now("Range")[0]).toBe(25);
+    expect(now("Range")[1]).toBeGreaterThan(30);
+  });
+
   it("SD7 key changes report each step, and end once when focus leaves", async () => {
     const changes: number[][] = [];
     const ends: number[][] = [];

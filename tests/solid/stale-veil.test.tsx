@@ -1,3 +1,4 @@
+import "../real-time-animations";
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";

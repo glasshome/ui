@@ -1,3 +1,4 @@
+import "../real-time-animations";
 import { cleanup, render } from "@solidjs/testing-library";
 import { computeAccessibleName } from "dom-accessibility-api";
 import { createSignal } from "solid-js";
