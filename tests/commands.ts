@@ -116,3 +116,13 @@ export const frameAxTree: BrowserCommand<[]> = async (ctx) => {
   const frame = await ctx.frame();
   return treeText(cdp, frameIdOf(frameTree, frame.url()));
 };
+
+// Timers and clocks keep real time; WebKit has no CDP.
+export const animationRate: BrowserCommand<[rate?: number]> = async (ctx, rate) => {
+  if (ctx.project.config.browser.name !== "chromium") return;
+  const cdp = await pointerSession(ctx.page);
+  await cdp.send("Animation.enable");
+  await cdp.send("Animation.setPlaybackRate", {
+    playbackRate: rate ?? Number(process.env.UI_ANIMATION_RATE ?? 10),
+  });
+};
