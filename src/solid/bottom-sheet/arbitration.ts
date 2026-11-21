@@ -18,16 +18,19 @@ export function hasNoDragAncestor(target: Element | null, root: Element): boolea
   return false;
 }
 
-export function shouldDrag(target: Element | null, root: Element, dy: number, dx: number): boolean {
-  if (Math.abs(dx) > Math.abs(dy)) return false;
-  if (hasNoDragAncestor(target, root)) return false;
-
+export function scrollerAhead(target: Element | null, root: Element, dy: number): Element | null {
   const dir: Direction = dy > 0 ? "down" : "up";
   let cur: Element | null = target;
   while (cur && cur !== root.parentElement) {
-    if (canScrollFurther(cur, dir)) return false;
+    if (canScrollFurther(cur, dir)) return cur;
     if (cur === root) break;
     cur = cur.parentElement;
   }
-  return true;
+  return null;
+}
+
+export function shouldDrag(target: Element | null, root: Element, dy: number, dx: number): boolean {
+  if (Math.abs(dx) > Math.abs(dy)) return false;
+  if (hasNoDragAncestor(target, root)) return false;
+  return scrollerAhead(target, root, dy) === null;
 }

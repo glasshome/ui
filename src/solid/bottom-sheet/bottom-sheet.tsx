@@ -183,7 +183,7 @@ const BottomSheetOverlay: Component<ComponentProps<"div">> = (props) => {
       data-state={dataState()}
       aria-hidden="true"
       class={cn(
-        `fixed inset-0 bg-black/80 transition-opacity duration-300 ease-out ${SCRIM_CONTAIN}`,
+        `fixed inset-0 touch-none bg-black/80 transition-opacity duration-300 ease-out ${SCRIM_CONTAIN}`,
         "data-[state=closing]:opacity-0 data-[state=open]:opacity-100",
         local.class,
       )}

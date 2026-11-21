@@ -715,6 +715,11 @@ html[data-motion="live"] [data-motion-reader] {
 .bs-content [data-slot$="-body"]:not([data-scrolled]) {
   touch-action: pan-down pinch-zoom;
 }
+@supports not (touch-action: pan-down) {
+  .bs-content [data-slot$="-body"]:not([data-scrolled]) {
+    touch-action: none;
+  }
+}
 .bs-content[data-reduced-motion] {
   animation-duration: 0ms !important;
 }
