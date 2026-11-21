@@ -113,14 +113,6 @@ describe("HoverCard contract", () => {
     await expectClosed();
   });
 
-  it("HC7 a touch on the trigger opens no card", async () => {
-    const { cards, run } = await mount("touch");
-    await run({ touch: TRIGGER });
-    await vi.advanceTimersByTimeAsync(OPEN_DELAY_MS);
-    await settle();
-    expect(cards()).toHaveLength(0);
-  });
-
   it("HC8 Escape closes the card", async () => {
     const { run, expectOpen, expectClosed } = await mount("escape");
     await run(HOVER);

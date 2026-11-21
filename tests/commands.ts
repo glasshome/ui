@@ -35,13 +35,8 @@ function pointerSession(page: Page) {
   return session;
 }
 
-const touchScreen = (cdp: Cdp, on: boolean) =>
-  cdp.send("Emulation.setTouchEmulationEnabled", { enabled: on, maxTouchPoints: on ? 5 : 1 });
-
-/** Whether the page's main pointer is a finger (pointer: coarse); "mouse" turns that off, which headless Chromium reports as no pointer and no hover, never the fresh page's fine mouse. */
-export const pointer: BrowserCommand<[kind: "finger" | "mouse"]> = async (ctx, kind) => {
-  await touchScreen(await pointerSession(ctx.page), kind === "finger");
-};
+// Pointer media is fixed when a page is made: Chromium cannot undo touch emulation, so no command turns it on.
+const FINGER_PROJECT = /-finger\b/;
 
 const TOUCH = {
   down: "touchStart",
@@ -50,16 +45,17 @@ const TOUCH = {
   cancel: "touchCancel",
 } as const;
 
-/** One real finger at a point of the test frame's viewport. */
+/** One real finger at a point of the test frame's viewport, in a project whose pages have a touch screen. */
 export const touch: BrowserCommand<[action: keyof typeof TOUCH, x: number, y: number]> = async (
   ctx,
   action,
   x,
   y,
 ) => {
+  if (!FINGER_PROJECT.test(ctx.project.name))
+    throw new Error("a finger needs a touch screen: put this test in a *-finger test file");
   const at = await toPage(ctx, x, y);
   const cdp = await pointerSession(ctx.page);
-  await touchScreen(cdp, true);
   await cdp.send("Input.dispatchTouchEvent", {
     type: TOUCH[action],
     touchPoints: action === "down" || action === "move" ? [{ ...at, id: 0 }] : [],
