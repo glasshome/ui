@@ -141,6 +141,13 @@
         }
       }
     },
+    "mainThreadMotion": [
+      "--glass-wash",
+      "borderBottomColor",
+      "borderLeftColor",
+      "borderRightColor",
+      "borderTopColor"
+    ],
     "guest": {
       "workUnits": {
         "max": 10,

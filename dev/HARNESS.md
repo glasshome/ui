@@ -34,9 +34,11 @@ A behaviour block under `src/lib/behavior/<name>.ts` is a subject like a compone
 
 Times are reported and never gated; only counts gate. A replacement lands at or under the budget it replaces.
 
-The drive holds the document timeline still for the mount and for each step, and takes every finite animation the input starts to a quarter, a half and three quarters of its length with a forced layout at each, then to its end, which the next frame draws together with what the end events change. Those animations cost the same counts on any host, and the points take milliseconds, so a timer rarely lands between them. What still moves with the host: a timer (presence ends an exit by timer, a tooltip opens by one), motion a script draws per frame, an endless animation, and an animation that starts after the drawn ones ended. The timeline runs again before the step settles, so these finish in real time and stay in the step's counts.
+The drive holds the document timeline still for the mount and for each step, and takes every finite animation the input starts to a quarter, a half and three quarters of its length with a forced layout at each, then to its end, which the next frame draws together with what the end events change. Those animations cost the same counts on any host, and the points take milliseconds, so a timer rarely lands between them. What still moves with the host: a timer (presence ends an exit by timer, a tooltip opens by one), motion a script draws per frame, an endless animation, and an animation that starts after the drawn ones ended and after the page stopped changing. The timeline runs again before the step settles, so these finish in real time and stay in the step's counts.
 
 With the timeline held, an animation costs the same four draws on the compositor or off it. So each step also reports `mainThreadMotion`, the properties its animations interpolate other than transform, opacity and filter, and a scenario's `mainThreadMotion` in `budget.json` lists the ones it may. A property outside the list is an overrun.
+
+`--all` drives the scenarios on four browsers at once, since the counts no longer follow the frames a busy host draws; `--jobs <n>` sets another number. A trace belongs to a browser, so each job launches its own.
 
 To set new numbers:
 

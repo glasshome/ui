@@ -1,6 +1,6 @@
 // bun run drive <component> <scenario> [--steps keyboard] [--cpu-rate 1] [--width phone|tablet|desktop]
 //                [--theme light|dark] [--out <dir>] [--json] [--build <dir>] [--against <git-ref> [--check]]
-// bun run drive --all                     every scenario of every component
+// bun run drive --all [--jobs 4]          every scenario of every component, four browsers at once unless --jobs says otherwise
 // --check without --against               fails on any count over dev/components/<slug>/budget.json or dev/blocks/<slug>/budget.json
 // bun run preview ...                     see preview.ts
 import { spawnSync } from "node:child_process";
@@ -282,8 +282,11 @@ async function main(argv: string[]): Promise<number> {
       build: { type: "string" },
       against: { type: "string" },
       check: { type: "boolean", default: false },
+      jobs: { type: "string", default: "4" },
     },
   });
+  const jobs = Number(values.jobs);
+  if (!Number.isInteger(jobs) || jobs < 1) throw new UsageError("--jobs takes a whole number");
   const cpuRate = Number(values["cpu-rate"]);
   if (!(cpuRate >= 1)) throw new UsageError("--cpu-rate takes a number of 1 or more");
   if (values.steps !== undefined && values.steps !== "keyboard") {
@@ -309,11 +312,14 @@ async function main(argv: string[]): Promise<number> {
     label: buildLabel(),
   };
 
-  const browser = await chromium.launch({
-    executablePath: process.env.CHROMIUM_PATH || undefined,
-    // An animated key scroll spans as many frames as the host draws, so its counts would move with the runner.
-    args: ["--disable-smooth-scrolling"],
-  });
+  const launch = () =>
+    chromium.launch({
+      executablePath: process.env.CHROMIUM_PATH || undefined,
+      // An animated key scroll spans as many frames as the host draws, so its counts would move with the runner.
+      args: ["--disable-smooth-scrolling"],
+    });
+  const browser = await launch();
+  const extra: Browser[] = [];
   try {
     const index = await readBuildIndex(browser, build);
     const runs: [IndexedComponent, IndexedScenario][] = values.all
@@ -336,10 +342,23 @@ async function main(argv: string[]): Promise<number> {
       else printCompare(compared);
       return values.check && !compared.same ? 1 : 0;
     }
+    // One trace per browser, so each job owns a browser.
+    for (let i = 1; i < Math.min(jobs, runs.length); i++) extra.push(await launch());
     const reports: RunReport[] = [];
+    const slots = runs.map(() => Promise.withResolvers<RunReport>());
+    let next = 0;
+    const work = async (own: Browser) => {
+      while (next < runs.length) {
+        const i = next++;
+        const [component, scenario] = runs[i] as [IndexedComponent, IndexedScenario];
+        const slot = slots[i] as PromiseWithResolvers<RunReport>;
+        await runScenario(own, component, scenario, opts).then(slot.resolve, slot.reject);
+      }
+    };
+    const working = Promise.all([browser, ...extra].map(work));
     const overruns: string[] = [];
-    for (const [component, scenario] of runs) {
-      const report = await runScenario(browser, component, scenario, opts);
+    for (const [i, [component]] of runs.entries()) {
+      const report = await (slots[i] as PromiseWithResolvers<RunReport>).promise;
       reports.push(report);
       if (!values.json) printHuman(report);
       if (values.check) {
@@ -348,11 +367,12 @@ async function main(argv: string[]): Promise<number> {
         );
       }
     }
+    await working;
     if (values.json) console.log(JSON.stringify(values.all ? reports : reports[0]));
     for (const overrun of overruns) console.error(`over budget: ${overrun}`);
     return overruns.length > 0 ? 1 : 0;
   } finally {
-    await browser.close();
+    await Promise.all([browser, ...extra].map((b) => b.close()));
     if (values.build === undefined) rmSync(build, { recursive: true, force: true });
   }
 }

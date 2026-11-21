@@ -1,4 +1,5 @@
 import type { CDPSession } from "playwright";
+import { MUTATIONS } from "./settle";
 
 const SAMPLES = [0.25, 0.5, 0.75, 1];
 const ROUNDS = 8;
@@ -22,6 +23,9 @@ export async function createAnimationStepper(cdp: CDPSession) {
   });
   cdp.on("Animation.animationCanceled", ({ id }) => started.delete(id));
   await cdp.send("Animation.enable");
+  let mutations = 0;
+  for (const event of MUTATIONS) cdp.on(event, () => mutations++);
+  await cdp.send("DOM.enable", {});
 
   const evaluate = (expression: string) =>
     cdp.send("Runtime.evaluate", { expression, awaitPromise: true });
@@ -52,8 +56,11 @@ export async function createAnimationStepper(cdp: CDPSession) {
       const animated = new Set<string>();
       for (let round = 0; round < ROUNDS; round++) {
         // An animation is reported once a frame starts it, and the last round's end events fire in a frame.
+        const before = mutations;
         await evaluate(TWO_FRAMES);
-        if (started.size === 0) break;
+        // A page that still changes may start one more: a closed layer hands focus back, and the trigger fades.
+        if (started.size === 0 && mutations === before) break;
+        if (started.size === 0) continue;
         const byEnd = Map.groupBy([...started], ([, end]) => end);
         started.clear();
         const ids = [...byEnd.values()].flat().map(([id]) => id);
