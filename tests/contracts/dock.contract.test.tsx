@@ -39,7 +39,15 @@ describe("Dock contract", () => {
     const { scope } = await mountScenario("Dock", "pages");
     await vi.waitFor(() => expect(pages(scope()).length).toBeGreaterThan(1));
     const second = findTarget(scope(), { role: "button", name: "Page 2" });
+    const strip = findTarget(scope(), { role: "button", name: "Board 1" }).closest(
+      '[data-slot="dock-bar"]',
+    );
+    if (!strip) throw new Error("no dock strip");
+    const scrolled = new Promise<void>((done) =>
+      strip.addEventListener("scrollend", () => done(), { once: true }),
+    );
     await press(second);
-    await vi.waitFor(() => expect(second.getAttribute("aria-current")).toBe("true"));
+    await scrolled;
+    expect(second.getAttribute("aria-current")).toBe("true");
   });
 });
