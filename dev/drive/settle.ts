@@ -16,6 +16,24 @@ const UNTIL_DONE = `function (ms) {
   return Promise.race([done, new Promise((r) => setTimeout(r, ms))]).then(() => running.length);
 }`;
 
+/** Object ids of every closed shadow root, which no script in the page can reach. */
+export async function closedRoots(cdp: CDPSession): Promise<string[]> {
+  const { root } = await cdp.send("DOM.getDocument", { depth: -1, pierce: true });
+  const found: number[] = [];
+  const walk = (node: typeof root) => {
+    for (const shadow of node.shadowRoots ?? []) {
+      if (shadow.shadowRootType === "closed") found.push(shadow.backendNodeId);
+      walk(shadow);
+    }
+    for (const child of node.children ?? []) walk(child);
+  };
+  walk(root);
+  const ids = await Promise.all(
+    found.map((backendNodeId) => cdp.send("DOM.resolveNode", { backendNodeId })),
+  );
+  return ids.flatMap((r) => (r.object.objectId ? [r.object.objectId] : []));
+}
+
 interface Settled {
   settled: boolean;
   settleMs: number;
@@ -29,23 +47,6 @@ export async function createSettler(cdp: CDPSession) {
   let mutations = 0;
   for (const event of MUTATIONS) cdp.on(event, () => mutations++);
   await cdp.send("DOM.enable", {});
-
-  async function closedRoots(): Promise<string[]> {
-    const { root } = await cdp.send("DOM.getDocument", { depth: -1, pierce: true });
-    const found: number[] = [];
-    const walk = (node: typeof root) => {
-      for (const shadow of node.shadowRoots ?? []) {
-        if (shadow.shadowRootType === "closed") found.push(shadow.backendNodeId);
-        walk(shadow);
-      }
-      for (const child of node.children ?? []) walk(child);
-    };
-    walk(root);
-    const ids = await Promise.all(
-      found.map((backendNodeId) => cdp.send("DOM.resolveNode", { backendNodeId })),
-    );
-    return ids.flatMap((r) => (r.object.objectId ? [r.object.objectId] : []));
-  }
 
   async function untilDone(roots: string[], ms: number): Promise<number> {
     const call = (objectId: string) =>
@@ -67,7 +68,7 @@ export async function createSettler(cdp: CDPSession) {
 
   return async function settle(budgetMs = BUDGET_MS): Promise<Settled> {
     const start = performance.now();
-    const roots = await closedRoots();
+    const roots = await closedRoots(cdp);
     while (performance.now() - start < budgetMs) {
       const before = mutations;
       const left = Math.max(0, budgetMs - (performance.now() - start));
