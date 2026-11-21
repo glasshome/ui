@@ -17,12 +17,12 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 19,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 35,
+          "reason": "rebaseline 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 8,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "reason": "rechecked 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs"
         },
         "layouts": {
           "max": 2,
@@ -61,12 +61,12 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 19,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 35,
+          "reason": "rebaseline 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 8,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "reason": "rechecked 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs"
         },
         "layouts": {
           "max": 2,
@@ -75,8 +75,8 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 12,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 22,
+          "reason": "rebaseline 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 6,
@@ -84,7 +84,7 @@
         },
         "layouts": {
           "max": 2,
-          "reason": "2026-11-20, max of 5 T50 runs: a timer ends this motion, and its work no longer always shares a frame with the last point the drive draws"
+          "reason": "rebaseline 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs; the close layout and the unmount layout, where the old 1 held only when the settle ended before the 120 ms exit timer"
         }
       }
     },
@@ -119,12 +119,12 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 19,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 35,
+          "reason": "rebaseline 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 8,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "reason": "rechecked 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs"
         },
         "layouts": {
           "max": 2,
@@ -133,8 +133,8 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 10,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 20,
+          "reason": "rebaseline 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 6,
@@ -142,7 +142,7 @@
         },
         "layouts": {
           "max": 2,
-          "reason": "2026-11-20, max of 5 T50 runs: a timer ends this motion, and its work no longer always shares a frame with the last point the drive draws"
+          "reason": "rebaseline 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs; the close layout and the unmount layout, where the old 1 held only when the settle ended before the 120 ms exit timer"
         }
       }
     },
@@ -177,12 +177,12 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 19,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 35,
+          "reason": "rebaseline 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 8,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "reason": "rechecked 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs"
         },
         "layouts": {
           "max": 2,
@@ -191,8 +191,8 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 12,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 25,
+          "reason": "rebaseline 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
           "max": 6,
@@ -200,7 +200,7 @@
         },
         "layouts": {
           "max": 2,
-          "reason": "2026-11-20, max of 5 T50 runs: a timer ends this motion, and its work no longer always shares a frame with the last point the drive draws"
+          "reason": "rebaseline 2026-11-21 after the fixture's exit became a CSS animation, so the step now always includes the unmount; max of 4 T50 runs; the close layout and the unmount layout, where the old 1 held only when the settle ended before the 120 ms exit timer"
         }
       }
     },

@@ -6,6 +6,7 @@ import {
   ModalTrigger,
   useDialogContext,
 } from "../../../src/lib/behavior/modal-root";
+import { MODAL_MOTION } from "../../../src/lib/motion-classes";
 import { defineScenarios } from "../../harness/types";
 
 const EXIT_MS = 120;
@@ -26,7 +27,7 @@ const Modal = () => (
       slot="modal"
       exitMs={EXIT_MS}
       scrimClass=""
-      panelClass=""
+      panelClass={MODAL_MOTION}
       panelStyle={{
         position: "fixed",
         top: "120px",
