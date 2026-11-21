@@ -18,6 +18,15 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.44.6](https://github.com/glasshome/ui/compare/v1.44.5...v1.44.6) (2026-11-21)
+
+
+### Bug Fixes
+
+* **bottom-sheet:** drag the body on WebKit, which ignores touch-action pan-down ([c2458be](https://github.com/glasshome/ui/commit/c2458bea8462415859b1785519ae940e6088fe6c))
+* **bottom-sheet:** drag the body on WebKit, which ignores touch-action pan-down ([8116166](https://github.com/glasshome/ui/commit/8116166495c2cf4577c58cf142b0a73920e15d12))
+* **bottom-sheet:** take the body's scroll with no layout read, tested in WebKit ([4a51e2e](https://github.com/glasshome/ui/commit/4a51e2e2cb13e2dc622a935798db9a048d624ee0))
+
 ## [1.44.5](https://github.com/glasshome/ui/compare/v1.44.4...v1.44.5) (2026-11-20)
 
 
