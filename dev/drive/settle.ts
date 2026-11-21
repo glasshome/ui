@@ -2,7 +2,7 @@ import type { CDPSession } from "playwright";
 
 const BUDGET_MS = 2000;
 const QUIET_MS = 34;
-const MUTATIONS = [
+export const MUTATIONS = [
   "DOM.childNodeInserted",
   "DOM.childNodeRemoved",
   "DOM.attributeModified",
