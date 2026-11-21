@@ -107,9 +107,9 @@ async function runScenario(
 
   // Released before the settle, so an animation the stepper missed still ends, in real time.
   const traced = async (act: () => Promise<void>, rate = 1) => {
+    await animations.hold();
     await browser.startTracing(page, { categories: TRACE_CATEGORIES });
     await throttle(rate);
-    await animations.hold();
     await act();
     const mainThreadMotion = await animations.play();
     await animations.release();
@@ -148,9 +148,19 @@ async function runScenario(
   timeline.push({ kind: "load" });
   const hash = stageHash(component.slug, scenario.id, opts.theme);
   const mounted = await traced(async () => {
-    await page.evaluate((h) => {
-      window.location.hash = h;
-    }, hash);
+    // Laid out in the task that mounts: a frame and an image load land in either order after it.
+    await page.evaluate(
+      (h) =>
+        new Promise<void>((done) => {
+          const laidOut = () => {
+            void document.documentElement.offsetHeight;
+            done();
+          };
+          window.addEventListener("hashchange", laidOut, { once: true });
+          window.location.hash = h;
+        }),
+      hash,
+    );
     await page.locator("[data-scenario]").waitFor({ state: "attached" });
   });
   timeline.push({ kind: "mount" });

@@ -49,6 +49,8 @@ export async function createAnimationStepper(cdp: CDPSession) {
     async hold() {
       started.clear();
       await cdp.send("Animation.setPlaybackRate", { playbackRate: 0 });
+      // The style a running animation left pending is flushed here, before the trace starts.
+      await evaluate(LAYOUT);
     },
     release: () => cdp.send("Animation.setPlaybackRate", { playbackRate: 1 }),
     /** Lays out what the step started and what those animations start as they end; returns the properties they animate on the main thread. */
