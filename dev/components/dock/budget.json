@@ -3,21 +3,28 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 49,
-          "reason": "baseline 2026-11-19, max of 3 T50 runs (39) plus 25%"
+          "max": 4,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
-        "largestRecalc": { "max": 39, "reason": "baseline 2026-11-19, max of 3 T50 runs" },
+        "largestRecalc": {
+          "max": 3,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs"
+        },
         "layouts": { "max": 1, "reason": "baseline 2026-11-19, max of 3 T50 runs" }
       },
       "1": {
         "elementsRestyled": {
-          "max": 232,
-          "reason": "baseline 2026-11-19, max of 3 T50 runs (185) plus 25%"
+          "max": 95,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
-        "largestRecalc": { "max": 21, "reason": "baseline 2026-11-19, max of 3 T50 runs" },
+        "largestRecalc": {
+          "max": 16,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs"
+        },
         "layouts": { "max": 3, "reason": "baseline 2026-11-19, max of 3 T50 runs" }
       }
     },
+    "mainThreadMotion": ["color"],
     "guest": {
       "workUnits": { "max": 15, "reason": "baseline 2026-11-19 (12), plus 25% and at least one" }
     }
@@ -26,11 +33,17 @@
     "steps": {
       "0": {
         "elementsRestyled": {
-          "max": 399,
-          "reason": "baseline 2026-11-19, max of 3 T50 runs (319) plus 25%"
+          "max": 142,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
-        "largestRecalc": { "max": 203, "reason": "baseline 2026-11-19, max of 3 T50 runs" },
-        "layouts": { "max": 3, "reason": "baseline 2026-11-19, max of 3 T50 runs" }
+        "largestRecalc": {
+          "max": 110,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs"
+        },
+        "layouts": {
+          "max": 2,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs"
+        }
       },
       "1": {
         "elementsRestyled": {

@@ -41,8 +41,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 57,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 30,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 3,
@@ -68,6 +68,13 @@
         }
       }
     },
+    "mainThreadMotion": [
+      "--glass-wash",
+      "borderBottomColor",
+      "borderLeftColor",
+      "borderRightColor",
+      "borderTopColor"
+    ],
     "guest": {
       "workUnits": {
         "max": 8,
@@ -117,8 +124,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 64,
-          "reason": "2026-11-19: raised to the CI runner's counts over three runs at 2.5x to 4.72x T50 rates, plus 25% on elements restyled; motion steps restyle and lay out once a frame drawn"
+          "max": 30,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 3,
@@ -130,6 +137,13 @@
         }
       }
     },
+    "mainThreadMotion": [
+      "--glass-wash",
+      "borderBottomColor",
+      "borderLeftColor",
+      "borderRightColor",
+      "borderTopColor"
+    ],
     "guest": {
       "workUnits": {
         "max": 5,
@@ -155,8 +169,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 1,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 0,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 0,
@@ -169,8 +183,8 @@
       },
       "2": {
         "elementsRestyled": {
-          "max": 57,
-          "reason": "2026-11-19: raised to the CI runner's counts over three runs at 2.5x to 4.72x T50 rates, plus 25% on elements restyled; motion steps restyle and lay out once a frame drawn"
+          "max": 27,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 3,
@@ -182,6 +196,7 @@
         }
       }
     },
+    "mainThreadMotion": ["--glass-light"],
     "guest": {
       "workUnits": {
         "max": 7,
@@ -207,8 +222,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 53,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 30,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 3,
@@ -220,6 +235,13 @@
         }
       }
     },
+    "mainThreadMotion": [
+      "--glass-wash",
+      "borderBottomColor",
+      "borderLeftColor",
+      "borderRightColor",
+      "borderTopColor"
+    ],
     "guest": {
       "workUnits": {
         "max": 5,
@@ -245,8 +267,8 @@
       },
       "1": {
         "elementsRestyled": {
-          "max": 58,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
+          "max": 32,
+          "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
           "max": 4,
@@ -257,6 +279,13 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
         }
       }
-    }
+    },
+    "mainThreadMotion": [
+      "--glass-wash",
+      "borderBottomColor",
+      "borderLeftColor",
+      "borderRightColor",
+      "borderTopColor"
+    ]
   }
 }

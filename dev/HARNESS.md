@@ -8,7 +8,7 @@ Each component that has a folder under `dev/components/<slug>/` can be seen, dri
 |---|---|---|
 | `scenarios.tsx` | `defineScenarios({ component, scenarios })`. Each scenario has an `id` (kebab-case), a `title`, `render`, and optionally `within` (`page`, `dialog`, `sheet`, `shadow-root`), `steps` (pointer and key input) and `keyboard` (the same journey by keyboard only). | `tests/harness/scenarios.test.tsx` |
 | `contract.md` | One table row per behaviour, with an id such as `T1`. A row that fails today says "Gap:" and names its work item. | `tests/harness/contracts-covered.test.ts`: every id has an `it("T1 ...")` in `tests/contracts/<slug>.contract.test.tsx` |
-| `budget.json` | Per scenario: `steps` (per step index: `elementsRestyled`, `largestRecalc` and `layouts`, each `{ max, reason }`) and `guest` (`workUnits` and the four guest DOM call counts). | Host steps: `bun gov ops ui drive --all --t50 --check` (gate `ui-harness`). Guest: `packages/private/widget-realm/tests/dom/ui-scenarios.test.ts` (gate `test-widget-realm`) |
+| `budget.json` | Per scenario: `steps` (per step index: `elementsRestyled`, `largestRecalc` and `layouts`, each `{ max, reason }`), `mainThreadMotion` (property names, absent when none) and `guest` (`workUnits` and the four guest DOM call counts). | Host steps: `bun gov ops ui drive --all --t50 --check` (gate `ui-harness`). Guest: `packages/private/widget-realm/tests/dom/ui-scenarios.test.ts` (gate `test-widget-realm`) |
 | `a11y-gaps.json` (optional) | `[{ scenario, rule, item, theme?, hover? }]`: axe rules a scenario breaks today at some step, in one theme or both, each naming its work item. `hover: true` limits the entry to browsers that report `(hover: hover)`, where a `hover:` style applies. The entry fails once no step breaks it. | `tests/harness/a11y.ts` |
 
 Every new scenario needs a budget: a missing scenario or step is an overrun.
@@ -32,10 +32,16 @@ A behaviour block under `src/lib/behavior/<name>.ts` is a subject like a compone
 
 ## Setting a budget
 
-Times are reported and never gated; only counts gate. A replacement lands at or under the budget it replaces. To set new numbers:
+Times are reported and never gated; only counts gate. A replacement lands at or under the budget it replaces.
 
-1. Run `bun gov ops ui drive --all --t50 --json` three times.
-2. For each step, take the highest of the three runs. Add 25% to `elementsRestyled`, since the measured T50 rate moves with host load and the frames an animation runs move with it. Keep `largestRecalc` and `layouts` exact.
+The drive holds the document timeline still for the mount and for each step, and takes every finite animation the input starts to a quarter, a half and three quarters of its length with a forced layout at each, then to its end, which the next frame draws together with what the end events change. Those animations cost the same counts on any host, and the points take milliseconds, so a timer rarely lands between them. What still moves with the host: a timer (presence ends an exit by timer, a tooltip opens by one), motion a script draws per frame, an endless animation, and an animation that starts after the drawn ones ended. The timeline runs again before the step settles, so these finish in real time and stay in the step's counts.
+
+With the timeline held, an animation costs the same four draws on the compositor or off it. So each step also reports `mainThreadMotion`, the properties its animations interpolate other than transform, opacity and filter, and a scenario's `mainThreadMotion` in `budget.json` lists the ones it may. A property outside the list is an overrun.
+
+To set new numbers:
+
+1. Run `bun gov ops ui drive --all --t50 --json` at least three times.
+2. For each step, take the highest of the runs. Add 25% to `elementsRestyled`, since the measured T50 rate moves with host load and timers race the drawn points. Keep `largestRecalc` and `layouts` exact.
 3. For `guest`, run `bunx vitest run tests/dom/ui-scenarios.test.ts` in `packages/private/widget-realm` and sum each scenario's rows in `tests/dom/.ui-scenarios/report.json`. Add 25% and at least one to `workUnits`: guest work driven by frames (Spotlight's 600 ms sampler) runs as many ticks as the host draws while a step's press is in flight. Keep the DOM call counts exact.
 4. Each `reason` names the date and why the number moved.
 

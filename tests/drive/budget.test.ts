@@ -15,8 +15,13 @@ const PERF: StepPerf = {
   inputToPaintMs: 30,
 };
 
-const step = (index: number, perf: Partial<StepPerf> = {}): StepReport => ({
+const step = (
+  index: number,
+  perf: Partial<StepPerf> = {},
+  mainThreadMotion: string[] = [],
+): StepReport => ({
   index,
+  mainThreadMotion,
   step: index === 0 ? null : { key: "ArrowRight" },
   settled: true,
   settleMs: 40,
@@ -59,6 +64,19 @@ describe("checkBudget", () => {
   it("an overrun names scenario, step and field", () => {
     expect(checkBudget(report([step(0), step(1, { elementsRestyled: 41 })]), BUDGET)).toEqual([
       "keyboard-nav step 1 elementsRestyled 41 > 40",
+    ]);
+  });
+
+  it("a property animated on the main thread that the budget does not list is an overrun", () => {
+    const moved = report([step(0), step(1, {}, ["height", "width"])]);
+    const listed: Budget = {
+      "keyboard-nav": {
+        steps: { "0": row(40, 20, 1), "1": row(40, 20, 1) },
+        mainThreadMotion: ["height"],
+      },
+    };
+    expect(checkBudget(moved, listed)).toEqual([
+      "keyboard-nav step 1 animates width on the main thread",
     ]);
   });
 

@@ -9,6 +9,7 @@ import { basename, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { type Browser, chromium } from "playwright";
 import type { IndexedComponent, IndexedScenario, Step, Target } from "../harness/types";
+import { createAnimationStepper } from "./animations";
 import { axTree, focusPath } from "./ax";
 import { checkBudget, readBudget } from "./budget";
 import { comparePage } from "./compare-page";
@@ -95,6 +96,7 @@ async function runScenario(
   await serveGallery(page, opts.build);
   const cdp = await context.newCDPSession(page);
   const settle = await createSettler(cdp);
+  const animations = await createAnimationStepper(cdp);
 
   const out = mkdtempSync(join(opts.out, `${component.slug}-${scenario.id}-`));
   const timeline: TimelineEntry[] = [];
@@ -103,18 +105,24 @@ async function runScenario(
     await cdp.send("Emulation.setCPUThrottlingRate", { rate });
   };
 
-  const traced = async <T>(work: () => Promise<T>) => {
+  // Released before the settle, so an animation the stepper missed still ends, in real time.
+  const traced = async (act: () => Promise<void>, rate = 1) => {
     await browser.startTracing(page, { categories: TRACE_CATEGORIES });
-    const result = await work();
+    await throttle(rate);
+    await animations.hold();
+    await act();
+    const mainThreadMotion = await animations.play();
+    await animations.release();
+    const settled = await settle();
+    await throttle(1);
     const events: TraceEvent[] = JSON.parse((await browser.stopTracing()).toString()).traceEvents;
-    return { result, perf: summarize(events) };
+    return { settled, mainThreadMotion, perf: summarize(events) };
   };
 
   const observe = async (
     index: number,
     step: Step | null,
-    settled: Awaited<ReturnType<typeof settle>>,
-    perf: StepReport["perf"],
+    { settled, mainThreadMotion, perf }: Awaited<ReturnType<typeof traced>>,
   ): Promise<StepReport> => {
     const screenshot = join(out, `step-${index}.png`);
     await page.screenshot({ path: screenshot });
@@ -127,6 +135,7 @@ async function runScenario(
       ax: await axTree(cdp),
       focus: await focusPath(cdp),
       markers: await markers(cdp),
+      mainThreadMotion,
       perf,
     };
   };
@@ -143,23 +152,15 @@ async function runScenario(
       window.location.hash = h;
     }, hash);
     await page.locator("[data-scenario]").waitFor({ state: "attached" });
-    return settle();
   });
   timeline.push({ kind: "mount" });
-  const reports = [await observe(0, null, mounted.result, mounted.perf)];
+  const reports = [await observe(0, null, mounted)];
 
   for (const [i, step] of steps.entries()) {
     const index = i + 1;
     const input = await prepare(page, cdp, step);
     timeline.push({ kind: "step", index });
-    const done = await traced(async () => {
-      await throttle(opts.cpuRate);
-      await input();
-      const settled = await settle();
-      await throttle(1);
-      return settled;
-    });
-    reports.push(await observe(index, step, done.result, done.perf));
+    reports.push(await observe(index, step, await traced(input, opts.cpuRate)));
   }
   await context.close();
 
