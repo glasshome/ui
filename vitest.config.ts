@@ -35,6 +35,10 @@ const DRIVE = "tests/drive/*.e2e.test.ts";
 const FINGER = "tests/**/*-finger.*test.{ts,tsx}";
 const VISUAL_FINGER = "tests/visual/**/*-finger.visual.test.tsx";
 
+// A gate run names a results directory; the runner keeps junit and failure shots there.
+const resultsDir = process.env.GATE_RESULTS_DIR;
+const shuffleSeed = process.env.GATE_SHUFFLE_SEED;
+
 // Vitest names each instance after its project, so a project that replaces the provider brings its own.
 const BROWSER = {
   enabled: true,
@@ -66,10 +70,6 @@ const WEBKIT_FILES = [
   "tests/contracts/modal-root-dormant.contract.test.tsx",
   "tests/contracts/sheet-body-drag.contract.test.tsx",
 ];
-
-// A gate run names a results directory; the runner keeps junit and failure shots there.
-const resultsDir = process.env.GATE_RESULTS_DIR;
-const shuffleSeed = process.env.GATE_SHUFFLE_SEED;
 
 export default defineConfig({
   plugins: [solid({ dev: false, hot: false }), tailwindcss()],
