@@ -1,3 +1,4 @@
+import { configure } from "@solidjs/testing-library";
 import { commands } from "vitest/browser";
 import "../src/styles/globals.css";
 import { provideIcons } from "../src/solid/icon.js";
@@ -8,6 +9,9 @@ import { installDenyFetch } from "../src/testing/index.js";
 provideIcons({ bundled: {} });
 
 installDenyFetch();
+
+// test-change-ok hang guard for findBy* and waitFor, matching the expect.poll guard in vitest.config.ts
+configure({ asyncUtilTimeout: 4_000 });
 
 await commands.animationRate();
 // The file before leaves the pointer anywhere; a control mounted under it starts hovered.

@@ -1,6 +1,6 @@
 import { cleanup } from "@solidjs/testing-library";
 import { computeAccessibleName } from "dom-accessibility-api";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { commands } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { findAll } from "../../dev/harness/steps";
@@ -43,7 +43,7 @@ describe("Select contract", () => {
     await run({ press: TRIGGER }, { press: { role: "option", name: "Cherry" } });
     await closed();
     expect(trigger().textContent).toContain("Cherry");
-    await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
+    await expect.poll(() => focusedElement()).toBe(trigger());
   });
 
   it("S5 Enter on the focused trigger opens the list", async () => {
@@ -72,7 +72,7 @@ describe("Select contract", () => {
     await run({ key: "Enter" });
     await closed();
     expect(trigger().textContent).toContain(picked);
-    await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
+    await expect.poll(() => focusedElement()).toBe(trigger());
   });
 
   it("S8 Escape closes without a change and refocuses the trigger", async () => {
@@ -80,7 +80,7 @@ describe("Select contract", () => {
     await run({ press: TRIGGER }, { key: "Escape" });
     await closed();
     expect(trigger().textContent).toContain("Pick one");
-    await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
+    await expect.poll(() => focusedElement()).toBe(trigger());
   });
 
   it("S9 typing highlights the first option starting with the typed letters", async () => {
@@ -139,7 +139,7 @@ describe("Select contract", () => {
     await run({ press: { role: "option", name: "Banana" } });
     await closed();
     expect(trigger().textContent).toContain("Banana");
-    await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
+    await expect.poll(() => focusedElement()).toBe(trigger());
   });
 
   it("S14 End in a long list scrolls the last option into view", async () => {
@@ -166,7 +166,7 @@ describe("Select contract", () => {
     await run({ key: "Escape" });
     await closed();
     expect(findAll(scope(), { role: "dialog", name: "Scenario" }), "dialog open").toHaveLength(1);
-    await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
+    await expect.poll(() => focusedElement()).toBe(trigger());
   });
 
   it("S17 typing and Left and Right on the closed trigger pick without opening", async () => {

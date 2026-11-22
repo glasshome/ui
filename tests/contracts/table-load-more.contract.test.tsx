@@ -1,5 +1,5 @@
 import { cleanup } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { findAll } from "../../dev/harness/steps";
 import { frames } from "../frames.js";
 import { press } from "../press.js";
@@ -33,9 +33,9 @@ describe("TableLoadMore contract", () => {
     const { scope } = await mountScenario("TableLoadMore", "long");
     expect(rows(scope())).toBe(50);
     more(scope())[0]?.scrollIntoView();
-    await vi.waitFor(() => expect(rows(scope())).toBe(100));
+    await expect.poll(() => rows(scope())).toBe(100);
     more(scope())[0]?.scrollIntoView();
-    await vi.waitFor(() => expect(rows(scope())).toBe(120));
+    await expect.poll(() => rows(scope())).toBe(120);
     expect(more(scope())).toHaveLength(0);
   });
 

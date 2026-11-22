@@ -1,7 +1,7 @@
 import "../real-time-animations";
 import { cleanup, render, screen } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, onTestFinished } from "vitest";
 import { cdp, page, userEvent } from "vitest/browser";
 import {
   AlertDialog,
@@ -343,9 +343,9 @@ describe("page cover", () => {
 
     expect(playState()).toEqual(["running"]);
     setOpen(true);
-    await vi.waitFor(() => expect(playState()).toEqual(["paused"]));
+    await expect.poll(() => playState()).toEqual(["paused"]);
     setOpen(false);
-    await vi.waitFor(() => expect(playState()).toEqual(["running"]));
+    await expect.poll(() => playState()).toEqual(["running"]);
   });
 });
 
@@ -473,9 +473,7 @@ describe("modal close buttons", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Not now" }));
     expect(calls).toEqual([["widget-7", "click"]]);
-    await vi.waitFor(() =>
-      expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull(),
-    );
+    await expect.poll(() => document.querySelector('[data-slot="dialog-content"]')).toBeNull();
   });
 
   it("still closes the modal it belongs to", async () => {
@@ -488,9 +486,7 @@ describe("modal close buttons", () => {
     ));
 
     await userEvent.click(screen.getByRole("button", { name: "Not now" }));
-    await vi.waitFor(() =>
-      expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull(),
-    );
+    await expect.poll(() => document.querySelector('[data-slot="dialog-content"]')).toBeNull();
   });
 });
 
@@ -860,12 +856,12 @@ describe("Page cover", () => {
     ));
     expect(ambient()).toBe("1");
     setOpen(true);
-    await vi.waitFor(() => expect(root.hasAttribute("data-covered")).toBe(true));
+    await expect.poll(() => root.hasAttribute("data-covered")).toBe(true);
     expect(writes).toEqual([{ covered: true, animating: 0 }]);
     expect(ambient()).toBe("0");
     expect(document.documentElement.getAttributeNames()).toEqual(htmlBefore);
     setOpen(false);
-    await vi.waitFor(() => expect(root.hasAttribute("data-covered")).toBe(false));
+    await expect.poll(() => root.hasAttribute("data-covered")).toBe(false);
     expect(writes).toEqual([
       { covered: true, animating: 0 },
       { covered: false, animating: 0 },
@@ -886,9 +882,7 @@ describe("Page cover", () => {
     const opening = panel().getAnimations();
     expect(opening.length).toBeGreaterThan(0);
     setOpen(false);
-    await vi.waitFor(() =>
-      expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull(),
-    );
+    await expect.poll(() => document.querySelector('[data-slot="dialog-content"]')).toBeNull();
     expect(writes).toEqual([]);
   });
 
@@ -901,10 +895,10 @@ describe("Page cover", () => {
       </BottomSheet>
     ));
     setOpen(true);
-    await vi.waitFor(() => expect(root.hasAttribute("data-covered")).toBe(true));
+    await expect.poll(() => root.hasAttribute("data-covered")).toBe(true);
     expect(writes.map((write) => write.covered)).toEqual([true]);
     setOpen(false);
-    await vi.waitFor(() => expect(root.hasAttribute("data-covered")).toBe(false));
+    await expect.poll(() => root.hasAttribute("data-covered")).toBe(false);
     expect(writes.map((write) => write.covered)).toEqual([true, false]);
     expect(writes[1]?.animating).toBe(0);
   });
@@ -918,14 +912,12 @@ describe("Page cover", () => {
       </BottomSheet>
     ));
     setOpen(true);
-    await vi.waitFor(() => expect(document.getAnimations().length).toBeGreaterThan(0));
+    await expect.poll(() => document.getAnimations().length).toBeGreaterThan(0);
     setOpen(false);
     await Promise.allSettled(document.getAnimations().map((animation) => animation.finished));
-    await vi.waitFor(() =>
-      expect(document.querySelector("[data-sheet-content]")?.getAttribute("data-state")).toBe(
-        "closed",
-      ),
-    );
+    await expect
+      .poll(() => document.querySelector("[data-sheet-content]")?.getAttribute("data-state"))
+      .toBe("closed");
     expect(writes.map((write) => write.covered)).toEqual([true, false]);
   });
 
@@ -947,11 +939,11 @@ describe("Page cover", () => {
         </AlertDialog>
       </>
     ));
-    await vi.waitFor(() => expect(document.querySelectorAll("[data-covering]").length).toBe(2));
+    await expect.poll(() => document.querySelectorAll("[data-covering]").length).toBe(2);
     setFirst(false);
-    await vi.waitFor(() => expect(document.querySelectorAll("[data-covering]").length).toBe(1));
+    await expect.poll(() => document.querySelectorAll("[data-covering]").length).toBe(1);
     expect(root.hasAttribute("data-covered")).toBe(true);
     setSecond(false);
-    await vi.waitFor(() => expect(root.hasAttribute("data-covered")).toBe(false));
+    await expect.poll(() => root.hasAttribute("data-covered")).toBe(false);
   });
 });

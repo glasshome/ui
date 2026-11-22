@@ -77,7 +77,7 @@ describe("MediaTile", () => {
         onBroken={onBroken}
       />
     ));
-    await vi.waitFor(() => expect(onBroken).toHaveBeenCalledTimes(1));
+    await expect.poll(() => onBroken).toHaveBeenCalledTimes(1);
 
     await press(screen.getByTestId("media-tile"));
     expect(onSelect).toHaveBeenCalledTimes(1);

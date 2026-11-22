@@ -1,5 +1,5 @@
 import { cleanup } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { findAll } from "../../dev/harness/steps";
 import { runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
@@ -37,15 +37,15 @@ describe("Dialog contract", () => {
   it("D3 Done closes the dialog and refocuses the trigger", async () => {
     const { trigger, dialogs, run } = await mount("close");
     await run(OPEN, { press: { role: "button", name: "Done" } });
-    await vi.waitFor(() => expect(dialogs()).toHaveLength(0));
-    await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
+    await expect.poll(() => dialogs()).toHaveLength(0);
+    await expect.poll(() => focusedElement()).toBe(trigger());
   });
 
   it("D4 Escape closes the dialog and refocuses the trigger", async () => {
     const { trigger, dialogs, run } = await mount("escape");
     await run(OPEN, { key: "Escape" });
-    await vi.waitFor(() => expect(dialogs()).toHaveLength(0));
-    await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
+    await expect.poll(() => dialogs()).toHaveLength(0);
+    await expect.poll(() => focusedElement()).toBe(trigger());
   });
 
   it("D5 a select inside opens its list and leaves the dialog open", async () => {
@@ -58,14 +58,14 @@ describe("Dialog contract", () => {
   it("D6 Escape in that list closes the list and leaves the dialog open", async () => {
     const { dialogs, listboxes, run } = await mount("nested-select");
     await run(OPEN, SELECT, { key: "Escape" });
-    await vi.waitFor(() => expect(listboxes()).toHaveLength(0));
+    await expect.poll(() => listboxes()).toHaveLength(0);
     expect(dialogs()).toHaveLength(1);
   });
 
   it("D7 a press beside the open dialog closes it and refocuses the trigger", async () => {
     const { trigger, dialogs, run } = await mount("outside-press");
     await run(OPEN, { pressAt: { x: 8, y: 8 } });
-    await vi.waitFor(() => expect(dialogs()).toHaveLength(0));
-    await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
+    await expect.poll(() => dialogs()).toHaveLength(0);
+    await expect.poll(() => focusedElement()).toBe(trigger());
   });
 });

@@ -1,5 +1,5 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { findAll, findTarget, runSteps, scenarioScope } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
 import { OUTSIDE } from "../../dev/components/popover/scenarios";
@@ -22,7 +22,9 @@ function helpers(scope: () => ParentNode[]) {
   const dialogs = () => findAll(scope(), { role: "dialog" });
   const panels = () => dialogs().filter((el) => el.getAttribute("data-slot") === "popover-content");
   const run = (...steps: Step[]) => runSteps(scope, steps, input, settle);
-  const expectClosed = () => vi.waitFor(() => expect(panels()).toHaveLength(0));
+  const expectClosed = async () => {
+    await expect.poll(() => panels()).toHaveLength(0);
+  };
   return { word, dialogs, panels, run, expectClosed };
 }
 
@@ -86,7 +88,7 @@ describe("Term contract", () => {
     const { word, run, expectClosed } = await mount("escape");
     await run(OPEN, { key: "Escape" });
     await expectClosed();
-    await vi.waitFor(() => expect(focusedElement()).toBe(word()));
+    await expect.poll(() => focusedElement()).toBe(word());
   });
 
   it("TM7 a press outside closes it", async () => {
@@ -100,7 +102,7 @@ describe("Term contract", () => {
     await run(OPEN, { key: "Escape" });
     await expectClosed();
     expect(dialogs()).toHaveLength(1);
-    await vi.waitFor(() => expect(focusedElement()).toBe(word()));
+    await expect.poll(() => focusedElement()).toBe(word());
   });
 
   it("TM9 the panel's top edge sits on the word's, inside the viewport", async () => {
@@ -122,7 +124,7 @@ describe("Term contract", () => {
     const before = gap();
     window.scrollBy(0, 60);
     await settle();
-    await vi.waitFor(() => expect(Math.abs(gap() - before)).toBeLessThanOrEqual(1));
+    await expect.poll(() => Math.abs(gap() - before)).toBeLessThanOrEqual(1);
     window.scrollTo(0, 0);
   });
 });

@@ -1,6 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { scenarioScope } from "../../dev/harness/steps";
 import { Avatar, AvatarFallback, AvatarImage } from "../../src/solid";
 import { mountScenario, settle } from "../harness/mount";
@@ -19,7 +19,9 @@ const slot = (name: string) =>
     .find((el) => el !== null) ?? null;
 const image = () => slot("avatar-image") as HTMLImageElement | null;
 const fallback = () => slot("avatar-fallback");
-const until = (ok: () => boolean) => vi.waitFor(() => expect(ok()).toBe(true));
+const until = async (ok: () => boolean) => {
+  await expect.poll(() => ok()).toBe(true);
+};
 
 describe("Avatar contract", () => {
   it("AV1 without an image, a span with the fallback and no img", async () => {

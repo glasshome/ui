@@ -3,9 +3,9 @@
  * programmatically, so a future export either renders through the DEFAULT
  * probe, gets a CASES entry (required props / parent wrappers), or is added
  * to NOT_PROBED with a written reason; an unhandled one fails CI here. */
-import { cleanup, render } from "@solidjs/testing-library";
+import { cleanup, render, waitFor } from "@solidjs/testing-library";
 import type { JSX } from "solid-js";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
 
 import type { EntityDataAdapter } from "../../src/solid/entity-data.js";
@@ -839,7 +839,7 @@ async function renderProbe(name: string) {
   const subTrigger = document.querySelector("[data-cm-sub-trigger]");
   if (subTrigger) {
     await userEvent.hover(subTrigger);
-    await vi.waitFor(() => {
+    await waitFor(() => {
       if (subTrigger.getAttribute("aria-expanded") !== "true")
         throw new Error("submenu still shut");
     });
