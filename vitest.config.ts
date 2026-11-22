@@ -1,6 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 import { playwright } from "@vitest/browser-playwright";
 import solid from "vite-plugin-solid";
+import { searchForWorkspaceRoot } from "vite";
 import { defineConfig } from "vitest/config";
 import {
   animationRate,
@@ -72,6 +73,10 @@ const WEBKIT_FILES = [
 ];
 
 export default defineConfig({
+  // A failure screenshot is written through the dev server, which serves only allowed roots.
+  server: {
+    fs: { allow: [searchForWorkspaceRoot(process.cwd()), ...(resultsDir ? [resultsDir] : [])] },
+  },
   plugins: [solid({ dev: false, hot: false }), tailwindcss()],
   resolve: {
     conditions: ["browser"],
