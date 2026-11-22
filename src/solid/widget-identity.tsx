@@ -1,7 +1,9 @@
 import { type JSX, mergeProps, Show } from "solid-js";
+import { type UiFormat, uiFormat } from "../lib/format.js";
 import { cn } from "../lib/utils.js";
 import { Badge } from "./badge.js";
 import { Icon } from "./icon.js";
+import { useUiFormat, useUiText } from "./locale.js";
 import { ScopeIndicator } from "./scope-indicator.js";
 import { SectionIcon, SectionSubtitle } from "./section-card.js";
 import { WidgetTrustBadge } from "./widget-trust-badge.js";
@@ -38,12 +40,18 @@ export function widgetHref(w: { scope: string; name: string }): string {
   return `/widgets/@${w.scope}/${w.name}`;
 }
 
+const usEnglish = uiFormat("en-US");
+const ONE_DECIMAL = { minimumFractionDigits: 1, maximumFractionDigits: 1, useGrouping: false };
+
 /** Compact download/count formatting, shared by every surface. */
-export function formatWidgetCount(n: number | null | undefined): string {
+export function formatWidgetCount(
+  n: number | null | undefined,
+  format: UiFormat = usEnglish,
+): string {
   const v = n ?? 0;
-  if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
-  if (v >= 1000) return `${(v / 1000).toFixed(1)}k`;
-  return v.toString();
+  if (v >= 1_000_000) return `${format.number(v / 1_000_000, ONE_DECIMAL)}M`;
+  if (v >= 1000) return `${format.number(v / 1000, ONE_DECIMAL)}k`;
+  return format.number(v, { useGrouping: false });
 }
 
 type WidgetIdentityProps = {
@@ -61,6 +69,7 @@ type WidgetIdentityProps = {
 
 export function WidgetIdentity(_props: WidgetIdentityProps) {
   const props = mergeProps({ iconSize: "sm" as const, showVersionInline: true }, _props);
+  const text = useUiText();
   return (
     <div data-slot="widget-identity" class={cn("flex min-w-0 items-center gap-3", props.class)}>
       <SectionIcon size={props.iconSize} tone={props.iconTone}>
@@ -75,16 +84,16 @@ export function WidgetIdentity(_props: WidgetIdentityProps) {
           </SectionSubtitle>
           <Show when={props.showVersionInline && props.widget.latestVersion}>
             <span class="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-              v{props.widget.latestVersion}
+              {text("ui.widget-identity.version", { version: props.widget.latestVersion ?? "" })}
             </span>
           </Show>
           <WidgetTrustBadge isOfficial={!!props.widget.isOfficial} />
 
           <Show when={props.widget.isUnlisted}>
-            <Badge tone="var(--warning)">Unlisted</Badge>
+            <Badge tone="var(--warning)">{text("ui.widget-identity.unlisted")}</Badge>
           </Show>
           <Show when={props.widget.isUnpublished}>
-            <Badge tone="var(--destructive)">Not published</Badge>
+            <Badge tone="var(--destructive)">{text("ui.widget-identity.unpublished")}</Badge>
           </Show>
         </div>
         <div data-slot="widget-identity-scope" class="flex min-w-0 flex-wrap items-center gap-1.5">
@@ -112,6 +121,8 @@ export function WidgetMeta(props: {
   showLatestVersion?: boolean;
   class?: string;
 }): JSX.Element {
+  const text = useUiText();
+  const format = useUiFormat();
   return (
     <div
       data-slot="widget-meta"
@@ -120,17 +131,19 @@ export function WidgetMeta(props: {
       <Show when={props.widget.downloadCount != null}>
         <span class="flex items-center gap-1 tabular-nums">
           <Icon icon="lucide:arrow-down-to-line" width={12} height={12} class="size-3" />
-          {formatWidgetCount(props.widget.downloadCount)}
+          {formatWidgetCount(props.widget.downloadCount, format)}
         </span>
       </Show>
       <Show when={props.showVersions && props.widget.versionCount != null}>
         <span class="flex items-center gap-1 tabular-nums">
           <Icon icon="lucide:layers" width={12} height={12} class="size-3" />
-          {props.widget.versionCount} versions
+          {text("ui.widget-identity.versions", { count: props.widget.versionCount ?? 0 })}
         </span>
       </Show>
       <Show when={props.showLatestVersion && props.widget.latestVersion}>
-        <span class="tabular-nums">v{props.widget.latestVersion}</span>
+        <span class="tabular-nums">
+          {text("ui.widget-identity.version", { version: props.widget.latestVersion ?? "" })}
+        </span>
       </Show>
     </div>
   );

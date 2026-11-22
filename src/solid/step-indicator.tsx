@@ -1,6 +1,7 @@
 import { For } from "solid-js";
 import { POSITION_BAR, POSITION_BAR_LIT } from "../lib/position-bar-classes.js";
 import { cn } from "../lib/utils.js";
+import { useUiText } from "./locale.js";
 
 /**
  * Position inside a multi-step flow: lit bars for the eye, one spoken line for
@@ -8,6 +9,7 @@ import { cn } from "../lib/utils.js";
  * the only place the position is readable.
  */
 export function StepIndicator(props: { count: number; index: number; class?: string }) {
+  const text = useUiText();
   const steps = () => Array.from({ length: Math.max(props.count, 0) }, (_, step) => step);
 
   return (
@@ -15,7 +17,9 @@ export function StepIndicator(props: { count: number; index: number; class?: str
       data-slot="step-indicator"
       class={cn("flex items-center justify-center gap-1", props.class)}
     >
-      <span class="sr-only">{`Step ${props.index + 1} of ${props.count}`}</span>
+      <span class="sr-only">
+        {text("ui.step-indicator.position", { step: props.index + 1, count: props.count })}
+      </span>
       <For each={steps()}>
         {(step) => (
           <span

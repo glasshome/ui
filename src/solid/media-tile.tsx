@@ -6,6 +6,7 @@ import { cn } from "../lib/utils.js";
 import { Badge } from "./badge.js";
 import { Button } from "./button.js";
 import { Icon } from "./icon.js";
+import { useUiText } from "./locale.js";
 import type { StoredMedia } from "./media-store.js";
 
 export interface MediaTileProps {
@@ -23,6 +24,7 @@ export interface MediaTileProps {
 }
 
 export function MediaTile(props: MediaTileProps) {
+  const text = useUiText();
   return (
     <div data-slot="media-tile" class={cn("relative min-w-0", props.class)}>
       <button
@@ -54,7 +56,7 @@ export function MediaTile(props: MediaTileProps) {
           <img
             data-slot="media-tile-image"
             src={props.thumbUrl}
-            alt={`Stored ${props.item.id}`}
+            alt={text("ui.media-tile.stored", { id: props.item.id })}
             width={props.item.width}
             height={props.item.height}
             loading="lazy"
@@ -73,7 +75,7 @@ export function MediaTile(props: MediaTileProps) {
           tone="var(--warning)"
           class="pointer-events-none absolute bottom-1 left-1 backdrop-blur-md"
         >
-          Unused
+          {text("ui.media-tile.unused")}
         </Badge>
       </Show>
       {/* Sibling, not nested: a button inside the tile button is invalid and eats the click. */}
@@ -89,7 +91,7 @@ export function MediaTile(props: MediaTileProps) {
             "after:absolute after:-inset-1.5 after:content-['']",
             SCRIM_CLASS,
           )}
-          aria-label={`Delete ${props.item.id}`}
+          aria-label={text("ui.media-tile.delete", { id: props.item.id })}
           onClick={() => props.onDelete?.()}
         >
           <Icon icon="lucide:trash-2" width={16} height={16} />

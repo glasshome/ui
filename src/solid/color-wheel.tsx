@@ -3,10 +3,11 @@ import { createMemo, createSignal } from "solid-js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { createDrag, type RangeKey, rangeKeyOf } from "../lib/behavior/range.js";
-import { type Color, COLOR_INTL_TRANSLATIONS, parseColor } from "../lib/color/index.js";
+import { type Color, colorIntlTranslations, parseColor } from "../lib/color/index.js";
 import { FOCUS_RING } from "../lib/input-classes.js";
 import { THUMB_CLASS, THUMB_COLOR_RING, THUMB_SIZE } from "../lib/thumb-classes.js";
 import { cn } from "../lib/utils.js";
+import { useUiFormat, useUiText } from "./locale.js";
 
 interface ColorWheelProps {
   value?: Color;
@@ -37,6 +38,9 @@ const ColorWheel: Component<ColorWheelProps> = (props) => {
   const thickness = () =>
     props.thickness ?? Math.min(100, Math.ceil((THUMB_SIZE / (size() / 2)) * 100));
   const disabled = () => props.disabled ?? false;
+  const text = useUiText();
+  const format = useUiFormat();
+  const names = createMemo(() => colorIntlTranslations(text));
   const [value, setValue] = createControllableSignal({
     value: () => props.value,
     defaultValue: () => props.defaultValue ?? RED,
@@ -148,11 +152,14 @@ const ColorWheel: Component<ColorWheelProps> = (props) => {
           data-slot="color-wheel-thumb"
           data-disabled={disabledMark()}
           tabIndex={disabled() ? undefined : 0}
-          aria-label={props["aria-label"] ?? "Hue"}
+          aria-label={props["aria-label"] ?? text("ui.color-wheel.label")}
           aria-valuemin={0}
           aria-valuemax={360}
           aria-valuenow={hue()}
-          aria-valuetext={`${color().formatChannelValue("hue")}, ${color().getHueName(COLOR_INTL_TRANSLATIONS)}`}
+          aria-valuetext={text("ui.color.value-named", {
+            value: color().formatChannelValue("hue", format),
+            name: color().getHueName(names()),
+          })}
           aria-disabled={disabled() || undefined}
           class={cn(THUMB_CLASS, FOCUS_RING, THUMB_COLOR_RING, "rounded-full")}
           style={{

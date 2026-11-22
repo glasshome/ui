@@ -1,10 +1,12 @@
 import { createMemo, createSignal, createUniqueId, For, Show } from "solid-js";
+import { type UiFormat, uiFormat } from "../lib/format.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
+import { useUiFormat, useUiText } from "./locale.js";
 import { Overlay } from "./overlay.js";
 import { Tabs, TabsList, TabsTrigger } from "./tabs.js";
 
-const numberFmt = new Intl.NumberFormat("en-US");
+const usEnglish = uiFormat("en-US");
 
 /* Bars and chart backings wear the field chrome so a ranked bar reads as a
  * static slider; fills are the slider's own tinted glass. One radius for the
@@ -14,17 +16,20 @@ const SLIDER_WELL = FIELD_CHROME;
 const SLIDER_WELL_RADIUS = "rounded-full";
 const SLIDER_FILL = "glass glass-tint [--glass-tone:var(--primary)]";
 
-function formatDayLabel(day: string): string {
+const DAY_LABEL: Intl.DateTimeFormatOptions = { month: "short", day: "numeric", timeZone: "UTC" };
+
+function formatDayLabel(day: string, format: UiFormat): string {
   // `day` is a "YYYY-MM-DD" UTC key; render as e.g. "Jul 1".
   const d = new Date(`${day}T00:00:00Z`);
   if (Number.isNaN(d.getTime())) return day;
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+  return format.dateTime(d, DAY_LABEL);
 }
 
-export function formatCompact(n: number): string {
-  if (!Number.isFinite(n)) return "0";
-  if (Math.abs(n) >= 1000) return `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k`;
-  return numberFmt.format(n);
+export function formatCompact(n: number, format: UiFormat = usEnglish): string {
+  if (!Number.isFinite(n)) return format.number(0);
+  if (Math.abs(n) >= 1000)
+    return `${format.number(n / 1000, { maximumFractionDigits: 1, useGrouping: false })}k`;
+  return format.number(n);
 }
 
 const BYTE_UNITS: [string, number][] = [
@@ -33,11 +38,17 @@ const BYTE_UNITS: [string, number][] = [
   ["KB", 1024],
 ];
 
-export function formatBytes(bytes: number): string {
-  if (!(bytes > 0)) return "0 KB";
+export function formatBytes(bytes: number, format: UiFormat = usEnglish): string {
+  if (!(bytes > 0)) return `${format.number(0)} KB`;
   const [unit, size] = BYTE_UNITS.find(([, s]) => bytes >= s) ?? ["KB", 1024];
   const val = bytes / size;
-  return `${val.toFixed(Number(val < 10))} ${unit}`;
+  const digits = Number(val < 10);
+  const shown = format.number(val, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+    useGrouping: false,
+  });
+  return `${shown} ${unit}`;
 }
 
 /**
@@ -73,8 +84,9 @@ function ChartHover(props: {
   topPct: number;
   format?: (n: number) => string;
 }) {
+  const format = useUiFormat();
   const label = () =>
-    props.format ? props.format(props.point.count) : numberFmt.format(props.point.count);
+    props.format ? props.format(props.point.count) : format.number(props.point.count);
   return (
     <>
       <div
@@ -93,7 +105,7 @@ function ChartHover(props: {
         }}
       >
         <span class="font-mono font-semibold tabular-nums">{label()}</span>
-        <span class="text-muted-foreground ml-1">{formatDayLabel(props.point.day)}</span>
+        <span class="text-muted-foreground ml-1">{formatDayLabel(props.point.day, format)}</span>
       </Overlay>
     </>
   );
@@ -111,6 +123,8 @@ export function AreaChart(props: {
   format?: (n: number) => string;
 }) {
   const geom = createMemo(() => chartGeom(props.data));
+  const text = useUiText();
+  const format = useUiFormat();
   const height = () => props.height ?? 48;
   const gid = createUniqueId();
   const [hover, setHover] = createSignal<number | null>(null);
@@ -136,7 +150,7 @@ export function AreaChart(props: {
           class={cn("text-muted-foreground flex items-center justify-center text-xs", props.class)}
           style={{ height: `${height()}px` }}
         >
-          Not enough data yet
+          {text("ui.chart.not-enough-data")}
         </div>
       }
     >
@@ -153,7 +167,9 @@ export function AreaChart(props: {
             preserveAspectRatio="none"
             class={cn("text-primary h-full w-full", props.class)}
             role="img"
-            aria-label={`Peak ${g().max} per day`}
+            aria-label={text("ui.chart.peak", {
+              peak: format.number(g().max, { useGrouping: false }),
+            })}
           >
             <defs>
               <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
@@ -196,14 +212,16 @@ export function BarList(props: {
   format?: (value: number) => string;
   empty?: string;
 }) {
+  const text = useUiText();
+  const format = useUiFormat();
   const max = createMemo(() => Math.max(1, ...props.items.map((i) => i.value)));
-  const fmt = (v: number) => (props.format ? props.format(v) : formatCompact(v));
+  const fmt = (v: number) => (props.format ? props.format(v) : formatCompact(v, format));
   return (
     <Show
       when={props.items.length > 0}
       fallback={
         <div data-slot="bar-list" class="text-muted-foreground py-2 text-xs">
-          {props.empty ?? "No data"}
+          {props.empty ?? text("ui.chart.no-data")}
         </div>
       }
     >

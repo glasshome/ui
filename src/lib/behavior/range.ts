@@ -1,5 +1,5 @@
 import { type Accessor, createMemo } from "solid-js";
-import { readingDirection } from "../locale.js";
+import { readingDirection } from "../format.js";
 import { createControllableSignal } from "./controllable.js";
 
 function snapValueToStep(value: number, min: number, max: number, step: number): number {

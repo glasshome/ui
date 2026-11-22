@@ -26,6 +26,7 @@ const READS_FILES_NO_DOM = [
   "tests/lib/{material,glass-tone,utils,anchor-placement,color}.test.ts",
   "tests/bottom-sheet/{state-machine,velocity}.test.ts",
   "tests/solid/{dock-paging,spotlight-geometry}.test.ts",
+  "tests/locales/**",
 ];
 // The shim dash, hub, widget-sdk, widget-realm and governor still install runs where they run it.
 const HAPPY_DOM_SHIM = ["tests/happy-dom-fidelity.test.ts"];

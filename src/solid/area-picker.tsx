@@ -5,6 +5,7 @@ import { PICKER_LIST } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
 import { useEntityData } from "./entity-data.js";
 import { Icon } from "./icon.js";
+import { useUiText } from "./locale.js";
 import { PickerRow } from "./picker-row.js";
 import { PickerSearch } from "./picker-search.js";
 import { PickerTrigger } from "./picker-trigger.js";
@@ -40,6 +41,7 @@ type AreaPickerProps = AreaPickerSingleProps | AreaPickerMultiProps;
 
 export function AreaPicker(props: AreaPickerProps) {
   const data = useEntityData();
+  const text = useUiText();
   const [open, setOpen] = createSignal(false);
   const [search, setSearch] = createSignal("");
   let searchRef: HTMLInputElement | undefined;
@@ -143,7 +145,7 @@ export function AreaPicker(props: AreaPickerProps) {
           aria-labelledby={props["aria-labelledby"]}
           disabled={props.disabled}
           onClear={showTriggerClear() ? clearSelection : undefined}
-          clearLabel={multi() ? "Clear areas" : "Clear area"}
+          clearLabel={text(multi() ? "ui.area-picker.clear-many" : "ui.area-picker.clear-one")}
         >
           <Show
             when={triggerArea()}
@@ -152,11 +154,14 @@ export function AreaPicker(props: AreaPickerProps) {
                 when={selected().length > 1}
                 fallback={
                   <span class="text-muted-foreground flex-1 text-left">
-                    {props.placeholder ?? (multi() ? "Select areas..." : "Select area...")}
+                    {props.placeholder ??
+                      text(multi() ? "ui.area-picker.select-many" : "ui.area-picker.select-one")}
                   </span>
                 }
               >
-                <span class="flex-1 truncate text-left">{selected().length} rooms</span>
+                <span class="flex-1 truncate text-left">
+                  {text("ui.area-picker.rooms", { count: selected().length })}
+                </span>
               </Show>
             }
           >
@@ -186,8 +191,8 @@ export function AreaPicker(props: AreaPickerProps) {
             }}
             value={search()}
             onValueChange={setSearch}
-            placeholder="Search areas..."
-            aria-label="Search areas"
+            placeholder={text("ui.area-picker.search-placeholder")}
+            aria-label={text("ui.area-picker.search")}
           />
           <SelectionScope
             marker="highlighted"
@@ -196,7 +201,9 @@ export function AreaPicker(props: AreaPickerProps) {
             onMouseLeave={() => setHovered(null)}
           >
             <Show when={filtered().length === 0 && missing().length === 0}>
-              <div class="text-muted-foreground py-4 text-center text-sm">No areas found</div>
+              <div class="text-muted-foreground py-4 text-center text-sm">
+                {text("ui.area-picker.none")}
+              </div>
             </Show>
             <For each={missing()}>
               {(areaId) => (
@@ -205,7 +212,7 @@ export function AreaPicker(props: AreaPickerProps) {
                   class={cn(MENU_ITEM, "text-muted-foreground/60")}
                 >
                   <span class="truncate">{areaId}</span>
-                  <span class="shrink-0 text-xs">no longer exists</span>
+                  <span class="shrink-0 text-xs">{text("ui.area-picker.missing")}</span>
                 </div>
               )}
             </For>

@@ -28,6 +28,7 @@ import {
 import { cn } from "../lib/utils.js";
 import { Button } from "./button.js";
 import { Icon } from "./icon.js";
+import { useUiText } from "./locale.js";
 
 type CarouselApi = EmblaCarouselType;
 
@@ -78,6 +79,7 @@ const Carousel: ParentComponent<
   ]);
   const orientation = () => local.orientation ?? "horizontal";
   const transition = () => local.transition ?? "slide";
+  const text = useUiText();
   let viewportEl: HTMLDivElement | undefined;
   const [api, setApi] = createSignal<CarouselApi>();
   const [canScrollPrev, setCanScrollPrev] = createSignal(false);
@@ -175,7 +177,7 @@ const Carousel: ParentComponent<
         onKeyDown={handleKeyDown}
         class={cn("relative", local.class)}
         role="region"
-        aria-roledescription="carousel"
+        aria-roledescription={text("ui.carousel.role")}
         data-slot="carousel"
         {...rest}
       >
@@ -203,12 +205,13 @@ const CarouselContent: Component<ComponentProps<"div">> = (props) => {
 const CarouselItem: Component<ComponentProps<"div">> = (props) => {
   const [local, rest] = splitProps(props, ["class"]);
   const { orientation, transition } = useCarousel();
+  const text = useUiText();
 
   return (
     // biome-ignore lint/a11y/useSemanticElements: role=group + aria-roledescription=slide is the canonical ARIA carousel slide; no HTML element maps to group.
     <div
       role="group"
-      aria-roledescription="slide"
+      aria-roledescription={text("ui.carousel.slide-role")}
       data-slot="carousel-item"
       class={cn(carouselItem(transition(), orientation()), local.class)}
       {...rest}
@@ -220,6 +223,7 @@ const CarouselItem: Component<ComponentProps<"div">> = (props) => {
 const CarouselDots: Component<ComponentProps<"div">> = (props) => {
   const [local, rest] = splitProps(props, ["class"]);
   const { selected, slideCount, scrollTo } = useCarousel();
+  const text = useUiText();
 
   return (
     <div class={cn(CAROUSEL_DOTS, local.class)} data-slot="carousel-dots" {...rest}>
@@ -228,7 +232,7 @@ const CarouselDots: Component<ComponentProps<"div">> = (props) => {
           type="button"
           data-slot="carousel-dot"
           data-active={selected() === i ? "" : undefined}
-          aria-label={`Go to slide ${i + 1}`}
+          aria-label={text("ui.carousel.go-to-slide", { index: i + 1 })}
           aria-current={selected() === i}
           class={carouselDot(selected() === i)}
           onClick={() => scrollTo(i)}
@@ -241,6 +245,7 @@ const CarouselDots: Component<ComponentProps<"div">> = (props) => {
 const CarouselPrevious: Component<ComponentProps<typeof Button>> = (props) => {
   const [local, rest] = splitProps(props, ["class", "variant", "size"]);
   const { orientation, scrollPrev, canScrollPrev } = useCarousel();
+  const text = useUiText();
 
   return (
     <Button
@@ -259,7 +264,7 @@ const CarouselPrevious: Component<ComponentProps<typeof Button>> = (props) => {
       {...rest}
     >
       <Icon icon="lucide:arrow-left" width={16} height={16} />
-      <span class="sr-only">Previous slide</span>
+      <span class="sr-only">{text("ui.carousel.previous")}</span>
     </Button>
   );
 };
@@ -267,6 +272,7 @@ const CarouselPrevious: Component<ComponentProps<typeof Button>> = (props) => {
 const CarouselNext: Component<ComponentProps<typeof Button>> = (props) => {
   const [local, rest] = splitProps(props, ["class", "variant", "size"]);
   const { orientation, scrollNext, canScrollNext } = useCarousel();
+  const text = useUiText();
 
   return (
     <Button
@@ -285,7 +291,7 @@ const CarouselNext: Component<ComponentProps<typeof Button>> = (props) => {
       {...rest}
     >
       <Icon icon="lucide:arrow-right" width={16} height={16} />
-      <span class="sr-only">Next slide</span>
+      <span class="sr-only">{text("ui.carousel.next")}</span>
     </Button>
   );
 };

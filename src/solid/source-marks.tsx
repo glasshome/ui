@@ -1,6 +1,7 @@
 import { Show } from "solid-js";
 import { cn } from "../lib/utils.js";
 import { Badge } from "./badge.js";
+import { useUiText } from "./locale.js";
 import { WidgetTrustBadge } from "./widget-trust-badge.js";
 
 /**
@@ -8,6 +9,7 @@ import { WidgetTrustBadge } from "./widget-trust-badge.js";
  * Inside an `@container/source-marks` narrower than 12rem, Built in steps aside so the name keeps its room.
  */
 export function SourceMarks(props: { official: boolean; builtIn?: boolean; class?: string }) {
+  const text = useUiText();
   return (
     <span
       data-slot="source-marks"
@@ -16,7 +18,7 @@ export function SourceMarks(props: { official: boolean; builtIn?: boolean; class
       <WidgetTrustBadge isOfficial={props.official} />
       <Show when={props.builtIn}>
         <Badge tone="var(--muted-foreground)" class="@max-[12rem]/source-marks:hidden">
-          Built in
+          {text("ui.source-marks.built-in")}
         </Badge>
       </Show>
     </span>

@@ -10,6 +10,7 @@ import {
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { Input } from "./input.js";
+import { useUiText } from "./locale.js";
 
 /* Both affordances sit absolutely over the field, so their icons never reprint
  * layout; each is one w-10 column and the input reserves exactly that. */
@@ -27,6 +28,7 @@ const PasswordInput: Component<
 > = (props) => {
   const [local, rest] = splitProps(props, ["class", "leading", "showLabel", "hideLabel"]);
   const [visible, setVisible] = createSignal(false);
+  const text = useUiText();
   const leading = children(() => local.leading);
 
   return (
@@ -54,7 +56,9 @@ const PasswordInput: Component<
         type="button"
         data-slot="password-input-toggle"
         aria-label={
-          visible() ? (local.hideLabel ?? "Hide password") : (local.showLabel ?? "Show password")
+          visible()
+            ? (local.hideLabel ?? text("ui.password-input.hide"))
+            : (local.showLabel ?? text("ui.password-input.show"))
         }
         onClick={() => setVisible((v) => !v)}
         class={cn(

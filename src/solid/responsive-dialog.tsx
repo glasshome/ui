@@ -24,6 +24,7 @@ import {
   BottomSheetTrigger,
 } from "./bottom-sheet/index.js";
 import { Button } from "./button.js";
+import { useUiText } from "./locale.js";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./dialog.js";
 import { createModalHead, createModalParts, type ModalSize } from "./dialog-parts.js";
 
@@ -166,6 +167,7 @@ const ResponsiveDialogClose: ParentComponent<
 > = (props) => {
   const [local, rest] = splitProps(props, ["children", "class", "variant", "size"]);
   const ctx = useResponsiveDialogContext();
+  const text = useUiText();
 
   return (
     <Button
@@ -176,7 +178,7 @@ const ResponsiveDialogClose: ParentComponent<
       class={local.class}
       {...rest}
     >
-      {local.children ?? "Close"}
+      {local.children ?? text("ui.dialog.close")}
     </Button>
   );
 };

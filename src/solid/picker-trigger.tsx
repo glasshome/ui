@@ -2,6 +2,7 @@ import { type JSX, Show, splitProps } from "solid-js";
 import { PICKER_TRIGGER } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
+import { useUiText } from "./locale.js";
 import { useAnchorTrigger } from "./popover.js";
 
 export interface PickerTriggerProps extends Omit<
@@ -18,6 +19,7 @@ export interface PickerTriggerProps extends Omit<
 }
 
 export function PickerTrigger(props: PickerTriggerProps) {
+  const text = useUiText();
   const [own, rest] = splitProps(props, [
     "slot",
     "open",
@@ -64,7 +66,7 @@ export function PickerTrigger(props: PickerTriggerProps) {
         <button
           type="button"
           data-slot="picker-trigger-clear"
-          aria-label={own.clearLabel ?? "Clear selection"}
+          aria-label={own.clearLabel ?? text("ui.picker-trigger.clear")}
           disabled={rest.disabled}
           class="text-muted-foreground hover:text-foreground absolute top-1/2 right-9 flex -translate-y-1/2 items-center rounded-sm p-1 transition-colors disabled:pointer-events-none disabled:opacity-50"
           onClick={() => own.onClear?.()}

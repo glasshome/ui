@@ -259,6 +259,19 @@ export {
   type ListReorder,
   type ListReorderOptions,
 } from "./list-reorder.js";
+export {
+  browserUiFormat,
+  englishUiText,
+  LocaleProvider,
+  loadUiCatalog,
+  type UiCatalogLoader,
+  type UiFormat,
+  type UiKey,
+  type UiText,
+  type UiTextArgs,
+  useUiFormat,
+  useUiText,
+} from "./locale.js";
 export { Logo } from "./logo.js";
 export { mediaIndexErrorCopy, mediaStoreErrorCopy, toMediaStoreError } from "./media-copy.js";
 export {

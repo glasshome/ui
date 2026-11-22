@@ -70,6 +70,7 @@ export const THEME_PRESETS: ThemePreset[] = [
   // Midnight Glass — hand-tuned, canonical palette from styles/theme.css.
   {
     id: "midnight-glass",
+    // ui-text-ok: preset proper name, like the positional names below
     name: "Midnight Glass",
     radius: 1.4,
     swatch: ["#1a6baa", "#22b8cf"],

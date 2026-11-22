@@ -20,6 +20,7 @@ import { glassToneText } from "../lib/glass-tone.js";
 import { createIsMobile } from "../lib/use-is-mobile.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
+import { useUiText } from "./locale.js";
 import { Spinner } from "./spinner.js";
 
 type Position = ComponentProps<typeof SolidSonner>["position"];
@@ -150,12 +151,17 @@ const resolveMsg = <T,>(
   v: T,
 ): ToastMessage => (typeof m === "function" ? (m as (v: T) => ToastMessage)(v) : (m ?? ""));
 
+function LoadingTitle() {
+  const text = useUiText();
+  return <>{text("ui.toast.loading")}</>;
+}
+
 function glassPromise<T>(
   promise: Promise<T> | (() => Promise<T>),
   data: PromiseData<T> = {},
 ): { unwrap: () => Promise<T> } {
   const id = sonnerToast.custom(
-    () => <GlassToast kind="loading" title={data.loading ?? "Loading"} />,
+    () => <GlassToast kind="loading" title={data.loading ?? <LoadingTitle />} />,
     {
       unstyled: true,
       duration: Number.POSITIVE_INFINITY,

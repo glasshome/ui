@@ -34,6 +34,7 @@ import {
   EmptyTitle,
 } from "./empty.js";
 import { Icon } from "./icon.js";
+import { useUiFormat, useUiText } from "./locale.js";
 import { mediaIndexErrorCopy, mediaStoreErrorCopy, toMediaStoreError } from "./media-copy.js";
 import {
   createBrokenMedia,
@@ -72,17 +73,16 @@ export interface ImagePickerProps {
   class?: string;
 }
 
-const UNAVAILABLE = "Uploading images isn't available here.";
-
 export function ImagePicker(props: ImagePickerProps) {
   const store = useMediaStore();
   const urls = useMediaUrls();
+  const text = useUiText();
   return (
     <Show
       when={store || props.presets}
       fallback={
         <div data-slot="image-picker" class={cn(props.class)}>
-          <Alert tone="info">{UNAVAILABLE}</Alert>
+          <Alert tone="info">{text("ui.image-picker.unavailable")}</Alert>
         </div>
       }
     >
@@ -95,11 +95,12 @@ type MediaGalleryTile = { kind: "media"; image: StoredMedia };
 type GalleryTile = { kind: "preset"; key: string; preset: ImagePreset } | MediaGalleryTile;
 
 function PresetTile(props: { preset: ImagePreset; selected: boolean; onSelect: () => void }) {
+  const text = useUiText();
   return (
     <div data-slot="image-picker-preset" class="relative min-w-0">
       <button
         type="button"
-        aria-label={`Use ${props.preset.label}`}
+        aria-label={text("ui.image-picker.use", { name: props.preset.label })}
         aria-pressed={props.selected}
         onClick={() => props.onSelect()}
         class={cn(
@@ -121,7 +122,7 @@ function PresetTile(props: { preset: ImagePreset; selected: boolean; onSelect: (
         tone="var(--muted-foreground)"
         class="pointer-events-none absolute bottom-1 left-1 backdrop-blur-md"
       >
-        Built in
+        {text("ui.image-picker.built-in")}
       </Badge>
     </div>
   );
@@ -131,6 +132,8 @@ function ImageGallery(
   props: ImagePickerProps & { store: MediaStore | undefined; urls: MediaUrls | undefined },
 ) {
   const store = props.store;
+  const text = useUiText();
+  const format = useUiFormat();
   const uploadedUrl = () => props.urls?.url(props.value);
 
   const [open, setOpen] = createSignal(false);
@@ -178,9 +181,7 @@ function ImageGallery(
   );
   const deleteDescription = createMemo(() => {
     const used = pendingDelete()?.usedBy ?? 0;
-    return used === 0
-      ? "No widget uses it."
-      : `${used} widget${used === 1 ? "" : "s"} will lose the image.`;
+    return text("ui.image-picker.delete-line", { used });
   });
 
   const chosenPreset = () => {
@@ -274,7 +275,7 @@ function ImageGallery(
             open={open()}
             onToggle={() => openGallery(!open())}
             onClear={props.value ? clearImage : undefined}
-            clearLabel="Clear image"
+            clearLabel={text("ui.image-picker.clear")}
           >
             <Show
               when={!thumbBroken() && props.value && (chosenPreset() ?? uploadedUrl())}
@@ -287,7 +288,7 @@ function ImageGallery(
                     class="text-muted-foreground shrink-0"
                   />
                   <span class="text-muted-foreground flex-1 truncate text-left">
-                    {thumbBroken() ? "Image unavailable" : "Choose image"}
+                    {text(thumbBroken() ? "ui.image-picker.broken" : "ui.image-picker.choose")}
                   </span>
                 </>
               }
@@ -302,7 +303,7 @@ function ImageGallery(
                 onError={() => setThumbBroken(true)}
               />
               <span class="flex-1 truncate text-left">
-                {chosenPreset()?.label ?? "Image selected"}
+                {chosenPreset()?.label ?? text("ui.image-picker.selected")}
               </span>
             </Show>
           </PickerTrigger>
@@ -327,7 +328,7 @@ function ImageGallery(
             <Show when={error()}>
               {(err) => (
                 <Alert tone="destructive" role="alert">
-                  {mediaStoreErrorCopy(err())}
+                  {mediaStoreErrorCopy(err(), text, format)}
                 </Alert>
               )}
             </Show>
@@ -339,8 +340,8 @@ function ImageGallery(
                     <EmptyMedia variant="icon">
                       <Icon icon="lucide:image-off" width={24} height={24} />
                     </EmptyMedia>
-                    <EmptyTitle>Images unavailable</EmptyTitle>
-                    <EmptyDescription>{mediaIndexErrorCopy(failure())}</EmptyDescription>
+                    <EmptyTitle>{text("ui.image-picker.index-failed")}</EmptyTitle>
+                    <EmptyDescription>{mediaIndexErrorCopy(failure(), text)}</EmptyDescription>
                   </EmptyHeader>
                   <EmptyContent>
                     <Button
@@ -357,7 +358,7 @@ function ImageGallery(
                         if (focused() === panel) focusWithoutTracking(again);
                       }}
                     >
-                      Try again
+                      {text("ui.image-picker.retry")}
                     </Button>
                   </EmptyContent>
                 </Empty>
@@ -380,8 +381,8 @@ function ImageGallery(
                         <EmptyMedia variant="icon">
                           <Icon icon="lucide:image" width={24} height={24} />
                         </EmptyMedia>
-                        <EmptyTitle>No images yet</EmptyTitle>
-                        <EmptyDescription>Upload one to use it here.</EmptyDescription>
+                        <EmptyTitle>{text("ui.image-picker.empty")}</EmptyTitle>
+                        <EmptyDescription>{text("ui.image-picker.empty-hint")}</EmptyDescription>
                       </EmptyHeader>
                     </Empty>
                   </Match>
@@ -404,7 +405,7 @@ function ImageGallery(
                       <MediaTile
                         item={tile.image}
                         thumbUrl={thumbUrl(tile.image.id)}
-                        label={`Use ${tile.image.id}`}
+                        label={text("ui.image-picker.use", { name: tile.image.id })}
                         broken={brokenTiles.isBroken(tile.image)}
                         markUnused
                         selected={props.value === tile.image.id}
@@ -440,7 +441,7 @@ function ImageGallery(
                     </PaginationItem>
                     <PaginationItem data-testid="image-picker-page-label">
                       <SectionMeta>
-                        Page {current() + 1} of {pageCount()}
+                        {text("ui.image-picker.page", { page: current() + 1, count: pageCount() })}
                       </SectionMeta>
                     </PaginationItem>
                     <PaginationItem>
@@ -465,12 +466,19 @@ function ImageGallery(
             <Show when={loaded()?.usage}>
               {(u) => (
                 <SectionMeta>
-                  {formatBytes(u().bytes)} of {formatBytes(u().limitBytes)} · {u().files} of{" "}
-                  {u().limitFiles} images
+                  {text("ui.image-picker.usage", {
+                    used: formatBytes(u().bytes, format),
+                    limit: formatBytes(u().limitBytes, format),
+                    files: u().files,
+                    limitFiles: u().limitFiles,
+                  })}
                 </SectionMeta>
               )}
             </Show>
-            <Show when={store} fallback={<SectionMeta>{UNAVAILABLE}</SectionMeta>}>
+            <Show
+              when={store}
+              fallback={<SectionMeta>{text("ui.image-picker.unavailable")}</SectionMeta>}
+            >
               <input
                 ref={fileInput}
                 type="file"
@@ -493,7 +501,7 @@ function ImageGallery(
                 onClick={() => fileInput?.click()}
               >
                 <Icon icon="lucide:upload" width={14} height={14} />
-                {uploading() ? "Uploading..." : "Upload"}
+                {text(uploading() ? "ui.image-picker.uploading" : "ui.image-picker.upload")}
               </Button>
             </Show>
           </div>
@@ -518,17 +526,19 @@ function ImageGallery(
           <AlertDialogHead
             icon="lucide:image-off"
             tone="var(--destructive)"
-            title="Delete image?"
+            title={text("ui.image-picker.delete-title")}
             line={deleteDescription()}
           />
           <AlertDialogFooter>
-            <AlertDialogCancel aria-label="Cancel">Cancel</AlertDialogCancel>
+            <AlertDialogCancel aria-label={text("ui.dialog.cancel")}>
+              {text("ui.dialog.cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
-              aria-label="Delete"
+              aria-label={text("ui.image-picker.delete")}
               onClick={() => void confirmDelete()}
             >
-              Delete
+              {text("ui.image-picker.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

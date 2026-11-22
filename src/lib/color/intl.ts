@@ -12,49 +12,56 @@
  * Ported from @internationalized/color by way of Kobalte's colors module (MIT).
  */
 
-export const COLOR_INTL_TRANSLATIONS = {
-  hue: "Hue",
-  saturation: "Saturation",
-  lightness: "Lightness",
-  brightness: "Brightness",
-  red: "Red",
-  green: "Green",
-  blue: "Blue",
-  alpha: "Alpha",
-  colorName: (lightness: string, chroma: string, hue: string) => `${lightness} ${chroma} ${hue}`,
-  transparentColorName: (
-    lightness: string,
-    chroma: string,
-    hue: string,
-    percentTransparent: string,
-  ) => `${lightness} ${chroma} ${hue}, ${percentTransparent} transparent`,
-  "very dark": "very dark",
-  dark: "dark",
-  light: "light",
-  "very light": "very light",
-  pale: "pale",
-  grayish: "grayish",
-  vibrant: "vibrant",
-  black: "black",
-  white: "white",
-  gray: "gray",
-  pink: "pink",
-  "pink red": "pink red",
-  "red orange": "red orange",
-  brown: "brown",
-  orange: "orange",
-  "orange yellow": "orange yellow",
-  "brown yellow": "brown yellow",
-  yellow: "yellow",
-  "yellow green": "yellow green",
-  "green cyan": "green cyan",
-  cyan: "cyan",
-  "cyan blue": "cyan blue",
-  "blue purple": "blue purple",
-  purple: "purple",
-  "purple magenta": "purple magenta",
-  magenta: "magenta",
-  "magenta pink": "magenta pink",
-};
+import { englishUiText, type UiText } from "../text.js";
 
-export type ColorIntlTranslations = typeof COLOR_INTL_TRANSLATIONS;
+export function colorIntlTranslations(text: UiText) {
+  return {
+    hue: text("ui.color.hue"),
+    saturation: text("ui.color.saturation"),
+    lightness: text("ui.color.lightness"),
+    brightness: text("ui.color.brightness"),
+    red: text("ui.color.red"),
+    green: text("ui.color.green"),
+    blue: text("ui.color.blue"),
+    alpha: text("ui.color.alpha"),
+    colorName: (lightness: string, chroma: string, hue: string) =>
+      text("ui.color.name", { lightness, chroma, hue }),
+    transparentColorName: (
+      lightness: string,
+      chroma: string,
+      hue: string,
+      percentTransparent: string,
+    ) => text("ui.color.transparent-name", { lightness, chroma, hue, percentTransparent }),
+    "very dark": text("ui.color.very-dark"),
+    dark: text("ui.color.dark"),
+    light: text("ui.color.light"),
+    "very light": text("ui.color.very-light"),
+    pale: text("ui.color.pale"),
+    grayish: text("ui.color.grayish"),
+    vibrant: text("ui.color.vibrant"),
+    black: text("ui.color.black"),
+    white: text("ui.color.white"),
+    gray: text("ui.color.gray"),
+    pink: text("ui.color.pink"),
+    "pink red": text("ui.color.pink-red"),
+    "red orange": text("ui.color.red-orange"),
+    brown: text("ui.color.brown"),
+    orange: text("ui.color.orange"),
+    "orange yellow": text("ui.color.orange-yellow"),
+    "brown yellow": text("ui.color.brown-yellow"),
+    yellow: text("ui.color.yellow"),
+    "yellow green": text("ui.color.yellow-green"),
+    "green cyan": text("ui.color.green-cyan"),
+    cyan: text("ui.color.cyan"),
+    "cyan blue": text("ui.color.cyan-blue"),
+    "blue purple": text("ui.color.blue-purple"),
+    purple: text("ui.color.purple"),
+    "purple magenta": text("ui.color.purple-magenta"),
+    magenta: text("ui.color.magenta"),
+    "magenta pink": text("ui.color.magenta-pink"),
+  };
+}
+
+export type ColorIntlTranslations = ReturnType<typeof colorIntlTranslations>;
+
+export const COLOR_INTL_TRANSLATIONS: ColorIntlTranslations = colorIntlTranslations(englishUiText);

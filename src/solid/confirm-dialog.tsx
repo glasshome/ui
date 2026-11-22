@@ -9,6 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogHead,
 } from "./alert-dialog.js";
+import { useUiText } from "./locale.js";
 
 export interface ConfirmDialogProps {
   open: boolean;
@@ -34,6 +35,7 @@ export interface ConfirmDialogProps {
 export function ConfirmDialog(props: ConfirmDialogProps): JSX.Element {
   const destructive = () => props.destructive ?? true;
   const thing = children(() => props.children);
+  const text = useUiText();
   return (
     <AlertDialog open={props.open} onOpenChange={props.onOpenChange}>
       <AlertDialogContent>
@@ -47,7 +49,7 @@ export function ConfirmDialog(props: ConfirmDialogProps): JSX.Element {
           <AlertDialogBody>{thing()}</AlertDialogBody>
         </Show>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{text("ui.dialog.cancel")}</AlertDialogCancel>
           <AlertDialogAction
             variant={destructive() ? "destructive" : "default"}
             busy={props.busy}

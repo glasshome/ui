@@ -6,6 +6,7 @@ import { Z_CLASS } from "../lib/layers.js";
 import { OVERLAY_SURFACE_OPAQUE } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import { createModalParts } from "./dialog-parts.js";
+import { useUiText } from "./locale.js";
 
 /* Non-modal: no scrim, no scroll lock, no focus trap, so the page behind stays
  * live. Opaque: an editor stays readable over any material, blur 0 included. Below md it docks to the bottom and a handle folds it to its header;
@@ -20,6 +21,7 @@ export function DockedPanel(props: {
   class?: string;
   children: JSX.Element;
 }) {
+  const text = useUiText();
   return (
     <Show when={props.open}>
       <Portal mount={usePortalMount()}>
@@ -33,7 +35,9 @@ export function DockedPanel(props: {
             <button
               type="button"
               data-slot="docked-panel-handle"
-              aria-label={props.collapsed ? "Show panel" : "Hide panel"}
+              aria-label={
+                props.collapsed ? text("ui.docked-panel.show") : text("ui.docked-panel.hide")
+              }
               aria-expanded={!props.collapsed}
               class="mx-auto flex h-6 w-full shrink-0 items-center justify-center md:hidden"
               onClick={() => props.onCollapsedChange?.(!props.collapsed)}

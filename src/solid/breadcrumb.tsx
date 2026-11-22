@@ -8,6 +8,7 @@ import {
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
+import { useUiText } from "./locale.js";
 
 const Breadcrumb: Component<ComponentProps<"nav">> = (props) => {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
@@ -80,6 +81,7 @@ const BreadcrumbSeparator: ParentComponent<ComponentProps<"li">> = (props) => {
 
 const BreadcrumbEllipsis: Component<ComponentProps<"span">> = (props) => {
   const [local, rest] = splitProps(props, ["class"]);
+  const text = useUiText();
   return (
     <span
       data-slot="breadcrumb-ellipsis"
@@ -89,7 +91,7 @@ const BreadcrumbEllipsis: Component<ComponentProps<"span">> = (props) => {
       {...rest}
     >
       <Icon icon="lucide:ellipsis" width={16} height={16} class="size-4" />
-      <span class="sr-only">More</span>
+      <span class="sr-only">{text("ui.breadcrumb.more")}</span>
     </span>
   );
 };
