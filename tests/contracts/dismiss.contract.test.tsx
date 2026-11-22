@@ -2,8 +2,7 @@ import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { commands } from "vitest/browser";
-import { findAll, runSteps } from "../../dev/harness/steps";
-import type { Step } from "../../dev/harness/types";
+import { findAll } from "../../dev/harness/steps";
 import { createDismiss, type DismissReason } from "../../src/lib/behavior/dismiss";
 import { type LayerKind, registerLayer } from "../../src/lib/behavior/layer-stack";
 import {
@@ -17,7 +16,8 @@ import {
 } from "../../src/solid";
 import { useFakeTime } from "../../src/testing";
 import { input } from "../harness/input";
-import { focusedElement, mountScenario, settle } from "../harness/mount";
+import { focusedElement, settle } from "../harness/mount";
+import { mount, OUTSIDE, press } from "./dismiss-parts";
 
 const TIMERS: ("setTimeout" | "clearTimeout")[] = ["setTimeout", "clearTimeout"];
 const LISTEN_DELAY_MS = 1;
@@ -26,18 +26,6 @@ afterEach(() => {
   cleanup();
   document.body.innerHTML = "";
 });
-
-const press = (name: string): Step => ({ press: { role: "button", name } });
-const OUTSIDE = { x: 500, y: 330 };
-
-async function mount(id: string) {
-  const { scope } = await mountScenario("dismiss", id);
-  const dialogs = () => findAll(scope(), { role: "dialog" });
-  const text = (name: string) => findAll(scope(), { role: "status", name })[0]?.textContent ?? "";
-  const button = (name: string) => findAll(scope(), { role: "button", name })[0] as HTMLElement;
-  const run = (...steps: Step[]) => runSteps(scope, steps, input, settle);
-  return { scope, dialogs, text, button, run };
-}
 
 function watchWindow() {
   const seen: KeyboardEvent[] = [];
@@ -149,22 +137,6 @@ describe("dismiss contract", () => {
     await run({ key: "Escape" });
     expect(text("Lower dismissals")).toBe("1");
     expect(dialogs()).toHaveLength(0);
-  });
-
-  it("DI5 a touch that scrolls closes nothing, and a tap outside closes on its click", async () => {
-    await commands.pointer("finger");
-    onTestFinished(() => commands.pointer("mouse"));
-    const { dialogs, text, run } = await mount("outside");
-    await run(press("Open Layer"));
-    await commands.touch("down", OUTSIDE.x, OUTSIDE.y);
-    await commands.touch("cancel", OUTSIDE.x, OUTSIDE.y);
-    await settle();
-    expect(dialogs()).toHaveLength(1);
-    await commands.touch("down", OUTSIDE.x, OUTSIDE.y);
-    await commands.touch("up", OUTSIDE.x, OUTSIDE.y);
-    await settle();
-    expect(dialogs()).toHaveLength(0);
-    expect(text("Layer dismissals")).toBe("1");
   });
 
   it("DI6 the press that opened the layer leaves it open", async () => {

@@ -2,7 +2,6 @@ import { cleanup, render } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it } from "vitest";
 import { commands } from "vitest/browser";
 import { findAll, findTarget } from "../../dev/harness/steps";
-import type { Target } from "../../dev/harness/types";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -10,34 +9,10 @@ import {
   ContextMenuTrigger,
 } from "../../src/solid";
 import { input } from "../harness/input";
-import { focusedElement, mountScenario, settle } from "../harness/mount";
+import { focusedElement, settle } from "../harness/mount";
+import { centre, chosen, expectCornerAt, item, menus, mount, step } from "./context-menu-parts";
 
 afterEach(() => cleanup());
-
-type Scope = () => ParentNode[];
-
-const AREA: Target = { role: "region", name: "Canvas" };
-const GUTTER = 2;
-const menus = (scope: Scope) => findAll(scope(), { role: "menu" });
-const item = (scope: Scope, name: string) =>
-  findTarget(scope(), { role: "menuitem", name }) as HTMLElement;
-const chosen = (scope: Scope) =>
-  findTarget(scope(), { role: "status", name: "Chosen" }).textContent;
-
-const centre = (el: Element) => {
-  const box = el.getBoundingClientRect();
-  return [box.x + box.width / 2, box.y + box.height / 2] as const;
-};
-
-async function step(run: Promise<void>) {
-  await run;
-  await settle();
-}
-
-async function mount(id = "closed") {
-  const { scope } = await mountScenario("ContextMenu", id);
-  return { scope, area: findTarget(scope(), AREA) as HTMLElement };
-}
 
 /** The last `contextmenu` the window saw, read after its dispatch ends. */
 function watchNativeMenu() {
@@ -59,12 +34,6 @@ async function secondaryPressAt(x: number, y: number) {
   await settle();
 }
 
-const expectCornerAt = (menu: Element | undefined, x: number, y: number) => {
-  const box = menu?.getBoundingClientRect();
-  expect(Math.abs((box?.left ?? -1) - (x + GUTTER))).toBeLessThanOrEqual(1);
-  expect(Math.abs((box?.top ?? -1) - y)).toBeLessThanOrEqual(1);
-};
-
 describe("ContextMenu contract", () => {
   it("CM1 mounted, no menu exists and the area is marked closed", async () => {
     const { scope, area } = await mount();
@@ -85,22 +54,6 @@ describe("ContextMenu contract", () => {
     expectCornerAt(all[0], x, y);
     expect(focusedElement()).toBe(all[0]);
     expect(area.hasAttribute("data-expanded")).toBe(true);
-  });
-
-  it("CM3 a held touch opens the menu under the finger and its release chooses nothing", async () => {
-    const { scope, area } = await mount();
-    const [x, y] = centre(area);
-    await step(input.hold(area));
-    const all = menus(scope);
-    expect(all).toHaveLength(1);
-    expectCornerAt(all[0], x, y);
-    expect(chosen(scope)).toBe("nothing");
-  });
-
-  it("CM4 a short tap opens nothing", async () => {
-    const { scope, area } = await mount();
-    await step(input.touch(area));
-    expect(menus(scope)).toHaveLength(0);
   });
 
   it("CM5 ArrowDown then Enter chooses Copy and closes the menu", async () => {

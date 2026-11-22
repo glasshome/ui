@@ -3,32 +3,11 @@ import { computeAccessibleName } from "dom-accessibility-api";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { commands } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
-import { findAll, findTarget, runSteps } from "../../dev/harness/steps";
-import type { Step } from "../../dev/harness/types";
-import { input } from "../harness/input";
-import { focusedElement, mountScenario, settle } from "../harness/mount";
+import { findAll } from "../../dev/harness/steps";
+import { focusedElement, settle } from "../harness/mount";
+import { mount, TRIGGER } from "./select-parts";
 
 afterEach(cleanup);
-
-const TRIGGER = { role: "button", name: "Fruit Pick one" };
-
-async function mount(id = "closed") {
-  const { scope } = await mountScenario("Select", id);
-  const trigger = () => {
-    const [only, ...rest] = findAll(scope(), { role: "button" }).filter(
-      (b) => b.getAttribute("aria-haspopup") === "listbox",
-    );
-    if (!only || rest.length > 0) throw new Error("expected one listbox trigger");
-    return only;
-  };
-  const option = (name: string) => findTarget(scope(), { role: "option", name });
-  const listboxes = () => findAll(scope(), { role: "listbox" });
-  const highlighted = () =>
-    findAll(scope(), { role: "option" }).filter((o) => o.hasAttribute("data-highlighted"));
-  const run = (...steps: Step[]) => runSteps(scope, steps, input, settle);
-  const closed = () => vi.waitFor(() => expect(listboxes()).toHaveLength(0));
-  return { scope, trigger, option, listboxes, highlighted, run, closed };
-}
 
 describe("Select contract", () => {
   it("S1 the closed trigger is a labelled button that pops a listbox", async () => {
@@ -188,26 +167,6 @@ describe("Select contract", () => {
     await closed();
     expect(findAll(scope(), { role: "dialog", name: "Scenario" }), "dialog open").toHaveLength(1);
     await vi.waitFor(() => expect(focusedElement()).toBe(trigger()));
-  });
-
-  it("S16 a touch that moves past the slop picks nothing, a still tap picks", async () => {
-    const { trigger, option, listboxes, run, closed } = await mount();
-    await run({ press: TRIGGER });
-    const banana = option("Banana").getBoundingClientRect();
-    const x = banana.x + banana.width / 2;
-    const y = banana.y + banana.height / 2;
-    await commands.touch("down", x, y);
-    await commands.touch("move", x, y + 12);
-    await commands.touch("move", x, y + 24);
-    await commands.touch("up", x, y + 24);
-    await settle();
-    expect(listboxes(), "list still open after the moved press").toHaveLength(1);
-    expect(trigger().textContent).toContain("Pick one");
-
-    await commands.touch("down", x, y);
-    await commands.touch("up", x, y);
-    await closed();
-    expect(trigger().textContent).toContain("Banana");
   });
 
   it("S17 typing and Left and Right on the closed trigger pick without opening", async () => {

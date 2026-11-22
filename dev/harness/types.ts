@@ -58,3 +58,7 @@ export interface IndexedComponent {
 }
 
 export const defineScenarios = (c: ComponentScenarios): ComponentScenarios => c;
+
+/** Whether the steps need a page with a touch screen. */
+export const usesFinger = (steps: readonly Step[]) =>
+  steps.some((step) => "touch" in step || "hold" in step);

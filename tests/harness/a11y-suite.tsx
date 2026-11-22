@@ -4,7 +4,7 @@ import { commands, page } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { BLOCKS, COMPONENTS, kebab } from "../../dev/harness/registry";
 import { runSteps } from "../../dev/harness/steps";
-import type { Scenario } from "../../dev/harness/types";
+import { type Scenario, usesFinger } from "../../dev/harness/types";
 import {
   expectAxeClean,
   expectGapsSeen,
@@ -44,14 +44,24 @@ function sliceOf(index: number, count: number) {
     lightest.components.add(component);
   }
   const mine = slices[index - 1]?.components ?? new Set<string>();
-  return [...COMPONENTS, ...BLOCKS]
-    .filter((c) => mine.has(c.component))
-    .flatMap(({ component, scenarios }) =>
-      scenarios.map((scenario) => ({ name: `${component} ${scenario.id}`, component, scenario })),
-    );
+  return allCases().filter((c) => mine.has(c.component));
 }
 
-export function a11yMatrix(index: number, count: number) {
+const allCases = () =>
+  [...COMPONENTS, ...BLOCKS].flatMap(({ component, scenarios }) =>
+    scenarios.map((scenario) => ({ name: `${component} ${scenario.id}`, component, scenario })),
+  );
+type Case = ReturnType<typeof allCases>[number];
+const byFinger = (c: Case) => usesFinger(c.scenario.steps ?? []);
+
+/** One slice of the scenarios a mouse and keyboard drive. */
+export const a11yMatrix = (index: number, count: number) =>
+  matrix(sliceOf(index, count).filter((c) => !byFinger(c)));
+
+/** The scenarios a finger drives, for a project whose pages have a touch screen. */
+export const a11yFingerMatrix = () => matrix(allCases().filter(byFinger));
+
+function matrix(CASES: Case[]) {
   afterEach(async () => {
     cleanup();
     document.documentElement.classList.remove("dark");
@@ -59,7 +69,6 @@ export function a11yMatrix(index: number, count: number) {
     await page.viewport(VIEWPORT.width, VIEWPORT.height);
   });
 
-  const CASES = sliceOf(index, count);
   const KEYBOARD = CASES.filter((c) => c.scenario.keyboard !== undefined);
 
   describe.each(CASES)("$name", ({ component, scenario }) => {

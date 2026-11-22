@@ -8,7 +8,13 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:
 import { basename, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { type Browser, chromium } from "playwright";
-import type { IndexedComponent, IndexedScenario, Step, Target } from "../harness/types";
+import {
+  type IndexedComponent,
+  type IndexedScenario,
+  type Step,
+  type Target,
+  usesFinger,
+} from "../harness/types";
 import { createAnimationStepper } from "./animations";
 import { axTree, focusPath } from "./ax";
 import { checkBudget, readBudget } from "./budget";
@@ -85,7 +91,7 @@ async function runScenario(
   const context = await browser.newContext({
     viewport: { width: w, height: h },
     colorScheme: opts.theme,
-    hasTouch: steps.some((s) => "touch" in s || "hold" in s),
+    hasTouch: usesFinger(steps),
   });
   const page = await context.newPage();
   const errors: string[] = [];
