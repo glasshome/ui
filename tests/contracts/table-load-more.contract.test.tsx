@@ -5,7 +5,11 @@ import { frames } from "../frames.js";
 import { press } from "../press.js";
 import { mountScenario, settle } from "../harness/mount";
 
-afterEach(cleanup);
+afterEach(async () => {
+  cleanup();
+  // The scroll a teardown clamps lands a frame later and would arm the next table's observer.
+  await frames(2);
+});
 
 const rows = (scope: ParentNode[]) => findAll(scope, { role: "listitem" }).length;
 const more = (scope: ParentNode[]) => findAll(scope, { role: "button", name: "Show more" });
@@ -40,8 +44,6 @@ describe("TableLoadMore contract", () => {
   });
 
   it("TL4 a long table nobody scrolls stays at one page", async () => {
-    // The scroll an earlier test's teardown clamps lands a frame later.
-    await frames(2);
     const { scope } = await mountScenario("TableLoadMore", "long");
     await frames(2);
     expect(rows(scope())).toBe(50);
