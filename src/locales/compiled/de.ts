@@ -2,8 +2,8 @@
 import type { CompiledCatalog } from "@glasshome/widget-contract/i18n-format";
 
 const catalog: CompiledCatalog = {
-  "ui.area-picker.clear-many": ["Bereiche löschen"],
-  "ui.area-picker.clear-one": ["Bereich löschen"],
+  "ui.area-picker.clear-many": ["Bereiche leeren"],
+  "ui.area-picker.clear-one": ["Bereich leeren"],
   "ui.area-picker.missing": ["existiert nicht mehr"],
   "ui.area-picker.none": ["Keine Bereiche gefunden"],
   "ui.area-picker.rooms": [
@@ -26,9 +26,9 @@ const catalog: CompiledCatalog = {
     },
   ],
   "ui.area-picker.search": ["Bereiche suchen"],
-  "ui.area-picker.search-placeholder": ["Bereiche suchen…"],
-  "ui.area-picker.select-many": ["Bereiche auswählen…"],
-  "ui.area-picker.select-one": ["Bereich auswählen…"],
+  "ui.area-picker.search-placeholder": ["Bereiche suchen..."],
+  "ui.area-picker.select-many": ["Bereiche auswählen..."],
+  "ui.area-picker.select-one": ["Bereich auswählen..."],
   "ui.breadcrumb.more": ["Mehr"],
   "ui.carousel.go-to-slide": [
     "Zu Folie ",
@@ -42,7 +42,7 @@ const catalog: CompiledCatalog = {
   "ui.carousel.role": ["Karussell"],
   "ui.carousel.slide-role": ["Folie"],
   "ui.chart.no-data": ["Keine Daten"],
-  "ui.chart.not-enough-data": ["Noch nicht genügend Daten"],
+  "ui.chart.not-enough-data": ["Noch nicht genug Daten"],
   "ui.chart.peak": [
     "Spitze ",
     {
@@ -141,7 +141,7 @@ const catalog: CompiledCatalog = {
   "ui.copy-button.copied": ["Kopiert!"],
   "ui.copy-button.copied-toast": ["In die Zwischenablage kopiert"],
   "ui.copy-button.copy": ["In die Zwischenablage kopieren"],
-  "ui.copy-button.failed-hint": ["Markieren und von Hand kopieren."],
+  "ui.copy-button.failed-hint": ["Markiere es und kopiere es von Hand."],
   "ui.copy-button.failed-toast": ["Kopieren nicht möglich"],
   "ui.data-table.clear-search": ["Suche löschen"],
   "ui.data-table.loading": ["Wird geladen…"],
@@ -155,7 +155,7 @@ const catalog: CompiledCatalog = {
   ],
   "ui.dialog.cancel": ["Abbrechen"],
   "ui.dialog.close": ["Schließen"],
-  "ui.dock.add": ["Zur Dock hinzufügen"],
+  "ui.dock.add": ["Zum Dock hinzufügen"],
   "ui.dock.page": [
     "Seite ",
     {
@@ -175,7 +175,7 @@ const catalog: CompiledCatalog = {
     " entfernen",
   ],
   "ui.docked-panel.hide": ["Panel ausblenden"],
-  "ui.docked-panel.show": ["Panel einblenden"],
+  "ui.docked-panel.show": ["Panel anzeigen"],
   "ui.entity-selector.class-excluded": [
     "Keine ",
     {
@@ -197,7 +197,7 @@ const catalog: CompiledCatalog = {
           {
             arg: "domain",
           },
-          "-Entität wurde ausgeblendet, weil sie kein",
+          "-Entität wurde ausgeblendet, weil sie",
         ],
         other: [
           {
@@ -207,11 +207,11 @@ const catalog: CompiledCatalog = {
           {
             arg: "domain",
           },
-          "-Entitäten wurden ausgeblendet, weil sie kein",
+          "-Entitäten wurden ausgeblendet, weil sie",
         ],
       },
     },
-    " ",
+    " keine ",
     {
       arg: "deviceClass",
     },
@@ -300,9 +300,9 @@ const catalog: CompiledCatalog = {
   "ui.icon-picker.clear": ["Symbol entfernen"],
   "ui.icon-picker.label": ["Symbol"],
   "ui.icon-picker.none": ["Keine Symbole gefunden"],
-  "ui.icon-picker.search": ["Symbole suchen"],
-  "ui.icon-picker.search-placeholder": ["Symbole suchen …"],
-  "ui.icon-picker.searching": ["Wird gesucht …"],
+  "ui.icon-picker.search": ["Symbole durchsuchen"],
+  "ui.icon-picker.search-placeholder": ["Symbole durchsuchen …"],
+  "ui.icon-picker.searching": ["Wird durchsucht …"],
   "ui.image-picker.broken": ["Bild nicht verfügbar"],
   "ui.image-picker.built-in": ["Integriert"],
   "ui.image-picker.choose": ["Bild auswählen"],
@@ -344,7 +344,7 @@ const catalog: CompiledCatalog = {
   ],
   "ui.image-picker.retry": ["Erneut versuchen"],
   "ui.image-picker.selected": ["Bild ausgewählt"],
-  "ui.image-picker.unavailable": ["Hochladen von Bildern ist hier nicht verfügbar."],
+  "ui.image-picker.unavailable": ["Das Hochladen von Bildern ist hier nicht verfügbar."],
   "ui.image-picker.upload": ["Hochladen"],
   "ui.image-picker.uploading": ["Wird hochgeladen …"],
   "ui.image-picker.usage": [
@@ -383,7 +383,7 @@ const catalog: CompiledCatalog = {
     },
     " gespeichert",
   ],
-  "ui.media-tile.unused": ["Nicht verwendet"],
+  "ui.media-tile.unused": ["Ungenutzt"],
   "ui.media.file-too-large": ["Diese Datei ist zu groß zum Hochladen."],
   "ui.media.image-too-large": ["Die Abmessungen dieses Bildes sind zu groß."],
   "ui.media.index-failed": [
@@ -406,7 +406,7 @@ const catalog: CompiledCatalog = {
     {
       arg: "limit",
     },
-    " Fotospeicher belegt. Lösche ein Foto, um Platz freizugeben.",
+    " deines Fotospeichers genutzt. Lösche ein Foto, um Platz freizugeben.",
   ],
   "ui.media.quota-files": [
     "Du hast das Fotolimit erreicht. Lösche eins, um ein weiteres hinzuzufügen.",
@@ -423,7 +423,7 @@ const catalog: CompiledCatalog = {
     " Fotos gespeichert. Lösche eins, um ein weiteres hinzuzufügen.",
   ],
   "ui.media.server-full": [
-    "Der Fotospeicher dieses Dashboards ist voll. Wer das Dashboard betreibt, muss auf dem Server Platz freigeben.",
+    "Der Fotospeicher des Dashboards ist voll. Wer dieses Dashboard betreibt, muss auf dem Server Platz freigeben.",
   ],
   "ui.media.upload-failed": [
     "Das hat nicht funktioniert. Versuche es erneut und melde dich erneut an, falls es weiterhin fehlschlägt.",
@@ -441,9 +441,9 @@ const catalog: CompiledCatalog = {
   ],
   "ui.pagination.more": ["Weitere Seiten"],
   "ui.pagination.next": ["Weiter"],
-  "ui.pagination.next-label": ["Zur nächsten Seite wechseln"],
+  "ui.pagination.next-label": ["Zur nächsten Seite gehen"],
   "ui.pagination.previous": ["Zurück"],
-  "ui.pagination.previous-label": ["Zur vorherigen Seite wechseln"],
+  "ui.pagination.previous-label": ["Zur vorherigen Seite gehen"],
   "ui.password-input.hide": ["Passwort verbergen"],
   "ui.password-input.show": ["Passwort anzeigen"],
   "ui.picker-trigger.clear": ["Auswahl löschen"],

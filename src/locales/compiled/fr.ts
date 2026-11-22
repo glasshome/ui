@@ -78,7 +78,7 @@ const catalog: CompiledCatalog = {
   "ui.color.green-cyan": ["vert cyan"],
   "ui.color.hue": ["Teinte"],
   "ui.color.light": ["clair"],
-  "ui.color.lightness": ["Clarté"],
+  "ui.color.lightness": ["Luminosité"],
   "ui.color.magenta": ["magenta"],
   "ui.color.magenta-pink": ["rose magenta"],
   "ui.color.name": [
@@ -102,7 +102,7 @@ const catalog: CompiledCatalog = {
   "ui.color.purple": ["violet"],
   "ui.color.purple-magenta": ["magenta violet"],
   "ui.color.red": ["Rouge"],
-  "ui.color.red-orange": ["orange rouge"],
+  "ui.color.red-orange": ["rouge orangé"],
   "ui.color.saturation": ["Saturation"],
   "ui.color.transparent-name": [
     {
@@ -345,7 +345,7 @@ const catalog: CompiledCatalog = {
   ],
   "ui.image-picker.retry": ["Réessayer"],
   "ui.image-picker.selected": ["Image sélectionnée"],
-  "ui.image-picker.unavailable": ["L’import d’images n’est pas disponible ici."],
+  "ui.image-picker.unavailable": ["L’importation d’images n’est pas disponible ici."],
   "ui.image-picker.upload": ["Importer"],
   "ui.image-picker.uploading": ["Importation en cours…"],
   "ui.image-picker.usage": [
@@ -385,16 +385,16 @@ const catalog: CompiledCatalog = {
     },
   ],
   "ui.media-tile.unused": ["Inutilisée"],
-  "ui.media.file-too-large": ["Ce fichier est trop volumineux pour être importé."],
+  "ui.media.file-too-large": ["Ce fichier est trop volumineux pour être envoyé."],
   "ui.media.image-too-large": ["Les dimensions de cette image sont trop grandes."],
   "ui.media.index-failed": [
-    "Vos photos n’ont pas pu être listées. Le tableau de bord a peut-être perdu la connexion au serveur.",
+    "Impossible d’afficher vos photos. Le tableau de bord a peut-être perdu le serveur.",
   ],
   "ui.media.index-no-household": [
-    "Aucun foyer n’est actif, les photos ne peuvent donc pas être listées pour le moment.",
+    "Aucun foyer n’est actif, donc vos photos ne peuvent pas être affichées pour le moment.",
   ],
   "ui.media.no-household": [
-    "Aucun foyer n’est actif, les photos ne peuvent donc pas être enregistrées pour le moment.",
+    "Aucun foyer n’est actif, donc les photos ne peuvent pas être enregistrées pour le moment.",
   ],
   "ui.media.not-an-image": ["Ce fichier n’est pas une image."],
   "ui.media.quota-bytes": [
@@ -429,9 +429,9 @@ const catalog: CompiledCatalog = {
     "L’espace de stockage des photos du tableau de bord est plein. La personne qui gère ce tableau de bord doit libérer de la place sur le serveur.",
   ],
   "ui.media.upload-failed": [
-    "Une erreur est survenue. Réessayez, et reconnectez-vous si le problème persiste.",
+    "Cela n’a pas fonctionné. Réessayez, et reconnectez-vous si l’erreur persiste.",
   ],
-  "ui.media.upload-rate": ["Trop d’importations à la fois. Patientez un instant et réessayez."],
+  "ui.media.upload-rate": ["Trop d’envois à la fois. Patientez un instant et réessayez."],
   "ui.number-field.decrement": ["Diminuer"],
   "ui.number-field.increment": ["Augmenter"],
   "ui.option-card.options": [
@@ -500,7 +500,7 @@ const catalog: CompiledCatalog = {
     },
   ],
   "ui.schema-form.reorder": [
-    "Réordonner ",
+    "Réorganiser ",
     {
       arg: "name",
     },
@@ -510,7 +510,7 @@ const catalog: CompiledCatalog = {
     "Ce paramètre nécessite une version plus récente du tableau de bord pour être modifié ici.",
   ],
   "ui.scope-indicator.org": ["org"],
-  "ui.scope-indicator.personal": ["perso"],
+  "ui.scope-indicator.personal": ["personnel"],
   "ui.settings-row.add": ["Ajouter"],
   "ui.source-marks.built-in": ["Intégré"],
   "ui.spinner.label": ["Chargement"],
@@ -535,7 +535,7 @@ const catalog: CompiledCatalog = {
     {
       arg: "kelvin",
     },
-    " kelvins",
+    " Kelvin",
   ],
   "ui.term.learn-more": ["En savoir plus"],
   "ui.toast.loading": ["Chargement"],

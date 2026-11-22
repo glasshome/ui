@@ -65,10 +65,10 @@ const catalog: CompiledCatalog = {
   "ui.color.alpha": ["Alfa"],
   "ui.color.black": ["negro"],
   "ui.color.blue": ["Azul"],
-  "ui.color.blue-purple": ["púrpura azulado"],
+  "ui.color.blue-purple": ["morado azulado"],
   "ui.color.brightness": ["Brillo"],
   "ui.color.brown": ["marrón"],
-  "ui.color.brown-yellow": ["amarillo marrón"],
+  "ui.color.brown-yellow": ["amarillo marronáceo"],
   "ui.color.cyan": ["cian"],
   "ui.color.cyan-blue": ["azul cian"],
   "ui.color.dark": ["oscuro"],
@@ -80,7 +80,7 @@ const catalog: CompiledCatalog = {
   "ui.color.light": ["claro"],
   "ui.color.lightness": ["Luminosidad"],
   "ui.color.magenta": ["magenta"],
-  "ui.color.magenta-pink": ["rosa magenta"],
+  "ui.color.magenta-pink": ["magenta rosado"],
   "ui.color.name": [
     {
       arg: "lightness",
@@ -95,12 +95,12 @@ const catalog: CompiledCatalog = {
     },
   ],
   "ui.color.orange": ["naranja"],
-  "ui.color.orange-yellow": ["amarillo naranja"],
+  "ui.color.orange-yellow": ["amarillo anaranjado"],
   "ui.color.pale": ["pálido"],
   "ui.color.pink": ["rosa"],
   "ui.color.pink-red": ["rojo rosado"],
-  "ui.color.purple": ["púrpura"],
-  "ui.color.purple-magenta": ["magenta púrpura"],
+  "ui.color.purple": ["morado"],
+  "ui.color.purple-magenta": ["magenta morado"],
   "ui.color.red": ["Rojo"],
   "ui.color.red-orange": ["naranja rojizo"],
   "ui.color.saturation": ["Saturación"],
@@ -140,7 +140,7 @@ const catalog: CompiledCatalog = {
   "ui.copy-button.copied": ["¡Copiado!"],
   "ui.copy-button.copied-toast": ["Copiado al portapapeles"],
   "ui.copy-button.copy": ["Copiar al portapapeles"],
-  "ui.copy-button.failed-hint": ["Selecciónalo y cópialo manualmente."],
+  "ui.copy-button.failed-hint": ["Selecciónalo y cópialo a mano."],
   "ui.copy-button.failed-toast": ["No se pudo copiar"],
   "ui.data-table.clear-search": ["Borrar búsqueda"],
   "ui.data-table.loading": ["Cargando…"],
@@ -189,6 +189,7 @@ const catalog: CompiledCatalog = {
       plural: "count",
       branches: {
         one: [
+          "Se ocultó ",
           {
             pound: true,
           },
@@ -196,9 +197,10 @@ const catalog: CompiledCatalog = {
           {
             arg: "domain",
           },
-          " se ha ocultado porque no",
+          " porque no",
         ],
         other: [
+          "Se ocultaron ",
           {
             pound: true,
           },
@@ -206,11 +208,11 @@ const catalog: CompiledCatalog = {
           {
             arg: "domain",
           },
-          " se han ocultado porque no",
+          " porque no",
         ],
       },
     },
-    " informan de ",
+    " informa de ",
     {
       arg: "deviceClass",
     },
@@ -231,7 +233,7 @@ const catalog: CompiledCatalog = {
     },
   ],
   "ui.entity-selector.no-matches": [
-    "Sin coincidencias para «",
+    "No hay coincidencias para «",
     {
       arg: "query",
     },
@@ -266,21 +268,21 @@ const catalog: CompiledCatalog = {
   ],
   "ui.entity-selector.search-placeholder": ["Buscar por nombre, habitación o ID..."],
   "ui.entity-selector.select-many": [
-    "Seleccionar entidades ",
+    "Selecciona entidades ",
     {
       arg: "domain",
     },
     "...",
   ],
   "ui.entity-selector.select-one": [
-    "Seleccionar entidad ",
+    "Selecciona una entidad ",
     {
       arg: "domain",
     },
     "...",
   ],
   "ui.entity-selector.sheet": [
-    "Seleccionar entidades ",
+    "Selecciona entidades ",
     {
       arg: "domain",
     },
@@ -297,7 +299,7 @@ const catalog: CompiledCatalog = {
   "ui.face-toggle.always-sees": ["siempre la ve"],
   "ui.hero-action.recommended": ["Recomendado"],
   "ui.icon-picker.all": ["Todos"],
-  "ui.icon-picker.clear": ["Borrar icono"],
+  "ui.icon-picker.clear": ["Quitar icono"],
   "ui.icon-picker.label": ["Icono"],
   "ui.icon-picker.none": ["No se han encontrado iconos"],
   "ui.icon-picker.search": ["Buscar iconos"],
@@ -306,7 +308,7 @@ const catalog: CompiledCatalog = {
   "ui.image-picker.broken": ["Imagen no disponible"],
   "ui.image-picker.built-in": ["Integrada"],
   "ui.image-picker.choose": ["Elegir imagen"],
-  "ui.image-picker.clear": ["Borrar imagen"],
+  "ui.image-picker.clear": ["Quitar imagen"],
   "ui.image-picker.delete": ["Eliminar"],
   "ui.image-picker.delete-line": [
     {
@@ -378,7 +380,7 @@ const catalog: CompiledCatalog = {
     },
   ],
   "ui.media-tile.stored": [
-    "Almacenada ",
+    "Almacenado ",
     {
       arg: "id",
     },
@@ -387,10 +389,10 @@ const catalog: CompiledCatalog = {
   "ui.media.file-too-large": ["Ese archivo es demasiado grande para subirlo."],
   "ui.media.image-too-large": ["Las dimensiones de esa imagen son demasiado grandes."],
   "ui.media.index-failed": [
-    "No se pudieron mostrar tus fotos. Es posible que el panel haya perdido el servidor.",
+    "No se pudieron listar tus fotos. Es posible que el panel haya perdido el servidor.",
   ],
   "ui.media.index-no-household": [
-    "No hay ningún hogar activo, así que ahora no se pueden mostrar tus fotos.",
+    "No hay ningún hogar activo, así que ahora no se pueden listar tus fotos.",
   ],
   "ui.media.no-household": [
     "No hay ningún hogar activo, así que ahora no se pueden guardar fotos.",
@@ -408,7 +410,7 @@ const catalog: CompiledCatalog = {
     {
       arg: "limit",
     },
-    " del almacenamiento de fotos. Elimina una foto para liberar espacio.",
+    " de almacenamiento de fotos. Elimina una foto para liberar espacio.",
   ],
   "ui.media.quota-files": ["Has alcanzado el límite de fotos. Elimina una para añadir otra."],
   "ui.media.quota-files-used": [
@@ -426,10 +428,10 @@ const catalog: CompiledCatalog = {
     "El almacenamiento de fotos del panel está lleno. Quien gestione este panel debe liberar espacio en el servidor.",
   ],
   "ui.media.upload-failed": [
-    "No funcionó. Inténtalo de nuevo y vuelve a iniciar sesión si sigue fallando.",
+    "Eso no funcionó. Inténtalo de nuevo y vuelve a iniciar sesión si sigue fallando.",
   ],
   "ui.media.upload-rate": ["Demasiadas subidas a la vez. Espera un momento e inténtalo de nuevo."],
-  "ui.number-field.decrement": ["Reducir"],
+  "ui.number-field.decrement": ["Disminuir"],
   "ui.number-field.increment": ["Aumentar"],
   "ui.option-card.options": [
     "Opciones de ",
@@ -504,7 +506,7 @@ const catalog: CompiledCatalog = {
   ],
   "ui.schema-form.string-list-placeholder": ["Escribe y pulsa Intro para añadir"],
   "ui.schema-form.unknown": [
-    "Este ajuste necesita una versión más reciente del panel para poder editarse aquí.",
+    "Este ajuste necesita una versión más reciente del panel para editarse aquí.",
   ],
   "ui.scope-indicator.org": ["org"],
   "ui.scope-indicator.personal": ["personal"],
@@ -532,7 +534,7 @@ const catalog: CompiledCatalog = {
     {
       arg: "kelvin",
     },
-    " kelvin",
+    " Kelvin",
   ],
   "ui.term.learn-more": ["Más información"],
   "ui.toast.loading": ["Cargando"],
