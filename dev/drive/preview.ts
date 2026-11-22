@@ -8,7 +8,7 @@ import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { type Browser, chromium } from "playwright";
 import { MATERIAL_PRESETS } from "../../src/tokens";
-import type { IndexedComponent, IndexedScenario } from "../harness/types";
+import { type IndexedComponent, type IndexedScenario, usesFinger } from "../harness/types";
 import {
   componentSlugs,
   findComponent,
@@ -102,7 +102,7 @@ async function shoot(browser: Browser, shot: Shot, afterSteps: boolean, material
   const context = await browser.newContext({
     viewport: { width: w, height: h },
     colorScheme: shot.column.theme,
-    hasTouch: steps.some((s) => "touch" in s || "hold" in s),
+    hasTouch: usesFinger(steps),
   });
   const page = await context.newPage();
   const errors: string[] = [];

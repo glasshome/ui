@@ -8,7 +8,13 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:
 import { basename, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { type Browser, chromium } from "playwright";
-import type { IndexedComponent, IndexedScenario, Step, Target } from "../harness/types";
+import {
+  type IndexedComponent,
+  type IndexedScenario,
+  type Step,
+  type Target,
+  usesFinger,
+} from "../harness/types";
 import { createAnimationStepper } from "./animations";
 import { axTree, focusPath } from "./ax";
 import { checkBudget, readBudget } from "./budget";
@@ -85,7 +91,7 @@ async function runScenario(
   const context = await browser.newContext({
     viewport: { width: w, height: h },
     colorScheme: opts.theme,
-    hasTouch: steps.some((s) => "touch" in s || "hold" in s),
+    hasTouch: usesFinger(steps),
   });
   const page = await context.newPage();
   const errors: string[] = [];
@@ -107,9 +113,9 @@ async function runScenario(
 
   // Released before the settle, so an animation the stepper missed still ends, in real time.
   const traced = async (act: () => Promise<void>, rate = 1) => {
+    await animations.hold();
     await browser.startTracing(page, { categories: TRACE_CATEGORIES });
     await throttle(rate);
-    await animations.hold();
     await act();
     const mainThreadMotion = await animations.play();
     await animations.release();
@@ -148,9 +154,19 @@ async function runScenario(
   timeline.push({ kind: "load" });
   const hash = stageHash(component.slug, scenario.id, opts.theme);
   const mounted = await traced(async () => {
-    await page.evaluate((h) => {
-      window.location.hash = h;
-    }, hash);
+    // Laid out in the task that mounts: a frame and an image load land in either order after it.
+    await page.evaluate(
+      (h) =>
+        new Promise<void>((done) => {
+          const laidOut = () => {
+            void document.documentElement.offsetHeight;
+            done();
+          };
+          window.addEventListener("hashchange", laidOut, { once: true });
+          window.location.hash = h;
+        }),
+      hash,
+    );
     await page.locator("[data-scenario]").waitFor({ state: "attached" });
   });
   timeline.push({ kind: "mount" });

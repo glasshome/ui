@@ -8,7 +8,6 @@ import {
   compose,
   emulateMedia,
   mouse,
-  pointer,
   touch,
   wheel,
 } from "./tests/commands";
@@ -34,7 +33,11 @@ const HAPPY_DOM_SHIM = ["tests/happy-dom-fidelity.test.ts"];
 const VISUAL = "tests/visual/**/*.test.tsx";
 const DRIVE = "tests/drive/*.e2e.test.ts";
 const GERMAN_BROWSER = "tests/solid/locale-browser-de.test.tsx";
+// Pages with a touch screen from birth; a page that gains one later never gets its mouse back.
+const FINGER = "tests/**/*-finger.*test.{ts,tsx}";
+const VISUAL_FINGER = "tests/visual/**/*-finger.visual.test.tsx";
 
+// Vitest names each instance after its project, so a project that replaces the provider brings its own.
 const BROWSER = {
   enabled: true,
   headless: true,
@@ -52,7 +55,6 @@ const BROWSER = {
     compose,
     emulateMedia,
     mouse,
-    pointer,
     touch,
     wheel,
   },
@@ -122,7 +124,14 @@ export default defineConfig({
           name: "chromium",
           setupFiles: ["./tests/setup.ts"],
           include: ["tests/**/*.test.{ts,tsx}"],
-          exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM, VISUAL, DRIVE, GERMAN_BROWSER],
+          exclude: [
+            ...READS_FILES_NO_DOM,
+            ...HAPPY_DOM_SHIM,
+            VISUAL,
+            DRIVE,
+            FINGER,
+            GERMAN_BROWSER,
+          ],
           browser: BROWSER,
         },
       },
@@ -139,6 +148,27 @@ export default defineConfig({
               // test-change-ok same 5 s as the shared provider, restated since this one replaces it
               actionTimeout: 5000,
               contextOptions: { locale: "de-DE" },
+            }),
+          },
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "chromium-finger",
+          setupFiles: ["./tests/setup.ts"],
+          include: [FINGER],
+          exclude: [VISUAL],
+          browser: {
+            ...BROWSER,
+            instances: [{ browser: "chromium" as const }],
+            provider: playwright({
+              // test-change-ok same 5 s as the shared provider, restated since this one replaces it
+              actionTimeout: 5000,
+              contextOptions: {
+                hasTouch: true,
+                permissions: ["clipboard-read", "clipboard-write"],
+              },
             }),
           },
         },
@@ -164,13 +194,32 @@ export default defineConfig({
           name: "visual",
           setupFiles: ["./tests/visual/setup.ts"],
           include: [VISUAL],
+          exclude: [VISUAL_FINGER],
           browser: {
             ...BROWSER,
+            instances: [{ browser: "chromium" as const }],
             // A page smaller than the frame scales every shot down; this fits the widest one.
             provider: playwright({
               // test-change-ok same 5 s as the shared provider, restated since this one replaces it
               actionTimeout: 5000,
               contextOptions: { viewport: { width: 1280, height: 900 } },
+            }),
+          },
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "visual-finger",
+          setupFiles: ["./tests/visual/setup.ts"],
+          include: [VISUAL_FINGER],
+          browser: {
+            ...BROWSER,
+            instances: [{ browser: "chromium" as const }],
+            provider: playwright({
+              // test-change-ok same 5 s as the shared provider, restated since this one replaces it
+              actionTimeout: 5000,
+              contextOptions: { hasTouch: true, viewport: { width: 1280, height: 900 } },
             }),
           },
         },
