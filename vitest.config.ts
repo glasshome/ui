@@ -69,6 +69,7 @@ const WEBKIT_FILES = [
 
 // A gate run names a results directory; the runner keeps junit and failure shots there.
 const resultsDir = process.env.GATE_RESULTS_DIR;
+const shuffleSeed = process.env.GATE_SHUFFLE_SEED;
 
 export default defineConfig({
   plugins: [solid({ dev: false, hot: false }), tailwindcss()],
@@ -96,6 +97,7 @@ export default defineConfig({
     ],
   },
   test: {
+    sequence: shuffleSeed ? { shuffle: true, seed: Number(shuffleSeed) } : undefined,
     reporters: resultsDir
       ? ["default", ["junit", { outputFile: `${resultsDir}/vitest.xml` }]]
       : ["default"],
