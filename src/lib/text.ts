@@ -1,6 +1,6 @@
 import { type CompiledCatalog, formatMessage } from "@glasshome/widget-contract/i18n-format";
 import english, { type UiKey } from "../locales/compiled/en.js";
-import { messageEnv } from "./format.js";
+import { ENGLISH_FORMATTING, messageEnv } from "./format.js";
 
 export type { UiKey };
 export type UiTextArgs = Readonly<Record<string, string | number>>;
@@ -15,4 +15,4 @@ export function translator(
   return (key, args = {}) => formatMessage(catalog[key] ?? english[key], args, env);
 }
 
-export const englishUiText: UiText = translator(english, "en");
+export const englishUiText: UiText = translator(english, "en", ENGLISH_FORMATTING);

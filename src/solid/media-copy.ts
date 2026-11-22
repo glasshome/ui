@@ -1,4 +1,4 @@
-import { type UiFormat, uiFormat } from "../lib/format.js";
+import { englishFormat, type UiFormat } from "../lib/format.js";
 import { englishUiText, type UiText } from "../lib/text.js";
 import { formatBytes } from "./charts.js";
 import { type MediaQuotaUsage, MediaStoreError, type MediaStoreErrorKind } from "./media-store.js";
@@ -28,8 +28,6 @@ const STORE_ERROR_COPY: Record<MediaStoreErrorKind, Copy> = {
   upload_failed: (text) => text("ui.media.upload-failed"),
 };
 
-const usEnglish = uiFormat("en-US");
-
 export function toMediaStoreError(cause: unknown): MediaStoreError {
   return cause instanceof MediaStoreError ? cause : new MediaStoreError("upload_failed");
 }
@@ -37,7 +35,7 @@ export function toMediaStoreError(cause: unknown): MediaStoreError {
 export function mediaStoreErrorCopy(
   error: MediaStoreError,
   text: UiText = englishUiText,
-  format: UiFormat = usEnglish,
+  format: UiFormat = englishFormat,
 ): string {
   return STORE_ERROR_COPY[error.kind](text, format, error.usage);
 }

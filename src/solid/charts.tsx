@@ -1,12 +1,10 @@
 import { createMemo, createSignal, createUniqueId, For, Show } from "solid-js";
-import { type UiFormat, uiFormat } from "../lib/format.js";
+import { englishFormat, type UiFormat } from "../lib/format.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 import { useUiFormat, useUiText } from "./locale.js";
 import { Overlay } from "./overlay.js";
 import { Tabs, TabsList, TabsTrigger } from "./tabs.js";
-
-const usEnglish = uiFormat("en-US");
 
 /* Bars and chart backings wear the field chrome so a ranked bar reads as a
  * static slider; fills are the slider's own tinted glass. One radius for the
@@ -25,10 +23,9 @@ function formatDayLabel(day: string, format: UiFormat): string {
   return format.dateTime(d, DAY_LABEL);
 }
 
-export function formatCompact(n: number, format: UiFormat = usEnglish): string {
+export function formatCompact(n: number, format: UiFormat = englishFormat): string {
   if (!Number.isFinite(n)) return format.number(0);
-  if (Math.abs(n) >= 1000)
-    return `${format.number(n / 1000, { maximumFractionDigits: 1, useGrouping: false })}k`;
+  if (Math.abs(n) >= 1000) return `${format.number(n / 1000, { maximumFractionDigits: 1 })}k`;
   return format.number(n);
 }
 
@@ -38,7 +35,7 @@ const BYTE_UNITS: [string, number][] = [
   ["KB", 1024],
 ];
 
-export function formatBytes(bytes: number, format: UiFormat = usEnglish): string {
+export function formatBytes(bytes: number, format: UiFormat = englishFormat): string {
   if (!(bytes > 0)) return `${format.number(0)} KB`;
   const [unit, size] = BYTE_UNITS.find(([, s]) => bytes >= s) ?? ["KB", 1024];
   const val = bytes / size;

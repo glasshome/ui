@@ -12,7 +12,7 @@
  * Ported from @internationalized/color by way of Kobalte's colors module (MIT).
  */
 
-import { type UiFormat, uiFormat } from "../format.js";
+import { englishFormat, type UiFormat } from "../format.js";
 import type { ColorIntlTranslations } from "./intl.js";
 
 type ColorFormat = "hex" | "hexa" | "rgb" | "rgba" | "hsl" | "hsla" | "hsb" | "hsba";
@@ -62,8 +62,6 @@ export interface Color {
 type HueName = keyof ColorIntlTranslations;
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
-
-const browserFormat = uiFormat();
 
 /** Parses a color from a string value. Throws an error if the string could not be parsed. */
 export function parseColor(value: string): Color {
@@ -136,7 +134,7 @@ abstract class ColorBase implements Color {
     return { xChannel: xCh, yChannel: yCh, zChannel: zCh } as ColorAxes;
   }
 
-  getColorName(translations: ColorIntlTranslations, format: UiFormat = browserFormat): string {
+  getColorName(translations: ColorIntlTranslations, format: UiFormat = englishFormat): string {
     let [l, c, h] = toOKLCH(this);
     if (l > 0.999) return translations.white;
     if (l < 0.001) return translations.black;
@@ -376,7 +374,7 @@ class RGBColor extends ColorBase {
     }
   }
 
-  formatChannelValue(channel: ColorChannel, format: UiFormat = browserFormat): string {
+  formatChannelValue(channel: ColorChannel, format: UiFormat = englishFormat): string {
     const options = this.getChannelFormatOptions(channel);
     return format.number(this.getChannelValue(channel), options);
   }
@@ -520,7 +518,7 @@ class HSBColor extends ColorBase {
     }
   }
 
-  formatChannelValue(channel: ColorChannel, format: UiFormat = browserFormat): string {
+  formatChannelValue(channel: ColorChannel, format: UiFormat = englishFormat): string {
     const options = this.getChannelFormatOptions(channel);
     let value = this.getChannelValue(channel);
     if (channel === "saturation" || channel === "brightness") value /= 100;
@@ -655,7 +653,7 @@ class HSLColor extends ColorBase {
     }
   }
 
-  formatChannelValue(channel: ColorChannel, format: UiFormat = browserFormat): string {
+  formatChannelValue(channel: ColorChannel, format: UiFormat = englishFormat): string {
     const options = this.getChannelFormatOptions(channel);
     let value = this.getChannelValue(channel);
     if (channel === "saturation" || channel === "lightness") value /= 100;

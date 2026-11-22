@@ -1,5 +1,5 @@
 import { type JSX, mergeProps, Show } from "solid-js";
-import { type UiFormat, uiFormat } from "../lib/format.js";
+import { englishFormat, type UiFormat } from "../lib/format.js";
 import { cn } from "../lib/utils.js";
 import { Badge } from "./badge.js";
 import { Icon } from "./icon.js";
@@ -40,18 +40,17 @@ export function widgetHref(w: { scope: string; name: string }): string {
   return `/widgets/@${w.scope}/${w.name}`;
 }
 
-const usEnglish = uiFormat("en-US");
-const ONE_DECIMAL = { minimumFractionDigits: 1, maximumFractionDigits: 1, useGrouping: false };
+const ONE_DECIMAL = { minimumFractionDigits: 1, maximumFractionDigits: 1 };
 
 /** Compact download/count formatting, shared by every surface. */
 export function formatWidgetCount(
   n: number | null | undefined,
-  format: UiFormat = usEnglish,
+  format: UiFormat = englishFormat,
 ): string {
   const v = n ?? 0;
   if (v >= 1_000_000) return `${format.number(v / 1_000_000, ONE_DECIMAL)}M`;
   if (v >= 1000) return `${format.number(v / 1000, ONE_DECIMAL)}k`;
-  return format.number(v, { useGrouping: false });
+  return format.number(v);
 }
 
 type WidgetIdentityProps = {

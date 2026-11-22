@@ -104,6 +104,9 @@ export function uiFormat(formatting?: string): UiFormat {
   };
 }
 
+export const ENGLISH_FORMATTING = "en-US";
+export const englishFormat: UiFormat = uiFormat(ENGLISH_FORMATTING);
+
 export function messageEnv(language: string, formatting?: string): FormatEnv {
   const plural = validTag(language) ?? "en";
   const rules = cached("plural", plural, undefined, () => new Intl.PluralRules(plural));

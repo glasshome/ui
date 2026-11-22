@@ -260,8 +260,6 @@ export {
   type ListReorderOptions,
 } from "./list-reorder.js";
 export {
-  browserUiFormat,
-  englishUiText,
   LocaleProvider,
   loadUiCatalog,
   type UiCatalogLoader,

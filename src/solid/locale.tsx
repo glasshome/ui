@@ -1,6 +1,6 @@
 import type { CompiledCatalog } from "@glasshome/widget-contract/i18n-format";
 import { createContext, createMemo, createResource, type JSX, useContext } from "solid-js";
-import { type UiFormat, uiFormat } from "../lib/format.js";
+import { englishFormat, type UiFormat, uiFormat } from "../lib/format.js";
 import { englishUiText, translator, type UiText } from "../lib/text.js";
 import english from "../locales/compiled/en.js";
 
@@ -23,7 +23,7 @@ interface UiLocale {
   format: UiFormat;
 }
 
-const ENGLISH: UiLocale = { text: englishUiText, format: uiFormat() };
+const ENGLISH: UiLocale = { text: englishUiText, format: englishFormat };
 
 const LocaleContext = createContext<() => UiLocale>(() => ENGLISH);
 
@@ -69,6 +69,3 @@ export function useUiFormat(): UiFormat {
     compare: (a, b) => locale().format.compare(a, b),
   };
 }
-
-export { englishUiText };
-export const browserUiFormat: UiFormat = ENGLISH.format;

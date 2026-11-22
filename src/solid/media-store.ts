@@ -1,5 +1,5 @@
 import { type Accessor, createContext, createSignal, useContext } from "solid-js";
-import { uiFormat } from "../lib/format.js";
+import { englishFormat } from "../lib/format.js";
 
 export type StoredMedia = {
   id: string;
@@ -102,13 +102,11 @@ export function isMediaImage(item: StoredMedia): boolean {
   return typeof item.mimeType === "string" && item.mimeType.startsWith("image/");
 }
 
-const byId = uiFormat();
-
 /** Unused first: someone browsing stored media is looking for what is safe to delete. */
 export function sortMediaForClearing(media: StoredMedia[]): StoredMedia[] {
   return media.filter(isMediaImage).sort((a, b) => {
     if ((a.usedBy === 0) !== (b.usedBy === 0)) return a.usedBy === 0 ? -1 : 1;
-    return byId.compare(a.id, b.id);
+    return englishFormat.compare(a.id, b.id);
   });
 }
 

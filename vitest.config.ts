@@ -33,6 +33,7 @@ const HAPPY_DOM_SHIM = ["tests/happy-dom-fidelity.test.ts"];
 // Baselines hold only in the Playwright image's fonts and rasteriser: `bun run test:visual:image`.
 const VISUAL = "tests/visual/**/*.test.tsx";
 const DRIVE = "tests/drive/*.e2e.test.ts";
+const GERMAN_BROWSER = "tests/solid/locale-browser-de.test.tsx";
 
 const BROWSER = {
   enabled: true,
@@ -121,8 +122,25 @@ export default defineConfig({
           name: "chromium",
           setupFiles: ["./tests/setup.ts"],
           include: ["tests/**/*.test.{ts,tsx}"],
-          exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM, VISUAL, DRIVE],
+          exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM, VISUAL, DRIVE, GERMAN_BROWSER],
           browser: BROWSER,
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "german-browser",
+          setupFiles: ["./tests/setup.ts"],
+          include: [GERMAN_BROWSER],
+          browser: {
+            ...BROWSER,
+            instances: [{ browser: "chromium" as const, name: "german-browser (chromium)" }],
+            provider: playwright({
+              // test-change-ok same 5 s as the shared provider, restated since this one replaces it
+              actionTimeout: 5000,
+              contextOptions: { locale: "de-DE" },
+            }),
+          },
         },
       },
       {
