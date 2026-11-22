@@ -39,7 +39,8 @@ const VISUAL_FINGER = "tests/visual/**/*-finger.visual.test.tsx";
 const BROWSER = {
   enabled: true,
   headless: true,
-  screenshotFailures: false,
+  screenshotFailures: Boolean(resultsDir),
+  screenshotDirectory: resultsDir ? `${resultsDir}/screenshots` : undefined,
   viewport: { width: 1024, height: 768 },
   provider: playwright({
     // test-change-ok a press that cannot land fails in 5 s instead of waiting out the test
@@ -65,6 +66,9 @@ const WEBKIT_FILES = [
   "tests/contracts/modal-root-dormant.contract.test.tsx",
   "tests/contracts/sheet-body-drag.contract.test.tsx",
 ];
+
+// A gate run names a results directory; the runner keeps junit and failure shots there.
+const resultsDir = process.env.GATE_RESULTS_DIR;
 
 export default defineConfig({
   plugins: [solid({ dev: false, hot: false }), tailwindcss()],
@@ -92,6 +96,9 @@ export default defineConfig({
     ],
   },
   test: {
+    reporters: resultsDir
+      ? ["default", ["junit", { outputFile: `${resultsDir}/vitest.xml` }]]
+      : ["default"],
     // Unset, vite-plugin-solid asks for jsdom, which a clean install does not have.
     environment: "node",
     maxWorkers: 4,
@@ -171,6 +178,7 @@ export default defineConfig({
           exclude: [VISUAL_FINGER],
           browser: {
             ...BROWSER,
+            screenshotFailures: false,
             instances: [{ browser: "chromium" as const }],
             // A page smaller than the frame scales every shot down; this fits the widest one.
             provider: playwright({
@@ -189,6 +197,7 @@ export default defineConfig({
           include: [VISUAL_FINGER],
           browser: {
             ...BROWSER,
+            screenshotFailures: false,
             instances: [{ browser: "chromium" as const }],
             provider: playwright({
               // test-change-ok same 5 s as the shared provider, restated since this one replaces it
