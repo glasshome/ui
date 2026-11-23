@@ -100,7 +100,7 @@
     "preview": "bun dev/drive/main.ts preview"
   },
   "dependencies": {
-    "@glasshome/widget-contract": "0.8.0",
+    "@glasshome/widget-contract": "0.9.0",
     "@iconify/types": "^2.0.0",
     "@iconify/utils": "^3.1.4",
     "@types/json-schema": "^7.0.15",
