@@ -26,8 +26,8 @@ export const TRACK_SURFACE = "border border-border/50 bg-card/40 backdrop-blur-s
 
 export const CARD_PADDING = {
   slots: "flex flex-col gap-3 p-3 md:gap-4 md:p-4",
-  md: "flex flex-col gap-3 p-4",
-  sm: "flex flex-col gap-2 p-3",
+  md: "flex flex-col gap-3 p-4", // ui-text-ok: utility classes
+  sm: "flex flex-col gap-2 p-3", // ui-text-ok: utility classes
   none: "",
 } as const;
 

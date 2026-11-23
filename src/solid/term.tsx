@@ -1,6 +1,7 @@
 import { type JSX, Show } from "solid-js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
+import { useUiText } from "./locale.js";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover.js";
 import { SectionIcon } from "./section-card.js";
 
@@ -14,6 +15,7 @@ export interface TermDefinition {
 
 /** A word a homeowner may not know; tapping it explains it in place. */
 export function Term(props: { term: TermDefinition; children?: JSX.Element; class?: string }) {
+  const text = useUiText();
   return (
     <Popover>
       <PopoverTrigger
@@ -38,7 +40,7 @@ export function Term(props: { term: TermDefinition; children?: JSX.Element; clas
                 rel="noopener noreferrer"
                 class="text-primary-tint-foreground mt-1 inline-flex items-center gap-1 self-start text-xs font-medium underline-offset-4 hover:underline"
               >
-                Learn more
+                {text("ui.term.learn-more")}
                 <Icon icon="lucide:arrow-up-right" width={12} height={12} />
               </a>
             )}

@@ -1,3 +1,4 @@
+import { useUiText } from "./locale.js";
 import { usePortalMount } from "./portal-mount.js";
 import type { VariantProps } from "cva";
 import {
@@ -46,6 +47,7 @@ const SheetDismiss = createModalDismiss("sheet-close", useDialogContext);
 /** Already the outline button; see DialogClose on why `as={Button}` is wrong. */
 const SheetClose: ParentComponent<SheetCloseProps> = (props) => {
   const [local, rest] = splitProps(props, ["class", "variant", "size", "children"]);
+  const text = useUiText();
   return (
     <SheetDismiss
       class={cn(
@@ -54,7 +56,7 @@ const SheetClose: ParentComponent<SheetCloseProps> = (props) => {
       )}
       {...rest}
     >
-      {local.children ?? "Close"}
+      {local.children ?? text("ui.dialog.close")}
     </SheetDismiss>
   );
 };

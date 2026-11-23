@@ -1,7 +1,15 @@
-import { type Component, type ComponentProps, splitProps } from "solid-js";
+import {
+  type Component,
+  type ComponentProps,
+  createSignal,
+  on,
+  createEffect,
+  splitProps,
+} from "solid-js";
 import { INPUT_CLASS } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
+import { useUiFormat, useUiText } from "./locale.js";
 
 /* The spinner column and the padding that reserves it: one pair, so the value
  * can never run under the chevrons. */
@@ -11,6 +19,23 @@ const SPINNER_RESERVE = "pr-10";
 const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) => {
   const [local, others] = splitProps(props, ["class", "step", "min", "max"]);
   let ref: HTMLInputElement | undefined;
+  const text = useUiText();
+  const format = useUiFormat();
+  const [typed, setTyped] = createSignal<string>();
+  createEffect(
+    on(
+      () => props.value,
+      () => setTyped(undefined),
+      { defer: true },
+    ),
+  );
+  const valueText = () => {
+    const raw = typed() ?? (props.value == null ? "" : String(props.value));
+    const value = Number(raw);
+    return raw.trim() === "" || !Number.isFinite(value)
+      ? undefined
+      : format.number(value, { maximumFractionDigits: 20 });
+  };
   const step = () => Number(local.step ?? 1) || 1;
 
   const nudge = (dir: 1 | -1) => {
@@ -28,6 +53,8 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
         ref={ref}
         type="number"
         data-slot="number-field"
+        aria-valuetext={valueText()}
+        on:input={(e) => setTyped(e.currentTarget.value)}
         step={local.step}
         min={local.min}
         max={local.max}
@@ -49,7 +76,7 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
         <button
           type="button"
           tabindex={-1}
-          aria-label="Increment"
+          aria-label={text("ui.number-field.increment")}
           onClick={() => nudge(1)}
           class="text-muted-foreground hover:bg-muted hover:text-foreground active:bg-muted flex flex-1 items-center justify-center transition-colors"
         >
@@ -58,7 +85,7 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
         <button
           type="button"
           tabindex={-1}
-          aria-label="Decrement"
+          aria-label={text("ui.number-field.decrement")}
           onClick={() => nudge(-1)}
           class="text-muted-foreground hover:bg-muted hover:text-foreground active:bg-muted flex flex-1 items-center justify-center transition-colors"
         >

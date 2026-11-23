@@ -60,6 +60,7 @@ export function clamp(value: number, min: number, max: number) {
 
 function formatNumber(value: number) {
   if (Number.isInteger(value)) return String(value);
+  // ui-text-ok: color channel
   return String(Number(value.toFixed(6)));
 }
 

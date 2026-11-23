@@ -18,6 +18,7 @@ import { Button } from "./button.js";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia } from "./empty.js";
 import { Icon } from "./icon.js";
 import { Input } from "./input.js";
+import { useUiText } from "./locale.js";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select.js";
 import { Skeleton } from "./skeleton.js";
 import { TABLE_HEAD_CELL_CLASS, TABLE_HEAD_LABEL_CLASS } from "./table.js";
@@ -103,6 +104,7 @@ export function TableSearchInput(props: {
   label: string;
   class?: string;
 }) {
+  const text = useUiText();
   return (
     <div data-slot="table-search-input" class={cn("relative w-full sm:w-64", props.class)}>
       <Icon
@@ -125,7 +127,7 @@ export function TableSearchInput(props: {
           size="icon"
           onClick={() => props.onInput("")}
           class="text-muted-foreground hover:text-foreground absolute top-1/2 right-1 size-6 -translate-y-1/2 p-1"
-          aria-label="Clear search"
+          aria-label={text("ui.data-table.clear-search")}
         >
           <Icon icon="lucide:x" width={14} height={14} class="size-3.5" />
         </Button>
@@ -217,6 +219,7 @@ export function TableSortHeader(props: {
   class?: string;
 }) {
   const label = createMemo(() => props.label);
+  const text = useUiText();
   return (
     <Button
       type="button"
@@ -229,7 +232,7 @@ export function TableSortHeader(props: {
         props.align === "end" ? "justify-end" : "justify-start",
         props.class,
       )}
-      aria-label={`Sort by ${label()}`}
+      aria-label={text("ui.data-table.sort-by", { column: label() })}
     >
       {label()}
       <Show
@@ -280,13 +283,13 @@ export function TableEmpty(props: {
   );
 }
 
-/** Inline error state with a Retry button. */
 export function TableError(props: { message: JSX.Element; onRetry: () => void }) {
+  const text = useUiText();
   return (
     <div data-slot="table-error" class="px-4 py-10 text-center">
       <p class="text-destructive text-sm">{props.message}</p>
       <Button variant="outline" size="sm" class="mt-3" onClick={props.onRetry}>
-        Retry
+        {text("ui.data-table.retry")}
       </Button>
     </div>
   );
@@ -320,6 +323,7 @@ export function TableLoadMore(props: {
   label?: string;
   class?: string;
 }) {
+  const text = useUiText();
   let sentinel: HTMLDivElement | undefined;
   onMount(() => {
     const target = sentinel;
@@ -355,7 +359,9 @@ export function TableLoadMore(props: {
     >
       <Show when={props.hasMore}>
         <Button variant="ghost" size="sm" busy={props.loading} onClick={() => props.onLoadMore()}>
-          {props.loading ? "Loading…" : (props.label ?? "Show more")}
+          {props.loading
+            ? text("ui.data-table.loading")
+            : (props.label ?? text("ui.data-table.show-more"))}
         </Button>
       </Show>
     </div>

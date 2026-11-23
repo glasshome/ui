@@ -2,6 +2,7 @@ import { type Component, type ComponentProps, splitProps } from "solid-js";
 import { cn } from "../lib/utils.js";
 import { buttonVariants } from "./button.js";
 import { Icon } from "./icon.js";
+import { useUiText } from "./locale.js";
 
 const Pagination: Component<ComponentProps<"nav">> = (props) => {
   const [local, rest] = splitProps(props, ["class"]);
@@ -57,29 +58,31 @@ const PaginationLink: Component<PaginationLinkProps> = (props) => {
 
 const PaginationPrevious: Component<PaginationLinkProps> = (props) => {
   const [local, rest] = splitProps(props, ["class"]);
+  const text = useUiText();
   return (
     <PaginationLink
-      aria-label="Go to previous page"
+      aria-label={text("ui.pagination.previous-label")}
       size="default"
       class={cn("gap-1 px-2.5 sm:pl-2.5", local.class)}
       {...rest}
     >
       <Icon icon="lucide:chevron-left" width={16} height={16} />
-      <span class="hidden sm:block">Previous</span>
+      <span class="hidden sm:block">{text("ui.pagination.previous")}</span>
     </PaginationLink>
   );
 };
 
 const PaginationNext: Component<PaginationLinkProps> = (props) => {
   const [local, rest] = splitProps(props, ["class"]);
+  const text = useUiText();
   return (
     <PaginationLink
-      aria-label="Go to next page"
+      aria-label={text("ui.pagination.next-label")}
       size="default"
       class={cn("gap-1 px-2.5 sm:pr-2.5", local.class)}
       {...rest}
     >
-      <span class="hidden sm:block">Next</span>
+      <span class="hidden sm:block">{text("ui.pagination.next")}</span>
       <Icon icon="lucide:chevron-right" width={16} height={16} />
     </PaginationLink>
   );
@@ -87,6 +90,7 @@ const PaginationNext: Component<PaginationLinkProps> = (props) => {
 
 const PaginationEllipsis: Component<ComponentProps<"span">> = (props) => {
   const [local, rest] = splitProps(props, ["class"]);
+  const text = useUiText();
   return (
     <span
       aria-hidden
@@ -95,7 +99,7 @@ const PaginationEllipsis: Component<ComponentProps<"span">> = (props) => {
       {...rest}
     >
       <Icon icon="lucide:ellipsis" width={16} height={16} class="size-4" />
-      <span class="sr-only">More pages</span>
+      <span class="sr-only">{text("ui.pagination.more")}</span>
     </span>
   );
 };

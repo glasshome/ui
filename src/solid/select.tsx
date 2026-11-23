@@ -75,6 +75,7 @@ interface SelectBaseProps<Option, OptGroup> extends Omit<
   disabled?: boolean;
   required?: boolean;
   readOnly?: boolean;
+  busy?: boolean;
   validationState?: "valid" | "invalid";
   children?: JSX.Element;
   /** @deprecated Ignored; removed in 2.0.0. */
@@ -153,6 +154,7 @@ interface SelectContextValue {
   setListboxLabelledBy: (ids: string | undefined) => void;
   blocked: Accessor<boolean>;
   disabled: Accessor<boolean>;
+  busy: Accessor<boolean>;
   attrs: StateAttrs;
 }
 
@@ -228,6 +230,7 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
       "disabled",
       "required",
       "readOnly",
+      "busy",
       "validationState",
       "children",
       "id",
@@ -330,7 +333,7 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
   let closeAutoFocus: ((event: Event) => void) | undefined;
   let refocusIfLost = false;
 
-  const blocked = () => !!local.disabled || !!local.readOnly;
+  const blocked = () => !!local.disabled || !!local.readOnly || !!local.busy;
   const focusTrigger = () => {
     const event = new Event("closeautofocus", { cancelable: true });
     closeAutoFocus?.(event);
@@ -426,6 +429,7 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
     setListboxLabelledBy,
     blocked,
     disabled: () => !!local.disabled,
+    busy: () => !!local.busy,
     attrs: {
       get "data-expanded"() {
         return flag(open());
@@ -605,6 +609,12 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
         get disabled() {
           return ctx.disabled();
         },
+        get "aria-busy"() {
+          return ctx.busy() || undefined;
+        },
+        get "aria-disabled"() {
+          return ctx.busy() || undefined;
+        },
         "aria-haspopup": "listbox" as const,
         get "aria-expanded"() {
           return ctx.open() ? ("true" as const) : ("false" as const);
@@ -629,6 +639,7 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
             // value, every other picker fills its field.
             "data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground w-fit whitespace-nowrap [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
             size() === "sm" && CONTROL_H.sm,
+            "aria-busy:cursor-progress aria-busy:opacity-50",
             local.class,
           );
         },

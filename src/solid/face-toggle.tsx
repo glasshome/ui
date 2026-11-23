@@ -3,6 +3,7 @@ import { createToggleItem, createToggleSet, type ToggleSet } from "../lib/toggle
 import { cn } from "../lib/utils.js";
 import { Avatar, AvatarFallback } from "./avatar.js";
 import { Icon } from "./icon.js";
+import { useUiText } from "./locale.js";
 
 const FaceContext = createContext<{ locked: () => ReadonlySet<string>; set: ToggleSet }>();
 
@@ -60,6 +61,7 @@ export function FaceToggle(props: {
   const group = useContext(FaceContext);
   if (!group) throw new Error("FaceToggle renders inside a FaceToggleGroup");
   const isLocked = () => group.locked().has(props.id);
+  const text = useUiText();
   const item = createToggleItem(group.set, {
     value: () => props.id,
     disabled: () => false,
@@ -111,7 +113,7 @@ export function FaceToggle(props: {
         {props.name}
       </span>
       <Show when={isLocked()}>
-        <span class="sr-only">{" always sees it"}</span>
+        <span class="sr-only"> {text("ui.face-toggle.always-sees")}</span>
       </Show>
     </button>
   );

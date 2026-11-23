@@ -4,6 +4,7 @@ import { PICKER_LIST } from "../lib/picker-classes.js";
 import { CHIP, ICON_PILL_TINT } from "../lib/pill-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon, iconSearch } from "./icon.js";
+import { useUiText } from "./locale.js";
 import { PickerSearch } from "./picker-search.js";
 import { PickerTrigger } from "./picker-trigger.js";
 import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popover.js";
@@ -12,12 +13,18 @@ import { SlotButton } from "./slot-button.js";
 export const ICON_SEARCH_DEBOUNCE_MS = 300;
 
 const ICON_LIBRARIES = [
-  { prefix: "", label: "All" },
+  { prefix: "", label: undefined },
+  // ui-text-ok: icon library brand name
   { prefix: "mdi", label: "MDI" },
+  // ui-text-ok: icon library brand name
   { prefix: "lucide", label: "Lucide" },
+  // ui-text-ok: icon library brand name
   { prefix: "solar", label: "Solar" },
+  // ui-text-ok: icon library brand name
   { prefix: "tabler", label: "Tabler" },
+  // ui-text-ok: icon library brand name
   { prefix: "ph", label: "Phosphor" },
+  // ui-text-ok: icon library brand name
   { prefix: "fluent", label: "Fluent" },
 ] as const;
 
@@ -270,6 +277,7 @@ export interface IconPickerProps {
 }
 
 export function IconPicker(props: IconPickerProps) {
+  const text = useUiText();
   const slot = () => props.variant === "slot";
   const [open, setOpen] = createSignal(false);
   const [search, setSearch] = createSignal("");
@@ -344,7 +352,7 @@ export function IconPicker(props: IconPickerProps) {
       <Show when={slot()}>
         <PopoverTrigger
           as={SlotButton}
-          aria-label={props["aria-label"] ?? "Icon"}
+          aria-label={props["aria-label"] ?? text("ui.icon-picker.label")}
           aria-labelledby={props["aria-labelledby"]}
           class={props.class}
         >
@@ -359,12 +367,13 @@ export function IconPicker(props: IconPickerProps) {
             onToggle={() => setOpen(!open())}
             aria-labelledby={props["aria-labelledby"]}
             onClear={props.value.trim() ? clearIcon : undefined}
-            clearLabel="Clear icon"
+            clearLabel={text("ui.icon-picker.clear")}
           >
             <Show
               when={props.value.trim()}
               fallback={
                 <span class="text-muted-foreground flex-1 text-left">
+                  {/* ui-text-ok: example icon id */}
                   {props.placeholder ?? "mdi:home"}
                 </span>
               }
@@ -395,8 +404,8 @@ export function IconPicker(props: IconPickerProps) {
               setSearch(next);
               searchIcons(next, activeLib());
             }}
-            placeholder="Search icons..."
-            aria-label="Search icons"
+            placeholder={text("ui.icon-picker.search-placeholder")}
+            aria-label={text("ui.icon-picker.search")}
           />
           <div class="border-border/50 flex flex-wrap gap-1 border-b px-2 py-1.5">
             <For each={ICON_LIBRARIES}>
@@ -414,17 +423,21 @@ export function IconPicker(props: IconPickerProps) {
                   )}
                   onClick={() => handleLibChange(lib.prefix)}
                 >
-                  {lib.label}
+                  {lib.label ?? text("ui.icon-picker.all")}
                 </button>
               )}
             </For>
           </div>
           <div class={cn(PICKER_LIST, "p-2")}>
             <Show when={loading() && displayIcons().length === 0}>
-              <div class="text-muted-foreground py-4 text-center text-sm">Searching...</div>
+              <div class="text-muted-foreground py-4 text-center text-sm">
+                {text("ui.icon-picker.searching")}
+              </div>
             </Show>
             <Show when={!loading() && search().trim() && displayIcons().length === 0}>
-              <div class="text-muted-foreground py-4 text-center text-sm">No icons found</div>
+              <div class="text-muted-foreground py-4 text-center text-sm">
+                {text("ui.icon-picker.none")}
+              </div>
             </Show>
             <div class="grid grid-cols-6 gap-1">
               <For each={displayIcons()}>

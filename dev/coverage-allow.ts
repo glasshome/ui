@@ -1,5 +1,6 @@
 /** Exports with no specimen, each with the reason. Reasons are a backlog. */
 export const ALLOW: Array<[name: string, reason: string]> = [
+  ["LocaleProvider", "Draws nothing of its own: it renders its children in the member's language."],
   [
     "AlertDialogHeader",
     "Raw header part: apps compose AlertDialogHead, whose specimen is the picture; the free-children Header is left for ui internals and tab-row headers.",

@@ -11,6 +11,7 @@ import {
 import { CARD_SURFACE } from "../lib/card-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
+import { useUiText } from "./locale.js";
 import { Ornament } from "./ornament.js";
 import { PickerRow } from "./picker-row.js";
 import { isItemActivation, RadioGroup, RadioGroupItem, useRadioGroup } from "./radio-group.js";
@@ -119,6 +120,7 @@ export function OptionCard(props: {
   children?: JSX.Element;
 }) {
   const group = useRadioGroup();
+  const text = useUiText();
   const checked = () => group.isSelectedValue(props.value);
   const [choices, setChoices] = createSignal<string[]>([]);
   const choice: ChoiceContext = {
@@ -179,7 +181,7 @@ export function OptionCard(props: {
             {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: the role is always radiogroup or group, both take aria-label */}
             <div
               role={choices().length > 0 ? "radiogroup" : "group"}
-              aria-label={`${props.title} options`}
+              aria-label={text("ui.option-card.options", { title: props.title })}
               class={OPTION_CARD_DRAWER_CONTENT}
             >
               {kids()}

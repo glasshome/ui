@@ -3,6 +3,7 @@ import { glassToneText, isNeutralTone, NEUTRAL_KNOBS } from "../lib/glass-tone.j
 import { cn } from "../lib/utils.js";
 import { Badge } from "./badge.js";
 import { Icon } from "./icon.js";
+import { useUiText } from "./locale.js";
 import { Ornament } from "./ornament.js";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js";
 
@@ -37,6 +38,7 @@ interface HeroActionContentProps {
 }
 
 function HeroActionContent(props: HeroActionContentProps) {
+  const text = useUiText();
   return (
     <>
       <Ornament kind={props.ornament} />
@@ -64,7 +66,7 @@ function HeroActionContent(props: HeroActionContentProps) {
             <Show when={props.recommended}>
               <Tooltip openDelay={150}>
                 <TooltipTrigger as={Badge} tone="var(--success)">
-                  Recommended
+                  {text("ui.hero-action.recommended")}
                 </TooltipTrigger>
                 <Show when={props.recommendedHint}>
                   {(hint) => <TooltipContent>{hint()}</TooltipContent>}

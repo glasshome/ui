@@ -25,12 +25,14 @@ const READS_FILES_NO_DOM = [
   "tests/lib/{material,glass-tone,utils,anchor-placement,color}.test.ts",
   "tests/bottom-sheet/{state-machine,velocity}.test.ts",
   "tests/solid/{dock-paging,spotlight-geometry}.test.ts",
+  "tests/locales/**",
 ];
 // The shim dash, hub, widget-sdk, widget-realm and governor still install runs where they run it.
 const HAPPY_DOM_SHIM = ["tests/happy-dom-fidelity.test.ts"];
 // Baselines hold only in the Playwright image's fonts and rasteriser: `bun run test:visual:image`.
 const VISUAL = "tests/visual/**/*.test.tsx";
 const DRIVE = "tests/drive/*.e2e.test.ts";
+const GERMAN_BROWSER = "tests/solid/locale-browser-de.test.tsx";
 // Pages with a touch screen from birth; a page that gains one later never gets its mouse back.
 const FINGER = "tests/**/*-finger.*test.{ts,tsx}";
 const VISUAL_FINGER = "tests/visual/**/*-finger.visual.test.tsx";
@@ -122,8 +124,32 @@ export default defineConfig({
           name: "chromium",
           setupFiles: ["./tests/setup.ts"],
           include: ["tests/**/*.test.{ts,tsx}"],
-          exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM, VISUAL, DRIVE, FINGER],
+          exclude: [
+            ...READS_FILES_NO_DOM,
+            ...HAPPY_DOM_SHIM,
+            VISUAL,
+            DRIVE,
+            FINGER,
+            GERMAN_BROWSER,
+          ],
           browser: BROWSER,
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "german-browser",
+          setupFiles: ["./tests/setup.ts"],
+          include: [GERMAN_BROWSER],
+          browser: {
+            ...BROWSER,
+            instances: [{ browser: "chromium" as const, name: "german-browser (chromium)" }],
+            provider: playwright({
+              // test-change-ok same 5 s as the shared provider, restated since this one replaces it
+              actionTimeout: 5000,
+              contextOptions: { locale: "de-DE" },
+            }),
+          },
         },
       },
       {

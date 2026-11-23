@@ -12,7 +12,7 @@
  * Ported from @internationalized/color by way of Kobalte's colors module (MIT).
  */
 
-import { locale } from "../locale.js";
+import { englishFormat, type UiFormat } from "../format.js";
 import type { ColorIntlTranslations } from "./intl.js";
 
 type ColorFormat = "hex" | "hexa" | "rgb" | "rgba" | "hsl" | "hsla" | "hsb" | "hsba";
@@ -51,20 +51,17 @@ export interface Color {
   getChannelRange(channel: ColorChannel): ColorChannelRange;
   getChannelName(channel: ColorChannel, translations: ColorIntlTranslations): string;
   getChannelFormatOptions(channel: ColorChannel): Intl.NumberFormatOptions;
-  formatChannelValue(channel: ColorChannel): string;
+  formatChannelValue(channel: ColorChannel, format?: UiFormat): string;
   getColorSpace(): ColorSpace;
   getColorSpaceAxes(xyChannels: { xChannel?: ColorChannel; yChannel?: ColorChannel }): ColorAxes;
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel];
-  getColorName(translations: ColorIntlTranslations): string;
+  getColorName(translations: ColorIntlTranslations, format?: UiFormat): string;
   getHueName(translations: ColorIntlTranslations): string;
 }
 
 type HueName = keyof ColorIntlTranslations;
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
-
-const format = (value: number, options: Intl.NumberFormatOptions) =>
-  new Intl.NumberFormat(locale, options).format(value);
 
 /** Parses a color from a string value. Throws an error if the string could not be parsed. */
 export function parseColor(value: string): Color {
@@ -102,7 +99,7 @@ abstract class ColorBase implements Color {
   abstract clone(): Color;
   abstract getChannelRange(channel: ColorChannel): ColorChannelRange;
   abstract getChannelFormatOptions(channel: ColorChannel): Intl.NumberFormatOptions;
-  abstract formatChannelValue(channel: ColorChannel): string;
+  abstract formatChannelValue(channel: ColorChannel, format?: UiFormat): string;
   abstract getColorSpace(): ColorSpace;
   abstract getColorChannels(): [ColorChannel, ColorChannel, ColorChannel];
 
@@ -137,7 +134,7 @@ abstract class ColorBase implements Color {
     return { xChannel: xCh, yChannel: yCh, zChannel: zCh } as ColorAxes;
   }
 
-  getColorName(translations: ColorIntlTranslations): string {
+  getColorName(translations: ColorIntlTranslations, format: UiFormat = englishFormat): string {
     let [l, c, h] = toOKLCH(this);
     if (l > 0.999) return translations.white;
     if (l < 0.001) return translations.black;
@@ -159,7 +156,7 @@ abstract class ColorBase implements Color {
     const lightnessText = lightness ? (translations[lightness] as string) : "";
     const alpha = this.getChannelValue("alpha");
     if (alpha < 1) {
-      const percentTransparent = format(1 - alpha, { style: "percent" });
+      const percentTransparent = format.number(1 - alpha, { style: "percent" });
       return translations
         .transparentColorName(lightnessText, chromaText, hue, percentTransparent)
         .replace(/\s+/g, " ")
@@ -377,9 +374,9 @@ class RGBColor extends ColorBase {
     }
   }
 
-  formatChannelValue(channel: ColorChannel): string {
+  formatChannelValue(channel: ColorChannel, format: UiFormat = englishFormat): string {
     const options = this.getChannelFormatOptions(channel);
-    return format(this.getChannelValue(channel), options);
+    return format.number(this.getChannelValue(channel), options);
   }
 
   getColorSpace(): ColorSpace {
@@ -521,11 +518,11 @@ class HSBColor extends ColorBase {
     }
   }
 
-  formatChannelValue(channel: ColorChannel): string {
+  formatChannelValue(channel: ColorChannel, format: UiFormat = englishFormat): string {
     const options = this.getChannelFormatOptions(channel);
     let value = this.getChannelValue(channel);
     if (channel === "saturation" || channel === "brightness") value /= 100;
-    return format(value, options);
+    return format.number(value, options);
   }
 
   getColorSpace(): ColorSpace {
@@ -656,11 +653,11 @@ class HSLColor extends ColorBase {
     }
   }
 
-  formatChannelValue(channel: ColorChannel): string {
+  formatChannelValue(channel: ColorChannel, format: UiFormat = englishFormat): string {
     const options = this.getChannelFormatOptions(channel);
     let value = this.getChannelValue(channel);
     if (channel === "saturation" || channel === "lightness") value /= 100;
-    return format(value, options);
+    return format.number(value, options);
   }
 
   getColorSpace(): ColorSpace {

@@ -24,6 +24,7 @@ import { Icon } from "./icon.js";
 import { IconPicker, type IconPickerProps } from "./icon-picker.js";
 import { ImagePicker } from "./image-picker.js";
 import { Input } from "./input.js";
+import { useUiText } from "./locale.js";
 import { createListReorder } from "./list-reorder.js";
 import { type ImagePreset, imagePreset, useMediaUrls } from "./media-store.js";
 import { NumberField } from "./number-field.js";
@@ -198,6 +199,7 @@ interface SchemaFormProps {
 }
 
 export function SchemaForm(props: SchemaFormProps) {
+  const text = useUiText();
   const properties = () => {
     const schema = props.schema;
     if (schema.type !== "object" || !schema.properties) return [];
@@ -227,7 +229,7 @@ export function SchemaForm(props: SchemaFormProps) {
       </For>
 
       <Show when={props.errors && props.errors.length > 0}>
-        <Alert tone="destructive" title="Validation errors">
+        <Alert tone="destructive" title={text("ui.schema-form.errors")}>
           <ul class="flex list-inside list-disc flex-col gap-1">
             <For each={props.errors}>{(err) => <li>{err}</li>}</For>
           </ul>
@@ -342,6 +344,7 @@ function LabeledField(props: FieldProps) {
 
 /** The one recursive dispatch: every nesting level renders through here. */
 function FieldControl(props: FieldProps) {
+  const uiText = useUiText();
   const current = () => props.value ?? props.prop.default;
   const text = () => textOf(current());
   const enumLabel = (value: string) => props.prop.labels?.[value] ?? value;
@@ -359,7 +362,7 @@ function FieldControl(props: FieldProps) {
     >
       <Match when={kind() === "unknown"}>
         <Alert tone="info" data-slot="schema-form-unknown">
-          This setting needs a newer dashboard version to be edited here.
+          {uiText("ui.schema-form.unknown")}
         </Alert>
       </Match>
       <Match when={kind() === "list"}>
@@ -443,7 +446,9 @@ function FieldControl(props: FieldProps) {
             checked={Boolean(current() ?? false)}
             onChange={(checked) => props.onChange(checked)}
           />
-          <span class="text-sm">{current() ? "Enabled" : "Disabled"}</span>
+          <span class="text-sm">
+            {uiText(current() ? "ui.schema-form.enabled" : "ui.schema-form.disabled")}
+          </span>
         </div>
       </Match>
       <Match when={kind() === "number"}>
@@ -501,6 +506,7 @@ const LIST_GAP = { class: "gap-2", px: 8 } as const;
 
 function ListControl(props: FieldProps) {
   const itemSchema = () => itemsOf(props.prop);
+  const text = useUiText();
   const mediaUrls = useMediaUrls();
   const [brokenThumbs, setBrokenThumbs] = createSignal<ReadonlySet<string>>(new Set());
 
@@ -553,7 +559,7 @@ function ListControl(props: FieldProps) {
   };
 
   const caption = (item: unknown, index: number) =>
-    labelFieldValue(item) ?? kindLabel(item) ?? `Item ${index + 1}`;
+    labelFieldValue(item) ?? kindLabel(item) ?? text("ui.schema-form.item", { index: index + 1 });
 
   // Only a row the labelField already named has anything left for the badge.
   const badgeLabel = (item: unknown) =>
@@ -695,7 +701,7 @@ function ListControl(props: FieldProps) {
                   variant="ghost"
                   size="icon"
                   class="relative cursor-grab touch-none active:cursor-grabbing"
-                  aria-label={`Reorder ${caption(item(), index)}`}
+                  aria-label={text("ui.schema-form.reorder", { name: caption(item(), index) })}
                   onPointerDown={(e: PointerEvent) => listDrag.startDrag(index, e, true)}
                   onKeyDown={(e: KeyboardEvent) => {
                     if (e.key === "ArrowUp") {
@@ -713,7 +719,7 @@ function ListControl(props: FieldProps) {
                   variant="ghost"
                   size="icon"
                   class="relative"
-                  aria-label={`Remove ${caption(item(), index)}`}
+                  aria-label={text("ui.schema-form.remove", { name: caption(item(), index) })}
                   disabled={items().length <= minItems()}
                   onClick={() => removeAt(index)}
                 >
@@ -739,7 +745,7 @@ function ListControl(props: FieldProps) {
       </Index>
       <Show when={items().length < minItems()}>
         <p class="text-muted-foreground text-sm">
-          Add at least {minItems()} {minItems() === 1 ? "item" : "items"}.
+          {text("ui.schema-form.min-items", { count: minItems() })}
         </p>
       </Show>
       <Button
@@ -750,7 +756,7 @@ function ListControl(props: FieldProps) {
         data-slot="schema-form-list-add"
       >
         <Icon icon="lucide:plus" width={16} height={16} aria-hidden="true" />
-        {props.prop.addLabel ?? "Add item"}
+        {props.prop.addLabel ?? text("ui.schema-form.add-item")}
       </Button>
     </fieldset>
   );
@@ -858,6 +864,7 @@ function StringListField(props: {
   onChange: (value: string[]) => void;
   labelledBy?: string;
 }) {
+  const text = useUiText();
   const [input, setInput] = createSignal("");
 
   const addItem = (item: string) => {
@@ -881,7 +888,7 @@ function StringListField(props: {
                 {item}
                 <button
                   type="button"
-                  aria-label={`Remove ${item}`}
+                  aria-label={text("ui.schema-form.remove", { name: item })}
                   onClick={() => props.onChange(props.value.filter((v) => v !== item))}
                   class="hover:text-destructive cursor-pointer rounded-sm"
                 >
@@ -894,7 +901,7 @@ function StringListField(props: {
       </Show>
       <Input
         type="text"
-        placeholder="Type and press Enter to add"
+        placeholder={text("ui.schema-form.string-list-placeholder")}
         value={input()}
         onInput={(e) => setInput(e.currentTarget.value)}
         onKeyDown={(e) => {

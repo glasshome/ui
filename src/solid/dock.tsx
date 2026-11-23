@@ -27,6 +27,7 @@ import { Badge } from "./badge.js";
 import { createDockReorder, DockMoveGrip } from "./dock-edit.js";
 import { pageOf, pageOffset } from "./dock-paging.js";
 import { Icon } from "./icon.js";
+import { useUiText } from "./locale.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js";
 
@@ -89,6 +90,7 @@ interface DockIconButtonProps extends ComponentProps<"button"> {
 const DOCK_PAGE_MS = 300;
 
 const DockIconButton: Component<DockIconButtonProps> = (props) => {
+  const text = useUiText();
   // Kobalte's button root narrows `type`; Solid's ComponentProps<"button"> also
   // admits "menu", so it is split off rather than spread.
   const [local, rest] = splitProps(props, [
@@ -147,7 +149,7 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
             role="status"
             tone="var(--primary)"
             class="absolute top-0 right-0 h-4 min-w-4 justify-center px-1 pt-0.5 pb-0 font-mono text-[9px] leading-none font-medium tabular-nums"
-            aria-label={`${local.badge} pending`}
+            aria-label={text("ui.dock.pending", { count: local.badge ?? 0 })}
           >
             {local.badge != null && local.badge > 9 ? "9+" : local.badge}
           </Badge>
@@ -159,6 +161,7 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
 };
 
 const Dock: Component<DockProps> = (props) => {
+  const text = useUiText();
   const [local, rest] = splitProps(props, [
     "items",
     "class",
@@ -534,7 +537,7 @@ const Dock: Component<DockProps> = (props) => {
                     <button
                       type="button"
                       data-slot="dock-item-remove"
-                      aria-label={`Remove ${item().label}`}
+                      aria-label={text("ui.dock.remove", { name: item().label })}
                       onClick={() => local.onRemove?.(item().id)}
                       class={cn(
                         "bg-card border-foreground/25 text-destructive absolute top-0 left-0 z-10 flex size-5 items-center justify-center rounded-full border shadow-sm",
@@ -551,7 +554,7 @@ const Dock: Component<DockProps> = (props) => {
               <button
                 type="button"
                 data-slot="dock-add"
-                aria-label="Add to dock"
+                aria-label={text("ui.dock.add")}
                 onClick={() => local.onAdd?.()}
                 style={{ order: local.items.length }}
                 class={cn(
@@ -588,7 +591,7 @@ const Dock: Component<DockProps> = (props) => {
                 ref={watchDot}
                 type="button"
                 data-slot="dock-page"
-                aria-label={`Page ${i + 1}`}
+                aria-label={text("ui.dock.page", { page: i + 1 })}
                 aria-current={page() === i ? "true" : undefined}
                 inert={i >= pages() || pages() < 2}
                 onClick={() => goToPage(i)}
