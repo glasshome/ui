@@ -489,7 +489,7 @@ const Dock: Component<DockProps> = (props) => {
           }}
           class={cn(
             // A carried item moves its snap point, and the strip would chase it.
-            "justify-[safe_center] flex items-center gap-0.5 data-[reordering]:snap-none sm:gap-1",
+            "flex items-center gap-0.5 data-[reordering]:snap-none sm:gap-1",
             vertical() && "flex-col",
             needsScroll()
               ? vertical()
