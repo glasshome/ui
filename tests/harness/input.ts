@@ -127,6 +127,12 @@ declare module "vitest/browser" {
       y: number,
       button?: "left" | "right",
     ): Promise<void>;
+    drag(
+      from: { x: number; y: number },
+      by: { x: number; y: number },
+      moves: number,
+      stepMs: number,
+    ): Promise<void>;
     touch(action: "down" | "move" | "up" | "cancel", x: number, y: number): Promise<void>;
     wheel(x: number, y: number, deltaY: number): Promise<void>;
     compose(on: boolean): Promise<void>;

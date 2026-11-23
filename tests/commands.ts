@@ -35,6 +35,55 @@ function pointerSession(page: Page) {
   return session;
 }
 
+type Point = { x: number; y: number };
+
+/**
+ * A real left-button drag from a point of the test frame's viewport. Its events carry stated
+ * timestamps, `stepMs` apart from the frame's time origin, so `event.timeStamp` velocity is the
+ * drag's own at any host speed.
+ */
+export const drag: BrowserCommand<[from: Point, by: Point, moves: number, stepMs: number]> = async (
+  ctx,
+  from,
+  by,
+  moves,
+  stepMs,
+) => {
+  if (ctx.project.config.browser.name !== "chromium")
+    throw new Error("a drag with stated timestamps needs CDP, which only Chromium has");
+  const start = await toPage(ctx, from.x, from.y);
+  const end = await toPage(ctx, from.x + by.x, from.y + by.y);
+  const origin = await (await ctx.frame()).evaluate(() => performance.timeOrigin);
+  await ctx.page.mouse.move(start.x, start.y);
+  const cdp = await pointerSession(ctx.page);
+  // CDP reads a timestamp as seconds since the epoch.
+  const at = (i: number) => ({
+    x: start.x + ((end.x - start.x) * i) / moves,
+    y: start.y + ((end.y - start.y) * i) / moves,
+    timestamp: (origin + i * stepMs) / 1000,
+  });
+  const left = { button: "left", clickCount: 1 } as const;
+  await cdp.send("Input.dispatchMouseEvent", {
+    type: "mousePressed",
+    ...left,
+    buttons: 1,
+    ...at(0),
+  });
+  for (let i = 1; i <= moves; i++)
+    await cdp.send("Input.dispatchMouseEvent", {
+      type: "mouseMoved",
+      ...left,
+      buttons: 1,
+      ...at(i),
+    });
+  await cdp.send("Input.dispatchMouseEvent", {
+    type: "mouseReleased",
+    ...left,
+    buttons: 0,
+    ...at(moves),
+  });
+};
+
 // Pointer media is fixed when a page is made: Chromium cannot undo touch emulation, so no command turns it on.
 const FINGER_PROJECT = /-finger\b/;
 
