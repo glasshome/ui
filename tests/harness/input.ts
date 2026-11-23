@@ -1,5 +1,6 @@
 import { vi } from "vitest";
 import { commands, userEvent } from "vitest/browser";
+import { settle } from "../../dev/harness/settle";
 import type { Input } from "../../dev/harness/steps";
 import { PRESENCE_TIMEOUT_MS } from "../../src/lib/behavior/presence";
 import { HOLD_GRACE_MS, HOLD_MS } from "../../src/lib/hold";
@@ -11,6 +12,30 @@ const centre = (el: Element) => {
 };
 
 const DRAG_MOVES = 4;
+
+/**
+ * A finger's timers run on a clock only the harness moves, so a slow round trip between down and
+ * up never reads as a hold. Fails if the gesture leaves a timer that switching back would drop.
+ */
+async function onHarnessClock(gesture: () => Promise<void>, afterMs: number) {
+  if (vi.isFakeTimers()) {
+    await gesture();
+    await vi.advanceTimersByTimeAsync(afterMs);
+    return;
+  }
+  useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
+  try {
+    await gesture();
+    // The tap's click comes from the browser's gesture detector, after the touch command returns.
+    await settle();
+    await vi.advanceTimersByTimeAsync(afterMs);
+    const pending = vi.getTimerCount();
+    if (pending)
+      throw new Error(`${pending} timers still pending ${afterMs} ms after the finger left`);
+  } finally {
+    vi.useRealTimers();
+  }
+}
 
 /** Real input at the element's centre: a selector cannot reach into a closed shadow root, a point can. */
 export const input: Input = {
@@ -36,8 +61,10 @@ export const input: Input = {
   },
   async touch(el) {
     const [x, y] = centre(el);
-    await commands.touch("down", x, y);
-    await commands.touch("up", x, y);
+    await onHarnessClock(async () => {
+      await commands.touch("down", x, y);
+      await commands.touch("up", x, y);
+    }, HOLD_MS);
   },
   async hover(el) {
     const [x, y] = centre(el);
@@ -51,12 +78,11 @@ export const input: Input = {
   },
   async hold(el) {
     const [x, y] = centre(el);
-    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
-    await commands.touch("down", x, y);
-    await vi.advanceTimersByTimeAsync(HOLD_MS + PRESENCE_TIMEOUT_MS);
-    await commands.touch("up", x, y);
-    await vi.advanceTimersByTimeAsync(HOLD_GRACE_MS);
-    vi.useRealTimers();
+    await onHarnessClock(async () => {
+      await commands.touch("down", x, y);
+      await vi.advanceTimersByTimeAsync(HOLD_MS + PRESENCE_TIMEOUT_MS);
+      await commands.touch("up", x, y);
+    }, HOLD_GRACE_MS);
   },
   key: (key) => userEvent.keyboard(`{${key}}`),
   type: (text) => userEvent.keyboard(text),
