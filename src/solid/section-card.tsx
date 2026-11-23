@@ -74,12 +74,15 @@ export function SectionCard(props: SectionCardProps) {
       <Show when={hasHeader()}>
         <header
           data-slot="section-card-header"
-          class={cn("flex items-center gap-2 sm:gap-3", props.headerClass)}
+          class={cn("flex flex-wrap items-center gap-2 sm:gap-3", props.headerClass)}
         >
           <Show when={props.icon}>
             {(icon) => <SectionIcon icon={icon()} tone="var(--primary)" />}
           </Show>
-          <div data-slot="section-card-headings" class="flex min-w-0 flex-1 flex-col gap-0.5">
+          <div
+            data-slot="section-card-headings"
+            class="flex min-w-[min(100%,10rem)] flex-1 flex-col gap-0.5"
+          >
             <div data-slot="section-card-headline" class="flex min-w-0 items-center gap-2 sm:gap-3">
               <Show when={title()}>
                 <SectionTitle>{title()}</SectionTitle>
@@ -93,7 +96,10 @@ export function SectionCard(props: SectionCardProps) {
             </Show>
           </div>
           <Show when={action()}>
-            <div data-slot="section-card-actions" class="flex shrink-0 items-center gap-2">
+            <div
+              data-slot="section-card-actions"
+              class="ml-auto flex max-w-full shrink-0 flex-wrap items-center justify-end gap-2"
+            >
               {action()}
             </div>
           </Show>

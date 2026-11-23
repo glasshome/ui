@@ -53,7 +53,10 @@ export function PageHeader(props: {
           />
         )}
       </Show>
-      <div data-slot="page-header-row" class="relative flex items-center gap-3 p-4 sm:gap-5 sm:p-6">
+      <div
+        data-slot="page-header-row"
+        class="relative flex flex-wrap items-center gap-3 p-4 sm:gap-5 sm:p-6"
+      >
         <Show
           when={iconNode()}
           fallback={
@@ -66,7 +69,10 @@ export function PageHeader(props: {
         >
           {iconNode()}
         </Show>
-        <div data-slot="page-header-headings" class="flex min-w-0 flex-1 flex-col gap-1.5 sm:gap-2">
+        <div
+          data-slot="page-header-headings"
+          class="flex min-w-[min(100%,12rem)] flex-1 flex-col gap-1.5 sm:gap-2"
+        >
           <div data-slot="page-header-headline" class="flex min-w-0 items-center gap-2 sm:gap-3">
             <h1
               data-slot="page-header-title"
@@ -88,7 +94,10 @@ export function PageHeader(props: {
           </Show>
         </div>
         <Show when={actions()}>
-          <div data-slot="page-header-actions" class="flex shrink-0 items-center gap-2">
+          <div
+            data-slot="page-header-actions"
+            class="ml-auto flex max-w-full shrink-0 flex-wrap items-center justify-end gap-2"
+          >
             {actions()}
           </div>
         </Show>
