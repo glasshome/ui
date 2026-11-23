@@ -96,7 +96,7 @@ export function trackPointer(base: Input) {
 declare module "vitest/browser" {
   interface BrowserCommands {
     mouse(
-      action: "move" | "down" | "up",
+      action: "move" | "down" | "up" | "press",
       x: number,
       y: number,
       button?: "left" | "right",

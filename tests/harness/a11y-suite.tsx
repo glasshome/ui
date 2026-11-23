@@ -1,5 +1,5 @@
 import { cleanup } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { commands, page } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { BLOCKS, COMPONENTS, kebab } from "../../dev/harness/registry";
@@ -62,13 +62,6 @@ export const a11yMatrix = (index: number, count: number) =>
 export const a11yFingerMatrix = () => matrix(allCases().filter(byFinger));
 
 function matrix(CASES: Case[]) {
-  afterEach(async () => {
-    cleanup();
-    document.documentElement.classList.remove("dark");
-    await commands.emulateMedia({ reducedMotion: "no-preference", colorScheme: "light" });
-    await page.viewport(VIEWPORT.width, VIEWPORT.height);
-  });
-
   const KEYBOARD = CASES.filter((c) => c.scenario.keyboard !== undefined);
 
   describe.each(CASES)("$name", ({ component, scenario }) => {
@@ -76,8 +69,6 @@ function matrix(CASES: Case[]) {
       const gaps = knownGaps(kebab(component), scenario.id, theme);
       document.documentElement.classList.toggle("dark", theme === "dark");
       await commands.emulateMedia({ colorScheme: theme });
-      // The previous test leaves the pointer anywhere; hovering a control at mount would make the first pass depend on test order.
-      await commands.mouse("move", innerWidth - 1, innerHeight - 1);
       const { scope } = await mount(component, scenario);
       const seen = await expectAxeClean(document, gaps);
       const pointer = trackPointer(input);

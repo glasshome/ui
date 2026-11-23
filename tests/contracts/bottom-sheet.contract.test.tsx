@@ -1,6 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { findAll, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
 import {
@@ -14,6 +14,7 @@ import { useFakeTime } from "../../src/testing";
 import { commands } from "vitest/browser";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
+import { afterTest } from "../harness/leaks";
 
 afterEach(cleanup);
 
@@ -132,7 +133,7 @@ describe("BottomSheet contract", () => {
     const [open, setOpen] = createSignal(true);
     const page = document.body.appendChild(document.createElement("div"));
     page.setAttribute("data-page", "");
-    onTestFinished(() => page.remove());
+    afterTest(() => page.remove());
     render(() => (
       <BottomSheet open={open()} onOpenChange={setOpen}>
         <BottomSheetPortal>
