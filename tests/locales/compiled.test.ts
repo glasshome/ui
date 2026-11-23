@@ -1,5 +1,6 @@
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { compileUiCatalogs } from "../../scripts/compile-catalogs.js";
+import { compileCatalogDir } from "@glasshome/widget-contract/catalog-build";
 import de from "../../src/locales/compiled/de.js";
 import en from "../../src/locales/compiled/en.js";
 import enXA from "../../src/locales/compiled/en-XA.js";
@@ -8,6 +9,8 @@ import fr from "../../src/locales/compiled/fr.js";
 
 describe("compiled ui catalogs", () => {
   it("match their sources: run `bun run catalogs` after editing a locale", () => {
-    expect({ de, en, "en-XA": enXA, es, fr }).toEqual(compileUiCatalogs());
+    expect({ de, en, "en-XA": enXA, es, fr }).toEqual(
+      compileCatalogDir(fileURLToPath(new URL("../../src/locales", import.meta.url))),
+    );
   });
 });
