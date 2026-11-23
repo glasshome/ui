@@ -45,6 +45,25 @@ describe("LocaleProvider", () => {
     expect(spinnerLabel(container)).toBe(fr["ui.spinner.label"]);
   });
 
+  it("speaks a catalog already in hand on the first frame, with no load", () => {
+    const loads: string[] = [];
+    const { container } = render(() => (
+      <LocaleProvider
+        language="fr"
+        formatting="fr-FR"
+        messages={frCatalog}
+        catalog={(language) => {
+          loads.push(language);
+          return Promise.resolve(undefined);
+        }}
+      >
+        <Spinner />
+      </LocaleProvider>
+    ));
+    expect(spinnerLabel(container)).toBe(fr["ui.spinner.label"]);
+    expect(loads).toEqual([]);
+  });
+
   it("stays English when the catalog fails to load", async () => {
     const container = frenchSpinner(() => Promise.reject(new Error("chunk failed")));
     await settle();
