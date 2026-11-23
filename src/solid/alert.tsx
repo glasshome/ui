@@ -27,6 +27,7 @@ export type { AlertTone };
 
 type AlertProps = ComponentProps<"div"> & {
   tone?: AlertTone;
+  /** The corner watermark's glyph; an Alert with an `action` shows no watermark. */
   icon?: JSX.Element;
   title?: JSX.Element;
   action?: JSX.Element;
@@ -95,25 +96,28 @@ const Alert: Component<AlertProps> = (props) => {
       style={{ "--glass-tone": tone().color, color: "var(--foreground)" }}
       {...rest}
     >
-      <span class={ALERT_ICON_BG_CLASS} style={alertIconBgStyle(tone().color)} aria-hidden="true">
-        <Show
-          when={icon()}
-          fallback={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              innerHTML={ALERT_ICON_PATHS[toneKey()]}
-            />
-          }
-        >
-          {icon()}
-        </Show>
-      </span>
+      {/* The action sits in the watermark's corner, so an Alert with one shows none. */}
+      <Show when={!action()}>
+        <span class={ALERT_ICON_BG_CLASS} style={alertIconBgStyle(tone().color)} aria-hidden="true">
+          <Show
+            when={icon()}
+            fallback={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                innerHTML={ALERT_ICON_PATHS[toneKey()]}
+              />
+            }
+          >
+            {icon()}
+          </Show>
+        </span>
+      </Show>
       <div class={ALERT_CONTENT_CLASS}>
         <AlertToneContext.Provider value={() => tone().color}>
           <AlertBody title={local.title} toneColor={tone().color}>
