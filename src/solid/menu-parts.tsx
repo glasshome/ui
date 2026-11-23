@@ -270,6 +270,8 @@ function toneStyle(tone: string | undefined) {
 
 interface RowOwnProps {
   disabled?: boolean;
+  /** The work this row's press started is running: it ignores presses and keeps focus, and the menu stays open. */
+  busy?: boolean;
   closeOnSelect?: boolean;
   onSelect?: () => void;
   /** @deprecated Ignored; removed in 2.0.0. */
@@ -335,6 +337,7 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
     "style",
     "children",
     "disabled",
+    "busy",
     "closeOnSelect",
     "onSelect",
     "textValue",
@@ -344,6 +347,7 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
   ]);
   const key = untrack(() => local.id) ?? createUniqueId();
   const disabled = () => local.disabled ?? false;
+  const busy = () => local.busy ?? false;
   const checked = () => local.checked ?? false;
   const indeterminate = () => local.indeterminate ?? false;
   const checkable = kind === "checkbox" || kind === "radio";
@@ -351,8 +355,9 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
 
   menu.register(key, {
     disabled,
-    closeOnSelect: () => local.closeOnSelect ?? kind === "item",
+    closeOnSelect: () => !busy() && (local.closeOnSelect ?? kind === "item"),
     onSelect: () => {
+      if (busy()) return;
       local.onSelect?.();
       local.choose?.();
     },
@@ -393,7 +398,10 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
           return indeterminate() ? "mixed" : checked() ? "true" : "false";
         },
         get "aria-disabled"() {
-          return disabled() ? "true" : undefined;
+          return disabled() || busy() ? "true" : undefined;
+        },
+        get "aria-busy"() {
+          return busy() ? "true" : undefined;
         },
         "aria-haspopup": submenu ? "true" : undefined,
         get "aria-expanded"() {
