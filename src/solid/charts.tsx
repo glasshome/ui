@@ -64,6 +64,7 @@ function chartGeom(data: { count: number }[]): ChartGeom | null {
   // the HTML hover marker so it lines up with the SVG.
   const yFrac = data.map((p) => (CHART_H - 1 - (p.count / max) * (CHART_H - 2)) / CHART_H);
   const coords = data.map(
+    // ui-text-ok: SVG and CSS number
     (_, i) => `${(i * step).toFixed(2)},${((yFrac[i] ?? 0) * CHART_H).toFixed(2)}`,
   );
   return {
@@ -225,6 +226,7 @@ export function BarList(props: {
       <div data-slot="bar-list" class="flex flex-col gap-1.5">
         <For each={props.items}>
           {(item) => {
+            // ui-text-ok: SVG and CSS number
             const pct = () => `${Math.max(2, (item.value / max()) * 100).toFixed(1)}%`;
             const Row = (
               <div class="group flex items-center gap-2 text-xs">
