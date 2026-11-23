@@ -489,14 +489,13 @@ const Dock: Component<DockProps> = (props) => {
           }}
           class={cn(
             // A carried item moves its snap point, and the strip would chase it.
-            "flex items-center gap-0.5 data-[reordering]:snap-none sm:gap-1",
+            "flex items-center justify-[safe_center] gap-0.5 data-[reordering]:snap-none sm:gap-1",
             vertical() && "flex-col",
             needsScroll()
               ? vertical()
                 ? "scrollbar-hide snap-y snap-mandatory overflow-y-auto overscroll-y-contain scroll-smooth"
                 : "scrollbar-hide snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth"
               : "overflow-visible",
-            !needsScroll() && "justify-center",
           )}
         >
           <SelectionScope
