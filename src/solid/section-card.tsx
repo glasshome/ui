@@ -305,7 +305,7 @@ export function SectionTitle(props: { children: JSX.Element; class?: string }) {
     <h2
       data-slot="section-title"
       class={cn(
-        "text-foreground truncate text-lg font-bold tracking-tight sm:text-xl",
+        "text-foreground line-clamp-2 text-lg font-bold tracking-tight text-balance [overflow-wrap:anywhere] sm:text-xl",
         props.class,
       )}
     >

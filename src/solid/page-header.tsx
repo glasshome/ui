@@ -76,7 +76,7 @@ export function PageHeader(props: {
           <div data-slot="page-header-headline" class="flex min-w-0 items-center gap-2 sm:gap-3">
             <h1
               data-slot="page-header-title"
-              class="text-foreground min-w-0 truncate pb-0.5 text-[1.75rem] leading-none font-bold tracking-[-0.035em] sm:text-[2.5rem]"
+              class="text-foreground line-clamp-2 min-w-0 pb-1 text-[1.75rem] leading-[1.1] font-bold tracking-[-0.035em] text-balance [overflow-wrap:anywhere] sm:text-[2.5rem]"
             >
               {props.title}
             </h1>
