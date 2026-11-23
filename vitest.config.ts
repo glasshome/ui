@@ -1,6 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 import { playwright } from "@vitest/browser-playwright";
 import solid from "vite-plugin-solid";
+import { searchForWorkspaceRoot } from "vite";
 import { defineConfig } from "vitest/config";
 import {
   animationRate,
@@ -37,11 +38,16 @@ const GERMAN_BROWSER = "tests/solid/locale-browser-de.test.tsx";
 const FINGER = "tests/**/*-finger.*test.{ts,tsx}";
 const VISUAL_FINGER = "tests/visual/**/*-finger.visual.test.tsx";
 
+// A gate run names a results directory; the runner keeps junit and failure shots there.
+const resultsDir = process.env.GATE_RESULTS_DIR;
+const shuffleSeed = process.env.GATE_SHUFFLE_SEED;
+
 // Vitest names each instance after its project, so a project that replaces the provider brings its own.
 const BROWSER = {
   enabled: true,
   headless: true,
-  screenshotFailures: false,
+  screenshotFailures: Boolean(resultsDir),
+  screenshotDirectory: resultsDir ? `${resultsDir}/screenshots` : undefined,
   viewport: { width: 1024, height: 768 },
   provider: playwright({
     // test-change-ok a press that cannot land fails in 5 s instead of waiting out the test
@@ -69,6 +75,10 @@ const WEBKIT_FILES = [
 ];
 
 export default defineConfig({
+  // A failure screenshot is written through the dev server, which serves only allowed roots.
+  server: {
+    fs: { allow: [searchForWorkspaceRoot(process.cwd()), ...(resultsDir ? [resultsDir] : [])] },
+  },
   plugins: [solid({ dev: false, hot: false }), tailwindcss()],
   resolve: {
     conditions: ["browser"],
@@ -94,6 +104,13 @@ export default defineConfig({
     ],
   },
   test: {
+    sequence: shuffleSeed ? { shuffle: true, seed: Number(shuffleSeed) } : undefined,
+    attachmentsDir: resultsDir ? `${resultsDir}/attachments` : undefined,
+    reporters: resultsDir
+      ? ["default", ["junit", { outputFile: `${resultsDir}/vitest.xml` }]]
+      : ["default"],
+    // test-change-ok hang guard for expect.poll and expect.element, below the 5 s testTimeout; provisional until the nightly stress ledger measures it
+    expect: { poll: { timeout: 4_000 } },
     // Unset, vite-plugin-solid asks for jsdom, which a clean install does not have.
     environment: "node",
     maxWorkers: 4,
@@ -197,6 +214,7 @@ export default defineConfig({
           exclude: [VISUAL_FINGER],
           browser: {
             ...BROWSER,
+            screenshotFailures: false,
             instances: [{ browser: "chromium" as const }],
             // A page smaller than the frame scales every shot down; this fits the widest one.
             provider: playwright({
@@ -215,6 +233,7 @@ export default defineConfig({
           include: [VISUAL_FINGER],
           browser: {
             ...BROWSER,
+            screenshotFailures: false,
             instances: [{ browser: "chromium" as const }],
             provider: playwright({
               // test-change-ok same 5 s as the shared provider, restated since this one replaces it

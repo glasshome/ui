@@ -87,7 +87,7 @@ describe("anchored contract", () => {
     const anchorY = anchor.getBoundingClientRect().top;
     const rect = scroller.getBoundingClientRect();
     await commands.wheel(rect.x + rect.width / 2, rect.y + 10, 40);
-    await vi.waitFor(() => expect(scroller.scrollTop).toBeGreaterThan(0));
+    await expect.poll(() => scroller.scrollTop).toBeGreaterThan(0);
     await frame();
     await frame();
     expect(anchor.getBoundingClientRect().top).not.toBe(anchorY);
@@ -99,7 +99,7 @@ describe("anchored contract", () => {
     document.body.append(tall);
     const pageBefore = anchor.getBoundingClientRect().top;
     await commands.wheel(window.innerWidth - 8, 8, 30);
-    await vi.waitFor(() => expect(window.scrollY).toBeGreaterThan(0));
+    await expect.poll(() => window.scrollY).toBeGreaterThan(0);
     await frame();
     await frame();
     expect(anchor.getBoundingClientRect().top).not.toBe(pageBefore);

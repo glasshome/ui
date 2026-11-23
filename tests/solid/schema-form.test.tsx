@@ -474,7 +474,7 @@ describe("list rows preview their picture", () => {
     const { container } = renderList(oneImage, { pictures: [{ image: "gone" }] });
     const img = thumb(container)?.querySelector("img");
     expect(img).toBeTruthy();
-    await vi.waitFor(() => expect(thumb(container)?.querySelector("img")).toBeNull());
+    await expect.poll(() => thumb(container)?.querySelector("img")).toBeNull();
     expect(
       thumb(container)?.querySelector('svg[data-slot="icon"]')?.getAttribute("data-icon"),
     ).toBe("lucide:image-off");

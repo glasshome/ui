@@ -1,5 +1,5 @@
 import { cleanup } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { findAll, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
 import { input } from "../harness/input";
@@ -30,13 +30,13 @@ describe("Spotlight contract", () => {
     const { part, hole, run } = await mount();
     const before = hole();
     await run(NEXT);
-    await vi.waitFor(() => expect(part("bubble")[0]?.textContent).toContain("Step 2"));
-    await vi.waitFor(() => expect(hole()).not.toBe(before));
+    await expect.poll(() => part("bubble")[0]?.textContent).toContain("Step 2");
+    await expect.poll(() => hole()).not.toBe(before);
   });
 
   it("SL3 Escape skips: the tour returns to its first step", async () => {
     const { part, run } = await mount();
     await run(NEXT, { key: "Escape" });
-    await vi.waitFor(() => expect(part("bubble")[0]?.textContent).toContain("Step 1"));
+    await expect.poll(() => part("bubble")[0]?.textContent).toContain("Step 1");
   });
 });

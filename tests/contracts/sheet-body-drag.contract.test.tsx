@@ -1,6 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { commands } from "vitest/browser";
 import {
   BottomSheet,
@@ -43,19 +43,19 @@ const sheetScrollsBody = !CSS.supports("touch-action", "pan-down");
 describe("a sheet body dragged by its content", () => {
   it("scrolls under the pointer where the engine drops pan-down, and stays put elsewhere", async () => {
     const { body, sheet, open } = tallSheet();
-    await vi.waitFor(() => expect(sheet.dataset.state).toBe("open"));
+    await expect.poll(() => sheet.dataset.state).toBe("open");
     const box = body.getBoundingClientRect();
     await drag(box.left + box.width / 2, box.top + 300, box.top + 100);
-    await vi.waitFor(() => expect(body.scrollTop >= 200).toBe(sheetScrollsBody));
+    await expect.poll(() => body.scrollTop >= 200).toBe(sheetScrollsBody);
     expect(open()).toBe(true);
   });
 
   it("drags the sheet shut from a body at its top", async () => {
     const { body, sheet, open } = tallSheet();
-    await vi.waitFor(() => expect(sheet.dataset.state).toBe("open"));
+    await expect.poll(() => sheet.dataset.state).toBe("open");
     const box = body.getBoundingClientRect();
     await drag(box.left + box.width / 2, box.top + 100, box.top + 500);
-    await vi.waitFor(() => expect(open()).toBe(false));
+    await expect.poll(() => open()).toBe(false);
     expect(body.scrollTop).toBe(0);
   });
 });

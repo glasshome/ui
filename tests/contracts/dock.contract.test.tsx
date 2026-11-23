@@ -1,5 +1,5 @@
 import { cleanup } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { findAll, findTarget } from "../../dev/harness/steps";
 import { press } from "../press.js";
 import { mountScenario } from "../harness/mount";
@@ -22,7 +22,7 @@ describe("Dock contract", () => {
 
   it("DK2 more items than room page the strip, which ends on a whole item", async () => {
     const { scope } = await mountScenario("Dock", "pages");
-    await vi.waitFor(() => expect(pages(scope()).length).toBeGreaterThan(1));
+    await expect.poll(() => pages(scope()).length).toBeGreaterThan(1);
     expect(pages(scope())[0]?.getAttribute("aria-current")).toBe("true");
     const first = findTarget(scope(), { role: "button", name: "Board 1" }).getBoundingClientRect();
     const second = findTarget(scope(), { role: "button", name: "Board 2" }).getBoundingClientRect();
@@ -37,7 +37,7 @@ describe("Dock contract", () => {
 
   it("DK3 pressing a page turns to it", async () => {
     const { scope } = await mountScenario("Dock", "pages");
-    await vi.waitFor(() => expect(pages(scope()).length).toBeGreaterThan(1));
+    await expect.poll(() => pages(scope()).length).toBeGreaterThan(1);
     const second = findTarget(scope(), { role: "button", name: "Page 2" });
     const strip = findTarget(scope(), { role: "button", name: "Board 1" }).closest(
       '[data-slot="dock-bar"]',

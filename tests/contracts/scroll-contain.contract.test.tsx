@@ -1,6 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal, type JSX } from "solid-js";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { commands } from "vitest/browser";
 import {
   BottomSheet,
@@ -76,7 +76,7 @@ async function openDialog(): Promise<Parts> {
     </Dialog>
   ));
   setDialogOpen(true);
-  await vi.waitFor(() => find('[role="dialog"]'));
+  await expect.poll(() => find('[role="dialog"]')).toBeTruthy();
   await settle();
   const panel = find('[role="dialog"]');
   return {
@@ -85,7 +85,7 @@ async function openDialog(): Promise<Parts> {
     header: null,
     close: async () => {
       setDialogOpen(false);
-      await vi.waitFor(() => expect(document.querySelector('[role="dialog"]')).toBeNull());
+      await expect.poll(() => document.querySelector('[role="dialog"]')).toBeNull();
     },
   };
 }
@@ -110,7 +110,7 @@ async function openSheet(): Promise<Parts> {
   );
   render(view);
   setSheetOpen(true);
-  await vi.waitFor(() => find('[role="dialog"]'));
+  await expect.poll(() => find('[role="dialog"]')).toBeTruthy();
   await settle();
   const panel = find('[role="dialog"]');
   return {
@@ -119,7 +119,7 @@ async function openSheet(): Promise<Parts> {
     header: null,
     close: async () => {
       setSheetOpen(false);
-      await vi.waitFor(() => expect(document.querySelector('[role="dialog"]')).toBeNull());
+      await expect.poll(() => document.querySelector('[role="dialog"]')).toBeNull();
     },
   };
 }
@@ -137,10 +137,12 @@ async function wheelOver(el: Element, deltaY: number) {
 }
 
 async function wheelToEndOfBody(body: Element) {
-  await vi.waitFor(async () => {
-    await wheelOver(body, 2000);
-    expect(body.scrollTop + body.clientHeight).toBeGreaterThanOrEqual(body.scrollHeight - 1);
-  });
+  await expect
+    .poll(async () => {
+      await wheelOver(body, 2000);
+      return body.scrollHeight - body.clientHeight - body.scrollTop;
+    })
+    .toBeLessThanOrEqual(1);
 }
 
 /** The page's scroll position after a wheel past the end of the body, then after one over the scrim. */

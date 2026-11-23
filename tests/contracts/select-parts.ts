@@ -1,4 +1,4 @@
-import { expect, vi } from "vitest";
+import { expect } from "vitest";
 import { findAll, findTarget, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
 import { input } from "../harness/input";
@@ -20,6 +20,8 @@ export async function mount(id = "closed") {
   const highlighted = () =>
     findAll(scope(), { role: "option" }).filter((o) => o.hasAttribute("data-highlighted"));
   const run = (...steps: Step[]) => runSteps(scope, steps, input, settle);
-  const closed = () => vi.waitFor(() => expect(listboxes()).toHaveLength(0));
+  const closed = async () => {
+    await expect.poll(() => listboxes()).toHaveLength(0);
+  };
   return { scope, trigger, option, listboxes, highlighted, run, closed };
 }
