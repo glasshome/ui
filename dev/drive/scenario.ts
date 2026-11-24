@@ -14,6 +14,8 @@ export type Width = keyof typeof WIDTHS;
 export const THEMES = ["light", "dark"] as const;
 export type Theme = (typeof THEMES)[number];
 
+const DRAG_MOVES = 4;
+
 export class UsageError extends Error {}
 
 export const oneOf = <T extends string>(value: string, allowed: readonly T[], flag: string): T => {
@@ -97,12 +99,26 @@ export async function prepare(
   }
   if ("drag" in step) {
     const { x, y } = await locate(cdp, step.drag);
-    const { by } = step.drag;
+    const { by, stepMs } = step.drag;
     return async () => {
       await page.mouse.move(x, y);
-      await page.mouse.down();
-      await page.mouse.move(x + by.x, y + by.y, { steps: 4 });
-      await page.mouse.up();
+      const now = await page.evaluate(() => performance.timeOrigin + performance.now());
+      // CDP reads a timestamp as seconds since the epoch.
+      const at = (i: number) => ({
+        x: x + (by.x * i) / DRAG_MOVES,
+        y: y + (by.y * i) / DRAG_MOVES,
+        timestamp: (now + i * stepMs) / 1000,
+        button: "left" as const,
+        clickCount: 1,
+      });
+      await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", buttons: 1, ...at(0) });
+      for (let i = 1; i <= DRAG_MOVES; i++)
+        await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", buttons: 1, ...at(i) });
+      await cdp.send("Input.dispatchMouseEvent", {
+        type: "mouseReleased",
+        buttons: 0,
+        ...at(DRAG_MOVES),
+      });
     };
   }
   if ("press" in step) {

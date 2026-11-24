@@ -1,11 +1,27 @@
 import { render } from "@solidjs/testing-library";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { findScenario } from "../../dev/harness/registry";
-import { settle } from "../../dev/harness/settle";
+import { settleDom } from "../../dev/harness/settle";
 import { scenarioScope } from "../../dev/harness/steps";
 import { Within } from "../../dev/harness/Within";
+import { afterTest } from "./leaks";
 
-export { settle };
+const realFrame = globalThis.requestAnimationFrame;
+
+/** Waits until the page stops changing; on frozen frames it would wait forever, so it refuses. */
+export async function settle(): Promise<void> {
+  if (globalThis.requestAnimationFrame !== realFrame) throw new Error("settle needs real frames");
+  await settleDom();
+}
+
+/** A closed shadow root on the page, which settle and the leak check see until the test ends. */
+export function openClosedRoot(parent: Element = document.body): ShadowRoot {
+  const host = parent.appendChild(document.createElement("div"));
+  const root = host.attachShadow({ mode: "closed" });
+  CLOSED_ROOTS.add(root);
+  afterTest(() => CLOSED_ROOTS.delete(root));
+  return root;
+}
 
 export function focusedElement(): Element | null {
   for (const root of CLOSED_ROOTS) if (root.activeElement) return root.activeElement;

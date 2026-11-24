@@ -5,7 +5,7 @@
  * inside a page that already scrolls) while keeping the shared scrollbar. */
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal, For } from "solid-js";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
 import { press } from "../press.js";
 import {
@@ -178,9 +178,9 @@ describe("a long table drawn a page at a time", () => {
     const more = () => view.queryByRole("button", { name: "Show more" });
     expect(rows()).toBe(50);
     more()?.scrollIntoView();
-    await vi.waitFor(() => expect(rows()).toBe(100));
+    await expect.poll(() => rows()).toBe(100);
     more()?.scrollIntoView();
-    await vi.waitFor(() => expect(rows()).toBe(120));
+    await expect.poll(() => rows()).toBe(120);
     expect(more()).toBeNull();
 
     setFilter("row");

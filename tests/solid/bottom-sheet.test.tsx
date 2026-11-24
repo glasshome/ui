@@ -145,7 +145,7 @@ describe("BottomSheet motion", () => {
     ));
     const panel = document.querySelector<HTMLElement>('[data-slot="bottom-sheet-content"]');
     expect(panel?.getAttribute("data-state")).toBe("opening");
-    await vi.waitFor(() => expect(panel?.getAttribute("data-state")).toBe("open"));
+    await expect.poll(() => panel?.getAttribute("data-state")).toBe("open");
   });
 
   it("times no transition under reduced motion, a literal duration class included", async () => {
@@ -186,10 +186,10 @@ describe("BottomSheet body", () => {
       </BottomSheet>
     ));
     const body = document.querySelector<HTMLElement>('[data-slot="bottom-sheet-body"]');
-    await vi.waitFor(() => expect(body?.hasAttribute("data-scrolled")).toBe(false));
+    await expect.poll(() => body?.hasAttribute("data-scrolled")).toBe(false);
     body?.scrollTo({ top: 120 });
-    await vi.waitFor(() => expect(body?.hasAttribute("data-scrolled")).toBe(true));
+    await expect.poll(() => body?.hasAttribute("data-scrolled")).toBe(true);
     body?.scrollTo({ top: 0 });
-    await vi.waitFor(() => expect(body?.hasAttribute("data-scrolled")).toBe(false));
+    await expect.poll(() => body?.hasAttribute("data-scrolled")).toBe(false);
   });
 });

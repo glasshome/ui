@@ -1,11 +1,7 @@
-import { cleanup } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { findAll } from "../../dev/harness/steps";
-import { frames } from "../frames.js";
 import { press } from "../press.js";
 import { mountScenario, settle } from "../harness/mount";
-
-afterEach(cleanup);
 
 const rows = (scope: ParentNode[]) => findAll(scope, { role: "listitem" }).length;
 const more = (scope: ParentNode[]) => findAll(scope, { role: "button", name: "Show more" });
@@ -33,17 +29,15 @@ describe("TableLoadMore contract", () => {
     const { scope } = await mountScenario("TableLoadMore", "long");
     expect(rows(scope())).toBe(50);
     more(scope())[0]?.scrollIntoView();
-    await vi.waitFor(() => expect(rows(scope())).toBe(100));
+    await expect.poll(() => rows(scope())).toBe(100);
     more(scope())[0]?.scrollIntoView();
-    await vi.waitFor(() => expect(rows(scope())).toBe(120));
+    await expect.poll(() => rows(scope())).toBe(120);
     expect(more(scope())).toHaveLength(0);
   });
 
   it("TL4 a long table nobody scrolls stays at one page", async () => {
-    // The scroll an earlier test's teardown clamps lands a frame later.
-    await frames(2);
     const { scope } = await mountScenario("TableLoadMore", "long");
-    await frames(2);
+    await settle();
     expect(rows(scope())).toBe(50);
   });
 });

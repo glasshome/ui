@@ -1,6 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
 import { findAll, findTarget, runSteps, scenarioScope } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
@@ -24,7 +24,9 @@ function helpers(scope: () => ParentNode[]) {
   const dialogs = () => findAll(scope(), { role: "dialog" });
   const panels = () => dialogs().filter((el) => el.getAttribute("data-slot") === "popover-content");
   const run = (...steps: Step[]) => runSteps(scope, steps, input, settle);
-  const expectClosed = () => vi.waitFor(() => expect(panels()).toHaveLength(0));
+  const expectClosed = async () => {
+    await expect.poll(() => panels()).toHaveLength(0);
+  };
   return { button, dialogs, panels, run, expectClosed };
 }
 
@@ -62,7 +64,7 @@ describe("Popover contract", () => {
     const { button, run, expectClosed } = await mount("escape");
     await run(OPEN, { key: "Escape" });
     await expectClosed();
-    await vi.waitFor(() => expect(focusedElement()).toBe(button("Filters")));
+    await expect.poll(() => focusedElement()).toBe(button("Filters"));
   });
 
   it("P5 a second press on a trigger the panel leaves uncovered closes it, focus on the trigger", async () => {
@@ -82,14 +84,14 @@ describe("Popover contract", () => {
     expect(panels()).toHaveLength(1);
     await run(OPEN);
     await expectClosed();
-    await vi.waitFor(() => expect(focusedElement()).toBe(button("Filters")));
+    await expect.poll(() => focusedElement()).toBe(button("Filters"));
   });
 
   it("P6 a press outside on nothing that takes focus closes it and focus returns to the trigger", async () => {
     const { button, run, expectClosed } = await mount("outside-press");
     await run(OPEN, { pressAt: OUTSIDE });
     await expectClosed();
-    await vi.waitFor(() => expect(focusedElement()).toBe(button("Filters")));
+    await expect.poll(() => focusedElement()).toBe(button("Filters"));
   });
 
   it("P7 a press outside on a control leaves focus on that control", async () => {
@@ -113,7 +115,7 @@ describe("Popover contract", () => {
     await run(OPEN, { key: "Escape" });
     await expectClosed();
     expect(host()).toBeDefined();
-    await vi.waitFor(() => expect(focusedElement()).toBe(button("Filters")));
+    await expect.poll(() => focusedElement()).toBe(button("Filters"));
     await run(OPEN);
     expect(panels()).toHaveLength(1);
     const title = findTarget(scenarioScope(), { role: "heading", name: "Scenario" });
@@ -133,7 +135,7 @@ describe("Popover contract", () => {
     expect(focusedElement()).toBe(button("Lights"));
     await run({ key: "Escape" });
     await expectClosed();
-    await vi.waitFor(() => expect(focusedElement()).toBe(button("Filters")));
+    await expect.poll(() => focusedElement()).toBe(button("Filters"));
   });
 
   it("P11 the panel covers its trigger from the trigger's top edge, inside the viewport", async () => {
@@ -159,7 +161,7 @@ describe("Popover contract", () => {
     const top = button("Filters").getBoundingClientRect().top;
     window.scrollBy(0, 60);
     await settle();
-    await vi.waitFor(() => expect(Math.abs(gap() - before)).toBeLessThanOrEqual(1));
+    await expect.poll(() => Math.abs(gap() - before)).toBeLessThanOrEqual(1);
     expect(button("Filters").getBoundingClientRect().top).toBeCloseTo(top - 60, 0);
     window.scrollTo(0, 0);
   });
@@ -187,7 +189,7 @@ describe("Popover contract", () => {
     expect(panels()[0]?.contains(focusedElement())).toBe(true);
     await input.pressAt(OUTSIDE.x, OUTSIDE.y);
     await expectClosed();
-    await vi.waitFor(() => expect(focusedElement()).toBe(button("Gallery")));
+    await expect.poll(() => focusedElement()).toBe(button("Gallery"));
     expect(button("Before")).toBeDefined();
     expect(getComputedStyle(document.body).pointerEvents).toBe("auto");
   });
@@ -225,7 +227,7 @@ describe("Popover contract", () => {
     expect(Math.abs(box.width - anchor.width)).toBeLessThanOrEqual(1);
     await run({ key: "Escape" });
     await expectClosed();
-    await vi.waitFor(() => expect(focusedElement()).toBe(button("Pick")));
+    await expect.poll(() => focusedElement()).toBe(button("Pick"));
   });
 
   it("P15 Title and Description name and describe the dialog", async () => {

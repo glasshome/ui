@@ -36,7 +36,6 @@ export default defineScenarios({
       within: "shadow-root",
       steps: [radio("Compact")],
     },
-    // Last: Select's pick screenshot runs next and takes this scenario's focus modality.
     {
       id: "keyboard-nav",
       title: "Arrow keys pick the next density, skipping Spacious",

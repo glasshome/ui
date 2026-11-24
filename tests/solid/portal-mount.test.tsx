@@ -25,6 +25,7 @@ import { PortalMountContext } from "../../src/solid/portal-mount.js";
 import { useFakeTime } from "../../src/testing/fake-time.js";
 import { inShadowRoot } from "../../src/lib/shadow-layer.js";
 import uiCss from "../../src/styles/globals.css?inline";
+import { openClosedRoot, settle } from "../harness/mount";
 
 // Fake time holds no CSS clock, so the enter and exit animations layers wait on are finished here.
 function finishAnimations() {
@@ -73,20 +74,18 @@ uiSheet.replaceSync(uiCss);
 
 /** A closed shadow root on the page, as a sealed realm's overlay is. */
 function closedRoot() {
-  const holder = document.createElement("div");
-  document.body.appendChild(holder);
-  const root = holder.attachShadow({ mode: "closed" });
+  const root = openClosedRoot();
   delegateInside(root);
   shadowRoots.push(root);
   const mount = document.createElement("div");
   root.appendChild(mount);
-  return { holder, root, mount };
+  return { holder: root.host, root, mount };
 }
 
-/** Layers open and close through CSS animations, whose events land on the next frame, and listen for outside presses a timer after they open. */
+/** Layers open and close through CSS animations, whose events land on a later frame, and listen for outside presses a timer after they open. */
 const layersListening = async () => {
   finishAnimations();
-  await new Promise(requestAnimationFrame);
+  await settle();
   await vi.advanceTimersByTimeAsync(20);
 };
 
@@ -682,9 +681,7 @@ describe("the second shadow-root review's cases", () => {
     const pageDialog = document.createElement("div");
     pageDialog.setAttribute("role", "dialog");
     document.body.appendChild(pageDialog);
-    const holder = document.createElement("div");
-    pageDialog.appendChild(holder);
-    const root = holder.attachShadow({ mode: "closed" });
+    const root = openClosedRoot(pageDialog);
     delegateInside(root);
     shadowRoots.push(root);
     const mount = document.createElement("div");

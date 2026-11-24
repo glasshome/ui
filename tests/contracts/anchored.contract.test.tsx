@@ -56,8 +56,6 @@ function placedOver(anchorStyle: JSX.CSSProperties) {
   };
 }
 
-const frame = () => new Promise<void>((done) => requestAnimationFrame(() => done()));
-
 describe("anchored contract", () => {
   it("PO1 opens below the trigger, offset from its edge, inside the viewport", async () => {
     const { anchor, part } = await open("below");
@@ -87,9 +85,8 @@ describe("anchored contract", () => {
     const anchorY = anchor.getBoundingClientRect().top;
     const rect = scroller.getBoundingClientRect();
     await commands.wheel(rect.x + rect.width / 2, rect.y + 10, 40);
-    await vi.waitFor(() => expect(scroller.scrollTop).toBeGreaterThan(0));
-    await frame();
-    await frame();
+    await expect.poll(() => scroller.scrollTop).toBeGreaterThan(0);
+    await settle();
     expect(anchor.getBoundingClientRect().top).not.toBe(anchorY);
     expect(Math.abs(gapBelow(anchor, part) - before)).toBeLessThanOrEqual(1);
 
@@ -99,9 +96,8 @@ describe("anchored contract", () => {
     document.body.append(tall);
     const pageBefore = anchor.getBoundingClientRect().top;
     await commands.wheel(window.innerWidth - 8, 8, 30);
-    await vi.waitFor(() => expect(window.scrollY).toBeGreaterThan(0));
-    await frame();
-    await frame();
+    await expect.poll(() => window.scrollY).toBeGreaterThan(0);
+    await settle();
     expect(anchor.getBoundingClientRect().top).not.toBe(pageBefore);
     expect(Math.abs(gapBelow(anchor, part) - before)).toBeLessThanOrEqual(1);
   });

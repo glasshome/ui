@@ -207,6 +207,58 @@
       }
     }
   },
+  "slow-drag": {
+    "steps": {
+      "0": {
+        "elementsRestyled": {
+          "max": 5,
+          "reason": "2026-11-19: the open scenario's mount, which this one shares"
+        },
+        "largestRecalc": {
+          "max": 4,
+          "reason": "2026-11-19: the open scenario's mount, which this one shares"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "2026-11-19: the open scenario's mount, which this one shares"
+        }
+      },
+      "1": {
+        "elementsRestyled": {
+          "max": 93,
+          "reason": "2026-11-24: max of 3 runs plus 25% on elements restyled"
+        },
+        "largestRecalc": {
+          "max": 18,
+          "reason": "2026-11-24: max of 3 runs"
+        },
+        "layouts": {
+          "max": 4,
+          "reason": "2026-11-24: max of 3 runs"
+        }
+      },
+      "2": {
+        "elementsRestyled": {
+          "max": 57,
+          "reason": "2026-11-24: max of 3 runs plus 25% on elements restyled"
+        },
+        "largestRecalc": {
+          "max": 3,
+          "reason": "2026-11-24: max of 3 runs"
+        },
+        "layouts": {
+          "max": 0,
+          "reason": "2026-11-24: max of 3 runs"
+        }
+      }
+    },
+    "guest": {
+      "workUnits": {
+        "max": 12,
+        "reason": "baseline 2026-11-24 (9), plus 25% and at least one"
+      }
+    }
+  },
   "nested-select": {
     "steps": {
       "0": {

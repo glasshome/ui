@@ -8,6 +8,8 @@ import { TRAVEL_MOTION } from "../../src/lib/motion-classes.js";
 import { OVERLAY_SURFACE_OPAQUE, SCRIM_CLASS } from "../../src/lib/overlay-classes.js";
 import { Spotlight } from "../../src/solid/spotlight.js";
 import { useFakeTime } from "../../src/testing/index.js";
+import { nextFrame } from "../harness/frame";
+import { settle } from "../harness/mount";
 
 const TAIL_SIZE = 20;
 const BUBBLE_GAP = 12;
@@ -18,8 +20,6 @@ function targetAt(x: number, y: number, width: number, height: number) {
   document.body.append(el);
   return el;
 }
-
-const nextFrame = () => new Promise(requestAnimationFrame);
 
 /* What the browser serialises for these path commands, e.g. "M104 192" as "M 104 192". */
 function pathCommands(d: string): string {
@@ -122,9 +122,11 @@ describe("Spotlight", () => {
     const width = bubble?.offsetWidth ?? 0;
     const chrome = bubble?.offsetHeight ?? 0;
     setGrow(116 - chrome);
+    // per-frame the bubble is re-measured in the frame after its content grows
     await nextFrame();
     setTarget(b);
     setGrow(137 - chrome);
+    // per-frame the bubble is re-measured in the frame after the target changes
     await nextFrame();
     /* The tail's half-diagonal (8√2) grows the gap below BUBBLE_GAP=12. */
     const gap = BUBBLE_GAP + (TAIL_SIZE * Math.SQRT2) / 2;
@@ -231,7 +233,7 @@ describe("Spotlight", () => {
         </Spotlight>
       </>
     ));
-    await nextFrame();
+    await settle();
     await userEvent.keyboard("{Escape}");
     const sheet = document.querySelector('[data-slot="bottom-sheet-content"]');
     expect(["closing", "closed"]).toContain(sheet?.getAttribute("data-state") ?? "closed");
@@ -290,8 +292,6 @@ describe("Spotlight", () => {
   });
 
   it("observes the bubble element too, so its own size change re-places it", async () => {
-    const raf = window.requestAnimationFrame.bind(window);
-    const realFrame = () => new Promise(raf);
     /* Frozen frames, so only the ResizeObserver can re-place the bubble. */
     useFakeTime({ toFake: ["requestAnimationFrame"] });
     const el = targetAt(500, 600, 100, 40);
@@ -302,15 +302,20 @@ describe("Spotlight", () => {
         <div style={{ height: `${grow()}px` }} />
       </Spotlight>
     ));
-    await realFrame();
-    await realFrame();
     const bubble = document.querySelector<HTMLElement>('[data-slot="spotlight-bubble"]');
+    if (!bubble) throw new Error("no bubble");
+    // Observers are called in the order they were made, so the Spotlight's has run when this one does.
+    let delivered = Promise.withResolvers<void>();
+    const after = new ResizeObserver(() => delivered.resolve());
+    after.observe(bubble);
+    onTestFinished(() => after.disconnect());
+    await delivered.promise;
+    delivered = Promise.withResolvers<void>();
     const gap = BUBBLE_GAP + (TAIL_SIZE * Math.SQRT2) / 2;
     setGrow(100);
-    const grown = bubble?.offsetHeight ?? 0;
-    await realFrame();
-    await realFrame();
-    const [, y] = (bubble?.style.translate ?? "").split(" ");
+    const grown = bubble.offsetHeight;
+    await delivered.promise;
+    const [, y] = bubble.style.translate.split(" ");
     expect(y).toBe(translateY(600 - gap - grown));
   });
 
@@ -321,8 +326,7 @@ describe("Spotlight", () => {
         Step
       </Spotlight>
     ));
-    await nextFrame();
-    await nextFrame();
+    await settle();
     const scroller = document.createElement("div");
     scroller.style.cssText = "position:fixed;left:0;top:0;width:50px;height:50px;overflow:auto";
     scroller.innerHTML = '<div style="height:200px"></div>';

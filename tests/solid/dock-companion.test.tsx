@@ -3,7 +3,7 @@ import { createSignal } from "solid-js";
 import { describe, expect, it } from "vitest";
 import { Dock, type DockPlacement } from "../../src/solid/dock.js";
 import { ToggleGroup, ToggleGroupItem } from "../../src/solid/toggle-group.js";
-import { frames } from "../frames.js";
+import { settle } from "../harness/mount";
 
 const items = (n: number) =>
   Array.from({ length: n }, (_, i) => ({
@@ -39,7 +39,7 @@ async function mount(placement: DockPlacement, open: boolean, box = { width: 800
       />
     </div>
   ));
-  await frames(2);
+  await settle();
   const surface = rectOf(view.container.querySelector('[data-slot="dock-surface"]'));
   const companion = rectOf(view.container.querySelector('[data-slot="dock-companion"]'));
   return { view, surface, companion };
@@ -75,7 +75,7 @@ describe("Dock companion", () => {
         />
       </div>
     ));
-    await frames(3);
+    await settle();
     const companion = rectOf(view.container.querySelector('[data-slot="dock-companion"]'));
     const dock = rectOf(view.container.querySelector('[data-slot="dock"]'));
     expect(view.container.querySelector(PAGE_DOTS)).not.toBeNull();
@@ -118,11 +118,11 @@ describe("Dock companion", () => {
           />
         </div>
       ));
-      await frames(3);
+      await settle();
       setOpen(true);
-      await frames(4);
+      await settle();
       setOpen(false);
-      await frames(4);
+      await settle();
     } finally {
       app.disconnect();
       window.removeEventListener("error", onError);
@@ -133,7 +133,7 @@ describe("Dock companion", () => {
   it("takes no room and no input while closed", async () => {
     const { view } = await mount("bottom", false);
     const bare = render(() => <Dock items={items(3)} />);
-    await frames(2);
+    await settle();
     const height = (root: HTMLElement) => rectOf(root.querySelector('[data-slot="dock"]')).height;
     const reveal = view.container.querySelector('[data-slot="dock-companion-reveal"]');
     expect(rectOf(reveal).height).toBe(0);
@@ -150,7 +150,7 @@ describe("Side dock pages", () => {
           <Dock items={items(count)} placement="left" />
         </div>
       ));
-      await frames(2);
+      await settle();
       return {
         paged: view.container.querySelector(PAGE_DOTS) !== null,
         width: rectOf(view.container.querySelector('[data-slot="dock-surface"]')).width,
@@ -177,7 +177,7 @@ describe("Dock lead", () => {
         />
       </div>
     ));
-    await frames(2);
+    await settle();
     const lead = rectOf(view.container.querySelector('[data-slot="dock-lead"]'));
     const bar = rectOf(view.container.querySelector('[data-slot="dock-bar"]'));
     const surface = rectOf(view.container.querySelector('[data-slot="dock-surface"]'));

@@ -1,10 +1,10 @@
-import { cleanup, render } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it } from "vitest";
+import { render } from "@solidjs/testing-library";
+import { describe, expect, it } from "vitest";
 import { commands, page } from "vitest/browser";
 import { COMPONENTS } from "../../dev/harness/registry";
 import { ScenarioStage } from "../../dev/harness/ScenarioStage";
 import { runSteps, scenarioScope } from "../../dev/harness/steps";
-import { settle } from "../../dev/harness/settle";
+import { settleDom } from "../../dev/harness/settle";
 import { usesFinger } from "../../dev/harness/types";
 import { input, trackPointer } from "../harness/input";
 
@@ -17,11 +17,6 @@ const ALL_CASES = COMPONENTS.flatMap(({ component, scenarios }) =>
 );
 /** Every scenario a finger drives, or every one a mouse and keyboard drive. */
 export function visualMatrix(finger: boolean) {
-  afterEach(() => {
-    cleanup();
-    document.documentElement.classList.remove("dark");
-  });
-
   const CASES = ALL_CASES.filter((c) => usesFinger(c.scenario.steps ?? []) === finger);
   describe.each(CASES)("$name", ({ component, scenario }) => {
     it.each(MATRIX)("looks as recorded, %s theme, %s width", async (theme, width) => {
@@ -40,12 +35,12 @@ export function visualMatrix(finger: boolean) {
           />
         </div>
       ));
-      await settle();
+      await settleDom();
       await document.fonts.ready;
       const pointer = trackPointer(input);
-      await runSteps(scenarioScope, scenario.steps ?? [], pointer.input, settle);
+      await runSteps(scenarioScope, scenario.steps ?? [], pointer.input, settleDom);
       await pointer.rehover();
-      await settle();
+      await settleDom();
       await expect
         .element(page.elementLocator(document.body))
         .toMatchScreenshot(`${component}-${scenario.id}-${theme}-${width}`, {
