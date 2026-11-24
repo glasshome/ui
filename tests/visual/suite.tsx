@@ -4,7 +4,7 @@ import { commands, page } from "vitest/browser";
 import { COMPONENTS } from "../../dev/harness/registry";
 import { ScenarioStage } from "../../dev/harness/ScenarioStage";
 import { runSteps, scenarioScope } from "../../dev/harness/steps";
-import { settle } from "../../dev/harness/settle";
+import { settleDom } from "../../dev/harness/settle";
 import { usesFinger } from "../../dev/harness/types";
 import { input, trackPointer } from "../harness/input";
 
@@ -35,12 +35,12 @@ export function visualMatrix(finger: boolean) {
           />
         </div>
       ));
-      await settle();
+      await settleDom();
       await document.fonts.ready;
       const pointer = trackPointer(input);
-      await runSteps(scenarioScope, scenario.steps ?? [], pointer.input, settle);
+      await runSteps(scenarioScope, scenario.steps ?? [], pointer.input, settleDom);
       await pointer.rehover();
-      await settle();
+      await settleDom();
       await expect
         .element(page.elementLocator(document.body))
         .toMatchScreenshot(`${component}-${scenario.id}-${theme}-${width}`, {

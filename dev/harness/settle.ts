@@ -34,7 +34,7 @@ const offsetOf = (target: EventTarget) =>
  * flight, and every animation started has run out. A ResizeObserver answer applied a frame later
  * is such a change. A scroll is in flight until its `scrollend`.
  */
-export async function settle(): Promise<void> {
+export async function settleDom(): Promise<void> {
   let changed = false;
   const changes = new MutationObserver(() => (changed = true));
   for (const root of [document, ...CLOSED_ROOTS])

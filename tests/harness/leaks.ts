@@ -2,7 +2,7 @@ import { cleanup } from "@solidjs/testing-library";
 import { vi } from "vitest";
 import { commands, page, server } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
-import { settle } from "../../dev/harness/settle";
+import { settleDom } from "../../dev/harness/settle";
 
 const html = document.documentElement;
 const body = document.body;
@@ -90,7 +90,7 @@ export async function expectNoLeaks(): Promise<void> {
   cleanup();
   // An afterEach runs before useFakeTime's own restore, and settle needs real frames.
   vi.useRealTimers();
-  await settle();
+  await settleDom();
   const leaks = leaksOf();
   if (!leaks.length) return;
   restore();
