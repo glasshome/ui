@@ -18,6 +18,30 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.45.0](https://github.com/glasshome/ui/compare/v1.44.6...v1.45.0) (2026-11-24)
+
+
+### Features
+
+* **i18n:** one form of address per language ([71b317f](https://github.com/glasshome/ui/commit/71b317fb0416a046b8bb0bc059cd9fac6707a0fc))
+* **locale:** LocaleProvider and catalogs in four languages ([30c4d9a](https://github.com/glasshome/ui/commit/30c4d9ab3dc1704875e9162a9bff975cce24189c))
+* parts declare what they take from an event in data-claim ([a76bcc2](https://github.com/glasshome/ui/commit/a76bcc2a87eee7e2d4d5c177e8df36048b9977e3))
+* **select:** busy state ([fd94754](https://github.com/glasshome/ui/commit/fd947546bc102908ac13bbabaa765c972bfeab9f))
+* **select:** busy state ([5ef7c8d](https://github.com/glasshome/ui/commit/5ef7c8d6a84e856d6f0b663bdfc9fc593a9a9f16))
+
+
+### Bug Fixes
+
+* **deps:** @glasshome/ui/testing accepts vitest 5 beside 4 ([61d4b95](https://github.com/glasshome/ui/commit/61d4b954c045b9f807d49d0f7ae1e2c423b9f419))
+* **dock:** a paging strip sits at its start from its first frame ([2c09110](https://github.com/glasshome/ui/commit/2c09110fc072ecae1f5d631e873eafe6c2f4e8de))
+* **dock:** a paging strip sits at its start from its first frame ([ae6bfb2](https://github.com/glasshome/ui/commit/ae6bfb27e07bbb988da9ea5c129129cfcac25a55))
+* **locale:** en-US with no provider, grouped counts ([8db5d86](https://github.com/glasshome/ui/commit/8db5d86c76708c6fe6e71235e3d60f9461d10285))
+* **test:** browser suites allow the gate results directory, so failure screenshots save ([b563aae](https://github.com/glasshome/ui/commit/b563aae455bb9fa2f00c1e148d9a77ac50aaacf4))
+* **test:** failure attachments go to the gate results directory, never the package ([a3d47d2](https://github.com/glasshome/ui/commit/a3d47d2bfeb8f11aff577af33bf5260520c5b400))
+* **test:** the results directory is declared before the browser config reads it ([cdcf327](https://github.com/glasshome/ui/commit/cdcf32783127825ffaa81a352d05c457fcf83225))
+* **ui:** page and section headers move their actions to a second line when the title would lose its room ([b258144](https://github.com/glasshome/ui/commit/b258144f15ca8d3ed5631142bacc5bfe2814a4a0))
+* **ui:** page and section titles wrap to two balanced lines before they clamp ([d6c2f3d](https://github.com/glasshome/ui/commit/d6c2f3d2cd1ad3141a09239d96539e85aaa57300))
+
 ## [1.44.6](https://github.com/glasshome/ui/compare/v1.44.5...v1.44.6) (2026-11-21)
 
 
