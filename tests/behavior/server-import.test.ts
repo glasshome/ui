@@ -1,19 +1,11 @@
-import { readdirSync } from "node:fs";
-import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
-const dir = resolve(import.meta.dirname, "../../src/lib/behavior");
-const files = readdirSync(dir).filter((f) => /\.tsx?$/.test(f));
+// Eager glob loads at collection, which has no timeout, so a loaded machine slows the suite without failing it.
+const modules = import.meta.glob("../../src/lib/behavior/*.{ts,tsx}", { eager: true });
 
 describe("server render", () => {
-  it(
-    "every module in src/lib/behavior imports without a document",
-    // test-change-ok cold transforms of every module, run while the browser projects launch and transform beside it
-    { timeout: 30_000 },
-    async () => {
-      expect(typeof document).toBe("undefined");
-      expect(files.length).toBeGreaterThan(0);
-      for (const file of files) await import(/* @vite-ignore */ join(dir, file));
-    },
-  );
+  it("every module in src/lib/behavior imports without a document", () => {
+    expect(typeof document).toBe("undefined");
+    expect(Object.keys(modules).length).toBeGreaterThan(0);
+  });
 });
