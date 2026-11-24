@@ -129,7 +129,7 @@ export default defineScenarios({
       id: "light-dismiss",
       title: "The browser closes an auto popover that a press outside lands beside",
       render: () => <TopLayerPart topLayer="auto" />,
-      steps: [{ press: { role: "button", name: "Toggle" } }, { pressAt: { x: 300, y: 400 } }],
+      steps: [{ press: { role: "button", name: "Toggle" } }, { pressAt: { x: 8, y: 360 } }],
     },
   ],
 });

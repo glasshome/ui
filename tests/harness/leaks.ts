@@ -65,10 +65,14 @@ function leaksOf(): string[] {
   if (focused && focused !== body) leaks.push(`focus on ${name(focused)}`);
   if (scrollX || scrollY) leaks.push(`window scrolled to ${scrollX},${scrollY}`);
   if (body.scrollTop || body.scrollLeft) leaks.push("body scrolled");
+  if (parent.innerWidth !== innerWidth || parent.innerHeight !== innerHeight)
+    leaks.push(
+      `browser window at ${parent.innerWidth}x${parent.innerHeight} around a ${innerWidth}x${innerHeight} frame`,
+    );
   return leaks;
 }
 
-function restore(): void {
+async function restore(): Promise<void> {
   for (const child of [...body.children]) if (!OWN_CHILDREN.has(child)) child.remove();
   CLOSED_ROOTS.clear();
   for (const [el, start] of AT_START) {
@@ -82,6 +86,7 @@ function restore(): void {
   if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   scrollTo(0, 0);
   body.scrollTo(0, 0);
+  await commands.fitWindow();
 }
 
 /** Unmounts what the test rendered, lets it settle, and fails the test if anything it made outlives it. */
@@ -93,6 +98,6 @@ export async function expectNoLeaks(): Promise<void> {
   await settleDom();
   const leaks = leaksOf();
   if (!leaks.length) return;
-  restore();
+  await restore();
   throw new Error(`the test left behind: ${leaks.join("; ")}`);
 }
