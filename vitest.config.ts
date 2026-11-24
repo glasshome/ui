@@ -156,25 +156,20 @@ export default defineConfig({
             FINGER,
             GERMAN_BROWSER,
           ],
-          browser: {
-            ...BROWSER,
-            api: { port: ownPort("UI_CHROMIUM_BROWSER_PORT"), strictPort: true },
-          },
+          api: { port: ownPort("UI_CHROMIUM_BROWSER_PORT"), strictPort: true },
+          browser: BROWSER,
         },
       },
       {
-        extends: true,
         test: {
           name: "german-browser",
           setupFiles: ["./tests/setup.ts"],
           include: [GERMAN_BROWSER],
+          api: { port: ownPort("UI_GERMAN_BROWSER_PORT"), strictPort: true },
           browser: {
             ...BROWSER,
-            api: { port: ownPort("UI_GERMAN_BROWSER_PORT"), strictPort: true },
             instances: [{ browser: "chromium" as const, name: "german-browser (chromium)" }],
             provider: playwright({
-              // test-change-ok same 5 s as the shared provider, restated since this one replaces it
-              actionTimeout: 5000,
               contextOptions: { locale: "de-DE" },
             }),
           },
@@ -186,9 +181,9 @@ export default defineConfig({
           setupFiles: ["./tests/setup.ts"],
           include: [FINGER],
           exclude: [VISUAL],
+          api: { port: ownPort("UI_FINGER_BROWSER_PORT"), strictPort: true },
           browser: {
             ...BROWSER,
-            api: { port: ownPort("UI_FINGER_BROWSER_PORT"), strictPort: true },
             instances: [{ browser: "chromium" as const }],
             provider: playwright({
               contextOptions: {
@@ -204,9 +199,9 @@ export default defineConfig({
           name: "webkit",
           setupFiles: ["./tests/setup.ts"],
           include: WEBKIT_FILES,
+          api: { port: ownPort("UI_WEBKIT_BROWSER_PORT"), strictPort: true },
           browser: {
             ...BROWSER,
-            api: { port: ownPort("UI_WEBKIT_BROWSER_PORT"), strictPort: true },
             instances: [{ browser: "webkit" as const }],
             // WebKit has no clipboard permission to grant.
             provider: playwright(),
@@ -219,9 +214,9 @@ export default defineConfig({
           setupFiles: ["./tests/visual/setup.ts"],
           include: [VISUAL],
           exclude: [VISUAL_FINGER],
+          api: { port: ownPort("UI_VISUAL_BROWSER_PORT"), strictPort: true },
           browser: {
             ...BROWSER,
-            api: { port: ownPort("UI_VISUAL_BROWSER_PORT"), strictPort: true },
             screenshotFailures: false,
             instances: [{ browser: "chromium" as const }],
             // A page smaller than the frame scales every shot down; this fits the widest one.
@@ -236,9 +231,9 @@ export default defineConfig({
           name: "visual-finger",
           setupFiles: ["./tests/visual/setup.ts"],
           include: [VISUAL_FINGER],
+          api: { port: ownPort("UI_VISUAL_FINGER_BROWSER_PORT"), strictPort: true },
           browser: {
             ...BROWSER,
-            api: { port: ownPort("UI_VISUAL_FINGER_BROWSER_PORT"), strictPort: true },
             screenshotFailures: false,
             instances: [{ browser: "chromium" as const }],
             provider: playwright({
