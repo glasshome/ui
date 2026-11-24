@@ -5,6 +5,7 @@ import { createSignal } from "solid-js";
 import { Toggle } from "../../src/solid/toggle.js";
 import { ToggleGroup, ToggleGroupItem } from "../../src/solid/toggle-group.js";
 import { useFakeTime } from "../../src/testing/index.js";
+import { settle } from "../harness/mount";
 
 afterEach(cleanup);
 
@@ -127,7 +128,7 @@ describe("ToggleGroup", () => {
         )}
       </div>
     ));
-    for (let i = 0; i < 2; i++) await new Promise(requestAnimationFrame);
+    await settle();
     const tops = [...view.container.querySelectorAll('[data-slot="toggle-group-item"]')].map(
       (item) => Math.round(item.getBoundingClientRect().top),
     );

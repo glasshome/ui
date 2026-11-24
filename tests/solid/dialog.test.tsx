@@ -1,7 +1,7 @@
 import "../real-time-animations";
 import { cleanup, render, screen } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, beforeEach, describe, expect, it, onTestFinished } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cdp, page, userEvent } from "vitest/browser";
 import {
   AlertDialog,
@@ -33,6 +33,7 @@ import {
 } from "../../src/solid/dialog.js";
 import { Sheet, SheetBody, SheetClose, SheetContent, SheetTitle } from "../../src/solid/sheet.js";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../src/solid/tabs.js";
+import { afterTest } from "../harness/leaks";
 
 afterEach(cleanup);
 
@@ -325,7 +326,7 @@ describe("page cover", () => {
     const page = document.createElement("div");
     page.setAttribute("data-page", "");
     document.body.append(page);
-    onTestFinished(() => page.remove());
+    afterTest(() => page.remove());
     const { container } = render(
       () => (
         <>
@@ -825,7 +826,7 @@ describe("Page cover", () => {
     root.append(reader);
     document.body.append(root);
     document.documentElement.dataset.motion = "live";
-    onTestFinished(() => {
+    afterTest(() => {
       root.remove();
       delete document.documentElement.dataset.motion;
     });
@@ -839,7 +840,7 @@ describe("Page cover", () => {
       }),
     );
     observer.observe(root, { attributes: true, attributeFilter: ["data-covered"] });
-    onTestFinished(() => observer.disconnect());
+    afterTest(() => observer.disconnect());
     return { root, ambient, writes };
   };
 

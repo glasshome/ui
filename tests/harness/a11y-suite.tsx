@@ -1,5 +1,5 @@
 import { cleanup } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { commands, page } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { BLOCKS, COMPONENTS, kebab } from "../../dev/harness/registry";
@@ -19,15 +19,45 @@ const VIEWPORT = { width: 1024, height: 768 };
 
 const THEMES = ["light", "dark"] as const;
 
-const frame = () => new Promise<void>((done) => requestAnimationFrame(() => done()));
 // A progress indicator keeps moving under reduced motion: WCAG 2.2.2 counts it as essential.
 const showsProgress = (a: Animation) =>
   a.effect instanceof KeyframeEffect &&
   a.effect.target?.closest('[role="status"], [role="progressbar"]') != null;
-const running = () =>
-  [document, ...CLOSED_ROOTS]
-    .flatMap((r) => r.getAnimations())
-    .filter((a) => a.playState === "running" && !showsProgress(a));
+// Reduced motion leaves tw-animate's enter and exit at 1 ms and every other duration at 0.
+const REDUCED_MOTION_MS = 1;
+const nameOf = (a: Animation) =>
+  a instanceof CSSAnimation
+    ? a.animationName
+    : a instanceof CSSTransition
+      ? a.transitionProperty
+      : a.id;
+
+/** Every animation that starts while it listens, by its own timing, at any host speed. */
+function recordMotion() {
+  const roots = [document, ...CLOSED_ROOTS];
+  const seen = new Set<Animation>();
+  const add = (e: Event) => {
+    if (e.target instanceof Element)
+      for (const a of e.target.getAnimations({ subtree: true })) seen.add(a);
+  };
+  const EVENTS = ["animationstart", "transitionrun"] as const;
+  for (const root of roots) for (const type of EVENTS) root.addEventListener(type, add, true);
+  return {
+    tooLong() {
+      for (const root of roots) for (const a of root.getAnimations()) seen.add(a);
+      const long = [...seen]
+        .filter((a) => !showsProgress(a))
+        .map((a) => ({ name: nameOf(a), endTime: Number(a.effect?.getComputedTiming().endTime) }))
+        .filter((a) => a.endTime > REDUCED_MOTION_MS);
+      seen.clear();
+      return long;
+    },
+    stop() {
+      for (const root of roots)
+        for (const type of EVENTS) root.removeEventListener(type, add, true);
+    },
+  };
+}
 
 async function mount(component: string, scenario: Scenario) {
   return mountScenario(component, scenario.id);
@@ -62,13 +92,6 @@ export const a11yMatrix = (index: number, count: number) =>
 export const a11yFingerMatrix = () => matrix(allCases().filter(byFinger));
 
 function matrix(CASES: Case[]) {
-  afterEach(async () => {
-    cleanup();
-    document.documentElement.classList.remove("dark");
-    await commands.emulateMedia({ reducedMotion: "no-preference", colorScheme: "light" });
-    await page.viewport(VIEWPORT.width, VIEWPORT.height);
-  });
-
   const KEYBOARD = CASES.filter((c) => c.scenario.keyboard !== undefined);
 
   describe.each(CASES)("$name", ({ component, scenario }) => {
@@ -76,8 +99,6 @@ function matrix(CASES: Case[]) {
       const gaps = knownGaps(kebab(component), scenario.id, theme);
       document.documentElement.classList.toggle("dark", theme === "dark");
       await commands.emulateMedia({ colorScheme: theme });
-      // The previous test leaves the pointer anywhere; hovering a control at mount would make the first pass depend on test order.
-      await commands.mouse("move", innerWidth - 1, innerHeight - 1);
       const { scope } = await mount(component, scenario);
       const seen = await expectAxeClean(document, gaps);
       const pointer = trackPointer(input);
@@ -97,14 +118,18 @@ function matrix(CASES: Case[]) {
       );
     });
 
-    it("settles within a frame of each step with reduced motion", async () => {
+    it("moves for no longer than reduced motion allows after each step", async () => {
       await commands.emulateMedia({ reducedMotion: "reduce" });
       const { scope } = await mount(component, scenario);
-      await runSteps(scope, scenario.steps ?? [], input, async (index) => {
-        await frame();
-        await frame();
-        expect(running(), `after step ${index}`).toEqual([]);
-      });
+      const motion = recordMotion();
+      try {
+        await runSteps(scope, scenario.steps ?? [], input, async (index) => {
+          await settle();
+          expect(motion.tooLong(), `after step ${index}`).toEqual([]);
+        });
+      } finally {
+        motion.stop();
+      }
     });
 
     it("has no horizontal overflow at 200% zoom", async () => {

@@ -106,7 +106,7 @@ describe("ColorWheel contract", () => {
     await settle();
     const { thumb, now, offset } = helpers(scenarioScope);
     const expected = dragged(offset());
-    await input.drag(thumb(), { x: -40, y: 80 });
+    await input.drag(thumb(), { x: -40, y: 80 }, 16);
     await settle();
     expect(now()).toBe(expected);
     expect(focusedElement()).toBe(thumb());
@@ -131,7 +131,7 @@ describe("ColorWheel contract", () => {
     expect(wheel().hasAttribute("data-disabled")).toBe(true);
     expect(thumb().hasAttribute("data-disabled")).toBe(true);
     expect(thumb().hasAttribute("tabindex")).toBe(false);
-    await run({ drag: { role: "slider", name: "Hue", by: { x: -40, y: 80 } } });
+    await run({ drag: { role: "slider", name: "Hue", by: { x: -40, y: 80 }, stepMs: 16 } });
     await run({ key: "Tab" }, { key: "ArrowRight" });
     expect(now()).toBe(0);
   });
@@ -139,7 +139,7 @@ describe("ColorWheel contract", () => {
   it("CW8 a drag and a key turn the hue inside a closed shadow root", async () => {
     const { now, run, offset } = await mount("in-shadow-root");
     const expected = dragged(offset());
-    await run({ drag: { role: "slider", name: "Hue", by: { x: -40, y: 80 } } });
+    await run({ drag: { role: "slider", name: "Hue", by: { x: -40, y: 80 }, stepMs: 16 } });
     expect(now(), "dragged in the shadow root").toBe(expected);
     await run({ key: "ArrowRight" });
     expect(now(), "stepped in the shadow root").toBe(expected + 1);
