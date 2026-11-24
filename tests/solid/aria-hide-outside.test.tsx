@@ -14,21 +14,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "../../src/solid/popover
 import { PortalMountContext } from "../../src/solid/portal-mount.js";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../../src/solid/select.js";
 import { Sheet, SheetContent, SheetTitle } from "../../src/solid/sheet.js";
+import { openClosedRoot, settle } from "../harness/mount";
 
 afterEach(() => {
   cleanup();
   document.body.innerHTML = "";
 });
 
-/** Kobalte's focus and hide passes run in zero-delay timers and the next frame, so six frames cover a pass and its follow-up. */
-const settle = async () => {
-  for (let i = 0; i < 6; i++) await new Promise(requestAnimationFrame);
-};
-
 function closedRoot() {
-  const holder = document.createElement("div");
-  document.body.appendChild(holder);
-  const root = holder.attachShadow({ mode: "closed" });
+  const root = openClosedRoot();
   const mount = document.createElement("div");
   root.appendChild(mount);
   return mount;

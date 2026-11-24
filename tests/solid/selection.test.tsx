@@ -1,9 +1,10 @@
 import "../real-time-animations";
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal, For, type JSX } from "solid-js";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { SelectionHighlight, SelectionScope } from "../../src/solid/selection.js";
 import { useFakeTime } from "../../src/testing/index.js";
+import { settle } from "../harness/mount";
 
 let seen = new Set<Animation>();
 
@@ -31,7 +32,6 @@ const animations = () => [...seen];
 const flights = () =>
   animations().filter((a) => (a as CSSAnimation).animationName.startsWith("selection-glide"));
 const fromOf = (flyer: HTMLElement) => flyer.style.getPropertyValue("--selection-from");
-const frame = () => new Promise<void>((done) => requestAnimationFrame(() => done()));
 
 function asTranslate(value: string) {
   const probe = document.createElement("div");
@@ -171,6 +171,12 @@ describe("SelectionScope", () => {
   });
 
   it("does not fly on mount when items report active, whatever order they report in", async () => {
+    const glides: string[] = [];
+    const started = (e: AnimationEvent) => {
+      if (e.animationName.startsWith("selection-glide")) glides.push(e.animationName);
+    };
+    document.addEventListener("animationstart", started);
+    onTestFinished(() => document.removeEventListener("animationstart", started));
     const { container } = render(() => (
       <SelectionScope marker="pressed" style={{ display: "flex", "--duration-slide": "220ms" }}>
         <button type="button" style={sized(80)}>
@@ -188,9 +194,8 @@ describe("SelectionScope", () => {
       </SelectionScope>
     ));
     await flush();
-    await frame();
-    record();
-    expect(flights()).toHaveLength(0);
+    await settle();
+    expect(glides).toEqual([]);
     expect(container.querySelector("[data-flying]")).toBeNull();
   });
 
@@ -211,7 +216,7 @@ describe("SelectionScope", () => {
     const { items, flyer, select } = renderGroup();
     await select(1);
     for (const a of animations()) a.finish();
-    await frame();
+    await settle();
 
     expect(flyer.hasAttribute("data-flying")).toBe(false);
     expect(items[1]?.querySelector("[data-landing]")).toBeNull();
@@ -252,8 +257,7 @@ describe("SelectionScope", () => {
   it("does not fly when motion is reduced", async () => {
     const { items, flyer, select } = renderGroup({ duration: "0ms" });
     await select(2);
-    await frame();
-    await frame();
+    await settle();
 
     expect(flyer.hasAttribute("data-flying")).toBe(false);
     expect(items[2]?.querySelector("[data-landing]")).toBeNull();

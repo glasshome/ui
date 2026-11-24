@@ -4,7 +4,7 @@ import { createSignal, type JSX } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cdp, userEvent } from "vitest/browser";
 import { Dock, type DockItem } from "../../src/solid/dock.js";
-import { frames } from "../frames.js";
+import { settle } from "../harness/mount";
 
 const items = (n: number, onClick: () => void = () => {}): DockItem[] =>
   Array.from({ length: n }, (_, i) => ({
@@ -247,8 +247,7 @@ describe("Dock edit chrome", () => {
       () => <Dock items={order()} editing onReorder={() => setOrder(order())} />,
       { width: `${OVERFLOWING_BOX}px` },
     );
-    // test-change-ok the dock pages in the frame after its observer reports, never inside the callback
-    await frames(3);
+    await settle();
     const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]') as HTMLElement;
     const dots = container.querySelectorAll('[data-slot="dock-pages"] button');
     expect(bar.scrollLeft).toBe(0);
@@ -273,8 +272,7 @@ describe("Dock edit chrome", () => {
         </div>
       </>
     ));
-    await new Promise(requestAnimationFrame);
-    await new Promise(requestAnimationFrame);
+    await settle();
     const cellOf = (box: string) =>
       container.querySelector(`[data-testid="${box}"] [data-slot="dock-cell"]`) as HTMLElement;
     const seconds = (box: string) => parseFloat(getComputedStyle(cellOf(box)).animationDuration);
