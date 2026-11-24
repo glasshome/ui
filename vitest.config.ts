@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import tailwindcss from "@tailwindcss/vite";
 import { playwright } from "@vitest/browser-playwright";
 import solid from "vite-plugin-solid";
@@ -36,6 +37,15 @@ const DRIVE = "tests/drive/*.e2e.test.ts";
 // Pages with a touch screen from birth; a page that gains one later never gets its mouse back.
 const FINGER = "tests/**/*-finger.*test.{ts,tsx}";
 const VISUAL_FINGER = "tests/visual/**/*-finger.visual.test.tsx";
+
+const PICK =
+  "const s=require('net').createServer().listen(0,'localhost',()=>{console.log(s.address().port);s.close()})";
+
+// Vitest's default counts up from 63315 in every process, so two suites would probe the same ports.
+function ownPort(name: string): number {
+  process.env[name] ??= execFileSync(process.execPath, ["-e", PICK]).toString().trim();
+  return Number(process.env[name]);
+}
 
 // A gate run names a results directory; the runner keeps junit and failure shots there.
 const resultsDir = process.env.GATE_RESULTS_DIR;
@@ -142,7 +152,10 @@ export default defineConfig({
           setupFiles: ["./tests/setup.ts"],
           include: ["tests/**/*.test.{ts,tsx}"],
           exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM, VISUAL, DRIVE, FINGER],
-          browser: BROWSER,
+          browser: {
+            ...BROWSER,
+            api: { port: ownPort("UI_CHROMIUM_BROWSER_PORT"), strictPort: true },
+          },
         },
       },
       {
@@ -154,6 +167,7 @@ export default defineConfig({
           exclude: [VISUAL],
           browser: {
             ...BROWSER,
+            api: { port: ownPort("UI_FINGER_BROWSER_PORT"), strictPort: true },
             instances: [{ browser: "chromium" as const }],
             provider: playwright({
               // test-change-ok same 5 s as the shared provider, restated since this one replaces it
@@ -174,6 +188,7 @@ export default defineConfig({
           include: WEBKIT_FILES,
           browser: {
             ...BROWSER,
+            api: { port: ownPort("UI_WEBKIT_BROWSER_PORT"), strictPort: true },
             instances: [{ browser: "webkit" as const }],
             // WebKit has no clipboard permission to grant.
             // test-change-ok same 5 s as the shared provider, restated since this one replaces it
@@ -190,6 +205,7 @@ export default defineConfig({
           exclude: [VISUAL_FINGER],
           browser: {
             ...BROWSER,
+            api: { port: ownPort("UI_VISUAL_BROWSER_PORT"), strictPort: true },
             screenshotFailures: false,
             instances: [{ browser: "chromium" as const }],
             // A page smaller than the frame scales every shot down; this fits the widest one.
@@ -209,6 +225,7 @@ export default defineConfig({
           include: [VISUAL_FINGER],
           browser: {
             ...BROWSER,
+            api: { port: ownPort("UI_VISUAL_FINGER_BROWSER_PORT"), strictPort: true },
             screenshotFailures: false,
             instances: [{ browser: "chromium" as const }],
             provider: playwright({
