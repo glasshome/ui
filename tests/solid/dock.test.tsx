@@ -133,7 +133,7 @@ describe("Dock paging", () => {
           return [Math.round(r.left), Math.round(r.top)];
         });
       const first = itemEdges();
-      await frames(2);
+      await settle();
 
       expect(itemEdges()).toEqual(first);
     },
