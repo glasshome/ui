@@ -3,18 +3,19 @@ import { commands, userEvent } from "vitest/browser";
 import { createHold, HOLD_MS, spendLongPress } from "../../src/lib/hold.js";
 import { useFakeTime } from "../../src/testing/index.js";
 
-const NATIVE: Record<"contextmenu" | "selectstart", (el: Element) => Promise<void>> = {
-  contextmenu: (el) => userEvent.click(el, { button: "right" }),
-  selectstart: (el) => userEvent.dblClick(el),
+// Commands leave the fake clock still; a userEvent press moves it and runs the release under test.
+const NATIVE: Record<"contextmenu" | "selectstart", () => Promise<void>> = {
+  contextmenu: () => commands.mouse("press", 50, 50, "right"),
+  selectstart: () => commands.mouse("press", 50, 50),
 };
 
-async function fire(target: Element, type: keyof typeof NATIVE): Promise<boolean | undefined> {
+async function fire(type: keyof typeof NATIVE): Promise<boolean | undefined> {
   let prevented: boolean | undefined;
   const look = (e: Event) => {
     prevented ??= e.defaultPrevented;
   };
   window.addEventListener(type, look);
-  await NATIVE[type](target);
+  await NATIVE[type]();
   window.removeEventListener(type, look);
   return prevented;
 }
@@ -37,29 +38,34 @@ describe("spendLongPress", () => {
     const el = sheet();
     spendLongPress();
 
-    expect(await fire(el, "contextmenu")).toBe(true);
-    expect(await fire(el, "selectstart")).toBe(true);
+    expect(await fire("contextmenu")).toBe(true);
+    expect(await fire("selectstart")).toBe(true);
 
     await userEvent.click(el);
     await vi.runAllTimersAsync();
 
-    expect(await fire(el, "contextmenu")).toBe(false);
-    expect(await fire(el, "selectstart")).toBe(false);
+    expect(await fire("contextmenu")).toBe(false);
+    expect(await fire("selectstart")).toBe(false);
   });
 
   it("lets go on its own when the release never arrives", async () => {
     useFakeTime();
-    const el = sheet();
+    sheet();
     spendLongPress();
     await vi.runAllTimersAsync();
 
-    expect(await fire(el, "selectstart")).toBe(false);
+    expect(await fire("selectstart")).toBe(false);
   });
 });
 
 declare module "vitest/browser" {
   interface BrowserCommands {
-    mouse(action: "move" | "down" | "up", x: number, y: number): Promise<void>;
+    mouse(
+      action: "move" | "down" | "up" | "press",
+      x: number,
+      y: number,
+      button?: "left" | "right",
+    ): Promise<void>;
   }
 }
 
