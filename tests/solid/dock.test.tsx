@@ -108,6 +108,36 @@ describe("Dock paging", () => {
       }
     },
   );
+
+  it.each([
+    { placement: "bottom", dir: "ltr", count: 12 },
+    { placement: "bottom", dir: "rtl", count: 12 },
+    { placement: "left", dir: "ltr", count: 12 },
+    { placement: "right", dir: "ltr", count: 12 },
+    { placement: "bottom", dir: "ltr", count: 3 },
+  ] as const)(
+    "puts a $placement $dir dock's $count items in its first frame where the paged strip keeps them",
+    async ({ placement, dir, count }) => {
+      const side = placement !== "bottom";
+      const { container } = render(() => (
+        <div
+          dir={dir}
+          style={{ width: side ? "200px" : `${OVERFLOWING_BOX}px`, height: side ? "340px" : "" }}
+        >
+          <Dock items={items(count)} placement={placement} />
+        </div>
+      ));
+      const itemEdges = () =>
+        [...container.querySelectorAll('[data-slot="dock-item"]')].map((item) => {
+          const r = item.getBoundingClientRect();
+          return [Math.round(r.left), Math.round(r.top)];
+        });
+      const first = itemEdges();
+      await settle();
+
+      expect(itemEdges()).toEqual(first);
+    },
+  );
 });
 
 describe("Dock hold", () => {

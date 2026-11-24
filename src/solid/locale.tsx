@@ -31,10 +31,11 @@ export function LocaleProvider(props: {
   language: string;
   formatting: string;
   catalog?: UiCatalogLoader;
+  messages?: CompiledCatalog;
   children: JSX.Element;
 }): JSX.Element {
   const [loaded] = createResource(
-    () => props.language,
+    () => (props.messages ? false : props.language),
     async (language) => {
       if (language === "en") return undefined;
       try {
@@ -45,7 +46,7 @@ export function LocaleProvider(props: {
     },
   );
   const current = createMemo((): UiLocale => {
-    const catalog = loaded.state === "ready" ? loaded() : undefined;
+    const catalog = props.messages ?? (loaded.state === "ready" ? loaded() : undefined);
     return {
       text: catalog
         ? translator(catalog, props.language, props.formatting)
