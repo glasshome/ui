@@ -1,5 +1,5 @@
-import { cleanup, render } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it } from "vitest";
+import { render } from "@solidjs/testing-library";
+import { describe, expect, it } from "vitest";
 import { commands, page } from "vitest/browser";
 import { COMPONENTS } from "../../dev/harness/registry";
 import { ScenarioStage } from "../../dev/harness/ScenarioStage";
@@ -17,11 +17,6 @@ const ALL_CASES = COMPONENTS.flatMap(({ component, scenarios }) =>
 );
 /** Every scenario a finger drives, or every one a mouse and keyboard drive. */
 export function visualMatrix(finger: boolean) {
-  afterEach(() => {
-    cleanup();
-    document.documentElement.classList.remove("dark");
-  });
-
   const CASES = ALL_CASES.filter((c) => usesFinger(c.scenario.steps ?? []) === finger);
   describe.each(CASES)("$name", ({ component, scenario }) => {
     it.each(MATRIX)("looks as recorded, %s theme, %s width", async (theme, width) => {

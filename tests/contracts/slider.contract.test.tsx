@@ -134,7 +134,7 @@ describe("Slider contract", () => {
     await settle();
     const { thumb, now, slot } = helpers(scenarioScope);
     const width = slot(thumb("Brightness"), "slider-track").getBoundingClientRect().width;
-    await input.drag(thumb("Brightness"), { x: 60, y: 0 });
+    await input.drag(thumb("Brightness"), { x: 60, y: 0 }, 16);
     await settle();
     const expected = Math.round(50 + (60 / width) * 100);
     expect(now("Brightness")).toEqual([expected]);
@@ -286,7 +286,7 @@ describe("Slider contract", () => {
   it("SD11 a drag and a key move the thumb inside a closed shadow root", async () => {
     const { thumb, now, run, slot } = await mount("in-shadow-root");
     const width = slot(thumb("Brightness"), "slider-track").getBoundingClientRect().width;
-    await run({ drag: { role: "slider", name: "Brightness", by: { x: 60, y: 0 } } });
+    await run({ drag: { role: "slider", name: "Brightness", by: { x: 60, y: 0 }, stepMs: 16 } });
     const dragged = Math.round(50 + (60 / width) * 100);
     expect(now("Brightness"), "dragged in the shadow root").toEqual([dragged]);
     await run({ key: "ArrowRight" });

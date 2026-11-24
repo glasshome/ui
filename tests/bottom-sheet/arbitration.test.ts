@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { hasNoDragAncestor, shouldDrag } from "../../src/solid/bottom-sheet/arbitration.js";
+import { afterTest } from "../harness/leaks";
 
 function sheet(inner = ""): { root: HTMLElement; target: (sel: string) => Element } {
   const root = document.createElement("div");
   root.innerHTML = inner;
   document.body.appendChild(root);
+  afterTest(() => root.remove());
   return {
     root,
     target: (sel: string) => {
