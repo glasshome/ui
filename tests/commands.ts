@@ -11,8 +11,22 @@ async function toPage(ctx: Ctx, x: number, y: number) {
   const box = await (await frame.frameElement()).boundingBox();
   if (!box) throw new Error("the test frame has no box");
   const scale = box.width / (await frame.evaluate(() => innerWidth));
-  return { x: box.x + x * scale, y: box.y + y * scale };
+  const at = { x: box.x + x * scale, y: box.y + y * scale };
+  const [width, height] = await ctx.page.evaluate(() => [innerWidth, innerHeight]);
+  // A point past the window's edge reaches no element, so the input would vanish without an error.
+  if (at.x < 0 || at.y < 0 || at.x >= width || at.y >= height)
+    throw new Error(`(${x}, ${y}) lies outside the ${width}x${height} browser window`);
+  return at;
 }
+
+/** Puts the browser window back to the size Playwright last set, after anything resized it behind Playwright's back. */
+export const fitWindow: BrowserCommand<[]> = async (ctx) => {
+  const size = ctx.page.viewportSize();
+  if (!size) return;
+  // Playwright skips a size equal to the one it last sent; the test frame keeps its own size meanwhile.
+  await ctx.page.setViewportSize({ ...size, height: size.height + 1 });
+  await ctx.page.setViewportSize(size);
+};
 
 /** Real mouse input at a point of the test frame's viewport; `press` is a move, down and up in one trip. */
 export const mouse: BrowserCommand<
