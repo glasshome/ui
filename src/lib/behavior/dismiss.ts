@@ -1,4 +1,5 @@
 import type { Accessor } from "solid-js";
+import { createClaim, keepKeys } from "./claims.js";
 import { type Layer, type LayerHandle, layerStack } from "./layer-stack.js";
 import { effect } from "./solid.js";
 
@@ -133,8 +134,18 @@ function createTooltipEscape(options: DismissOptions) {
 const escapeHandlers = new WeakMap<Layer, (event: KeyboardEvent) => void>();
 const claimedKeys = new WeakSet<Event>();
 
+const ESCAPE = keepKeys(["Escape"]);
+
 function createEscape(options: DismissOptions) {
   const { layer } = options;
+  createClaim(
+    () => layer.layer()?.element(),
+    () => {
+      const mine = layer.layer();
+      if (!mine || mine.kind === "tooltip" || !takesKeys(mine)) return undefined;
+      return mine.escape() || mine.kind === "modal" ? ESCAPE : undefined;
+    },
+  );
   effect(
     () =>
       [

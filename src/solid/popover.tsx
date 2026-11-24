@@ -196,22 +196,27 @@ function PopoverTrigger<T extends ValidComponent = "button">(props: PartProps<T>
   });
   return (
     <Polymorphic
-      {...merge({ "data-slot": "popover-trigger" }, rest, expandedAttrs(ctx.isOpen), {
-        as: local.as,
-        defaultAs: "button" as ValidComponent,
-        ref: (el: HTMLElement) => {
-          setOwn(el);
-          ctx.setTrigger(el);
-          if (typeof local.ref === "function") local.ref(el);
+      {...merge(
+        { "data-slot": "popover-trigger", "data-claim": "prevent:pointerdown" },
+        rest,
+        expandedAttrs(ctx.isOpen),
+        {
+          as: local.as,
+          defaultAs: "button" as ValidComponent,
+          ref: (el: HTMLElement) => {
+            setOwn(el);
+            ctx.setTrigger(el);
+            if (typeof local.ref === "function") local.ref(el);
+          },
+          "aria-haspopup": "dialog",
+          get "aria-expanded"() {
+            return ctx.isOpen();
+          },
+          get "aria-controls"() {
+            return ctx.isOpen() ? ctx.contentId() : undefined;
+          },
         },
-        "aria-haspopup": "dialog",
-        get "aria-expanded"() {
-          return ctx.isOpen();
-        },
-        get "aria-controls"() {
-          return ctx.isOpen() ? ctx.contentId() : undefined;
-        },
-      })}
+      )}
     />
   );
 }

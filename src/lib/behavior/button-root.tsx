@@ -1,4 +1,5 @@
 import { type ComponentProps, createSignal, type JSX, type ValidComponent } from "solid-js";
+import { selfKeys } from "./claims.js";
 import { Polymorphic } from "./polymorphic.js";
 import { callEventHandler, effect, merge, omit } from "./solid.js";
 
@@ -14,9 +15,12 @@ type Passed = {
   onClick?: JSX.EventHandlerUnion<HTMLElement, MouseEvent>;
   ref?: unknown;
   href?: unknown;
+  "data-claim"?: string;
 };
 
 const NATIVE = new Set(["button", "input"]);
+const MADE_CLAIM = selfKeys(["Enter", " "]);
+const DISABLED_CLAIM = "prevent:click stop:click";
 
 /** A press target: a native button, a link, or any other element made one (role, Tab stop, Enter and Space). */
 export function ButtonRoot<T extends ValidComponent = "button">(props: ButtonRootProps<T>) {
@@ -26,6 +30,11 @@ export function ButtonRoot<T extends ValidComponent = "button">(props: ButtonRoo
     typeof own.as === "string" ? own.as : own.as === undefined ? "button" : el()?.localName;
   const native = () => NATIVE.has(tag() ?? "");
   const made = () => !native() && !(tag() === "a" && own.href !== undefined);
+  const claim = () => {
+    if (native()) return undefined;
+    if (own.disabled) return DISABLED_CLAIM;
+    return made() ? MADE_CLAIM : undefined;
+  };
 
   // Bound on the element, since Solid's delegated handlers never reach inside a closed shadow root.
   effect(el, (node) => {
@@ -92,6 +101,9 @@ export function ButtonRoot<T extends ValidComponent = "button">(props: ButtonRoo
             return own.as;
           },
           defaultAs: "button" as ValidComponent,
+          get "data-claim"() {
+            return [claim(), own["data-claim"]].filter(Boolean).join(" ") || undefined;
+          },
           ref: (node: HTMLElement) => {
             setEl(node);
             if (typeof own.ref === "function") own.ref(node);

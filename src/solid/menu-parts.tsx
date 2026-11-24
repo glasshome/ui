@@ -17,7 +17,7 @@ import {
 import { Portal } from "solid-js/web";
 import type { Align, Side } from "../lib/anchor-placement.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
-import { createMenu, type Menu, type MenuOptions } from "../lib/behavior/menu.js";
+import { createMenu, type Menu, type MenuOptions, rowClaim } from "../lib/behavior/menu.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
 import { effect, merge } from "../lib/behavior/solid.js";
@@ -367,6 +367,7 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
   }
 
   const subOpen = () => submenu?.menu.open() ?? false;
+  const [row, setRow] = createSignal<HTMLElement>();
   const inner = (
     <RowContext.Provider value={{ checked, indeterminate }}>
       <SelectionHighlight active={menu.highlighted() === key} />
@@ -379,6 +380,7 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
         as: local.as,
         defaultAs: "div" as ValidComponent,
         ref: (el: HTMLElement) => {
+          setRow(el);
           submenu?.menu.setTrigger(el);
           if (typeof local.ref === "function") local.ref(el);
         },
@@ -413,6 +415,9 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
         },
         get "data-disabled"() {
           return disabled() ? "" : undefined;
+        },
+        get "data-claim"() {
+          return disabled() ? undefined : rowClaim(menu, row(), !!submenu);
         },
         get "data-checked"() {
           return checkable && checked() ? "" : undefined;

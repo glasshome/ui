@@ -4,11 +4,13 @@ import type { Box } from "../anchor-placement.js";
 import { type AnchorLike, createAnchored } from "./anchored.js";
 import { createCollection } from "./collection.js";
 import { createDismiss } from "./dismiss.js";
+import { claimKeys, createClaim, keepKeys } from "./claims.js";
 import { focusedIn, focusFell, focusWithoutTracking } from "./focus-scope.js";
 import { registerLayer } from "./layer-stack.js";
 import { effect } from "./solid.js";
 
 const MENU_ITEMS = '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]';
+const CONTENT_CLAIM = claimKeys(["Tab", " "]);
 export const SUBMENU_OPEN_DELAY_MS = 100;
 export const POINTER_GRACE_MS = 300;
 
@@ -16,6 +18,17 @@ export const POINTER_GRACE_MS = 300;
 export type MenuFocus = "first" | "last" | "content" | "none";
 
 type Dir = "ltr" | "rtl";
+
+const openKey = (dir: Dir) => (dir === "rtl" ? "ArrowLeft" : "ArrowRight");
+const closeKey = (dir: Dir) => (dir === "rtl" ? "ArrowRight" : "ArrowLeft");
+
+/** What a menu row takes: Enter unless it is a link, and the key that opens its submenu. */
+export function rowClaim(menu: Menu, row: Element | undefined, opensSubmenu: boolean) {
+  const keys = row?.matches("a[href]") ? [] : ["Enter"];
+  if (opensSubmenu) keys.push(openKey(menu.dir()));
+  return keys.length > 0 ? claimKeys(keys) : undefined;
+}
+
 type Point = { x: number; y: number };
 
 export interface MenuItemEntry {
@@ -69,6 +82,7 @@ export interface MenuButton {
   onPointerDown: (event: PointerEvent) => void;
   onClick: () => void;
   onKeyDown: (event: KeyboardEvent) => void;
+  claim: Accessor<string | undefined>;
 }
 
 const isDisabled = (el: Element) =>
@@ -127,6 +141,9 @@ export function createMenu(options: MenuOptions): Menu {
     loop: () => true,
     dir,
   });
+  createClaim(content, () =>
+    parent ? `${CONTENT_CLAIM} ${keepKeys([closeKey(dir())])}` : CONTENT_CLAIM,
+  );
 
   const enabledItems = (el: HTMLElement) =>
     [...el.querySelectorAll<HTMLElement>(MENU_ITEMS)].filter((item) => !isDisabled(item));
@@ -285,9 +302,6 @@ export function createMenu(options: MenuOptions): Menu {
     if (focused && el.contains(focused)) focusWithoutTracking(el);
   }
 
-  const openKeys = () => (dir() === "rtl" ? "ArrowLeft" : "ArrowRight");
-  const closeKeys = () => (dir() === "rtl" ? "ArrowRight" : "ArrowLeft");
-
   effect(content, (el) => {
     if (!el) return;
     let pressedInside = false;
@@ -371,12 +385,12 @@ export function createMenu(options: MenuOptions): Menu {
           else linkKeyed = true;
           return activate(item, "keyboard");
         }
-        if (event.key === openKeys() && entry.submenu) {
+        if (event.key === openKey(dir()) && entry.submenu) {
           event.preventDefault();
           return entry.submenu.show("first");
         }
       }
-      if (parent && event.key === closeKeys()) {
+      if (parent && event.key === closeKey(dir())) {
         event.preventDefault();
         event.stopPropagation();
         return hide(true);
@@ -436,7 +450,12 @@ export function createMenuButton(menu: Menu, disabled: Accessor<boolean>): MenuB
     ArrowDown: "first",
     ArrowUp: "last",
   };
+  const keyClaim = keepKeys(Object.keys(keys));
   return {
+    claim: () => {
+      if (disabled()) return undefined;
+      return menu.open() ? keyClaim : `${keyClaim} prevent:mousedown`;
+    },
     onPointerDown(event) {
       pointerType = event.pointerType;
       if (disabled() || event.pointerType === "touch" || event.button !== 0) return;

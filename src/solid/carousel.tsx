@@ -25,9 +25,12 @@ import {
   carouselItem,
   carouselTrack,
 } from "../lib/carousel-classes.js";
+import { claimKeys } from "../lib/behavior/claims.js";
 import { cn } from "../lib/utils.js";
 import { Button } from "./button.js";
 import { Icon } from "./icon.js";
+
+const CAROUSEL_CLAIM = claimKeys(["ArrowLeft", "ArrowRight"]);
 
 type CarouselApi = EmblaCarouselType;
 
@@ -173,6 +176,7 @@ const Carousel: ParentComponent<
       {/* biome-ignore lint/a11y/useSemanticElements: role=region + aria-roledescription is the canonical ARIA carousel pattern; section would change document outline semantics. */}
       <div
         onKeyDown={handleKeyDown}
+        data-claim={CAROUSEL_CLAIM}
         class={cn("relative", local.class)}
         role="region"
         aria-roledescription="carousel"

@@ -1,3 +1,5 @@
+import { createSignal } from "solid-js";
+
 /** A press held this long, without moving, is a hold. Matches Android's long-press timeout, so the
  *  browser's own long press never wins the race. */
 export const HOLD_MS = 350;
@@ -10,6 +12,7 @@ const HOLD_SLOP_PX = 10;
 const NATIVE_LONG_PRESS = ["contextmenu", "selectstart"] as const;
 // Not pointercancel: Android may cancel the pointer before its own long press fires.
 const RELEASE = ["pointerup", "touchend"] as const;
+const SPENT_CLAIM = "prevent:touchend prevent:click stop:click";
 
 function spendPress(): void {
   if (typeof document === "undefined") return;
@@ -93,6 +96,8 @@ export interface Hold {
   cancel: () => void;
   /** The current press, or the last one, became a hold. */
   fired: () => boolean;
+  /** The `data-claim` a fired hold's press carries until its release: the finger's compat mouse events and click. */
+  claim: () => string | undefined;
 }
 
 /** The one hold door: a press held still for `delayMs` calls `onHold`, after it spends the
@@ -107,6 +112,7 @@ export function createHold(opts: HoldOptions): Hold {
   let armed = false;
   let didFire = false;
   let unspend: (() => void) | undefined;
+  const [spent, setSpent] = createSignal(false);
 
   const other = (press: { pointerId?: number }) =>
     pointer !== undefined && press.pointerId !== undefined && press.pointerId !== pointer;
@@ -128,6 +134,7 @@ export function createHold(opts: HoldOptions): Hold {
   const up = () => {
     stop();
     pressing = false;
+    setSpent(false);
     if (typeof window === "undefined") return;
     window.removeEventListener("pointerup", onWindowEnd, true);
     window.removeEventListener("pointercancel", onWindowEnd, true);
@@ -162,6 +169,7 @@ export function createHold(opts: HoldOptions): Hold {
       timer = setTimeout(() => {
         timer = undefined;
         didFire = true;
+        setSpent(true);
         spendPress();
         unspend = spendRelease(press.target);
         opts.onHold();
@@ -175,5 +183,6 @@ export function createHold(opts: HoldOptions): Hold {
     up,
     cancel,
     fired: () => didFire,
+    claim: () => (spent() ? SPENT_CLAIM : undefined),
   };
 }
