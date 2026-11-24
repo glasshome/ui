@@ -480,6 +480,7 @@ const Dock: Component<DockProps> = (props) => {
             watch(el);
           }}
           data-slot="dock-bar"
+          data-paged={needsScroll() ? "" : undefined}
           data-reordering={reorder.dragId() ? "" : undefined}
           onScroll={() => {
             if (containerRef) setPage(pageOf(scrollPos(containerRef), viewportSpan()));
@@ -493,7 +494,6 @@ const Dock: Component<DockProps> = (props) => {
                 ? "scrollbar-hide snap-y snap-mandatory overflow-y-auto overscroll-y-contain scroll-smooth"
                 : "scrollbar-hide snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth"
               : "overflow-visible",
-            !needsScroll() && "justify-center",
           )}
         >
           <SelectionScope
