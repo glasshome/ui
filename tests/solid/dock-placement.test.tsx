@@ -4,7 +4,7 @@ import { createSignal } from "solid-js";
 import { describe, expect, it, vi } from "vitest";
 import { Dock, type DockPlacement } from "../../src/solid/dock.js";
 import { useFakeTime } from "../../src/testing/index.js";
-import { frames } from "../frames.js";
+import { settle } from "../harness/mount";
 
 const items = (n: number) =>
   Array.from({ length: n }, (_, i) => ({
@@ -38,7 +38,7 @@ async function mountSide(placement: DockPlacement, count: number, height = 600) 
       <Dock items={items(count)} placement={placement} />
     </div>
   ));
-  await frames(2);
+  await settle();
   return view;
 }
 
@@ -59,7 +59,7 @@ describe("Dock placement", () => {
         <Dock items={items(3)} />
       </div>
     ));
-    await frames(2);
+    await settle();
     const rects = [...container.querySelectorAll('[data-slot="dock-item"]')].map(rectOf);
     expect(container.querySelector('[data-slot="dock"]')?.getAttribute("data-placement")).toBe(
       "bottom",
@@ -106,7 +106,7 @@ describe("Dock placement", () => {
         <Dock items={items(12)} placement="right" />
       </div>
     ));
-    await frames(2);
+    await settle();
     const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]') as HTMLElement;
     const dots = container.querySelectorAll<HTMLElement>('[data-slot="dock-pages"] button');
     const turned = scrolled(bar);
@@ -122,7 +122,7 @@ describe("Dock placement", () => {
         <Dock items={items(3)} placement="left" dockMode="docked" />
       </div>
     ));
-    await frames(2);
+    await settle();
     const surface = container.querySelector<HTMLElement>('[data-slot="dock-surface"]');
     expect(rectOf(surface).height).toBe(600);
     expect(getComputedStyle(surface as Element).borderTopLeftRadius).toBe("0px");
@@ -158,7 +158,7 @@ describe("Dock arrival", () => {
         <Dock items={items(12)} arrivedIds={arrived()} />
       </div>
     ));
-    await frames(2);
+    await settle();
     const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]') as HTMLElement;
     expect(insideStrip(container, "d11", "x")).toBe(false);
 
@@ -175,7 +175,7 @@ describe("Dock arrival", () => {
         <Dock items={items(12)} placement="left" arrivedIds={arrived()} />
       </div>
     ));
-    await frames(2);
+    await settle();
     const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]') as HTMLElement;
     const turned = scrolled(bar);
     setArrived(["d11"]);

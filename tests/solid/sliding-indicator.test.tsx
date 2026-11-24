@@ -8,6 +8,7 @@ import { createSignal, type JSX } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SlidingIndicator } from "../../src/solid/sliding-indicator.js";
 import { useFakeTime } from "../../src/testing/index.js";
+import { settle } from "../harness/mount";
 
 afterEach(() => {
   cleanup();
@@ -24,11 +25,6 @@ async function frames(count = 3) {
     await flush();
   }
   await flush();
-}
-
-async function resizeDelivered() {
-  await new Promise(requestAnimationFrame);
-  await new Promise(requestAnimationFrame);
 }
 
 const box = (width: number, height = 32): JSX.CSSProperties => ({
@@ -81,13 +77,13 @@ describe("SlidingIndicator", () => {
     const active = buttons[0] as HTMLElement;
     if (!(root instanceof HTMLElement)) throw new Error("no root");
 
-    await resizeDelivered();
+    await settle();
     const indicator = () => container.querySelector<HTMLElement>("[data-sliding-indicator]");
     expect(indicator()?.style.width).toBe("80px");
 
     // The icon/webfont grows the active trigger after first paint; the container keeps its size.
     active.style.width = "140px";
-    await resizeDelivered();
+    await settle();
 
     expect(root.getBoundingClientRect().width).toBe(200);
     expect(indicator()?.style.width).toBe("140px");
@@ -206,7 +202,7 @@ describe("SlidingIndicator", () => {
     expect(indicator()?.style.transition).toBe("none");
 
     (buttons[0] as HTMLElement).style.width = "96px";
-    await resizeDelivered();
+    await settle();
     expect(indicator()?.style.width).toBe("96px");
     expect(indicator()?.style.transition).toBe("none");
 
@@ -356,7 +352,7 @@ describe("SlidingIndicator with an attribute selector", () => {
 
   it("writes nothing when a re-measure finds the same place", async () => {
     const { root, indicator } = renderPressedGroup();
-    await resizeDelivered();
+    await settle();
     const el = indicator();
     if (!el) throw new Error("no indicator");
     const writes: MutationRecord[] = [];
@@ -364,7 +360,7 @@ describe("SlidingIndicator with an attribute selector", () => {
     watch.observe(el, { attributes: true });
 
     root.style.width = "200px";
-    await resizeDelivered();
+    await settle();
     watch.disconnect();
 
     expect(writes).toEqual([]);

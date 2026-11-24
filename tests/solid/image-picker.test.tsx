@@ -19,6 +19,7 @@ import {
   MediaStoreError,
   type StoredMedia,
 } from "../../src/solid/media-store.js";
+import { settle } from "../harness/mount";
 import { press } from "../press.js";
 
 const PIXEL = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
@@ -324,11 +325,11 @@ describe("ImagePicker", () => {
   });
 
   it("marks Upload busy and keeps its focus and the gallery while an upload is in flight", async () => {
-    let settle: ((uploaded: StoredMedia) => void) | undefined;
+    let land: ((uploaded: StoredMedia) => void) | undefined;
     const store = storeWith({
       upload: () =>
         new Promise<StoredMedia>((resolve) => {
-          settle = resolve;
+          land = resolve;
         }),
     });
     withStore(store, () => <ImagePicker value="" onChange={() => {}} />);
@@ -340,11 +341,10 @@ describe("ImagePicker", () => {
     await uploadFile();
     await waitFor(() => expect(uploadButton().getAttribute("aria-busy")).toBe("true"));
     expect(uploadButton().textContent).toMatch(/uploading/i);
-    await new Promise(requestAnimationFrame);
-    await new Promise(requestAnimationFrame);
+    await settle();
     expect(document.activeElement).toBe(uploadButton());
 
-    settle?.(image("c"));
+    land?.(image("c"));
     await waitFor(() => expect(uploadButton().getAttribute("aria-busy")).toBeNull());
     expect(uploadButton().textContent).toMatch(/^\s*Upload\s*$/);
     expect(gallery()).not.toBeNull();
@@ -373,12 +373,12 @@ describe("ImagePicker", () => {
     };
 
     it("Upload, which keeps focus while busy and after its upload has landed", async () => {
-      let settle: ((uploaded: StoredMedia) => void) | undefined;
+      let land: ((uploaded: StoredMedia) => void) | undefined;
       inDialog(
         storeWith({
           upload: () =>
             new Promise<StoredMedia>((resolve) => {
-              settle = resolve;
+              land = resolve;
             }),
         }),
       );
@@ -388,11 +388,10 @@ describe("ImagePicker", () => {
 
       await uploadFile();
       await waitFor(() => expect(uploadButton().getAttribute("aria-busy")).toBe("true"));
-      await new Promise(requestAnimationFrame);
-      await new Promise(requestAnimationFrame);
+      await settle();
       expect(document.activeElement).toBe(uploadButton());
 
-      settle?.(image("c"));
+      land?.(image("c"));
       await waitFor(() => expect(uploadButton().getAttribute("aria-busy")).toBeNull());
       expect(gallery()).not.toBeNull();
       expect(document.activeElement).toBe(uploadButton());
@@ -442,20 +441,20 @@ describe("ImagePicker", () => {
 
     const slowRemove = () => {
       let media = [image("a"), image("b")];
-      let settle: (() => void) | undefined;
+      let land: (() => void) | undefined;
       inDialog(
         storeWith({
           index: async () => indexOf(media),
           remove: (id) =>
             new Promise<void>((resolve) => {
-              settle = () => {
+              land = () => {
                 media = media.filter((item) => item.id !== id);
                 resolve();
               };
             }),
         }),
       );
-      return () => settle?.();
+      return () => land?.();
     };
     const deleteOf = (id: string) =>
       waitFor(() =>
@@ -464,7 +463,7 @@ describe("ImagePicker", () => {
     const confirmation = () => screen.queryByRole("alertdialog");
 
     it("a photo's Delete, once a slow delete's confirmation has closed", async () => {
-      const settle = slowRemove();
+      const land = slowRemove();
       await openGallery();
       const remove = await deleteOf("b");
       await userEvent.click(remove);
@@ -472,7 +471,7 @@ describe("ImagePicker", () => {
       await waitFor(() => expect(confirmation()).toBeNull());
       await waitFor(() => expect(gallery()?.contains(document.activeElement)).toBe(true));
 
-      settle();
+      land();
 
       await waitFor(() => expect(remove.isConnected).toBe(false));
       await focusStaysInGallery(remove);
@@ -491,7 +490,7 @@ describe("ImagePicker", () => {
     });
 
     it("another photo the person moved to while a delete ran", async () => {
-      const settle = slowRemove();
+      const land = slowRemove();
       await openGallery();
       await userEvent.click(await deleteOf("b"));
       await userEvent.click(await waitFor(() => screen.getByRole("button", { name: /^delete$/i })));
@@ -499,7 +498,7 @@ describe("ImagePicker", () => {
       const other = await deleteOf("a");
       other.focus();
 
-      settle();
+      land();
 
       await waitFor(() => expect(screen.getAllByTestId("media-tile")).toHaveLength(1));
       expect(document.activeElement).toBe(other);

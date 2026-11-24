@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 import { commands, userEvent } from "vitest/browser";
-import { settle } from "../../dev/harness/settle";
+import { settleDom } from "../../dev/harness/settle";
 import type { Input } from "../../dev/harness/steps";
 import { PRESENCE_TIMEOUT_MS } from "../../src/lib/behavior/presence";
 import { HOLD_GRACE_MS, HOLD_MS } from "../../src/lib/hold";
@@ -27,7 +27,7 @@ async function onHarnessClock(gesture: () => Promise<void>, afterMs: number) {
   try {
     await gesture();
     // The tap's click comes from the browser's gesture detector, after the touch command returns.
-    await settle();
+    await settleDom();
     await vi.advanceTimersByTimeAsync(afterMs);
     const pending = vi.getTimerCount();
     if (pending)
