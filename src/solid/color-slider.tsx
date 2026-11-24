@@ -2,7 +2,13 @@ import type { Component } from "solid-js";
 import { createMemo, createSignal } from "solid-js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
-import { alongTrack, createDrag, createRange } from "../lib/behavior/range.js";
+import {
+  alongTrack,
+  createDrag,
+  DRAG_CLAIM,
+  createRange,
+  RANGE_CLAIM,
+} from "../lib/behavior/range.js";
 import {
   type Color,
   type ColorChannel,
@@ -133,6 +139,7 @@ const ColorSlider: Component<ColorSliderProps> = (props) => {
         data-disabled={disabledMark()}
         class={cn("relative h-7 w-full", disabled() ? "cursor-not-allowed" : "cursor-pointer")}
         style={{ "forced-color-adjust": "none" }}
+        data-claim={disabled() ? undefined : DRAG_CLAIM}
         on:pointerdown={drag.onPointerDown}
         on:pointermove={drag.onPointerMove}
         on:pointerup={drag.onPointerUp}
@@ -166,6 +173,7 @@ const ColorSlider: Component<ColorSliderProps> = (props) => {
             "forced-color-adjust": "none",
             background: color().toString("css"),
           }}
+          data-claim={disabled() ? undefined : RANGE_CLAIM}
           on:keydown={(e) => range.keyDown(e, 0)}
           onBlur={range.blur}
         />

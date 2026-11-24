@@ -1,4 +1,5 @@
 import { type Accessor, createSignal, onCleanup } from "solid-js";
+import { claimKeys, createClaim } from "./claims.js";
 import { focusedIn, focusWithoutTracking } from "./focus-scope.js";
 import { effect } from "./solid.js";
 
@@ -18,6 +19,8 @@ export interface CollectionOptions {
   preferred?: Accessor<readonly string[]>;
   /** APG's focusable when disabled: an `aria-disabled` item stays in the arrow order and can hold the tab stop. */
   disabledFocusable?: boolean;
+  /** False when the root holds more than its items (an accordion's panels): each item claims the keys itself. */
+  claimsKeys?: boolean;
 }
 
 export interface Collection {
@@ -149,6 +152,13 @@ export function createCollection(options: CollectionOptions): Collection {
       () => [options.root(), options.preferred?.() ?? []] as const,
       ([root, preferred]) => placeStop(root, preferred),
     );
+  }
+
+  if (options.claimsKeys !== false) {
+    createClaim(options.root, () => {
+      const { next, prev } = forwardKeys(options.orientation(), options.dir?.() === "rtl");
+      return claimKeys([next, prev, "Home", "End"]);
+    });
   }
 
   const typer = createTypeahead();

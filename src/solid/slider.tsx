@@ -1,7 +1,13 @@
 import type { Component } from "solid-js";
 import { createMemo, createSignal, For } from "solid-js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
-import { alongTrack, createDrag, createRange } from "../lib/behavior/range.js";
+import {
+  alongTrack,
+  createDrag,
+  DRAG_CLAIM,
+  createRange,
+  RANGE_CLAIM,
+} from "../lib/behavior/range.js";
 import { FIELD_CHROME, FOCUS_RING } from "../lib/input-classes.js";
 import { readingDirection } from "../lib/format.js";
 import { THUMB_CLASS, THUMB_RAIL_BLEED, THUMB_RAIL_PAD } from "../lib/thumb-classes.js";
@@ -116,6 +122,7 @@ const Slider: Component<SliderProps> = (props) => {
           disabled() ? "cursor-not-allowed" : "cursor-pointer",
           props.trackClass,
         )}
+        data-claim={disabled() ? undefined : DRAG_CLAIM}
         on:pointerdown={drag.onPointerDown}
         on:pointermove={drag.onPointerMove}
         on:pointerup={drag.onPointerUp}
@@ -187,6 +194,7 @@ const Slider: Component<SliderProps> = (props) => {
                 "touch-action": "none",
                 background: props.thumbColors?.[index] ?? "var(--material-control-knob)",
               }}
+              data-claim={disabled() ? undefined : RANGE_CLAIM}
               on:keydown={(e) => range.keyDown(e, index)}
               onBlur={range.blur}
             />

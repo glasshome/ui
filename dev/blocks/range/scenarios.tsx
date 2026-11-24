@@ -1,5 +1,11 @@
 import { createSignal, For } from "solid-js";
-import { alongTrack, createDrag, createRange } from "../../../src/lib/behavior/range";
+import {
+  alongTrack,
+  createDrag,
+  createRange,
+  DRAG_CLAIM,
+  RANGE_CLAIM,
+} from "../../../src/lib/behavior/range";
 import { defineScenarios } from "../../harness/types";
 
 const NAMES = ["Low", "High"];
@@ -34,6 +40,7 @@ const Range = () => {
         data-changes={changes()}
         data-ends={ends()}
         class="bg-muted relative h-8 w-full touch-none rounded"
+        data-claim={DRAG_CLAIM}
         onPointerDown={drag.onPointerDown}
         onPointerMove={drag.onPointerMove}
         onPointerUp={drag.onPointerUp}
@@ -46,6 +53,7 @@ const Range = () => {
               tabIndex={0}
               aria-label={NAMES[index]}
               aria-valuenow={range.values()[index]}
+              data-claim={RANGE_CLAIM}
               class="bg-primary absolute top-0 size-8 -translate-x-1/2 rounded-full"
               style={{ left: `${range.fraction(range.values()[index] ?? 0) * 100}%` }}
               onKeyDown={(e) => range.keyDown(e, index)}

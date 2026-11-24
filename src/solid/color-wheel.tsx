@@ -2,7 +2,13 @@ import type { Component } from "solid-js";
 import { createMemo, createSignal } from "solid-js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
-import { createDrag, type RangeKey, rangeKeyOf } from "../lib/behavior/range.js";
+import {
+  createDrag,
+  DRAG_CLAIM,
+  RANGE_CLAIM,
+  type RangeKey,
+  rangeKeyOf,
+} from "../lib/behavior/range.js";
 import { type Color, colorIntlTranslations, parseColor } from "../lib/color/index.js";
 import { FOCUS_RING } from "../lib/input-classes.js";
 import { THUMB_CLASS, THUMB_COLOR_RING, THUMB_SIZE } from "../lib/thumb-classes.js";
@@ -140,6 +146,7 @@ const ColorWheel: Component<ColorWheelProps> = (props) => {
           "clip-path": "circle(50%)",
           mask: `radial-gradient(#0000 ${70 - (thickness() / 100) * 70}%, #000 ${70.5 - (thickness() / 100) * 70}%)`,
         }}
+        data-claim={disabled() ? undefined : DRAG_CLAIM}
         on:pointerdown={drag.onPointerDown}
         on:pointermove={drag.onPointerMove}
         on:pointerup={drag.onPointerUp}
@@ -171,6 +178,7 @@ const ColorWheel: Component<ColorWheelProps> = (props) => {
             "touch-action": "none",
             background: color().toString("css"),
           }}
+          data-claim={disabled() ? undefined : RANGE_CLAIM}
           on:keydown={onKeyDown}
           onBlur={onBlur}
         />

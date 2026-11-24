@@ -947,6 +947,11 @@ svg[data-slot="icon"] {
     & > [data-slot="dock-surface"] > [data-slot="dock-bar"] {
       flex-shrink: 0;
     }
+    /* Before the observer says the strip pages, an overflowing one already sits where it scrolls from. */
+    & > [data-slot="dock-surface"] > [data-slot="dock-bar"]:not([data-paged]) {
+      justify-content: center;
+      justify-content: safe center;
+    }
   }
   [data-slot="dock-page"] {
     --dock-dot-left: calc(
