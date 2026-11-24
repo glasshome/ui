@@ -59,6 +59,7 @@ export function fixReadable(colors: ThemeColors, text: Key): string | null {
     for (const direction of [-1, 1]) {
       const l = parsed.l + direction * distance;
       if (l < 0 || l > 1) continue;
+      // ui-text-ok: color channel
       const candidate = toOklch(clamp(Number(l.toFixed(4)), 0, 1), parsed.c, parsed.h);
       if (clears(candidate, colors, pairs)) return candidate;
     }

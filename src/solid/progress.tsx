@@ -1,13 +1,8 @@
-import {
-  type Component,
-  type ComponentProps,
-  createMemo,
-  createUniqueId,
-  splitProps,
-} from "solid-js";
+import { type Component, type ComponentProps, createUniqueId, splitProps } from "solid-js";
 import { merge } from "../lib/behavior/solid.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
+import { useUiFormat } from "./locale.js";
 
 type ProgressProps = Omit<ComponentProps<"div">, "children"> & {
   value?: number;
@@ -33,11 +28,11 @@ const Progress: Component<ProgressProps> = (props) => {
   const max = () => local.maxValue ?? 100;
   const value = () => Math.min(Math.max(local.value ?? 0, min()), max());
   const share = () => (value() - min()) / (max() - min());
-  const percent = createMemo(() => new Intl.NumberFormat(undefined, { style: "percent" }));
+  const format = useUiFormat();
   const valueText = () => {
     if (local.indeterminate) return undefined;
     if (local.getValueLabel) return local.getValueLabel({ value: value(), min: min(), max: max() });
-    return percent().format(share());
+    return format.number(share(), { style: "percent" });
   };
   const markers = {
     get "data-progress"() {

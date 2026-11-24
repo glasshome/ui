@@ -1,5 +1,5 @@
 import { type Accessor, createMemo } from "solid-js";
-import { readingDirection } from "../locale.js";
+import { readingDirection } from "../format.js";
 import { keepKeys } from "./claims.js";
 import { createControllableSignal } from "./controllable.js";
 

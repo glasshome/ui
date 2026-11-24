@@ -4,6 +4,7 @@ import { claimKeys } from "../lib/behavior/claims.js";
 import { FOCUS_RING } from "../lib/input-classes.js";
 import { THUMB_COLOR_RING } from "../lib/thumb-classes.js";
 import { cn } from "../lib/utils.js";
+import { useUiFormat, useUiText } from "./locale.js";
 
 const PIN = 34;
 const WHITE = parseColor("hsb(0, 0%, 100%)");
@@ -34,6 +35,7 @@ interface ColorDiscProps {
  * A colour disc: hue around it, saturation from the white centre to the rim, one thumb for both.
  */
 const ColorDisc: Component<ColorDiscProps> = (props) => {
+  const text = useUiText();
   const size = () => props.size ?? 260;
   const radius = () => size() / 2;
   const value = () => props.value ?? WHITE;
@@ -117,11 +119,14 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
       <div
         role="slider"
         tabIndex={props.disabled ? -1 : 0}
-        aria-label={props["aria-label"] ?? "Colour"}
+        aria-label={props["aria-label"] ?? text("ui.color-disc.label")}
         aria-valuemin={0}
         aria-valuemax={360}
         aria-valuenow={Math.round(hsb().getChannelValue("hue"))}
-        aria-valuetext={`Hue ${Math.round(hsb().getChannelValue("hue"))}, saturation ${Math.round(hsb().getChannelValue("saturation"))}%`}
+        aria-valuetext={text("ui.color-disc.value", {
+          hue: Math.round(hsb().getChannelValue("hue")),
+          saturation: Math.round(hsb().getChannelValue("saturation")),
+        })}
         data-slot="color-disc-thumb"
         class={cn(
           "absolute rounded-full shadow-[0_2px_8px_rgb(0_0_0/0.45)]",
@@ -170,6 +175,8 @@ export function kelvinToCss(kelvin: number): string {
 
 /** Warm to cool white on one bar, in Kelvin, over the span the lamps can reach. */
 const TemperatureBar: Component<TemperatureBarProps> = (props) => {
+  const text = useUiText();
+  const format = useUiFormat();
   const min = () => props.min ?? 2000;
   const max = () => props.max ?? 6500;
   const span = () => Math.max(max() - min(), 1);
@@ -221,11 +228,13 @@ const TemperatureBar: Component<TemperatureBarProps> = (props) => {
       <div
         role="slider"
         tabIndex={props.disabled ? -1 : 0}
-        aria-label={props["aria-label"] ?? "White"}
+        aria-label={props["aria-label"] ?? text("ui.temperature-bar.label")}
         aria-valuemin={min()}
         aria-valuemax={max()}
         aria-valuenow={props.value}
-        aria-valuetext={`${props.value} Kelvin`}
+        aria-valuetext={text("ui.temperature-bar.value", {
+          kelvin: format.number(props.value, { useGrouping: false }),
+        })}
         data-slot="temperature-bar-thumb"
         data-claim={props.disabled ? undefined : BAR_CLAIM}
         class={cn(

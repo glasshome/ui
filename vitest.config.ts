@@ -1,11 +1,13 @@
 import tailwindcss from "@tailwindcss/vite";
 import { playwright } from "@vitest/browser-playwright";
 import solid from "vite-plugin-solid";
+import { searchForWorkspaceRoot } from "vite";
 import { defineConfig } from "vitest/config";
 import {
   animationRate,
   frameAxTree,
   compose,
+  drag,
   emulateMedia,
   mouse,
   touch,
@@ -25,21 +27,28 @@ const READS_FILES_NO_DOM = [
   "tests/lib/{material,glass-tone,utils,anchor-placement,color}.test.ts",
   "tests/bottom-sheet/{state-machine,velocity}.test.ts",
   "tests/solid/{dock-paging,spotlight-geometry}.test.ts",
+  "tests/locales/**",
 ];
 // The shim dash, hub, widget-sdk, widget-realm and governor still install runs where they run it.
 const HAPPY_DOM_SHIM = ["tests/happy-dom-fidelity.test.ts"];
 // Baselines hold only in the Playwright image's fonts and rasteriser: `bun run test:visual:image`.
 const VISUAL = "tests/visual/**/*.test.tsx";
 const DRIVE = "tests/drive/*.e2e.test.ts";
+const GERMAN_BROWSER = "tests/solid/locale-browser-de.test.tsx";
 // Pages with a touch screen from birth; a page that gains one later never gets its mouse back.
 const FINGER = "tests/**/*-finger.*test.{ts,tsx}";
 const VISUAL_FINGER = "tests/visual/**/*-finger.visual.test.tsx";
+
+// A gate run names a results directory; the runner keeps junit and failure shots there.
+const resultsDir = process.env.GATE_RESULTS_DIR;
+const shuffleSeed = process.env.GATE_SHUFFLE_SEED;
 
 // Vitest names each instance after its project, so a project that replaces the provider brings its own.
 const BROWSER = {
   enabled: true,
   headless: true,
-  screenshotFailures: false,
+  screenshotFailures: Boolean(resultsDir),
+  screenshotDirectory: resultsDir ? `${resultsDir}/screenshots` : undefined,
   viewport: { width: 1024, height: 768 },
   provider: playwright({
     // test-change-ok a press that cannot land fails in 5 s instead of waiting out the test
@@ -51,6 +60,7 @@ const BROWSER = {
     animationRate,
     axTree: frameAxTree,
     compose,
+    drag,
     emulateMedia,
     mouse,
     touch,
@@ -67,6 +77,10 @@ const WEBKIT_FILES = [
 ];
 
 export default defineConfig({
+  // A failure screenshot is written through the dev server, which serves only allowed roots.
+  server: {
+    fs: { allow: [searchForWorkspaceRoot(process.cwd()), ...(resultsDir ? [resultsDir] : [])] },
+  },
   plugins: [solid({ dev: false, hot: false }), tailwindcss()],
   resolve: {
     conditions: ["browser"],
@@ -92,6 +106,13 @@ export default defineConfig({
     ],
   },
   test: {
+    sequence: shuffleSeed ? { shuffle: true, seed: Number(shuffleSeed) } : undefined,
+    attachmentsDir: resultsDir ? `${resultsDir}/attachments` : undefined,
+    reporters: resultsDir
+      ? ["default", ["junit", { outputFile: `${resultsDir}/vitest.xml` }]]
+      : ["default"],
+    // test-change-ok hang guard for expect.poll and expect.element, below the 5 s testTimeout; provisional until the nightly stress ledger measures it
+    expect: { poll: { timeout: 4_000 } },
     // Unset, vite-plugin-solid asks for jsdom, which a clean install does not have.
     environment: "node",
     maxWorkers: 4,
@@ -122,8 +143,32 @@ export default defineConfig({
           name: "chromium",
           setupFiles: ["./tests/setup.ts"],
           include: ["tests/**/*.test.{ts,tsx}"],
-          exclude: [...READS_FILES_NO_DOM, ...HAPPY_DOM_SHIM, VISUAL, DRIVE, FINGER],
+          exclude: [
+            ...READS_FILES_NO_DOM,
+            ...HAPPY_DOM_SHIM,
+            VISUAL,
+            DRIVE,
+            FINGER,
+            GERMAN_BROWSER,
+          ],
           browser: BROWSER,
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "german-browser",
+          setupFiles: ["./tests/setup.ts"],
+          include: [GERMAN_BROWSER],
+          browser: {
+            ...BROWSER,
+            instances: [{ browser: "chromium" as const, name: "german-browser (chromium)" }],
+            provider: playwright({
+              // test-change-ok same 5 s as the shared provider, restated since this one replaces it
+              actionTimeout: 5000,
+              contextOptions: { locale: "de-DE" },
+            }),
+          },
         },
       },
       {
@@ -171,6 +216,7 @@ export default defineConfig({
           exclude: [VISUAL_FINGER],
           browser: {
             ...BROWSER,
+            screenshotFailures: false,
             instances: [{ browser: "chromium" as const }],
             // A page smaller than the frame scales every shot down; this fits the widest one.
             provider: playwright({
@@ -189,6 +235,7 @@ export default defineConfig({
           include: [VISUAL_FINGER],
           browser: {
             ...BROWSER,
+            screenshotFailures: false,
             instances: [{ browser: "chromium" as const }],
             provider: playwright({
               // test-change-ok same 5 s as the shared provider, restated since this one replaces it

@@ -9,9 +9,10 @@ import {
   RANGE_CLAIM,
 } from "../lib/behavior/range.js";
 import { FIELD_CHROME, FOCUS_RING } from "../lib/input-classes.js";
-import { locale, readingDirection } from "../lib/locale.js";
+import { readingDirection } from "../lib/format.js";
 import { THUMB_CLASS, THUMB_RAIL_BLEED, THUMB_RAIL_PAD } from "../lib/thumb-classes.js";
 import { cn } from "../lib/utils.js";
+import { useUiFormat } from "./locale.js";
 
 interface SliderProps {
   value?: number[];
@@ -40,7 +41,6 @@ interface SliderProps {
   "aria-labelledby"?: string;
 }
 
-const decimal = new Intl.NumberFormat(locale, { style: "decimal" });
 const rtl = readingDirection === "rtl";
 const START = rtl ? "right" : "left";
 const END = rtl ? "left" : "right";
@@ -48,6 +48,7 @@ const END = rtl ? "left" : "right";
 const THUMB_SHIFT = rtl ? "50% 0" : "-50% 0";
 
 const Slider: Component<SliderProps> = (props) => {
+  const format = useUiFormat();
   const min = () => props.min ?? 0;
   const max = () => props.max ?? 100;
   const disabled = () => props.disabled ?? false;
@@ -177,7 +178,7 @@ const Slider: Component<SliderProps> = (props) => {
               aria-valuemin={min()}
               aria-valuemax={max()}
               aria-valuenow={range.values()[index]}
-              aria-valuetext={decimal.format(range.values()[index] ?? 0)}
+              aria-valuetext={format.number(range.values()[index] ?? 0)}
               aria-orientation="horizontal"
               aria-disabled={disabled() || undefined}
               class={cn(

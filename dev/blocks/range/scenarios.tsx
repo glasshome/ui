@@ -87,7 +87,7 @@ export default defineScenarios({
       id: "drag",
       title: "A drag moves the thumb closest to the press",
       render: () => <Range />,
-      steps: [{ drag: { role: "slider", name: "High", by: { x: 40, y: 0 } } }],
+      steps: [{ drag: { role: "slider", name: "High", by: { x: 40, y: 0 }, stepMs: 16 } }],
     },
   ],
 });

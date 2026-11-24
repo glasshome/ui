@@ -26,6 +26,7 @@
     "src/index.ts",
     "src/backgrounds",
     "src/lib",
+    "src/locales/compiled",
     "src/solid",
     "src/styles",
     "src/testing",
@@ -75,6 +76,7 @@
   },
   "scripts": {
     "build": "rm -rf dist && vite build && tsc -p tsconfig.build.json",
+    "catalogs": "bun scripts/compile-catalogs.ts",
     "check:structural": "bun scripts/check-structural-classes.ts",
     "check:dead": "fallow dead-code --fail-on-issues",
     "check:gallery": "bun scripts/check-gallery.ts",
@@ -98,6 +100,7 @@
     "preview": "bun dev/drive/main.ts preview"
   },
   "dependencies": {
+    "@glasshome/widget-contract": "0.9.0",
     "@iconify/types": "^2.0.0",
     "@iconify/utils": "^3.1.4",
     "@types/json-schema": "^7.0.15",

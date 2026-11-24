@@ -15,8 +15,8 @@ export type Step =
   | { hold: Target }
   /** A mouse press at a point of the viewport, for what no role names: the page behind a modal. */
   | { pressAt: { x: number; y: number } }
-  /** A mouse press at the target's centre, moved by `by` px, then released. */
-  | { drag: Target & { by: { x: number; y: number } } }
+  /** A mouse press at the target's centre, moved by `by` px in four moves `stepMs` apart, then released. */
+  | { drag: Target & { by: { x: number; y: number }; stepMs: number } }
   | { key: string }
   | { type: string };
 

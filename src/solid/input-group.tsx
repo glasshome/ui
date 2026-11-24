@@ -80,7 +80,7 @@ const GROUP_BUTTON_SM = `${CONTROL_H.sm} gap-1.5 px-2.5 has-[>svg]:px-2.5`;
 const GROUP_BUTTON_ICON_SM = "size-8 p-0 has-[>svg]:p-0";
 
 const inputGroupButtonVariants = cva({
-  base: "flex items-center gap-2 rounded-sm text-sm shadow-none",
+  base: "flex items-center gap-2 rounded-sm text-sm shadow-none", // ui-text-ok: utility classes
   variants: {
     size: {
       /** @deprecated `"sm"`; removed in 2.0.0. */

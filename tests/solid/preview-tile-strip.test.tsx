@@ -2,7 +2,7 @@
  * with an empty tile and an action that sit among the pictures. */
 import { cleanup, render, screen } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished } from "vitest";
 import { userEvent } from "vitest/browser";
 import { press } from "../press.js";
 import { setViewportWidth } from "../viewport.js";
@@ -79,12 +79,13 @@ describe("PreviewTileGroup scroll", () => {
     ));
     setValue("Garage");
     const tile = screen.getByRole("radio", { name: "Garage" }).closest("[data-slot=preview-tile]");
-    await vi.waitFor(() => {
-      const edge = strip().getBoundingClientRect();
-      const box = tile?.getBoundingClientRect();
-      expect(box?.right).toBeLessThanOrEqual(edge.right + 1);
-      expect(box?.left).toBeGreaterThanOrEqual(edge.left - 1);
-    });
+    await expect
+      .poll(() => {
+        const edge = strip().getBoundingClientRect();
+        const box = tile?.getBoundingClientRect();
+        return box ? Math.max(box.right - edge.right, edge.left - box.left) : Infinity;
+      })
+      .toBeLessThanOrEqual(1);
   });
 });
 

@@ -16,6 +16,7 @@ import { ModalFrame, useDialogContext } from "../lib/behavior/modal-root.js";
 import { MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { cn } from "../lib/utils.js";
+import { useUiText } from "./locale.js";
 import {
   ANCHORED_PANEL,
   createModalDismiss,
@@ -51,6 +52,7 @@ const DialogDismiss = createModalDismiss("dialog-close", useDialogContext);
  *  and the later stylesheet rule wins. */
 const DialogClose: ParentComponent<DialogCloseProps> = (props) => {
   const [local, rest] = splitProps(props, ["class", "variant", "size", "children"]);
+  const text = useUiText();
   return (
     <DialogDismiss
       class={cn(
@@ -59,7 +61,7 @@ const DialogClose: ParentComponent<DialogCloseProps> = (props) => {
       )}
       {...rest}
     >
-      {local.children ?? "Close"}
+      {local.children ?? text("ui.dialog.close")}
     </DialogDismiss>
   );
 };

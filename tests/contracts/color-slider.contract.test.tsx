@@ -85,7 +85,7 @@ describe("ColorSlider contract", () => {
     await settle();
     const { thumb, now, trackWidth } = helpers(scenarioScope);
     const expected = Math.round(180 + (60 / trackWidth("Hue")) * 360);
-    await input.drag(thumb("Hue"), { x: 60, y: 0 });
+    await input.drag(thumb("Hue"), { x: 60, y: 0 }, 16);
     await settle();
     expect(now("Hue")).toBe(expected);
     expect(changes.at(-1)?.getChannelValue("hue")).toBe(expected);
@@ -107,7 +107,7 @@ describe("ColorSlider contract", () => {
   it("CSL6 a drag and a key move the hue inside a closed shadow root", async () => {
     const { now, run, trackWidth } = await mount("in-shadow-root");
     const dragged = Math.round(180 + (60 / trackWidth("Hue")) * 360);
-    await run({ drag: { role: "slider", name: "Hue", by: { x: 60, y: 0 } } });
+    await run({ drag: { role: "slider", name: "Hue", by: { x: 60, y: 0 }, stepMs: 16 } });
     expect(now("Hue"), "dragged in the shadow root").toBe(dragged);
     await run({ key: "ArrowRight" });
     expect(now("Hue"), "stepped in the shadow root").toBe(dragged + 1);

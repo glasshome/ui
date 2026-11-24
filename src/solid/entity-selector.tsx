@@ -13,6 +13,7 @@ import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { MENU_ITEM_RADIUS, MENU_LABEL } from "../lib/menu-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
 import { createIsMobile } from "../lib/use-is-mobile.js";
+import type { UiText } from "../lib/text.js";
 import { cn } from "../lib/utils.js";
 import {
   BottomSheet,
@@ -23,6 +24,7 @@ import {
 } from "./bottom-sheet/index.js";
 import { type EntityViewLike, useEntityData } from "./entity-data.js";
 import { Icon } from "./icon.js";
+import { useUiFormat, useUiText } from "./locale.js";
 import { PICKER_ROW_HEIGHT, PickerRow } from "./picker-row.js";
 import { PickerSearch } from "./picker-search.js";
 import { PickerTrigger } from "./picker-trigger.js";
@@ -72,14 +74,16 @@ function isUnavailable(view: EntityViewLike) {
   return view.state === "unavailable" || view.state === "unknown";
 }
 
-function stateLabel(view: EntityViewLike) {
-  if (isUnavailable(view)) return "Unavailable";
+function stateLabel(view: EntityViewLike, text: UiText) {
+  if (isUnavailable(view)) return text("ui.entity-selector.unavailable");
   const unit = view.unitOfMeasurement;
   return unit ? `${view.state} ${unit}` : view.state;
 }
 
 export function EntitySelector(props: EntitySelectorProps) {
   const data = useEntityData();
+  const text = useUiText();
+  const format = useUiFormat();
   const isMobile = createIsMobile();
   const listboxId = createUniqueId();
   const [open, setOpen] = createSignal(false);
@@ -115,14 +119,12 @@ export function EntitySelector(props: EntitySelectorProps) {
     props.deviceClass ? usableViews().length - classFiltered().length : 0,
   );
 
-  const classExcludedMessage = () => {
-    const n = classExcludedCount();
-    const hidden =
-      n === 1
-        ? `1 ${props.domain} entity was hidden because it does not`
-        : `${n} ${props.domain} entities were hidden because they do not`;
-    return `No ${props.deviceClass} ${props.domain} entities found. ${hidden} report ${props.deviceClass}.`;
-  };
+  const classExcludedMessage = () =>
+    text("ui.entity-selector.class-excluded", {
+      count: classExcludedCount(),
+      domain: props.domain,
+      deviceClass: props.deviceClass ?? "",
+    });
 
   const diagnosticCount = createMemo(
     () => classFiltered().filter((v) => v.entityCategory != null).length,
@@ -161,13 +163,13 @@ export function EntitySelector(props: EntitySelectorProps) {
     const groups = Array.from(byAreaKey.entries())
       .map(([key, views]) => ({
         areaKey: key,
-        label: key === NO_AREA_KEY ? "Other" : (names.get(key) ?? key),
+        label: key === NO_AREA_KEY ? text("ui.entity-selector.other") : (names.get(key) ?? key),
         noArea: key === NO_AREA_KEY,
-        views: views.sort((a, b) => a.friendlyName.localeCompare(b.friendlyName)),
+        views: views.sort((a, b) => format.compare(a.friendlyName, b.friendlyName)),
       }))
       .sort((a, b) => {
         if (a.noArea !== b.noArea) return a.noArea ? 1 : -1;
-        return a.label.localeCompare(b.label);
+        return format.compare(a.label, b.label);
       });
 
     const flat: ListRow[] = [];
@@ -405,7 +407,9 @@ export function EntitySelector(props: EntitySelectorProps) {
         when={triggerLabel()}
         fallback={
           <span class="text-muted-foreground flex-1 truncate text-left">
-            Select {props.domain} {isSingle() ? "entity" : "entities"}...
+            {text(isSingle() ? "ui.entity-selector.select-one" : "ui.entity-selector.select-many", {
+              domain: props.domain,
+            })}
           </span>
         }
       >
@@ -423,7 +427,7 @@ export function EntitySelector(props: EntitySelectorProps) {
     };
     const state = () => {
       const v = view();
-      return v ? stateLabel(v) : "";
+      return v ? stateLabel(v, text) : "";
     };
     return (
       <PickerRow
@@ -455,15 +459,15 @@ export function EntitySelector(props: EntitySelectorProps) {
         }}
         type="search"
         role="combobox"
-        aria-label={`Search ${props.domain} entities`}
+        aria-label={text("ui.entity-selector.search", { domain: props.domain })}
         aria-controls={listboxId}
         aria-expanded
         aria-activedescendant={activeOptionId()}
-        placeholder="Search by name, room, or ID..."
+        placeholder={text("ui.entity-selector.search-placeholder")}
         value={search()}
         onValueChange={setSearch}
         onKeyDown={handleKeyDown}
-        clearLabel="Clear search"
+        clearLabel={text("ui.entity-selector.clear-search")}
         size={isMobile() ? "touch" : "default"}
         class="[&_input::-webkit-search-cancel-button]:hidden"
       />
@@ -472,7 +476,7 @@ export function EntitySelector(props: EntitySelectorProps) {
         id={listboxId}
         role="listbox"
         aria-multiselectable={!isSingle()}
-        aria-label={`${props.domain} entities`}
+        aria-label={text("ui.entity-selector.list", { domain: props.domain })}
         class={cn(
           "min-h-0 flex-1 touch-pan-y overscroll-contain px-1 py-1",
           PICKER_LIST,
@@ -494,7 +498,7 @@ export function EntitySelector(props: EntitySelectorProps) {
                         when={classExcludedCount() > 0}
                         fallback={
                           <span class="text-muted-foreground text-sm">
-                            No {props.domain} entities found in your home
+                            {text("ui.entity-selector.none", { domain: props.domain })}
                           </span>
                         }
                       >
@@ -503,27 +507,27 @@ export function EntitySelector(props: EntitySelectorProps) {
                     }
                   >
                     <span class="text-muted-foreground text-sm">
-                      Only diagnostic {props.domain} entities available
+                      {text("ui.entity-selector.only-diagnostic", { domain: props.domain })}
                     </span>
                     <button
                       type="button"
                       class="text-primary-tint-foreground text-sm hover:underline"
                       onClick={() => setShowDiagnostics(true)}
                     >
-                      Show diagnostic entities
+                      {text("ui.entity-selector.show-diagnostic-entities")}
                     </button>
                   </Show>
                 }
               >
                 <span class="text-muted-foreground text-sm">
-                  No matches for "{search().trim()}"
+                  {text("ui.entity-selector.no-matches", { query: search().trim() })}
                 </span>
                 <button
                   type="button"
                   class="text-primary-tint-foreground text-sm hover:underline"
                   onClick={() => setSearch("")}
                 >
-                  Clear search
+                  {text("ui.entity-selector.clear-search")}
                 </button>
               </Show>
             </div>
@@ -559,7 +563,9 @@ export function EntitySelector(props: EntitySelectorProps) {
       <Show when={diagnosticCount() > 0 || props.deviceClass}>
         <div class="border-border/50 flex shrink-0 items-center justify-between gap-2 border-t px-3 py-2">
           <span class="text-muted-foreground truncate text-xs">
-            {props.deviceClass ? `Showing ${props.deviceClass} entities only` : ""}
+            {props.deviceClass
+              ? text("ui.entity-selector.class-only", { deviceClass: props.deviceClass })
+              : ""}
           </span>
           <Show when={diagnosticCount() > 0}>
             <button
@@ -567,7 +573,9 @@ export function EntitySelector(props: EntitySelectorProps) {
               class="text-muted-foreground hover:text-foreground shrink-0 text-xs transition-colors"
               onClick={() => setShowDiagnostics(!showDiagnostics())}
             >
-              {showDiagnostics() ? "Hide diagnostic" : `Show diagnostic (${diagnosticCount()})`}
+              {showDiagnostics()
+                ? text("ui.entity-selector.hide-diagnostic")
+                : text("ui.entity-selector.show-diagnostic", { count: diagnosticCount() })}
             </button>
           </Show>
         </div>
@@ -602,7 +610,9 @@ export function EntitySelector(props: EntitySelectorProps) {
                 </span>
                 <button
                   type="button"
-                  aria-label={`Remove ${view()?.friendlyName ?? id}`}
+                  aria-label={text("ui.entity-selector.remove", {
+                    name: view()?.friendlyName ?? id,
+                  })}
                   class="text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex w-8 shrink-0 cursor-pointer items-center justify-center transition-colors"
                   onClick={() => removeEntity(id)}
                 >
@@ -646,7 +656,7 @@ export function EntitySelector(props: EntitySelectorProps) {
           <BottomSheetOverlay />
           <BottomSheetContent
             class="h-[85dvh] pb-[env(safe-area-inset-bottom)]"
-            ariaLabel={`Select ${props.domain} entities`}
+            ariaLabel={text("ui.entity-selector.sheet", { domain: props.domain })}
           >
             <BottomSheetHandle />
             {p.children}

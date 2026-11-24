@@ -36,20 +36,20 @@ export default defineScenarios({
       id: "drag",
       title: "The thumb dragged around the ring",
       render: () => <Wheel at={0} />,
-      steps: [{ drag: { ...hue, by: { x: -40, y: 80 } } }],
+      steps: [{ drag: { ...hue, by: { x: -40, y: 80 }, stepMs: 16 } }],
     },
     {
       id: "disabled",
       title: "A drag on a disabled wheel changes nothing",
       render: () => <Wheel at={0} disabled />,
-      steps: [{ drag: { ...hue, by: { x: -40, y: 80 } } }],
+      steps: [{ drag: { ...hue, by: { x: -40, y: 80 }, stepMs: 16 } }],
     },
     {
       id: "in-shadow-root",
       title: "Inside a closed shadow root",
       render: () => <Wheel at={0} />,
       within: "shadow-root",
-      steps: [{ drag: { ...hue, by: { x: -40, y: 80 } } }, { key: "ArrowRight" }],
+      steps: [{ drag: { ...hue, by: { x: -40, y: 80 }, stepMs: 16 } }, { key: "ArrowRight" }],
     },
   ],
 });

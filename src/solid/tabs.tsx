@@ -33,7 +33,7 @@ type TabsLayout = "stack" | "split";
 type Orientation = "horizontal" | "vertical";
 
 const TABS_LAYOUT: Record<TabsLayout, string> = {
-  stack: "flex flex-col gap-2",
+  stack: "flex flex-col gap-2", // ui-text-ok: utility classes
   split: "contents",
 };
 

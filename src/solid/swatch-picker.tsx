@@ -1,6 +1,7 @@
 import type { JSX } from "solid-js";
 import { For } from "solid-js";
 import { cn } from "../lib/utils.js";
+import { useUiText } from "./locale.js";
 import { RadioGroup, RadioGroupItem } from "./radio-group.js";
 
 /** One colour out of a few, as swatches sharing one row; `children` is the custom slot at the end (a picker). */
@@ -14,6 +15,7 @@ export function SwatchPicker(props: {
   class?: string;
   children?: JSX.Element;
 }) {
+  const text = useUiText();
   return (
     <RadioGroup
       data-slot="swatch-picker"
@@ -36,7 +38,8 @@ export function SwatchPicker(props: {
               style={{ background: color }}
             />
             <span class="sr-only">
-              {props.labelOf?.(color, index()) ?? `Colour ${index() + 1}`}
+              {props.labelOf?.(color, index()) ??
+                text("ui.swatch-picker.colour", { index: index() + 1 })}
             </span>
           </RadioGroupItem>
         )}

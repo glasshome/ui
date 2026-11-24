@@ -51,11 +51,12 @@ function step(
   return items[Math.max(0, Math.min(items.length - 1, next))];
 }
 
+// ui-text-ok: KeyboardEvent.key names
+const KEY = { up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight" } as const;
+
 function forwardKeys(orientation: Orientation, rtl: boolean): { next: string; prev: string } {
-  if (orientation === "vertical") return { next: "ArrowDown", prev: "ArrowUp" };
-  return rtl
-    ? { next: "ArrowLeft", prev: "ArrowRight" }
-    : { next: "ArrowRight", prev: "ArrowLeft" };
+  if (orientation === "vertical") return { next: KEY.down, prev: KEY.up };
+  return rtl ? { next: KEY.left, prev: KEY.right } : { next: KEY.right, prev: KEY.left };
 }
 
 const textOf = (el: HTMLElement) => el.textContent ?? "";

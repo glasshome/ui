@@ -4,6 +4,7 @@ import { Field, FieldContent, FieldDescription, FieldLabel } from "./field.js";
 import { Icon } from "./icon.js";
 import { IconPicker, type IconPickerProps } from "./icon-picker.js";
 import { Input } from "./input.js";
+import { useUiText } from "./locale.js";
 import { Switch } from "./switch.js";
 
 /**
@@ -12,10 +13,11 @@ import { Switch } from "./switch.js";
  */
 
 export function SectionAddButton(props: { onClick: () => void }) {
+  const text = useUiText();
   return (
     <Button variant="outline" size="sm" onClick={props.onClick}>
       <Icon icon="lucide:plus" width={14} height={14} />
-      Add
+      {text("ui.settings-row.add")}
     </Button>
   );
 }
@@ -37,7 +39,7 @@ export function RowActions(props: {
   /** What the row is, so each button is named for it: "Edit Kitchen", "Delete Kitchen". */
   name?: string;
 }) {
-  const named = (verb: string) => (props.name ? `${verb} ${props.name}` : verb);
+  const text = useUiText();
   return (
     <div data-slot="row-actions" class="flex items-center gap-1">
       <Button
@@ -45,7 +47,11 @@ export function RowActions(props: {
         size="icon"
         class="size-8"
         onClick={props.onEdit}
-        aria-label={named("Edit")}
+        aria-label={
+          props.name
+            ? text("ui.row-actions.edit-named", { name: props.name })
+            : text("ui.row-actions.edit")
+        }
       >
         <Icon icon="lucide:pencil" width={14} height={14} />
       </Button>
@@ -57,7 +63,11 @@ export function RowActions(props: {
           onClick={props.onDelete}
           disabled={props.deleteDisabled}
           title={props.deleteTitle}
-          aria-label={named("Delete")}
+          aria-label={
+            props.name
+              ? text("ui.row-actions.delete-named", { name: props.name })
+              : text("ui.row-actions.delete")
+          }
         >
           <Icon icon="lucide:trash-2" width={14} height={14} />
         </Button>

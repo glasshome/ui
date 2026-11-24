@@ -1,5 +1,5 @@
 import type { Component } from "solid-js";
-import { createSignal } from "solid-js";
+import { createMemo, createSignal } from "solid-js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import {
@@ -12,13 +12,15 @@ import {
 import {
   type Color,
   type ColorChannel,
-  COLOR_INTL_TRANSLATIONS,
+  colorIntlTranslations,
   parseColor,
 } from "../lib/color/index.js";
 import { FOCUS_RING } from "../lib/input-classes.js";
-import { readingDirection } from "../lib/locale.js";
+import { readingDirection, type UiFormat } from "../lib/format.js";
+import type { UiText } from "../lib/text.js";
 import { THUMB_CLASS, THUMB_COLOR_RING, THUMB_RAIL_PAD } from "../lib/thumb-classes.js";
 import { cn } from "../lib/utils.js";
+import { useUiFormat, useUiText } from "./locale.js";
 
 interface ColorSliderProps {
   value?: Color;
@@ -36,18 +38,28 @@ const START = rtl ? "right" : "left";
 const THUMB_SHIFT = rtl ? "translateX(50%)" : "translateX(-50%)";
 const RED = parseColor("hsl(0, 100%, 50%)");
 
-const valueText = (color: Color, channel: ColorChannel) => {
-  const formatted = color.formatChannelValue(channel);
-  if (channel === "alpha") return formatted;
+const valueText = (
+  color: Color,
+  channel: ColorChannel,
+  text: UiText,
+  format: UiFormat,
+  names: ReturnType<typeof colorIntlTranslations>,
+) => {
+  const value = color.formatChannelValue(channel, format);
+  if (channel === "alpha") return value;
   if (channel === "hue") {
     const hue = parseColor(`hsl(${color.getChannelValue("hue")}, 100%, 50%)`);
-    return `${formatted}, ${hue.getHueName(COLOR_INTL_TRANSLATIONS)}`;
+    return text("ui.color.value-named", { value, name: hue.getHueName(names) });
   }
-  return `${formatted}, ${color.withChannelValue("alpha", 1).getColorName(COLOR_INTL_TRANSLATIONS)}`;
+  const name = color.withChannelValue("alpha", 1).getColorName(names, format);
+  return text("ui.color.value-named", { value, name });
 };
 
 const ColorSlider: Component<ColorSliderProps> = (props) => {
   const disabled = () => props.disabled ?? false;
+  const text = useUiText();
+  const format = useUiFormat();
+  const names = createMemo(() => colorIntlTranslations(text));
   const [color, setColor] = createControllableSignal({
     value: () => props.value,
     defaultValue: () => props.defaultValue ?? RED,
@@ -144,7 +156,7 @@ const ColorSlider: Component<ColorSliderProps> = (props) => {
           aria-valuemin={channelRange().minValue}
           aria-valuemax={channelRange().maxValue}
           aria-valuenow={range.values()[0]}
-          aria-valuetext={valueText(color(), props.channel)}
+          aria-valuetext={valueText(color(), props.channel, text, format, names())}
           aria-orientation="horizontal"
           aria-disabled={disabled() || undefined}
           class={cn(

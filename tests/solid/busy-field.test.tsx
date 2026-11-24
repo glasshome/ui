@@ -1,6 +1,7 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Input } from "../../src/solid/input.js";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "../../src/solid/select.js";
 import { Switch } from "../../src/solid/switch.js";
 import { press } from "../press.js";
 
@@ -52,5 +53,38 @@ describe("Input busy", () => {
   it("keeps a caller's readOnly when not busy", () => {
     const view = render(() => <Input readOnly />);
     expect((view.getByRole("textbox") as HTMLInputElement).readOnly).toBe(true);
+  });
+});
+
+describe("Select busy", () => {
+  const view = (busy: boolean) =>
+    render(() => (
+      <Select
+        busy={busy}
+        options={["en", "fr"]}
+        value="en"
+        itemComponent={(p) => <SelectItem item={p.item}>{p.item.rawValue}</SelectItem>}
+      >
+        <SelectTrigger aria-label="Language">en</SelectTrigger>
+        <SelectContent />
+      </Select>
+    )).getByRole("button", { name: /Language/ });
+
+  it("stays shut and keeps focus while its own work runs", async () => {
+    const el = view(true);
+    expect(el.getAttribute("aria-busy")).toBe("true");
+    expect(el.getAttribute("aria-disabled")).toBe("true");
+    expect((el as HTMLButtonElement).disabled).toBe(false);
+    el.focus();
+    await press(el, { force: true });
+    expect(el.getAttribute("aria-expanded")).toBe("false");
+    expect(document.activeElement).toBe(el);
+  });
+
+  it("opens as usual when not busy", async () => {
+    const el = view(false);
+    expect(el.hasAttribute("aria-busy")).toBe(false);
+    await press(el);
+    expect(el.getAttribute("aria-expanded")).toBe("true");
   });
 });
