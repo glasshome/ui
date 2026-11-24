@@ -2,7 +2,8 @@ import { render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { describe, expect, it, onTestFinished } from "vitest";
 import { Dock } from "../../src/solid/dock.js";
-import { frames } from "../frames.js";
+import { nextFrame } from "../harness/frame";
+import { settle } from "../harness/mount";
 import { setViewportWidth } from "../viewport.js";
 
 /* Every slot has a dot; the ones past the last page draw nothing and take no input. */
@@ -26,7 +27,7 @@ describe("Dock paging", () => {
         <Dock items={items(3)} />
       </div>
     ));
-    await frames(2);
+    await settle();
 
     expect(container.querySelectorAll(PAGE_DOTS)).toHaveLength(0);
   });
@@ -40,11 +41,11 @@ describe("Dock paging", () => {
         <Dock items={items(10)} />
       </div>
     ));
-    await frames(2);
+    await settle();
     expect(container.querySelectorAll(PAGE_DOTS).length).toBeGreaterThan(1);
     setBox(1200);
     await setViewportWidth(1000);
-    await frames(2);
+    await settle();
 
     expect(container.querySelectorAll(PAGE_DOTS)).toHaveLength(0);
   });
@@ -55,7 +56,7 @@ describe("Dock paging", () => {
         <Dock items={items(12)} />
       </div>
     ));
-    await frames(2);
+    await settle();
 
     const dots = container.querySelectorAll(PAGE_DOTS);
     expect(dots).toHaveLength(3);
@@ -69,7 +70,7 @@ describe("Dock paging", () => {
         <Dock items={items(12)} />
       </div>
     ));
-    await frames(2);
+    await settle();
 
     const bar = container.querySelector('[data-slot="dock-bar"]');
     expect(bar?.className).toContain("snap-x");
@@ -101,7 +102,8 @@ describe("Dock paging", () => {
       const first = look();
       expect(first.drawn).toBe(3);
       for (let i = 0; i < 4; i++) {
-        await frames(1);
+        // per-frame the surface, strip and drawn dots in each of the four frames after mount
+        await nextFrame();
         expect(look()).toEqual(first);
       }
     },

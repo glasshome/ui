@@ -147,7 +147,6 @@ describe("ToggleGroup", () => {
         </ToggleGroup>
       </div>
     ));
-    await new Promise(requestAnimationFrame);
     const room = view.container
       .querySelector('[data-slot="toggle-group"]')
       ?.getBoundingClientRect();
@@ -184,17 +183,14 @@ describe("ToggleGroup", () => {
         </ToggleGroup>
       </div>
     ));
-    const frames = async () => {
-      for (let i = 0; i < 3; i++) await new Promise(requestAnimationFrame);
-    };
     const root = view.container.querySelector('[data-slot="toggle-group"]');
-    await frames();
+    await settle();
     expect(root?.hasAttribute("data-wrapped")).toBe(false);
 
     for (const label of view.container.querySelectorAll<HTMLElement>("[data-label]")) {
       label.style.width = "120px";
     }
-    await frames();
+    await settle();
 
     expect(root?.hasAttribute("data-wrapped")).toBe(true);
   });
@@ -216,7 +212,7 @@ describe("ToggleGroup", () => {
       </div>
     ));
     const rows = async () => {
-      for (let i = 0; i < 3; i++) await new Promise(requestAnimationFrame);
+      await settle();
       const tops = [...view.container.querySelectorAll('[data-slot="toggle-group-item"]')].map(
         (item) => Math.round(item.getBoundingClientRect().top),
       );
@@ -259,12 +255,9 @@ describe("ToggleGroup", () => {
       for (const entry of entries) heights.push(Math.round(entry.contentRect.height));
     });
     if (outer) page.observe(outer);
-    const frames = async () => {
-      for (let i = 0; i < 3; i++) await new Promise(requestAnimationFrame);
-    };
-    await frames();
+    await settle();
     setWidth(300);
-    await frames();
+    await settle();
     page.disconnect();
     window.removeEventListener("error", onError);
 
@@ -347,8 +340,7 @@ describe("ToggleGroup", () => {
     await userEvent.keyboard("{ArrowRight}");
     expect(document.activeElement?.textContent).toBe("middle");
     setValues(["left", "right"]);
-    await Promise.resolve();
-    await new Promise(requestAnimationFrame);
+    await settle();
     const stops = [...view.container.querySelectorAll('[data-slot="toggle-group-item"]')].filter(
       (el) => el.getAttribute("tabindex") === "0",
     );

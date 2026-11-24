@@ -6,8 +6,6 @@ import type { Step } from "../../dev/harness/types";
 import { trackPointer } from "./input";
 import { focusedElement, settle } from "./mount";
 
-const frame = () => new Promise<void>((done) => requestAnimationFrame(() => done()));
-
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
 type Theme = "light" | "dark";
@@ -82,13 +80,12 @@ export async function spokenTranscript(
     // The reader speaks from async handlers, so a phrase can land frames after the step.
     const quietLog = async () => {
       let log = await virtual.spokenPhraseLog();
-      for (let still = 0; still < 2;) {
-        await frame();
+      for (;;) {
+        await settle();
         const next = await virtual.spokenPhraseLog();
-        still = next.length === log.length ? still + 1 : 0;
+        if (next.length === log.length) return next;
         log = next;
       }
-      return log;
     };
     const take = async () => {
       const log = await quietLog();
