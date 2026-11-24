@@ -55,7 +55,7 @@ export default defineScenarios({
       id: "drag",
       title: "The hue thumb dragged along the track",
       render: () => <Hue at={180} />,
-      steps: [{ drag: { ...hue, by: { x: 60, y: 0 } } }],
+      steps: [{ drag: { ...hue, by: { x: 60, y: 0 }, stepMs: 16 } }],
     },
     {
       id: "disabled",
@@ -68,7 +68,7 @@ export default defineScenarios({
       title: "Inside a closed shadow root",
       render: () => <Hue at={180} />,
       within: "shadow-root",
-      steps: [{ drag: { ...hue, by: { x: 60, y: 0 } } }, { key: "ArrowRight" }],
+      steps: [{ drag: { ...hue, by: { x: 60, y: 0 }, stepMs: 16 } }, { key: "ArrowRight" }],
     },
   ],
 });

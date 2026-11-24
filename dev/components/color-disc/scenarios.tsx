@@ -29,20 +29,20 @@ export default defineScenarios({
       id: "drag",
       title: "The thumb dragged across the disc",
       render: () => <Disc />,
-      steps: [{ drag: { ...colour, by: { x: 0, y: 60 } } }],
+      steps: [{ drag: { ...colour, by: { x: 0, y: 60 }, stepMs: 16 } }],
     },
     {
       id: "disabled",
       title: "A drag on a disabled disc changes nothing",
       render: () => <Disc disabled />,
-      steps: [{ drag: { ...colour, by: { x: 0, y: 60 } } }],
+      steps: [{ drag: { ...colour, by: { x: 0, y: 60 }, stepMs: 16 } }],
     },
     {
       id: "in-shadow-root",
       title: "Inside a closed shadow root",
       render: () => <Disc />,
       within: "shadow-root",
-      steps: [{ drag: { ...colour, by: { x: 0, y: 60 } } }],
+      steps: [{ drag: { ...colour, by: { x: 0, y: 60 }, stepMs: 16 } }],
     },
   ],
 });

@@ -60,7 +60,7 @@ describe("range contract", () => {
   it("RA4 the closest thumb follows a drag, which ends once at release", async () => {
     const { now, track, count, run } = await mount("drag");
     const width = track().getBoundingClientRect().width;
-    await run({ drag: { role: "slider", name: "High", by: { x: 40, y: 0 } } });
+    await run({ drag: { role: "slider", name: "High", by: { x: 40, y: 0 }, stepMs: 16 } });
     expect(now("High")).toBe(Math.round((60 + (40 / width) * 100) / 5) * 5);
     expect(now("Low")).toBe(20);
     expect(count("ends")).toBe(1);

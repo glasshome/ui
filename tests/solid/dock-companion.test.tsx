@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { Dock, type DockPlacement } from "../../src/solid/dock.js";
 import { ToggleGroup, ToggleGroupItem } from "../../src/solid/toggle-group.js";
 import { frames } from "../frames.js";
+import { settle } from "../harness/mount";
 
 const items = (n: number) =>
   Array.from({ length: n }, (_, i) => ({
@@ -177,7 +178,7 @@ describe("Dock lead", () => {
         />
       </div>
     ));
-    await frames(2);
+    await settle();
     const lead = rectOf(view.container.querySelector('[data-slot="dock-lead"]'));
     const bar = rectOf(view.container.querySelector('[data-slot="dock-bar"]'));
     const surface = rectOf(view.container.querySelector('[data-slot="dock-surface"]'));

@@ -104,7 +104,7 @@ describe("ColorDisc contract", () => {
     await settle();
     const { thumb, text, picked } = helpers(scenarioScope);
     const expected = picked({ x: 0, y: 60 });
-    await input.drag(thumb(), { x: 0, y: 60 });
+    await input.drag(thumb(), { x: 0, y: 60 }, 16);
     await settle();
     expect(text()).toBe(expected);
     expect(ends).toHaveLength(1);
@@ -114,7 +114,7 @@ describe("ColorDisc contract", () => {
   it("CD5 a disabled disc leaves the tab order and ignores a drag or a key", async () => {
     const { thumb, text, run } = await mount("disabled");
     expect(thumb().getAttribute("tabindex")).toBe("-1");
-    await run({ drag: { role: "slider", name: "Colour", by: { x: 0, y: 60 } } });
+    await run({ drag: { role: "slider", name: "Colour", by: { x: 0, y: 60 }, stepMs: 16 } });
     await run({ key: "Tab" }, { key: "ArrowRight" });
     expect(text()).toBe("Hue 0, saturation 50%");
   });
@@ -122,7 +122,7 @@ describe("ColorDisc contract", () => {
   it("CD6 a drag picks the colour inside a closed shadow root", async () => {
     const { text, run, picked } = await mount("in-shadow-root");
     const expected = picked({ x: 0, y: 60 });
-    await run({ drag: { role: "slider", name: "Colour", by: { x: 0, y: 60 } } });
+    await run({ drag: { role: "slider", name: "Colour", by: { x: 0, y: 60 }, stepMs: 16 } });
     expect(text(), "picked in the shadow root").toBe(expected);
   });
 });

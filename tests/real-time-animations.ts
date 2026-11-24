@@ -1,5 +1,5 @@
 import { beforeAll } from "vitest";
-import { commands } from "vitest/browser";
+import { setAnimationRate } from "./harness/leaks";
 
 // For a file that reads an animation in flight.
-beforeAll(() => commands.animationRate(1));
+beforeAll(() => setAnimationRate(1));

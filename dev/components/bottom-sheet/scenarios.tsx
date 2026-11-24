@@ -32,6 +32,7 @@ const Sheet = (props: { fruit?: boolean }) => (
 
 const OUTSIDE = { x: 8, y: 8 };
 const OPEN = { press: { role: "button", name: "Open sheet" } };
+const HEADING = { role: "heading", name: "Sheet" };
 
 export default defineScenarios({
   component: "BottomSheet",
@@ -59,7 +60,13 @@ export default defineScenarios({
       id: "drag",
       title: "A quick drag down on its body closes it",
       render: () => <Sheet />,
-      steps: [OPEN, { drag: { role: "heading", name: "Sheet", by: { x: 0, y: 24 } } }],
+      steps: [OPEN, { drag: { ...HEADING, by: { x: 0, y: 24 }, stepMs: 16 } }],
+    },
+    {
+      id: "slow-drag",
+      title: "A slow short drag down on its body snaps it back open",
+      render: () => <Sheet />,
+      steps: [OPEN, { drag: { ...HEADING, by: { x: 0, y: 24 }, stepMs: 40 } }],
     },
     {
       id: "nested-select",

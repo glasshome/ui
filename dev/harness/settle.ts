@@ -26,9 +26,13 @@ const afterFrame = async () => {
 // A DOM that keeps changing, such as a ticking clock, counts as settled after this many frames.
 const CHANGING_FRAMES = 60;
 
+const offsetOf = (target: EventTarget) =>
+  target instanceof Element ? `${target.scrollLeft},${target.scrollTop}` : `${scrollX},${scrollY}`;
+
 /**
- * Done once two frames in a row change no DOM, scroll nothing and start no finite animation, and
- * every one started has run out. A ResizeObserver answer applied a frame later is such a change.
+ * Done once two frames in a row change no DOM, start no finite animation and have no scroll in
+ * flight, and every animation started has run out. A ResizeObserver answer applied a frame later
+ * is such a change. A scroll is in flight until its `scrollend`.
  */
 export async function settle(): Promise<void> {
   let changed = false;
@@ -40,9 +44,28 @@ export async function settle(): Promise<void> {
       attributes: true,
       characterData: true,
     });
-  const scrolled = () => (changed = true);
-  for (const root of [document, ...CLOSED_ROOTS])
+  const scrolling = new Map<EventTarget, string>();
+  const scrolled = (e: Event) => {
+    changed = true;
+    if (e.target) scrolling.set(e.target, "");
+  };
+  const ended = (e: Event) => {
+    if (e.target) scrolling.delete(e.target);
+  };
+  // Chromium sends no scrollend after a layout clamp or scroll anchoring: one jump, then still.
+  const inFlight = () => {
+    for (const [target, last] of scrolling) {
+      const gone = target instanceof Node && !target.isConnected;
+      const at = offsetOf(target);
+      if (gone || at === last) scrolling.delete(target);
+      else scrolling.set(target, at);
+    }
+    return scrolling.size > 0;
+  };
+  for (const root of [document, ...CLOSED_ROOTS]) {
     root.addEventListener("scroll", scrolled, { capture: true, passive: true });
+    root.addEventListener("scrollend", ended, { capture: true, passive: true });
+  }
   try {
     let quiet = 0;
     let changing = 0;
@@ -50,7 +73,8 @@ export async function settle(): Promise<void> {
       await afterFrame();
       const now = running();
       if (changed) changing++;
-      quiet = now.length === 0 && (!changed || changing > CHANGING_FRAMES) ? quiet + 1 : 0;
+      const still = now.length === 0 && !inFlight();
+      quiet = still && (!changed || changing > CHANGING_FRAMES) ? quiet + 1 : 0;
       changed = false;
       // A cancelled animation rejects `finished`; it has stopped all the same.
       await Promise.race([
@@ -60,7 +84,9 @@ export async function settle(): Promise<void> {
     }
   } finally {
     changes.disconnect();
-    for (const root of [document, ...CLOSED_ROOTS])
+    for (const root of [document, ...CLOSED_ROOTS]) {
       root.removeEventListener("scroll", scrolled, { capture: true });
+      root.removeEventListener("scrollend", ended, { capture: true });
+    }
   }
 }

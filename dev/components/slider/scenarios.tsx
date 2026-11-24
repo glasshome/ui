@@ -61,7 +61,7 @@ export default defineScenarios({
       id: "drag",
       title: "A thumb dragged along the track",
       render: () => <Brightness at={50} />,
-      steps: [{ drag: { ...thumb, by: { x: 60, y: 0 } } }],
+      steps: [{ drag: { ...thumb, by: { x: 60, y: 0 }, stepMs: 16 } }],
     },
     {
       id: "track-press",
@@ -80,7 +80,7 @@ export default defineScenarios({
       title: "Inside a closed shadow root",
       render: () => <Brightness at={50} />,
       within: "shadow-root",
-      steps: [{ drag: { ...thumb, by: { x: 60, y: 0 } } }, { key: "ArrowRight" }],
+      steps: [{ drag: { ...thumb, by: { x: 60, y: 0 }, stepMs: 16 } }, { key: "ArrowRight" }],
     },
   ],
 });
