@@ -10,6 +10,7 @@ import {
   compose,
   drag,
   emulateMedia,
+  fitWindow,
   mouse,
   touch,
   wheel,
@@ -58,11 +59,8 @@ const BROWSER = {
   enabled: true,
   headless: true,
   screenshotFailures: Boolean(resultsDir),
-  screenshotDirectory: resultsDir ? `${resultsDir}/screenshots` : undefined,
   viewport: { width: 1024, height: 768 },
   provider: playwright({
-    // test-change-ok a press that cannot land fails in 5 s instead of waiting out the test
-    actionTimeout: 5000,
     contextOptions: { permissions: ["clipboard-read", "clipboard-write"] },
   }),
   instances: [{ browser: "chromium" as const }],
@@ -72,6 +70,7 @@ const BROWSER = {
     compose,
     drag,
     emulateMedia,
+    fitWindow,
     mouse,
     touch,
     wheel,
@@ -117,6 +116,10 @@ export default defineConfig({
   },
   test: {
     sequence: shuffleSeed ? { shuffle: true, seed: Number(shuffleSeed) } : undefined,
+    // Whole values in test.each titles keep two cases from sharing one results-ledger id.
+    taskTitleValueFormatTruncate: 0,
+    // Vitest's shared default directory is wiped by any suite whose lockfile differs, and its key misses workspace exports edits.
+    fsModuleCache: false,
     attachmentsDir: resultsDir ? `${resultsDir}/attachments` : undefined,
     reporters: resultsDir
       ? ["default", ["junit", { outputFile: `${resultsDir}/vitest.xml` }]]
@@ -128,15 +131,12 @@ export default defineConfig({
     maxWorkers: 4,
     projects: [
       {
-        extends: true,
         test: { name: "node", environment: "node", include: READS_FILES_NO_DOM },
       },
       {
-        extends: true,
         test: { name: "happy-dom", environment: "happy-dom", include: HAPPY_DOM_SHIM },
       },
       {
-        extends: true,
         test: {
           name: "drive",
           environment: "node",
@@ -148,7 +148,6 @@ export default defineConfig({
         },
       },
       {
-        extends: true,
         test: {
           name: "chromium",
           setupFiles: ["./tests/setup.ts"],
@@ -161,44 +160,36 @@ export default defineConfig({
             FINGER,
             GERMAN_BROWSER,
           ],
-          browser: {
-            ...BROWSER,
-            api: { port: ownPort("UI_CHROMIUM_BROWSER_PORT"), strictPort: true },
-          },
+          api: { port: ownPort("UI_CHROMIUM_BROWSER_PORT"), strictPort: true },
+          browser: BROWSER,
         },
       },
       {
-        extends: true,
         test: {
           name: "german-browser",
           setupFiles: ["./tests/setup.ts"],
           include: [GERMAN_BROWSER],
+          api: { port: ownPort("UI_GERMAN_BROWSER_PORT"), strictPort: true },
           browser: {
             ...BROWSER,
-            api: { port: ownPort("UI_GERMAN_BROWSER_PORT"), strictPort: true },
             instances: [{ browser: "chromium" as const, name: "german-browser (chromium)" }],
             provider: playwright({
-              // test-change-ok same 5 s as the shared provider, restated since this one replaces it
-              actionTimeout: 5000,
               contextOptions: { locale: "de-DE" },
             }),
           },
         },
       },
       {
-        extends: true,
         test: {
           name: "chromium-finger",
           setupFiles: ["./tests/setup.ts"],
           include: [FINGER],
           exclude: [VISUAL],
+          api: { port: ownPort("UI_FINGER_BROWSER_PORT"), strictPort: true },
           browser: {
             ...BROWSER,
-            api: { port: ownPort("UI_FINGER_BROWSER_PORT"), strictPort: true },
             instances: [{ browser: "chromium" as const }],
             provider: playwright({
-              // test-change-ok same 5 s as the shared provider, restated since this one replaces it
-              actionTimeout: 5000,
               contextOptions: {
                 hasTouch: true,
                 permissions: ["clipboard-read", "clipboard-write"],
@@ -208,56 +199,48 @@ export default defineConfig({
         },
       },
       {
-        extends: true,
         test: {
           name: "webkit",
           setupFiles: ["./tests/setup.ts"],
           include: WEBKIT_FILES,
+          api: { port: ownPort("UI_WEBKIT_BROWSER_PORT"), strictPort: true },
           browser: {
             ...BROWSER,
-            api: { port: ownPort("UI_WEBKIT_BROWSER_PORT"), strictPort: true },
             instances: [{ browser: "webkit" as const }],
             // WebKit has no clipboard permission to grant.
-            // test-change-ok same 5 s as the shared provider, restated since this one replaces it
-            provider: playwright({ actionTimeout: 5000 }),
+            provider: playwright(),
           },
         },
       },
       {
-        extends: true,
         test: {
           name: "visual",
           setupFiles: ["./tests/visual/setup.ts"],
           include: [VISUAL],
           exclude: [VISUAL_FINGER],
+          api: { port: ownPort("UI_VISUAL_BROWSER_PORT"), strictPort: true },
           browser: {
             ...BROWSER,
-            api: { port: ownPort("UI_VISUAL_BROWSER_PORT"), strictPort: true },
             screenshotFailures: false,
             instances: [{ browser: "chromium" as const }],
             // A page smaller than the frame scales every shot down; this fits the widest one.
             provider: playwright({
-              // test-change-ok same 5 s as the shared provider, restated since this one replaces it
-              actionTimeout: 5000,
               contextOptions: { viewport: { width: 1280, height: 900 } },
             }),
           },
         },
       },
       {
-        extends: true,
         test: {
           name: "visual-finger",
           setupFiles: ["./tests/visual/setup.ts"],
           include: [VISUAL_FINGER],
+          api: { port: ownPort("UI_VISUAL_FINGER_BROWSER_PORT"), strictPort: true },
           browser: {
             ...BROWSER,
-            api: { port: ownPort("UI_VISUAL_FINGER_BROWSER_PORT"), strictPort: true },
             screenshotFailures: false,
             instances: [{ browser: "chromium" as const }],
             provider: playwright({
-              // test-change-ok same 5 s as the shared provider, restated since this one replaces it
-              actionTimeout: 5000,
               contextOptions: { hasTouch: true, viewport: { width: 1280, height: 900 } },
             }),
           },

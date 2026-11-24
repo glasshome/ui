@@ -2,7 +2,7 @@ import "../real-time-animations";
 import { cleanup, render, screen } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { cdp, page, userEvent } from "vitest/browser";
+import { cdp, commands, page, userEvent } from "vitest/browser";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -774,12 +774,14 @@ describe("Dialog body gutter", () => {
   const overlayScrollbars = (overlay: boolean) =>
     overlay
       ? cdp().send("Emulation.setDeviceMetricsOverride", {
-          width: 0,
-          height: 0,
+          width: innerWidth,
+          height: innerHeight,
           deviceScaleFactor: 0,
           mobile: true,
         })
-      : cdp().send("Emulation.clearDeviceMetricsOverride");
+      : cdp()
+          .send("Emulation.clearDeviceMetricsOverride")
+          .then(() => commands.fitWindow());
 
   it.each([
     ["an overlay scrollbar", true, "0px"],

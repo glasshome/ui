@@ -20,5 +20,6 @@ afterEach(expectNoLeaks);
 declare module "vitest/browser" {
   interface BrowserCommands {
     animationRate(rate?: number): Promise<void>;
+    fitWindow(): Promise<void>;
   }
 }

@@ -126,7 +126,7 @@ describe("Dock paging", () => {
           return [Math.round(r.left), Math.round(r.top)];
         });
       const first = places();
-      await frames(4);
+      await settle();
 
       expect(container.querySelector('[data-slot="dock-bar"]')?.className).toMatch(
         /overflow-[xy]-auto/,
