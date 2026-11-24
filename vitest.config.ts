@@ -58,7 +58,6 @@ const BROWSER = {
   enabled: true,
   headless: true,
   screenshotFailures: Boolean(resultsDir),
-  screenshotDirectory: resultsDir ? `${resultsDir}/screenshots` : undefined,
   viewport: { width: 1024, height: 768 },
   provider: playwright({
     // test-change-ok a press that cannot land fails in 5 s instead of waiting out the test
@@ -117,6 +116,8 @@ export default defineConfig({
   },
   test: {
     sequence: shuffleSeed ? { shuffle: true, seed: Number(shuffleSeed) } : undefined,
+    // Whole values in test.each titles keep two cases from sharing one results-ledger id.
+    taskTitleValueFormatTruncate: 0,
     attachmentsDir: resultsDir ? `${resultsDir}/attachments` : undefined,
     reporters: resultsDir
       ? ["default", ["junit", { outputFile: `${resultsDir}/vitest.xml` }]]

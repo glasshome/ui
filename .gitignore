@@ -6,4 +6,4 @@ dist/
 .env*.local
 .fallow/
 .impeccable/
-.vitest-attachments/
+.vitest/

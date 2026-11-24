@@ -57,6 +57,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: visual-actual-and-diff
-          path: .vitest-attachments/
+          path: .vitest/
           if-no-files-found: ignore
       - run: bun run test:webkit
