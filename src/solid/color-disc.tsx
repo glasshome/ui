@@ -1,5 +1,6 @@
 import { type Color, parseColor } from "../lib/color/index.js";
 import { type Component, createSignal, type JSX } from "solid-js";
+import { claimKeys } from "../lib/behavior/claims.js";
 import { FOCUS_RING } from "../lib/input-classes.js";
 import { THUMB_COLOR_RING } from "../lib/thumb-classes.js";
 import { cn } from "../lib/utils.js";
@@ -11,6 +12,8 @@ const THUMB = 38;
 /* The bar keeps its thumb this far from each end, so a press maps to the same span. */
 const THUMB_INSET = 28;
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+const DISC_CLAIM = claimKeys(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"]);
+const BAR_CLAIM = claimKeys(["ArrowLeft", "ArrowRight"]);
 
 /* Hue 0 at three o'clock, turning clockwise, the direction the conic gradient paints. */
 const discBackground =
@@ -139,6 +142,7 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
           background: value().toString("css"),
           "pointer-events": "none",
         }}
+        data-claim={props.disabled ? undefined : DISC_CLAIM}
         on:keydown={onKeyDown}
       />
     </div>
@@ -232,6 +236,7 @@ const TemperatureBar: Component<TemperatureBarProps> = (props) => {
           kelvin: format.number(props.value, { useGrouping: false }),
         })}
         data-slot="temperature-bar-thumb"
+        data-claim={props.disabled ? undefined : BAR_CLAIM}
         class={cn(
           "pointer-events-none absolute top-1/2 rounded-full",
           THUMB_COLOR_RING,

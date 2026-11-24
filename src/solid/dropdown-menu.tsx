@@ -164,6 +164,9 @@ function DropdownMenuTrigger<T extends ValidComponent = "button">(
           if (typeof local.ref === "function") local.ref(node);
         },
         "aria-haspopup": "true",
+        get "data-claim"() {
+          return button.claim();
+        },
         get "aria-expanded"() {
           return menu.open();
         },

@@ -80,6 +80,19 @@ describe("createHold", () => {
     expect(clicks).toBe(2);
   });
 
+  it("claims its release once it fires, until the press ends", async () => {
+    useFakeTime();
+    const el = sheet();
+    const hold = createHold({ onHold: () => {} });
+    el.addEventListener("pointerdown", hold.down);
+    await commands.mouse("down", 50, 50);
+    expect(hold.claim()).toBeUndefined();
+    await vi.advanceTimersByTimeAsync(HOLD_MS);
+    expect(hold.claim()).toBe("prevent:touchend prevent:click stop:click");
+    await commands.mouse("up", 50, 50);
+    expect(hold.claim()).toBeUndefined();
+  });
+
   it("a press that moves past the slop never fires", async () => {
     useFakeTime();
     const el = sheet();

@@ -416,6 +416,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
               class={local.scrimClass}
               data-expanded={expanded() ? "" : undefined}
               data-closed={expanded() ? undefined : ""}
+              data-claim="prevent:pointerdown"
               on:pointerdown={(event) => {
                 // Focus stays in the panel when the scrim is pressed.
                 if (event.target === event.currentTarget) event.preventDefault();

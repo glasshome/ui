@@ -11,6 +11,7 @@ import {
   useContext,
   type ValidComponent,
 } from "solid-js";
+import { claimKeys } from "../lib/behavior/claims.js";
 import { type Collection, createCollection } from "../lib/behavior/collection.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { focusWithoutTracking, trackFocus } from "../lib/behavior/focus-scope.js";
@@ -76,6 +77,8 @@ function useAccordionItem(): AccordionItemContextValue {
 }
 
 const NAVIGATION_KEYS = new Set(["ArrowDown", "ArrowUp", "Home", "End"]);
+const NAVIGATION_CLAIM = claimKeys(NAVIGATION_KEYS);
+const ESCAPE_CLAIM = claimKeys(["Escape"]);
 
 const AccordionRoot: Component<AccordionProps> = (props) => {
   const fallbackId = `accordion-${createUniqueId()}`;
@@ -102,6 +105,7 @@ const AccordionRoot: Component<AccordionProps> = (props) => {
     orientation: () => "vertical",
     focus: "roving",
     loop: () => local.shouldFocusWrap ?? true,
+    claimsKeys: false,
   });
 
   const toggle = (item: string) => {
@@ -142,6 +146,9 @@ const AccordionRoot: Component<AccordionProps> = (props) => {
           ref: (node: HTMLElement) => {
             setEl(node);
             if (typeof local.ref === "function") local.ref(node as HTMLDivElement);
+          },
+          get "data-claim"() {
+            return mayEmpty() && value().length > 0 ? ESCAPE_CLAIM : undefined;
           },
         })}
       />
@@ -224,6 +231,7 @@ const AccordionTriggerRoot: Component<AccordionTriggerProps> = (props) => {
           get "data-key"() {
             return item.value();
           },
+          "data-claim": NAVIGATION_CLAIM,
         },
         others,
         {

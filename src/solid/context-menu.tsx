@@ -113,6 +113,7 @@ type ContextMenuTriggerProps<T extends ValidComponent = "div"> = TriggerOwnProps
 type Bound<E extends Event> = E & { currentTarget: HTMLElement; target: Element };
 
 const NO_CALLOUT = "-webkit-touch-callout: none";
+const MENU_CLAIM = "prevent:contextmenu stop:contextmenu";
 
 function ContextMenuTrigger<T extends ValidComponent = "div">(
   props: ContextMenuTriggerProps<T>,
@@ -210,6 +211,10 @@ function ContextMenuTrigger<T extends ValidComponent = "div">(
           return typeof own === "string"
             ? `${NO_CALLOUT}; ${own}`
             : { "-webkit-touch-callout": "none", ...own };
+        },
+        get "data-claim"() {
+          if (disabled()) return undefined;
+          return [MENU_CLAIM, hold.claim()].filter(Boolean).join(" ");
         },
         get "data-disabled"() {
           return disabled() ? "" : undefined;

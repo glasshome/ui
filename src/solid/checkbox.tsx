@@ -80,7 +80,7 @@ const Checkbox = (props: CheckboxProps) => {
   });
   const [input, setInput] = createSignal<HTMLInputElement>();
   const [root, setRoot] = createSignal<HTMLDivElement>();
-  let focused = false;
+  const [focused, setFocused] = createSignal(false);
 
   effect(
     () => [input(), local.indeterminate ?? false, checked()] as const,
@@ -136,8 +136,9 @@ const Checkbox = (props: CheckboxProps) => {
       role="group"
       id={id()}
       on:pointerdown={(event) => {
-        if (focused) event.preventDefault();
+        if (focused()) event.preventDefault();
       }}
+      data-claim={focused() ? "prevent:pointerdown" : undefined}
       {...state()}
       data-slot="checkbox"
       {...others}
@@ -169,8 +170,8 @@ const Checkbox = (props: CheckboxProps) => {
           {...state()}
           class="peer"
           on:change={change}
-          on:focus={() => (focused = true)}
-          on:blur={() => (focused = false)}
+          on:focus={() => setFocused(true)}
+          on:blur={() => setFocused(false)}
         />
         <span
           aria-hidden="true"

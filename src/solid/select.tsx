@@ -18,6 +18,7 @@ import {
 import { Portal } from "solid-js/web";
 import { createAnchored } from "../lib/behavior/anchored.js";
 import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
+import { claimKeys, createClaim } from "../lib/behavior/claims.js";
 import { createCollection, createTypeahead } from "../lib/behavior/collection.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createDismiss } from "../lib/behavior/dismiss.js";
@@ -40,6 +41,11 @@ import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { usePortalMount } from "./portal-mount.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
+
+const PRESS_CLAIM = "prevent:pointerdown";
+const TRIGGER_CLAIM = `${claimKeys(["Enter", " ", "ArrowDown", "ArrowUp"])} ${PRESS_CLAIM}`;
+const STEP_CLAIM = claimKeys(["ArrowLeft", "ArrowRight"]);
+const LISTBOX_CLAIM = claimKeys(["Enter", " "]);
 
 /** One row of the list: an option, or the heading of a group of options. */
 interface SelectNode<T> {
@@ -616,6 +622,11 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
           return ctx.busy() || undefined;
         },
         "aria-haspopup": "listbox" as const,
+        get "data-claim"() {
+          if (ctx.blocked()) return undefined;
+          if (ctx.open()) return PRESS_CLAIM;
+          return ctx.multiple() ? TRIGGER_CLAIM : `${TRIGGER_CLAIM} ${STEP_CLAIM}`;
+        },
         get "aria-expanded"() {
           return ctx.open() ? ("true" as const) : ("false" as const);
         },
@@ -743,6 +754,7 @@ const SelectContent: Component<SelectContentProps> = (props) => {
     orientation: () => "vertical",
     focus: "virtual",
   });
+  createClaim(listbox, () => LISTBOX_CLAIM);
 
   effect(
     () => [ctx.open(), listbox()] as const,

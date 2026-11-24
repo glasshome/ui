@@ -11,7 +11,6 @@ import {
   useContext,
 } from "solid-js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
-import { trackFocus } from "../lib/behavior/focus-scope.js";
 import { callEventHandler, effect } from "../lib/behavior/solid.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
@@ -204,18 +203,12 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
       if (el) el.defaultChecked = isDefault;
     },
   );
-  let inputFocus: ReturnType<typeof trackFocus> | undefined;
-  effect(input, (el) => {
-    if (!el) return;
-    const tracked = trackFocus(el);
-    inputFocus = tracked;
-    return tracked.stop;
-  });
+  const [focused, setFocused] = createSignal(false);
   // Bound on the elements, since Solid's delegated handlers never reach inside a closed shadow root.
   effect(item, (node) => {
     if (!node) return;
     const pointerdown = (event: PointerEvent) => {
-      if (inputFocus?.has()) event.preventDefault();
+      if (focused()) event.preventDefault();
     };
     const click = (event: MouseEvent) =>
       callEventHandler(
@@ -244,6 +237,7 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
       }}
       role="group"
       id={id()}
+      data-claim={focused() ? "prevent:pointerdown" : undefined}
       {...state()}
       data-slot="radio-group-item"
       class={cn("flex", local.class)}
@@ -265,9 +259,12 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
         class="peer"
         aria-busy={local.busy || undefined}
         aria-disabled={local.busy || undefined}
+        data-claim={local.busy ? "prevent:click" : undefined}
         on:click={(event) => {
           if (local.busy) event.preventDefault();
         }}
+        on:focus={() => setFocused(true)}
+        on:blur={() => setFocused(false)}
         on:change={change}
       />
       <label

@@ -108,6 +108,32 @@ describe("Dock paging", () => {
       }
     },
   );
+
+  it.each(["bottom", "left", "right"] as const)(
+    "draws a paging %s dock's items in its first frame where they stay once the strip scrolls",
+    async (placement) => {
+      const side = placement !== "bottom";
+      const { container } = render(() => (
+        <div
+          style={{ width: side ? "200px" : `${OVERFLOWING_BOX}px`, height: side ? "340px" : "" }}
+        >
+          <Dock items={items(12)} placement={placement} />
+        </div>
+      ));
+      const places = () =>
+        [...container.querySelectorAll('[data-slot="dock-item"]')].map((item) => {
+          const r = item.getBoundingClientRect();
+          return [Math.round(r.left), Math.round(r.top)];
+        });
+      const first = places();
+      await frames(4);
+
+      expect(container.querySelector('[data-slot="dock-bar"]')?.className).toMatch(
+        /overflow-[xy]-auto/,
+      );
+      expect(places()).toEqual(first);
+    },
+  );
 });
 
 describe("Dock hold", () => {

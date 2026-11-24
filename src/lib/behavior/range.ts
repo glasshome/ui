@@ -1,5 +1,6 @@
 import { type Accessor, createMemo } from "solid-js";
 import { readingDirection } from "../format.js";
+import { keepKeys } from "./claims.js";
 import { createControllableSignal } from "./controllable.js";
 
 function snapValueToStep(value: number, min: number, max: number, step: number): number {
@@ -50,6 +51,12 @@ const RTL_KEYS: Record<string, RangeKey> = {
 };
 
 const SHIFTED: Partial<Record<RangeKey, RangeKey>> = { decrease: "pageDown", increase: "pageUp" };
+
+/** The claim a range's thumb makes on the keys it handles. */
+export const RANGE_CLAIM = keepKeys(Object.keys(LTR_KEYS));
+
+/** The claim a drag surface makes on the press that starts a drag. */
+export const DRAG_CLAIM = "prevent:pointerdown";
 
 export function rangeKeyOf(e: KeyboardEvent): RangeKey | undefined {
   const key = (readingDirection === "rtl" ? RTL_KEYS : LTR_KEYS)[e.key];

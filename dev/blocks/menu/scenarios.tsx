@@ -1,5 +1,5 @@
 import { type Accessor, createSignal, type JSX, onCleanup, Show } from "solid-js";
-import { createMenu, createMenuButton, type Menu } from "../../../src/lib/behavior/menu";
+import { createMenu, createMenuButton, type Menu, rowClaim } from "../../../src/lib/behavior/menu";
 import { defineScenarios } from "../../harness/types";
 
 type ItemRole = "menuitem" | "menuitemcheckbox" | "menuitemradio";
@@ -40,6 +40,7 @@ function Row(props: {
       aria-checked={props.checked ? (props.checked() ? "true" : "false") : undefined}
       aria-haspopup={props.submenu ? "menu" : undefined}
       aria-expanded={props.submenu ? props.submenu.open() : undefined}
+      data-claim={props.disabled ? undefined : rowClaim(props.menu, undefined, !!props.submenu)}
       data-highlighted={props.menu.highlighted() === props.id ? "" : undefined}
       style={{
         padding: "6px 10px",
@@ -99,6 +100,7 @@ export function ActionsMenu() {
         ref={(el) => menu.setTrigger(el)}
         aria-haspopup="menu"
         aria-expanded={open()}
+        data-claim={button.claim()}
         on:pointerdown={(event) => button.onPointerDown(event)}
         on:click={() => button.onClick()}
         on:keydown={(event) => button.onKeyDown(event)}
