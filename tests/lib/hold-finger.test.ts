@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { commands, userEvent } from "vitest/browser";
+import { commands } from "vitest/browser";
 import { createHold, HOLD_MS } from "../../src/lib/hold.js";
 import { useFakeTime } from "../../src/testing/index.js";
 
@@ -18,6 +18,12 @@ afterEach(() => {
 declare module "vitest/browser" {
   interface BrowserCommands {
     touch(action: "down" | "up" | "cancel", x: number, y: number): Promise<void>;
+    mouse(
+      action: "move" | "down" | "up" | "press",
+      x: number,
+      y: number,
+      button?: "left" | "right",
+    ): Promise<void>;
   }
 }
 
@@ -52,7 +58,8 @@ describe("createHold", () => {
     await vi.advanceTimersByTimeAsync(HOLD_MS);
     await commands.touch("cancel", 50, 50);
     el.removeEventListener("pointerdown", hold.down);
-    await userEvent.click(el);
+    // Raw mouse input carries no action timer, so a cold module server cannot time the press out.
+    await commands.mouse("press", 50, 50);
     expect(clicks).toBe(1);
   });
 
