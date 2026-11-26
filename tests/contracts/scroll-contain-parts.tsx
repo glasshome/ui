@@ -1,7 +1,7 @@
 import { render } from "@solidjs/testing-library";
-import { findScenario } from "../../dev/harness/registry";
+import { loadScenario } from "../../dev/harness/load-scenario";
 import { runSteps, scenarioScope } from "../../dev/harness/steps";
-import { Within } from "../../dev/harness/Within";
+import { loadWithin } from "../../dev/harness/load-within";
 import { input } from "../harness/input";
 import { settle } from "../harness/mount";
 
@@ -25,9 +25,10 @@ export interface Parts {
 }
 
 export async function openBlock(id: string, within: "page" | "shadow-root"): Promise<Parts> {
-  const scenario = findScenario("scroll-contain", id);
+  const scenario = await loadScenario("scroll-contain", id);
   if (!scenario) throw new Error(`no scenario ${id}`);
-  render(() => <Within mode={within}>{scenario.render()}</Within>);
+  const Frame = await loadWithin(within);
+  render(() => <Frame>{scenario.render()}</Frame>);
   await settle();
   await runSteps(scenarioScope, [{ press: { role: "button", name: "Open modal" } }], input, settle);
   return {

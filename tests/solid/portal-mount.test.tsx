@@ -1,7 +1,7 @@
 import "../real-time-animations";
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
-import { DelegatedEvents, delegateEvents } from "@solidjs/web";
+import { createSignal, flush } from "solid-js";
+import { DelegatedEvents, delegateEvents, registerDelegatedRoot } from "@solidjs/web";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import {
@@ -57,13 +57,7 @@ for (const name of DelegatedEvents) document.addEventListener(name, unpin);
 
 /** The realm's wiring (widget-sdk's `delegateInside`): the document cannot see into a closed root, so Solid listens on it. */
 function delegateInside(root: ShadowRoot) {
-  const target = {
-    addEventListener: (type: string, listener: EventListener) =>
-      root.addEventListener(type, listener),
-    removeEventListener: (type: string, listener: EventListener) =>
-      root.removeEventListener(type, listener),
-  } as unknown as Document;
-  delegateEvents([...DelegatedEvents], target);
+  registerDelegatedRoot(root);
   for (const name of DelegatedEvents) root.addEventListener(name, unpin);
   root.adoptedStyleSheets = [uiSheet];
 }
@@ -476,8 +470,10 @@ describe("the rest of the shadow-root review's cases", () => {
     outside.dispatchEvent(
       new PointerEvent("pointerdown", { bubbles: true, composed: true, pointerType: "touch" }),
     );
+    flush();
     expect(open()).toBe(true);
     outside.dispatchEvent(new MouseEvent("click", { bubbles: true, composed: true }));
+    flush();
     expect(open()).toBe(false);
   });
 

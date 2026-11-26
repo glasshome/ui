@@ -1,11 +1,11 @@
 import { render } from "@solidjs/testing-library";
 import { page } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
-import { findScenario } from "../../dev/harness/registry";
+import { loadScenario } from "../../dev/harness/load-scenario";
 import { settleDom } from "../../dev/harness/settle";
 import { SCENARIO_WIDTHS } from "../../dev/harness/types";
 import { scenarioScope } from "../../dev/harness/steps";
-import { Within } from "../../dev/harness/Within";
+import { loadWithin } from "../../dev/harness/load-within";
 import { afterTest } from "./leaks";
 
 const realFrame = globalThis.requestAnimationFrame;
@@ -31,12 +31,11 @@ export function focusedElement(): Element | null {
 }
 
 export async function mountScenario(component: string, id: string) {
-  const scenario = findScenario(component, id);
+  const scenario = await loadScenario(component, id);
   if (!scenario) throw new Error(`no scenario ${component}/${id}`);
   if (scenario.width) await page.viewport(...SCENARIO_WIDTHS[scenario.width]);
-  const { container } = render(() => (
-    <Within mode={scenario.within ?? "page"}>{scenario.render()}</Within>
-  ));
+  const Frame = await loadWithin(scenario.within ?? "page");
+  const { container } = render(() => <Frame>{scenario.render()}</Frame>);
   await settle();
   return { root: container, scope: scenarioScope, scenario };
 }

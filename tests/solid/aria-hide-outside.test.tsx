@@ -197,7 +197,9 @@ const stacked: Record<string, (inner: () => boolean) => JSX.Element> = {
   ),
   "dialog handing off to a dialog": (inner) => {
     const [which, setWhich] = createSignal<"a" | "b" | null>("a");
-    createEffect(() => inner() && setWhich("b"));
+    createEffect(inner, (value) => {
+      if (value) setWhich("b");
+    });
     return (
       <>
         <Dialog open={which() === "a"}>

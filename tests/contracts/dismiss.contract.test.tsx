@@ -1,5 +1,5 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { commands } from "vitest/browser";
 import { findAll } from "../../dev/harness/steps";
@@ -356,6 +356,7 @@ describe("dismiss contract", () => {
     trigger.focus();
     expect(reasons).toEqual([]);
     outside.focus();
+    flush();
     expect(reasons).toEqual(["focus-outside"]);
     expect(open()).toBe(false);
 

@@ -1,12 +1,12 @@
 import "../real-time-animations";
 import { cleanup, render } from "@solidjs/testing-library";
-import { createEffect, createSignal } from "solid-js";
+import { createEffect, createSignal, flush } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { commands, userEvent } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { findAll } from "../../dev/harness/steps";
-import { Within } from "../../dev/harness/Within";
+import { ClosedShadowRoot } from "../../dev/harness/within-shadow";
 import { layerStack } from "../../src/lib/behavior/layer-stack";
 import { ModalFrame, ModalRoot, useDialogContext } from "../../src/lib/behavior/modal-root";
 import { overAnchor } from "../../src/lib/anchor-placement";
@@ -181,13 +181,13 @@ describe("modal root contract", () => {
 
   it("MR6 inside a closed shadow root the dialog hides nothing on the page, and on the page it hides what is beside it", async () => {
     const shadow = page(() => (
-      <Within mode="shadow-root">
+      <ClosedShadowRoot>
         <Dialog open>
           <DialogContent>
             <DialogTitle>Sealed</DialogTitle>
           </DialogContent>
         </Dialog>
-      </Within>
+      </ClosedShadowRoot>
     ));
     await settle();
     expect(findAll(scope(), { role: "dialog", name: "Sealed" })).toHaveLength(1);
@@ -298,13 +298,13 @@ describe("modal root contract", () => {
     cleanup();
 
     render(() => (
-      <Within mode="shadow-root">
+      <ClosedShadowRoot>
         <Dialog open>
           <DialogContent>
             <DialogTitle>Sealed</DialogTitle>
           </DialogContent>
         </Dialog>
-      </Within>
+      </ClosedShadowRoot>
     ));
     await settle();
     expect(
@@ -620,6 +620,7 @@ describe("kept modal contract", () => {
     };
     const shown = box(layer);
     setOpen(false);
+    flush();
     const writes: string[] = [];
     const who = (node: Node) => (node === layer ? "root" : node === panel ? "panel" : "inside");
     const observer = new MutationObserver((records) => {
@@ -815,6 +816,7 @@ describe("kept modal contract", () => {
       const scrim = document.querySelector('[data-slot="dialog-overlay"]');
       if (!scrim) throw new Error("no scrim");
       setOpen(false);
+      flush();
       expect(panel.getAnimations().length + scrim.getAnimations().length).toBeGreaterThan(0);
       await settle();
       expect(
@@ -900,7 +902,9 @@ describe("kept modal contract", () => {
     const seen: boolean[] = [];
     const Probe = () => {
       const ctx = useDialogContext();
-      createEffect(() => seen.push(ctx.dormant()));
+      createEffect(ctx.dormant, (dormant) => {
+        seen.push(dormant);
+      });
       return null;
     };
     const [open, setOpen] = createSignal(false);

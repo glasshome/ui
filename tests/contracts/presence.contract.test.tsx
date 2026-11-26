@@ -1,5 +1,5 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal, onCleanup, Show } from "solid-js";
+import { createSignal, flush, onCleanup, Show } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createPresence,
@@ -28,6 +28,14 @@ function setup(options: {
   const [keep, setKeep] = createSignal(options.keep ?? false);
   const [element, setElement] = createSignal<HTMLElement>();
   const held: { presence?: Presence } = {};
+  const Panel = () => {
+    onCleanup(() => setElement(undefined));
+    return (
+      <div ref={setElement} data-testid="panel" style={options.style}>
+        <span data-testid="child" />
+      </div>
+    );
+  };
   const view = render(() => {
     const presence = createPresence({
       present,
@@ -39,16 +47,7 @@ function setup(options: {
     held.presence = presence;
     return (
       <Show when={presence.mounted()}>
-        <div
-          ref={(node) => {
-            setElement(node);
-            onCleanup(() => setElement(undefined));
-          }}
-          data-testid="panel"
-          style={options.style}
-        >
-          <span data-testid="child" />
-        </div>
+        <Panel />
       </Show>
     );
   });
@@ -57,10 +56,31 @@ function setup(options: {
     return held.presence;
   };
   const panel = () => view.queryByTestId("panel");
-  const emit = (target: Element, type: string, init: AnimationEventInit = {}) =>
+  const emit = (target: Element, type: string, init: AnimationEventInit = {}) => {
     target.dispatchEvent(new AnimationEvent(type, { bubbles: true, ...init }));
-  const advance = (ms: number) => vi.advanceTimersByTimeAsync(ms);
-  return { present, setPresent, keep, setKeep, view, presence, panel, emit, advance };
+    flush();
+  };
+  const advance = async (ms: number) => {
+    await vi.advanceTimersByTimeAsync(ms);
+    flush();
+  };
+  const settled =
+    <T,>(write: (value: T) => unknown) =>
+    (value: T) => {
+      write(value);
+      flush();
+    };
+  return {
+    present,
+    setPresent: settled(setPresent),
+    keep,
+    setKeep: settled(setKeep),
+    view,
+    presence,
+    panel,
+    emit,
+    advance,
+  };
 }
 
 describe("presence", () => {
