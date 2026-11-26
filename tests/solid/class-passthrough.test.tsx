@@ -736,6 +736,11 @@ const CASES: Record<string, () => JSX.Element> = {
       </solid.ToggleGroupItem>
     </solid.ToggleGroup>
   ),
+  FollowTooltip: () => (
+    <solid.FollowTooltip at={{ x: 10, y: 10 }} class="probe">
+      t
+    </solid.FollowTooltip>
+  ),
   TooltipTrigger: () => (
     <solid.Tooltip>
       <solid.TooltipTrigger class="probe">t</solid.TooltipTrigger>
