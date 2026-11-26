@@ -389,6 +389,8 @@ export { Textarea } from "./textarea.js";
 export { Toggle, toggleVariants } from "./toggle.js";
 export { ToggleGroup, ToggleGroupItem } from "./toggle-group.js";
 export { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js";
+export { FollowTooltip, type FollowPoint, type FollowTooltipProps } from "./follow-tooltip.js";
+export { trusted } from "./icon-nodes.js";
 export { WidgetCard } from "./widget-card.js";
 export {
   formatWidgetCount,

@@ -1,6 +1,7 @@
 /* Framework-agnostic root. Components are the primary doors; surface recipes
  * are exported here only for consumers that cannot run Solid (server .astro
  * frontmatter) or that gate the blur themselves (performant-blur wrappers). */
+export { ariaBool } from "./lib/aria.js";
 export {
   ALERT_CLASS,
   ALERT_CONTENT_CLASS,
