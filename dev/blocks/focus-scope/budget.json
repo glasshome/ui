@@ -160,8 +160,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 5,
-        "reason": "baseline 2026-11-17; phase 1 step 5 is open, Task 12 re-measures; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
+        "max": 7,
+        "reason": "2026-11-26: Worker realm baseline, guest lane total plus 25% and at least one; the old max had no room for a frame tick under load"
       },
       "domCalls": {
         "getComputedStyle": 0,

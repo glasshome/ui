@@ -174,8 +174,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 8,
-        "reason": "baseline 2026-11-17, 6 measured plus 25%; predates Phase 1 Next step 5, Task 12 re-measures"
+        "max": 10,
+        "reason": "2026-11-26: Worker realm baseline, guest lane total plus 25% and at least one; the old max had no room for a frame tick under load"
       },
       "domCalls": {
         "getComputedStyle": 0,
