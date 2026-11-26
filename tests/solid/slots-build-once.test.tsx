@@ -11,12 +11,19 @@ afterEach(cleanup);
 // A slot read twice builds its JSX twice; under SSR hydration the first build claims
 // keys the server never emitted, and a Dynamic inside it throws.
 
-const SOURCES = import.meta.glob<string>("../../src/solid/**/*.{ts,tsx}", {
+const SOURCES = import.meta.glob<string>("../../src/**/*.{ts,tsx}", {
   query: "?raw",
   import: "default",
   eager: true,
 });
-const sourceKey = (file: string) => `../../src/solid/${file}`;
+const sourceKey = (file: string) => {
+  const parts: string[] = ["..", "..", "src"];
+  for (const part of `solid/${file}`.split("/")) {
+    if (part === "..") parts.pop();
+    else if (part !== ".") parts.push(part);
+  }
+  return parts.join("/");
+};
 const read = (file: string) => SOURCES[sourceKey(file)] ?? "";
 const moduleFile = (base: string) =>
   [`${base}.tsx`, `${base}.ts`].find((file) => sourceKey(file) in SOURCES) ?? `${base}.tsx`;
@@ -35,7 +42,7 @@ function sourceOf(file: string): string {
 function exportFiles(): Map<string, string> {
   const files = new Map<string, string>();
   for (const block of read("index.ts").matchAll(
-    /export\s*(?:type\s*)?\{([^}]*)\}\s*from\s*"\.\/([^"]+)\.js"/g,
+    /export\s*(?:type\s*)?\{([^}]*)\}\s*from\s*"((?:\.\.?\/)[^"]+)\.js"/g,
   )) {
     const [, names = "", file = ""] = block;
     for (const entry of names.split(",")) {
