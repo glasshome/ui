@@ -95,8 +95,8 @@
     "mainThreadMotion": ["height"],
     "guest": {
       "workUnits": {
-        "max": 19,
-        "reason": "rebaseline 2026-11-26 on the Solid 2 guest; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+        "max": 18,
+        "reason": "rebaseline 2026-11-26 after Polymorphic renders through dynamic(); plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -133,8 +133,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 17,
-        "reason": "rebaseline 2026-11-26 on the Solid 2 guest; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+        "max": 15,
+        "reason": "rebaseline 2026-11-26 after Polymorphic renders through dynamic(); plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },

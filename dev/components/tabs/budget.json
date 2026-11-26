@@ -18,8 +18,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 27,
-        "reason": "rebaseline 2026-11-26 on the Solid 2 guest; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+        "max": 24,
+        "reason": "rebaseline 2026-11-26 after Polymorphic renders through dynamic(); plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -42,8 +42,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 27,
-        "reason": "rebaseline 2026-11-26 on the Solid 2 guest; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+        "max": 24,
+        "reason": "rebaseline 2026-11-26 after Polymorphic renders through dynamic(); plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -122,8 +122,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 34,
-        "reason": "rebaseline 2026-11-26 on the Solid 2 guest; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+        "max": 29,
+        "reason": "rebaseline 2026-11-26 after Polymorphic renders through dynamic(); plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -160,8 +160,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 29,
-        "reason": "rebaseline 2026-11-26 on the Solid 2 guest; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+        "max": 27,
+        "reason": "rebaseline 2026-11-26 after Polymorphic renders through dynamic(); plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -198,8 +198,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 34,
-        "reason": "rebaseline 2026-11-26 on the Solid 2 guest; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+        "max": 30,
+        "reason": "rebaseline 2026-11-26 after Polymorphic renders through dynamic(); plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
