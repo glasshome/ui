@@ -6,7 +6,7 @@
  * - unknown formType renders a read-only notice, never a broken control,
  * - formType "list" and "variants" branches per sdk-2.md D.3. */
 import { render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { press } from "../press.js";
@@ -98,6 +98,7 @@ describe("SchemaForm is controlled", () => {
     const input = view.getByLabelText("Name") as HTMLInputElement;
     expect(input.value).toBe("Alpha");
     setData({ name: "Beta" });
+    flush();
     expect(input.value).toBe("Beta");
   });
 
