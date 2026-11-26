@@ -1,4 +1,4 @@
-import { effect } from "./solid.js";
+import { createEffect } from "solid-js";
 
 /**
  * What a node takes from an event, read by a sealed widget's host at the event itself: a widget
@@ -37,7 +37,7 @@ export function createClaim(
   tokens: () => string | undefined,
 ): void {
   const id = Symbol();
-  effect(
+  createEffect(
     () => [target(), tokens()] as const,
     ([el, claimed]) => {
       if (!el || !claimed) return;

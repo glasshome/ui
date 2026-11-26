@@ -12,7 +12,7 @@ import { Icon } from "./icon.js";
 
 type Direction = "horizontal" | "vertical";
 
-const ResizableContext = createContext<{ direction: () => Direction }>();
+const ResizableContext = createContext<{ direction: () => Direction } | null>(null);
 
 const ResizablePanelGroup: ParentComponent<ComponentProps<"div"> & { direction?: Direction }> = (
   props,

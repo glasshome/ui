@@ -50,7 +50,7 @@ export interface EntityDataAdapter {
   useAreas(): Accessor<AreaViewLike[]>;
 }
 
-export const EntityDataContext = createContext<EntityDataAdapter>();
+export const EntityDataContext = createContext<EntityDataAdapter | null>(null);
 
 /**
  * Module-level fallback for render roots the host's context provider cannot

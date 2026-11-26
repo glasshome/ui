@@ -10,15 +10,16 @@ import {
   omit,
   untrack,
   useContext,
+  createEffect,
+  merge,
 } from "solid-js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
-import { Portal } from "@solidjs/web";
+import { Layer } from "../lib/behavior/layer.js";
 import type { Align, Side } from "../lib/anchor-placement.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createMenu, type Menu, type MenuOptions, rowClaim } from "../lib/behavior/menu.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
-import { effect, merge } from "../lib/behavior/solid.js";
 import { glassToneText } from "../lib/glass-tone.js";
 import {
   MENU_ITEM,
@@ -31,6 +32,7 @@ import { FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { usePortalMount } from "./portal-mount.js";
+import { useRequired } from "../lib/context.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
 
 /* The panel without its motion: DropdownMenu morphs out of its trigger,
@@ -64,12 +66,10 @@ export interface MenuLevel {
 
 const MenuLevelContext = createContext<MenuLevel>();
 
-export const MenuLevelProvider = MenuLevelContext.Provider;
+export const MenuLevelProvider = MenuLevelContext;
 
 export function useMenuLevel(): MenuLevel {
-  const level = useContext(MenuLevelContext);
-  if (!level) throw new Error("Menu parts render inside a DropdownMenu or a ContextMenu");
-  return level;
+  return useRequired(MenuLevelContext, "Menu parts", ["DropdownMenu", "ContextMenu"]);
 }
 
 export function createMenuLevel(options: MenuOptions, parent?: MenuLevel): MenuLevel {
@@ -103,8 +103,8 @@ export const MenuContentPart: Component<MenuContentPartProps> = (props) => {
     "onPanel",
   );
   const fallback = createUniqueId();
-  const id = (): string => props.id ?? fallback;
-  effect(id, (value) => {
+  const id = (): string => props.id || fallback;
+  createEffect(id, (value) => {
     level.setContentId(value);
     return () => level.setContentId(undefined);
   });
@@ -114,6 +114,7 @@ export const MenuContentPart: Component<MenuContentPartProps> = (props) => {
     exitMs: untrack(() => props.exitMs),
   });
 
+  const portalMount = usePortalMount();
   const Panel: Component = () => {
     onCleanup(() => menu.setContent(undefined));
     return (
@@ -141,9 +142,9 @@ export const MenuContentPart: Component<MenuContentPartProps> = (props) => {
 
   return (
     <Show when={presence.mounted()}>
-      <Portal mount={usePortalMount()}>
+      <Layer mount={portalMount}>
         <Panel />
-      </Portal>
+      </Layer>
     </Show>
   );
 };
@@ -203,7 +204,7 @@ interface RowState {
   indeterminate: Accessor<boolean>;
 }
 
-const RowContext = createContext<RowState>();
+const RowContext = createContext<RowState | null>(null);
 
 type MenuRowPartProps = RowOwnProps &
   ToneProps & {
@@ -391,14 +392,14 @@ type LabelOwnProps = { inset?: boolean; as?: ValidComponent };
 
 export type MenuLabelProps = LabelOwnProps & Omit<ComponentProps<"span">, "as">;
 
-const GroupContext = createContext<(id: string | undefined) => void>();
+const GroupContext = createContext<((id: string | undefined) => void) | null>(null);
 
 export const MenuLabelPart: Component<MenuLabelProps & { slotName: string }> = (props) => {
   const register = useContext(GroupContext);
   const rest = omit(props, "class", "inset", "slotName", "id", "as", "ref");
   const fallback = createUniqueId();
-  const id = (): string => props.id ?? fallback;
-  effect(id, (value) => {
+  const id = (): string => props.id || fallback;
+  createEffect(id, (value) => {
     register?.(value);
     return () => register?.(undefined);
   });
@@ -441,7 +442,7 @@ export const MenuGroup: Component<MenuGroupProps> = (props) => {
           as: props.as,
           defaultAs: "div" as ValidComponent,
           get id() {
-            return props.id ?? fallback;
+            return props.id || fallback;
           },
           role: "group",
           get "aria-labelledby"() {
@@ -459,7 +460,7 @@ interface RadioState {
   disabled: Accessor<boolean>;
 }
 
-const RadioContext = createContext<RadioState>();
+const RadioContext = createContext<RadioState | null>(null);
 
 export type MenuRadioGroupProps = Omit<MenuGroupProps, "onChange"> & {
   value?: string;

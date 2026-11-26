@@ -1,11 +1,10 @@
-import { createSignal } from "solid-js";
-import { effect } from "../../../src/lib/behavior/solid";
+import { createSignal, createEffect } from "solid-js";
 import { defineScenarios } from "../../harness/types";
 
 const Toggle = () => {
   const [button, setButton] = createSignal<HTMLButtonElement>();
   const [on, setOn] = createSignal(false);
-  effect(
+  createEffect(
     () => [button(), on()] as const,
     ([el, value]) => {
       el?.setAttribute("aria-pressed", String(value));

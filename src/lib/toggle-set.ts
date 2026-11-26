@@ -1,7 +1,6 @@
-import { type Accessor, createSignal, createUniqueId, onCleanup } from "solid-js";
+import { type Accessor, createSignal, createUniqueId, onCleanup, createEffect } from "solid-js";
 import { type Collection, createCollection } from "./behavior/collection.js";
 import { focusWithoutTracking, trackFocus } from "./behavior/focus-scope.js";
-import { effect } from "./behavior/solid.js";
 
 type Orientation = "horizontal" | "vertical";
 
@@ -64,11 +63,11 @@ export function createToggleItem(
 ) {
   const id = `${set.id()}-item-${createUniqueId()}`;
   const [el, setEl] = createSignal<HTMLElement>();
-  effect(item.disabled, () => set.collection.refresh());
+  createEffect(item.disabled, () => set.collection.refresh());
   onCleanup(() => set.collection.refresh());
   const pressed = () => set.isPressed(item.value());
 
-  effect(el, (node) => {
+  createEffect(el, (node) => {
     if (!node) return;
     set.joined(1);
     let mousePressed = false;

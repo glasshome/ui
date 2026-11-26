@@ -1,10 +1,18 @@
-import { type Component, createSignal, createUniqueId, omit, untrack } from "solid-js";
+import {
+  type Component,
+  createSignal,
+  createUniqueId,
+  omit,
+  untrack,
+  createEffect,
+  merge,
+} from "solid-js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import type { AnchorLike } from "../lib/behavior/anchored.js";
 import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createMenuButton } from "../lib/behavior/menu.js";
-import { callEventHandler, effect, merge } from "../lib/behavior/solid.js";
+import { callEventHandler } from "../lib/behavior/solid.js";
 import { MORPH_MOTION, MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -110,8 +118,8 @@ function DropdownMenuTrigger<T extends ValidComponent = "button">(
     "onClick",
   );
   const fallback = createUniqueId();
-  const id = (): string => props.id ?? fallback;
-  effect(id, (value) => {
+  const id = (): string => props.id || fallback;
+  createEffect(id, (value) => {
     level.setTriggerId(value);
     return () => level.setTriggerId(undefined);
   });
@@ -119,7 +127,7 @@ function DropdownMenuTrigger<T extends ValidComponent = "button">(
   const [el, setEl] = createSignal<HTMLElement>();
 
   // Bound on the element, since Solid's delegated handlers never reach inside a closed shadow root.
-  effect(el, (node) => {
+  createEffect(el, (node) => {
     if (!node) return;
     const down = (event: PointerEvent) => {
       callEventHandler(event as Bound<PointerEvent>, props.onPointerDown);

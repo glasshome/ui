@@ -1,4 +1,5 @@
-import { createContext, createMemo, createSignal, Show, useContext } from "solid-js";
+import { createContext, createMemo, createSignal, Show } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type JSX } from "@solidjs/web";
 import { createToggleItem, createToggleSet, type ToggleSet } from "../lib/toggle-set.js";
 import { cn } from "../lib/utils.js";
@@ -59,8 +60,7 @@ export function FaceToggle(props: {
   kind: "person" | "screen";
   class?: string;
 }) {
-  const group = useContext(FaceContext);
-  if (!group) throw new Error("FaceToggle renders inside a FaceToggleGroup");
+  const group = useRequired(FaceContext, "FaceToggle", "FaceToggleGroup");
   const isLocked = () => group.locked().has(props.id);
   const text = useUiText();
   const item = createToggleItem(group.set, {

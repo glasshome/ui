@@ -1,7 +1,6 @@
 import {
   createEffect,
   createMemo,
-  createResource,
   createSignal,
   For,
   Match,
@@ -45,6 +44,7 @@ import {
   type MediaStoreError,
   type MediaUrls,
   presetValue,
+  type MediaIndex,
   type StoredMedia,
   sortMediaForClearing,
   useMediaStore,
@@ -149,16 +149,31 @@ function ImageGallery(
   let uploadButton: HTMLButtonElement | undefined;
   let panel: HTMLElement | undefined;
 
-  const [index, { refetch }] = createResource(
+  const [index, setIndex] = createSignal<{ value?: MediaIndex; error?: unknown }>({});
+  let request = 0;
+  const refetch = (): Promise<void> => {
+    const ticket = ++request;
+    const pending = store ? store.index() : Promise.reject(new Error("no media store"));
+    return pending.then(
+      (value) => {
+        if (ticket === request) setIndex({ value });
+      },
+      (error: unknown) => {
+        if (ticket === request) setIndex({ error });
+      },
+    );
+  };
+  createEffect(
     () => everOpened() && store !== undefined,
-    () => (store ? store.index() : Promise.reject(new Error("no media store"))),
+    (ready) => {
+      if (ready) void refetch();
+    },
   );
-  // Reading index() on a rejected resource rethrows, which crashes the popover's
-  // portal and leaves its overlay swallowing clicks. Every read goes through this.
-  const indexError = createMemo(() =>
-    index.error === undefined ? undefined : toMediaStoreError(index.error),
-  );
-  const loaded = () => (index.error === undefined ? index() : undefined);
+  const indexError = createMemo(() => {
+    const error = index().error;
+    return error === undefined ? undefined : toMediaStoreError(error);
+  });
+  const loaded = () => index().value;
   const sorted = createMemo(() => sortMediaForClearing(loaded()?.media ?? []));
   const presetTiles = createMemo(() =>
     Object.entries(props.presets ?? {}).map(([key, preset]): GalleryTile => ({

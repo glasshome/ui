@@ -1,6 +1,6 @@
 import { type JSX } from "@solidjs/web";
 import { Show } from "solid-js";
-import { Portal } from "@solidjs/web";
+import { Layer } from "../lib/behavior/layer.js";
 import { usePortalMount } from "./portal-mount.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { OVERLAY_SURFACE_OPAQUE } from "../lib/overlay-classes.js";
@@ -21,10 +21,11 @@ export function DockedPanel(props: {
   class?: string;
   children: JSX.Element;
 }) {
+  const portalMount = usePortalMount();
   const text = useUiText();
   return (
     <Show when={props.open}>
-      <Portal mount={usePortalMount()}>
+      <Layer mount={portalMount}>
         <aside
           data-slot="docked-panel"
           aria-label={props.ariaLabel}
@@ -47,7 +48,7 @@ export function DockedPanel(props: {
           </Show>
           {props.children}
         </aside>
-      </Portal>
+      </Layer>
     </Show>
   );
 }

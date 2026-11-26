@@ -9,13 +9,15 @@ import {
   onSettled,
   Show,
   omit,
-  useContext,
+  createEffect,
+  merge,
 } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type ValidComponent } from "@solidjs/web";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
-import { callEventHandler, effect, merge } from "../lib/behavior/solid.js";
+import { callEventHandler } from "../lib/behavior/solid.js";
 import { MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 
@@ -48,8 +50,7 @@ interface CollapsibleContextValue {
 const CollapsibleContext = createContext<CollapsibleContextValue>();
 
 export function useCollapsible(): CollapsibleContextValue {
-  const ctx = useContext(CollapsibleContext);
-  if (!ctx) throw new Error("A collapsible part renders inside a Collapsible");
+  const ctx = useRequired(CollapsibleContext, "A collapsible part", "Collapsible");
   return ctx;
 }
 
@@ -129,7 +130,7 @@ export const CollapsibleTriggerRoot: Component<CollapsibleTriggerProps> = (props
   const native = () => (props.as ?? "button") === "button";
 
   // Bound on the element: a delegated handler never hears a press inside a closed shadow root.
-  effect(el, (node) => {
+  createEffect(el, (node) => {
     if (!node) return;
     const click = (event: MouseEvent) => {
       callEventHandler(
@@ -191,8 +192,8 @@ export const CollapsibleTriggerRoot: Component<CollapsibleTriggerProps> = (props
 export const CollapsibleContentRoot: Component<CollapsibleContentProps> = (props) => {
   const ctx = useCollapsible();
   const others = omit(props, "as", "ref", "id");
-  const id = () => props.id ?? ctx.defaultContentId();
-  effect(id, (value) => ctx.registerContent(value));
+  const id = () => props.id || ctx.defaultContentId();
+  createEffect(id, (value) => ctx.registerContent(value));
 
   const [el, setEl] = createSignal<HTMLElement>();
   const presence = createPresence({
@@ -206,10 +207,10 @@ export const CollapsibleContentRoot: Component<CollapsibleContentProps> = (props
   let still = ctx.open();
   onSettled(() => {
     const frame = requestAnimationFrame(() => (still = false));
-    onCleanup(() => cancelAnimationFrame(frame));
+    return () => cancelAnimationFrame(frame);
   });
 
-  effect(
+  createEffect(
     () => [el(), ctx.open()] as const,
     ([node, open]) => {
       if (!node) return;

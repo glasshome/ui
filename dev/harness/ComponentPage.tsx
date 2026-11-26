@@ -1,4 +1,4 @@
-import { createResource, createSignal, For, onCleanup, onSettled, Show } from "solid-js";
+import { createEffect, createSignal, For, onSettled, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import {
   Button,
@@ -60,10 +60,10 @@ function Cell(props: { href: string; label: string; width: StageWidth; fullHeigh
       if (first) setHostWidth(first.contentRect.width);
     });
     if (host) observer.observe(host);
-    onCleanup(() => {
+    return () => {
       observer.disconnect();
       watching?.disconnect();
-    });
+    };
   });
 
   const measure = () => {
@@ -140,14 +140,22 @@ async function fetchReport(source: { slug: string; id: string }): Promise<RunRep
 
 /** The driver's newest run of this scenario, refetched when the window regains focus. */
 function ReportPanel(props: { slug: string; id: string }) {
-  const [report, { refetch }] = createResource(
-    () => ({ slug: props.slug, id: props.id }),
-    fetchReport,
+  const [report, setReport] = createSignal<RunReport | null>(null);
+  const [focusCount, setFocusCount] = createSignal(0);
+  createEffect(
+    () => ({ slug: props.slug, id: props.id, focus: focusCount() }),
+    (source) => {
+      let live = true;
+      void fetchReport(source).then((next) => live && setReport(next));
+      return () => {
+        live = false;
+      };
+    },
   );
   onSettled(() => {
-    const onFocus = () => void refetch();
+    const onFocus = () => setFocusCount((count) => count + 1);
     window.addEventListener("focus", onFocus);
-    onCleanup(() => window.removeEventListener("focus", onFocus));
+    return () => window.removeEventListener("focus", onFocus);
   });
   return (
     <Show

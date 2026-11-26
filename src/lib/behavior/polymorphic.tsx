@@ -1,6 +1,6 @@
+import { merge, omit } from "solid-js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import { Dynamic } from "@solidjs/web";
-import { merge, omit } from "./solid.js";
 
 export type PolymorphicProps<D extends ValidComponent> = {
   as?: ValidComponent;

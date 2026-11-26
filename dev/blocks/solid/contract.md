@@ -1,6 +1,6 @@
 # solid: behaviour contract
 
-Each line is one browser test in `tests/contracts/solid.contract.test.tsx`, named by its id. `src/lib/behavior/solid.ts` is the Solid 2 shaped effect, merge and omit every block builds on; the unit tests in `tests/behavior/solid.test.tsx` hold its edge cases.
+Each line is one browser test in `tests/contracts/solid.contract.test.tsx`, named by its id. Blocks build on Solid 2's `createEffect`, `merge` and `omit` directly.
 
 | id | when | then |
 |---|---|---|

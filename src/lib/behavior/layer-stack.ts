@@ -1,5 +1,4 @@
-import { type Accessor, createMemo, createRoot, createSignal } from "solid-js";
-import { effect } from "./solid.js";
+import { type Accessor, createSignal, createEffect } from "solid-js";
 
 export type LayerKind = "modal" | "popover" | "menu" | "tooltip" | "tour";
 export type TopLayer = "auto" | "manual";
@@ -33,11 +32,15 @@ export interface LayerHandle {
   containsPath(path: readonly EventTarget[]): boolean;
 }
 
-const [layers, setLayers] = createSignal<readonly Layer[]>([]);
+const [layerSignal, setLayers] = createSignal<readonly Layer[]>([]);
+// The signal lags until flush, and handlers run inside a flush: reads track the signal and answer from this list.
+let stack: readonly Layer[] = [];
 
-const top = createRoot(() =>
-  createMemo(() => layers().findLast((layer) => layer.kind !== "tooltip")),
-);
+const layers = (): readonly Layer[] => {
+  layerSignal();
+  return stack;
+};
+const top = (): Layer | undefined => layers().findLast((layer) => layer.kind !== "tooltip");
 
 export const layerStack: {
   layers: Accessor<readonly Layer[]>;
@@ -62,6 +65,7 @@ function blockPointerBelow(above: readonly HTMLElement[]): () => void {
 let releasePointer: (() => void) | undefined;
 
 function setStack(list: readonly Layer[]): void {
+  stack = list;
   setLayers(list);
   releasePointer?.();
   releasePointer = undefined;
@@ -94,9 +98,14 @@ function enterTopLayer(element: HTMLElement, mode: TopLayer, dismiss: (() => voi
 }
 
 export function registerLayer(options: LayerOptions): LayerHandle {
-  const [layer, setLayer] = createSignal<Layer | undefined>();
+  const [layerSignal, setLayer] = createSignal<Layer | undefined>();
+  let current: Layer | undefined;
+  const layer = (): Layer | undefined => {
+    layerSignal();
+    return current;
+  };
 
-  effect(
+  createEffect(
     () => [options.element(), options.open(), options.blockPointer?.() ?? false] as const,
     ([element, open, blocksPointer]) => {
       if (!element || !open) return;
@@ -109,7 +118,8 @@ export function registerLayer(options: LayerOptions): LayerHandle {
         blocksPointer,
         dismiss: options.dismiss,
       };
-      setStack([...layers(), entry]);
+      setStack([...stack, entry]);
+      current = entry;
       setLayer(entry);
       const leaveTopLayer = options.topLayer
         ? enterTopLayer(element, options.topLayer, () => {
@@ -118,7 +128,8 @@ export function registerLayer(options: LayerOptions): LayerHandle {
         : undefined;
       return () => {
         leaveTopLayer?.();
-        setStack(layers().filter((other) => other !== entry));
+        setStack(stack.filter((other) => other !== entry));
+        current = undefined;
         setLayer(undefined);
       };
     },

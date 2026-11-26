@@ -5,7 +5,6 @@ import {
   createMemo,
   createSignal,
   For,
-  on,
   onCleanup,
   onSettled,
   Show,
@@ -300,14 +299,12 @@ const Dock: Component<DockProps> = (props) => {
 
   // A newcomer may land on a page nobody is looking at; turn there once.
   createEffect(
-    on(
-      () => props.arrivedIds?.join("\n") ?? "",
-      () => {
-        const first = props.items.findIndex((it) => arrivedSet().has(it.id));
-        if (first >= 0) requestAnimationFrame(() => turnToItem(first));
-      },
-      { defer: true },
-    ),
+    () => props.arrivedIds?.join("\n") ?? "",
+    () => {
+      const first = props.items.findIndex((it) => arrivedSet().has(it.id));
+      if (first >= 0) requestAnimationFrame(() => turnToItem(first));
+    },
+    { defer: true },
   );
 
   // CSS draws the paging; the observer only tells the scripts what it drew.
@@ -377,10 +374,10 @@ const Dock: Component<DockProps> = (props) => {
       });
     });
     for (const [el, options] of watched) observer.observe(el, options);
-    onCleanup(() => {
+    return () => {
       cancelAnimationFrame(frame);
       observer?.disconnect();
-    });
+    };
   });
 
   return (

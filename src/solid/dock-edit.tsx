@@ -1,5 +1,5 @@
 import { createSignal, For, onCleanup, Show } from "solid-js";
-import { Portal } from "@solidjs/web";
+import { Layer } from "../lib/behavior/layer.js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { cn } from "../lib/utils.js";
@@ -175,6 +175,7 @@ export function DockMoveGrip(props: {
   placement: EdgeZone;
   onMove: (placement: EdgeZone) => void;
 }) {
+  const portalMount = usePortalMount();
   const [carrying, setCarrying] = createSignal(false);
   const [zone, setZone] = createSignal<EdgeZone | null>(null);
   let stop: (() => void) | undefined;
@@ -236,7 +237,7 @@ export function DockMoveGrip(props: {
         />
       </div>
       <Show when={carrying()}>
-        <Portal mount={usePortalMount()}>
+        <Layer mount={portalMount}>
           <div
             data-slot="dock-edge-zones"
             aria-hidden="true"
@@ -256,7 +257,7 @@ export function DockMoveGrip(props: {
               )}
             </For>
           </div>
-        </Portal>
+        </Layer>
       </Show>
     </>
   );

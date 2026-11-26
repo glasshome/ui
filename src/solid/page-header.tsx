@@ -40,8 +40,10 @@ export function PageHeader(props: {
     <div
       data-slot="page-header"
       ref={glass().ref}
-      class={cn(CARD_SURFACE_BASE, SECTION_OUTER_RADIUS, "relative overflow-hidden")}
-      classList={{ [CARD_BLUR]: !(glass().active?.() ?? false) }}
+      class={[
+        cn(CARD_SURFACE_BASE, SECTION_OUTER_RADIUS, "relative overflow-hidden"),
+        { [CARD_BLUR]: !(glass().active?.() ?? false) },
+      ]}
       style={glass().style?.() ?? {}}
     >
       <Show when={props.logo}>

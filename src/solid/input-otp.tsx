@@ -19,7 +19,7 @@ interface InputOTPContextValue {
   isActive: () => boolean;
 }
 
-const InputOTPContext = createContext<InputOTPContextValue>();
+const InputOTPContext = createContext<InputOTPContextValue | null>(null);
 
 const InputOTP: ParentComponent<
   ComponentProps<"div"> & {

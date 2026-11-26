@@ -31,7 +31,7 @@ type AlertProps = ComponentProps<"div"> & {
 // tone="destructive">` rendered in plain foreground: same markup, same slot,
 // same size class, but colourless, because it had no way to see the tone its
 // parent had already resolved.
-const AlertToneContext = createContext<() => string>();
+const AlertToneContext = createContext<(() => string) | null>(null);
 
 // Its own component so title and children resolve under AlertToneContext.
 const AlertBody: Component<{ title?: JSX.Element; toneColor: string; children?: JSX.Element }> = (

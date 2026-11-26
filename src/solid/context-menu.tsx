@@ -6,11 +6,13 @@ import {
   onCleanup,
   omit,
   untrack,
-  useContext,
+  createEffect,
+  merge,
 } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
-import { callEventHandler, effect, merge } from "../lib/behavior/solid.js";
+import { callEventHandler } from "../lib/behavior/solid.js";
 import { createHold } from "../lib/hold.js";
 import { MOTION_EXIT_MS, OVERLAY_MOTION } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
@@ -52,8 +54,7 @@ type Point = { x: number; y: number };
 const PointContext = createContext<(point: Point) => void>();
 
 const usePoint = (): ((point: Point) => void) => {
-  const setPoint = useContext(PointContext);
-  if (!setPoint) throw new Error("ContextMenuTrigger renders inside a ContextMenu");
+  const setPoint = useRequired(PointContext, "ContextMenuTrigger", "ContextMenu");
   return setPoint;
 };
 
@@ -129,8 +130,8 @@ function ContextMenuTrigger<T extends ValidComponent = "div">(
     "onPointerCancel",
   );
   const fallback = createUniqueId();
-  const id = (): string => props.id ?? fallback;
-  effect(id, (value) => {
+  const id = (): string => props.id || fallback;
+  createEffect(id, (value) => {
     level.setTriggerId(value);
     return () => level.setTriggerId(undefined);
   });
@@ -145,7 +146,7 @@ function ContextMenuTrigger<T extends ValidComponent = "div">(
   const [el, setEl] = createSignal<HTMLElement>();
 
   // Bound on the element, since Solid's delegated handlers never reach inside a closed shadow root.
-  effect(el, (node) => {
+  createEffect(el, (node) => {
     if (!node) return;
     const onMenu = (event: MouseEvent) => {
       callEventHandler(event as Bound<MouseEvent>, props.onContextMenu);

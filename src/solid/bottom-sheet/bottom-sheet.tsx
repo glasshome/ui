@@ -3,16 +3,15 @@ import {
   createContext,
   createEffect,
   createMemo,
-  createRenderEffect,
   createSignal,
   onCleanup,
   type ParentComponent,
   Show,
   omit,
-  useContext,
 } from "solid-js";
+import { useRequired } from "../../lib/context.js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
-import { Portal } from "@solidjs/web";
+import { Layer } from "../../lib/behavior/layer.js";
 import { Polymorphic } from "../../lib/behavior/polymorphic.js";
 import { usePortalMount } from "../portal-mount.js";
 import { createControllableSignal } from "../../lib/behavior/controllable.js";
@@ -23,7 +22,7 @@ import {
   SCROLL_CONTAIN,
 } from "../../lib/overlay-classes.js";
 import { coverNow } from "../../lib/page-cover.js";
-import { callEventHandler, effect } from "../../lib/behavior/solid.js";
+import { callEventHandler } from "../../lib/behavior/solid.js";
 import { cn } from "../../lib/utils.js";
 import { type MotionEvent, watchMotion } from "../../lib/behavior/presence.js";
 import { MOTION_EXIT_MS } from "../../lib/motion-classes.js";
@@ -62,8 +61,7 @@ const isSheetMotion = (e: MotionEvent) =>
 const BottomSheetContext = createContext<BottomSheetContextValue>();
 
 function useBottomSheetContext(): BottomSheetContextValue {
-  const ctx = useContext(BottomSheetContext);
-  if (!ctx) throw new Error("BottomSheet components must be used within <BottomSheet>");
+  const ctx = useRequired(BottomSheetContext, "BottomSheet parts", "BottomSheet");
   return ctx;
 }
 
@@ -92,18 +90,19 @@ const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
 
   const dismissible = () => props.dismissible !== false;
 
-  createEffect(() => {
-    const isOpen = open();
-    const s = state();
-    if (isOpen && s === "closed") {
-      setState("opening");
-    } else if (
-      !isOpen &&
-      (s === "open" || s === "opening" || s === "pressing" || s === "dragging" || s === "snapping")
-    ) {
-      setState("closing");
-    }
-  });
+  createEffect(
+    () => [open(), state()] as const,
+    ([isOpen, s]) => {
+      if (isOpen && s === "closed") {
+        setState("opening");
+      } else if (
+        !isOpen &&
+        (s === "open" || s === "opening" || s === "pressing" || s === "dragging" || s === "snapping")
+      ) {
+        setState("closing");
+      }
+    },
+  );
 
   return (
     <BottomSheetContext
@@ -149,7 +148,7 @@ const BottomSheetTrigger: ParentComponent<SheetButtonProps> = (props) => {
 
 interface BottomSheetPortalProps {
   children: JSX.Element;
-  mount?: Node;
+  mount?: Element;
 }
 
 const BottomSheetPortal: Component<BottomSheetPortalProps> = (props) => {
@@ -158,7 +157,7 @@ const BottomSheetPortal: Component<BottomSheetPortalProps> = (props) => {
   const mounted = () => ctx.state() !== "closed";
   return (
     <Show when={mounted()}>
-      <Portal mount={props.mount ?? portalMount}>{props.children}</Portal>
+      <Layer mount={props.mount ?? portalMount}>{props.children}</Layer>
     </Show>
   );
 };
@@ -205,7 +204,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
 
   const present = createMemo(() => ctx.state() !== "closed");
 
-  effect(present, (on) => (on && el ? coverNow(el) : undefined));
+  createEffect(present, (on) => (on && el ? coverNow(el) : undefined));
 
   const clearAnimInline = () => {
     if (!el) return;
@@ -214,29 +213,25 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     el.style.transform = "";
   };
 
-  createEffect(() => {
-    const s = ctx.state();
+  createEffect(ctx.state, (s) => {
     if (s !== "opening" && s !== "closing" && s !== "snapping") return;
     const node = el;
     if (!node) return;
-    onCleanup(
-      watchMotion(
-        node,
-        MOTION_EXIT_MS.sheet,
-        () => {
-          if (s === "opening") ctx.setState("open");
-          else {
-            ctx.setState(s === "snapping" ? "open" : "closed");
-            clearAnimInline();
-          }
-        },
-        isSheetMotion,
-      ),
+    return watchMotion(
+      node,
+      MOTION_EXIT_MS.sheet,
+      () => {
+        if (s === "opening") ctx.setState("open");
+        else {
+          ctx.setState(s === "snapping" ? "open" : "closed");
+          clearAnimInline();
+        }
+      },
+      isSheetMotion,
     );
   });
 
-  createEffect(() => {
-    const node = ctx.contentRef();
+  createEffect(ctx.contentRef, (node) => {
     if (!node) return;
     const handle = attachDrag({
       el: node,
@@ -244,16 +239,17 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
       setState: ctx.setState,
       requestClose: () => ctx.setOpen(false),
     });
-    onCleanup(() => handle.destroy());
+    return () => handle.destroy();
   });
 
-  createEffect(() => {
-    const node = ctx.contentRef();
-    if (!node) return;
-    if (!present()) return;
-    const handle = watchKeyboard(node);
-    onCleanup(() => handle.destroy());
-  });
+  createEffect(
+    () => (present() ? ctx.contentRef() : undefined),
+    (node) => {
+      if (!node) return;
+      const handle = watchKeyboard(node);
+      return () => handle.destroy();
+    },
+  );
 
   const handle = registerLayer({
     element: ctx.contentRef,
@@ -352,8 +348,8 @@ const { Body: BottomSheetBody } = createModalParts("bottom-sheet");
 const BottomSheetTitle: Component<ComponentProps<"h2">> = (props) => {
   const rest = omit(props, "class");
   const labels = useModalLabels();
-  const id = () => rest.id ?? labels?.titleId;
-  createRenderEffect(() => labels?.registerTitle(id()));
+  const id = () => rest.id || labels?.titleId;
+  createEffect(id, (value) => labels?.registerTitle(value));
   return (
     <h2 data-slot="bottom-sheet-title" id={id()} class={cn(MODAL_TITLE, props.class)} {...rest} />
   );
@@ -362,8 +358,8 @@ const BottomSheetTitle: Component<ComponentProps<"h2">> = (props) => {
 const BottomSheetDescription: Component<ComponentProps<"p">> = (props) => {
   const rest = omit(props, "class");
   const labels = useModalLabels();
-  const id = () => rest.id ?? labels?.descriptionId;
-  createRenderEffect(() => labels?.registerDescription(id()));
+  const id = () => rest.id || labels?.descriptionId;
+  createEffect(id, (value) => labels?.registerDescription(value));
   return (
     <p
       data-slot="bottom-sheet-description"

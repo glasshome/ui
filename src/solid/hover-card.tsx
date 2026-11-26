@@ -7,10 +7,12 @@ import {
   Show,
   omit,
   untrack,
-  useContext,
+  createEffect,
+  merge,
 } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
-import { Portal } from "@solidjs/web";
+import { Layer } from "../lib/behavior/layer.js";
 import type { Align, Side } from "../lib/anchor-placement.js";
 import { createAnchored } from "../lib/behavior/anchored.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
@@ -18,7 +20,6 @@ import { createDismiss } from "../lib/behavior/dismiss.js";
 import { registerLayer } from "../lib/behavior/layer-stack.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
-import { effect, merge } from "../lib/behavior/solid.js";
 import { MOTION_EXIT_MS, OVERLAY_MOTION } from "../lib/motion-classes.js";
 import { FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
@@ -51,11 +52,10 @@ interface HoverCardContextValue {
   hold: () => void;
 }
 
-const HoverCardContext = createContext<HoverCardContextValue | null>(null);
+const HoverCardContext = createContext<HoverCardContextValue>();
 
 const useHoverCard = (): HoverCardContextValue => {
-  const ctx = useContext(HoverCardContext);
-  if (!ctx) throw new Error("HoverCard parts render inside a HoverCard");
+  const ctx = useRequired(HoverCardContext, "HoverCard parts", "HoverCard");
   return ctx;
 };
 
@@ -116,7 +116,7 @@ function HoverCardTrigger<T extends ValidComponent = "a">(
     if (untrack(ctx.trigger) === untrack(own)) ctx.setTrigger(undefined);
   });
 
-  effect(own, (el) => {
+  createEffect(own, (el) => {
     if (!el) return;
     let touched = false;
     const mouseLike = (e: PointerEvent) => e.pointerType !== "touch";
@@ -210,6 +210,7 @@ const HoverCardContent: Component<HoverCardContentProps> = (props) => {
     offset: ctx.gutter,
   });
 
+  const portalMount = usePortalMount();
   const Card: Component = () => {
     onCleanup(() => ctx.setCard(undefined));
     return (
@@ -231,9 +232,9 @@ const HoverCardContent: Component<HoverCardContentProps> = (props) => {
 
   return (
     <Show when={presence.mounted()}>
-      <Portal mount={usePortalMount()}>
+      <Layer mount={portalMount}>
         <Card />
-      </Portal>
+      </Layer>
     </Show>
   );
 };

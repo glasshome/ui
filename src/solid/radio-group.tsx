@@ -6,11 +6,12 @@ import {
   type ParentComponent,
   Show,
   omit,
-  useContext,
+  createEffect,
 } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX } from "@solidjs/web";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
-import { callEventHandler, effect } from "../lib/behavior/solid.js";
+import { callEventHandler } from "../lib/behavior/solid.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 import { VISUALLY_HIDDEN } from "../lib/visually-hidden.js";
@@ -29,8 +30,7 @@ type RadioGroupContextValue = {
 const RadioGroupContext = createContext<RadioGroupContextValue>();
 
 function useRadioGroup(): RadioGroupContextValue {
-  const context = useContext(RadioGroupContext);
-  if (!context) throw new Error("RadioGroupItem renders inside a RadioGroup");
+  const context = useRequired(RadioGroupContext, "RadioGroupItem", "RadioGroup");
   return context;
 }
 
@@ -69,7 +69,7 @@ const RadioGroup = (props: RadioGroupProps) => {
     "children",
   );
   const fallbackId = `radiogroup-${createUniqueId()}`;
-  const id = () => props.id ?? fallbackId;
+  const id = () => props.id || fallbackId;
   const [root, setRoot] = createSignal<HTMLDivElement>();
   const [selected, setSelected] = createControllableSignal({
     value: () => props.value,
@@ -84,7 +84,7 @@ const RadioGroup = (props: RadioGroupProps) => {
   };
   const context: RadioGroupContextValue = {
     id,
-    name: () => props.name ?? id(),
+    name: () => props.name || id(),
     isSelectedValue: (value) => value === selected(),
     select: (value) => {
       if (!props.readOnly && !props.disabled) setSelected(value);
@@ -95,7 +95,7 @@ const RadioGroup = (props: RadioGroupProps) => {
     readOnly: () => props.readOnly ?? false,
     defaultValue: () => props.defaultValue ?? "",
   };
-  effect(root, (el) => {
+  createEffect(root, (el) => {
     if (!el) return;
     // Space on the checked radio sends no click of its own, so a keyboard pick would never reach onPick.
     const down = (event: KeyboardEvent) => {
@@ -113,7 +113,7 @@ const RadioGroup = (props: RadioGroupProps) => {
       el.removeEventListener("keyup", up, true);
     };
   });
-  effect(
+  createEffect(
     () => root()?.closest("form"),
     (form) => {
       if (!form) return;
@@ -187,7 +187,7 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
     "onClick",
   );
   const fallbackId = `${group.id()}-item-${createUniqueId()}`;
-  const id = () => props.id ?? fallbackId;
+  const id = () => props.id || fallbackId;
   const disabled = () => group.disabled() || (props.disabled ?? false);
   const checked = () => group.isSelectedValue(props.value);
   const [item, setItem] = createSignal<HTMLDivElement>();
@@ -198,7 +198,7 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
     "data-checked": checked() ? "" : undefined,
   });
 
-  effect(
+  createEffect(
     () => [input(), props.value === group.defaultValue()] as const,
     ([el, isDefault]) => {
       if (el) el.defaultChecked = isDefault;
@@ -206,7 +206,7 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
   );
   const [focused, setFocused] = createSignal(false);
   // Bound on the elements, since Solid's delegated handlers never reach inside a closed shadow root.
-  effect(item, (node) => {
+  createEffect(item, (node) => {
     if (!node) return;
     const pointerdown = (event: PointerEvent) => {
       if (focused()) event.preventDefault();

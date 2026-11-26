@@ -194,11 +194,13 @@ export function ActionsCatalog() {
                 type="button"
                 onClick={() => setSeg(i())}
                 data-lit={seg() === i() ? "" : undefined}
-                class="relative rounded-md px-3 py-1 text-sm transition-colors"
-                classList={{
+                class={[
+                  "relative rounded-md px-3 py-1 text-sm transition-colors",
+                  {
                   "text-foreground": seg() === i(),
                   "text-muted-foreground hover:text-foreground": seg() !== i(),
-                }}
+                },
+                ]}
               >
                 <SelectionHighlight />
                 {label}

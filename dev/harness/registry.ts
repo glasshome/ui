@@ -1,4 +1,7 @@
+import { kebab } from "./load-scenario";
 import type { ComponentScenarios, IndexedComponent, Scenario } from "./types";
+
+export { kebab };
 
 const modules = import.meta.glob<{ default: ComponentScenarios }>("../components/*/scenarios.tsx", {
   eager: true,
@@ -46,7 +49,6 @@ export const BLOCKS: ComponentScenarios[] = Object.values(blockModules)
   .map((m) => ({ ...m.default, kind: "block" as const }))
   .sort((a, b) => a.component.localeCompare(b.component));
 
-export const kebab = (name: string) => name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 
 export const findComponent = (component: string): ComponentScenarios | undefined =>
   [...COMPONENTS, ...BLOCKS].find(

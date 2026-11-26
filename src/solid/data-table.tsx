@@ -1,12 +1,9 @@
 import {
   type Accessor,
   children,
-  createEffect,
   createMemo,
   createSignal,
   For,
-  on,
-  onCleanup,
   onSettled,
   Show,
   omit,
@@ -345,11 +342,11 @@ export function TableLoadMore(props: {
       unwatch ??= watchNearEnd(target, onNear);
     };
     window.addEventListener("scroll", arm, { capture: true, passive: true, once: true });
-    onCleanup(() => {
+    return () => {
       window.removeEventListener("scroll", arm, { capture: true });
       cancelAnimationFrame(frame);
       unwatch?.();
-    });
+    };
   });
   return (
     <div
@@ -374,9 +371,10 @@ export function createTableWindow<T>(
   options: { pageSize?: number; resetOn?: Accessor<unknown> } = {},
 ) {
   const pageSize = options.pageSize ?? 50;
-  const [limit, setLimit] = createSignal(pageSize);
-  const resetOn = options.resetOn;
-  if (resetOn) createEffect(on(resetOn, () => setLimit(pageSize), { defer: true }));
+  const [limit, setLimit] = createSignal(() => {
+    options.resetOn?.();
+    return pageSize;
+  });
   return {
     shown: createMemo(() => items().slice(0, limit())),
     hasMore: () => items().length > limit(),

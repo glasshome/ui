@@ -1,5 +1,4 @@
-import { type Accessor } from "solid-js";
-import { effect } from "./behavior/solid.js";
+import { type Accessor, createEffect } from "solid-js";
 
 /* A row of segments that runs out of width wraps into a grid whose rows hold an even count
  * (four modes go two by two, five go three and two), never a full row and an orphan. */
@@ -129,7 +128,7 @@ export function balanceRows(
   };
 
   layout(0, 0);
-  effect(members, watch);
+  createEffect(members, watch);
   return () => {
     cancelAnimationFrame(frame);
     resize.disconnect();

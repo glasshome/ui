@@ -1,14 +1,6 @@
-import type { VariantProps } from "cva";
-import {
-  type Component,
-  createContext,
-  type ParentComponent,
-  Show,
-  omit,
-  useContext,
-} from "solid-js";
+import { type Component, createContext, type ParentComponent, Show, omit } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
-import type { buttonVariants } from "../lib/button-variants.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createIsMobile } from "../lib/use-is-mobile.js";
 import {
@@ -35,8 +27,7 @@ interface ResponsiveDialogContextValue {
 const ResponsiveDialogContext = createContext<ResponsiveDialogContextValue>();
 
 function useResponsiveDialogContext(): ResponsiveDialogContextValue {
-  const ctx = useContext(ResponsiveDialogContext);
-  if (!ctx) throw new Error("ResponsiveDialog parts must be used within <ResponsiveDialog>");
+  const ctx = useRequired(ResponsiveDialogContext, "ResponsiveDialog parts", "ResponsiveDialog");
   return ctx;
 }
 
@@ -89,7 +80,8 @@ const ResponsiveDialogTrigger: ParentComponent<
   );
 };
 
-type ResponsiveDialogContentProps = ComponentProps<"div"> & {
+type ResponsiveDialogContentProps = Omit<ComponentProps<"div">, "style"> & {
+  style?: JSX.CSSProperties | string;
   /** Desktop panel width. The mobile sheet is always full width. */
   size?: ModalSize;
   /** Names a panel that has no `ResponsiveDialogTitle`. */
@@ -160,9 +152,7 @@ const ResponsiveDialogHead = createModalHead(
 
 /** Defaults to the footer's outline button; an icon-only close passes `ghost`
  *  so the glyph is not boxed. */
-const ResponsiveDialogClose: ParentComponent<
-  ComponentProps<"button"> & VariantProps<typeof buttonVariants>
-> = (props) => {
+const ResponsiveDialogClose: ParentComponent<ComponentProps<typeof Button>> = (props) => {
   const rest = omit(props, "children", "class", "variant", "size");
   const ctx = useResponsiveDialogContext();
   const text = useUiText();

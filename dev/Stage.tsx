@@ -78,10 +78,10 @@ export function Stage(props: { route: string }) {
     if (host) observer.observe(host);
     const onResize = () => setViewportHeight(window.innerHeight);
     window.addEventListener("resize", onResize);
-    onCleanup(() => {
+    return () => {
       observer.disconnect();
       window.removeEventListener("resize", onResize);
-    });
+    };
   });
 
   const available = () => hostWidth() || size().width;

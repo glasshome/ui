@@ -1,6 +1,5 @@
-import { type Accessor } from "solid-js";
+import { type Accessor, createEffect } from "solid-js";
 import { type Align, type Box, placeBeside, type Side } from "../anchor-placement.js";
-import { effect } from "./solid.js";
 
 /** An element, or a point or box with no element of its own: a context menu opens at the pointer. */
 export interface AnchorLike {
@@ -33,7 +32,7 @@ const ANCHORED = "data-anchored";
 
 export function createAnchored(options: AnchoredOptions): Anchored {
   let last: Box | undefined;
-  effect(
+  createEffect(
     () =>
       [
         options.open(),

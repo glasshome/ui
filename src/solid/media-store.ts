@@ -67,7 +67,7 @@ export interface MediaStore extends MediaUrls {
 export const MediaStoreContext = createContext<MediaStore | null>();
 
 /** A tree's own url source, over the one the host provided. */
-export const MediaUrlsContext = createContext<MediaUrls>();
+export const MediaUrlsContext = createContext<MediaUrls | null>(null);
 
 let defaultStore: Accessor<MediaStore | null> = () => null;
 let defaultUrls: MediaUrls | undefined;
@@ -83,7 +83,12 @@ export function provideMediaUrls(urls: MediaUrls): void {
 }
 
 export function useMediaStore(): MediaStore | undefined {
-  const scoped = useContext(MediaStoreContext);
+  let scoped: MediaStore | null | undefined;
+  try {
+    scoped = useContext(MediaStoreContext);
+  } catch {
+    scoped = undefined;
+  }
   if (scoped === null) return undefined;
   return scoped ?? defaultStore() ?? undefined;
 }

@@ -1,22 +1,4 @@
-import { createEffect, merge, onCleanup, omit, untrack } from "solid-js";
-import { type JSX } from "@solidjs/web";
-
-export function effect<T>(compute: () => T, apply: (value: T) => (() => void) | void): void {
-  createEffect(() => {
-    const value = compute();
-    const cleanup = untrack(() => apply(value));
-    if (cleanup) onCleanup(cleanup);
-  });
-}
-
-export const merge = mergeProps;
-
-export function omit<T extends object, K extends keyof T>(
-  props: T,
-  ...keys: K[]
-): { [P in keyof T as Exclude<P, K>]: T[P] } {
-  return splitProps(props, keys)[1];
-}
+import type { JSX } from "@solidjs/web";
 
 /** Solid's handler prop is a union: a plain function, or the bound
  *  `[handler, data]` form that calls `handler(data, event)`. A wrapper that

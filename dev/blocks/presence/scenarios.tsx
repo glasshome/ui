@@ -1,4 +1,4 @@
-import { createSignal, onSettled, Show } from "solid-js";
+import { createSignal, Show } from "solid-js";
 import { createPresence } from "../../../src/lib/behavior/presence";
 import { defineScenarios } from "../../harness/types";
 
@@ -33,7 +33,7 @@ const Panel = (props: { keep?: boolean }) => {
         <div
           ref={(node) => {
             setElement(node);
-            onSettled(() => setMounts(mounts() + 1));
+            setMounts((count) => count + 1);
           }}
           role="dialog"
           aria-label="Panel"

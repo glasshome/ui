@@ -1,12 +1,5 @@
-import {
-  children,
-  createContext,
-  createSignal,
-  onCleanup,
-  onSettled,
-  Show,
-  useContext,
-} from "solid-js";
+import { children, createContext, createSignal, onSettled, Show } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type JSX } from "@solidjs/web";
 import { CARD_SURFACE } from "../lib/card-classes.js";
 import { cn } from "../lib/utils.js";
@@ -51,9 +44,8 @@ export function OptionChoice(props: {
   icon?: string;
   disabled?: boolean;
 }) {
-  const card = useContext(OptionChoiceContext);
-  if (!card) throw new Error("OptionChoice renders inside an OptionCard");
-  onSettled(() => onCleanup(card.register(props.value)));
+  const card = useRequired(OptionChoiceContext, "OptionChoice", "OptionCard");
+  onSettled(() => card.register(props.value));
   const selected = () => card.subValue() === props.value;
   return (
     <PickerRow

@@ -6,15 +6,17 @@ import {
   createUniqueId,
   type ParentComponent,
   omit,
-  useContext,
+  createEffect,
+  merge,
 } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import { claimKeys } from "../lib/behavior/claims.js";
 import { type Collection, createCollection } from "../lib/behavior/collection.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { focusWithoutTracking, trackFocus } from "../lib/behavior/focus-scope.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
-import { callEventHandler, effect, merge } from "../lib/behavior/solid.js";
+import { callEventHandler } from "../lib/behavior/solid.js";
 import { cn } from "../lib/utils.js";
 import {
   CollapsibleContentRoot,
@@ -63,14 +65,12 @@ const AccordionContext = createContext<AccordionContextValue>();
 const AccordionItemContext = createContext<AccordionItemContextValue>();
 
 function useAccordion(): AccordionContextValue {
-  const ctx = useContext(AccordionContext);
-  if (!ctx) throw new Error("An accordion part renders inside an Accordion");
+  const ctx = useRequired(AccordionContext, "An accordion part", "Accordion");
   return ctx;
 }
 
 function useAccordionItem(): AccordionItemContextValue {
-  const ctx = useContext(AccordionItemContext);
-  if (!ctx) throw new Error("An accordion part renders inside an AccordionItem");
+  const ctx = useRequired(AccordionItemContext, "An accordion part", "AccordionItem");
   return ctx;
 }
 
@@ -115,7 +115,7 @@ const AccordionRoot: Component<AccordionProps> = (props) => {
     } else setValue(props.multiple ? [...current, item] : [item]);
   };
 
-  effect(el, (node) => {
+  createEffect(el, (node) => {
     if (!node) return;
     const keydown = (event: KeyboardEvent) => {
       const onTrigger = event.target instanceof HTMLElement && event.target.matches("[data-key]");
@@ -196,13 +196,13 @@ const AccordionTriggerRoot: Component<AccordionTriggerProps> = (props) => {
   const others = omit(props, "ref", "onClick");
   const [el, setEl] = createSignal<HTMLElement>();
   const id = () => others.id ?? `${item.itemId()}-trigger`;
-  effect(id, (value) => {
+  createEffect(id, (value) => {
     item.setTriggerId(value);
     return () => item.setTriggerId(undefined);
   });
 
   let focused: ReturnType<typeof trackFocus> | undefined;
-  effect(el, (node) => {
+  createEffect(el, (node) => {
     if (!node) return;
     const tracked = trackFocus(node);
     focused = tracked;

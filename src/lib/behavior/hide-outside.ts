@@ -1,6 +1,5 @@
-import { type Accessor, onCleanup } from "solid-js";
+import { type Accessor, onCleanup, createEffect } from "solid-js";
 import type { LayerHandle } from "./layer-stack.js";
-import { effect } from "./solid.js";
 
 const KEPT = '[aria-live], [role="status"], [role="alert"], [data-kb-top-layer]';
 const ELEMENT = 1;
@@ -43,7 +42,11 @@ function branchOf(element: Element): Element {
   return branch;
 }
 
-function hiddenAround(parent: ParentNode, layers: Element[], live: Element[]): Element[] {
+function hiddenAround(
+  parent: ParentNode,
+  layers: readonly Element[],
+  live: readonly Element[],
+): Element[] {
   const hidden: Element[] = [];
   for (const child of Array.from(parent.children)) {
     if (layers.some((layer) => child.contains(layer)) || live.includes(child)) continue;
@@ -60,7 +63,7 @@ export function createHideOutside(options: HideOutsideOptions): void {
     for (const child of hidden) release(child);
     hidden = [];
   };
-  effect(
+  createEffect(
     () => {
       const element = options.layer.layer()?.element();
       if (!options.active() || !element) return null;

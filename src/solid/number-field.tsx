@@ -1,4 +1,4 @@
-import { type Component, createSignal, on, createEffect, omit } from "solid-js";
+import { type Component, createSignal, omit } from "solid-js";
 import { type ComponentProps } from "@solidjs/web";
 import { INPUT_CLASS } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
@@ -15,14 +15,10 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
   let ref: HTMLInputElement | undefined;
   const text = useUiText();
   const format = useUiFormat();
-  const [typed, setTyped] = createSignal<string>();
-  createEffect(
-    on(
-      () => props.value,
-      () => setTyped(undefined),
-      { defer: true },
-    ),
-  );
+  const [typed, setTyped] = createSignal<string | undefined>(() => {
+    void props.value;
+    return undefined;
+  });
   const valueText = () => {
     const raw = typed() ?? (props.value == null ? "" : String(props.value));
     const value = Number(raw);

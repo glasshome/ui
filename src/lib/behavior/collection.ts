@@ -1,7 +1,6 @@
-import { type Accessor, createSignal, onCleanup } from "solid-js";
+import { type Accessor, createSignal, onCleanup, createEffect } from "solid-js";
 import { claimKeys, createClaim } from "./claims.js";
 import { focusedIn, focusWithoutTracking } from "./focus-scope.js";
-import { effect } from "./solid.js";
 
 export const TYPEAHEAD_MS = 1000;
 
@@ -134,7 +133,7 @@ export function createCollection(options: CollectionOptions): Collection {
   }
 
   if (options.focus === "roving") {
-    effect(options.root, (root) => {
+    createEffect(options.root, (root) => {
       if (!root) return;
       // An item focused before the collection mounts (autofocus) keeps the stop.
       const current = focusedIn(root);
@@ -148,7 +147,7 @@ export function createCollection(options: CollectionOptions): Collection {
       root.addEventListener("focusout", leave);
       return () => root.removeEventListener("focusout", leave);
     });
-    effect(
+    createEffect(
       () => [options.root(), options.preferred?.() ?? []] as const,
       ([root, preferred]) => placeStop(root, preferred),
     );

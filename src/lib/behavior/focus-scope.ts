@@ -1,6 +1,5 @@
-import { type Accessor, onCleanup, untrack } from "solid-js";
+import { type Accessor, onCleanup, untrack, createEffect } from "solid-js";
 import { layerStack } from "./layer-stack.js";
-import { effect } from "./solid.js";
 
 export const CANDIDATES =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [contenteditable]:not([contenteditable="false"]), [tabindex]:not([tabindex="-1"])';
@@ -248,7 +247,7 @@ export function createFocusScope(options: FocusScopeOptions): FocusScope {
     return { release, untrap };
   };
 
-  effect(
+  createEffect(
     () => [options.container(), options.active(), options.trapped()] as const,
     ([container, active, trapped]) => {
       const wanted = container && active ? container : undefined;

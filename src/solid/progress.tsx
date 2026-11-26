@@ -1,6 +1,5 @@
-import { type Component, createUniqueId, omit } from "solid-js";
+import { type Component, createUniqueId, omit, merge } from "solid-js";
 import { type ComponentProps } from "@solidjs/web";
-import { merge } from "../lib/behavior/solid.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 import { useUiFormat } from "./locale.js";

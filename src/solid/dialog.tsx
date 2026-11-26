@@ -5,7 +5,6 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  onCleanup,
   type ParentComponent,
   omit,
 } from "solid-js";
@@ -84,24 +83,40 @@ const ANCHORED_WIDTH: Record<ModalSize, number> = {
 };
 
 const DialogContent: ParentComponent<DialogContentProps> = (props) => {
-  const others = omit(props, "class", "children", "size", "ariaLabel", "anchor", "style", "ref");
+  const portalMount = usePortalMount();
+  const others = omit(
+    props,
+    "class",
+    "children",
+    "size",
+    "ariaLabel",
+    "anchor",
+    "style",
+    "ref",
+    "slot",
+  );
   const ctx = useDialogContext();
   const [viewport, setViewport] = createSignal(0);
   const [height, setHeight] = createSignal<number>();
-  createEffect(() => {
-    if (!props.anchor || !ctx.isOpen()) return;
-    const measure = () => setViewport((n) => n + 1);
-    window.addEventListener("resize", measure);
-    onCleanup(() => window.removeEventListener("resize", measure));
-  });
-  createEffect(() => {
-    const el = ctx.panel();
-    if (!props.anchor || !el) return;
-    setHeight(el.offsetHeight);
-    const observer = new ResizeObserver(() => setHeight(el.offsetHeight));
-    observer.observe(el);
-    onCleanup(() => observer.disconnect());
-  });
+  createEffect(
+    () => !!props.anchor && ctx.isOpen(),
+    (active) => {
+      if (!active) return;
+      const measure = () => setViewport((n) => n + 1);
+      window.addEventListener("resize", measure);
+      return () => window.removeEventListener("resize", measure);
+    },
+  );
+  createEffect(
+    () => (props.anchor ? ctx.panel() : undefined),
+    (el) => {
+      if (!el) return;
+      setHeight(el.offsetHeight);
+      const observer = new ResizeObserver(() => setHeight(el.offsetHeight));
+      observer.observe(el);
+      return () => observer.disconnect();
+    },
+  );
   const placement = createMemo<JSX.CSSProperties | undefined>((last) => {
     if (!ctx.isOpen()) return last;
     viewport();
@@ -113,7 +128,7 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
       <ModalCover panel={ctx.panel} open={ctx.isOpen} dormant={ctx.dormant} />
       <ModalFrame
         slot="dialog"
-        mount={usePortalMount()}
+        mount={portalMount}
         exitMs={props.anchor ? MOTION_EXIT_MS.anchored : MOTION_EXIT_MS.modal}
         scrimClass={MODAL_SCRIM}
         panelClass={cn(

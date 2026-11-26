@@ -1,5 +1,5 @@
 import type { CompiledCatalog } from "@glasshome/widget-contract/i18n-format";
-import { createContext, createMemo, createResource, useContext } from "solid-js";
+import { createContext, createEffect, createMemo, createSignal, useContext } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { englishFormat, type UiFormat, uiFormat } from "../lib/format.js";
 import { englishUiText, translator, type UiText } from "../lib/text.js";
@@ -34,19 +34,25 @@ export function LocaleProvider(props: {
   catalog?: UiCatalogLoader;
   children: JSX.Element;
 }): JSX.Element {
-  const [loaded] = createResource(
+  const [loaded, setLoaded] = createSignal<{ catalog: CompiledCatalog | undefined }>();
+  createEffect(
     () => props.language,
-    async (language) => {
-      if (language === "en") return undefined;
-      try {
-        return await (props.catalog ?? loadUiCatalog)(language);
-      } catch {
-        return undefined;
+    (language) => {
+      let live = true;
+      setLoaded(undefined);
+      if (language !== "en") {
+        (props.catalog ?? loadUiCatalog)(language).then(
+          (catalog) => live && setLoaded({ catalog }),
+          () => {},
+        );
       }
+      return () => {
+        live = false;
+      };
     },
   );
   const current = createMemo((): UiLocale => {
-    const catalog = loaded.state === "ready" ? loaded() : undefined;
+    const catalog = loaded()?.catalog;
     return {
       text: catalog
         ? translator(catalog, props.language, props.formatting)

@@ -1,4 +1,4 @@
-import { type Accessor, createSignal, onCleanup, untrack } from "solid-js";
+import { type Accessor, createSignal, onCleanup, untrack, createEffect } from "solid-js";
 import type { Align, Side } from "../anchor-placement.js";
 import type { Box } from "../anchor-placement.js";
 import { type AnchorLike, createAnchored } from "./anchored.js";
@@ -7,7 +7,6 @@ import { createDismiss } from "./dismiss.js";
 import { claimKeys, createClaim, keepKeys } from "./claims.js";
 import { focusedIn, focusFell, focusWithoutTracking } from "./focus-scope.js";
 import { registerLayer } from "./layer-stack.js";
-import { effect } from "./solid.js";
 
 const MENU_ITEMS = '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]';
 const CONTENT_CLAIM = claimKeys(["Tab", " "]);
@@ -253,12 +252,12 @@ export function createMenu(options: MenuOptions): Menu {
 
   if (parent) {
     parent.adopt(menu);
-    effect(parent.open, (parentOpen) => {
+    createEffect(parent.open, (parentOpen) => {
       if (!parentOpen && untrack(options.open)) options.onOpenChange(false);
     });
   }
 
-  effect(
+  createEffect(
     () => [open(), content()] as const,
     ([isOpen, el]) => {
       if (!isOpen || !el) return;
@@ -302,7 +301,7 @@ export function createMenu(options: MenuOptions): Menu {
     if (focused && el.contains(focused)) focusWithoutTracking(el);
   }
 
-  effect(content, (el) => {
+  createEffect(content, (el) => {
     if (!el) return;
     let pressedInside = false;
     let pointerPressed = false;

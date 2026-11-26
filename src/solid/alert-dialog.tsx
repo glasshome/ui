@@ -38,14 +38,15 @@ type AlertDialogContentProps = ModalContentProps & {
 };
 
 const AlertDialogContent: ParentComponent<AlertDialogContentProps> = (props) => {
-  const rest = omit(props, "class", "children", "size", "ariaLabel", "style", "ref");
+  const portalMount = usePortalMount();
+  const rest = omit(props, "class", "children", "size", "ariaLabel", "style", "ref", "slot");
   const ctx = useDialogContext();
   return (
     <>
       <ModalCover panel={ctx.panel} open={ctx.isOpen} dormant={ctx.dormant} />
       <ModalFrame
         slot="alert-dialog"
-        mount={usePortalMount()}
+        mount={portalMount}
         exitMs={MOTION_EXIT_MS.modal}
         scrimClass={MODAL_SCRIM}
         panelClass={cn(

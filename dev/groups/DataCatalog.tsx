@@ -259,7 +259,7 @@ export function DataCatalog() {
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={3}>Total</TableCell>
+                <TableCell colspan={3}>Total</TableCell>
                 <TableCell class="text-right">$59.98</TableCell>
               </TableRow>
             </TableFooter>

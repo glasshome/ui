@@ -1,14 +1,13 @@
 import {
   createContext,
   createSignal,
-  onCleanup,
   onSettled,
   Show,
   omit,
   useContext,
+  createEffect,
 } from "solid-js";
 import { type ComponentProps, type JSX } from "@solidjs/web";
-import { effect } from "../lib/behavior/solid.js";
 import { cn } from "../lib/utils.js";
 
 /** The attribute (without `data-`) that marks the active item: Kobalte's, or the caller's own. */
@@ -20,7 +19,7 @@ interface SelectionContextValue {
   watchMarker: () => void;
 }
 
-const SelectionContext = createContext<SelectionContextValue>();
+const SelectionContext = createContext<SelectionContextValue | null>(null);
 
 /**
  * The glass behind an item while it is the active one. Render it as the first child of every
@@ -33,9 +32,11 @@ export function SelectionHighlight(props: { active?: boolean }) {
   const scope = useContext(SelectionContext);
   let span: HTMLSpanElement | undefined;
   const [item, setItem] = createSignal<HTMLElement>();
-  onSettled(() => setItem(span?.parentElement ?? undefined));
+  onSettled(() => {
+    setItem(span?.parentElement ?? undefined);
+  });
   if (scope && props.active === undefined) scope.watchMarker();
-  effect(
+  createEffect(
     () => [item(), props.active] as const,
     ([item, active]) => {
       if (!scope || !item || active === undefined) return;
@@ -302,12 +303,12 @@ export function SelectionScope(props: SelectionScopeProps) {
       observer.observe(scope, { subtree: true, attributes: true, attributeFilter: [attribute] });
     };
     if (watching) watch();
-    onCleanup(() => {
+    return () => {
       observer?.disconnect();
       move = undefined;
       watch = undefined;
       flight.settle();
-    });
+    };
   });
 
   return (

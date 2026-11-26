@@ -5,17 +5,16 @@ import {
   type Component,
   createContext,
   createSignal,
-  onCleanup,
   onSettled,
   type ParentComponent,
   Show,
   omit,
-  useContext,
+  merge,
 } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
-import { merge, omit } from "../lib/behavior/solid.js";
 import { BALANCE_CONTENT, BALANCED_ROWS, balanceRows } from "../lib/balance-rows.js";
 import { TRACK_SURFACE } from "../lib/card-classes.js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
@@ -63,11 +62,10 @@ type ToggleGroupContextValue = VariantProps<typeof toggleVariants> & {
 // A stacked item keeps its control height: flex-1 in a column would shrink it to its text.
 const STACKED_ITEMS = "[&_[data-slot=toggle-group-item]]:flex-none";
 
-const ToggleGroupContext = createContext<ToggleGroupContextValue | null>(null);
+const ToggleGroupContext = createContext<ToggleGroupContextValue>();
 
 const useToggleGroup = (): ToggleGroupContextValue => {
-  const ctx = useContext(ToggleGroupContext);
-  if (!ctx) throw new Error("ToggleGroupItem renders inside a ToggleGroup");
+  const ctx = useRequired(ToggleGroupContext, "ToggleGroupItem", "ToggleGroup");
   return ctx;
 };
 
@@ -128,8 +126,8 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
   onSettled(() => {
     const el = root();
     if (!el) return;
-    if (props.scroll) onCleanup(trackScroll(el, "[data-pressed]", values));
-    else if (!vertical()) onCleanup(balanceRows(el, scope() ?? el, ITEM, set.members));
+    if (props.scroll) return trackScroll(el, "[data-pressed]", values);
+    if (!vertical()) return balanceRows(el, scope() ?? el, ITEM, set.members);
   });
 
   const context: ToggleGroupContextValue = {
@@ -257,7 +255,7 @@ const ToggleGroupItem: Component<ToggleGroupItemProps> = (props) => {
           if (typeof props.ref === "function") props.ref(node as HTMLButtonElement);
         },
         get id() {
-          return props.id ?? item.props.id;
+          return props.id || item.props.id;
         },
         get "data-variant"() {
           return context.variant || props.variant;

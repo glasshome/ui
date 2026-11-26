@@ -62,14 +62,16 @@ export function SectionCard(props: SectionCardProps) {
     <section
       data-slot="section-card"
       ref={glass().ref}
-      class={cn(
-        CARD_SURFACE_BASE,
-        SECTION_OUTER_RADIUS,
-        SECTION_PADDING,
-        "transition-glass relative flex flex-col gap-3 overflow-hidden [contain:layout_style_paint] md:gap-4",
-        props.class,
-      )}
-      classList={{ [CARD_BLUR]: !active() }}
+      class={[
+        cn(
+          CARD_SURFACE_BASE,
+          SECTION_OUTER_RADIUS,
+          SECTION_PADDING,
+          "transition-glass relative flex flex-col gap-3 overflow-hidden [contain:layout_style_paint] md:gap-4",
+          props.class,
+        ),
+        { [CARD_BLUR]: !active() },
+      ]}
       style={glass().style?.() ?? {}}
     >
       <Show when={hasHeader()}>

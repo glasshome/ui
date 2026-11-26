@@ -1,5 +1,4 @@
-import { type Accessor, createMemo, createSignal } from "solid-js";
-import { effect } from "./solid.js";
+import { type Accessor, createMemo, createSignal, createEffect, untrack } from "solid-js";
 
 export type PresencePhase = "opening" | "open" | "closing" | "closed";
 export type MotionEvent = AnimationEvent | TransitionEvent;
@@ -53,9 +52,11 @@ export function watchMotion(
 }
 
 export function createPresence(options: PresenceOptions): Presence {
-  const [phase, setPhase] = createSignal<PresencePhase>(options.present() ? "opening" : "closed");
+  const [phase, setPhase] = createSignal<PresencePhase>(
+    untrack(options.present) ? "opening" : "closed",
+  );
 
-  effect(
+  createEffect(
     () => options.present(),
     (present) => {
       setPhase((current) => {
@@ -66,9 +67,9 @@ export function createPresence(options: PresenceOptions): Presence {
     },
   );
 
-  effect(
-    () => [phase(), options.element()] as const,
-    ([current, el]) => {
+  createEffect(
+    () => [phase(), options.element(), options.exitMs] as const,
+    ([current, el, exitMs]) => {
       if (current !== "opening" && current !== "closing") return;
       if (!el) {
         if (current === "closing") setPhase("closed");
@@ -76,7 +77,7 @@ export function createPresence(options: PresenceOptions): Presence {
       }
       return watchMotion(
         el,
-        options.exitMs,
+        exitMs,
         () => setPhase(current === "opening" ? "open" : "closed"),
         options.accept,
       );

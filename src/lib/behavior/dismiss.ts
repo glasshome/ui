@@ -1,7 +1,6 @@
-import { type Accessor } from "solid-js";
+import { type Accessor, createEffect } from "solid-js";
 import { createClaim, keepKeys } from "./claims.js";
 import { type Layer, type LayerHandle, layerStack } from "./layer-stack.js";
-import { effect } from "./solid.js";
 
 export type DismissReason = "escape" | "outside-press" | "focus-outside";
 
@@ -51,7 +50,7 @@ function listenersFor(element: HTMLElement) {
 
 function createFocusOutside(options: DismissOptions) {
   const { layer } = options;
-  effect(
+  createEffect(
     () => [layer.layer()?.element(), options.focusOutside?.() ?? false] as const,
     ([element, enabled]) => {
       if (!element || !enabled) return;
@@ -75,7 +74,7 @@ function createFocusOutside(options: DismissOptions) {
 
 function createOutsidePress(options: DismissOptions) {
   const { layer } = options;
-  effect(
+  createEffect(
     () => [layer.layer()?.element(), options.outsidePress?.() ?? true] as const,
     ([element, enabled]) => {
       if (!element || !enabled) return;
@@ -146,7 +145,7 @@ function createEscape(options: DismissOptions) {
       return mine.escape() || mine.kind === "modal" ? ESCAPE : undefined;
     },
   );
-  effect(
+  createEffect(
     () =>
       [
         layer.layer(),

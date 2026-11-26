@@ -9,9 +9,11 @@ import {
   omit,
   untrack,
   useContext,
+  createEffect,
+  merge,
 } from "solid-js";
+import { useRequired } from "../context.js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
-import { Portal } from "@solidjs/web";
 import { LAYER_ROOT } from "../overlay-classes.js";
 import { createControllableSignal } from "./controllable.js";
 import { createDismiss } from "./dismiss.js";
@@ -19,8 +21,9 @@ import { focusedIn, createFocusScope, focusWithoutTracking } from "./focus-scope
 import { createHideOutside } from "./hide-outside.js";
 import { layerStack, registerLayer } from "./layer-stack.js";
 import { Polymorphic } from "./polymorphic.js";
+import { Layer } from "./layer.js";
 import { createPresence } from "./presence.js";
-import { callEventHandler, effect, merge } from "./solid.js";
+import { callEventHandler } from "./solid.js";
 
 export type ModalRole = "dialog" | "alertdialog";
 
@@ -55,11 +58,10 @@ export interface ModalContext {
   setPanel: (el: HTMLElement | undefined) => void;
 }
 
-const ModalContextValue = createContext<ModalContext>();
+const ModalContextValue = createContext<ModalContext | null>(null);
 
 export function useDialogContext(): ModalContext {
-  const context = useContext(ModalContextValue);
-  if (!context) throw new Error("Dialog parts must be used within <Dialog>");
+  const context = useRequired(ModalContextValue, "Dialog parts", "Dialog");
   return context;
 }
 
@@ -90,15 +92,19 @@ export function ModalRoot(props: ModalRootProps): JSX.Element {
   const [contentId, registerContent] = createRegistry();
   const [triggerRef, setTriggerRef] = createSignal<HTMLElement>();
   const [panel, setPanel] = createSignal<HTMLElement>();
-  const [dormantSource, setDormantSource] = createSignal<Accessor<boolean>>(() => false);
+  // ModalFrame binds its presence from its own body.
+  const [dormantSource, setDormantSource] = createSignal(
+    { read: (): boolean => false },
+    { ownedWrite: true },
+  );
   const context: ModalContext = {
     isOpen,
     close: () => setOpen(false),
     toggle: () => setOpen(!untrack(isOpen)),
     modal: () => props.modal ?? true,
     keep: () => props.keep ?? false,
-    dormant: () => dormantSource()(),
-    bindDormant: (source) => setDormantSource(() => source),
+    dormant: () => dormantSource().read(),
+    bindDormant: (source) => setDormantSource({ read: source }),
     get role() {
       return props.role ?? "dialog";
     },
@@ -166,8 +172,8 @@ function createLabelPart(defaultAs: ValidComponent, register: (id: string) => ()
   return (props: ModalPartProps<ValidComponent>): JSX.Element => {
     const rest = omit(props, "as", "id");
     const fallback = createUniqueId();
-    const id = (): string => props.id ?? fallback;
-    effect(id, register);
+    const id = (): string => props.id || fallback;
+    createEffect(id, register);
     return (
       <Polymorphic
         {...merge(rest, {
@@ -196,7 +202,7 @@ export function ModalDescription<T extends ValidComponent = "p">(
 
 export interface ModalFrameProps extends Omit<
   JSX.HTMLAttributes<HTMLDivElement>,
-  "ref" | "style" | "role" | "class"
+  "ref" | "style" | "role" | "class" | "slot"
 > {
   slot: string;
   panelClass: string;
@@ -205,7 +211,7 @@ export interface ModalFrameProps extends Omit<
   ariaLabel?: string;
   ref?: (el: HTMLElement) => void;
   as?: ValidComponent;
-  mount?: Node;
+  mount?: Element;
   exitMs: number;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
@@ -301,8 +307,8 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
     "id",
   );
   const fallbackId = createUniqueId();
-  const id = (): string => props.id ?? fallbackId;
-  effect(id, ctx.registerContent);
+  const id = (): string => props.id || fallbackId;
+  createEffect(id, ctx.registerContent);
 
   const presence = createPresence({
     present: ctx.isOpen,
@@ -362,7 +368,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
     },
   });
 
-  effect(
+  createEffect(
     () => ctx.isOpen() && ctx.panel() !== undefined,
     (open) => {
       if (open) {
@@ -394,18 +400,17 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
     <Show when={presence.mounted()}>
       {(_) => {
         onCleanup(() => ctx.setPanel(undefined));
+        const [container, setContainer] = createSignal<HTMLDivElement>();
+        createRenderEffect(
+          () => [container(), presence.dormant()] as const,
+          ([el, dormant]) => {
+            if (!el) return;
+            if (dormant) finishMotion(el);
+            el.toggleAttribute("data-dormant", dormant);
+          },
+        );
         return (
-          <Portal
-            mount={props.mount}
-            ref={(container: HTMLDivElement) => {
-              container.className = LAYER_ROOT;
-              createRenderEffect(() => {
-                const dormant = presence.dormant();
-                if (dormant) finishMotion(container);
-                container.toggleAttribute("data-dormant", dormant);
-              });
-            }}
-          >
+          <Layer mount={props.mount} class={LAYER_ROOT} ref={setContainer}>
             <div
               data-slot={`${props.slot}-overlay`}
               class={props.scrimClass}
@@ -440,7 +445,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
             >
               {props.children}
             </Polymorphic>
-          </Portal>
+          </Layer>
         );
       }}
     </Show>

@@ -363,10 +363,10 @@ export const ModalCover: Component<{
   open: Accessor<boolean>;
   dormant: Accessor<boolean>;
 }> = (props) => {
-  createEffect(() => {
-    const panel = props.panel();
-    if (panel && !props.dormant()) onCleanup(coverOnceOpen(panel, props.open));
-  });
+  createEffect(
+    () => (props.dormant() ? undefined : props.panel()),
+    (panel) => (panel ? coverOnceOpen(panel, props.open) : undefined),
+  );
   return null;
 };
 
@@ -375,11 +375,11 @@ export interface ModalLabels {
   descriptionId: string;
   labelledBy: Accessor<string | undefined>;
   describedBy: Accessor<string | undefined>;
-  registerTitle: (id: string | undefined) => void;
-  registerDescription: (id: string | undefined) => void;
+  registerTitle: (id: string | undefined) => () => void;
+  registerDescription: (id: string | undefined) => () => void;
 }
 
-const ModalLabelsContext = createContext<ModalLabels>();
+const ModalLabelsContext = createContext<ModalLabels | null>(null);
 
 /** ModalRoot wires title/description ids for its families; BottomSheet wires
  *  them through this. The part registers the id it actually rendered, so a
@@ -391,7 +391,7 @@ export function createModalLabels(): ModalLabels {
   const [describedBy, setDescribedBy] = createSignal<string>();
   const register = (set: (id: string | undefined) => void, id: string | undefined) => {
     set(id);
-    onCleanup(() => set(undefined));
+    return () => set(undefined);
   };
   return {
     titleId,
@@ -403,8 +403,8 @@ export function createModalLabels(): ModalLabels {
   };
 }
 
-export const ModalLabelsProvider = ModalLabelsContext.Provider;
+export const ModalLabelsProvider = ModalLabelsContext;
 
 export function useModalLabels(): ModalLabels | undefined {
-  return useContext(ModalLabelsContext);
+  return useContext(ModalLabelsContext) ?? undefined;
 }

@@ -1,8 +1,7 @@
 import type { IconifyIcon } from "@iconify/types";
 import { iconToSVG } from "@iconify/utils";
-import { batch, createMemo, createSignal, merge, type Signal, omit } from "solid-js";
-import { type JSX } from "@solidjs/web";
-import { isServer } from "@solidjs/web";
+import { createMemo, createSignal, merge, type Signal, omit } from "solid-js";
+import { isServer, type JSX } from "@solidjs/web";
 import { iconNodes, trusted } from "./icon-nodes.js";
 
 export type IconData = IconifyIcon;
@@ -68,13 +67,11 @@ function request(name: string): void {
       result = {};
     }
     if (source?.load !== load) return;
-    batch(() => {
-      for (const n of names) {
-        loaded.set(n, result[n] ?? null);
-        requested.delete(n);
-        arrivals.get(n)?.[1]((v) => v + 1);
-      }
-    });
+    for (const n of names) {
+      loaded.set(n, result[n] ?? null);
+      requested.delete(n);
+      arrivals.get(n)?.[1]((v) => v + 1);
+    }
   });
 }
 

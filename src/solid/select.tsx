@@ -11,10 +11,12 @@ import {
   Show,
   omit,
   untrack,
-  useContext,
+  createEffect,
+  merge,
 } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX } from "@solidjs/web";
-import { Portal } from "@solidjs/web";
+import { Layer } from "../lib/behavior/layer.js";
 import { createAnchored } from "../lib/behavior/anchored.js";
 import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
 import { claimKeys, createClaim } from "../lib/behavior/claims.js";
@@ -30,7 +32,6 @@ import {
   vetoed,
 } from "../lib/behavior/modal-root.js";
 import { createPresence } from "../lib/behavior/presence.js";
-import { effect, merge } from "../lib/behavior/solid.js";
 import { CONTROL_H, INPUT_SURFACE } from "../lib/input-classes.js";
 import { nestedLayerAttrs, Z_CLASS } from "../lib/layers.js";
 import { MENU_ITEM, MENU_ITEM_RADIUS, MENU_LABEL, MENU_SEPARATOR } from "../lib/menu-classes.js";
@@ -154,11 +155,10 @@ type StateAttrs = {
   ]: "" | undefined;
 };
 
-const SelectContext = createContext<SelectContextValue | null>(null);
+const SelectContext = createContext<SelectContextValue>();
 
 const useSelect = (): SelectContextValue => {
-  const ctx = useContext(SelectContext);
-  if (!ctx) throw new Error("Select parts render inside a Select");
+  const ctx = useRequired(SelectContext, "Select parts", "Select");
   return ctx;
 };
 
@@ -166,11 +166,10 @@ interface SelectListValue {
   highlighted: Accessor<string | undefined>;
 }
 
-const SelectListContext = createContext<SelectListValue | null>(null);
+const SelectListContext = createContext<SelectListValue>();
 
 const useSelectList = (): SelectListValue => {
-  const ctx = useContext(SelectListContext);
-  if (!ctx) throw new Error("SelectItem renders inside SelectContent, through itemComponent");
+  const ctx = useRequired(SelectListContext, "SelectItem", "SelectContent");
   return ctx;
 };
 
@@ -195,30 +194,31 @@ type SelectionProps = {
 };
 
 function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>): JSX.Element {
-  const [local, , rest] = splitProps(
+  const rest = omit(
     props as SelectBaseProps<Option, OptGroup> & SelectionProps,
-    [
-      "options",
-      "optionValue",
-      "optionTextValue",
-      "optionDisabled",
-      "optionGroupChildren",
-      "itemComponent",
-      "sectionComponent",
-      "placeholder",
-      "open",
-      "defaultOpen",
-      "onOpenChange",
-      "closeOnSelection",
-      "disabled",
-      "required",
-      "readOnly",
-      "busy",
-      "validationState",
-      "children",
-      "id",
-    ],
-    ["multiple", "value", "defaultValue", "onChange"],
+    "options",
+    "optionValue",
+    "optionTextValue",
+    "optionDisabled",
+    "optionGroupChildren",
+    "itemComponent",
+    "sectionComponent",
+    "placeholder",
+    "open",
+    "defaultOpen",
+    "onOpenChange",
+    "closeOnSelection",
+    "disabled",
+    "required",
+    "readOnly",
+    "busy",
+    "validationState",
+    "children",
+    "id",
+    "multiple",
+    "value",
+    "defaultValue",
+    "onChange",
   );
 
   const keyOf = (option: Option): string =>
@@ -312,7 +312,7 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
     if (!event.defaultPrevented) focusWithoutTracking(trigger());
   };
 
-  const id = untrack(() => props.id) ?? createUniqueId();
+  const id = untrack(() => props.id) || createUniqueId();
   const typer = createTypeahead();
 
   const ctx: SelectContextValue = {
@@ -490,7 +490,7 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
     "aria-labelledby",
   );
   const size = () => props.size ?? "default";
-  const triggerId = () => props.id ?? `${ctx.ids.root}-trigger`;
+  const triggerId = () => props.id || `${ctx.ids.root}-trigger`;
   const labelledBy = () =>
     [
       props["aria-labelledby"] ?? ctx.labelId(),
@@ -498,14 +498,14 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
     ]
       .filter(Boolean)
       .join(" ") || undefined;
-  effect(triggerId, (next) => {
+  createEffect(triggerId, (next) => {
     ctx.setTriggerId(next);
   });
-  effect(labelledBy, (next) => {
+  createEffect(labelledBy, (next) => {
     ctx.setListboxLabelledBy(next);
   });
 
-  effect(ctx.trigger, (el) => {
+  createEffect(ctx.trigger, (el) => {
     if (!el) return;
     let touch: { x: number; y: number } | undefined;
     let pressed = false;
@@ -659,7 +659,7 @@ const SelectContent: Component<SelectContentProps> = (props) => {
   const [panel, setPanel] = createSignal<HTMLElement>();
   const [listbox, setListbox] = createSignal<HTMLElement>();
 
-  effect(
+  createEffect(
     () => props.onCloseAutoFocus,
     (handler) => {
       ctx.setCloseAutoFocus(handler);
@@ -715,7 +715,7 @@ const SelectContent: Component<SelectContentProps> = (props) => {
   });
   createClaim(listbox, () => LISTBOX_CLAIM);
 
-  effect(
+  createEffect(
     () => [ctx.open(), listbox()] as const,
     ([open, list]) => {
       if (!open || !list) return;
@@ -809,6 +809,7 @@ const SelectContent: Component<SelectContentProps> = (props) => {
     </li>
   );
 
+  const portalMount = usePortalMount();
   const Panel: Component = () => {
     onCleanup(() => {
       setPanel(undefined);
@@ -874,9 +875,9 @@ const SelectContent: Component<SelectContentProps> = (props) => {
   return (
     <SelectListContext value={{ highlighted: collection.highlighted }}>
       <Show when={presence.mounted()}>
-        <Portal mount={usePortalMount()}>
+        <Layer mount={portalMount}>
           <Panel />
-        </Portal>
+        </Layer>
       </Show>
     </SelectListContext>
   );
@@ -885,8 +886,8 @@ const SelectContent: Component<SelectContentProps> = (props) => {
 const SelectLabel: Component<ComponentProps<"span">> = (props) => {
   const ctx = useSelect();
   const rest = omit(props, "class", "id");
-  const labelId = () => props.id ?? `${ctx.ids.root}-label`;
-  effect(labelId, (next) => {
+  const labelId = () => props.id || `${ctx.ids.root}-label`;
+  createEffect(labelId, (next) => {
     ctx.setLabelId(next);
     return () => ctx.setLabelId(undefined);
   });

@@ -4,7 +4,6 @@ import {
   createSignal,
   createUniqueId,
   For,
-  on,
   onCleanup,
   type ParentComponent,
   Show,
@@ -272,15 +271,13 @@ export function EntitySelector(props: EntitySelectorProps) {
   };
 
   createEffect(
-    on(
-      search,
-      () => {
-        setActiveIndex(0);
-        scrollRef?.scrollTo({ top: 0 });
-        setScrollTop(0);
-      },
-      { defer: true },
-    ),
+    search,
+    () => {
+      setActiveIndex(0);
+      scrollRef?.scrollTo({ top: 0 });
+      setScrollTop(0);
+    },
+    { defer: true },
   );
 
   createEffect(() => {

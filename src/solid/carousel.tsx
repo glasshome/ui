@@ -14,8 +14,8 @@ import {
   onCleanup,
   type ParentComponent,
   omit,
-  useContext,
 } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps } from "@solidjs/web";
 import {
   CAROUSEL_DOTS,
@@ -52,10 +52,7 @@ interface CarouselContextProps {
 const CarouselContext = createContext<CarouselContextProps>();
 
 function useCarousel() {
-  const context = useContext(CarouselContext);
-  if (!context) {
-    throw new Error("useCarousel must be used within a <Carousel />");
-  }
+  const context = useRequired(CarouselContext, "Carousel parts", "Carousel");
   return context;
 }
 

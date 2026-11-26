@@ -1,4 +1,5 @@
-import { createContext, createSignal, onCleanup, onSettled, Show, useContext } from "solid-js";
+import { createContext, createSignal, onSettled, Show } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type JSX } from "@solidjs/web";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
@@ -26,7 +27,7 @@ export function GlyphTileGroup(props: {
   });
   onSettled(() => {
     const group = root();
-    if (group) onCleanup(trackScroll(group, "[data-pressed]", () => props.value));
+    if (group) return trackScroll(group, "[data-pressed]", () => props.value);
   });
   return (
     <GlyphContext value={set}>
@@ -58,8 +59,7 @@ export function GlyphTile(props: {
   badge?: string;
   class?: string;
 }) {
-  const set = useContext(GlyphContext);
-  if (!set) throw new Error("GlyphTile renders inside a GlyphTileGroup");
+  const set = useRequired(GlyphContext, "GlyphTile", "GlyphTileGroup");
   const item = createToggleItem(set, { value: () => props.value, disabled: () => false });
   return (
     <button

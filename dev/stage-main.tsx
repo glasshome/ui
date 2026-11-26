@@ -47,7 +47,9 @@ function StageEntry() {
   const isScenario = () => route().parts[0] === "components" && route().parts.length === 3;
   const entry = () => findEntry(route().parts[0] ?? "", route().parts[1] ?? "");
 
-  createEffect(() => document.documentElement.classList.toggle("dark", dark()));
+  createEffect(dark, (isDark) => {
+    document.documentElement.classList.toggle("dark", isDark);
+  });
 
   return (
     <div class="bg-background text-foreground min-h-screen">

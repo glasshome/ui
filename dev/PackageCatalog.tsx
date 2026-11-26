@@ -22,7 +22,7 @@ function Guard(props: { name: string; children: JSX.Element }) {
       fallback={(err) => (
         <div class="border-destructive/40 bg-destructive/10 text-destructive rounded-lg border p-4 text-sm">
           <p class="font-semibold">{props.name} failed to render</p>
-          <p class="mt-1 font-mono text-xs opacity-80">{String(err?.message ?? err)}</p>
+          <p class="mt-1 font-mono text-xs opacity-80">{String(err())}</p>
         </div>
       )}
     >

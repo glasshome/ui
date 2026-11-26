@@ -11,8 +11,8 @@ interface FormContextValue {
   clearError: (name: string) => void;
 }
 
-const FormFieldContext = createContext<FormFieldContextValue>();
-const FormContext = createContext<FormContextValue>();
+const FormFieldContext = createContext<FormFieldContextValue | null>(null);
+const FormContext = createContext<FormContextValue | null>(null);
 
 const Form: ParentComponent<
   ComponentProps<"form"> & {

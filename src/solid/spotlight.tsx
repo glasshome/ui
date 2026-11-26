@@ -1,6 +1,6 @@
 import { type Component, createEffect, createSignal, onCleanup, onSettled, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
-import { Portal } from "@solidjs/web";
+import { Layer } from "../lib/behavior/layer.js";
 import { usePortalMount } from "./portal-mount.js";
 import { createDismiss } from "../lib/behavior/dismiss.js";
 import { registerLayer } from "../lib/behavior/layer-stack.js";
@@ -39,6 +39,7 @@ function sameFields<T extends object>(a: T | null, b: T | null): boolean {
 }
 
 const Spotlight: Component<SpotlightProps> = (props) => {
+  const portalMount = usePortalMount();
   const [box, setBox] = createSignal<Box | null>(null, { equals: sameFields });
   const [anchorBox, setAnchorBox] = createSignal<Box | null>(null, { equals: sameFields });
   const [viewport, setViewport] = createSignal(
@@ -117,17 +118,17 @@ const Spotlight: Component<SpotlightProps> = (props) => {
   onSettled(() => {
     window.addEventListener("resize", measure);
     window.addEventListener("scroll", measure, { capture: true, passive: true });
-    onCleanup(() => {
+    return () => {
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", measure, { capture: true });
-    });
+    };
   });
 
   const place = () =>
     placeBubble(viewport(), anchorBox(), bubbleSize(), BUBBLE_GAP_WITH_TAIL, VIEWPORT_MARGIN);
 
   return (
-    <Portal mount={usePortalMount()}>
+    <Layer mount={portalMount}>
       <Show when={props.scrim}>
         <div
           data-slot="spotlight-scrim"
@@ -178,7 +179,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
           {props.children}
         </div>
       </div>
-    </Portal>
+    </Layer>
   );
 };
 

@@ -1,7 +1,6 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, Show, createEffect } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { createFocusScope, type InitialFocus } from "../../../src/lib/behavior/focus-scope";
-import { effect } from "../../../src/lib/behavior/solid";
 import { defineScenarios } from "../../harness/types";
 
 const Scope = (props: { children: JSX.Element; initialFocus?: InitialFocus }) => {
@@ -33,7 +32,7 @@ const Scope = (props: { children: JSX.Element; initialFocus?: InitialFocus }) =>
 
 const Preview = () => {
   const [host, setHost] = createSignal<HTMLElement>();
-  effect(host, (el) => {
+  createEffect(host, (el) => {
     if (!el) return;
     const root = el.attachShadow({ mode: "open" });
     const button = document.createElement("button");

@@ -1,8 +1,8 @@
-import { createSignal } from "solid-js";
+import { createSignal, createEffect, merge, omit } from "solid-js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import { selfKeys } from "./claims.js";
 import { Polymorphic } from "./polymorphic.js";
-import { callEventHandler, effect, merge, omit } from "./solid.js";
+import { callEventHandler } from "./solid.js";
 
 export type ButtonRootProps<T extends ValidComponent = "button"> = Omit<
   ComponentProps<T>,
@@ -38,7 +38,7 @@ export function ButtonRoot<T extends ValidComponent = "button">(props: ButtonRoo
   };
 
   // Bound on the element, since Solid's delegated handlers never reach inside a closed shadow root.
-  effect(el, (node) => {
+  createEffect(el, (node) => {
     if (!node) return;
     const click = (event: MouseEvent) => {
       if (own.disabled && !native()) {

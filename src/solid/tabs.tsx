@@ -8,14 +8,15 @@ import {
   onSettled,
   Show,
   omit,
-  useContext,
+  createEffect,
+  merge,
 } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type ValidComponent } from "@solidjs/web";
 import { type Collection, createCollection } from "../lib/behavior/collection.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { CANDIDATES, focusWithoutTracking, trackFocus } from "../lib/behavior/focus-scope.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
-import { effect, merge } from "../lib/behavior/solid.js";
 import { TRACK_SURFACE } from "../lib/card-classes.js";
 import { PRESS_DIP, SETTLE_MOTION } from "../lib/motion-classes.js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
@@ -60,11 +61,10 @@ interface TabsContextValue {
   contentId: (value: string) => string;
 }
 
-const TabsContext = createContext<TabsContextValue | null>(null);
+const TabsContext = createContext<TabsContextValue>();
 
 const useTabs = (): TabsContextValue => {
-  const ctx = useContext(TabsContext);
-  if (!ctx) throw new Error("Tabs parts render inside a Tabs");
+  const ctx = useRequired(TabsContext, "Tabs parts", "Tabs");
   return ctx;
 };
 
@@ -87,7 +87,7 @@ const Tabs: Component<TabsProps> = (props) => {
     "as",
   );
   const fallbackId = `tabs-${createUniqueId()}`;
-  const id = () => props.id ?? fallbackId;
+  const id = () => props.id || fallbackId;
   const orientation = () => props.orientation ?? "horizontal";
   const [value, setValue] = createControllableSignal<string | undefined>({
     value: () => props.value,
@@ -115,7 +115,7 @@ const Tabs: Component<TabsProps> = (props) => {
     else setValue(next);
   };
 
-  effect(
+  createEffect(
     () => [list(), value(), triggerIds()] as const,
     ([el, current]) => {
       if (!el) return;
@@ -181,11 +181,11 @@ const TabsList: Component<TabsListProps> = (props) => {
   const [el, setEl] = createSignal<HTMLElement>();
   onSettled(() => {
     const listEl = el();
-    if (listEl) onCleanup(trackScroll(listEl, "[data-selected]", ctx.value));
+    if (listEl) return trackScroll(listEl, "[data-selected]", ctx.value);
   });
   onCleanup(() => ctx.setList(undefined));
 
-  effect(el, (node) => {
+  createEffect(el, (node) => {
     if (!node) return;
     const keydown = (event: KeyboardEvent) => {
       const before = ctx.collection.highlighted();
@@ -261,16 +261,16 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
   );
   const [el, setEl] = createSignal<HTMLElement>();
   const disabled = () => props.disabled || ctx.disabled();
-  effect(disabled, () => ctx.collection.refresh());
+  createEffect(disabled, () => ctx.collection.refresh());
   onCleanup(() => ctx.collection.refresh());
   const selected = () => ctx.value() === props.value;
 
-  effect(
+  createEffect(
     () => [props.value, props.id] as const,
     ([key, custom]) => ctx.register("trigger", key, custom),
   );
 
-  effect(el, (node) => {
+  createEffect(el, (node) => {
     if (!node) return;
     let mousePressed = false;
     const focused = trackFocus(node);
@@ -384,11 +384,11 @@ const TabsContent: Component<TabsContentProps> = (props) => {
   const [holdsTabStop, setHoldsTabStop] = createSignal(false);
   const selected = () => ctx.value() === props.value;
 
-  effect(
+  createEffect(
     () => [props.value, props.id] as const,
     ([key, custom]) => ctx.register("content", key, custom),
   );
-  effect(el, (node) => {
+  createEffect(el, (node) => {
     if (node) setHoldsTabStop(node.querySelector(CANDIDATES) !== null);
   });
 

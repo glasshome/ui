@@ -9,9 +9,12 @@ import {
   omit,
   untrack,
   useContext,
+  createEffect,
+  merge,
 } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
-import { Portal } from "@solidjs/web";
+import { Layer } from "../lib/behavior/layer.js";
 import { type Align, controlRadius, type Side } from "../lib/anchor-placement.js";
 import { createAnchored } from "../lib/behavior/anchored.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
@@ -33,7 +36,6 @@ import {
 } from "../lib/behavior/modal-root.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
-import { effect, merge } from "../lib/behavior/solid.js";
 import { INPUT_SURFACE } from "../lib/input-classes.js";
 import { nestedLayerAttrs, Z_CLASS } from "../lib/layers.js";
 import { FIELD_MOTION, MORPH_MOTION, MOTION_EXIT_MS } from "../lib/motion-classes.js";
@@ -89,11 +91,10 @@ interface PopoverContextValue {
   setDescriptionId: (id: string | undefined) => void;
 }
 
-const PopoverContext = createContext<PopoverContextValue | null>(null);
+const PopoverContext = createContext<PopoverContextValue>();
 
 const usePopover = (): PopoverContextValue => {
-  const ctx = useContext(PopoverContext);
-  if (!ctx) throw new Error("Popover parts render inside a Popover");
+  const ctx = useRequired(PopoverContext, "Popover parts", "Popover");
   return ctx;
 };
 
@@ -150,7 +151,7 @@ function PopoverTrigger<T extends ValidComponent = "button">(props: PartProps<T>
     const el = untrack(own);
     if (el && untrack(ctx.trigger) === el) ctx.setTrigger(undefined);
   });
-  effect(own, (el) => {
+  createEffect(own, (el) => {
     if (!el) return;
     // A press never focuses the trigger, so focus stays where the panel left it.
     const down = (event: PointerEvent) => event.preventDefault();
@@ -243,8 +244,8 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
   );
   const surface = () => props.surface ?? ctx.surface();
   const fallbackId = createUniqueId();
-  const id = () => props.id ?? fallbackId;
-  effect(id, (next) => {
+  const id = () => props.id || fallbackId;
+  createEffect(id, (next) => {
     ctx.setContentId(next);
     return () => ctx.setContentId(undefined);
   });
@@ -325,7 +326,7 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
     },
   });
 
-  effect(
+  createEffect(
     () => ctx.isOpen() && panel() !== undefined,
     (open) => {
       if (open) {
@@ -390,9 +391,9 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
 
   return (
     <Show when={presence.mounted()}>
-      <Portal mount={mount}>
+      <Layer mount={mount}>
         <Panel />
-      </Portal>
+      </Layer>
     </Show>
   );
 };
@@ -405,8 +406,8 @@ function labelPart(
     const set = register(usePopover());
     const rest = omit(props as PartProps<ValidComponent>, "as", "id");
     const fallback = createUniqueId();
-    const id = (): string => props.id ?? fallback;
-    effect(id, (next) => {
+    const id = (): string => props.id || fallback;
+    createEffect(id, (next) => {
       set(next);
       return () => set(undefined);
     });

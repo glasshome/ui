@@ -514,7 +514,9 @@ export default function DashboardShape() {
     Object.entries(home.power).filter(([id, on]) => on && id.startsWith(`${domain}.`)).length;
   const devicesOn = () => onIds("light") + onIds("switch");
   const setPower = (ids: string[], on: boolean) => {
-    for (const id of ids) setHome("power", id, on);
+    setHome((draft) => {
+      for (const id of ids) draft.power[id] = on;
+    });
   };
 
   const temperatures = DEMO_ENTITIES.filter((entity) => entity.deviceClass === "temperature");
@@ -623,7 +625,11 @@ export default function DashboardShape() {
                         power={home.power}
                         brightness={home.brightness[area.id] ?? 60}
                         onPower={setPower}
-                        onBrightness={(value) => setHome("brightness", area.id, value)}
+                        onBrightness={(value) =>
+                          setHome((draft) => {
+                            draft.brightness[area.id] = value;
+                          })
+                        }
                       />
                     )}
                   </For>

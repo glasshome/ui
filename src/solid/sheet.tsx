@@ -95,6 +95,7 @@ const SheetAbove: Component<{ above?: JSX.Element }> = (props) => {
 };
 
 const SheetContent: ParentComponent<SheetContentProps> = (props) => {
+  const portalMount = usePortalMount();
   const rest = omit(
     props,
     "class",
@@ -105,6 +106,7 @@ const SheetContent: ParentComponent<SheetContentProps> = (props) => {
     "style",
     "ref",
     "onOpenAutoFocus",
+    "slot",
   );
   const ctx = useDialogContext();
   return (
@@ -112,7 +114,7 @@ const SheetContent: ParentComponent<SheetContentProps> = (props) => {
       <ModalCover panel={ctx.panel} open={ctx.isOpen} dormant={ctx.dormant} />
       <ModalFrame
         slot="sheet"
-        mount={usePortalMount()}
+        mount={portalMount}
         exitMs={SHEET_EXIT_MS}
         scrimClass={SHEET_SCRIM}
         panelClass={cn(SHEET_PANEL, SHEET_SIDE[props.side ?? "right"], props.class)}

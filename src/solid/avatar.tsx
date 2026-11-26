@@ -5,10 +5,10 @@ import {
   createSignal,
   Show,
   omit,
-  useContext,
+  createEffect,
 } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps } from "@solidjs/web";
-import { effect } from "../lib/behavior/solid.js";
 import { cn } from "../lib/utils.js";
 
 type LoadingStatus = "idle" | "loading" | "loaded" | "error";
@@ -27,8 +27,7 @@ interface AvatarContextValue {
 const AvatarContext = createContext<AvatarContextValue>();
 
 function useAvatar(): AvatarContextValue {
-  const ctx = useContext(AvatarContext);
-  if (!ctx) throw new Error("An avatar part renders inside an Avatar");
+  const ctx = useRequired(AvatarContext, "An avatar part", "Avatar");
   return ctx;
 }
 
@@ -60,7 +59,7 @@ const AvatarImage: Component<ComponentProps<"img">> = (props) => {
   const [status, setStatus] = createSignal<LoadingStatus>("idle");
 
   // A detached probe, so the photo replaces the fallback only once it has decoded.
-  effect(
+  createEffect(
     () => props.src,
     (src) => {
       if (!src) return void setStatus("error");
@@ -78,7 +77,7 @@ const AvatarImage: Component<ComponentProps<"img">> = (props) => {
       };
     },
   );
-  effect(status, (next) => {
+  createEffect(status, (next) => {
     if (next !== "idle") ctx.report(next);
   });
 
@@ -93,7 +92,7 @@ const AvatarFallback: Component<ComponentProps<"span">> = (props) => {
   const ctx = useAvatar();
   const rest = omit(props, "class");
   const [due, setDue] = createSignal(ctx.fallbackDelay() === undefined);
-  effect(ctx.fallbackDelay, (delay) => {
+  createEffect(ctx.fallbackDelay, (delay) => {
     if (delay === undefined) return;
     const timer = setTimeout(() => setDue(true), delay);
     return () => clearTimeout(timer);

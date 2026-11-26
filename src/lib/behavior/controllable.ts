@@ -10,12 +10,16 @@ export interface ControllableOptions<T> {
 export function createControllableSignal<T>(
   options: ControllableOptions<T>,
 ): [Accessor<T>, (next: T) => void] {
-  const [stored, setStored] = createSignal<T>(untrack(options.defaultValue), { equals: false });
-  const get = (): T => options.value() ?? stored();
+  // Boxed: a signal given a function would take it as a derivation.
+  let written = untrack(options.defaultValue);
+  const [stored, setStored] = createSignal({ value: written });
+  const get = (): T => options.value() ?? stored().value;
   const set = (next: T) => {
     const same = options.equals ?? Object.is;
-    if (same(next, untrack(get))) return;
-    setStored(() => next);
+    // The stored signal lags until flush; two sets in one tick compare against the last one.
+    if (same(next, untrack(options.value) ?? written)) return;
+    written = next;
+    setStored({ value: next });
     options.onChange?.(next);
   };
   return [get, set];

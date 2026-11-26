@@ -8,17 +8,18 @@ import {
   Show,
   omit,
   untrack,
-  useContext,
+  createEffect,
+  merge,
 } from "solid-js";
+import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
-import { Portal } from "@solidjs/web";
+import { Layer } from "../lib/behavior/layer.js";
 import { createAnchored } from "../lib/behavior/anchored.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createDismiss } from "../lib/behavior/dismiss.js";
 import { registerLayer } from "../lib/behavior/layer-stack.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
-import { effect, merge } from "../lib/behavior/solid.js";
 import type { Align, Side } from "../lib/anchor-placement.js";
 import { MOTION_EXIT_MS, OVERLAY_MOTION } from "../lib/motion-classes.js";
 import { FLOATING_PANEL } from "../lib/overlay-classes.js";
@@ -56,8 +57,7 @@ interface TooltipContextValue {
 const TooltipContext = createContext<TooltipContextValue>();
 
 const useTooltip = (): TooltipContextValue => {
-  const ctx = useContext(TooltipContext);
-  if (!ctx) throw new Error("Tooltip parts render inside a Tooltip");
+  const ctx = useRequired(TooltipContext, "Tooltip parts", "Tooltip");
   return ctx;
 };
 
@@ -113,7 +113,7 @@ function TooltipTrigger<T extends ValidComponent = "button">(
     ctx.hide(false);
   });
 
-  effect(ctx.trigger, (el) => {
+  createEffect(ctx.trigger, (el) => {
     if (!el) return;
     const mouseLike = (e: PointerEvent) => e.pointerType !== "touch";
     const enter = (e: PointerEvent) => mouseLike(e) && ctx.show(true);
@@ -196,6 +196,7 @@ const TooltipContent: Component<TooltipContentProps> = (props) => {
     offset: ctx.gutter,
   });
 
+  const portalMount = usePortalMount();
   const Panel: Component = () => {
     onCleanup(() => setPanel(undefined));
     return (
@@ -225,9 +226,9 @@ const TooltipContent: Component<TooltipContentProps> = (props) => {
 
   return (
     <Show when={presence.mounted()}>
-      <Portal mount={usePortalMount()}>
+      <Layer mount={portalMount}>
         <Panel />
-      </Portal>
+      </Layer>
     </Show>
   );
 };

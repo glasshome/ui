@@ -1,5 +1,4 @@
-import { type Accessor } from "solid-js";
-import { effect } from "./behavior/solid.js";
+import { type Accessor, createEffect } from "solid-js";
 
 /* A row of segments that scrolls sideways (tabs, a scrolling toggle group):
  * the selected segment stays in view and a clipped edge fades out, so the row
@@ -37,7 +36,7 @@ export function trackScroll(
   // A frame late: on mount the track has no width yet, and during a press
   // the focus scroll cancels a smooth scroll started in the same task.
   let frame = 0;
-  effect(selection, () => {
+  createEffect(selection, () => {
     cancelAnimationFrame(frame);
     frame = requestAnimationFrame(reveal);
   });
