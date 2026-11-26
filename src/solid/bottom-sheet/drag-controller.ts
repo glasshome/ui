@@ -1,3 +1,4 @@
+import { holdClaim } from "../../lib/behavior/claims.js";
 import { hasNoDragAncestor, scrollerAhead, shouldDrag } from "./arbitration.js";
 import {
   CLOSE_DISTANCE_RATIO,
@@ -17,6 +18,7 @@ const FLING_STOP_PX_PER_MS = 0.02;
 // theme.css gives an unscrolled body touch-action none where pan-down is unsupported; unscrolled means scrollTop 0.
 const BODY_HELD_BY_SHEET = '[data-slot$="-body"]:not([data-scrolled])';
 const panDownDropped = () => !CSS.supports("touch-action", "pan-down");
+const RELEASE_CLICK_CLAIM = "prevent:click stop:click";
 
 interface DragHandle {
   destroy: () => void;
@@ -50,6 +52,16 @@ export function attachDrag(opts: DragOptions): DragHandle {
   let shownDy = 0;
   let scroller: Element | null = null;
   let fling = 0;
+  let releaseClaim: (() => void) | undefined;
+
+  // Held from the move, since a widget in a Worker hears the release only after its click has gone.
+  const claimReleaseClick = (moved: boolean) => {
+    if (moved) releaseClaim ??= holdClaim(el, RELEASE_CLICK_CLAIM);
+    else {
+      releaseClaim?.();
+      releaseClaim = undefined;
+    }
+  };
 
   const isDraggableState = (): boolean => {
     const s = getState();
@@ -145,6 +157,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
     const totalDx = e.clientX - startX;
     lastTotalDy = totalDy;
     if (scroller) {
+      claimReleaseClick(Math.abs(totalDy) > DEAD_ZONE_PX);
       tracker.add(totalDy, e.timeStamp);
       scroller.scrollTop = -totalDy;
       return;
@@ -156,6 +169,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
         if (getState() === "pressing") setState("open");
         const box = Math.abs(totalDy) >= Math.abs(totalDx) && takeScroll(pointerTarget, totalDy);
         if (box) {
+          claimReleaseClick(Math.abs(totalDy) > DEAD_ZONE_PX);
           tracker.add(totalDy, e.timeStamp);
           box.scrollTop = -totalDy;
         } else dragAborted = true;
@@ -163,6 +177,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
       }
       commitDrag();
     }
+    claimReleaseClick(Math.abs(totalDy) > DEAD_ZONE_PX);
     tracker.add(totalDy, e.timeStamp);
     dy = totalDy;
     follow(dy);
@@ -199,13 +214,17 @@ export function attachDrag(opts: DragOptions): DragHandle {
   };
 
   const suppressNextClick = () => {
+    const stop = () => {
+      document.removeEventListener("click", onClick, true);
+      claimReleaseClick(false);
+    };
     const onClick = (e: MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      document.removeEventListener("click", onClick, true);
+      stop();
     };
     document.addEventListener("click", onClick, true);
-    setTimeout(() => document.removeEventListener("click", onClick, true), 100);
+    setTimeout(stop, 100);
   };
 
   const safeReleaseCapture = () => {
@@ -226,6 +245,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
       const box = scroller;
       const velocity = tracker.compute(e.timeStamp);
       if (Math.abs(lastTotalDy) > DEAD_ZONE_PX) suppressNextClick();
+      else claimReleaseClick(false);
       const at = Math.max(0, -lastTotalDy);
       cleanupDrag();
       flingScroll(box, at, -velocity);
@@ -244,6 +264,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
       projectedDy > height * CLOSE_DISTANCE_RATIO || velocity > CLOSE_VELOCITY_PX_PER_MS;
 
     if (Math.abs(lastTotalDy) > DEAD_ZONE_PX) suppressNextClick();
+    else claimReleaseClick(false);
 
     cleanupDrag();
     if (shouldClose) settleClose();
@@ -254,6 +275,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
     if (e.pointerId !== pointerId) return;
     safeReleaseCapture();
     const wasDragging = movedPastDeadZone;
+    claimReleaseClick(false);
     cleanupDrag();
     if (wasDragging) settleSnap();
     else setState("open");
@@ -277,6 +299,7 @@ export function attachDrag(opts: DragOptions): DragHandle {
       el.removeEventListener("pointercancel", onPointerCancel);
       el.removeEventListener("touchmove", onTouchMove);
       stopFling();
+      claimReleaseClick(false);
       cleanupDrag();
     },
   };

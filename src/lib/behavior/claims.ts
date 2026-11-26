@@ -31,24 +31,29 @@ function write(el: Element, own: Map<symbol, string>) {
   else el.removeAttribute(CLAIM_ATTR);
 }
 
+/** Holds a claim on an element beside every other part's claims on it, until the returned release. */
+export function holdClaim(el: Element, tokens: string): () => void {
+  const id = Symbol();
+  const own = held.get(el) ?? new Map<symbol, string>();
+  held.set(el, own);
+  own.set(id, tokens);
+  write(el, own);
+  return () => {
+    own.delete(id);
+    write(el, own);
+  };
+}
+
 /** Claims on an element another part renders, held beside every other part's claims on it. */
 export function createClaim(
   target: () => Element | undefined,
   tokens: () => string | undefined,
 ): void {
-  const id = Symbol();
   createEffect(
     () => [target(), tokens()] as const,
     ([el, claimed]) => {
       if (!el || !claimed) return;
-      const own = held.get(el) ?? new Map<symbol, string>();
-      held.set(el, own);
-      own.set(id, claimed);
-      write(el, own);
-      return () => {
-        own.delete(id);
-        write(el, own);
-      };
+      return holdClaim(el, claimed);
     },
   );
 }
