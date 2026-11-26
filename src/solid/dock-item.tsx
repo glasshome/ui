@@ -27,6 +27,25 @@ export const DockIconButton: Component<DockIconButtonProps> = (props) => {
   const rest = omit(props, "icon", "label", "class", "isActive", "badge", "type", "lit", "arrived");
   const isElement = () => typeof props.icon !== "function";
 
+  const icon = (
+    <div
+      data-slot="dock-item-icon"
+      class={cn(
+        "flex items-center justify-center transition-colors duration-(--duration-state)",
+        props.lit ? "text-primary" : "text-foreground group-hover:text-primary/80",
+      )}
+    >
+      {isElement() ? (
+        (props.icon as JSX.Element)
+      ) : (
+        <Polymorphic
+          defaultAs={props.icon as Component<{ class?: string }>}
+          class="h-5 w-5 sm:h-6 sm:w-6"
+        />
+      )}
+    </div>
+  );
+
   return (
     <Tooltip openDelay={150} placement="top">
       <TooltipTrigger
@@ -48,22 +67,7 @@ export const DockIconButton: Component<DockIconButtonProps> = (props) => {
         <Show when={props.arrived}>
           <span data-slot="dock-item-arrival" aria-hidden="true" class={DOCK_ARRIVE_MOTION} />
         </Show>
-        <div
-          data-slot="dock-item-icon"
-          class={cn(
-            "flex items-center justify-center transition-colors duration-(--duration-state)",
-            props.lit ? "text-primary" : "text-foreground group-hover:text-primary/80",
-          )}
-        >
-          {isElement() ? (
-            (props.icon as JSX.Element)
-          ) : (
-            <Polymorphic
-              defaultAs={props.icon as Component<{ class?: string }>}
-              class="h-5 w-5 sm:h-6 sm:w-6"
-            />
-          )}
-        </div>
+        {icon}
         <Show when={typeof props.badge === "number" && props.badge > 0}>
           {/* Inside the item box: an overhanging badge inflates the bar's
            * scrollWidth and trips the overflow-to-scroll check below. */}
