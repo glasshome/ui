@@ -42,7 +42,7 @@ const InputOTP: ParentComponent<
     "containerClass",
     "pattern",
   );
-  const [internalValue, setInternalValue] = createSignal(props.value ?? "");
+  const [internalValue, setInternalValue] = createSignal(() => props.value ?? "");
   const [activeIndex, setActiveIndex] = createSignal(-1);
   const [isActive, setIsActive] = createSignal(false);
   let inputRef!: HTMLInputElement;
