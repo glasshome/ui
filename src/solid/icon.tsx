@@ -23,6 +23,7 @@ export interface IconSource {
 let source: IconSource | undefined;
 const loaded = new Map<string, IconData | null>();
 // A new source re-resolves every icon; a batch landing wakes only the names it answered.
+// oxlint-disable-next-line solid/ssr-module-state -- icon data is the same for every visitor
 const [generation, setGeneration] = createSignal(0);
 const arrivals = new Map<string, Signal<number>>();
 const arrivalOf = (name: string) => {

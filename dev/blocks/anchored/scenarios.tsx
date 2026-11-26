@@ -1,5 +1,6 @@
 import { createSignal, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
+// oxlint-disable-next-line solid/portal-in-layer -- the block drives the behavior under a bare Portal
 import { Portal } from "@solidjs/web";
 import { createAnchored } from "../../../src/lib/behavior/anchored";
 import { defineScenarios } from "../../harness/types";

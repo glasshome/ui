@@ -99,6 +99,7 @@ const RadioGroup = (props: RadioGroupProps) => {
     if (!el) return;
     // Space on the checked radio sends no click of its own, so a keyboard pick would never reach onPick.
     const down = (event: KeyboardEvent) => {
+      // oxlint-disable-next-line solid/ssr-module-state -- keyboard state, written only by a client keydown
       arrowKeyHeld = event.key.startsWith("Arrow");
       const target = event.target;
       if (event.key === " " && target instanceof HTMLInputElement && target.checked) target.click();

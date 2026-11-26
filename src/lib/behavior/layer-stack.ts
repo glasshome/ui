@@ -32,6 +32,7 @@ export interface LayerHandle {
   containsPath(path: readonly EventTarget[]): boolean;
 }
 
+// oxlint-disable-next-line solid/ssr-module-state -- one stack per document; layers register only on the client
 const [layerSignal, setLayers] = createSignal<readonly Layer[]>([]);
 // The signal lags until flush, and handlers run inside a flush: reads track the signal and answer from this list.
 let stack: readonly Layer[] = [];

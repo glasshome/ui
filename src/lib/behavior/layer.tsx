@@ -1,3 +1,4 @@
+// oxlint-disable-next-line solid/portal-in-layer -- this file is ui's layer
 import { Portal, type JSX } from "@solidjs/web";
 
 export interface LayerProps {
