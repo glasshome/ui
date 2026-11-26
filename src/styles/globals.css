@@ -897,11 +897,13 @@
   }
 }
 
-/* Icon: the box a glyph sits in, sized by its width/height attributes. */
-svg[data-slot="icon"] {
-  display: inline-block;
-  vertical-align: 0;
-  flex-shrink: 0;
+/* Icon: the box a glyph sits in, sized by its width/height attributes. In base, so a display utility on an Icon wins. */
+@layer base {
+  svg[data-slot="icon"] {
+    display: inline-block;
+    vertical-align: 0;
+    flex-shrink: 0;
+  }
 }
 
 /* Dock paging from its slot count and its room alone: the first frame already

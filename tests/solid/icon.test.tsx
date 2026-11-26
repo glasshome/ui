@@ -113,4 +113,18 @@ describe("Icon", () => {
     flush();
     expect(container.querySelector("svg")?.innerHTML).toContain("M5 12h14");
   });
+
+  it("sits inline by default and yields its display to a display utility", () => {
+    const { container } = render(() => (
+      <>
+        <Icon icon="lucide:plus" />
+        <Icon icon="lucide:plus" class="hidden" />
+        <Icon icon="lucide:plus" class="block" />
+      </>
+    ));
+    const shown = [...container.querySelectorAll("svg")].map(
+      (svg) => getComputedStyle(svg).display,
+    );
+    expect(shown).toEqual(["inline-block", "none", "block"]);
+  });
 });
