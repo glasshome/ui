@@ -267,11 +267,16 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
     submenu: submenu?.menu,
   });
   if (submenu) {
-    submenu.setTriggerId(key);
-    onCleanup(() => {
-      submenu.menu.setTrigger(undefined);
-      submenu.setTriggerId(undefined);
-    });
+    createEffect(
+      () => key,
+      (value) => {
+        submenu.setTriggerId(value);
+        return () => {
+          submenu.menu.setTrigger(undefined);
+          submenu.setTriggerId(undefined);
+        };
+      },
+    );
   }
 
   const subOpen = () => submenu?.menu.open() ?? false;
