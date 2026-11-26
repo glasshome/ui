@@ -142,7 +142,10 @@ export function Icon(props: IconProps) {
   if (isServer) {
     // A TrustedHTML is a fresh object per call, which the spread would write as a new innerHTML.
     const html = createMemo(() => trusted(body()));
-    return <svg {...shell} innerHTML={html()} />;
+    const svg = <svg {...shell} innerHTML={html()} />;
+    // The client's child insert takes one hydration id after the svg; take it here too.
+    createMemo(() => undefined);
+    return svg;
   }
   const nodes = createMemo(() => iconNodes(body()));
   return <svg {...shell}>{nodes()}</svg>;
