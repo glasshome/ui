@@ -1,15 +1,14 @@
 import { createEffect, createSignal, type JSX, onCleanup, Show } from "solid-js";
 import { render } from "solid-js/web";
-import { Dialog, DialogContent, DialogTitle } from "../../src/solid";
 import {
-  BottomSheet,
-  BottomSheetBody,
-  BottomSheetContent,
-  BottomSheetHandle,
-  BottomSheetOverlay,
-  BottomSheetPortal,
-  BottomSheetTitle,
-} from "../../src/solid/bottom-sheet/index.js";
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  ResponsiveDialog,
+  ResponsiveDialogBody,
+  ResponsiveDialogContent,
+  ResponsiveDialogTitle,
+} from "../../src/solid";
 import { PortalMountContext } from "../../src/solid/portal-mount.js";
 import { CLOSED_ROOTS } from "./closed-roots";
 import type { Within as WithinMode } from "./types";
@@ -76,18 +75,14 @@ export function Within(props: { mode: WithinMode; children: JSX.Element }) {
         </Dialog>
       </Show>
       <Show when={props.mode === "sheet"}>
-        <BottomSheet defaultOpen>
-          <BottomSheetPortal>
-            <BottomSheetOverlay />
-            <BottomSheetContent>
-              <BottomSheetHandle />
-              <BottomSheetBody>
-                <BottomSheetTitle>Scenario</BottomSheetTitle>
-                {props.children}
-              </BottomSheetBody>
-            </BottomSheetContent>
-          </BottomSheetPortal>
-        </BottomSheet>
+        <ResponsiveDialog defaultOpen>
+          <ResponsiveDialogContent>
+            <ResponsiveDialogBody>
+              <ResponsiveDialogTitle>Scenario</ResponsiveDialogTitle>
+              {props.children}
+            </ResponsiveDialogBody>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
       </Show>
       <Show when={props.mode === "shadow-root"}>
         <ClosedShadowRoot>{props.children}</ClosedShadowRoot>

@@ -2,11 +2,11 @@ import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { CDPSession, Page } from "playwright";
 import { HOLD_GRACE_MS, HOLD_MS } from "../../src/lib/hold";
-import type { IndexedComponent, Step, Target } from "../harness/types";
+import { type IndexedComponent, SCENARIO_WIDTHS, type Step, type Target } from "../harness/types";
 import { PKG } from "./serve";
 
 export const WIDTHS = {
-  phone: [390, 844],
+  phone: SCENARIO_WIDTHS.phone,
   tablet: [834, 1112],
   desktop: [1280, 900],
 } as const;

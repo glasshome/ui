@@ -62,6 +62,7 @@ export default defineScenarios({
       title: "Inside a bottom sheet",
       render: Fruit,
       within: "sheet",
+      width: "phone",
       steps: [{ press: TRIGGER }],
     },
     {

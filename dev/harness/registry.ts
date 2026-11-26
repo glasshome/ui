@@ -65,6 +65,7 @@ export const scenarioIndex = (): IndexedComponent[] =>
       id: s.id,
       title: s.title,
       within: s.within ?? "page",
+      width: s.width ?? null,
       steps: s.steps ?? [],
       keyboard: s.keyboard ?? null,
     })),

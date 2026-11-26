@@ -1,7 +1,9 @@
 import { render } from "@solidjs/testing-library";
+import { page } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";
 import { findScenario } from "../../dev/harness/registry";
 import { settleDom } from "../../dev/harness/settle";
+import { SCENARIO_WIDTHS } from "../../dev/harness/types";
 import { scenarioScope } from "../../dev/harness/steps";
 import { Within } from "../../dev/harness/Within";
 import { afterTest } from "./leaks";
@@ -31,6 +33,7 @@ export function focusedElement(): Element | null {
 export async function mountScenario(component: string, id: string) {
   const scenario = findScenario(component, id);
   if (!scenario) throw new Error(`no scenario ${component}/${id}`);
+  if (scenario.width) await page.viewport(...SCENARIO_WIDTHS[scenario.width]);
   const { container } = render(() => (
     <Within mode={scenario.within ?? "page"}>{scenario.render()}</Within>
   ));

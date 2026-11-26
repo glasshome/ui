@@ -57,7 +57,7 @@ const TRACE_CATEGORIES = [
 interface Options {
   keyboard: boolean;
   cpuRate: number;
-  width: Width;
+  width: Width | null;
   theme: Theme;
   out: string;
   build: string;
@@ -87,7 +87,8 @@ async function runScenario(
   const steps = opts.keyboard ? scenario.keyboard : scenario.steps;
   if (steps === null)
     throw new UsageError(`${component.slug}/${scenario.id} has no keyboard steps`);
-  const [w, h] = WIDTHS[opts.width];
+  const width = opts.width ?? scenario.width ?? "desktop";
+  const [w, h] = WIDTHS[width];
   const context = await browser.newContext({
     viewport: { width: w, height: h },
     colorScheme: opts.theme,
@@ -185,7 +186,7 @@ async function runScenario(
     scenario: scenario.id,
     build: opts.label,
     cpuRate: opts.cpuRate,
-    width: opts.width,
+    width,
     theme: opts.theme,
     steps: reports,
     timeline,
@@ -290,7 +291,7 @@ async function main(argv: string[]): Promise<number> {
     options: {
       steps: { type: "string" },
       "cpu-rate": { type: "string", default: "1" },
-      width: { type: "string", default: "desktop" },
+      width: { type: "string" },
       theme: { type: "string", default: "dark" },
       out: { type: "string" },
       json: { type: "boolean", default: false },
@@ -321,7 +322,10 @@ async function main(argv: string[]): Promise<number> {
   const opts: Options = {
     keyboard: values.steps === "keyboard",
     cpuRate,
-    width: oneOf(values.width, ["phone", "tablet", "desktop"], "width"),
+    width:
+      values.width === undefined
+        ? null
+        : oneOf(values.width, Object.keys(WIDTHS) as Width[], "width"),
     theme: oneOf(values.theme, THEMES, "theme"),
     out: base,
     build,

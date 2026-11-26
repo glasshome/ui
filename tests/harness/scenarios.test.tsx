@@ -1,8 +1,9 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it } from "vitest";
+import { page } from "vitest/browser";
 import { BusyPage } from "../../dev/blocks/busy-page";
 import { BLOCKS, COMPONENTS, findScenario, scenarioPath } from "../../dev/harness/registry";
-import type { Within } from "../../dev/harness/types";
+import { SCENARIO_WIDTHS, type Within } from "../../dev/harness/types";
 import { Within as WithinStage } from "../../dev/harness/Within";
 import * as overlayClasses from "../../src/lib/overlay-classes.js";
 import * as solid from "../../src/solid/index.js";
@@ -42,7 +43,7 @@ describe("scenario registry", () => {
 const RENDERED: Record<Within, (container: HTMLElement) => boolean> = {
   page: (container) => container.querySelector("[data-slot]") !== null,
   dialog: () => document.querySelector('[role="dialog"] [data-slot]') !== null,
-  sheet: () => document.querySelector('[role="dialog"] [data-slot]') !== null,
+  sheet: () => document.querySelector('[data-slot="bottom-sheet-content"] [data-slot]') !== null,
   "shadow-root": (container) => {
     const host = container.querySelector<HTMLElement>('[data-within="shadow-root"]');
     return host !== null && host.shadowRoot === null && host.getBoundingClientRect().height > 0;
@@ -56,6 +57,7 @@ const CASES = COMPONENTS.flatMap((c) =>
 describe("every scenario", () => {
   it.each(CASES)("%s renders inside its Within", async (_name, scenario) => {
     const within = scenario.within ?? "page";
+    if (scenario.width) await page.viewport(...SCENARIO_WIDTHS[scenario.width]);
     const { container } = render(() => (
       <WithinStage mode={within}>{scenario.render()}</WithinStage>
     ));

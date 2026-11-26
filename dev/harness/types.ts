@@ -27,10 +27,15 @@ export interface Scenario {
   title: string;
   render: () => JSX.Element;
   within?: Within;
+  /** The viewport it needs; a ResponsiveDialog is a sheet only below `sm`. Unset runs at the runner's own. */
+  width?: "phone";
   steps?: Step[];
   /** The same journey as `steps`, by keys only. */
   keyboard?: Step[];
 }
+
+/** Scenario widths, as the drive names them. */
+export const SCENARIO_WIDTHS = { phone: [390, 844] } as const;
 
 export type SubjectKind = "component" | "block";
 
@@ -46,6 +51,7 @@ export interface IndexedScenario {
   id: string;
   title: string;
   within: Within;
+  width: "phone" | null;
   steps: Step[];
   keyboard: Step[] | null;
 }
