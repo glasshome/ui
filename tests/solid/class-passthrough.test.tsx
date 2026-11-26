@@ -67,6 +67,10 @@ const NOT_PROBED: Record<string, string> = {
     "part of an item inside a SelectionScope, nothing outside one; it takes the item's radius and the scope's tone, never a class",
   OptionChoice: "row of an OptionCard; the card owns the class",
   Toaster: "third-party toast outlet (solid-sonner), no class contract of its own",
+  EntityDataContext: "a context provider, renders its children and no DOM element of its own",
+  MediaStoreContext: "a context provider, renders its children and no DOM element of its own",
+  MediaUrlsContext: "a context provider, renders its children and no DOM element of its own",
+  PortalMountContext: "a context provider, renders its children and no DOM element of its own",
 };
 
 /* Known defects: these drop the class today. Each test fails once the
