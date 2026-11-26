@@ -84,3 +84,33 @@ it("keeps a large picture's glyph and name as they were", () => {
   expect(labelShown(container)).toBe(true);
   expect(glyphPx(container)).toBeCloseTo(32 * (800 / 1256), 0);
 });
+
+it("asks for each render at the share of the board its tile takes", () => {
+  const { container } = render(() => (
+    <DashboardPreview
+      columns={12}
+      boardWidth="min(90vw, 30rem)"
+      tiles={[
+        tile({ key: "a", w: 6, src: "/a.png", srcset: "/a-320.webp 320w, /a.png 816w" }),
+        tile({ key: "b", x: 6, w: 6, src: "/b.png" }),
+      ]}
+    />
+  ));
+  const [withSet, without] = container.querySelectorAll("img");
+  expect(withSet?.getAttribute("srcset")).toBe("/a-320.webp 320w, /a.png 816w");
+  expect(withSet?.getAttribute("sizes")).toBe(
+    `calc(min(90vw, 30rem) * ${((6 * 90 + 5 * 16) / 1256).toFixed(4)})`,
+  );
+  expect(without?.hasAttribute("srcset")).toBe(false);
+  expect(without?.hasAttribute("sizes")).toBe(false);
+});
+
+it("takes the viewport as the board's width when none is given", () => {
+  const { container } = render(() => (
+    <DashboardPreview
+      columns={12}
+      tiles={[tile({ w: 12, src: "/a.png", srcset: "/a.png 816w" })]}
+    />
+  ));
+  expect(container.querySelector("img")?.getAttribute("sizes")).toBe("calc(100vw * 1.0000)");
+});
