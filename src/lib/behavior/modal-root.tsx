@@ -7,6 +7,7 @@ import {
   onCleanup,
   Show,
   omit,
+  onFlush,
   untrack,
   useContext,
   createEffect,
@@ -20,6 +21,7 @@ import { createDismiss } from "./dismiss.js";
 import { focusedIn, createFocusScope, focusWithoutTracking } from "./focus-scope.js";
 import { createHideOutside } from "./hide-outside.js";
 import { layerStack, registerLayer } from "./layer-stack.js";
+import { createSlot } from "./slot.js";
 import { Polymorphic } from "./polymorphic.js";
 import { Layer } from "./layer.js";
 import { createPresence } from "./presence.js";
@@ -54,6 +56,7 @@ export interface ModalContext {
   registerContent: (id: string) => () => void;
   triggerRef: Accessor<HTMLElement | undefined>;
   setTriggerRef: (el: HTMLElement | undefined) => void;
+  releaseTriggerRef: (el: HTMLElement) => void;
   panel: Accessor<HTMLElement | undefined>;
   setPanel: (el: HTMLElement | undefined) => void;
 }
@@ -71,12 +74,10 @@ export function useDialogDormant(): Accessor<boolean> {
 }
 
 function createRegistry(): [Accessor<string | undefined>, (id: string) => () => void] {
-  const [current, setCurrent] = createSignal<string>();
+  const [current, setCurrent, release] = createSlot<string>();
   const register = (id: string) => {
     setCurrent(id);
-    return () => {
-      if (untrack(current) === id) setCurrent(undefined);
-    };
+    return () => release(id);
   };
   return [current, register];
 }
@@ -90,7 +91,7 @@ export function ModalRoot(props: ModalRootProps): JSX.Element {
   const [titleId, registerTitle] = createRegistry();
   const [descriptionId, registerDescription] = createRegistry();
   const [contentId, registerContent] = createRegistry();
-  const [triggerRef, setTriggerRef] = createSignal<HTMLElement>();
+  const [triggerRef, setTriggerRef, releaseTriggerRef] = createSlot<HTMLElement>();
   const [panel, setPanel] = createSignal<HTMLElement>();
   // ModalFrame binds its presence from its own body.
   const [dormantSource, setDormantSource] = createSignal(
@@ -115,7 +116,8 @@ export function ModalRoot(props: ModalRootProps): JSX.Element {
     contentId,
     registerContent,
     triggerRef,
-    setTriggerRef: (el) => setTriggerRef(el),
+    setTriggerRef,
+    releaseTriggerRef,
     panel,
     setPanel: (el) => setPanel(el),
   };
@@ -131,7 +133,7 @@ export function ModalTrigger<T extends ValidComponent = "button">(
   const rest = omit(props as ModalPartProps<ValidComponent>, "as", "ref", "onClick");
   let own: HTMLElement | undefined;
   onCleanup(() => {
-    if (own && untrack(ctx.triggerRef) === own) ctx.setTriggerRef(undefined);
+    if (own) ctx.releaseTriggerRef(own);
   });
   return (
     <Polymorphic
@@ -348,8 +350,10 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
         closedByOutside = true;
       }
       ctx.close();
-      // A controlled `open` refused the close.
-      if (untrack(ctx.isOpen)) closedByOutside = false;
+      onFlush(() => {
+        // A controlled `open` refused the close.
+        if (untrack(ctx.isOpen)) closedByOutside = false;
+      });
     },
   });
 

@@ -28,6 +28,7 @@ import {
 } from "../lib/behavior/focus-scope.js";
 import { createHideOutside } from "../lib/behavior/hide-outside.js";
 import { registerLayer } from "../lib/behavior/layer-stack.js";
+import { createSlot } from "../lib/behavior/slot.js";
 import {
   type FocusOutsideEvent,
   type InteractOutsideEvent,
@@ -85,6 +86,7 @@ interface PopoverContextValue {
   setAnchor: (el: HTMLElement | undefined) => void;
   trigger: Accessor<HTMLElement | undefined>;
   setTrigger: (el: HTMLElement | undefined) => void;
+  releaseTrigger: (el: HTMLElement) => void;
   contentId: Accessor<string | undefined>;
   setContentId: (id: string | undefined) => void;
   titleId: Accessor<string | undefined>;
@@ -107,7 +109,7 @@ const PopoverRoot: Component<PopoverProps> = (props) => {
     onChange: (next) => props.onOpenChange?.(next),
   });
   const [anchor, setAnchor] = createSignal<HTMLElement>();
-  const [trigger, setTrigger] = createSignal<HTMLElement>();
+  const [trigger, setTrigger, releaseTrigger] = createSlot<HTMLElement>();
   const [contentId, setContentId] = createSignal<string>();
   const [titleId, setTitleId] = createSignal<string>();
   const [descriptionId, setDescriptionId] = createSignal<string>();
@@ -123,7 +125,8 @@ const PopoverRoot: Component<PopoverProps> = (props) => {
     anchor: () => props.anchorRef?.() ?? anchor(),
     setAnchor: (el) => setAnchor(el),
     trigger,
-    setTrigger: (el) => setTrigger(el),
+    setTrigger,
+    releaseTrigger,
     contentId,
     setContentId,
     titleId,
@@ -151,7 +154,7 @@ function PopoverTrigger<T extends ValidComponent = "button">(props: PartProps<T>
   const [own, setOwn] = createSignal<HTMLElement>();
   onCleanup(() => {
     const el = untrack(own);
-    if (el && untrack(ctx.trigger) === el) ctx.setTrigger(undefined);
+    if (el) ctx.releaseTrigger(el);
   });
   createEffect(own, (el) => {
     if (!el) return;

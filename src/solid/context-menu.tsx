@@ -11,6 +11,7 @@ import {
 } from "solid-js";
 import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
+import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { callEventHandler } from "../lib/behavior/solid.js";
 import { createHold } from "../lib/hold.js";
@@ -59,12 +60,11 @@ const usePoint = (): ((point: Point) => void) => {
 };
 
 const ContextMenuRoot: Component<ContextMenuRootProps> = (props) => {
-  const [isOpen, setIsOpen] = createSignal(false);
-  const setOpen = (next: boolean) => {
-    if (next === untrack(isOpen)) return;
-    setIsOpen(next);
-    props.onOpenChange?.(next);
-  };
+  const [isOpen, setOpen] = createControllableSignal<boolean>({
+    value: () => undefined,
+    defaultValue: () => false,
+    onChange: (next) => props.onOpenChange?.(next),
+  });
   const [point, setPoint] = createSignal<Point>({ x: 0, y: 0 });
   const placement = () => parsePlacement(props.placement ?? "right-start");
   const level = createMenuLevel({
@@ -185,7 +185,7 @@ function ContextMenuTrigger<T extends ValidComponent = "div">(
       node.removeEventListener("pointermove", onMove);
       node.removeEventListener("pointerup", onUp);
       node.removeEventListener("pointercancel", onCancel);
-      if (untrack(menu.trigger) === node) menu.setTrigger(undefined);
+      menu.releaseTrigger(node);
     };
   });
 

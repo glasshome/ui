@@ -6,6 +6,8 @@ import {
   Show,
   omit,
   createEffect,
+  onFlush,
+  untrack,
 } from "solid-js";
 import { type ComponentProps, type JSX } from "@solidjs/web";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
@@ -123,7 +125,9 @@ const Checkbox = (props: CheckboxProps) => {
   const change = (event: Event) => {
     const target = event.currentTarget as HTMLInputElement;
     if (!props.readOnly) setChecked(target.checked);
-    target.checked = checked();
+    onFlush(() => {
+      target.checked = untrack(checked);
+    });
   };
 
   return (

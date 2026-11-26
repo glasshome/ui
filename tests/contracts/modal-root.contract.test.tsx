@@ -564,6 +564,39 @@ describe("modal root contract", () => {
     await vi.advanceTimersByTimeAsync(200);
     expect(document.querySelector('[data-slot="probe-content"]')).toBeNull();
   });
+
+  it("MR19 a press outside a non-modal dialog sends no focus to the trigger, and a refused one does not keep a later close from returning focus", async () => {
+    const [refuse, setRefuse] = createSignal(false);
+    const [open, setOpen] = createSignal(false);
+    render(() => (
+      <Dialog open={open()} onOpenChange={(next) => refuse() || setOpen(next)} modal={false}>
+        <DialogTrigger as={Button}>Open</DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Loose</DialogTitle>
+          <DialogClose>Done</DialogClose>
+        </DialogContent>
+      </Dialog>
+    ));
+    await input.press(button("Open"));
+    await settle();
+    expect(dialogs()[0]?.contains(document.activeElement)).toBe(true);
+    await input.pressAt(CORNER.x, CORNER.y);
+    await settle();
+    expect(open()).toBe(false);
+    expect(document.activeElement).not.toBe(button("Open"));
+
+    await input.press(button("Open"));
+    await settle();
+    setRefuse(true);
+    await input.pressAt(CORNER.x, CORNER.y);
+    await settle();
+    expect(open()).toBe(true);
+    setRefuse(false);
+    await input.press(button("Done"));
+    await settle();
+    expect(open()).toBe(false);
+    expect(document.activeElement).toBe(button("Open"));
+  });
 });
 
 const EDGE_STOP = 'span[tabindex="0"][aria-hidden="true"]';

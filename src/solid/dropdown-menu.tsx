@@ -142,7 +142,7 @@ function DropdownMenuTrigger<T extends ValidComponent = "button">(
     return () => {
       node.removeEventListener("pointerdown", down);
       node.removeEventListener("keydown", key);
-      if (untrack(menu.trigger) === node) menu.setTrigger(undefined);
+      menu.releaseTrigger(node);
     };
   });
 

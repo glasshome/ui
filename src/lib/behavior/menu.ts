@@ -7,6 +7,7 @@ import { createDismiss } from "./dismiss.js";
 import { claimKeys, createClaim, keepKeys } from "./claims.js";
 import { focusedIn, focusFell, focusWithoutTracking } from "./focus-scope.js";
 import { registerLayer } from "./layer-stack.js";
+import { createSlot } from "./slot.js";
 
 const MENU_ITEMS = '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]';
 const CONTENT_CLAIM = claimKeys(["Tab", " "]);
@@ -63,6 +64,7 @@ export interface Menu {
   setContent: (el: HTMLElement | undefined) => void;
   trigger: Accessor<HTMLElement | undefined>;
   setTrigger: (el: HTMLElement | undefined) => void;
+  releaseTrigger: (el: HTMLElement) => void;
   highlighted: Accessor<string | undefined>;
   tabIndex: (key: string) => 0 | -1;
   show: (focus: MenuFocus) => void;
@@ -120,8 +122,8 @@ function graceArea(exit: Point, panel: Box, side: "left" | "right"): Point[] {
 export function createMenu(options: MenuOptions): Menu {
   const parent = options.parent;
   const [content, setContent] = createSignal<HTMLElement>();
-  const [trigger, setTrigger] = createSignal<HTMLElement>();
-  const [active, setActive] = createSignal<string>();
+  const [trigger, setTrigger, releaseTrigger] = createSlot<HTMLElement>();
+  const [active, setActive, releaseActive] = createSlot<string>();
   const entries = new Map<string, MenuItemEntry>();
   const children = new Set<Menu>();
   const dir = (): Dir =>
@@ -225,6 +227,7 @@ export function createMenu(options: MenuOptions): Menu {
     setContent,
     trigger,
     setTrigger,
+    releaseTrigger,
     highlighted: active,
     tabIndex: collection.tabIndex,
     show,
@@ -235,7 +238,7 @@ export function createMenu(options: MenuOptions): Menu {
       collection.refresh();
       onCleanup(() => {
         if (entries.get(key) === entry) entries.delete(key);
-        if (untrack(active) === key) setActive(undefined);
+        releaseActive(key);
         collection.refresh();
       });
     },

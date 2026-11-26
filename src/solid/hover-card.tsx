@@ -18,6 +18,7 @@ import { createAnchored } from "../lib/behavior/anchored.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createDismiss } from "../lib/behavior/dismiss.js";
 import { registerLayer } from "../lib/behavior/layer-stack.js";
+import { createSlot } from "../lib/behavior/slot.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
 import { MOTION_EXIT_MS, OVERLAY_MOTION } from "../lib/motion-classes.js";
@@ -42,6 +43,7 @@ interface HoverCardContextValue {
   open: Accessor<boolean>;
   trigger: Accessor<HTMLElement | undefined>;
   setTrigger: (el: HTMLElement | undefined) => void;
+  releaseTrigger: (el: HTMLElement) => void;
   card: Accessor<HTMLElement | undefined>;
   setCard: (el: HTMLElement | undefined) => void;
   side: Accessor<Side>;
@@ -71,7 +73,7 @@ const HoverCardRoot: Component<HoverCardProps> = (props) => {
     defaultValue: () => props.defaultOpen ?? false,
     onChange: (next) => props.onOpenChange?.(next),
   });
-  const [trigger, setTrigger] = createSignal<HTMLElement>();
+  const [trigger, setTrigger, releaseTrigger] = createSlot<HTMLElement>();
   const [card, setCard] = createSignal<HTMLElement>();
   const placement = () => (props.placement ?? "bottom").split("-") as [Side, Align?];
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -86,7 +88,8 @@ const HoverCardRoot: Component<HoverCardProps> = (props) => {
   const value: HoverCardContextValue = {
     open,
     trigger,
-    setTrigger: (el) => setTrigger(el),
+    setTrigger,
+    releaseTrigger,
     card,
     setCard: (el) => setCard(el),
     side: () => placement()[0],
@@ -113,7 +116,8 @@ function HoverCardTrigger<T extends ValidComponent = "a">(
   const nativeLink = () => props.as === undefined || props.as === "a";
 
   onCleanup(() => {
-    if (untrack(ctx.trigger) === untrack(own)) ctx.setTrigger(undefined);
+    const el = untrack(own);
+    if (el) ctx.releaseTrigger(el);
   });
 
   createEffect(own, (el) => {
