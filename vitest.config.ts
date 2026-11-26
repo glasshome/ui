@@ -93,6 +93,15 @@ export default defineConfig({
   plugins: [solid({ dev: false, hot: false }), tailwindcss()],
   resolve: {
     conditions: ["browser"],
+    dedupe: [
+      "solid-js",
+      "solid-js/web",
+      "solid-js/store",
+      "@solidjs/web",
+      "@solidjs/router",
+      "@solidjs/signals",
+      "@solidjs/meta",
+    ],
   },
   optimizeDeps: {
     // A dependency found mid-run re-optimizes and reloads the page, failing the in-flight test import.
