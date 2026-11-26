@@ -707,14 +707,12 @@ describe("an anchored dialog", () => {
     const el = document.createElement("div");
     el.style.cssText = `position:fixed;left:${left}px;top:${top}px;width:${width}px;height:${height}px`;
     document.body.appendChild(el);
+    afterTest(() => el.remove());
     return el;
   };
 
   beforeEach(() => page.viewport(1440, 900));
-  afterEach(async () => {
-    document.body.innerHTML = "";
-    await page.viewport(1024, 768);
-  });
+  afterEach(() => page.viewport(1024, 768));
 
   it("grows out of the middle of the element that opened it", () => {
     const tile = anchorAt(500, 300, 200, 150);
