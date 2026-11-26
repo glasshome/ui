@@ -1,6 +1,6 @@
 import "../real-time-animations";
 import { render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { describe, expect, it, vi } from "vitest";
 import { Dock, type DockPlacement } from "../../src/solid/dock.js";
 import { useFakeTime } from "../../src/testing/index.js";
@@ -142,6 +142,7 @@ describe("Dock arrival", () => {
     expect(container.querySelector('[data-slot="dock-item-arrival"]')).toBeNull();
 
     setArrived(["d1"]);
+    flush();
     const marked = [...container.querySelectorAll("[data-arrived]")].map((e) =>
       e.getAttribute("data-dock-id"),
     );

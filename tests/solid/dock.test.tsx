@@ -1,5 +1,5 @@
 import { render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { describe, expect, it, onTestFinished } from "vitest";
 import { Dock } from "../../src/solid/dock.js";
 import { nextFrame } from "../harness/frame";
@@ -149,13 +149,16 @@ describe("Dock hold", () => {
 
     expect(flood().hasAttribute("data-hold")).toBe(false);
     setHold({ x: 12, y: 8, fired: false });
+    flush();
     expect(flood().hasAttribute("data-hold")).toBe(true);
     expect(flood().style.left).toBe("12px");
     expect(flood().style.width).toMatch(/px$/);
     setHold({ x: 12, y: 8, fired: true });
+    flush();
     expect(flood().hasAttribute("data-fired")).toBe(true);
     expect(flood().hasAttribute("data-hold")).toBe(false);
     setHold(null);
+    flush();
     expect(flood().hasAttribute("data-fired")).toBe(false);
     expect(flood().style.left).toBe("12px");
   });
@@ -172,6 +175,7 @@ describe("Dock mode rim", () => {
     const { container } = render(() => <Dock items={two} glow={on()} />);
     expect(container.querySelector('[data-slot="dock-glow"]')).toBeNull();
     setOn(true);
+    flush();
     expect(container.querySelector('[data-slot="dock-glow"]')).not.toBeNull();
   });
 });
@@ -195,6 +199,7 @@ describe("Dock drop target", () => {
       );
     expect(marked()).toEqual([]);
     setTarget("b");
+    flush();
     expect(marked()).toEqual(["b"]);
     // Unmounting clears the dock's overflow timer, which would otherwise fire after teardown.
     unmount();
@@ -220,6 +225,7 @@ describe("Dock drop target", () => {
     }
     expect(lit()).toEqual(["a"]);
     setTarget("b");
+    flush();
     expect(lit()).toEqual(["b"]);
     unmount();
   });

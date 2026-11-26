@@ -1,5 +1,5 @@
 import { cleanup, render, screen, waitFor } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { afterEach, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
 import { ImagePicker } from "../../src/solid/image-picker.jsx";
@@ -21,7 +21,10 @@ const store: MediaStore = {
   url: (id) => `${PIXEL}#${id}`,
 };
 const trigger = () => document.querySelector('[data-slot="image-picker-trigger"]') as HTMLElement;
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  provideMediaStore(() => null);
+});
 
 it("resolves an uploaded id through the url source when no store is provided", () => {
   provideMediaUrls({ url: (id) => (id === "abc" ? `${PIXEL}#abc` : undefined) });
@@ -61,6 +64,7 @@ it("reads a store accessor each time a picker mounts", async () => {
   expect(screen.getByText("Uploading images isn't available here.")).toBeTruthy();
   cleanup();
   setLent(store);
+  flush();
   render(() => <ImagePicker value="" onChange={() => {}} presets={presets} />);
   await userEvent.click(trigger());
   await waitFor(() =>

@@ -1,5 +1,5 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { cdp, userEvent } from "vitest/browser";
 import {
@@ -159,6 +159,7 @@ describe("Spotlight", () => {
       vi.advanceTimersToNextFrame();
       callsInWindow += vi.getTimerCount();
     }
+    flush();
     expect(scrim()?.style.clipPath).toContain(pathCommands("M104 192"));
 
     expect(callsInWindow).toBeGreaterThan(20);
@@ -177,6 +178,7 @@ describe("Spotlight", () => {
       </Spotlight>
     ));
     setTarget(b);
+    flush();
     const scrim = document.querySelector<HTMLElement>('[data-slot="spotlight-scrim"]');
     expect(scrim?.style.clipPath).toContain(pathCommands("M504 592"));
   });
@@ -317,6 +319,7 @@ describe("Spotlight", () => {
     delivered = Promise.withResolvers<void>();
     const gap = BUBBLE_GAP + (TAIL_SIZE * Math.SQRT2) / 2;
     setGrow(100);
+    flush();
     const grown = bubble.offsetHeight;
     await delivered.promise;
     const [, y] = bubble.style.translate.split(" ");

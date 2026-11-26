@@ -1,5 +1,5 @@
 import { render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { describe, expect, it } from "vitest";
 
 import { carouselItem, carouselTrack } from "../../src/lib/carousel-classes.js";
@@ -69,6 +69,7 @@ describe("autoplay is reactive", () => {
     renderWith(delay, (api) => seen.push(api));
     expect(seen).toHaveLength(1);
     setDelay(10_000);
+    flush();
     expect(seen).toHaveLength(2);
     expect(seen[0]).not.toBe(seen[1]);
   });
@@ -79,6 +80,7 @@ describe("autoplay is reactive", () => {
     renderWith(delay, (api) => seen.push(api));
     expect(seen).toHaveLength(1);
     setDelay(5000);
+    flush();
     expect(seen).toHaveLength(2);
     expect(seen[1]?.plugins().autoplay).toBeTruthy();
     expect(seen[0]?.plugins().autoplay).toBeUndefined();
