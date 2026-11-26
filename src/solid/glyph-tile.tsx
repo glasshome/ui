@@ -1,4 +1,4 @@
-import { createContext, createSignal, onSettled, Show } from "solid-js";
+import { createContext, createSignal, Show } from "solid-js";
 import { useRequired } from "../lib/context.js";
 import { type JSX } from "@solidjs/web";
 import { FIELD_CHROME } from "../lib/input-classes.js";
@@ -25,10 +25,7 @@ export function GlyphTileGroup(props: {
     setValues: (next) => props.onChange(next[0] ?? null),
     multiple: () => false,
   });
-  onSettled(() => {
-    const group = root();
-    if (group) return trackScroll(group, "[data-pressed]", () => props.value);
-  });
+  trackScroll(root, "[data-pressed]", () => props.value);
   return (
     <GlyphContext value={set}>
       <div

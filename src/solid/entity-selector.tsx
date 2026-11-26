@@ -88,7 +88,6 @@ export function EntitySelector(props: EntitySelectorProps) {
   const [open, setOpen] = createSignal(false);
   const [search, setSearch] = createSignal("");
   const [showDiagnostics, setShowDiagnostics] = createSignal(false);
-  const [activeIndex, setActiveIndex] = createSignal(0);
 
   let inputRef: HTMLInputElement | undefined;
   let scrollRef: HTMLDivElement | undefined;
@@ -200,6 +199,9 @@ export function EntitySelector(props: EntitySelectorProps) {
   const entityRows = createMemo(
     () => rows().filter((r) => r.kind === "entity") as Extract<ListRow, { kind: "entity" }>[],
   );
+  const [activeIndex, setActiveIndex] = createSignal<number>((held) =>
+    Math.min(held ?? 0, Math.max(0, entityRows().length - 1)),
+  );
 
   // Prefix-summed pixel offsets; offsets()[i] is the top of row i.
   const offsets = createMemo(() => {
@@ -256,18 +258,22 @@ export function EntitySelector(props: EntitySelectorProps) {
     return idx == null ? 0 : (offsets()[idx] ?? 0);
   };
 
-  // The scroll container mounts lazily (popover/sheet open), so the observer
-  // attaches via ref callback rather than component onMount.
-  const attachScrollRef = (el: HTMLDivElement) => {
-    scrollRef = el;
-    setScrollTop(el.scrollTop);
-    setViewportHeight(el.clientHeight);
-    const observer = new ResizeObserver(() => setViewportHeight(el.clientHeight));
-    observer.observe(el);
+  // The scroll container mounts lazily (popover/sheet open); called as it renders, so its owner holds the observer.
+  const scrollListRef = () => {
+    let observer: ResizeObserver | undefined;
+    let attached: HTMLDivElement | undefined;
     onCleanup(() => {
-      observer.disconnect();
-      if (scrollRef === el) scrollRef = undefined;
+      observer?.disconnect();
+      if (scrollRef === attached) scrollRef = undefined;
     });
+    return (el: HTMLDivElement) => {
+      attached = el;
+      scrollRef = el;
+      setScrollTop(el.scrollTop);
+      setViewportHeight(el.clientHeight);
+      observer = new ResizeObserver(() => setViewportHeight(el.clientHeight));
+      observer.observe(el);
+    };
   };
 
   createEffect(
@@ -279,11 +285,6 @@ export function EntitySelector(props: EntitySelectorProps) {
     },
     { defer: true },
   );
-
-  createEffect(() => {
-    const max = entityRows().length - 1;
-    if (activeIndex() > max) setActiveIndex(Math.max(0, max));
-  });
 
   const ensureActiveVisible = (entityIndex: number) => {
     if (!scrollRef) return;
@@ -469,7 +470,7 @@ export function EntitySelector(props: EntitySelectorProps) {
         class="[&_input::-webkit-search-cancel-button]:hidden"
       />
       <div
-        ref={attachScrollRef}
+        ref={scrollListRef()}
         id={listboxId}
         role="listbox"
         aria-multiselectable={isSingle() ? "false" : "true"}

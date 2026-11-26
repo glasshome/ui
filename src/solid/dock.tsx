@@ -175,24 +175,23 @@ const Dock: Component<DockProps> = (props) => {
   const vertical = () => placement() !== "bottom";
   const gripShown = () => Boolean(props.editing && props.onMovePlacement);
   // The drain plays where the fill grew, so the point outlives the hold.
-  const [holdPoint, setHoldPoint] = createSignal({ x: 0, y: 0, r: 0 });
   let surfaceRef: HTMLDivElement | undefined;
   let surfaceSize: ResizeObserverSize | undefined;
   let dotsRef: HTMLDivElement | undefined;
   let companionRef: HTMLDivElement | undefined;
   const lead = children(() => props.lead);
   const companion = children(() => props.companion);
-  createEffect(() => {
+  const holdPoint = createMemo<{ x: number; y: number; r: number }>((drained) => {
     const h = props.hold;
-    if (!h) return;
+    if (!h) return drained ?? { x: 0, y: 0, r: 0 };
     const w = surfaceSize?.inlineSize ?? 0;
     const ht = surfaceSize?.blockSize ?? 0;
     // Reaches the farthest corner exactly at full scale, so the fill ends as the hold does.
-    setHoldPoint({
+    return {
       x: h.x,
       y: h.y,
       r: Math.hypot(Math.max(h.x, w - h.x), Math.max(h.y, ht - h.y)),
-    });
+    };
   });
   const dockMode = () => props.dockMode ?? "floating";
   let containerRef!: HTMLDivElement;
@@ -265,37 +264,45 @@ const Dock: Component<DockProps> = (props) => {
   };
 
   // A drag cannot click a page dot, so resting on the dot row turns to the page under it.
-  createEffect(() => {
-    const point = props.dragPoint ?? reorder.point();
-    if (!point || pages() < 2 || !surfaceRef || !containerRef) return;
-    const strip = containerRef.getBoundingClientRect();
-    const surface = surfaceRef.getBoundingClientRect();
-    const place = placement();
-    const inSurfaceAlong = vertical()
-      ? point.y >= surface.top && point.y <= surface.bottom
-      : point.x >= surface.left && point.x <= surface.right;
-    const dots = dotsRef?.getBoundingClientRect();
-    const pastStrip =
-      place === "left"
-        ? point.x >= surface.left && point.x <= (dots?.right ?? strip.left)
-        : place === "right"
-          ? point.x <= surface.right && point.x >= (dots?.left ?? strip.right)
-          : point.y > strip.bottom && point.y <= surface.bottom;
-    if (!pastStrip || !inSurfaceAlong) return;
-    const ratio = vertical()
-      ? (point.y - surface.top) / surface.height
-      : (point.x - surface.left) / surface.width;
-    const target = Math.min(pages() - 1, Math.floor(ratio * pages()));
-    if (target === page()) return;
-    const timer = setTimeout(() => goToPage(target), DOCK_PAGE_MS);
-    onCleanup(() => clearTimeout(timer));
-  });
+  createEffect(
+    () => ({
+      point: props.dragPoint ?? reorder.point(),
+      count: pages(),
+      at: page(),
+      place: placement(),
+    }),
+    ({ point, count, at, place }) => {
+      if (!point || count < 2 || !surfaceRef || !containerRef) return;
+      const strip = containerRef.getBoundingClientRect();
+      const surface = surfaceRef.getBoundingClientRect();
+      const inSurfaceAlong = vertical()
+        ? point.y >= surface.top && point.y <= surface.bottom
+        : point.x >= surface.left && point.x <= surface.right;
+      const dots = dotsRef?.getBoundingClientRect();
+      const pastStrip =
+        place === "left"
+          ? point.x >= surface.left && point.x <= (dots?.right ?? strip.left)
+          : place === "right"
+            ? point.x <= surface.right && point.x >= (dots?.left ?? strip.right)
+            : point.y > strip.bottom && point.y <= surface.bottom;
+      if (!pastStrip || !inSurfaceAlong) return;
+      const ratio = vertical()
+        ? (point.y - surface.top) / surface.height
+        : (point.x - surface.left) / surface.width;
+      const target = Math.min(count - 1, Math.floor(ratio * count));
+      if (target === at) return;
+      const timer = setTimeout(() => goToPage(target), DOCK_PAGE_MS);
+      return () => clearTimeout(timer);
+    },
+  );
 
   // The active dashboard may sit on another page after a switch elsewhere.
-  createEffect(() => {
-    const i = activeIndex();
-    if (i !== null) turnToItem(i);
-  });
+  createEffect(
+    () => ({ i: activeIndex(), paged: needsScroll(), span: viewportSpan(), axis: vertical() }),
+    ({ i }) => {
+      if (i !== null) turnToItem(i);
+    },
+  );
 
   // A newcomer may land on a page nobody is looking at; turn there once.
   createEffect(
@@ -318,27 +325,57 @@ const Dock: Component<DockProps> = (props) => {
   const watch = (el: Element, options?: ResizeObserverOptions) => {
     watched.set(el, options);
     observer?.observe(el, options);
+  };
+  // A ref cannot register a cleanup; called as the element renders, its owner holds the cleanup.
+  const watchedRef = (
+    options: ResizeObserverOptions | undefined,
+    hooks: { attach?: (el: Element) => void; drop?: (el: Element) => void } = {},
+  ) => {
+    let el: Element | undefined;
     onCleanup(() => {
+      if (!el) return;
       watched.delete(el);
       observer?.unobserve(el);
+      hooks.drop?.(el);
     });
+    return (node: Element) => {
+      el = node;
+      hooks.attach?.(node);
+      watch(node, options);
+    };
   };
-  const watchDot = (el: Element) => {
-    dotDrawn.set(el, false);
-    watch(el, { box: "border-box" });
-    onCleanup(() => {
-      dotDrawn.delete(el);
-      countPages();
-    });
-  };
-  const watchLead = (el: Element) => {
-    leadEl = el;
-    watch(el, { box: "border-box" });
-    onCleanup(() => {
-      leadEl = undefined;
-      setLeadSize(undefined);
-    });
-  };
+  const dotRef = () =>
+    watchedRef(
+      { box: "border-box" },
+      {
+        attach: (el) => dotDrawn.set(el, false),
+        drop: (el) => {
+          dotDrawn.delete(el);
+          countPages();
+        },
+      },
+    );
+  const leadRef = () =>
+    watchedRef(
+      { box: "border-box" },
+      {
+        attach: (el) => (leadEl = el),
+        drop: () => {
+          leadEl = undefined;
+          setLeadSize(undefined);
+        },
+      },
+    );
+  const companionWatchRef = () =>
+    watchedRef(
+      { box: "border-box" },
+      {
+        attach: (el) => (companionRef = el as HTMLDivElement),
+        drop: (el) => {
+          if (companionRef === el) companionRef = undefined;
+        },
+      },
+    );
 
   onSettled(() => {
     let frame = 0;
@@ -451,7 +488,7 @@ const Dock: Component<DockProps> = (props) => {
         </Show>
         <Show when={lead()}>
           <div
-            ref={watchLead}
+            ref={leadRef()}
             data-slot="dock-lead"
             class={cn(
               "flex shrink-0 items-center gap-0.5 sm:gap-1",
@@ -506,7 +543,7 @@ const Dock: Component<DockProps> = (props) => {
                   style={cellStyle(item().id)}
                   onPointerDown={(e) => reorder.begin(item().id, e)}
                   onMouseDown={reorder.onMouseDown}
-                  onClick={{ handleEvent: reorder.onClickCapture, capture: true }}
+                  ref={(el) => el.addEventListener("click", reorder.onClickCapture, true)}
                 >
                   <DockIconButton
                     class={needsScroll() ? "snap-start" : undefined}
@@ -576,7 +613,7 @@ const Dock: Component<DockProps> = (props) => {
           <For keyed={false} each={Array.from({ length: slots() })}>
             {(_, i) => (
               <button
-                ref={watchDot}
+                ref={dotRef()}
                 type="button"
                 data-slot="dock-page"
                 aria-label={text("ui.dock.page", { page: i + 1 })}
@@ -606,13 +643,7 @@ const Dock: Component<DockProps> = (props) => {
           )}
         >
           <div class="min-h-0 min-w-0 overflow-hidden">
-            <div
-              ref={(el) => {
-                companionRef = el;
-                watch(el, { box: "border-box" });
-              }}
-              class={vertical() ? "pt-2" : "px-2 pt-2 pb-1"}
-            >
+            <div ref={companionWatchRef()} class={vertical() ? "pt-2" : "px-2 pt-2 pb-1"}>
               <div
                 data-slot="dock-companion"
                 data-placement={placement()}

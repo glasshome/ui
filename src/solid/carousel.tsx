@@ -11,7 +11,6 @@ import {
   createContext,
   createEffect,
   createSignal,
-  onCleanup,
   type ParentComponent,
   omit,
 } from "solid-js";
@@ -81,7 +80,7 @@ const Carousel: ParentComponent<
   const orientation = () => props.orientation ?? "horizontal";
   const transition = () => props.transition ?? "slide";
   const text = useUiText();
-  let viewportEl: HTMLDivElement | undefined;
+  const [viewportEl, setViewportEl] = createSignal<HTMLDivElement>();
   const [api, setApi] = createSignal<CarouselApi>();
   const [canScrollPrev, setCanScrollPrev] = createSignal(false);
   const [canScrollNext, setCanScrollNext] = createSignal(false);
@@ -89,59 +88,65 @@ const Carousel: ParentComponent<
   const [slideCount, setSlideCount] = createSignal(0);
 
   const viewportRef = (el: HTMLDivElement) => {
-    viewportEl = el;
+    setViewportEl(el);
   };
 
   // Tracks autoplay: a widget whose config changes the interval (or supplies one
   // after the first mount) gets a re-initialised engine, old timers destroyed.
-  createEffect(() => {
-    const delay = props.autoplay;
-    if (!viewportEl) return;
-    // Reduced motion keeps the carousel usable but stops it moving on its own.
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const plugins = [...(props.plugins ?? [])];
-    if (transition() !== "slide") plugins.push(Fade());
-    if (delay && !reduced) {
-      // Manual nav should not kill autoplay for good; hover/focus pauses it.
-      plugins.push(
-        Autoplay({
-          delay,
-          stopOnInteraction: false,
-          stopOnMouseEnter: true,
-          stopOnFocusIn: true,
-        }),
-      );
-    }
-    const embla = EmblaCarousel(
-      viewportEl,
-      { axis: orientation() === "horizontal" ? "x" : "y", ...props.opts },
-      plugins,
-    );
-    setApi(embla);
-    props.setApi?.(embla);
+  createEffect(
+    () => ({
+      viewport: viewportEl(),
+      delay: props.autoplay,
+      extra: props.plugins,
+      fade: transition() !== "slide",
+      axis: orientation() === "horizontal" ? ("x" as const) : ("y" as const),
+      opts: props.opts,
+      onApi: props.setApi,
+    }),
+    ({ viewport, delay, extra, fade, axis, opts, onApi }) => {
+      if (!viewport) return;
+      // Reduced motion keeps the carousel usable but stops it moving on its own.
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const plugins = [...(extra ?? [])];
+      if (fade) plugins.push(Fade());
+      if (delay && !reduced) {
+        // Manual nav should not kill autoplay for good; hover/focus pauses it.
+        plugins.push(
+          Autoplay({
+            delay,
+            stopOnInteraction: false,
+            stopOnMouseEnter: true,
+            stopOnFocusIn: true,
+          }),
+        );
+      }
+      const embla = EmblaCarousel(viewport, { axis, ...opts }, plugins);
+      setApi(embla);
+      onApi?.(embla);
 
-    let previous = -1;
-    const onSelect = () => {
-      setCanScrollPrev(embla.canScrollPrev());
-      setCanScrollNext(embla.canScrollNext());
-      setSelected(embla.selectedScrollSnap());
-      setSlideCount(embla.scrollSnapList().length);
-      // Slides carry their own selected state so CSS (wipe) can key off it;
-      // embla itself only drives transform and opacity. data-prev keeps the
-      // outgoing slide one layer down until the sweep lands.
-      const active = embla.selectedScrollSnap();
-      embla.slideNodes().forEach((node, i) => {
-        node.toggleAttribute("data-selected", i === active);
-        node.toggleAttribute("data-prev", i === previous && i !== active);
-      });
-      previous = active;
-    };
-    onSelect();
-    embla.on("reInit", onSelect);
-    embla.on("select", onSelect);
+      let previous = -1;
+      const onSelect = () => {
+        setCanScrollPrev(embla.canScrollPrev());
+        setCanScrollNext(embla.canScrollNext());
+        setSelected(embla.selectedScrollSnap());
+        setSlideCount(embla.scrollSnapList().length);
+        // Slides carry their own selected state so CSS (wipe) can key off it;
+        // embla itself only drives transform and opacity. data-prev keeps the
+        // outgoing slide one layer down until the sweep lands.
+        const active = embla.selectedScrollSnap();
+        embla.slideNodes().forEach((node, i) => {
+          node.toggleAttribute("data-selected", i === active);
+          node.toggleAttribute("data-prev", i === previous && i !== active);
+        });
+        previous = active;
+      };
+      onSelect();
+      embla.on("reInit", onSelect);
+      embla.on("select", onSelect);
 
-    onCleanup(() => embla.destroy());
-  });
+      return () => embla.destroy();
+    },
+  );
 
   const scrollPrev = () => api()?.scrollPrev();
   const scrollNext = () => api()?.scrollNext();

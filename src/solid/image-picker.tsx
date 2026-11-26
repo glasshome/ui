@@ -1,12 +1,4 @@
-import {
-  createEffect,
-  createMemo,
-  createSignal,
-  For,
-  Match,
-  Show,
-  Switch,
-} from "solid-js";
+import { createEffect, createMemo, createSignal, For, Match, Show, Switch } from "solid-js";
 import { focusedIn, focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
@@ -184,9 +176,9 @@ function ImageGallery(
   );
   // A reload hands back fresh objects; an unchanged upload keeps its tile, and the focus on it.
   const mediaTiles = createMemo<MediaGalleryTile[]>((before) => {
-    const kept = new Map(before.map((tile) => [JSON.stringify(tile.image), tile]));
+    const kept = new Map((before ?? []).map((tile) => [JSON.stringify(tile.image), tile]));
     return sorted().map((image) => kept.get(JSON.stringify(image)) ?? { kind: "media", image });
-  }, []);
+  });
   // Built-in pictures lead the grid; the household's uploads follow them.
   const tiles = createMemo<GalleryTile[]>(() => [...presetTiles(), ...mediaTiles()]);
   const pageCount = createMemo(() => Math.max(1, Math.ceil(tiles().length / MEDIA_PAGE_SIZE)));
@@ -215,18 +207,15 @@ function ImageGallery(
     setThumbBroken(false);
   };
 
-  const openGallery = (next: boolean) => {
-    if (next) setEverOpened(true);
-    setOpen(next);
-  };
-
   // A gallery reopened after a failed upload starts clean; a stale banner reads as a fresh failure.
-  createEffect(() => {
-    if (open()) {
+  const openGallery = (next: boolean) => {
+    if (next && !open()) {
+      setEverOpened(true);
       setError(undefined);
       setPage(0);
     }
-  });
+    setOpen(next);
+  };
 
   const step = (delta: number) =>
     setPage(Math.min(Math.max(current() + delta, 0), pageCount() - 1));
@@ -325,7 +314,7 @@ function ImageGallery(
         </PopoverAnchor>
         <PopoverContent
           ref={(el: HTMLElement) => (panel = el)}
-          tabIndex={-1}
+          tabindex={-1}
           class="min-w-72"
           // A key pressed as the gallery opens lands on the panel, never on a tile it would pick.
           onOpenAutoFocus={(event: Event) => {

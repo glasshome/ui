@@ -1,4 +1,4 @@
-import { type Component, createEffect, createSignal, onCleanup, onSettled, Show } from "solid-js";
+import { type Component, createEffect, createSignal, onSettled, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { Layer } from "../lib/behavior/layer.js";
 import { usePortalMount } from "./portal-mount.js";
@@ -42,11 +42,11 @@ const Spotlight: Component<SpotlightProps> = (props) => {
   const portalMount = usePortalMount();
   const [box, setBox] = createSignal<Box | null>(null, { equals: sameFields });
   const [anchorBox, setAnchorBox] = createSignal<Box | null>(null, { equals: sameFields });
-  const [viewport, setViewport] = createSignal(
+  const [viewport, setViewport] = createSignal<{ width: number; height: number }>(
     { width: window.innerWidth, height: window.innerHeight },
     { equals: sameFields },
   );
-  const [bubbleSize, setBubbleSize] = createSignal(
+  const [bubbleSize, setBubbleSize] = createSignal<{ width: number; height: number }>(
     { width: BUBBLE_DEFAULT_WIDTH, height: 96 },
     { equals: sameFields },
   );
@@ -72,14 +72,14 @@ const Spotlight: Component<SpotlightProps> = (props) => {
     return r ? { x: r.left, y: r.top, width: r.width, height: r.height } : null;
   };
 
+  let measured: { target?: Element; anchor?: Element; node?: HTMLDivElement } = {};
   const measure = () => {
+    const { target, anchor, node } = measured;
     setViewport({ width: window.innerWidth, height: window.innerHeight });
-    const targetBox = rectToBox(props.target);
+    const targetBox = rectToBox(target);
     setBox(targetBox);
-    const anchor = anchorEl();
     /* Same element as target: reuse its box instead of measuring it twice a tick. */
-    setAnchorBox(anchor === props.target ? targetBox : rectToBox(anchor));
-    const node = bubble();
+    setAnchorBox(anchor === target ? targetBox : rectToBox(anchor));
     if (node)
       setBubbleSize({
         width: node.offsetWidth || BUBBLE_DEFAULT_WIDTH,
@@ -87,33 +87,34 @@ const Spotlight: Component<SpotlightProps> = (props) => {
       });
   };
 
-  createEffect(() => {
-    const target = props.target;
-    const anchor = anchorEl();
-    let raf = 0;
-    let start: number | undefined;
+  createEffect(
+    () => [props.target, anchorEl(), bubble()] as const,
+    ([target, anchor, node]) => {
+      measured = { target, anchor, node };
+      let raf = 0;
+      let start: number | undefined;
 
-    /* A transform-animating target never fires ResizeObserver, and its motion may
-     * start a few frames late, so sample the whole window instead of stopping early. */
-    const tick = (time: number) => {
-      start ??= time;
+      /* A transform-animating target never fires ResizeObserver, and its motion may
+       * start a few frames late, so sample the whole window instead of stopping early. */
+      const tick = (time: number) => {
+        start ??= time;
+        measure();
+        if (time - start < 600) raf = requestAnimationFrame(tick);
+      };
+
       measure();
-      if (time - start < 600) raf = requestAnimationFrame(tick);
-    };
+      raf = requestAnimationFrame(tick);
 
-    measure();
-    raf = requestAnimationFrame(tick);
-
-    const observer = new ResizeObserver(measure);
-    if (target) observer.observe(target);
-    if (anchor && anchor !== target) observer.observe(anchor);
-    const node = bubble();
-    if (node) observer.observe(node);
-    onCleanup(() => {
-      cancelAnimationFrame(raf);
-      observer.disconnect();
-    });
-  });
+      const observer = new ResizeObserver(measure);
+      if (target) observer.observe(target);
+      if (anchor && anchor !== target) observer.observe(anchor);
+      if (node) observer.observe(node);
+      return () => {
+        cancelAnimationFrame(raf);
+        observer.disconnect();
+      };
+    },
+  );
 
   onSettled(() => {
     window.addEventListener("resize", measure);

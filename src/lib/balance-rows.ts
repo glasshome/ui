@@ -41,13 +41,36 @@ const inline = (sizes: readonly ResizeObserverSize[] | undefined, fallback: numb
  * one `BALANCE_CONTENT` node. Sizes come from a ResizeObserver only, never a layout read: an
  * item's own width is its content node's width plus its padding and border, the same in either
  * layout, so only the column count waits a frame, and the wrapping row never overflows meanwhile.
+ * Lays nothing out while either element is undefined.
  */
 export function balanceRows(
+  sizer: Accessor<HTMLElement | undefined>,
+  items: Accessor<HTMLElement | undefined>,
+  item: string,
+  members: Accessor<unknown>,
+): void {
+  let watch: (() => void) | undefined;
+  createEffect(
+    () => [sizer(), items()] as const,
+    ([sizerEl, itemsEl]) => {
+      if (!sizerEl || !itemsEl) return;
+      const rows = observeRows(sizerEl, itemsEl, item);
+      watch = rows.watch;
+      watch();
+      return () => {
+        watch = undefined;
+        rows.stop();
+      };
+    },
+  );
+  createEffect(members, () => watch?.());
+}
+
+function observeRows(
   sizer: HTMLElement,
   items: HTMLElement,
   item: string,
-  members: Accessor<unknown>,
-): () => void {
+): { watch: () => void; stop: () => void } {
   const content = `[${BALANCE_CONTENT}]`;
   const each = () => [...items.querySelectorAll<HTMLElement>(`:scope > ${item}`)];
   const own = new WeakMap<Element, number>();
@@ -128,9 +151,11 @@ export function balanceRows(
   };
 
   layout(0, 0);
-  createEffect(members, watch);
-  return () => {
-    cancelAnimationFrame(frame);
-    resize.disconnect();
+  return {
+    watch,
+    stop: () => {
+      cancelAnimationFrame(frame);
+      resize.disconnect();
+    },
   };
 }

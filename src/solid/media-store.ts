@@ -1,4 +1,4 @@
-import { type Accessor, createContext, createSignal, useContext } from "solid-js";
+import { type Accessor, type Context, createContext, createSignal, useContext } from "solid-js";
 import { englishFormat } from "../lib/format.js";
 
 export type StoredMedia = {
@@ -82,19 +82,23 @@ export function provideMediaUrls(urls: MediaUrls): void {
   defaultUrls = urls;
 }
 
-export function useMediaStore(): MediaStore | undefined {
-  let scoped: MediaStore | null | undefined;
+// Outside any root (a widget's plain helper call) there is no tree to read, so the host's registration answers.
+function contextOutsideRoot<T>(context: Context<T>): T | undefined {
   try {
-    scoped = useContext(MediaStoreContext);
+    return useContext(context);
   } catch {
-    scoped = undefined;
+    return undefined;
   }
+}
+
+export function useMediaStore(): MediaStore | undefined {
+  const scoped = contextOutsideRoot(MediaStoreContext);
   if (scoped === null) return undefined;
   return scoped ?? defaultStore() ?? undefined;
 }
 
 export function useMediaUrls(): MediaUrls | undefined {
-  return useMediaStore() ?? useContext(MediaUrlsContext) ?? defaultUrls;
+  return useMediaStore() ?? contextOutsideRoot(MediaUrlsContext) ?? defaultUrls;
 }
 
 /** One grid page. The picker and the library both slice by this, so neither can

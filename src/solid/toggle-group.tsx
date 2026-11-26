@@ -5,7 +5,6 @@ import {
   type Component,
   createContext,
   createSignal,
-  onSettled,
   type ParentComponent,
   Show,
   omit,
@@ -120,15 +119,12 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
     setValues,
     multiple: () => props.multiple ?? false,
     orientation,
-    id: () => props.id,
+    id: () => (typeof props.id === "string" ? props.id : undefined),
   });
 
-  onSettled(() => {
-    const el = root();
-    if (!el) return;
-    if (props.scroll) return trackScroll(el, "[data-pressed]", values);
-    if (!vertical()) return balanceRows(el, scope() ?? el, ITEM, set.members);
-  });
+  trackScroll(() => (props.scroll ? root() : undefined), "[data-pressed]", values);
+  const balanced = () => (props.scroll || vertical() ? undefined : root());
+  balanceRows(balanced, () => balanced() && (scope() ?? root()), ITEM, set.members);
 
   const context: ToggleGroupContextValue = {
     get variant() {
@@ -172,7 +168,7 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
         get [BALANCED_ROWS]() {
           return props.scroll || vertical() || sliding() ? undefined : "";
         },
-        "on:keydown": (event: KeyboardEvent) => set.collection.onKeyDown(event),
+        onKeyDown: (event: KeyboardEvent) => set.collection.onKeyDown(event),
         get class() {
           return cn(
             `group/toggle-group w-fit max-w-full items-center gap-y-1 rounded-lg data-[wrapped]:w-full ${TRACK_SURFACE} p-1 data-[variant=outline]:shadow-xs`,

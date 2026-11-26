@@ -5,10 +5,10 @@ import {
   createSignal,
   createUniqueId,
   onCleanup,
-  onSettled,
   Show,
   omit,
   createEffect,
+  flush,
   merge,
 } from "solid-js";
 import { useRequired } from "../lib/context.js";
@@ -179,10 +179,7 @@ const TabsList: Component<TabsListProps> = (props) => {
   const ctx = useTabs();
   const others = omit(props, "class", "children", "ref", "as");
   const [el, setEl] = createSignal<HTMLElement>();
-  onSettled(() => {
-    const listEl = el();
-    if (listEl) return trackScroll(listEl, "[data-selected]", ctx.value);
-  });
+  trackScroll(el, "[data-selected]", ctx.value);
   onCleanup(() => ctx.setList(undefined));
 
   createEffect(el, (node) => {
@@ -190,6 +187,7 @@ const TabsList: Component<TabsListProps> = (props) => {
     const keydown = (event: KeyboardEvent) => {
       const before = ctx.collection.highlighted();
       ctx.collection.onKeyDown(event);
+      flush();
       const after = ctx.collection.highlighted();
       if (after !== undefined && after !== before && ctx.automatic()) ctx.select(after);
     };
@@ -266,7 +264,7 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
   const selected = () => ctx.value() === props.value;
 
   createEffect(
-    () => [props.value, props.id] as const,
+    () => [props.value, typeof props.id === "string" ? props.id : undefined] as const,
     ([key, custom]) => ctx.register("trigger", key, custom),
   );
 
@@ -385,7 +383,7 @@ const TabsContent: Component<TabsContentProps> = (props) => {
   const selected = () => ctx.value() === props.value;
 
   createEffect(
-    () => [props.value, props.id] as const,
+    () => [props.value, typeof props.id === "string" ? props.id : undefined] as const,
     ([key, custom]) => ctx.register("content", key, custom),
   );
   createEffect(el, (node) => {

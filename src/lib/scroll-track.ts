@@ -14,38 +14,43 @@ function writeClip(list: HTMLElement): void {
   list.toggleAttribute("data-clip-end", end > 1);
 }
 
-/** Centres the segment matching `selected` whenever `selection` changes; drives
- *  scrollLeft, since scrollIntoView would scroll the page with it. */
+/** Centres the segment matching `selected` in `list` whenever `selection` changes; drives
+ *  scrollLeft, since scrollIntoView would scroll the page with it. Tracks nothing while `list` is undefined. */
 export function trackScroll(
-  list: HTMLElement,
+  list: Accessor<HTMLElement | undefined>,
   selected: string,
   selection: Accessor<unknown>,
-): () => void {
-  const reveal = () => {
-    writeClip(list);
-    if (list.scrollWidth <= list.clientWidth) return;
-    const item = list.querySelector(selected);
+): void {
+  const reveal = (el: HTMLElement) => {
+    writeClip(el);
+    if (el.scrollWidth <= el.clientWidth) return;
+    const item = el.querySelector(selected);
     if (!item) return;
-    const track = list.getBoundingClientRect();
+    const track = el.getBoundingClientRect();
     const box = item.getBoundingClientRect();
-    const left = list.scrollLeft + (box.left - track.left) - (track.width - box.width) / 2;
+    const left = el.scrollLeft + (box.left - track.left) - (track.width - box.width) / 2;
     const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
-    list.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });
+    el.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });
   };
-  const clip = () => writeClip(list);
+  createEffect(list, (el) => {
+    if (!el) return;
+    const clip = () => writeClip(el);
+    const resize = new ResizeObserver(clip);
+    resize.observe(el);
+    el.addEventListener("scroll", clip, { passive: true });
+    return () => {
+      resize.disconnect();
+      el.removeEventListener("scroll", clip);
+    };
+  });
   // A frame late: on mount the track has no width yet, and during a press
   // the focus scroll cancels a smooth scroll started in the same task.
-  let frame = 0;
-  createEffect(selection, () => {
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(reveal);
-  });
-  const resize = new ResizeObserver(clip);
-  resize.observe(list);
-  list.addEventListener("scroll", clip, { passive: true });
-  return () => {
-    cancelAnimationFrame(frame);
-    resize.disconnect();
-    list.removeEventListener("scroll", clip);
-  };
+  createEffect(
+    () => [list(), selection()] as const,
+    ([el]) => {
+      if (!el) return;
+      const frame = requestAnimationFrame(() => reveal(el));
+      return () => cancelAnimationFrame(frame);
+    },
+  );
 }
