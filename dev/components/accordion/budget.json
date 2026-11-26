@@ -7,8 +7,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 19,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 20,
+          "reason": "2026-11-26: the content's one min-h-0 wrapper for the grid disclosure motion (ui#196); max of 3 runs"
         },
         "layouts": {
           "max": 1,
@@ -31,8 +31,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 19,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 20,
+          "reason": "2026-11-26: the content's one min-h-0 wrapper for the grid disclosure motion (ui#196); max of 3 runs"
         },
         "layouts": {
           "max": 1,
@@ -45,8 +45,8 @@
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
-          "max": 14,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 16,
+          "reason": "2026-11-26: the content's one min-h-0 wrapper for the grid disclosure motion (ui#196); max of 3 runs"
         },
         "layouts": {
           "max": 7,
@@ -59,8 +59,8 @@
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
-          "max": 7,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 8,
+          "reason": "2026-11-26: the content's one min-h-0 wrapper for the grid disclosure motion (ui#196); max of 3 runs"
         },
         "layouts": {
           "max": 6,
@@ -68,7 +68,7 @@
         }
       }
     },
-    "mainThreadMotion": ["height"],
+    "mainThreadMotion": ["gridTemplateRows"],
     "guest": {
       "workUnits": {
         "max": 15,
@@ -98,8 +98,8 @@
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
-          "max": 7,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 8,
+          "reason": "2026-11-26: the content's one min-h-0 wrapper for the grid disclosure motion (ui#196); max of 3 runs"
         },
         "layouts": {
           "max": 6,
@@ -169,8 +169,8 @@
       "borderRightColor",
       "borderTopColor",
       "boxShadow",
-      "height",
-      "outlineWidth"
+      "outlineWidth",
+      "gridTemplateRows"
     ],
     "guest": {
       "workUnits": {
@@ -187,8 +187,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 21,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 23,
+          "reason": "2026-11-26: the content's one min-h-0 wrapper for the grid disclosure motion (ui#196); max of 3 runs"
         },
         "layouts": {
           "max": 2,
@@ -201,8 +201,8 @@
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
-          "max": 7,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 8,
+          "reason": "2026-11-26: the content's one min-h-0 wrapper for the grid disclosure motion (ui#196); max of 3 runs"
         },
         "layouts": {
           "max": 6,
@@ -210,7 +210,7 @@
         }
       }
     },
-    "mainThreadMotion": ["height"],
+    "mainThreadMotion": ["gridTemplateRows"],
     "guest": {
       "workUnits": {
         "max": 14,
@@ -226,8 +226,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 19,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 20,
+          "reason": "2026-11-26: the content's one min-h-0 wrapper for the grid disclosure motion (ui#196); max of 3 runs"
         },
         "layouts": {
           "max": 1,
@@ -292,8 +292,8 @@
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
-          "max": 7,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 8,
+          "reason": "2026-11-26: the content's one min-h-0 wrapper for the grid disclosure motion (ui#196); max of 3 runs"
         },
         "layouts": {
           "max": 6,
@@ -321,8 +321,8 @@
       "borderRightColor",
       "borderTopColor",
       "boxShadow",
-      "height",
-      "outlineWidth"
+      "outlineWidth",
+      "gridTemplateRows"
     ],
     "guest": {
       "workUnits": {
@@ -339,8 +339,8 @@
           "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs plus 25% on elements restyled, since counts move with the T50 rate the host measures"
         },
         "largestRecalc": {
-          "max": 21,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 22,
+          "reason": "2026-11-26: the content's one min-h-0 wrapper for the grid disclosure motion (ui#196); max of 3 runs"
         },
         "layouts": {
           "max": 1,
@@ -353,8 +353,8 @@
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
-          "max": 14,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 16,
+          "reason": "2026-11-26: the content's one min-h-0 wrapper for the grid disclosure motion (ui#196); max of 3 runs"
         },
         "layouts": {
           "max": 7,
@@ -362,6 +362,6 @@
         }
       }
     },
-    "mainThreadMotion": ["height"]
+    "mainThreadMotion": ["gridTemplateRows"]
   }
 }
