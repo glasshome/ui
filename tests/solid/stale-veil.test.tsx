@@ -1,6 +1,6 @@
 import "../real-time-animations";
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
 import { commands, userEvent } from "vitest/browser";
 import { StaleVeil } from "../../src/solid/index.js";
@@ -39,6 +39,7 @@ describe("StaleVeil", () => {
     expect(veil()).toBeNull();
 
     setShown(true);
+    flush();
     const el = veil() as HTMLElement;
     const running = el.getAnimations();
     expect(running).toHaveLength(1);
@@ -104,6 +105,7 @@ describe("StaleVeil", () => {
     const tile = document.querySelector('[data-testid="tile"]') as HTMLElement;
     const before = tile.getBoundingClientRect().toJSON();
     setShown(true);
+    flush();
     const el = veil() as HTMLElement;
     expect(el.getBoundingClientRect().toJSON()).toEqual(tile.getBoundingClientRect().toJSON());
     expect(tile.getBoundingClientRect().toJSON()).toEqual(before);
@@ -121,6 +123,7 @@ describe("StaleVeil", () => {
     render(() => <Tile shown={shown()} />);
     expect(veil()).not.toBeNull();
     setShown(false);
+    flush();
     expect(veil()).toBeNull();
     const button = document.querySelector("button") as HTMLButtonElement;
     const box = button.getBoundingClientRect();

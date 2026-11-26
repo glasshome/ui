@@ -1,5 +1,5 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { commands } from "vitest/browser";
 import {
@@ -69,6 +69,7 @@ describe("BottomSheet labelling", () => {
     const panel = document.querySelector<HTMLElement>('[data-slot="bottom-sheet-content"]');
     expect(panel?.getAttribute("aria-labelledby")).toBe("first-title");
     setTitleId("second-title");
+    flush();
     expect(panel?.getAttribute("aria-labelledby")).toBe("second-title");
     expect(document.querySelector('[data-slot="bottom-sheet-title"]')?.id).toBe("second-title");
   });

@@ -2,7 +2,7 @@
  * first paint, loaded data when a batch resolves, a 1em placeholder when the
  * name is unknown, and the same node kept throughout (no remount). */
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal, For } from "solid-js";
+import { createSignal, flush, For } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Icon, provideIcons } from "../../src/solid/icon.js";
 import { useFakeTime } from "../../src/testing/index.js";
@@ -110,6 +110,7 @@ describe("Icon", () => {
     const { container } = render(() => <Icon icon="lucide:plus" />);
     expect(container.querySelector("svg")?.innerHTML).toBe("");
     provideIcons({ bundled: { "lucide:plus": PLUS } });
+    flush();
     expect(container.querySelector("svg")?.innerHTML).toContain("M5 12h14");
   });
 });

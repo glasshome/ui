@@ -1,5 +1,5 @@
 import { cleanup, render, screen } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   AlertDialog,
@@ -44,8 +44,10 @@ describe("AlertDialogAction busy", () => {
     expect(open()).toBe(true);
 
     setBusy(false);
+    flush();
     action.click();
     expect(onClick).toHaveBeenCalledOnce();
+    flush();
     expect(open()).toBe(false);
   });
 });

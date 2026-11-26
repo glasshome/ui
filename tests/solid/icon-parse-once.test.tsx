@@ -1,6 +1,6 @@
 /* An icon body is parsed once and every Icon showing it gets its own copy of the nodes. */
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
 import { Icon, provideIcons } from "../../src/solid/icon.js";
 import { createBodyParseCache } from "../../src/solid/icon-nodes.js";
@@ -71,9 +71,11 @@ describe("Icon nodes", () => {
     const svg = container.querySelector("svg");
     expect(svg?.innerHTML).toBe(pathBody(1));
     setName("t:two");
+    flush();
     expect(svg?.innerHTML).toBe(pathBody(2));
     expect(container.querySelector("svg")).toBe(svg);
     setName("t:one");
+    flush();
     expect(svg?.innerHTML).toBe(pathBody(1));
   });
 

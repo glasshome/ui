@@ -4,7 +4,7 @@
  * scroll recipe caps no height of its own (real hub call sites pass it bare,
  * inside a page that already scrolls) while keeping the shared scrollbar. */
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal, For } from "solid-js";
+import { createSignal, flush, For } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
 import { press } from "../press.js";
@@ -184,6 +184,7 @@ describe("a long table drawn a page at a time", () => {
     expect(more()).toBeNull();
 
     setFilter("row");
+    flush();
     expect(rows()).toBe(50);
     expect(more()).not.toBeNull();
   });

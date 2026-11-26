@@ -1,5 +1,5 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
 import { scenarioScope } from "../../dev/harness/steps";
 import { Avatar, AvatarFallback, AvatarImage } from "../../src/solid";
@@ -82,6 +82,7 @@ describe("Avatar contract", () => {
     ));
     await until(() => image() !== null);
     setSrc(OTHER);
+    flush();
     expect(fallback()).not.toBeNull();
     expect(image()).toBeNull();
     await until(() => image()?.getAttribute("src") === OTHER);

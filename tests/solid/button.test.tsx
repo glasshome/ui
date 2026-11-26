@@ -1,5 +1,5 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { buttonVariants } from "../../src/lib/button-variants.js";
 import { Button, ButtonWell } from "../../src/solid/button.js";
@@ -75,6 +75,7 @@ describe("Button busy", () => {
     view.getByRole("button").click();
     expect(onClick).not.toHaveBeenCalled();
     setBusy(false);
+    flush();
     view.getByRole("button").click();
     expect(onClick).toHaveBeenCalledOnce();
   });
