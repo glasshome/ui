@@ -1,4 +1,4 @@
-import { untrack } from "solid-js";
+import { flush, untrack } from "solid-js";
 import type { JSX } from "@solidjs/web";
 
 /** Solid's handler prop is a union: a plain function, or the bound
@@ -11,6 +11,8 @@ export function callEventHandler<T, E extends Event>(
   if (!handler) return;
   if (typeof handler === "function") handler(event);
   else handler[0](handler[1], event);
+  // Reads lag writes until flush, and the caller reads state the handler may have just set.
+  flush();
 }
 
 /** Hands the element to a forwarded `ref` prop, read once: a ref applies once per element. */
