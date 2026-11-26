@@ -65,6 +65,8 @@
 
   --animate-collapsible-down: collapsible-down var(--duration-expand) ease-out;
   --animate-collapsible-up: collapsible-up var(--duration-expand) ease-out;
+  --animate-disclosure-open: disclosure-open var(--duration-expand) ease-out;
+  --animate-disclosure-close: disclosure-close var(--duration-expand) ease-out;
 
   /* Select "native expand": the panel unfolds out of the trigger edge. Kobalte
 	 * exposes no data-side, only --kb-select-content-transform-origin (set to the
@@ -112,16 +114,35 @@
     height: 0;
   }
   to {
-    height: var(--collapsible-content-height, auto);
+    height: var(--collapsible-content-height);
   }
 }
 
 @keyframes collapsible-up {
   from {
-    height: var(--collapsible-content-height, auto);
+    height: var(--collapsible-content-height);
   }
   to {
     height: 0;
+  }
+}
+
+/* A grid row grows to its content's own height, so nothing measures it first. */
+@keyframes disclosure-open {
+  from {
+    grid-template-rows: 0fr;
+  }
+  to {
+    grid-template-rows: 1fr;
+  }
+}
+
+@keyframes disclosure-close {
+  from {
+    grid-template-rows: 1fr;
+  }
+  to {
+    grid-template-rows: 0fr;
   }
 }
 
