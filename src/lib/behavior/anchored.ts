@@ -106,10 +106,15 @@ export function createAnchored(options: AnchoredOptions): Anchored {
       for (const target of scrollTargets)
         target.addEventListener("scroll", onScroll, { capture: true, passive: true });
       window.addEventListener("resize", onResize);
+      // A layout read in the widget realm's Worker answers the last size the page sent; observing sends it.
+      const sizes = new ResizeObserver(onResize);
+      sizes.observe(floating);
+      if (anchor instanceof Element) sizes.observe(anchor);
       return () => {
         for (const target of scrollTargets)
           target.removeEventListener("scroll", onScroll, { capture: true });
         window.removeEventListener("resize", onResize);
+        sizes.disconnect();
         if (frame !== undefined) cancelAnimationFrame(frame);
         floating.removeAttribute(ANCHORED);
         last = undefined;
