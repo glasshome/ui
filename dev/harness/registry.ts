@@ -49,7 +49,6 @@ export const BLOCKS: ComponentScenarios[] = Object.values(blockModules)
   .map((m) => ({ ...m.default, kind: "block" as const }))
   .sort((a, b) => a.component.localeCompare(b.component));
 
-
 export const findComponent = (component: string): ComponentScenarios | undefined =>
   [...COMPONENTS, ...BLOCKS].find(
     (c) => c.component === component || kebab(c.component) === component,
