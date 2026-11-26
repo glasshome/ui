@@ -21,7 +21,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./collapsib
 import { EntitySelector } from "./entity-selector.js";
 import { Field, FieldDescription, FieldLabel, FieldLegend, FieldSet } from "./field.js";
 import { Icon } from "./icon.js";
-import { IconPicker, type IconPickerProps } from "./icon-picker.js";
+import { IconPicker } from "./icon-picker.js";
 import { ImagePicker } from "./image-picker.js";
 import { Input } from "./input.js";
 import { useUiText } from "./locale.js";
@@ -70,22 +70,6 @@ export const SCHEMA_FORM_FORM_TYPES = [
   "list",
   "variants",
 ] as const;
-
-const warnedLegacyAreaKeys = new Set<string>();
-
-/** @deprecated `field.area()`; removed in 2.0.0. */
-function isLegacyAreaKey(key: string, prop: ExtendedJSONSchema): boolean {
-  const lower = key.toLowerCase();
-  if (prop.type !== "string" || (lower !== "areaid" && lower !== "area_id")) return false;
-  const isDev = typeof process !== "undefined" && process.env?.NODE_ENV !== "production";
-  if (isDev && !warnedLegacyAreaKeys.has(key)) {
-    warnedLegacyAreaKeys.add(key);
-    console.warn(
-      `[SchemaForm] "${key}" renders an area picker because of its name. That fallback is removed in the next major; declare it with field.area() instead. https://glasshome.app/docs/widget-sdk/config`,
-    );
-  }
-  return true;
-}
 
 function isKnownFormType(prop: ExtendedJSONSchema): boolean {
   return (
@@ -193,8 +177,6 @@ interface SchemaFormProps {
   data: Record<string, unknown>;
   onChange: (data: Record<string, unknown>) => void;
   errors?: string[];
-  /** @deprecated Pass `search` to `provideIcons` once; removed in 2.0.0. */
-  searchIcons?: IconPickerProps["searchIcons"];
   class?: string;
 }
 
@@ -223,7 +205,6 @@ export function SchemaForm(props: SchemaFormProps) {
             prop={prop}
             value={props.data[key]}
             onChange={(value) => updateField(key, value)}
-            searchIcons={props.searchIcons}
           />
         )}
       </For>
@@ -242,12 +223,11 @@ export function SchemaForm(props: SchemaFormProps) {
 interface FieldProps {
   /** Unique control id (dot-path for nested fields). */
   id: string;
-  /** Property key: label fallback and the legacy areaId heuristic. */
+  /** Property key: label fallback. */
   name: string;
   prop: ExtendedJSONSchema;
   value: unknown;
   onChange: (value: unknown) => void;
-  searchIcons?: IconPickerProps["searchIcons"];
   /** Id of the FieldLabel naming this control, for the kinds that render no
    *  element carrying `id`. */
   labelledBy?: string;
@@ -279,26 +259,25 @@ type ControlKind =
   | "group"
   | "text";
 
-const CONTROL_KINDS: ReadonlyArray<
-  readonly [ControlKind, (prop: ExtendedJSONSchema, name: string) => boolean]
-> = [
-  ["unknown", (prop) => !isKnownFormType(prop)],
-  ["list", (prop) => prop.formType === "list"],
-  ["variants", (prop) => prop.formType === "variants"],
-  ["entities", (prop) => isEntityArray(prop)],
-  ["icon", (prop) => prop.formType === "icon-picker"],
-  ["image", (prop) => prop.formType === "image-picker"],
-  ["area", (prop, name) => prop.formType === "area-picker" || isLegacyAreaKey(name, prop)],
-  ["enum", (prop) => prop.enum !== undefined],
-  ["boolean", (prop) => prop.type === "boolean"],
-  ["number", (prop) => prop.type === "number" || prop.type === "integer"],
-  ["choices", (prop) => isChoiceArray(prop)],
-  ["strings", (prop) => isStringArray(prop)],
-  ["group", (prop) => isObjectGroup(prop)],
-];
+const CONTROL_KINDS: ReadonlyArray<readonly [ControlKind, (prop: ExtendedJSONSchema) => boolean]> =
+  [
+    ["unknown", (prop) => !isKnownFormType(prop)],
+    ["list", (prop) => prop.formType === "list"],
+    ["variants", (prop) => prop.formType === "variants"],
+    ["entities", (prop) => isEntityArray(prop)],
+    ["icon", (prop) => prop.formType === "icon-picker"],
+    ["image", (prop) => prop.formType === "image-picker"],
+    ["area", (prop) => prop.formType === "area-picker"],
+    ["enum", (prop) => prop.enum !== undefined],
+    ["boolean", (prop) => prop.type === "boolean"],
+    ["number", (prop) => prop.type === "number" || prop.type === "integer"],
+    ["choices", (prop) => isChoiceArray(prop)],
+    ["strings", (prop) => isStringArray(prop)],
+    ["group", (prop) => isObjectGroup(prop)],
+  ];
 
-function controlKind(prop: ExtendedJSONSchema, name: string): ControlKind {
-  return CONTROL_KINDS.find(([, matches]) => matches(prop, name))?.[0] ?? "text";
+function controlKind(prop: ExtendedJSONSchema): ControlKind {
+  return CONTROL_KINDS.find(([, matches]) => matches(prop))?.[0] ?? "text";
 }
 
 /* `for` only where the control really renders an element carrying the field id;
@@ -324,7 +303,7 @@ const LABEL_TARGET: Record<ControlKind, "for" | "labelledby" | "none"> = {
 /* A hint belongs to the label above it, not to the control below: under the
  * control it reads as the next field's. Groups carry their own caption. */
 function LabeledField(props: FieldProps) {
-  const kind = () => controlKind(props.prop, props.name);
+  const kind = () => controlKind(props.prop);
   const labelId = () => `${props.id}-label`;
   const target = () => LABEL_TARGET[kind()];
   return (
@@ -348,7 +327,7 @@ function FieldControl(props: FieldProps) {
   const current = () => props.value ?? props.prop.default;
   const text = () => textOf(current());
   const enumLabel = (value: string) => props.prop.labels?.[value] ?? value;
-  const kind = () => controlKind(props.prop, props.name);
+  const kind = () => controlKind(props.prop);
   return (
     <SwitchFlow
       fallback={
@@ -386,7 +365,6 @@ function FieldControl(props: FieldProps) {
           aria-labelledby={props.labelledBy}
           value={text()}
           onChange={(val) => props.onChange(val)}
-          searchIcons={props.searchIcons}
         />
       </Match>
       <Match when={kind() === "image"}>
@@ -490,7 +468,6 @@ function FieldControl(props: FieldProps) {
                 prop={subProp}
                 value={recordOf(current())[subKey]}
                 onChange={(value) => props.onChange({ ...recordOf(current()), [subKey]: value })}
-                searchIcons={props.searchIcons}
               />
             )}
           </For>
@@ -734,7 +711,6 @@ function ListControl(props: FieldProps) {
                     prop={itemSchema()}
                     value={item()}
                     onChange={(value) => replaceAt(index, value)}
-                    searchIcons={props.searchIcons}
                     bare
                   />
                 </div>
@@ -825,7 +801,6 @@ function VariantsControl(props: FieldProps) {
                   prop={subProp}
                   value={value()[subKey]}
                   onChange={(fieldValue) => props.onChange({ ...value(), [subKey]: fieldValue })}
-                  searchIcons={props.searchIcons}
                 />
               )}
             </For>

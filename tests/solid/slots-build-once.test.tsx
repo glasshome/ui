@@ -84,7 +84,6 @@ const inDialog = inside(ui.Dialog as never, { open: true });
 const inAlertDialog = inside(ui.AlertDialog as never, { open: true });
 const inSheet = inside(ui.Sheet as never, { open: true });
 const inResponsive = inside(ui.ResponsiveDialog as never, { open: true });
-const inBottomSheet = inside(ui.BottomSheet as never, { open: true });
 const inPopover = inside(ui.Popover as never, { open: true });
 const inHoverCard = inside(ui.HoverCard as never, { open: true });
 const inTooltip = inside(ui.Tooltip as never, { open: true });
@@ -172,11 +171,6 @@ const FIXTURES: Record<string, Fixture> = {
   AvatarFallback: { wrap: inAvatar },
   AvatarImage: { wrap: inAvatar },
   BarList: { props: { items: [] } },
-  BottomSheetClose: { wrap: inBottomSheet },
-  BottomSheetContent: { wrap: inBottomSheet },
-  BottomSheetOverlay: { wrap: inBottomSheet },
-  BottomSheetPortal: { wrap: inBottomSheet },
-  BottomSheetTrigger: { wrap: inBottomSheet },
   CarouselContent: { wrap: inCarousel },
   CarouselDots: { wrap: inCarousel },
   CarouselItem: { wrap: inCarousel },
@@ -229,7 +223,6 @@ const FIXTURES: Record<string, Fixture> = {
       onClick: noop,
     },
   },
-  HeroOption: { wrap: inOptionGroup, props: { value: "a", title: "t" } },
   HoverCardContent: { wrap: inHoverCard },
   HoverCardTrigger: { wrap: inHoverCard },
   IconPicker: { props: { value: "", onChange: noop } },
@@ -373,6 +366,7 @@ describe("slot props build once", () => {
   // Slotless components (charts, skeletons, inputs) and parts closed in their fixture read
   // no slot; the floor keeps the harness from going quietly vacuous.
   it("reaches a slot in most components", () => {
-    expect(reached.size).toBeGreaterThanOrEqual(230);
+    // test-change-ok the floor drops with the removed deprecated components
+    expect(reached.size).toBeGreaterThanOrEqual(227);
   });
 });

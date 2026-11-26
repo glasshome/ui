@@ -17,8 +17,6 @@ import { MORPH_MOTION, MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 import {
   createMenuLevel,
-  type DeprecatedMenuRootProps,
-  MenuArrow,
   type MenuCheckboxItemProps,
   MenuCheckboxItemPart,
   MenuContentPart,
@@ -31,7 +29,6 @@ import {
   MenuLabelPart,
   MenuLevelProvider,
   type MenuPlacement,
-  MenuPortal,
   MenuRadioGroup,
   type MenuRadioItemProps,
   MenuRadioItemPart,
@@ -40,7 +37,6 @@ import {
   MenuSubContentPart,
   type MenuSubTriggerProps,
   MenuSubTriggerPart,
-  MenuTextPart,
   parsePlacement,
   useMenuLevel,
 } from "./menu-parts.js";
@@ -48,7 +44,7 @@ import { controlRadius } from "../lib/anchor-placement.js";
 
 type AnchorRect = { x?: number; y?: number; width?: number; height?: number };
 
-interface DropdownMenuRootProps extends DeprecatedMenuRootProps {
+interface DropdownMenuRootProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -279,9 +275,7 @@ const DropdownMenuRadioGroup = MenuRadioGroup;
 const DropdownMenu = Object.assign(DropdownMenuRoot, {
   Root: DropdownMenuRoot,
   Trigger: DropdownMenuTrigger,
-  Portal: MenuPortal,
   Content: DropdownMenuContent,
-  Arrow: MenuArrow,
   Item: DropdownMenuItem,
   CheckboxItem: DropdownMenuCheckboxItem,
   RadioGroup: DropdownMenuRadioGroup,
@@ -293,9 +287,6 @@ const DropdownMenu = Object.assign(DropdownMenuRoot, {
   SubTrigger: DropdownMenuSubTrigger,
   SubContent: DropdownMenuSubContent,
   ItemIndicator: MenuItemIndicator,
-  Icon: MenuTextPart,
-  ItemLabel: MenuTextPart,
-  ItemDescription: MenuTextPart,
 });
 
 export {

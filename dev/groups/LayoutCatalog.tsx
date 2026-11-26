@@ -16,10 +16,8 @@ import {
   ResizablePanelGroup,
   RowActions,
   ScrollArea,
-  ScrollBar,
   SectionCard,
   SectionIcon,
-  SectionLabel,
   SectionMeta,
   SectionRow,
   SectionRowSkeletons,
@@ -105,10 +103,9 @@ export function LayoutCatalog() {
         </Axis>
       </Specimen>
 
-      <Specimen name="SectionLabel">
+      <Specimen name="SectionMeta">
         <div class="flex flex-col gap-1">
           <SectionTitle>SectionTitle</SectionTitle>
-          <SectionLabel>SectionLabel</SectionLabel>
           <SectionMeta>SectionMeta</SectionMeta>
         </div>
       </Specimen>
@@ -143,7 +140,6 @@ export function LayoutCatalog() {
               )}
             </For>
           </div>
-          <ScrollBar orientation="vertical" />
         </ScrollArea>
       </Specimen>
 

@@ -5,7 +5,7 @@ import { Badge } from "./badge.js";
 import { Icon } from "./icon.js";
 import { useUiFormat, useUiText } from "./locale.js";
 import { ScopeIndicator } from "./scope-indicator.js";
-import { SectionIcon, SectionSubtitle } from "./section-card.js";
+import { SectionIcon, SectionHeading } from "./section-card.js";
 import { WidgetTrustBadge } from "./widget-trust-badge.js";
 
 /**
@@ -78,9 +78,9 @@ export function WidgetIdentity(_props: WidgetIdentityProps) {
       </SectionIcon>
       <div data-slot="widget-identity-headings" class="flex min-w-0 flex-1 flex-col gap-0.5">
         <div data-slot="widget-identity-headline" class="flex items-center gap-2">
-          <SectionSubtitle class="truncate">
+          <SectionHeading class="truncate">
             {props.widget.displayName || props.widget.name}
-          </SectionSubtitle>
+          </SectionHeading>
           <Show when={props.showVersionInline && props.widget.latestVersion}>
             <span class="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
               {text("ui.widget-identity.version", { version: props.widget.latestVersion ?? "" })}

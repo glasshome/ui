@@ -2,7 +2,7 @@ import { createUniqueId, type JSX, Show } from "solid-js";
 import { Button } from "./button.js";
 import { Field, FieldContent, FieldDescription, FieldLabel } from "./field.js";
 import { Icon } from "./icon.js";
-import { IconPicker, type IconPickerProps } from "./icon-picker.js";
+import { IconPicker } from "./icon-picker.js";
 import { Input } from "./input.js";
 import { useUiText } from "./locale.js";
 import { Switch } from "./switch.js";
@@ -94,17 +94,10 @@ export function LabeledIconPicker(props: {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  /** @deprecated Pass `search` to `provideIcons` once; removed in 2.0.0. */
-  searchIcons?: IconPickerProps["searchIcons"];
 }) {
   return (
     <LabeledField label={props.label}>
-      <IconPicker
-        value={props.value}
-        onChange={props.onChange}
-        placeholder={props.placeholder}
-        searchIcons={props.searchIcons}
-      />
+      <IconPicker value={props.value} onChange={props.onChange} placeholder={props.placeholder} />
     </LabeledField>
   );
 }

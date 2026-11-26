@@ -50,8 +50,6 @@ const AlertDialogContent: ParentComponent<AlertDialogContentProps> = (props) => 
     "ariaLabel",
     "style",
     "ref",
-    "onFocusOutside",
-    "forceMount",
   ]);
   const ctx = useDialogContext();
   return (

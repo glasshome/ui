@@ -4,7 +4,7 @@ export { type Color, parseColor } from "../lib/color/index.js";
 // Floating glass panel + its shared surface token.
 export { SECTION_ROW_SURFACE } from "../lib/card-classes.js";
 export { copyImage, copyText } from "../lib/clipboard.js";
-export { createHold, HOLD_GRACE_MS, HOLD_MS, spendLongPress } from "../lib/hold.js";
+export { createHold, HOLD_GRACE_MS, HOLD_MS } from "../lib/hold.js";
 export type { Hold, HoldOptions, HoldPress } from "../lib/hold.js";
 export { RISE_MOTION, SETTLE_MOTION, STALE_CONTENT, TRAVEL_MOTION } from "../lib/motion-classes.js";
 export { COVERING_ATTR, coverPage } from "../lib/page-cover.js";
@@ -14,7 +14,6 @@ export {
   SECTION_INNER_RADIUS,
   SECTION_OUTER_RADIUS,
   SECTION_PADDING,
-  SECTION_ROW_CLASS,
 } from "../lib/section-tokens.js";
 // Wave 2: Simple Kobalte Components
 export { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./accordion.js";
@@ -37,20 +36,6 @@ export { AreaPicker } from "./area-picker.js";
 export { AspectRatio } from "./aspect-ratio.js";
 export { Avatar, AvatarFallback, AvatarImage } from "./avatar.js";
 export { Badge, TierBadge } from "./badge.js";
-export {
-  BottomSheet,
-  BottomSheetBody,
-  BottomSheetClose,
-  BottomSheetContent,
-  BottomSheetDescription,
-  BottomSheetFooter,
-  BottomSheetHandle,
-  BottomSheetHeader,
-  BottomSheetOverlay,
-  BottomSheetPortal,
-  BottomSheetTitle,
-  BottomSheetTrigger,
-} from "./bottom-sheet/index.js";
 export {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -213,16 +198,7 @@ export {
   FieldSubGroup,
   FieldTitle,
 } from "./field.js";
-export {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  useFormField,
-} from "./form.js";
+export { Form, FormField, useFormField } from "./form.js";
 export { HeroAction } from "./hero-action.js";
 export { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card.js";
 // One door for icons: an inline <svg> fed by the host's icon source.
@@ -299,7 +275,7 @@ export {
 } from "./media-store.js";
 export { MediaTile, type MediaTileProps } from "./media-tile.js";
 export { NumberField } from "./number-field.js";
-export { HeroOption, OptionCard, OptionCardGroup, OptionChoice } from "./option-card.js";
+export { OptionCard, OptionCardGroup, OptionChoice } from "./option-card.js";
 export { Overlay } from "./overlay.js";
 export { PageHeader } from "./page-header.js";
 export {
@@ -336,7 +312,7 @@ export {
 } from "./responsive-dialog.js";
 export { type ExtendedJSONSchema, SCHEMA_FORM_FORM_TYPES, SchemaForm } from "./schema-form.js";
 export { ScopeIndicator } from "./scope-indicator.js";
-export { ScrollArea, ScrollBar } from "./scroll-area.js";
+export { ScrollArea } from "./scroll-area.js";
 export {
   FactRow,
   type GlassSurface,
@@ -345,12 +321,10 @@ export {
   SectionCard,
   SectionGroup,
   SectionIcon,
-  SectionLabel,
   SectionMeta,
   SectionRow,
   SectionRowSkeleton,
   SectionRowSkeletons,
-  SectionSubtitle,
   SectionTitle,
 } from "./section-card.js";
 // Wave 3: Complex Kobalte Components
@@ -389,7 +363,6 @@ export { Skeleton } from "./skeleton.js";
 export { SlotButton, type SlotButtonProps } from "./slot-button.js";
 export { Slider } from "./slider.js";
 export { SelectionHighlight, type SelectionMarker, SelectionScope } from "./selection.js";
-export { SlidingIndicator } from "./sliding-indicator.js";
 // Wave 4: React-Library Alternatives - Simpler
 export { GlassToast, Toaster, toast } from "./sonner.js";
 export { FaceToggle, FaceToggleGroup } from "./face-toggle.js";

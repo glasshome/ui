@@ -81,71 +81,7 @@ export function createMenuLevel(options: MenuOptions, parent?: MenuLevel): MenuL
   return { menu, parent, triggerId, setTriggerId, contentId, setContentId };
 }
 
-/** @deprecated Ignored options; removed in 2.0.0. */
-export interface DeprecatedMenuRootProps {
-  /** @deprecated Ignored; removed in 2.0.0. */
-  modal?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  preventScroll?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  id?: string;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  forceMount?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  orientation?: "horizontal" | "vertical";
-  /** @deprecated Ignored; removed in 2.0.0. */
-  value?: string;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  shift?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  flip?: boolean | string;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  slide?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  overlap?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  sameWidth?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  fitViewport?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  hideWhenDetached?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  detachedPadding?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  arrowPadding?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  overflowPadding?: number;
-}
-
-/** @deprecated Ignored callbacks; removed in 2.0.0. */
-export interface DeprecatedMenuContentProps {
-  /** @deprecated Ignored; removed in 2.0.0. */
-  forceMount?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  onOpenAutoFocus?: (event: Event) => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  onCloseAutoFocus?: (event: Event) => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  onPointerDownOutside?: (event: Event) => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  onFocusOutside?: (event: Event) => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  onInteractOutside?: (event: Event) => void;
-}
-
-const DEPRECATED_CONTENT_PROPS = [
-  "forceMount",
-  "onOpenAutoFocus",
-  "onCloseAutoFocus",
-  "onEscapeKeyDown",
-  "onPointerDownOutside",
-  "onFocusOutside",
-  "onInteractOutside",
-] as const;
-
-export type MenuContentProps = Omit<ComponentProps<"div">, "role"> & DeprecatedMenuContentProps;
+export type MenuContentProps = Omit<ComponentProps<"div">, "role">;
 
 type MenuContentPartProps = MenuContentProps & {
   slotName: string;
@@ -166,7 +102,6 @@ export const MenuContentPart: Component<MenuContentPartProps> = (props) => {
     "motionClass",
     "exitMs",
     "onPanel",
-    ...DEPRECATED_CONTENT_PROPS,
   ]);
   const fallback = createUniqueId();
   const id = (): string => local.id ?? fallback;
@@ -220,24 +155,6 @@ export interface MenuSubProps {
   onOpenChange?: (open: boolean) => void;
   gutter?: number;
   children?: JSX.Element;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  shift?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  slide?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  overlap?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  fitViewport?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  hideWhenDetached?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  detachedPadding?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  arrowPadding?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  overflowPadding?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  getAnchorRect?: (anchor?: HTMLElement) => unknown;
 }
 
 export const MenuSub: Component<MenuSubProps> = (props) => {
@@ -256,13 +173,7 @@ export const MenuSub: Component<MenuSubProps> = (props) => {
 
 type ToneProps = {
   tone?: string;
-  /** @deprecated `tone="var(--destructive)"`; removed in 2.0.0. */
-  variant?: "default" | "destructive";
 };
-
-function resolveTone(local: ToneProps): string | undefined {
-  return local.tone ?? (local.variant === "destructive" ? "var(--destructive)" : undefined);
-}
 
 function toneStyle(tone: string | undefined) {
   return tone ? { "--selection-tone": tone, color: glassToneText(tone) } : undefined;
@@ -272,8 +183,6 @@ interface RowOwnProps {
   disabled?: boolean;
   closeOnSelect?: boolean;
   onSelect?: () => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  textValue?: string;
 }
 
 /** A menu row's props over the element or component it renders `as`, a link for one. */
@@ -327,7 +236,6 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
     "slotName",
     "inset",
     "tone",
-    "variant",
     "as",
     "id",
     "ref",
@@ -337,7 +245,6 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
     "disabled",
     "closeOnSelect",
     "onSelect",
-    "textValue",
     "checked",
     "indeterminate",
     "choose",
@@ -347,7 +254,7 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
   const checked = () => local.checked ?? false;
   const indeterminate = () => local.indeterminate ?? false;
   const checkable = kind === "checkbox" || kind === "radio";
-  const tone = () => resolveTone(local);
+  const tone = () => local.tone;
 
   menu.register(key, {
     disabled,
@@ -696,14 +603,3 @@ export function MenuRadioItemPart(
     </MenuRow>
   );
 }
-
-/** @deprecated Drop the wrapper; the content portals itself; removed in 2.0.0. */
-export const MenuPortal: Component<{ children?: JSX.Element; mount?: Node }> = (props) => (
-  <>{props.children}</>
-);
-
-/** @deprecated Ignored; removed in 2.0.0. */
-export const MenuArrow: Component = () => null;
-
-/** @deprecated Use a plain `span`; removed in 2.0.0. */
-export const MenuTextPart: Component<ComponentProps<"span">> = (props) => <span {...props} />;

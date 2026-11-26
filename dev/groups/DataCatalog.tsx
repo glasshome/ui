@@ -451,7 +451,7 @@ export function DataCatalog() {
       <Specimen name="Empty" span={2}>
         <Empty class="w-full">
           <EmptyHeader>
-            <EmptyMedia variant="icon">
+            <EmptyMedia media="icon">
               <Icon icon="lucide:inbox" width={24} height={24} />
             </EmptyMedia>
             <EmptyTitle>No devices yet</EmptyTitle>

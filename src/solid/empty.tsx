@@ -36,17 +36,15 @@ const EMPTY_MEDIA: Record<EmptyMediaKind, string> = {
 const EmptyMedia: Component<
   ComponentProps<"div"> & {
     media?: EmptyMediaKind;
-    /** @deprecated `media`; removed in 2.0.0. */
-    variant?: EmptyMediaKind | "default";
   }
 > = (props) => {
-  const [local, rest] = splitProps(props, ["class", "media", "variant"] as const);
-  const media = () => local.media ?? (local.variant === "default" ? undefined : local.variant);
+  const [local, rest] = splitProps(props, ["class", "media"] as const);
+  const media = () => local.media;
   return (
     <div
       data-slot="empty-media"
       data-media={media()}
-      data-variant={local.variant ?? media() ?? "default"}
+      data-variant={media() ?? "default"}
       class={cn(
         "flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0",
         media() && EMPTY_MEDIA[media() as EmptyMediaKind],

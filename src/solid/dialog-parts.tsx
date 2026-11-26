@@ -18,7 +18,6 @@ import {
   type ValidComponent,
 } from "solid-js";
 import {
-  type FocusOutsideEvent,
   type InteractOutsideEvent,
   ModalDescription,
   type ModalPartProps,
@@ -53,14 +52,6 @@ export interface ModalRootSkinProps {
   modal?: boolean;
   /** Stays mounted and dormant after it closes, so the next open shows the same nodes instead of building them. */
   keep?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  id?: string;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  forceMount?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  preventScroll?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  translations?: Record<string, string>;
   children?: JSX.Element;
 }
 
@@ -90,10 +81,6 @@ export type ModalContentProps = Omit<ComponentProps<"div">, "style" | "role"> & 
   onInteractOutside?: (event: InteractOutsideEvent) => void;
   onOpenAutoFocus?: (event: Event) => void;
   onCloseAutoFocus?: (event: Event) => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  onFocusOutside?: (event: FocusOutsideEvent) => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  forceMount?: boolean;
 };
 
 export interface ModalTextParts {

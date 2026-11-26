@@ -337,7 +337,7 @@ function ImageGallery(
                 // role="status": the gallery is explaining itself, not raising an alarm.
                 <Empty role="status">
                   <EmptyHeader>
-                    <EmptyMedia variant="icon">
+                    <EmptyMedia media="icon">
                       <Icon icon="lucide:image-off" width={24} height={24} />
                     </EmptyMedia>
                     <EmptyTitle>{text("ui.image-picker.index-failed")}</EmptyTitle>
@@ -378,7 +378,7 @@ function ImageGallery(
                   <Match when={loaded()}>
                     <Empty>
                       <EmptyHeader>
-                        <EmptyMedia variant="icon">
+                        <EmptyMedia media="icon">
                           <Icon icon="lucide:image" width={24} height={24} />
                         </EmptyMedia>
                         <EmptyTitle>{text("ui.image-picker.empty")}</EmptyTitle>

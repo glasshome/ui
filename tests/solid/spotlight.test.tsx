@@ -2,7 +2,11 @@ import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { cdp, userEvent } from "vitest/browser";
-import { BottomSheet, BottomSheetContent, BottomSheetPortal } from "../../src/solid/index.js";
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetPortal,
+} from "../../src/solid/bottom-sheet/index.js";
 import { Z_CLASS } from "../../src/lib/layers.js";
 import { TRAVEL_MOTION } from "../../src/lib/motion-classes.js";
 import { OVERLAY_SURFACE_OPAQUE, SCRIM_CLASS } from "../../src/lib/overlay-classes.js";

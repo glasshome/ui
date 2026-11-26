@@ -2,6 +2,7 @@ import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal, type JSX } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
 import { commands } from "vitest/browser";
+import { Dialog, DialogBody, DialogContent } from "../../src/solid";
 import {
   BottomSheet,
   BottomSheetBody,
@@ -9,10 +10,7 @@ import {
   BottomSheetOverlay,
   BottomSheetPortal,
   BottomSheetTitle,
-  Dialog,
-  DialogBody,
-  DialogContent,
-} from "../../src/solid";
+} from "../../src/solid/bottom-sheet/index.js";
 import { settle } from "../harness/mount";
 import { corner, find, openBlock, type Parts, pageY } from "./scroll-contain-parts";
 

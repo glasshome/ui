@@ -34,26 +34,6 @@ export const ALLOW: Array<[name: string, reason: string]> = [
     "Its mark loads /assets/glasshome_logo.png, which dev/ does not serve, so a specimen 404s and gallery:shots fails on the console error (GALLERY-PLAN.md gap 4).",
   ],
   [
-    "SlidingIndicator",
-    "Deprecated: it measures the active item and keeps a copy of layout. The SelectionScope specimen is what replaces it. Goes at the next major.",
-  ],
-  [
-    "HeroOption",
-    "Deprecated alias of OptionCard, the same function; the OptionCard specimen is its pixels. Goes at the next major.",
-  ],
-  [
-    "SectionSubtitle",
-    "Deprecated: a bare heading has no owner. A specimen would advertise it over SectionGroup and FieldLegend, the doors that replace it.",
-  ],
-  [
-    "BottomSheetHeader",
-    "Deprecated alias of the shared modal Header part. A titled sheet is ResponsiveDialog, whose specimen renders the header.",
-  ],
-  [
-    "BottomSheetFooter",
-    "Deprecated alias of the shared modal Footer part. A footed sheet is ResponsiveDialog, whose specimen renders the footer.",
-  ],
-  [
     "SelectGroup",
     "No consumer and no composition to show: Select renders options flat through sectionComponent, so a wrapping div never holds a section's items.",
   ],

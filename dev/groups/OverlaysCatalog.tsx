@@ -9,16 +9,6 @@ import {
   AlertDialogTrigger,
   Avatar,
   AvatarFallback,
-  BottomSheet,
-  BottomSheetBody,
-  BottomSheetClose,
-  BottomSheetContent,
-  BottomSheetDescription,
-  BottomSheetHandle,
-  BottomSheetOverlay,
-  BottomSheetPortal,
-  BottomSheetTitle,
-  BottomSheetTrigger,
   Button,
   buttonVariants,
   Collapsible,
@@ -90,6 +80,18 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../src/solid";
+import {
+  BottomSheet,
+  BottomSheetBody,
+  BottomSheetClose,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetHandle,
+  BottomSheetOverlay,
+  BottomSheetPortal,
+  BottomSheetTitle,
+  BottomSheetTrigger,
+} from "../../src/solid/bottom-sheet/index.js";
 import { Icon } from "../../src/solid/icon.js";
 import { CatalogGroup, Specimen } from "../CatalogKit";
 
@@ -316,7 +318,7 @@ export function OverlaysCatalog() {
                 <Icon icon="lucide:copy" width={16} height={16} /> Duplicate
               </ContextMenuItem>
               <ContextMenuSeparator />
-              <ContextMenuItem variant="destructive">
+              <ContextMenuItem tone="var(--destructive)">
                 <Icon icon="lucide:trash-2" width={16} height={16} /> Delete
               </ContextMenuItem>
             </ContextMenuGroup>

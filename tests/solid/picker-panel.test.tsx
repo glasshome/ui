@@ -298,7 +298,7 @@ describe("EntitySelector listbox wiring", () => {
 
 describe("Popover statics", () => {
   it("keeps the Kobalte parts reachable off the root", () => {
-    for (const part of ["Portal", "Content", "Trigger", "Anchor", "Title", "CloseButton"]) {
+    for (const part of ["Content", "Trigger", "Anchor", "Title", "CloseButton"]) {
       expect(typeof (Popover as unknown as Record<string, unknown>)[part]).toBe("function");
     }
   });

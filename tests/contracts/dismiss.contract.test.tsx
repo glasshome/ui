@@ -10,10 +10,12 @@ import {
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogTitle,
+} from "../../src/solid";
+import {
   BottomSheet,
   BottomSheetContent,
   BottomSheetPortal,
-} from "../../src/solid";
+} from "../../src/solid/bottom-sheet/index.js";
 import { useFakeTime } from "../../src/testing";
 import { input } from "../harness/input";
 import { focusedElement, settle } from "../harness/mount";

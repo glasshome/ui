@@ -41,8 +41,6 @@ const noop = () => {};
 const NOT_PROBED: Record<string, string> = {
   // Renderless roots / portals
   AlertDialog: "renderless context root (kobalte Dialog), no DOM element of its own",
-  BottomSheet: "renderless context root (state machine provider), no DOM element of its own",
-  BottomSheetPortal: "portal mount point, renders children into <body> with no element of its own",
   ContextMenu: "renderless context root (kobalte Menu), no DOM element of its own",
   ContextMenuSub: "renderless sub-menu context root, no DOM element of its own",
   Dialog: "renderless context root (kobalte Dialog), no DOM element of its own",
@@ -65,11 +63,9 @@ const NOT_PROBED: Record<string, string> = {
     "the header door: media, title and line are the whole API, no class to restyle it",
   ConfirmDialog: "a composed dialog: its parts are fixed, no class to restyle them",
   MediaStoreError: "error class, not a component: no class prop to pass through",
-  HeroOption: "deprecated alias of OptionCard",
   SelectionHighlight:
     "part of an item inside a SelectionScope, nothing outside one; it takes the item's radius and the scope's tone, never a class",
   OptionChoice: "row of an OptionCard; the card owns the class",
-  ScrollBar: "deprecated no-op; gh-scroll's native-styled bar is the bar",
   Toaster: "third-party toast outlet (solid-sonner), no class contract of its own",
 };
 
@@ -198,36 +194,6 @@ const CASES: Record<string, () => JSX.Element> = {
     <solid.Avatar>
       <solid.AvatarFallback class="probe">GH</solid.AvatarFallback>
     </solid.Avatar>
-  ),
-  BottomSheetTrigger: () => (
-    <solid.BottomSheet>
-      <solid.BottomSheetTrigger class="probe">open</solid.BottomSheetTrigger>
-    </solid.BottomSheet>
-  ),
-  BottomSheetOverlay: () => (
-    <solid.BottomSheet open>
-      <solid.BottomSheetPortal>
-        <solid.BottomSheetOverlay class="probe" />
-      </solid.BottomSheetPortal>
-    </solid.BottomSheet>
-  ),
-  BottomSheetContent: () => (
-    <solid.BottomSheet open>
-      <solid.BottomSheetPortal>
-        <solid.BottomSheetContent class="probe" ariaLabel="sheet">
-          c
-        </solid.BottomSheetContent>
-      </solid.BottomSheetPortal>
-    </solid.BottomSheet>
-  ),
-  BottomSheetClose: () => (
-    <solid.BottomSheet open>
-      <solid.BottomSheetPortal>
-        <solid.BottomSheetContent ariaLabel="sheet">
-          <solid.BottomSheetClose class="probe">x</solid.BottomSheetClose>
-        </solid.BottomSheetContent>
-      </solid.BottomSheetPortal>
-    </solid.BottomSheet>
   ),
   CarouselContent: () => (
     <solid.Carousel>

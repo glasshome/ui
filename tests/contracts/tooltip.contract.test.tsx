@@ -85,14 +85,12 @@ describe("Tooltip contract", () => {
     expect(box.right).toBeLessThanOrEqual(window.innerWidth);
   });
 
-  it("TT8 Content inside Portal adds one layer to the page and no empty wrapper", async () => {
+  it("TT8 Content adds one layer to the page and no empty wrapper", async () => {
     useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
     const { container } = render(() => (
       <Tooltip>
         <TooltipTrigger>Save</TooltipTrigger>
-        <Tooltip.Portal>
-          <TooltipContent>Save changes</TooltipContent>
-        </Tooltip.Portal>
+        <TooltipContent>Save changes</TooltipContent>
       </Tooltip>
     ));
     await settle();

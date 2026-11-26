@@ -11,7 +11,6 @@ import {
   SectionCard,
   SectionGroup,
   SectionIcon,
-  SectionLabel,
   SectionRow,
   SectionRowSkeletons,
   SectionTitle,
@@ -155,30 +154,10 @@ describe("section kit material", () => {
     expect(slot(group.container, "section-icon").getAttribute("style")).toContain("var(--primary)");
   });
 
-  it("SectionIcon tone='neutral' keeps the plain well", () => {
-    const { container } = render(() => <SectionIcon icon="lucide:cloud" tone="neutral" />);
-    const icon = slot(container, "section-icon");
-    expect(icon.className).not.toContain("glass-tint");
-    expect(icon.getAttribute("style") ?? "").not.toContain("--glass-tone");
-  });
-
-  it("SectionIcon takes a CSS color tone and still maps the old enum", () => {
+  it("SectionIcon takes a CSS color tone", () => {
     const css = render(() => <SectionIcon icon="a" tone="var(--warning)" />);
     expect(slot(css.container, "section-icon").getAttribute("style")).toContain("var(--warning)");
-
-    const legacy = render(() => <SectionIcon icon="a" tone="primary" />);
-    const el = slot(legacy.container, "section-icon");
-    expect(el.getAttribute("style")).toContain("var(--primary)");
-    expect(el.className).toContain("glass-tint");
-  });
-
-  it("SectionLabel renders the SectionMeta line, bolded", () => {
-    const { container } = render(() => <SectionLabel>Devices</SectionLabel>);
-    const label = slot(container, "section-meta");
-    const tokens = label.className.split(/\s+/);
-    expect(tokens).toEqual(
-      expect.arrayContaining(["text-muted-foreground", "text-xs", "font-medium"]),
-    );
+    expect(slot(css.container, "section-icon").className).toContain("glass-tint");
   });
 });
 

@@ -262,25 +262,15 @@ const ICON_DIMENSIONS: Record<SectionIconSize, string> = {
   lg: "size-12 sm:size-14 [&>[data-slot=icon]]:text-[24px] sm:[&>[data-slot=icon]]:text-[28px]",
 };
 
-/** @deprecated Pass a CSS color to `tone`; removed in 2.0.0. */
-const LEGACY_TONES: Record<string, string | undefined> = {
-  neutral: undefined,
-  primary: "var(--primary)",
-};
-
 export function SectionIcon(props: {
   icon?: string;
   children?: JSX.Element;
   size?: SectionIconSize;
-  /** Any CSS color. `"neutral"` and `"primary"` are the deprecated old enum. */
+  /** Any CSS color. */
   tone?: string;
   class?: string;
 }) {
-  const tone = () => {
-    const t = props.tone;
-    if (t == null) return undefined;
-    return t in LEGACY_TONES ? LEGACY_TONES[t] : t;
-  };
+  const tone = () => props.tone ?? undefined;
   const glyph = children(() => props.children);
   return (
     <span
@@ -314,7 +304,7 @@ export function SectionTitle(props: { children: JSX.Element; class?: string }) {
   );
 }
 
-function SectionHeading(props: { children: JSX.Element; class?: string }) {
+export function SectionHeading(props: { children: JSX.Element; class?: string }) {
   return (
     <h3
       data-slot="section-subtitle"
@@ -323,11 +313,6 @@ function SectionHeading(props: { children: JSX.Element; class?: string }) {
       {props.children}
     </h3>
   );
-}
-
-/** @deprecated `SectionGroup`, or `FieldLegend` for a titled group of form rows; removed in 2.0.0. */
-export function SectionSubtitle(props: { children: JSX.Element; class?: string }) {
-  return <SectionHeading class={props.class}>{props.children}</SectionHeading>;
 }
 
 /** One labelled group inside a `SectionCard`: icon, label, optional count and
@@ -360,11 +345,6 @@ export function SectionGroup(props: {
       {props.children}
     </section>
   );
-}
-
-/** @deprecated `SectionMeta`, or `FieldLegend` for a titled group of rows; removed in 2.0.0. */
-export function SectionLabel(props: { children: JSX.Element; class?: string }) {
-  return <SectionMeta class={cn("font-medium", props.class)}>{props.children}</SectionMeta>;
 }
 
 export function SectionMeta(props: { children: JSX.Element; class?: string }) {

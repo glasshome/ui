@@ -27,9 +27,6 @@ export const MORPH_MOTION =
 export const ANCHORED_MOTION =
   "data-[expanded]:animate-anchored-in data-[closed]:animate-morph-out";
 
-/** @deprecated Rows arrive with their panel; the class does nothing. Removed in 2.0.0. */
-export const STAGGER = "gh-stagger";
-
 /* An exit that holds its last frame: a closed surface still mounted (kept, or waiting
  * for its unmount) rests invisible instead of snapping back. */
 const REST_CLOSED = "data-[closed]:fill-mode-forwards";

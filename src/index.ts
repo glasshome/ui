@@ -82,14 +82,12 @@ export {
   PRESS_DIP,
   SCRIM_MOTION,
   SETTLE_MOTION,
-  STAGGER,
   STALE_CONTENT,
 } from "./lib/motion-classes.js";
-export { createHold, HOLD_GRACE_MS, HOLD_MS, spendLongPress } from "./lib/hold.js";
+export { createHold, HOLD_GRACE_MS, HOLD_MS } from "./lib/hold.js";
 export type { Hold, HoldOptions, HoldPress } from "./lib/hold.js";
 export { MOTION_WINDOW_MS, startMotionWindow } from "./lib/motion-window.js";
 export {
-  anchorToTriggerTop,
   FLOATING_PANEL,
   OVERLAY_BLUR,
   OVERLAY_SURFACE,
@@ -104,7 +102,6 @@ export {
   SECTION_INNER_RADIUS,
   SECTION_OUTER_RADIUS,
   SECTION_PADDING,
-  SECTION_ROW_CLASS,
 } from "./lib/section-tokens.js";
 export { SEGMENT_ITEM } from "./lib/segment-classes.js";
 export { THUMB_CLASS, THUMB_RAIL_BLEED, THUMB_RAIL_PAD, THUMB_SIZE } from "./lib/thumb-classes.js";

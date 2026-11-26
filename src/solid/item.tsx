@@ -78,17 +78,15 @@ const ItemMedia: Component<
   ComponentProps<"div"> & {
     /** The well the media sits in. Omit for bare content. */
     media?: ItemMediaKind;
-    /** @deprecated `media`; removed in 2.0.0. */
-    variant?: ItemMediaKind | "default";
   }
 > = (props) => {
-  const [local, rest] = splitProps(props, ["class", "media", "variant"] as const);
-  const media = () => local.media ?? (local.variant === "default" ? undefined : local.variant);
+  const [local, rest] = splitProps(props, ["class", "media"] as const);
+  const media = () => local.media;
   return (
     <div
       data-slot="item-media"
       data-media={media()}
-      data-variant={local.variant ?? media() ?? "default"}
+      data-variant={media() ?? "default"}
       class={cn(
         "flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none",
         media() && ITEM_MEDIA[media() as ItemMediaKind],

@@ -1,3 +1,4 @@
+import { Button } from "../../../src/solid";
 import {
   BottomSheet,
   BottomSheetBody,
@@ -8,8 +9,7 @@ import {
   BottomSheetPortal,
   BottomSheetTitle,
   BottomSheetTrigger,
-  Button,
-} from "../../../src/solid";
+} from "../../../src/solid/bottom-sheet/index.js";
 import { defineScenarios } from "../../harness/types";
 import { Fruit, FRUIT_TRIGGER } from "../select/scenarios";
 

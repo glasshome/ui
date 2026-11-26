@@ -7,7 +7,7 @@ import {
   BottomSheetBody,
   BottomSheetContent,
   BottomSheetPortal,
-} from "../../src/solid";
+} from "../../src/solid/bottom-sheet/index.js";
 
 afterEach(cleanup);
 

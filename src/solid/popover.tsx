@@ -69,36 +69,6 @@ interface PopoverProps {
   gutter?: number;
   anchorRef?: Accessor<HTMLElement | undefined>;
   children?: JSX.Element;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  id?: string;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  preventScroll?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  forceMount?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  translations?: unknown;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  getAnchorRect?: (anchor?: HTMLElement) => unknown;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  shift?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  flip?: boolean | string;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  slide?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  overlap?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  sameWidth?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  fitViewport?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  hideWhenDetached?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  detachedPadding?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  arrowPadding?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  overflowPadding?: number;
 }
 
 interface PopoverContextValue {
@@ -256,8 +226,6 @@ interface PopoverContentProps extends Omit<ComponentProps<"div">, "ref"> {
   onInteractOutside?: (event: InteractOutsideEvent) => void;
   onOpenAutoFocus?: (event: Event) => void;
   onCloseAutoFocus?: (event: Event) => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  forceMount?: boolean;
 }
 
 const PopoverContent: Component<PopoverContentProps> = (props) => {
@@ -267,7 +235,6 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
     "surface",
     "ref",
     "id",
-    "forceMount",
     "onEscapeKeyDown",
     "onPointerDownOutside",
     "onFocusOutside",
@@ -475,21 +442,11 @@ function PopoverCloseButton<T extends ValidComponent = "button">(props: PartProp
   );
 }
 
-/** @deprecated Drop the wrapper; the content portals itself; removed in 2.0.0. */
-const PopoverPortal: Component<{ children?: JSX.Element; mount?: Node }> = (props) => (
-  <>{props.children}</>
-);
-
-/** @deprecated Ignored; removed in 2.0.0. */
-const PopoverArrow: Component = () => null;
-
 const Popover = Object.assign(PopoverRoot, {
   Anchor: PopoverAnchor,
-  Arrow: PopoverArrow,
   CloseButton: PopoverCloseButton,
   Content: PopoverContent,
   Description: PopoverDescription,
-  Portal: PopoverPortal,
   Title: PopoverTitle,
   Trigger: PopoverTrigger,
 });

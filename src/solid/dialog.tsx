@@ -93,8 +93,6 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
     "anchor",
     "style",
     "ref",
-    "onFocusOutside",
-    "forceMount",
   ]);
   const ctx = useDialogContext();
   const [viewport, setViewport] = createSignal(0);

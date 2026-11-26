@@ -8,7 +8,7 @@ import {
   BottomSheetContent,
   BottomSheetPortal,
   BottomSheetTrigger,
-} from "../../src/solid";
+} from "../../src/solid/bottom-sheet/index.js";
 import { MOTION_EXIT_MS } from "../../src/lib/motion-classes";
 import { useFakeTime } from "../../src/testing";
 import { commands } from "vitest/browser";

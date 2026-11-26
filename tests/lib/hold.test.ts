@@ -1,24 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { commands, userEvent } from "vitest/browser";
-import { createHold, HOLD_MS, spendLongPress } from "../../src/lib/hold.js";
+import { createHold, HOLD_MS } from "../../src/lib/hold.js";
 import { useFakeTime } from "../../src/testing/index.js";
-
-// Commands leave the fake clock still; a userEvent press moves it and runs the release under test.
-const NATIVE: Record<"contextmenu" | "selectstart", () => Promise<void>> = {
-  contextmenu: () => commands.mouse("press", 50, 50, "right"),
-  selectstart: () => commands.mouse("press", 50, 50),
-};
-
-async function fire(type: keyof typeof NATIVE): Promise<boolean | undefined> {
-  let prevented: boolean | undefined;
-  const look = (e: Event) => {
-    prevented ??= e.defaultPrevented;
-  };
-  window.addEventListener(type, look);
-  await NATIVE[type]();
-  window.removeEventListener(type, look);
-  return prevented;
-}
 
 function sheet(): HTMLElement {
   const el = document.body.appendChild(document.createElement("div"));
@@ -30,32 +13,6 @@ function sheet(): HTMLElement {
 afterEach(() => {
   document.body.replaceChildren();
   window.getSelection()?.removeAllRanges();
-});
-
-describe("spendLongPress", () => {
-  it("keeps the browser's long press off what a hold opened until the finger lifts", async () => {
-    useFakeTime();
-    const el = sheet();
-    spendLongPress();
-
-    expect(await fire("contextmenu")).toBe(true);
-    expect(await fire("selectstart")).toBe(true);
-
-    await userEvent.click(el);
-    await vi.runAllTimersAsync();
-
-    expect(await fire("contextmenu")).toBe(false);
-    expect(await fire("selectstart")).toBe(false);
-  });
-
-  it("lets go on its own when the release never arrives", async () => {
-    useFakeTime();
-    sheet();
-    spendLongPress();
-    await vi.runAllTimersAsync();
-
-    expect(await fire("selectstart")).toBe(false);
-  });
 });
 
 declare module "vitest/browser" {

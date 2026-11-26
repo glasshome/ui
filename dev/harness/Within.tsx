@@ -1,5 +1,6 @@
 import { createEffect, createSignal, type JSX, onCleanup, Show } from "solid-js";
 import { render } from "solid-js/web";
+import { Dialog, DialogContent, DialogTitle } from "../../src/solid";
 import {
   BottomSheet,
   BottomSheetBody,
@@ -8,10 +9,7 @@ import {
   BottomSheetOverlay,
   BottomSheetPortal,
   BottomSheetTitle,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "../../src/solid";
+} from "../../src/solid/bottom-sheet/index.js";
 import { PortalMountContext } from "../../src/solid/portal-mount.js";
 import { CLOSED_ROOTS } from "./closed-roots";
 import type { Within as WithinMode } from "./types";

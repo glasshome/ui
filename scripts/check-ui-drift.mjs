@@ -44,11 +44,6 @@ const RULES = [
     "use INPUT_CLASS / INPUT_SURFACE / FIELD_CHROME from @glasshome/ui",
   ],
   [
-    "hand-rolled group header",
-    /<SectionSubtitle\b/,
-    "a labelled group inside a card is <SectionGroup icon label count action>; an empty state is <Empty> + parts; a list row is <ListRow>",
-  ],
-  [
     "solid badge",
     /border-transparent\s+bg-primary\s+text-primary-foreground/,
     "use <Badge tone> — there are no solid badge variants",

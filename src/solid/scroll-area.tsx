@@ -1,4 +1,4 @@
-import { type Component, type ComponentProps, type ParentComponent, splitProps } from "solid-js";
+import { type ComponentProps, type ParentComponent, splitProps } from "solid-js";
 import { cn } from "../lib/utils.js";
 
 const ScrollArea: ParentComponent<ComponentProps<"div">> = (props) => {
@@ -19,9 +19,4 @@ const ScrollArea: ParentComponent<ComponentProps<"div">> = (props) => {
   );
 };
 
-/** @deprecated Ignored; removed in 2.0.0. */
-const ScrollBar: Component<ComponentProps<"div"> & { orientation?: "vertical" | "horizontal" }> = (
-  _props,
-) => null;
-
-export { ScrollArea, ScrollBar };
+export { ScrollArea };

@@ -192,22 +192,6 @@ const toast = Object.assign(
     warning: show("warning"),
     info: show("info"),
     message: show("message"),
-    /** @deprecated `toast.promise`; removed in 2.0.0. */
-    loading: (message: ToastMessage, data: ExternalToast = {}) => {
-      const { description, icon, action, ...rest } = data;
-      return sonnerToast.custom(
-        () => (
-          <GlassToast
-            kind="loading"
-            title={message}
-            description={description as ToastMessage | undefined}
-            icon={icon ?? undefined}
-            action={action as JSX.Element | undefined}
-          />
-        ),
-        { unstyled: true, duration: Number.POSITIVE_INFINITY, ...rest },
-      );
-    },
     custom: sonnerToast.custom,
     dismiss: sonnerToast.dismiss,
     promise: glassPromise,

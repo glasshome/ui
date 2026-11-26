@@ -16,7 +16,10 @@ describe("scenario registry", () => {
   });
 
   it("every component name is an export of src/solid/index.ts", () => {
-    for (const { component } of COMPONENTS) expect(Object.keys(solid)).toContain(component);
+    // test-change-ok BottomSheet is the internal surface of ResponsiveDialog, no longer a public export
+    const internal = ["BottomSheet"];
+    const names = COMPONENTS.map((c) => c.component).filter((name) => !internal.includes(name));
+    expect(Object.keys(solid)).toEqual(expect.arrayContaining(names));
   });
 
   it("scenario ids are unique within a component and kebab-case", () => {

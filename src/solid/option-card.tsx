@@ -213,6 +213,3 @@ function OptionIconWell(props: { icon?: string; image?: string }) {
     </Show>
   );
 }
-
-/** @deprecated `OptionCard`; removed in 2.0.0. */
-export const HeroOption = OptionCard;

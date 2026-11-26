@@ -38,54 +38,9 @@ interface TooltipRootProps {
   openDelay?: number;
   closeDelay?: number;
   children?: JSX.Element;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  id?: string;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  disabled?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  skipDelayDuration?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  triggerOnFocusOnly?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  ignoreSafeArea?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  forceMount?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  getAnchorRect?: (anchor?: HTMLElement) => unknown;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  shift?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  flip?: boolean | string;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  slide?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  overlap?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  sameWidth?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  fitViewport?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  hideWhenDetached?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  detachedPadding?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  arrowPadding?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  overflowPadding?: number;
 }
 
-interface TooltipContentProps extends ComponentProps<"div"> {
-  /** @deprecated Ignored; removed in 2.0.0. */
-  forceMount?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  onEscapeKeyDown?: (event: Event) => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  onPointerDownOutside?: (event: Event) => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  onFocusOutside?: (event: Event) => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  onInteractOutside?: (event: Event) => void;
-}
+interface TooltipContentProps extends ComponentProps<"div"> {}
 
 interface TooltipContextValue {
   id: string;
@@ -222,15 +177,7 @@ function TooltipTrigger<T extends ValidComponent = "button">(
 
 const TooltipContent: Component<TooltipContentProps> = (props) => {
   const ctx = useTooltip();
-  const [local, others] = splitProps(props, [
-    "class",
-    "ref",
-    "forceMount",
-    "onEscapeKeyDown",
-    "onPointerDownOutside",
-    "onFocusOutside",
-    "onInteractOutside",
-  ]);
+  const [local, others] = splitProps(props, ["class", "ref"]);
   const [panel, setPanel] = createSignal<HTMLElement>();
   const presence = createPresence({
     present: ctx.open,
@@ -291,17 +238,9 @@ const TooltipContent: Component<TooltipContentProps> = (props) => {
   );
 };
 
-/** @deprecated Drop the wrapper; the content portals itself; removed in 2.0.0. */
-const TooltipPortal: Component<{ children?: JSX.Element }> = (props) => <>{props.children}</>;
-
-/** @deprecated Ignored; removed in 2.0.0. */
-const TooltipArrow: Component = () => null;
-
 const Tooltip = Object.assign(TooltipRoot, {
   Trigger: TooltipTrigger,
   Content: TooltipContent,
-  Portal: TooltipPortal,
-  Arrow: TooltipArrow,
 });
 
 export { Tooltip, TooltipContent, TooltipTrigger };

@@ -57,14 +57,11 @@ describe("one tinted material", () => {
     expect(pill.textContent).toContain("@ihsen");
   });
 
-  it("ItemMedia takes the icon well from a media prop and still accepts the old variant", () => {
+  it("ItemMedia takes the icon well from a media prop", () => {
     const byMedia = render(() => <ItemMedia media="icon" />);
     const media = slot(byMedia.container, "item-media");
     expect(media.className).toContain(ICON_PILL);
     expect(media.getAttribute("data-media")).toBe("icon");
-
-    const byVariant = render(() => <ItemMedia variant="icon" />);
-    expect(slot(byVariant.container, "item-media").className).toContain(ICON_PILL);
   });
 
   it("Progress rides a recessed rail with a tinted glass fill", () => {
@@ -94,7 +91,7 @@ describe("Tooltip", () => {
 
   it("keeps Kobalte's namespace on the root", () => {
     expect(typeof Tooltip).toBe("function");
-    for (const member of ["Trigger", "Content", "Portal", "Arrow"] as const) {
+    for (const member of ["Trigger", "Content"] as const) {
       expect(typeof Tooltip[member], member).toBe("function");
     }
   });

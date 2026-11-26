@@ -298,12 +298,10 @@ type StackedBarSegment = {
   value: number;
   /** CSS color driving the segment's own glass tint. */
   tone?: string;
-  /** @deprecated `tone`; removed in 2.0.0. */
-  class?: string;
 };
 
 function segmentClass(s: StackedBarSegment) {
-  return cn(s.tone && "glass glass-tint", s.class);
+  return cn(s.tone && "glass glass-tint");
 }
 
 function segmentStyle(s: StackedBarSegment) {

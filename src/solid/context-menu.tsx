@@ -18,8 +18,6 @@ import { MOTION_EXIT_MS, OVERLAY_MOTION } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 import {
   createMenuLevel,
-  type DeprecatedMenuRootProps,
-  MenuArrow,
   type MenuCheckboxItemProps,
   MenuCheckboxItemPart,
   MenuContentPart,
@@ -32,7 +30,6 @@ import {
   MenuLabelPart,
   MenuLevelProvider,
   type MenuPlacement,
-  MenuPortal,
   MenuRadioGroup,
   type MenuRadioItemProps,
   MenuRadioItemPart,
@@ -41,12 +38,11 @@ import {
   MenuSubContentPart,
   type MenuSubTriggerProps,
   MenuSubTriggerPart,
-  MenuTextPart,
   parsePlacement,
   useMenuLevel,
 } from "./menu-parts.js";
 
-interface ContextMenuRootProps extends DeprecatedMenuRootProps {
+interface ContextMenuRootProps {
   onOpenChange?: (open: boolean) => void;
   placement?: MenuPlacement;
   gutter?: number;
@@ -316,9 +312,7 @@ const ContextMenuRadioGroup = MenuRadioGroup;
 const ContextMenu = Object.assign(ContextMenuRoot, {
   Root: ContextMenuRoot,
   Trigger: ContextMenuTrigger,
-  Portal: MenuPortal,
   Content: ContextMenuContent,
-  Arrow: MenuArrow,
   Item: ContextMenuItem,
   CheckboxItem: ContextMenuCheckboxItem,
   RadioGroup: ContextMenuRadioGroup,
@@ -330,9 +324,6 @@ const ContextMenu = Object.assign(ContextMenuRoot, {
   SubTrigger: ContextMenuSubTrigger,
   SubContent: ContextMenuSubContent,
   ItemIndicator: MenuItemIndicator,
-  Icon: MenuTextPart,
-  ItemLabel: MenuTextPart,
-  ItemDescription: MenuTextPart,
 });
 
 export {

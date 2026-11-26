@@ -270,8 +270,6 @@ export interface IconPickerProps {
   class?: string;
   /** Names a `slot` trigger, which shows no text of its own. */
   "aria-label"?: string;
-  /** @deprecated Pass `search` to `provideIcons` once; removed in 2.0.0. */
-  searchIcons?: (query: string, prefix: string) => Promise<string[]>;
   /** Id of the element naming the trigger, for forms that label it outside. */
   "aria-labelledby"?: string;
 }
@@ -294,19 +292,13 @@ export function IconPicker(props: IconPickerProps) {
       setApiResults([]);
       return;
     }
-    const legacy = props.searchIcons;
     const hosted = iconSearch();
     const prefixes = prefix ? [prefix] : ICON_LIBRARIES.map((lib) => lib.prefix).filter(Boolean);
-    const run = legacy
-      ? () => legacy(query, prefix)
-      : hosted
-        ? () => hosted(query, prefixes)
-        : undefined;
-    if (!run) return;
+    if (!hosted) return;
     setLoading(true);
     debounceTimer = setTimeout(async () => {
       try {
-        setApiResults(await run());
+        setApiResults(await hosted(query, prefixes));
       } catch {
         setApiResults([]);
       } finally {

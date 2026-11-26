@@ -16,10 +16,8 @@ import {
   PRESS_DIP,
   SCRIM_MOTION,
   SETTLE_MOTION,
-  STAGGER,
 } from "../../src/lib/motion-classes.js";
 import {
-  anchorToTriggerTop,
   FLOATING_PANEL,
   FLOATING_PANEL_SURFACE,
   OVERLAY_SURFACE,
@@ -79,16 +77,7 @@ describe("motion vocabulary", () => {
       expect(recipe).toContain("duration-(--duration-");
     }
     expect(MORPH_MOTION).toContain("data-[expanded]:animate-morph-in");
-    expect(STAGGER).toBe("gh-stagger");
     expect(PRESS_DIP).toBe("active:scale-[0.97]");
-  });
-
-  it("anchorToTriggerTop returns a zero-height rect on the trigger's top edge", () => {
-    expect(anchorToTriggerTop(undefined)).toEqual({ x: 0, y: 0, width: 0, height: 0 });
-    const trigger = document.body.appendChild(document.createElement("button"));
-    trigger.style.cssText = "position: fixed; left: 10px; top: 20px; width: 200px; height: 36px;";
-    expect(anchorToTriggerTop(trigger)).toEqual({ x: 10, y: 20, width: 200, height: 0 });
-    trigger.remove();
   });
 });
 

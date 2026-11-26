@@ -40,13 +40,5 @@ export const FLOATING_PANEL_SURFACE = `${OVERLAY_SURFACE} ${PANEL_TAIL}`;
  * menus add p-1, popovers p-4, pickers none. */
 export const FLOATING_PANEL = `${OVERLAY_SURFACE} relative ${PANEL_TAIL}`;
 
-/** @deprecated Ignored; removed in 2.0.0. */
-export const anchorToTriggerTop = (anchor?: HTMLElement) => {
-  const r = anchor?.getBoundingClientRect();
-  return r
-    ? { x: r.left, y: r.top, width: r.width, height: 0 }
-    : { x: 0, y: 0, width: 0, height: 0 };
-};
-
 /* The modal layer's own root. Its box, containment and stacking never change, so going dormant only adds skipping. */
 export const LAYER_ROOT = `pointer-events-none fixed inset-0 ${Z_CLASS.overlay} [contain:layout_paint_style] *:pointer-events-auto data-[dormant]:[content-visibility:hidden] not-supports-[content-visibility:hidden]:data-[dormant]:hidden`;

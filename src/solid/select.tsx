@@ -84,28 +84,6 @@ interface SelectBaseProps<Option, OptGroup> extends Omit<
   busy?: boolean;
   validationState?: "valid" | "invalid";
   children?: JSX.Element;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  name?: string;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  placement?: string;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  gutter?: number;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  flip?: boolean | string;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  overlap?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  sameWidth?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  getAnchorRect?: (anchor?: HTMLElement) => unknown;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  modal?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  preventScroll?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  disallowEmptySelection?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  allowDuplicateSelectionEvents?: boolean;
 }
 
 interface SingleProps<Option> {
@@ -240,17 +218,6 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
       "validationState",
       "children",
       "id",
-      "name",
-      "placement",
-      "gutter",
-      "flip",
-      "overlap",
-      "sameWidth",
-      "getAnchorRect",
-      "modal",
-      "preventScroll",
-      "disallowEmptySelection",
-      "allowDuplicateSelectionEvents",
     ],
     ["multiple", "value", "defaultValue", "onChange"],
   );
@@ -675,27 +642,18 @@ interface SelectContentProps extends Omit<ComponentProps<"div">, "children"> {
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
   onInteractOutside?: (event: InteractOutsideEvent) => void;
   onCloseAutoFocus?: (event: Event) => void;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  children?: JSX.Element;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  forceMount?: boolean;
-  /** @deprecated Ignored; removed in 2.0.0. */
-  onOpenAutoFocus?: (event: Event) => void;
 }
 
 const SelectContent: Component<SelectContentProps> = (props) => {
   const ctx = useSelect();
   const [local, others] = splitProps(props, [
     "class",
-    "children",
     "listboxClass",
     "ref",
     "onEscapeKeyDown",
     "onPointerDownOutside",
     "onInteractOutside",
     "onCloseAutoFocus",
-    "onOpenAutoFocus",
-    "forceMount",
   ]);
   const [panel, setPanel] = createSignal<HTMLElement>();
   const [listbox, setListbox] = createSignal<HTMLElement>();
