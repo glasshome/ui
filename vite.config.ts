@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import solid from "vite-plugin-solid";
+import solid from "@solidjs/vite-plugin";
 
 export default defineConfig({
   plugins: [solid()],
@@ -21,8 +21,7 @@ export default defineConfig({
       external: [
         "vitest",
         "solid-js",
-        "solid-js/web",
-        "solid-js/store",
+        "@solidjs/web",
         "@glasshome/sync-layer",
         "@glasshome/sync-layer/solid",
       ],

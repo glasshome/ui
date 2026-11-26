@@ -5,7 +5,7 @@ import type { IconifyIcon, IconifyJSON } from "@iconify/types";
 import { getIconData } from "@iconify/utils";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, type Plugin } from "vite";
-import solid from "vite-plugin-solid";
+import solid from "@solidjs/vite-plugin";
 import { driveReports } from "./dev/harness/report-middleware";
 
 /* Dev-only gallery server (`bun run dev:gallery`). The publishable library

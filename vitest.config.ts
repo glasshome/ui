@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process";
 import tailwindcss from "@tailwindcss/vite";
 import { playwright } from "@vitest/browser-playwright";
-import solid from "vite-plugin-solid";
+import solid from "@solidjs/vite-plugin";
 import { searchForWorkspaceRoot } from "vite";
 import { defineConfig } from "vitest/config";
 import {
@@ -52,6 +52,8 @@ function ownPort(name: string): number {
 
 // A gate run names a results directory; the runner keeps junit and failure shots there.
 const resultsDir = process.env.GATE_RESULTS_DIR;
+// Solid's development build reports owned-scope and context errors the production build hides.
+const devMode = process.env.UI_SOLID_DEV !== "0";
 const shuffleSeed = process.env.GATE_SHUFFLE_SEED;
 
 // Vitest names each instance after its project, so a project that replaces the provider brings its own.
@@ -90,9 +92,9 @@ export default defineConfig({
   server: {
     fs: { allow: [searchForWorkspaceRoot(process.cwd()), ...(resultsDir ? [resultsDir] : [])] },
   },
-  plugins: [solid({ dev: false, hot: false }), tailwindcss()],
+  plugins: [solid({ dev: devMode, refresh: false }), tailwindcss()],
   resolve: {
-    conditions: ["browser"],
+    conditions: devMode ? ["browser", "development"] : ["browser"],
     dedupe: [
       "solid-js",
       "solid-js/web",
@@ -108,8 +110,7 @@ export default defineConfig({
     noDiscovery: true,
     include: [
       "solid-js",
-      "solid-js/web",
-      "solid-js/store",
+      "@solidjs/web",
       "@solidjs/testing-library",
       "clsx",
       "cva",
@@ -135,7 +136,7 @@ export default defineConfig({
       : ["default"],
     // test-change-ok hang guard for expect.poll and expect.element, below the 5 s testTimeout; provisional until the nightly stress ledger measures it
     expect: { poll: { timeout: 4_000 } },
-    // Unset, vite-plugin-solid asks for jsdom, which a clean install does not have.
+    // Unset, the Solid plugin asks for jsdom, which a clean install does not have.
     environment: "node",
     maxWorkers: 4,
     projects: [
