@@ -13,6 +13,7 @@ import {
   untrack,
   createEffect,
   merge,
+  onFlush,
 } from "solid-js";
 import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX } from "@solidjs/web";
@@ -331,9 +332,11 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
       if (!untrack(open)) return;
       refocusIfLost = false;
       setOpen(false);
-      if (untrack(open)) return;
-      if (reason === "commit") focusTrigger();
-      else if (reason === "outside") refocusIfLost = true;
+      onFlush(() => {
+        if (untrack(open)) return;
+        if (reason === "commit") focusTrigger();
+        else if (reason === "outside") refocusIfLost = true;
+      });
     },
     settle: () => {
       const near = trigger();

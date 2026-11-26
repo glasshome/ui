@@ -11,6 +11,7 @@ import {
   useContext,
   createEffect,
   merge,
+  onFlush,
 } from "solid-js";
 import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
@@ -295,8 +296,10 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
         }
       }
       ctx.setOpen(false);
-      // A controlled `open` refused the close.
-      if (untrack(ctx.isOpen)) closedOutside = false;
+      onFlush(() => {
+        // A controlled `open` refused the close.
+        if (untrack(ctx.isOpen)) closedOutside = false;
+      });
     },
   });
 
