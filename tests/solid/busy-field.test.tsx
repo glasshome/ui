@@ -54,6 +54,11 @@ describe("Input busy", () => {
     const view = render(() => <Input readonly />);
     expect((view.getByRole("textbox") as HTMLInputElement).readOnly).toBe(true);
   });
+
+  it("takes readOnly as ui's other fields do", () => {
+    const view = render(() => <Input readOnly />);
+    expect((view.getByRole("textbox") as HTMLInputElement).readOnly).toBe(true);
+  });
 });
 
 describe("Select busy", () => {
