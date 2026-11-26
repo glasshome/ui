@@ -158,7 +158,7 @@ const ColorSlider: Component<ColorSliderProps> = (props) => {
           aria-valuenow={range.values()[0]}
           aria-valuetext={valueText(color(), props.channel, text, format, names())}
           aria-orientation="horizontal"
-          aria-disabled={disabled() || undefined}
+          aria-disabled={disabled() ? "true" : undefined}
           class={cn(
             THUMB_CLASS,
             FOCUS_RING,

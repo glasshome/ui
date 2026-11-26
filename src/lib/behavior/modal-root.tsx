@@ -145,7 +145,7 @@ export function ModalTrigger<T extends ValidComponent = "button">(
         },
         "aria-haspopup": "dialog",
         get "aria-expanded"() {
-          return ctx.isOpen();
+          return ctx.isOpen() ? "true" : "false";
         },
         get "aria-controls"() {
           return ctx.isOpen() ? ctx.contentId() : undefined;

@@ -32,12 +32,12 @@ const Switch: Component<SwitchProps> = (props) => {
       {...rest}
       type="button"
       role="switch"
-      aria-checked={checked()}
+      aria-checked={checked() ? "true" : "false"}
       data-slot="switch"
       data-checked={checked() ? "" : undefined}
       disabled={local.disabled}
-      aria-busy={local.busy || undefined}
-      aria-disabled={local.busy || undefined}
+      aria-busy={local.busy ? "true" : undefined}
+      aria-disabled={local.busy ? "true" : undefined}
       class={cn(
         // Unchecked wears the recessed input surface, the same dug-out glass as
         // the slider rail; checked matches the slider fill. A `border-input`

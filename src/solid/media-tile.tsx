@@ -32,7 +32,7 @@ export function MediaTile(props: MediaTileProps) {
         data-slot="media-tile-select"
         data-testid="media-tile"
         aria-label={props.label}
-        aria-pressed={props.selected}
+        aria-pressed={props.selected === undefined ? undefined : props.selected ? "true" : "false"}
         onClick={() => props.onSelect()}
         class={cn(
           FIELD_CHROME,

@@ -114,7 +114,7 @@ export function createToggleItem(
         return item.disabled();
       },
       get "aria-pressed"() {
-        return pressed();
+        return pressed() ? "true" : "false";
       },
       get "data-pressed"() {
         return pressed() ? "" : undefined;

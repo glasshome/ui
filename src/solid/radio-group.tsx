@@ -138,9 +138,9 @@ const RadioGroup = (props: RadioGroupProps) => {
         id={id()}
         aria-labelledby={labelledBy()}
         aria-orientation={local.orientation ?? "vertical"}
-        aria-required={local.required || undefined}
-        aria-disabled={local.disabled || undefined}
-        aria-readonly={local.readOnly || undefined}
+        aria-required={local.required ? "true" : undefined}
+        aria-disabled={local.disabled ? "true" : undefined}
+        aria-readonly={local.readOnly ? "true" : undefined}
         {...formState(context)}
         data-slot="radio-group"
         class={cn("flex flex-col gap-3", local.class)}
@@ -257,8 +257,8 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
         aria-labelledby={`${id()}-label`}
         {...state()}
         class="peer"
-        aria-busy={local.busy || undefined}
-        aria-disabled={local.busy || undefined}
+        aria-busy={local.busy ? "true" : undefined}
+        aria-disabled={local.busy ? "true" : undefined}
         data-claim={local.busy ? "prevent:click" : undefined}
         on:click={(event) => {
           if (local.busy) event.preventDefault();

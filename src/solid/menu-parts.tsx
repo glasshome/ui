@@ -306,7 +306,7 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
         },
         "aria-haspopup": submenu ? "true" : undefined,
         get "aria-expanded"() {
-          return submenu ? subOpen() : undefined;
+          return submenu ? (subOpen() ? "true" : "false") : undefined;
         },
         get "aria-controls"() {
           return subOpen() ? submenu?.contentId() : undefined;

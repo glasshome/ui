@@ -156,7 +156,7 @@ function RoomsCard() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  aria-pressed={!shown().includes(area.id)}
+                  aria-pressed={shown().includes(area.id) ? "false" : "true"}
                   aria-label={`Hide ${area.name}`}
                   onClick={() => toggle(area.id)}
                 >

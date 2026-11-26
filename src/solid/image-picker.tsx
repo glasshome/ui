@@ -101,7 +101,7 @@ function PresetTile(props: { preset: ImagePreset; selected: boolean; onSelect: (
       <button
         type="button"
         aria-label={text("ui.image-picker.use", { name: props.preset.label })}
-        aria-pressed={props.selected}
+        aria-pressed={props.selected ? "true" : "false"}
         onClick={() => props.onSelect()}
         class={cn(
           FIELD_CHROME,
@@ -431,7 +431,7 @@ function ImageGallery(
                     <PaginationItem>
                       <PaginationPrevious
                         href="#"
-                        aria-disabled={current() === 0}
+                        aria-disabled={current() === 0 ? "true" : "false"}
                         class={current() === 0 ? "pointer-events-none opacity-50" : undefined}
                         onClick={(event) => {
                           event.preventDefault();
@@ -447,7 +447,7 @@ function ImageGallery(
                     <PaginationItem>
                       <PaginationNext
                         href="#"
-                        aria-disabled={current() === pageCount() - 1}
+                        aria-disabled={current() === pageCount() - 1 ? "true" : "false"}
                         class={
                           current() === pageCount() - 1
                             ? "pointer-events-none opacity-50"

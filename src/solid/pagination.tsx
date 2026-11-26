@@ -93,7 +93,7 @@ const PaginationEllipsis: Component<ComponentProps<"span">> = (props) => {
   const text = useUiText();
   return (
     <span
-      aria-hidden
+      aria-hidden="true"
       data-slot="pagination-ellipsis"
       class={cn("flex size-9 items-center justify-center", local.class)}
       {...rest}

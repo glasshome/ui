@@ -223,7 +223,7 @@ export function AreaPicker(props: AreaPickerProps) {
                   type="button"
                   data-slot="area-picker-row"
                   highlighted={highlightedId() === area.id}
-                  aria-pressed={multi() ? isSelected(area.id) : undefined}
+                  aria-pressed={multi() ? (isSelected(area.id) ? "true" : "false") : undefined}
                   icon={area.icon || "mdi:home-floor-1"}
                   title={area.name}
                   subtitle={`${area.entityCount} ${area.entityCount === 1 ? "entity" : "entities"}`}

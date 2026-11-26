@@ -89,7 +89,7 @@ export function ButtonRoot<T extends ValidComponent = "button">(props: ButtonRoo
             return native() ? own.disabled : undefined;
           },
           get "aria-disabled"() {
-            return !native() && own.disabled ? true : undefined;
+            return !native() && own.disabled ? "true" : undefined;
           },
           get "data-disabled"() {
             return own.disabled ? "" : undefined;

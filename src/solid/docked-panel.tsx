@@ -38,7 +38,7 @@ export function DockedPanel(props: {
               aria-label={
                 props.collapsed ? text("ui.docked-panel.show") : text("ui.docked-panel.hide")
               }
-              aria-expanded={!props.collapsed}
+              aria-expanded={props.collapsed ? "false" : "true"}
               class="mx-auto flex h-6 w-full shrink-0 items-center justify-center md:hidden"
               onClick={() => props.onCollapsedChange?.(!props.collapsed)}
             >

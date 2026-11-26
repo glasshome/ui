@@ -167,7 +167,7 @@ const ColorWheel: Component<ColorWheelProps> = (props) => {
             value: color().formatChannelValue("hue", format),
             name: color().getHueName(names()),
           })}
-          aria-disabled={disabled() || undefined}
+          aria-disabled={disabled() ? "true" : undefined}
           class={cn(THUMB_CLASS, FOCUS_RING, THUMB_COLOR_RING, "rounded-full")}
           style={{
             position: "absolute",

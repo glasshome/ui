@@ -25,7 +25,11 @@ const Reveal = () => {
   return (
     <div class="flex w-64 flex-col gap-3">
       <LightTile shown={stale()} lit />
-      <Button variant="outline" aria-pressed={stale()} onClick={() => setStale((on) => !on)}>
+      <Button
+        variant="outline"
+        aria-pressed={stale() ? "true" : "false"}
+        onClick={() => setStale((on) => !on)}
+      >
         Stale
       </Button>
     </div>

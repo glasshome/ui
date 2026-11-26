@@ -155,7 +155,7 @@ export const CollapsibleTriggerRoot: Component<CollapsibleTriggerProps> = (props
       {...merge(
         {
           get "aria-expanded"() {
-            return ctx.open();
+            return ctx.open() ? "true" : "false";
           },
           get "aria-controls"() {
             return ctx.controls();
@@ -170,7 +170,7 @@ export const CollapsibleTriggerRoot: Component<CollapsibleTriggerProps> = (props
             return native() ? ctx.disabled() : undefined;
           },
           get "aria-disabled"() {
-            return !native() && ctx.disabled() ? true : undefined;
+            return !native() && ctx.disabled() ? "true" : undefined;
           },
           get "data-disabled"() {
             return ctx.disabled() ? "" : undefined;

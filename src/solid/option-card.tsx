@@ -60,7 +60,7 @@ export function OptionChoice(props: {
       as="button"
       type="button"
       role="radio"
-      aria-checked={selected()}
+      aria-checked={selected() ? "true" : "false"}
       data-slot="option-choice"
       class={OPTION_CHOICE_ROW}
       disabled={props.disabled}

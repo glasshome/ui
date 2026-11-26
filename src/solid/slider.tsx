@@ -180,7 +180,7 @@ const Slider: Component<SliderProps> = (props) => {
               aria-valuenow={range.values()[index]}
               aria-valuetext={format.number(range.values()[index] ?? 0)}
               aria-orientation="horizontal"
-              aria-disabled={disabled() || undefined}
+              aria-disabled={disabled() ? "true" : undefined}
               class={cn(
                 THUMB_CLASS,
                 FOCUS_RING,

@@ -321,10 +321,10 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
           return disabled();
         },
         get "aria-selected"() {
-          return selected();
+          return selected() ? "true" : "false";
         },
         get "aria-disabled"() {
-          return disabled() || undefined;
+          return disabled() ? "true" : undefined;
         },
         get "aria-controls"() {
           return selected() ? ctx.contentId(local.value) : undefined;

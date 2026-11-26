@@ -69,7 +69,7 @@ function Toggle(props: ToggleProps) {
   return (
     <ButtonRoot
       data-slot="toggle"
-      aria-pressed={pressed()}
+      aria-pressed={pressed() ? "true" : "false"}
       data-pressed={pressed() ? "" : undefined}
       class={cn(
         toggleVariants({ variant: local.variant, size: local.size }),

@@ -9,7 +9,7 @@ const Toggle = (props: { value?: boolean; onChange?: (next: boolean) => void }) 
     onChange: (next) => props.onChange?.(next),
   });
   return (
-    <button type="button" aria-pressed={on()} onClick={() => setOn(!on())}>
+    <button type="button" aria-pressed={on() ? "true" : "false"} onClick={() => setOn(!on())}>
       Toggle
     </button>
   );

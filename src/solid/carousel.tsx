@@ -237,7 +237,7 @@ const CarouselDots: Component<ComponentProps<"div">> = (props) => {
           data-slot="carousel-dot"
           data-active={selected() === i ? "" : undefined}
           aria-label={text("ui.carousel.go-to-slide", { index: i + 1 })}
-          aria-current={selected() === i}
+          aria-current={selected() === i ? "true" : "false"}
           class={carouselDot(selected() === i)}
           onClick={() => scrollTo(i)}
         />

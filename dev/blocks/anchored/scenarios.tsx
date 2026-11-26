@@ -31,7 +31,7 @@ const Placed = (props: {
     <button
       ref={setAnchor}
       type="button"
-      aria-expanded={open()}
+      aria-expanded={open() ? "true" : "false"}
       style={props.anchorStyle}
       on:click={() => setOpen(!open())}
     >

@@ -164,9 +164,9 @@ const Checkbox = (props: CheckboxProps) => {
           aria-label={field["aria-label"]}
           aria-labelledby={labelledBy()}
           aria-describedby={field["aria-describedby"]}
-          aria-required={local.required || undefined}
-          aria-disabled={local.disabled || undefined}
-          aria-readonly={local.readOnly || undefined}
+          aria-required={local.required ? "true" : undefined}
+          aria-disabled={local.disabled ? "true" : undefined}
+          aria-readonly={local.readOnly ? "true" : undefined}
           {...state()}
           class="peer"
           on:change={change}

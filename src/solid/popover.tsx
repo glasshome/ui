@@ -180,7 +180,7 @@ function PopoverTrigger<T extends ValidComponent = "button">(props: PartProps<T>
           },
           "aria-haspopup": "dialog",
           get "aria-expanded"() {
-            return ctx.isOpen();
+            return ctx.isOpen() ? "true" : "false";
           },
           get "aria-controls"() {
             return ctx.isOpen() ? ctx.contentId() : undefined;

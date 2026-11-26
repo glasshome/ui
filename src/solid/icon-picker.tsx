@@ -405,7 +405,7 @@ export function IconPicker(props: IconPickerProps) {
                 <button
                   type="button"
                   data-slot="icon-picker-library"
-                  aria-pressed={activeLib() === lib.prefix}
+                  aria-pressed={activeLib() === lib.prefix ? "true" : "false"}
                   class={cn(
                     CHIP,
                     "transition-glass cursor-pointer",
@@ -436,7 +436,7 @@ export function IconPicker(props: IconPickerProps) {
                 {(icon) => (
                   <button
                     type="button"
-                    aria-pressed={props.value === icon}
+                    aria-pressed={props.value === icon ? "true" : "false"}
                     class={cn(
                       "transition-glass hover:bg-accent mx-auto flex size-11 cursor-pointer items-center justify-center rounded-lg",
                       props.value === icon &&

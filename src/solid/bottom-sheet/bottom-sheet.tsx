@@ -137,7 +137,7 @@ const BottomSheetTrigger: ParentComponent<SheetButtonProps> = (props) => {
       as={local.as}
       data-slot="bottom-sheet-trigger"
       aria-haspopup="dialog"
-      aria-expanded={ctx.open()}
+      aria-expanded={ctx.open() ? "true" : "false"}
       onClick={(event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => {
         callEventHandler(event, local.onClick);
         ctx.setOpen(true);

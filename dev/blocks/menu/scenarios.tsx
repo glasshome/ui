@@ -39,7 +39,7 @@ function Row(props: {
       aria-disabled={props.disabled ? "true" : undefined}
       aria-checked={props.checked ? (props.checked() ? "true" : "false") : undefined}
       aria-haspopup={props.submenu ? "menu" : undefined}
-      aria-expanded={props.submenu ? props.submenu.open() : undefined}
+      aria-expanded={props.submenu ? (props.submenu.open() ? "true" : "false") : undefined}
       data-claim={props.disabled ? undefined : rowClaim(props.menu, undefined, !!props.submenu)}
       data-highlighted={props.menu.highlighted() === props.id ? "" : undefined}
       style={{
@@ -99,7 +99,7 @@ export function ActionsMenu() {
         type="button"
         ref={(el) => menu.setTrigger(el)}
         aria-haspopup="menu"
-        aria-expanded={open()}
+        aria-expanded={open() ? "true" : "false"}
         data-claim={button.claim()}
         on:pointerdown={(event) => button.onPointerDown(event)}
         on:click={() => button.onClick()}

@@ -11,7 +11,7 @@ const Input: Component<InputProps> = (props) => {
       type={local.type}
       data-slot="input"
       readOnly={local.busy || local.readOnly}
-      aria-busy={local.busy || undefined}
+      aria-busy={local.busy ? "true" : undefined}
       class={cn(INPUT_CLASS, "aria-busy:cursor-progress aria-busy:opacity-50", local.class)}
       {...others}
     />

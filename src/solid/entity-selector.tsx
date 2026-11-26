@@ -393,7 +393,7 @@ export function EntitySelector(props: EntitySelectorProps) {
       open={open()}
       onToggle={p.onClick}
       aria-labelledby={props["aria-labelledby"]}
-      aria-expanded={open()}
+      aria-expanded={open() ? "true" : "false"}
       aria-controls={listboxId}
       aria-haspopup="listbox"
       onClear={showTriggerClear() ? clearSelection : undefined}
@@ -434,7 +434,7 @@ export function EntitySelector(props: EntitySelectorProps) {
         role="option"
         id={optionId(p.entityIndex)}
         data-slot="entity-selector-row"
-        aria-selected={selected()}
+        aria-selected={selected() ? "true" : "false"}
         highlighted={!isMobile() && activeIndex() === p.entityIndex}
         class="absolute inset-x-0"
         style={{ top: `${p.top}px`, height: `${ROW_HEIGHT}px` }}
@@ -461,7 +461,7 @@ export function EntitySelector(props: EntitySelectorProps) {
         role="combobox"
         aria-label={text("ui.entity-selector.search", { domain: props.domain })}
         aria-controls={listboxId}
-        aria-expanded
+        aria-expanded="true"
         aria-activedescendant={activeOptionId()}
         placeholder={text("ui.entity-selector.search-placeholder")}
         value={search()}
@@ -475,7 +475,7 @@ export function EntitySelector(props: EntitySelectorProps) {
         ref={attachScrollRef}
         id={listboxId}
         role="listbox"
-        aria-multiselectable={!isSingle()}
+        aria-multiselectable={isSingle() ? "false" : "true"}
         aria-label={text("ui.entity-selector.list", { domain: props.domain })}
         class={cn(
           "min-h-0 flex-1 touch-pan-y overscroll-contain px-1 py-1",

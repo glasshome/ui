@@ -164,7 +164,7 @@ function DropdownMenuTrigger<T extends ValidComponent = "button">(
           return button.claim();
         },
         get "aria-expanded"() {
-          return menu.open();
+          return menu.open() ? "true" : "false";
         },
         get "aria-controls"() {
           return menu.open() ? level.contentId() : undefined;
