@@ -97,3 +97,22 @@ it("shows a listener in an outer closed root the nested host, never the inner no
   expect(seen?.path).not.toContain(button);
   expect(seen?.path).toContain(innerHost);
 });
+
+describe("textContent", () => {
+  it("writes a number as its digits, zero included", () => {
+    const span = document.createElement("span");
+    document.body.appendChild(span);
+    span.textContent = 0 as unknown as string;
+    expect(span.firstChild?.nodeValue).toBe("0");
+  });
+
+  it("clears the element for null and the empty string", () => {
+    const span = document.createElement("span");
+    span.append("old");
+    span.textContent = null;
+    expect(span.childNodes.length).toBe(0);
+    span.append("old");
+    span.textContent = "";
+    expect(span.childNodes.length).toBe(0);
+  });
+});

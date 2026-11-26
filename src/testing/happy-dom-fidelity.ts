@@ -89,6 +89,20 @@ function installShadowRecorder(): void {
   };
 }
 
+function installTextContent(): void {
+  const proto = Element.prototype;
+  const descriptor = Reflect.getOwnPropertyDescriptor(proto, "textContent");
+  const set = descriptor?.set;
+  if (!descriptor || !set) throw new Error("happy-dom's Element has no textContent setter");
+  // happy-dom drops a falsy value, so the number 0 wrote nothing.
+  Object.defineProperty(proto, "textContent", {
+    ...descriptor,
+    set(this: Node, value: string | number | null | undefined) {
+      set.call(this, value == null ? "" : String(value));
+    },
+  });
+}
+
 export function installHappyDomFidelity(): void {
   // A shared-module suite runs every file's setup against the same window.
   const marked = Event.prototype as { [INSTALLED]?: true };
@@ -96,6 +110,7 @@ export function installHappyDomFidelity(): void {
   marked[INSTALLED] = true;
   installEventRetargeting();
   installShadowRecorder();
+  installTextContent();
 }
 
 export function shadowOf(host: Element | null | undefined): ShadowRoot | undefined {
