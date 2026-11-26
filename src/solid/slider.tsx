@@ -1,4 +1,4 @@
-import type { Component } from "solid-js";
+import { type Component } from "solid-js";
 import { createMemo, createSignal, For } from "solid-js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import {
@@ -123,10 +123,10 @@ const Slider: Component<SliderProps> = (props) => {
           props.trackClass,
         )}
         data-claim={disabled() ? undefined : DRAG_CLAIM}
-        on:pointerdown={drag.onPointerDown}
-        on:pointermove={drag.onPointerMove}
-        on:pointerup={drag.onPointerUp}
-        on:pointercancel={drag.onPointerCancel}
+        onPointerDown={drag.onPointerDown}
+        onPointerMove={drag.onPointerMove}
+        onPointerUp={drag.onPointerUp}
+        onPointerCancel={drag.onPointerCancel}
       >
         <div
           data-slot="slider-fill"
@@ -172,7 +172,7 @@ const Slider: Component<SliderProps> = (props) => {
               data-slot="slider-thumb"
               data-orientation="horizontal"
               data-disabled={disabledMark()}
-              tabIndex={disabled() ? undefined : 0}
+              tabindex={disabled() ? undefined : 0}
               aria-label={props["aria-label"]}
               aria-labelledby={props["aria-labelledby"]}
               aria-valuemin={min()}
@@ -195,7 +195,7 @@ const Slider: Component<SliderProps> = (props) => {
                 background: props.thumbColors?.[index] ?? "var(--material-control-knob)",
               }}
               data-claim={disabled() ? undefined : RANGE_CLAIM}
-              on:keydown={(e) => range.keyDown(e, index)}
+              onKeyDown={(e) => range.keyDown(e, index)}
               onBlur={range.blur}
             />
           )}

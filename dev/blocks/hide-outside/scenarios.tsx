@@ -1,5 +1,6 @@
-import { createSignal, type JSX, Show } from "solid-js";
-import { Portal } from "solid-js/web";
+import { createSignal, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
 import { createFocusScope } from "../../../src/lib/behavior/focus-scope";
 import { createHideOutside } from "../../../src/lib/behavior/hide-outside";
 import { type LayerKind, registerLayer } from "../../../src/lib/behavior/layer-stack";
@@ -28,7 +29,7 @@ const Modal = (props: {
   });
   return (
     <>
-      <button type="button" on:click={() => setOpen(true)}>
+      <button type="button" onClick={() => setOpen(true)}>
         {`Open ${props.name}`}
       </button>
       <Show when={open()}>
@@ -43,11 +44,11 @@ const Modal = (props: {
           >
             {props.children}
             <Show when={props.onAnnounce}>
-              <button type="button" on:click={() => props.onAnnounce?.(`Saved ${props.name}`)}>
+              <button type="button" onClick={() => props.onAnnounce?.(`Saved ${props.name}`)}>
                 Announce
               </button>
             </Show>
-            <button type="button" on:click={() => setOpen(false)}>
+            <button type="button" onClick={() => setOpen(false)}>
               {`Close ${props.name}`}
             </button>
           </div>
@@ -69,7 +70,7 @@ const List = (props: { kind: LayerKind }) => {
   });
   return (
     <>
-      <button type="button" on:click={() => setOpen(!open())}>
+      <button type="button" onClick={() => setOpen(!open())}>
         Toggle list
       </button>
       <Show when={open()}>

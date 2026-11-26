@@ -8,15 +8,15 @@ import Fade from "embla-carousel-fade";
 import {
   type Accessor,
   type Component,
-  type ComponentProps,
   createContext,
   createEffect,
   createSignal,
   onCleanup,
   type ParentComponent,
-  splitProps,
+  omit,
   useContext,
 } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import {
   CAROUSEL_DOTS,
   CAROUSEL_VIEWPORT,
@@ -70,7 +70,8 @@ const Carousel: ParentComponent<
     setApi?: (api: CarouselApi) => void;
   }
 > = (props) => {
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "class",
     "children",
     "opts",
@@ -79,9 +80,9 @@ const Carousel: ParentComponent<
     "transition",
     "autoplay",
     "setApi",
-  ]);
-  const orientation = () => local.orientation ?? "horizontal";
-  const transition = () => local.transition ?? "slide";
+  );
+  const orientation = () => props.orientation ?? "horizontal";
+  const transition = () => props.transition ?? "slide";
   const text = useUiText();
   let viewportEl: HTMLDivElement | undefined;
   const [api, setApi] = createSignal<CarouselApi>();
@@ -97,11 +98,11 @@ const Carousel: ParentComponent<
   // Tracks autoplay: a widget whose config changes the interval (or supplies one
   // after the first mount) gets a re-initialised engine, old timers destroyed.
   createEffect(() => {
-    const delay = local.autoplay;
+    const delay = props.autoplay;
     if (!viewportEl) return;
     // Reduced motion keeps the carousel usable but stops it moving on its own.
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const plugins = [...(local.plugins ?? [])];
+    const plugins = [...(props.plugins ?? [])];
     if (transition() !== "slide") plugins.push(Fade());
     if (delay && !reduced) {
       // Manual nav should not kill autoplay for good; hover/focus pauses it.
@@ -116,11 +117,11 @@ const Carousel: ParentComponent<
     }
     const embla = EmblaCarousel(
       viewportEl,
-      { axis: orientation() === "horizontal" ? "x" : "y", ...local.opts },
+      { axis: orientation() === "horizontal" ? "x" : "y", ...props.opts },
       plugins,
     );
     setApi(embla);
-    local.setApi?.(embla);
+    props.setApi?.(embla);
 
     let previous = -1;
     const onSelect = () => {
@@ -160,7 +161,7 @@ const Carousel: ParentComponent<
   };
 
   return (
-    <CarouselContext.Provider
+    <CarouselContext
       value={{
         viewportRef,
         api,
@@ -179,26 +180,26 @@ const Carousel: ParentComponent<
       <div
         onKeyDown={handleKeyDown}
         data-claim={CAROUSEL_CLAIM}
-        class={cn("relative", local.class)}
+        class={cn("relative", props.class)}
         role="region"
         aria-roledescription={text("ui.carousel.role")}
         data-slot="carousel"
         {...rest}
       >
-        {local.children}
+        {props.children}
       </div>
-    </CarouselContext.Provider>
+    </CarouselContext>
   );
 };
 
 const CarouselContent: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const { viewportRef, orientation, transition } = useCarousel();
 
   return (
     <div ref={viewportRef} class={CAROUSEL_VIEWPORT} data-slot="carousel-content">
       <div
-        class={cn(carouselTrack(transition(), orientation()), local.class)}
+        class={cn(carouselTrack(transition(), orientation()), props.class)}
         data-transition={transition()}
         {...rest}
       />
@@ -207,7 +208,7 @@ const CarouselContent: Component<ComponentProps<"div">> = (props) => {
 };
 
 const CarouselItem: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const { orientation, transition } = useCarousel();
   const text = useUiText();
 
@@ -217,7 +218,7 @@ const CarouselItem: Component<ComponentProps<"div">> = (props) => {
       role="group"
       aria-roledescription={text("ui.carousel.slide-role")}
       data-slot="carousel-item"
-      class={cn(carouselItem(transition(), orientation()), local.class)}
+      class={cn(carouselItem(transition(), orientation()), props.class)}
       {...rest}
     />
   );
@@ -225,12 +226,12 @@ const CarouselItem: Component<ComponentProps<"div">> = (props) => {
 
 /** Slide indicators. Stays in sync with drag, autoplay, and prev/next alike. */
 const CarouselDots: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const { selected, slideCount, scrollTo } = useCarousel();
   const text = useUiText();
 
   return (
-    <div class={cn(CAROUSEL_DOTS, local.class)} data-slot="carousel-dots" {...rest}>
+    <div class={cn(CAROUSEL_DOTS, props.class)} data-slot="carousel-dots" {...rest}>
       {Array.from({ length: slideCount() }, (_, i) => (
         <button
           type="button"
@@ -247,21 +248,21 @@ const CarouselDots: Component<ComponentProps<"div">> = (props) => {
 };
 
 const CarouselPrevious: Component<ComponentProps<typeof Button>> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "variant", "size"]);
+  const rest = omit(props, "class", "variant", "size");
   const { orientation, scrollPrev, canScrollPrev } = useCarousel();
   const text = useUiText();
 
   return (
     <Button
       data-slot="carousel-previous"
-      variant={local.variant ?? "outline"}
-      size={local.size ?? "icon"}
+      variant={props.variant ?? "outline"}
+      size={props.size ?? "icon"}
       class={cn(
         "absolute size-8",
         orientation() === "horizontal"
           ? "top-1/2 -left-12 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
-        local.class,
+        props.class,
       )}
       disabled={!canScrollPrev()}
       onClick={scrollPrev}
@@ -274,21 +275,21 @@ const CarouselPrevious: Component<ComponentProps<typeof Button>> = (props) => {
 };
 
 const CarouselNext: Component<ComponentProps<typeof Button>> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "variant", "size"]);
+  const rest = omit(props, "class", "variant", "size");
   const { orientation, scrollNext, canScrollNext } = useCarousel();
   const text = useUiText();
 
   return (
     <Button
       data-slot="carousel-next"
-      variant={local.variant ?? "outline"}
-      size={local.size ?? "icon"}
+      variant={props.variant ?? "outline"}
+      size={props.size ?? "icon"}
       class={cn(
         "absolute size-8",
         orientation() === "horizontal"
           ? "top-1/2 -right-12 -translate-y-1/2"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
-        local.class,
+        props.class,
       )}
       disabled={!canScrollNext()}
       onClick={scrollNext}

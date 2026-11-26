@@ -14,7 +14,7 @@ const EXIT_MS = 120;
 const Done = () => {
   const ctx = useDialogContext();
   return (
-    <button type="button" on:click={() => ctx.close()}>
+    <button type="button" onClick={() => ctx.close()}>
       Done
     </button>
   );
@@ -47,7 +47,7 @@ const KeptModal = () => {
   const [reading, setReading] = createSignal("Humidity 40%");
   return (
     <>
-      <button type="button" on:click={() => setReading("Humidity 55%")}>
+      <button type="button" onClick={() => setReading("Humidity 55%")}>
         Change reading
       </button>
       <ModalRoot modal keep>

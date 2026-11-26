@@ -1,4 +1,5 @@
-import { type Component, ErrorBoundary, type JSX } from "solid-js";
+import { type Component, Errored } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { ActionsCatalog } from "./groups/ActionsCatalog";
 import { AppKitCatalog } from "./groups/AppKitCatalog";
 import { DataCatalog } from "./groups/DataCatalog";
@@ -17,7 +18,7 @@ import { WidgetCardCatalog } from "./groups/WidgetCardCatalog";
  * one visible error card instead of blanking the whole catalog. */
 function Guard(props: { name: string; children: JSX.Element }) {
   return (
-    <ErrorBoundary
+    <Errored
       fallback={(err) => (
         <div class="border-destructive/40 bg-destructive/10 text-destructive rounded-lg border p-4 text-sm">
           <p class="font-semibold">{props.name} failed to render</p>
@@ -26,7 +27,7 @@ function Guard(props: { name: string; children: JSX.Element }) {
       )}
     >
       {props.children}
-    </ErrorBoundary>
+    </Errored>
   );
 }
 

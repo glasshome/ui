@@ -4,7 +4,7 @@
  * constants, so a control that retypes either fails here. */
 import { parseColor } from "../../src/lib/color/index.js";
 import { cleanup, render } from "@solidjs/testing-library";
-import type { JSX } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
 import { FIELD_CHROME, FOCUS_RING } from "../../src/lib/input-classes.js";

@@ -1,4 +1,5 @@
-import { type JSX, mergeProps, Show } from "solid-js";
+import { merge, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { englishFormat, type UiFormat } from "../lib/format.js";
 import { cn } from "../lib/utils.js";
 import { Badge } from "./badge.js";
@@ -67,7 +68,7 @@ type WidgetIdentityProps = {
 };
 
 export function WidgetIdentity(_props: WidgetIdentityProps) {
-  const props = mergeProps({ iconSize: "sm" as const, showVersionInline: true }, _props);
+  const props = merge({ iconSize: "sm" as const, showVersionInline: true }, _props);
   const text = useUiText();
   return (
     <div data-slot="widget-identity" class={cn("flex min-w-0 items-center gap-3", props.class)}>

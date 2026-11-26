@@ -1,5 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal, type JSX } from "solid-js";
+import { createSignal } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it } from "vitest";
 import { commands } from "vitest/browser";
 import { Dialog, DialogBody, DialogContent } from "../../src/solid";

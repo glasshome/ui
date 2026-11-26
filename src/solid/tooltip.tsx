@@ -1,19 +1,17 @@
 import {
   type Accessor,
   type Component,
-  type ComponentProps,
   createContext,
   createSignal,
   createUniqueId,
-  type JSX,
   onCleanup,
   Show,
-  splitProps,
+  omit,
   untrack,
   useContext,
-  type ValidComponent,
 } from "solid-js";
-import { Portal } from "solid-js/web";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
 import { createAnchored } from "../lib/behavior/anchored.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createDismiss } from "../lib/behavior/dismiss.js";
@@ -98,7 +96,7 @@ const TooltipRoot: Component<TooltipRootProps> = (props) => {
     hide: (delayed) => schedule(false, delayed ? (props.closeDelay ?? CLOSE_DELAY_MS) : 0),
     hold,
   };
-  return <TooltipContext.Provider value={value}>{props.children}</TooltipContext.Provider>;
+  return <TooltipContext value={value}>{props.children}</TooltipContext>;
 };
 
 type TooltipTriggerProps<T extends ValidComponent> = { as?: T } & Omit<ComponentProps<T>, "as">;
@@ -107,11 +105,7 @@ function TooltipTrigger<T extends ValidComponent = "button">(
   props: TooltipTriggerProps<T>,
 ): JSX.Element {
   const ctx = useTooltip();
-  const [local, rest] = splitProps(props as TooltipTriggerProps<ValidComponent>, [
-    "as",
-    "ref",
-    "aria-describedby",
-  ]);
+  const rest = omit(props as TooltipTriggerProps<ValidComponent>, "as", "ref", "aria-describedby");
   let pressed = false;
 
   onCleanup(() => {
@@ -157,15 +151,15 @@ function TooltipTrigger<T extends ValidComponent = "button">(
   return (
     <Polymorphic
       {...merge({ "data-slot": "tooltip-trigger" }, rest, {
-        as: local.as,
+        as: props.as,
         defaultAs: "button" as ValidComponent,
         ref: (el: HTMLElement) => {
           ctx.setTrigger(el);
-          if (typeof local.ref === "function") local.ref(el);
+          if (typeof props.ref === "function") props.ref(el);
         },
         get "aria-describedby"() {
           return (
-            [local["aria-describedby"], ctx.open() ? ctx.id : undefined]
+            [props["aria-describedby"], ctx.open() ? ctx.id : undefined]
               .filter(Boolean)
               .join(" ") || undefined
           );
@@ -177,7 +171,7 @@ function TooltipTrigger<T extends ValidComponent = "button">(
 
 const TooltipContent: Component<TooltipContentProps> = (props) => {
   const ctx = useTooltip();
-  const [local, others] = splitProps(props, ["class", "ref"]);
+  const others = omit(props, "class", "ref");
   const [panel, setPanel] = createSignal<HTMLElement>();
   const presence = createPresence({
     present: ctx.open,
@@ -209,21 +203,21 @@ const TooltipContent: Component<TooltipContentProps> = (props) => {
         {...others}
         ref={(el) => {
           setPanel(el);
-          if (typeof local.ref === "function") local.ref(el);
+          if (typeof props.ref === "function") props.ref(el);
         }}
         id={ctx.id}
         role="tooltip"
         data-slot="tooltip-content"
         data-expanded={ctx.open() ? "" : undefined}
         data-closed={ctx.open() ? undefined : ""}
-        on:pointerenter={ctx.hold}
-        on:pointerleave={() => ctx.hide(true)}
+        onPointerEnter={ctx.hold}
+        onPointerLeave={() => ctx.hide(true)}
         class={cn(
           FLOATING_PANEL,
           OVERLAY_MOTION,
           ORIGIN_BY_SIDE,
           "overflow-hidden px-3 py-1.5 text-xs",
-          local.class,
+          props.class,
         )}
       />
     );

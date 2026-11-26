@@ -1,13 +1,5 @@
-import {
-  children,
-  type ComponentProps,
-  createSignal,
-  createUniqueId,
-  type JSX,
-  type ParentComponent,
-  Show,
-  splitProps,
-} from "solid-js";
+import { children, createSignal, createUniqueId, type ParentComponent, Show, omit } from "solid-js";
+import { type ComponentProps, type JSX } from "@solidjs/web";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { effect } from "../lib/behavior/solid.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
@@ -135,7 +127,7 @@ const Checkbox = (props: CheckboxProps) => {
       }}
       role="group"
       id={id()}
-      on:pointerdown={(event) => {
+      onPointerDown={(event) => {
         if (focused()) event.preventDefault();
       }}
       data-claim={focused() ? "prevent:pointerdown" : undefined}
@@ -159,7 +151,7 @@ const Checkbox = (props: CheckboxProps) => {
           checked={checked()}
           required={local.required}
           disabled={local.disabled}
-          readOnly={local.readOnly}
+          readonly={local.readOnly}
           style={VISUALLY_HIDDEN}
           aria-label={field["aria-label"]}
           aria-labelledby={labelledBy()}
@@ -169,9 +161,9 @@ const Checkbox = (props: CheckboxProps) => {
           aria-readonly={local.readOnly ? "true" : undefined}
           {...state()}
           class="peer"
-          on:change={change}
-          on:focus={() => setFocused(true)}
-          on:blur={() => setFocused(false)}
+          onChange={change}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
         />
         <span
           aria-hidden="true"

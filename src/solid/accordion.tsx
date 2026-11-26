@@ -1,16 +1,14 @@
 import {
   type Accessor,
   type Component,
-  type ComponentProps,
   createContext,
   createSignal,
   createUniqueId,
-  type JSX,
   type ParentComponent,
-  splitProps,
+  omit,
   useContext,
-  type ValidComponent,
 } from "solid-js";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import { claimKeys } from "../lib/behavior/claims.js";
 import { type Collection, createCollection } from "../lib/behavior/collection.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
@@ -82,7 +80,8 @@ const ESCAPE_CLAIM = claimKeys(["Escape"]);
 
 const AccordionRoot: Component<AccordionProps> = (props) => {
   const fallbackId = `accordion-${createUniqueId()}`;
-  const [local, others] = splitProps(props, [
+  const others = omit(
+    props,
     "as",
     "ref",
     "value",
@@ -91,29 +90,29 @@ const AccordionRoot: Component<AccordionProps> = (props) => {
     "multiple",
     "collapsible",
     "shouldFocusWrap",
-  ]);
+  );
   const [value, setValue] = createControllableSignal<string[]>({
-    value: () => local.value,
-    defaultValue: () => local.defaultValue ?? [],
-    onChange: (next) => local.onChange?.(next),
+    value: () => props.value,
+    defaultValue: () => props.defaultValue ?? [],
+    onChange: (next) => props.onChange?.(next),
   });
-  const mayEmpty = () => !!local.multiple || !!local.collapsible;
+  const mayEmpty = () => !!props.multiple || !!props.collapsible;
   const [el, setEl] = createSignal<HTMLElement>();
   const collection = createCollection({
     root: el,
     itemSelector: "[data-key]",
     orientation: () => "vertical",
     focus: "roving",
-    loop: () => local.shouldFocusWrap ?? true,
+    loop: () => props.shouldFocusWrap ?? true,
     claimsKeys: false,
   });
 
   const toggle = (item: string) => {
     const current = value();
     if (current.includes(item)) {
-      if (local.multiple) setValue(current.filter((v) => v !== item));
-      else if (local.collapsible) setValue([]);
-    } else setValue(local.multiple ? [...current, item] : [item]);
+      if (props.multiple) setValue(current.filter((v) => v !== item));
+      else if (props.collapsible) setValue([]);
+    } else setValue(props.multiple ? [...current, item] : [item]);
   };
 
   effect(el, (node) => {
@@ -138,56 +137,54 @@ const AccordionRoot: Component<AccordionProps> = (props) => {
   };
 
   return (
-    <AccordionContext.Provider value={ctx}>
+    <AccordionContext value={ctx}>
       <Polymorphic
         {...merge({ id: fallbackId }, others, {
-          as: local.as,
+          as: props.as,
           defaultAs: "div" as ValidComponent,
           ref: (node: HTMLElement) => {
             setEl(node);
-            if (typeof local.ref === "function") local.ref(node as HTMLDivElement);
+            if (typeof props.ref === "function") props.ref(node as HTMLDivElement);
           },
           get "data-claim"() {
             return mayEmpty() && value().length > 0 ? ESCAPE_CLAIM : undefined;
           },
         })}
       />
-    </AccordionContext.Provider>
+    </AccordionContext>
   );
 };
 
 const AccordionItemRoot: Component<AccordionItemProps> = (props) => {
   const accordion = useAccordion();
   const fallbackId = `${accordion.rootId()}-item-${createUniqueId()}`;
-  const [local, others] = splitProps(props, ["value", "disabled"]);
+  const others = omit(props, "value", "disabled");
   const [triggerId, setTriggerId] = createSignal<string>();
   const itemId = () => others.id ?? fallbackId;
 
   return (
-    <AccordionItemContext.Provider
-      value={{ value: () => local.value, itemId, triggerId, setTriggerId }}
-    >
+    <AccordionItemContext value={{ value: () => props.value, itemId, triggerId, setTriggerId }}>
       <CollapsibleRoot
         {...merge({ id: fallbackId }, others, {
           get open() {
-            return accordion.isOpen(local.value);
+            return accordion.isOpen(props.value);
           },
-          onOpenChange: () => accordion.toggle(local.value),
+          onOpenChange: () => accordion.toggle(props.value),
           get disabled() {
-            return local.disabled;
+            return props.disabled;
           },
         })}
       />
-    </AccordionItemContext.Provider>
+    </AccordionItemContext>
   );
 };
 
 const AccordionHeader: Component<AccordionHeaderProps> = (props) => {
   const collapsible = useCollapsible();
-  const [local, others] = splitProps(props, ["as"]);
+  const others = omit(props, "as");
   return (
     <Polymorphic
-      {...merge(collapsible.markers, others, { as: local.as, defaultAs: "h3" as ValidComponent })}
+      {...merge(collapsible.markers, others, { as: props.as, defaultAs: "h3" as ValidComponent })}
     />
   );
 };
@@ -196,7 +193,7 @@ const AccordionTriggerRoot: Component<AccordionTriggerProps> = (props) => {
   const accordion = useAccordion();
   const item = useAccordionItem();
   const collapsible = useCollapsible();
-  const [local, others] = splitProps(props, ["ref", "onClick"]);
+  const others = omit(props, "ref", "onClick");
   const [el, setEl] = createSignal<HTMLElement>();
   const id = () => others.id ?? `${item.itemId()}-trigger`;
   effect(id, (value) => {
@@ -218,7 +215,7 @@ const AccordionTriggerRoot: Component<AccordionTriggerProps> = (props) => {
   });
 
   const click: JSX.EventHandler<HTMLButtonElement, MouseEvent> = (event) => {
-    callEventHandler(event, local.onClick);
+    callEventHandler(event, props.onClick);
     // WebKit leaves a clicked button unfocused, and the arrows move from the focused trigger.
     const node = el();
     if (node && !collapsible.disabled() && !focused?.has()) focusWithoutTracking(node);
@@ -241,7 +238,7 @@ const AccordionTriggerRoot: Component<AccordionTriggerProps> = (props) => {
           onClick: click,
           ref: (node: HTMLButtonElement) => {
             setEl(node);
-            if (typeof local.ref === "function") local.ref(node);
+            if (typeof props.ref === "function") props.ref(node);
           },
         },
       )}
@@ -262,7 +259,7 @@ const CONTENT_VARS_CSS = Object.entries(CONTENT_VARS)
 
 const AccordionContentRoot: Component<AccordionContentProps> = (props) => {
   const item = useAccordionItem();
-  const [local, others] = splitProps(props, ["style"]);
+  const others = omit(props, "style");
   return (
     <CollapsibleContentRoot
       {...merge(
@@ -272,9 +269,9 @@ const AccordionContentRoot: Component<AccordionContentProps> = (props) => {
             return item.triggerId();
           },
           get style() {
-            return typeof local.style === "string"
-              ? `${CONTENT_VARS_CSS}${local.style}`
-              : { ...CONTENT_VARS, ...local.style };
+            return typeof props.style === "string"
+              ? `${CONTENT_VARS_CSS}${props.style}`
+              : { ...CONTENT_VARS, ...props.style };
           },
         },
         others,
@@ -292,29 +289,29 @@ const Accordion = Object.assign(AccordionRoot, {
 });
 
 const AccordionItem: Component<AccordionItemProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <AccordionItemRoot
       data-slot="accordion-item"
-      class={cn("border-b last:border-b-0", local.class)}
+      class={cn("border-b last:border-b-0", props.class)}
       {...rest}
     />
   );
 };
 
 const AccordionTrigger: ParentComponent<AccordionTriggerProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "children"]);
+  const rest = omit(props, "class", "children");
   return (
     <AccordionHeader class="flex">
       <AccordionTriggerRoot
         data-slot="accordion-trigger"
         class={cn(
           "focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all duration-(--duration-state) outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-expanded]>[data-slot=icon]]:rotate-180",
-          local.class,
+          props.class,
         )}
         {...rest}
       >
-        {local.children}
+        {props.children}
         <Icon
           icon="lucide:chevron-down"
           width={16}
@@ -327,14 +324,14 @@ const AccordionTrigger: ParentComponent<AccordionTriggerProps> = (props) => {
 };
 
 const AccordionContent: ParentComponent<AccordionContentProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "children"]);
+  const rest = omit(props, "class", "children");
   return (
     <AccordionContentRoot
       data-slot="accordion-content"
       class="data-[closed]:animate-accordion-up data-[expanded]:animate-accordion-down overflow-hidden text-sm duration-(--duration-expand)"
       {...rest}
     >
-      <div class={cn("pt-0 pb-4", local.class)}>{local.children}</div>
+      <div class={cn("pt-0 pb-4", props.class)}>{props.children}</div>
     </AccordionContentRoot>
   );
 };

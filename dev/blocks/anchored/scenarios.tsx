@@ -1,5 +1,6 @@
-import { createSignal, type JSX, Show } from "solid-js";
-import { Portal } from "solid-js/web";
+import { createSignal, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
 import { createAnchored } from "../../../src/lib/behavior/anchored";
 import { defineScenarios } from "../../harness/types";
 
@@ -33,7 +34,7 @@ const Placed = (props: {
       type="button"
       aria-expanded={open() ? "true" : "false"}
       style={props.anchorStyle}
-      on:click={() => setOpen(!open())}
+      onClick={() => setOpen(!open())}
     >
       Anchor
     </button>

@@ -1,4 +1,4 @@
-import type { Component } from "solid-js";
+import { type Component } from "solid-js";
 import { createMemo, createSignal } from "solid-js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
@@ -147,10 +147,10 @@ const ColorWheel: Component<ColorWheelProps> = (props) => {
           mask: `radial-gradient(#0000 ${70 - (thickness() / 100) * 70}%, #000 ${70.5 - (thickness() / 100) * 70}%)`,
         }}
         data-claim={disabled() ? undefined : DRAG_CLAIM}
-        on:pointerdown={drag.onPointerDown}
-        on:pointermove={drag.onPointerMove}
-        on:pointerup={drag.onPointerUp}
-        on:pointercancel={drag.onPointerCancel}
+        onPointerDown={drag.onPointerDown}
+        onPointerMove={drag.onPointerMove}
+        onPointerUp={drag.onPointerUp}
+        onPointerCancel={drag.onPointerCancel}
       >
         {/* Always a circle: the thumb rides a circular track, theme corner radius looks broken there. */}
         <span
@@ -158,7 +158,7 @@ const ColorWheel: Component<ColorWheelProps> = (props) => {
           role="slider"
           data-slot="color-wheel-thumb"
           data-disabled={disabledMark()}
-          tabIndex={disabled() ? undefined : 0}
+          tabindex={disabled() ? undefined : 0}
           aria-label={props["aria-label"] ?? text("ui.color-wheel.label")}
           aria-valuemin={0}
           aria-valuemax={360}
@@ -179,7 +179,7 @@ const ColorWheel: Component<ColorWheelProps> = (props) => {
             background: color().toString("css"),
           }}
           data-claim={disabled() ? undefined : RANGE_CLAIM}
-          on:keydown={onKeyDown}
+          onKeyDown={onKeyDown}
           onBlur={onBlur}
         />
       </div>

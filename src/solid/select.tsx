@@ -1,21 +1,20 @@
 import {
   type Accessor,
   type Component,
-  type ComponentProps,
   createComponent,
   createContext,
   createMemo,
   createSignal,
   createUniqueId,
   For,
-  type JSX,
   onCleanup,
   Show,
-  splitProps,
+  omit,
   untrack,
   useContext,
 } from "solid-js";
-import { Portal } from "solid-js/web";
+import { type ComponentProps, type JSX } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
 import { createAnchored } from "../lib/behavior/anchored.js";
 import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
 import { claimKeys, createClaim } from "../lib/behavior/claims.js";
@@ -223,17 +222,17 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
   );
 
   const keyOf = (option: Option): string =>
-    local.optionValue === undefined ? String(option) : String(read(option, local.optionValue));
+    props.optionValue === undefined ? String(option) : String(read(option, props.optionValue));
   const textOf = (option: Option): string =>
-    local.optionTextValue === undefined
+    props.optionTextValue === undefined
       ? String(option)
-      : String(read(option, local.optionTextValue));
-  const disabledOf = (option: Option): boolean => read(option, local.optionDisabled) === true;
+      : String(read(option, props.optionTextValue));
+  const disabledOf = (option: Option): boolean => read(option, props.optionDisabled) === true;
 
   const nodes = createMemo(() => {
     const out: SelectNode<unknown>[] = [];
     let items = 0;
-    const groupKey = local.optionGroupChildren;
+    const groupKey = props.optionGroupChildren;
     const add = (option: Option, level: number) =>
       out.push({
         type: "item",
@@ -244,7 +243,7 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
         level,
         index: items++,
       });
-    for (const entry of local.options) {
+    for (const entry of props.options) {
       const children =
         groupKey !== undefined && entry !== null && typeof entry === "object"
           ? (entry as Record<PropertyKey, unknown>)[groupKey as PropertyKey]
@@ -294,9 +293,9 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
   const selected = createMemo(() => new Set(keys()));
 
   const [open, setOpen] = createControllableSignal<boolean>({
-    value: () => local.open,
-    defaultValue: () => local.defaultOpen ?? false,
-    onChange: (next) => local.onOpenChange?.(next),
+    value: () => props.open,
+    defaultValue: () => props.defaultOpen ?? false,
+    onChange: (next) => props.onOpenChange?.(next),
   });
   const [openFrom, setOpenFrom] = createSignal<"first" | "last">("first");
   const [trigger, setTrigger] = createSignal<HTMLElement>();
@@ -306,14 +305,14 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
   let closeAutoFocus: ((event: Event) => void) | undefined;
   let refocusIfLost = false;
 
-  const blocked = () => !!local.disabled || !!local.readOnly || !!local.busy;
+  const blocked = () => !!props.disabled || !!props.readOnly || !!props.busy;
   const focusTrigger = () => {
     const event = new Event("closeautofocus", { cancelable: true });
     closeAutoFocus?.(event);
     if (!event.defaultPrevented) focusWithoutTracking(trigger());
   };
 
-  const id = untrack(() => local.id) ?? createUniqueId();
+  const id = untrack(() => props.id) ?? createUniqueId();
   const typer = createTypeahead();
 
   const ctx: SelectContextValue = {
@@ -323,7 +322,7 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
     openFrom,
     show: (from) => {
       if (blocked() || untrack(open)) return;
-      if (items().length === 0 && local.open === undefined) return;
+      if (items().length === 0 && props.open === undefined) return;
       refocusIfLost = false;
       setOpenFrom(from);
       setOpen(true);
@@ -361,7 +360,7 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
         const current = untrack(keys);
         setKeys(current.includes(key) ? current.filter((k) => k !== key) : [...current, key]);
       } else if (!untrack(selected).has(key)) setKeys([key]);
-      if (local.closeOnSelection ?? !props.multiple) ctx.close("commit");
+      if (props.closeOnSelection ?? !props.multiple) ctx.close("commit");
     },
     step: (by) => {
       if (props.multiple || blocked()) return;
@@ -389,11 +388,11 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
       setKeys(untrack(keys).filter((k) => k !== key));
     },
     clear: () => setKeys([]),
-    placeholder: () => local.placeholder,
+    placeholder: () => props.placeholder,
     itemComponent: () =>
-      local.itemComponent as Component<{ item: SelectNode<unknown> }> | undefined,
+      props.itemComponent as Component<{ item: SelectNode<unknown> }> | undefined,
     sectionComponent: () =>
-      local.sectionComponent as Component<{ section: SelectNode<unknown> }> | undefined,
+      props.sectionComponent as Component<{ section: SelectNode<unknown> }> | undefined,
     trigger,
     setTrigger,
     labelId,
@@ -401,8 +400,8 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
     listboxLabelledBy,
     setListboxLabelledBy,
     blocked,
-    disabled: () => !!local.disabled,
-    busy: () => !!local.busy,
+    disabled: () => !!props.disabled,
+    busy: () => !!props.busy,
     attrs: {
       get "data-expanded"() {
         return flag(open());
@@ -411,27 +410,27 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
         return flag(!open());
       },
       get "data-valid"() {
-        return flag(local.validationState === "valid");
+        return flag(props.validationState === "valid");
       },
       get "data-invalid"() {
-        return flag(local.validationState === "invalid");
+        return flag(props.validationState === "invalid");
       },
       get "data-required"() {
-        return flag(!!local.required);
+        return flag(!!props.required);
       },
       get "data-disabled"() {
-        return flag(!!local.disabled);
+        return flag(!!props.disabled);
       },
       get "data-readonly"() {
-        return flag(!!local.readOnly);
+        return flag(!!props.readOnly);
       },
     },
   };
 
   return (
-    <SelectContext.Provider value={ctx}>
-      <div {...merge(rest, ctx.attrs, { role: "group" as const, id })}>{local.children}</div>
-    </SelectContext.Provider>
+    <SelectContext value={ctx}>
+      <div {...merge(rest, ctx.attrs, { role: "group" as const, id })}>{props.children}</div>
+    </SelectContext>
   );
 }
 
@@ -448,8 +447,8 @@ interface SelectValueProps<Option> extends Omit<ComponentProps<"span">, "childre
 
 function SelectValue<Option>(props: SelectValueProps<Option>): JSX.Element {
   const ctx = useSelect();
-  const [local, others] = splitProps(props, ["children"]);
-  const child = createMemo(() => local.children);
+  const others = omit(props, "children");
+  const child = createMemo(() => props.children);
   const state: SelectValueState<Option> = {
     selectedOption: () => ctx.selectedOptions()[0] as Option,
     selectedOptions: () => ctx.selectedOptions() as Option[],
@@ -480,7 +479,8 @@ type SelectTriggerProps = ButtonRootProps<"button"> & { size?: "sm" | "default" 
 
 const SelectTrigger: Component<SelectTriggerProps> = (props) => {
   const ctx = useSelect();
-  const [local, rest] = splitProps(props as SelectTriggerProps & { ref?: unknown }, [
+  const rest = omit(
+    props as SelectTriggerProps & { ref?: unknown },
     "class",
     "children",
     "size",
@@ -488,13 +488,13 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
     "id",
     "aria-label",
     "aria-labelledby",
-  ]);
-  const size = () => local.size ?? "default";
-  const triggerId = () => local.id ?? `${ctx.ids.root}-trigger`;
+  );
+  const size = () => props.size ?? "default";
+  const triggerId = () => props.id ?? `${ctx.ids.root}-trigger`;
   const labelledBy = () =>
     [
-      local["aria-labelledby"] ?? ctx.labelId(),
-      local["aria-label"] !== undefined ? triggerId() : undefined,
+      props["aria-labelledby"] ?? ctx.labelId(),
+      props["aria-label"] !== undefined ? triggerId() : undefined,
     ]
       .filter(Boolean)
       .join(" ") || undefined;
@@ -574,7 +574,7 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
       {...merge(rest, ctx.attrs, {
         ref: (el: HTMLButtonElement) => {
           ctx.setTrigger(el);
-          if (typeof local.ref === "function") local.ref(el);
+          if (typeof props.ref === "function") props.ref(el);
         },
         get id() {
           return triggerId();
@@ -601,7 +601,7 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
           return ctx.open() ? ctx.ids.listbox : undefined;
         },
         get "aria-label"() {
-          return local["aria-label"];
+          return props["aria-label"];
         },
         get "aria-labelledby"() {
           return [labelledBy(), ctx.ids.value].filter(Boolean).join(" ");
@@ -618,12 +618,12 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
             "data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground w-fit whitespace-nowrap [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
             size() === "sm" && CONTROL_H.sm,
             "aria-busy:cursor-progress aria-busy:opacity-50",
-            local.class,
+            props.class,
           );
         },
       })}
     >
-      {local.children}
+      {props.children}
       <span aria-hidden="true" {...ctx.attrs}>
         <Icon
           icon="lucide:chevron-down"
@@ -646,7 +646,8 @@ interface SelectContentProps extends Omit<ComponentProps<"div">, "children"> {
 
 const SelectContent: Component<SelectContentProps> = (props) => {
   const ctx = useSelect();
-  const [local, others] = splitProps(props, [
+  const others = omit(
+    props,
     "class",
     "listboxClass",
     "ref",
@@ -654,12 +655,12 @@ const SelectContent: Component<SelectContentProps> = (props) => {
     "onPointerDownOutside",
     "onInteractOutside",
     "onCloseAutoFocus",
-  ]);
+  );
   const [panel, setPanel] = createSignal<HTMLElement>();
   const [listbox, setListbox] = createSignal<HTMLElement>();
 
   effect(
-    () => local.onCloseAutoFocus,
+    () => props.onCloseAutoFocus,
     (handler) => {
       ctx.setCloseAutoFocus(handler);
       return () => ctx.setCloseAutoFocus(undefined);
@@ -683,13 +684,13 @@ const SelectContent: Component<SelectContentProps> = (props) => {
     layer,
     onDismiss: (reason, event) => {
       if (reason === "escape") {
-        if (vetoed(local.onEscapeKeyDown, event as KeyboardEvent)) return;
+        if (vetoed(props.onEscapeKeyDown, event as KeyboardEvent)) return;
         ctx.close("commit");
         return;
       }
       const outside = interactOutside(event as PointerEvent, (e) => {
-        local.onPointerDownOutside?.(e);
-        local.onInteractOutside?.(e);
+        props.onPointerDownOutside?.(e);
+        props.onInteractOutside?.(e);
       });
       if (outside.defaultPrevented) return;
       ctx.close("outside");
@@ -819,7 +820,7 @@ const SelectContent: Component<SelectContentProps> = (props) => {
         {...merge(others, nestedLayerAttrs(false), {
           ref: (el: HTMLDivElement) => {
             setPanel(el);
-            if (typeof local.ref === "function") local.ref(el);
+            if (typeof props.ref === "function") props.ref(el);
           },
           "data-slot": "select-content",
           get "data-expanded"() {
@@ -835,7 +836,7 @@ const SelectContent: Component<SelectContentProps> = (props) => {
               INPUT_SURFACE,
               FIELD_MOTION,
               `relative ${Z_CLASS.overlay} text-popover-foreground overflow-hidden rounded-md p-1`,
-              local.class,
+              props.class,
             );
           },
         })}
@@ -853,13 +854,13 @@ const SelectContent: Component<SelectContentProps> = (props) => {
             aria-labelledby={ctx.listboxLabelledBy()}
             aria-multiselectable={ctx.multiple() ? "true" : undefined}
             aria-activedescendant={ctx.optionId(collection.highlighted())}
-            class={local.listboxClass}
-            on:keydown={onKeyDown}
-            on:pointerdown={onPointerDown}
-            on:pointermove={onPointerMove}
-            on:pointerup={onPointerUp}
-            on:pointercancel={onPointerCancel}
-            on:click={onClick}
+            class={props.listboxClass}
+            onKeyDown={onKeyDown}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerCancel}
+            onClick={onClick}
           >
             <For each={ctx.nodes()}>
               {(node) => (node.type === "section" ? <Section node={node} /> : <Row node={node} />)}
@@ -871,20 +872,20 @@ const SelectContent: Component<SelectContentProps> = (props) => {
   };
 
   return (
-    <SelectListContext.Provider value={{ highlighted: collection.highlighted }}>
+    <SelectListContext value={{ highlighted: collection.highlighted }}>
       <Show when={presence.mounted()}>
         <Portal mount={usePortalMount()}>
           <Panel />
         </Portal>
       </Show>
-    </SelectListContext.Provider>
+    </SelectListContext>
   );
 };
 
 const SelectLabel: Component<ComponentProps<"span">> = (props) => {
   const ctx = useSelect();
-  const [local, rest] = splitProps(props, ["class", "id"]);
-  const labelId = () => local.id ?? `${ctx.ids.root}-label`;
+  const rest = omit(props, "class", "id");
+  const labelId = () => props.id ?? `${ctx.ids.root}-label`;
   effect(labelId, (next) => {
     ctx.setLabelId(next);
     return () => ctx.setLabelId(undefined);
@@ -897,10 +898,10 @@ const SelectLabel: Component<ComponentProps<"span">> = (props) => {
         },
         "data-slot": "select-label",
         get class() {
-          return cn(MENU_LABEL, "font-normal", local.class);
+          return cn(MENU_LABEL, "font-normal", props.class);
         },
       })}
-      on:click={() => focusWithoutTracking(ctx.trigger())}
+      onClick={() => focusWithoutTracking(ctx.trigger())}
     />
   );
 };
@@ -913,8 +914,8 @@ interface SelectItemProps extends Omit<ComponentProps<"li">, "children"> {
 const SelectItem: Component<SelectItemProps> = (props) => {
   const ctx = useSelect();
   const list = useSelectList();
-  const [local, rest] = splitProps(props, ["class", "children", "item"]);
-  const key = () => local.item.key;
+  const rest = omit(props, "class", "children", "item");
+  const key = () => props.item.key;
   const optionId = () => ctx.optionId(key());
   const labelId = () => `${optionId()}-label`;
   const isSelected = () => ctx.isSelected(key());
@@ -926,7 +927,7 @@ const SelectItem: Component<SelectItemProps> = (props) => {
       return flag(list.highlighted() === key());
     },
     get "data-disabled"() {
-      return flag(local.item.disabled);
+      return flag(props.item.disabled);
     },
   };
   return (
@@ -943,7 +944,7 @@ const SelectItem: Component<SelectItemProps> = (props) => {
           return isSelected() ? ("true" as const) : ("false" as const);
         },
         get "aria-disabled"() {
-          return local.item.disabled ? ("true" as const) : ("false" as const);
+          return props.item.disabled ? ("true" as const) : ("false" as const);
         },
         get "aria-labelledby"() {
           return labelId();
@@ -953,7 +954,7 @@ const SelectItem: Component<SelectItemProps> = (props) => {
           return cn(
             MENU_ITEM,
             "focus:text-foreground data-[highlighted]:text-foreground w-full pr-8 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
-            local.class,
+            props.class,
           );
         },
       })}
@@ -967,23 +968,23 @@ const SelectItem: Component<SelectItemProps> = (props) => {
         </span>
       </Show>
       <div id={labelId()} {...marks}>
-        {local.children}
+        {props.children}
       </div>
     </li>
   );
 };
 
 const SelectGroup: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
-  return <div data-slot="select-group" class={cn("", local.class)} {...rest} />;
+  const rest = omit(props, "class");
+  return <div data-slot="select-group" class={cn("", props.class)} {...rest} />;
 };
 
 const SelectSeparator: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="select-separator"
-      class={cn("pointer-events-none", MENU_SEPARATOR, local.class)}
+      class={cn("pointer-events-none", MENU_SEPARATOR, props.class)}
       {...rest}
     />
   );

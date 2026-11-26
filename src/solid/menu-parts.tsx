@@ -1,20 +1,18 @@
 import {
   type Accessor,
   type Component,
-  type ComponentProps,
   createContext,
   createSignal,
   createUniqueId,
-  type JSX,
   onCleanup,
   type ParentComponent,
   Show,
-  splitProps,
+  omit,
   untrack,
   useContext,
-  type ValidComponent,
 } from "solid-js";
-import { Portal } from "solid-js/web";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
 import type { Align, Side } from "../lib/anchor-placement.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createMenu, type Menu, type MenuOptions, rowClaim } from "../lib/behavior/menu.js";
@@ -93,7 +91,8 @@ type MenuContentPartProps = MenuContentProps & {
 export const MenuContentPart: Component<MenuContentPartProps> = (props) => {
   const level = useMenuLevel();
   const menu = level.menu;
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "class",
     "children",
     "ref",
@@ -102,9 +101,9 @@ export const MenuContentPart: Component<MenuContentPartProps> = (props) => {
     "motionClass",
     "exitMs",
     "onPanel",
-  ]);
+  );
   const fallback = createUniqueId();
-  const id = (): string => local.id ?? fallback;
+  const id = (): string => props.id ?? fallback;
   effect(id, (value) => {
     level.setContentId(value);
     return () => level.setContentId(undefined);
@@ -112,7 +111,7 @@ export const MenuContentPart: Component<MenuContentPartProps> = (props) => {
   const presence = createPresence({
     present: menu.open,
     element: menu.content,
-    exitMs: untrack(() => local.exitMs),
+    exitMs: untrack(() => props.exitMs),
   });
 
   const Panel: Component = () => {
@@ -122,20 +121,20 @@ export const MenuContentPart: Component<MenuContentPartProps> = (props) => {
         {...rest}
         ref={(el) => {
           menu.setContent(el);
-          local.onPanel?.(el);
-          if (typeof local.ref === "function") local.ref(el);
+          props.onPanel?.(el);
+          if (typeof props.ref === "function") props.ref(el);
         }}
         id={id()}
         role="menu"
-        tabIndex={-1}
+        tabindex={-1}
         aria-labelledby={level.triggerId()}
         data-orientation="horizontal"
         data-expanded={menu.open() ? "" : undefined}
         data-closed={menu.open() ? undefined : ""}
-        data-slot={local.slotName}
-        class={cn(MENU_CONTENT_CLASS, local.motionClass, local.class)}
+        data-slot={props.slotName}
+        class={cn(MENU_CONTENT_CLASS, props.motionClass, props.class)}
       >
-        <MenuContentIndicator>{local.children}</MenuContentIndicator>
+        <MenuContentIndicator>{props.children}</MenuContentIndicator>
       </div>
     );
   };
@@ -231,7 +230,8 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
   if (!owner) throw new Error("A sub trigger renders inside a Sub");
   const submenu = kind === "sub" ? here : undefined;
   const menu = owner.menu;
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "kind",
     "slotName",
     "inset",
@@ -248,20 +248,20 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
     "checked",
     "indeterminate",
     "choose",
-  ]);
-  const key = untrack(() => local.id) ?? createUniqueId();
-  const disabled = () => local.disabled ?? false;
-  const checked = () => local.checked ?? false;
-  const indeterminate = () => local.indeterminate ?? false;
+  );
+  const key = untrack(() => props.id) ?? createUniqueId();
+  const disabled = () => props.disabled ?? false;
+  const checked = () => props.checked ?? false;
+  const indeterminate = () => props.indeterminate ?? false;
   const checkable = kind === "checkbox" || kind === "radio";
-  const tone = () => local.tone;
+  const tone = () => props.tone;
 
   menu.register(key, {
     disabled,
-    closeOnSelect: () => local.closeOnSelect ?? kind === "item",
+    closeOnSelect: () => props.closeOnSelect ?? kind === "item",
     onSelect: () => {
-      local.onSelect?.();
-      local.choose?.();
+      props.onSelect?.();
+      props.choose?.();
     },
     submenu: submenu?.menu,
   });
@@ -276,20 +276,20 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
   const subOpen = () => submenu?.menu.open() ?? false;
   const [row, setRow] = createSignal<HTMLElement>();
   const inner = (
-    <RowContext.Provider value={{ checked, indeterminate }}>
+    <RowContext value={{ checked, indeterminate }}>
       <SelectionHighlight active={menu.highlighted() === key} />
-      {local.children}
-    </RowContext.Provider>
+      {props.children}
+    </RowContext>
   );
   return (
     <Polymorphic
       {...merge(rest, {
-        as: local.as,
+        as: props.as,
         defaultAs: "div" as ValidComponent,
         ref: (el: HTMLElement) => {
           setRow(el);
           submenu?.menu.setTrigger(el);
-          if (typeof local.ref === "function") local.ref(el);
+          if (typeof props.ref === "function") props.ref(el);
         },
         id: key,
         "data-key": key,
@@ -333,10 +333,10 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
           return indeterminate() ? "" : undefined;
         },
         get "data-slot"() {
-          return local.slotName;
+          return props.slotName;
         },
         get "data-inset"() {
-          return local.inset;
+          return props.inset;
         },
         get "data-tone"() {
           return tone() ? "" : undefined;
@@ -344,12 +344,12 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
         get class() {
           return cn(
             checkable ? cn(MENU_ITEM_BASE, "py-1.5 pr-2 pl-8") : MENU_ITEM,
-            local.inset && "pl-8",
-            local.class,
+            props.inset && "pl-8",
+            props.class,
           );
         },
         get style() {
-          return { ...toneStyle(tone()), ...local.style };
+          return { ...toneStyle(tone()), ...props.style };
         },
         children: inner,
       })}
@@ -366,8 +366,8 @@ export interface ItemIndicatorProps {
 /** Shows its children while the row around it is checked. */
 export const MenuItemIndicator: Component<ItemIndicatorProps> = (props) => {
   const row = useContext(RowContext);
-  const [local, rest] = splitProps(props, ["forceMount"]);
-  const on = () => local.forceMount || row?.checked() || row?.indeterminate();
+  const rest = omit(props, "forceMount");
+  const on = () => props.forceMount || row?.checked() || row?.indeterminate();
   return (
     <Show when={on()}>
       <div
@@ -395,9 +395,9 @@ const GroupContext = createContext<(id: string | undefined) => void>();
 
 export const MenuLabelPart: Component<MenuLabelProps & { slotName: string }> = (props) => {
   const register = useContext(GroupContext);
-  const [local, rest] = splitProps(props, ["class", "inset", "slotName", "id", "as", "ref"]);
+  const rest = omit(props, "class", "inset", "slotName", "id", "as", "ref");
   const fallback = createUniqueId();
-  const id = (): string => local.id ?? fallback;
+  const id = (): string => props.id ?? fallback;
   effect(id, (value) => {
     register?.(value);
     return () => register?.(undefined);
@@ -405,23 +405,23 @@ export const MenuLabelPart: Component<MenuLabelProps & { slotName: string }> = (
   return (
     <Polymorphic
       {...merge(rest, {
-        as: local.as,
+        as: props.as,
         defaultAs: "span" as ValidComponent,
         ref: (el: HTMLElement) => {
-          if (typeof local.ref === "function") local.ref(el);
+          if (typeof props.ref === "function") props.ref(el);
         },
         get id() {
           return id();
         },
         "aria-hidden": "true",
         get "data-slot"() {
-          return local.slotName;
+          return props.slotName;
         },
         get "data-inset"() {
-          return local.inset;
+          return props.inset;
         },
         get class() {
-          return cn(MENU_LABEL, local.inset && "pl-8", local.class);
+          return cn(MENU_LABEL, props.inset && "pl-8", props.class);
         },
       })}
     />
@@ -431,17 +431,17 @@ export const MenuLabelPart: Component<MenuLabelProps & { slotName: string }> = (
 export type MenuGroupProps = { as?: ValidComponent } & Omit<ComponentProps<"div">, "as">;
 
 export const MenuGroup: Component<MenuGroupProps> = (props) => {
-  const [local, rest] = splitProps(props, ["as", "id"]);
+  const rest = omit(props, "as", "id");
   const [labelId, setLabelId] = createSignal<string>();
   const fallback = createUniqueId();
   return (
-    <GroupContext.Provider value={setLabelId}>
+    <GroupContext value={setLabelId}>
       <Polymorphic
         {...merge(rest, {
-          as: local.as,
+          as: props.as,
           defaultAs: "div" as ValidComponent,
           get id() {
-            return local.id ?? fallback;
+            return props.id ?? fallback;
           },
           role: "group",
           get "aria-labelledby"() {
@@ -449,7 +449,7 @@ export const MenuGroup: Component<MenuGroupProps> = (props) => {
           },
         })}
       />
-    </GroupContext.Provider>
+    </GroupContext>
   );
 };
 
@@ -469,35 +469,35 @@ export type MenuRadioGroupProps = Omit<MenuGroupProps, "onChange"> & {
 };
 
 export const MenuRadioGroup: Component<MenuRadioGroupProps> = (props) => {
-  const [local, rest] = splitProps(props, ["value", "defaultValue", "onChange", "disabled"]);
+  const rest = omit(props, "value", "defaultValue", "onChange", "disabled");
   const [value, setValue] = createControllableSignal<string | undefined>({
-    value: () => local.value,
-    defaultValue: () => local.defaultValue,
+    value: () => props.value,
+    defaultValue: () => props.defaultValue,
     onChange: (next) => {
-      if (next !== undefined) local.onChange?.(next);
+      if (next !== undefined) props.onChange?.(next);
     },
   });
-  const state: RadioState = { value, setValue, disabled: () => local.disabled ?? false };
+  const state: RadioState = { value, setValue, disabled: () => props.disabled ?? false };
   return (
-    <RadioContext.Provider value={state}>
+    <RadioContext value={state}>
       <MenuGroup {...rest} />
-    </RadioContext.Provider>
+    </RadioContext>
   );
 };
 
 type MenuSeparatorProps = ComponentProps<"hr"> & { slotName: string };
 
 export const MenuSeparatorPart: Component<MenuSeparatorProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "slotName", "ref"]);
+  const rest = omit(props, "class", "slotName", "ref");
   return (
     <hr
       {...rest}
       ref={(el) => {
-        if (typeof local.ref === "function") local.ref(el);
+        if (typeof props.ref === "function") props.ref(el);
       }}
       data-orientation="horizontal"
-      data-slot={local.slotName}
-      class={cn(MENU_SEPARATOR, local.class)}
+      data-slot={props.slotName}
+      class={cn(MENU_SEPARATOR, props.class)}
     />
   );
 };
@@ -512,10 +512,10 @@ export type MenuSubTriggerProps<T extends ValidComponent = "div"> = MenuRowProps
 export function MenuSubTriggerPart(
   props: MenuSubTriggerProps<ValidComponent> & { slotName: string },
 ) {
-  const [local, rest] = splitProps(props as RowInput, ["children"]);
+  const rest = omit(props as RowInput, "children");
   return (
     <MenuRow kind="sub" {...rest}>
-      {local.children}
+      {props.children}
       <Icon icon="lucide:chevron-right" width={16} height={16} class="ml-auto" />
     </MenuRow>
   );
@@ -541,16 +541,17 @@ export type MenuCheckboxItemProps<T extends ValidComponent = "div"> = MenuRowPro
 export function MenuCheckboxItemPart(
   props: MenuCheckboxItemProps<ValidComponent> & { slotName: string },
 ) {
-  const [local, rest] = splitProps(props as RowInput & CheckboxOwnProps, [
+  const rest = omit(
+    props as RowInput & CheckboxOwnProps,
     "children",
     "checked",
     "defaultChecked",
     "onChange",
-  ]);
+  );
   const [checked, setChecked] = createControllableSignal<boolean>({
-    value: () => local.checked,
-    defaultValue: () => local.defaultChecked ?? false,
-    onChange: (next) => local.onChange?.(next),
+    value: () => props.checked,
+    defaultValue: () => props.defaultChecked ?? false,
+    onChange: (next) => props.onChange?.(next),
   });
   return (
     <MenuRow
@@ -564,7 +565,7 @@ export function MenuCheckboxItemPart(
           <Icon icon="lucide:check" width={16} height={16} class="size-4" />
         </MenuItemIndicator>
       </span>
-      {local.children}
+      {props.children}
     </MenuRow>
   );
 }
@@ -580,18 +581,14 @@ export function MenuRadioItemPart(
   props: MenuRadioItemProps<ValidComponent> & { slotName: string },
 ) {
   const group = useContext(RadioContext);
-  const [local, rest] = splitProps(props as RowInput & RadioOwnProps, [
-    "children",
-    "value",
-    "disabled",
-  ]);
+  const rest = omit(props as RowInput & RadioOwnProps, "children", "value", "disabled");
   return (
     <MenuRow
       kind="radio"
       {...rest}
-      disabled={local.disabled || group?.disabled()}
-      checked={group?.value() === local.value}
-      choose={() => group?.setValue(local.value)}
+      disabled={props.disabled || group?.disabled()}
+      checked={group?.value() === props.value}
+      choose={() => group?.setValue(props.value)}
     >
       <span class="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
         <MenuItemIndicator>
@@ -599,7 +596,7 @@ export function MenuRadioItemPart(
           <Icon icon="mdi:circle" width={8} height={8} class="size-2" />
         </MenuItemIndicator>
       </span>
-      {local.children}
+      {props.children}
     </MenuRow>
   );
 }

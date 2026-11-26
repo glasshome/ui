@@ -1,10 +1,5 @@
-import {
-  type Component,
-  type ComponentProps,
-  Show,
-  splitProps,
-  type ValidComponent,
-} from "solid-js";
+import { type Component, Show, omit } from "solid-js";
+import { type ComponentProps, type ValidComponent } from "@solidjs/web";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import {
   CARD_ACTION_CLASS,
@@ -38,7 +33,8 @@ type CardProps = ComponentProps<"div"> &
 
 // The card owns the padding: every part below carries none, and no part has a margin.
 const Card: Component<CardProps> = (props) => {
-  const [local, others] = splitProps(props, [
+  const others = omit(
+    props,
     "class",
     "interactive",
     "opaque",
@@ -46,58 +42,58 @@ const Card: Component<CardProps> = (props) => {
     "as",
     "ornament",
     "children",
-  ]);
+  );
   return (
     <Polymorphic
       defaultAs="div"
-      as={local.as}
+      as={props.as}
       data-slot="card"
       class={cn(
-        local.opaque ? CARD_SURFACE_OPAQUE : CARD_SURFACE,
+        props.opaque ? CARD_SURFACE_OPAQUE : CARD_SURFACE,
         "rounded-[var(--radius)]",
-        CARD_PADDING[local.padding ?? "none"],
-        local.interactive && CARD_INTERACTIVE,
-        local.ornament && "group relative overflow-hidden",
-        local.class,
+        CARD_PADDING[props.padding ?? "none"],
+        props.interactive && CARD_INTERACTIVE,
+        props.ornament && "group relative overflow-hidden",
+        props.class,
       )}
       {...others}
     >
-      <Show when={local.ornament}>{(kind) => <Ornament kind={kind()} />}</Show>
-      {local.children}
+      <Show when={props.ornament}>{(kind) => <Ornament kind={kind()} />}</Show>
+      {props.children}
     </Polymorphic>
   );
 };
 
 const CardHeader: Component<ComponentProps<"div">> = (props) => {
-  const [local, others] = splitProps(props, ["class"]);
-  return <div data-slot="card-header" class={cn(CARD_HEADER_CLASS, local.class)} {...others} />;
+  const others = omit(props, "class");
+  return <div data-slot="card-header" class={cn(CARD_HEADER_CLASS, props.class)} {...others} />;
 };
 
 const CardTitle: Component<ComponentProps<"div">> = (props) => {
-  const [local, others] = splitProps(props, ["class"]);
-  return <div data-slot="card-title" class={cn(CARD_TITLE_CLASS, local.class)} {...others} />;
+  const others = omit(props, "class");
+  return <div data-slot="card-title" class={cn(CARD_TITLE_CLASS, props.class)} {...others} />;
 };
 
 const CardDescription: Component<ComponentProps<"div">> = (props) => {
-  const [local, others] = splitProps(props, ["class"]);
+  const others = omit(props, "class");
   return (
-    <div data-slot="card-description" class={cn(CARD_DESCRIPTION_CLASS, local.class)} {...others} />
+    <div data-slot="card-description" class={cn(CARD_DESCRIPTION_CLASS, props.class)} {...others} />
   );
 };
 
 const CardAction: Component<ComponentProps<"div">> = (props) => {
-  const [local, others] = splitProps(props, ["class"]);
-  return <div data-slot="card-action" class={cn(CARD_ACTION_CLASS, local.class)} {...others} />;
+  const others = omit(props, "class");
+  return <div data-slot="card-action" class={cn(CARD_ACTION_CLASS, props.class)} {...others} />;
 };
 
 const CardContent: Component<ComponentProps<"div">> = (props) => {
-  const [local, others] = splitProps(props, ["class"]);
-  return <div data-slot="card-content" class={cn(CARD_CONTENT_CLASS, local.class)} {...others} />;
+  const others = omit(props, "class");
+  return <div data-slot="card-content" class={cn(CARD_CONTENT_CLASS, props.class)} {...others} />;
 };
 
 const CardFooter: Component<ComponentProps<"div">> = (props) => {
-  const [local, others] = splitProps(props, ["class"]);
-  return <div data-slot="card-footer" class={cn(CARD_FOOTER_CLASS, local.class)} {...others} />;
+  const others = omit(props, "class");
+  return <div data-slot="card-footer" class={cn(CARD_FOOTER_CLASS, props.class)} {...others} />;
 };
 
 export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle };

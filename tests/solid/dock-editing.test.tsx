@@ -1,6 +1,7 @@
 import "../real-time-animations";
 import { cleanup, render, screen } from "@solidjs/testing-library";
-import { createSignal, type JSX } from "solid-js";
+import { createSignal } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cdp, userEvent } from "vitest/browser";
 import { Dock, type DockItem } from "../../src/solid/dock.js";

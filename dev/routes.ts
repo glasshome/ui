@@ -1,4 +1,4 @@
-import type { Component } from "solid-js";
+import { type Component } from "solid-js";
 import { ComponentPage } from "./harness/ComponentPage";
 import { COMPONENTS, kebab } from "./harness/registry";
 import ColourRoles from "./foundations/ColourRoles";

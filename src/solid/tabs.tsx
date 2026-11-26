@@ -1,17 +1,16 @@
 import {
   type Accessor,
   type Component,
-  type ComponentProps,
   createContext,
   createSignal,
   createUniqueId,
   onCleanup,
-  onMount,
+  onSettled,
   Show,
-  splitProps,
+  omit,
   useContext,
-  type ValidComponent,
 } from "solid-js";
+import { type ComponentProps, type ValidComponent } from "@solidjs/web";
 import { type Collection, createCollection } from "../lib/behavior/collection.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { CANDIDATES, focusWithoutTracking, trackFocus } from "../lib/behavior/focus-scope.js";
@@ -74,7 +73,8 @@ const TAB = '[role="tab"][data-key]';
 type Ids = Record<string, string | undefined>;
 
 const Tabs: Component<TabsProps> = (props) => {
-  const [local, others] = splitProps(props, [
+  const others = omit(
+    props,
     "class",
     "layout",
     "value",
@@ -85,14 +85,14 @@ const Tabs: Component<TabsProps> = (props) => {
     "disabled",
     "id",
     "as",
-  ]);
+  );
   const fallbackId = `tabs-${createUniqueId()}`;
-  const id = () => local.id ?? fallbackId;
-  const orientation = () => local.orientation ?? "horizontal";
+  const id = () => props.id ?? fallbackId;
+  const orientation = () => props.orientation ?? "horizontal";
   const [value, setValue] = createControllableSignal<string | undefined>({
-    value: () => local.value,
-    defaultValue: () => local.defaultValue,
-    onChange: (next) => next !== undefined && local.onChange?.(next),
+    value: () => props.value,
+    defaultValue: () => props.defaultValue,
+    onChange: (next) => next !== undefined && props.onChange?.(next),
   });
   const [list, setList] = createSignal<HTMLElement>();
   const [triggerIds, setTriggerIds] = createSignal<Ids>({});
@@ -111,7 +111,7 @@ const Tabs: Component<TabsProps> = (props) => {
   });
 
   const select = (next: string) => {
-    if (next === value()) local.onChange?.(next);
+    if (next === value()) props.onChange?.(next);
     else setValue(next);
   };
 
@@ -140,8 +140,8 @@ const Tabs: Component<TabsProps> = (props) => {
     value,
     select,
     orientation,
-    disabled: () => local.disabled ?? false,
-    automatic: () => (local.activationMode ?? "automatic") === "automatic",
+    disabled: () => props.disabled ?? false,
+    automatic: () => (props.activationMode ?? "automatic") === "automatic",
     collection,
     setList,
     register,
@@ -150,10 +150,10 @@ const Tabs: Component<TabsProps> = (props) => {
   };
 
   return (
-    <TabsContext.Provider value={context}>
+    <TabsContext value={context}>
       <Polymorphic
         {...merge({ "data-slot": "tabs" }, others, {
-          as: local.as,
+          as: props.as,
           defaultAs: "div" as ValidComponent,
           get id() {
             return id();
@@ -162,14 +162,14 @@ const Tabs: Component<TabsProps> = (props) => {
             return orientation();
           },
           get "data-layout"() {
-            return local.layout ?? "stack";
+            return props.layout ?? "stack";
           },
           get class() {
-            return cn(TABS_LAYOUT[local.layout ?? "stack"], local.class);
+            return cn(TABS_LAYOUT[props.layout ?? "stack"], props.class);
           },
         })}
       />
-    </TabsContext.Provider>
+    </TabsContext>
   );
 };
 
@@ -177,9 +177,9 @@ type TabsListProps = ComponentProps<"div"> & { as?: ValidComponent };
 
 const TabsList: Component<TabsListProps> = (props) => {
   const ctx = useTabs();
-  const [local, others] = splitProps(props, ["class", "children", "ref", "as"]);
+  const others = omit(props, "class", "children", "ref", "as");
   const [el, setEl] = createSignal<HTMLElement>();
-  onMount(() => {
+  onSettled(() => {
     const listEl = el();
     if (listEl) onCleanup(trackScroll(listEl, "[data-selected]", ctx.value));
   });
@@ -200,12 +200,12 @@ const TabsList: Component<TabsListProps> = (props) => {
   return (
     <Polymorphic
       {...merge({ "data-slot": "tabs-list" }, others, {
-        as: local.as,
+        as: props.as,
         defaultAs: "div" as ValidComponent,
         ref: (node: HTMLElement) => {
           setEl(node);
           ctx.setList(node);
-          if (typeof local.ref === "function") local.ref(node as HTMLDivElement);
+          if (typeof props.ref === "function") props.ref(node as HTMLDivElement);
         },
         role: "tablist",
         get "aria-orientation"() {
@@ -217,7 +217,7 @@ const TabsList: Component<TabsListProps> = (props) => {
         get class() {
           return cn(
             `scrollbar-hide inline-flex h-9 w-full items-center overflow-x-auto rounded-lg has-[[data-slot=tabs-trigger-icon]]:h-auto ${TRACK_SURFACE} ${SCROLL_TRACK_FADE} text-muted-foreground p-1`,
-            local.class,
+            props.class,
           );
         },
       })}
@@ -229,7 +229,7 @@ const TabsList: Component<TabsListProps> = (props) => {
         radius={SEGMENT_RADIUS}
         class="flex h-full w-max min-w-full items-center gap-1"
       >
-        {local.children}
+        {props.children}
       </SelectionScope>
     </Polymorphic>
   );
@@ -247,7 +247,8 @@ type TabsTriggerProps = ComponentProps<"button"> & {
  *  `inline` sets the glyph beside the word instead, for a row that stands alone. */
 const TabsTrigger: Component<TabsTriggerProps> = (props) => {
   const ctx = useTabs();
-  const [local, others] = splitProps(props, [
+  const others = omit(
+    props,
     "class",
     "icon",
     "inline",
@@ -257,15 +258,15 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
     "id",
     "ref",
     "as",
-  ]);
+  );
   const [el, setEl] = createSignal<HTMLElement>();
-  const disabled = () => local.disabled || ctx.disabled();
+  const disabled = () => props.disabled || ctx.disabled();
   effect(disabled, () => ctx.collection.refresh());
   onCleanup(() => ctx.collection.refresh());
-  const selected = () => ctx.value() === local.value;
+  const selected = () => ctx.value() === props.value;
 
   effect(
-    () => [local.value, local.id] as const,
+    () => [props.value, props.id] as const,
     ([key, custom]) => ctx.register("trigger", key, custom),
   );
 
@@ -275,8 +276,8 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
     const focused = trackFocus(node);
     const choose = () => {
       if (disabled()) return;
-      ctx.select(local.value);
-      ctx.collection.highlight(local.value, "pointer");
+      ctx.select(props.value);
+      ctx.collection.highlight(props.value, "pointer");
     };
     // A mouse selects on press, so focus lands on a tab already selected and is announced so.
     const pointerdown = (event: PointerEvent) => {
@@ -289,7 +290,7 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
       if (event.detail === 0 || !mousePressed) choose();
       mousePressed = false;
     };
-    const focus = () => ctx.collection.highlight(local.value, "pointer");
+    const focus = () => ctx.collection.highlight(props.value, "pointer");
     node.addEventListener("pointerdown", pointerdown);
     node.addEventListener("click", click);
     node.addEventListener("focus", focus);
@@ -304,18 +305,18 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
   return (
     <Polymorphic
       {...merge({ "data-slot": "tabs-trigger" }, others, {
-        as: local.as,
+        as: props.as,
         defaultAs: "button" as ValidComponent,
         ref: (node: HTMLElement) => {
           setEl(node);
-          if (typeof local.ref === "function") local.ref(node as HTMLButtonElement);
+          if (typeof props.ref === "function") props.ref(node as HTMLButtonElement);
         },
         get id() {
-          return ctx.triggerId(local.value);
+          return ctx.triggerId(props.value);
         },
         role: "tab",
         get tabIndex() {
-          return disabled() ? undefined : ctx.collection.tabIndex(local.value);
+          return disabled() ? undefined : ctx.collection.tabIndex(props.value);
         },
         get disabled() {
           return disabled();
@@ -327,10 +328,10 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
           return disabled() ? "true" : undefined;
         },
         get "aria-controls"() {
-          return selected() ? ctx.contentId(local.value) : undefined;
+          return selected() ? ctx.contentId(props.value) : undefined;
         },
         get "data-key"() {
-          return local.value;
+          return props.value;
         },
         get "data-orientation"() {
           return ctx.orientation();
@@ -339,7 +340,7 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
           return selected() ? "" : undefined;
         },
         get "data-highlighted"() {
-          return ctx.collection.highlighted() === local.value ? "" : undefined;
+          return ctx.collection.highlighted() === props.value ? "" : undefined;
         },
         get "data-disabled"() {
           return disabled() ? "" : undefined;
@@ -349,23 +350,23 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
             SEGMENT_ITEM,
             PRESS_DIP,
             "not-data-[selected]:hover:text-foreground relative isolate data-[selected]:text-(--material-accent)",
-            local.icon && !local.inline && "h-auto flex-1 flex-col gap-1 py-2 text-xs",
-            local.class,
+            props.icon && !props.inline && "h-auto flex-1 flex-col gap-1 py-2 text-xs",
+            props.class,
           );
         },
       })}
     >
       <SelectionHighlight active={selected()} />
-      {local.icon && (
+      {props.icon && (
         <Icon
-          data-slot={local.inline ? "tabs-trigger-inline-icon" : "tabs-trigger-icon"}
-          icon={local.icon}
-          width={local.inline ? 16 : 18}
-          height={local.inline ? 16 : 18}
+          data-slot={props.inline ? "tabs-trigger-inline-icon" : "tabs-trigger-icon"}
+          icon={props.icon}
+          width={props.inline ? 16 : 18}
+          height={props.inline ? 16 : 18}
           aria-hidden="true"
         />
       )}
-      {local.children}
+      {props.children}
     </Polymorphic>
   );
 };
@@ -378,13 +379,13 @@ type TabsContentProps = ComponentProps<"div"> & {
 
 const TabsContent: Component<TabsContentProps> = (props) => {
   const ctx = useTabs();
-  const [local, others] = splitProps(props, ["class", "value", "forceMount", "id", "ref", "as"]);
+  const others = omit(props, "class", "value", "forceMount", "id", "ref", "as");
   const [el, setEl] = createSignal<HTMLElement>();
   const [holdsTabStop, setHoldsTabStop] = createSignal(false);
-  const selected = () => ctx.value() === local.value;
+  const selected = () => ctx.value() === props.value;
 
   effect(
-    () => [local.value, local.id] as const,
+    () => [props.value, props.id] as const,
     ([key, custom]) => ctx.register("content", key, custom),
   );
   effect(el, (node) => {
@@ -392,24 +393,24 @@ const TabsContent: Component<TabsContentProps> = (props) => {
   });
 
   return (
-    <Show when={local.forceMount || selected()}>
+    <Show when={props.forceMount || selected()}>
       <Polymorphic
         {...merge({ "data-slot": "tabs-content" }, others, {
-          as: local.as,
+          as: props.as,
           defaultAs: "div" as ValidComponent,
           ref: (node: HTMLElement) => {
             setEl(node);
-            if (typeof local.ref === "function") local.ref(node as HTMLDivElement);
+            if (typeof props.ref === "function") props.ref(node as HTMLDivElement);
           },
           get id() {
-            return ctx.contentId(local.value);
+            return ctx.contentId(props.value);
           },
           role: "tabpanel",
           get tabIndex() {
             return holdsTabStop() ? undefined : 0;
           },
           get "aria-labelledby"() {
-            return ctx.triggerId(local.value);
+            return ctx.triggerId(props.value);
           },
           get "data-orientation"() {
             return ctx.orientation();
@@ -421,7 +422,7 @@ const TabsContent: Component<TabsContentProps> = (props) => {
             return cn(
               SETTLE_MOTION,
               "focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
-              local.class,
+              props.class,
             );
           },
         })}

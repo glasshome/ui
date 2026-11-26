@@ -1,11 +1,5 @@
-import {
-  type Component,
-  type ComponentProps,
-  createSignal,
-  on,
-  createEffect,
-  splitProps,
-} from "solid-js";
+import { type Component, createSignal, on, createEffect, omit } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import { INPUT_CLASS } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -17,7 +11,7 @@ const SPINNER_COLUMN = "w-10";
 const SPINNER_RESERVE = "pr-10";
 
 const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) => {
-  const [local, others] = splitProps(props, ["class", "step", "min", "max"]);
+  const others = omit(props, "class", "step", "min", "max");
   let ref: HTMLInputElement | undefined;
   const text = useUiText();
   const format = useUiFormat();
@@ -36,13 +30,13 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
       ? undefined
       : format.number(value, { maximumFractionDigits: 20 });
   };
-  const step = () => Number(local.step ?? 1) || 1;
+  const step = () => Number(props.step ?? 1) || 1;
 
   const nudge = (dir: 1 | -1) => {
     if (!ref) return;
     let next = (Number(ref.value) || 0) + dir * step();
-    if (local.min != null) next = Math.max(Number(local.min), next);
-    if (local.max != null) next = Math.min(Number(local.max), next);
+    if (props.min != null) next = Math.max(Number(props.min), next);
+    if (props.max != null) next = Math.min(Number(props.max), next);
     ref.value = String(next);
     ref.dispatchEvent(new Event("input", { bubbles: true }));
   };
@@ -54,15 +48,15 @@ const NumberField: Component<Omit<ComponentProps<"input">, "type">> = (props) =>
         type="number"
         data-slot="number-field"
         aria-valuetext={valueText()}
-        on:input={(e) => setTyped(e.currentTarget.value)}
-        step={local.step}
-        min={local.min}
-        max={local.max}
+        onInput={(e) => setTyped(e.currentTarget.value)}
+        step={props.step}
+        min={props.min}
+        max={props.max}
         class={cn(
           INPUT_CLASS,
           SPINNER_RESERVE,
           "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
-          local.class,
+          props.class,
         )}
         {...others}
       />

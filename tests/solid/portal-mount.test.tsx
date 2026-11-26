@@ -1,7 +1,7 @@
 import "../real-time-animations";
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal } from "solid-js";
-import { DelegatedEvents, delegateEvents } from "solid-js/web";
+import { DelegatedEvents, delegateEvents } from "@solidjs/web";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import {
@@ -129,14 +129,14 @@ describe("a portal mount inside a closed shadow root", () => {
     const [open, setOpen] = createSignal(true);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <Dialog open={open()} onOpenChange={setOpen}>
             <DialogContent>
               <DialogTitle>Edit</DialogTitle>
               <Button data-testid="inside">Save</Button>
             </DialogContent>
           </Dialog>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -158,13 +158,13 @@ describe("a portal mount inside a closed shadow root", () => {
       const [open, setOpen] = createSignal(true);
       const dispose = render(
         () => (
-          <PortalMountContext.Provider value={mount}>
+          <PortalMountContext value={mount}>
             <Dialog open={open()} onOpenChange={setOpen}>
               <DialogContent>
                 <DialogTitle>Edit</DialogTitle>
               </DialogContent>
             </Dialog>
-          </PortalMountContext.Provider>
+          </PortalMountContext>
         ),
         { container: mount },
       );
@@ -182,14 +182,14 @@ describe("a portal mount inside a closed shadow root", () => {
     const [open, setOpen] = createSignal(true);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <Dialog open={open()} onOpenChange={setOpen}>
             <DialogContent>
               <DialogTitle>Edit</DialogTitle>
               <Button data-testid="inside">Save</Button>
             </DialogContent>
           </Dialog>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -204,7 +204,7 @@ describe("a portal mount inside a closed shadow root", () => {
     const { root, mount } = closedRoot();
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <Dialog open>
             <DialogContent>
               <DialogTitle>Edit</DialogTitle>
@@ -212,7 +212,7 @@ describe("a portal mount inside a closed shadow root", () => {
               <Button data-testid="last">Two</Button>
             </DialogContent>
           </Dialog>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -227,12 +227,12 @@ describe("a portal mount inside a closed shadow root", () => {
     const { root, mount } = closedRoot();
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <Popover open>
             <PopoverTrigger>Open</PopoverTrigger>
             <PopoverContent>Hello</PopoverContent>
           </Popover>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -245,14 +245,14 @@ describe("a portal mount inside a closed shadow root", () => {
     const [open, setOpen] = createSignal(true);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <BottomSheet open={open()} onOpenChange={setOpen}>
             <BottomSheetContent>
               <BottomSheetTitle>Sheet</BottomSheetTitle>
               <Button data-testid="inside">Save</Button>
             </BottomSheetContent>
           </BottomSheet>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -313,7 +313,7 @@ describe("layers stacked inside a closed shadow root", () => {
     const icon = iconLike();
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <Dialog open={dialog()} onOpenChange={setDialog}>
             <DialogContent>
               <DialogTitle>Edit</DialogTitle>
@@ -327,7 +327,7 @@ describe("layers stacked inside a closed shadow root", () => {
               </Popover>
             </DialogContent>
           </Dialog>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -384,7 +384,7 @@ describe("focus in a dialog inside a closed shadow root", () => {
     root.appendChild(outside);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <Dialog open={open()} onOpenChange={setOpen}>
             <DialogContent>
               <DialogTitle>Edit</DialogTitle>
@@ -392,7 +392,7 @@ describe("focus in a dialog inside a closed shadow root", () => {
               <Button data-testid="last">Two</Button>
             </DialogContent>
           </Dialog>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -427,7 +427,7 @@ describe("the rest of the shadow-root review's cases", () => {
     const [sub, setSub] = createSignal(false);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <DropdownMenu open={menu()} onOpenChange={setMenu}>
             <DropdownMenuTrigger>Open</DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -441,7 +441,7 @@ describe("the rest of the shadow-root review's cases", () => {
               </DropdownMenuSub>
             </DropdownMenuContent>
           </DropdownMenu>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -463,12 +463,12 @@ describe("the rest of the shadow-root review's cases", () => {
     const [open, setOpen] = createSignal(true);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <Popover open={open()} onOpenChange={setOpen}>
             <PopoverTrigger>Open</PopoverTrigger>
             <PopoverContent>Hello</PopoverContent>
           </Popover>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -487,14 +487,14 @@ describe("the rest of the shadow-root review's cases", () => {
     let held: HTMLElement | undefined;
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <Popover open={open()} onOpenChange={setOpen}>
             <PopoverTrigger>Open</PopoverTrigger>
             <PopoverContent ref={(el: HTMLElement) => (held = el)}>
               <Button data-testid="in-popover">Pick</Button>
             </PopoverContent>
           </Popover>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -511,14 +511,14 @@ describe("the rest of the shadow-root review's cases", () => {
     const [open, setOpen] = createSignal(true);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <Popover open={open()} onOpenChange={setOpen}>
             <PopoverTrigger>Open</PopoverTrigger>
             <PopoverContent onInteractOutside={() => setOpen(false)}>
               <Button data-testid="in-popover">Pick</Button>
             </PopoverContent>
           </Popover>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -537,13 +537,13 @@ describe("the rest of the shadow-root review's cases", () => {
     const [open, setOpen] = createSignal(true);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <BottomSheet open={open()} onOpenChange={setOpen}>
             <BottomSheetContent>
               <BottomSheetTitle>Sheet</BottomSheetTitle>
             </BottomSheetContent>
           </BottomSheet>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -563,14 +563,14 @@ describe("the second shadow-root review's cases", () => {
     const [open, setOpen] = createSignal(true);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <Popover open={open()} onOpenChange={setOpen}>
             <PopoverTrigger data-testid="trigger">Open</PopoverTrigger>
             <PopoverContent onCloseAutoFocus={props.onCloseAutoFocus}>
               <Button data-testid="in-popover">Pick</Button>
             </PopoverContent>
           </Popover>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -608,14 +608,14 @@ describe("the second shadow-root review's cases", () => {
     const [open, setOpen] = createSignal(true);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <DropdownMenu open={open()} onOpenChange={setOpen}>
             <DropdownMenuTrigger>Open</DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem>One</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -631,14 +631,14 @@ describe("the second shadow-root review's cases", () => {
     const { holder, mount } = closedRoot();
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <DropdownMenu open>
             <DropdownMenuTrigger>Open</DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem>One</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -653,7 +653,7 @@ describe("the second shadow-root review's cases", () => {
     const [menu, setMenu] = createSignal(true);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <DropdownMenu open={menu()} onOpenChange={setMenu}>
             <DropdownMenuTrigger>Open</DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -665,7 +665,7 @@ describe("the second shadow-root review's cases", () => {
               </DropdownMenuSub>
             </DropdownMenuContent>
           </DropdownMenu>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -691,13 +691,13 @@ describe("the second shadow-root review's cases", () => {
     const [open, setOpen] = createSignal(true);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <BottomSheet open={open()} onOpenChange={setOpen}>
             <BottomSheetContent>
               <BottomSheetTitle>Sheet</BottomSheetTitle>
             </BottomSheetContent>
           </BottomSheet>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -714,14 +714,14 @@ describe("the second shadow-root review's cases", () => {
     const [open, setOpen] = createSignal(true);
     render(
       () => (
-        <PortalMountContext.Provider value={mount}>
+        <PortalMountContext value={mount}>
           <Popover open={open()} onOpenChange={() => {}}>
             <PopoverTrigger>Open</PopoverTrigger>
             <PopoverContent onCloseAutoFocus={(e: Event) => prevented.push(e.defaultPrevented)}>
               Hello
             </PopoverContent>
           </Popover>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: mount },
     );
@@ -743,12 +743,12 @@ describe("the second shadow-root review's cases", () => {
     // The other realm's layer stays open on presses outside it, as one whose caller refuses the close does.
     render(
       () => (
-        <PortalMountContext.Provider value={a.mount}>
+        <PortalMountContext value={a.mount}>
           <Popover open onOpenChange={() => {}}>
             <PopoverTrigger>Open</PopoverTrigger>
             <PopoverContent>Stays</PopoverContent>
           </Popover>
-        </PortalMountContext.Provider>
+        </PortalMountContext>
       ),
       { container: a.mount },
     );

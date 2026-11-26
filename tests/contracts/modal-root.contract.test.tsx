@@ -1,6 +1,7 @@
 import "../real-time-animations";
 import { cleanup, render } from "@solidjs/testing-library";
-import { createEffect, createSignal, type JSX } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { commands, userEvent } from "vitest/browser";
 import { CLOSED_ROOTS } from "../../dev/harness/closed-roots";

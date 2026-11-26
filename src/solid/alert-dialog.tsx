@@ -1,12 +1,7 @@
 import { usePortalMount } from "./portal-mount.js";
 import type { VariantProps } from "cva";
-import {
-  type Component,
-  type ComponentProps,
-  type JSX,
-  type ParentComponent,
-  splitProps,
-} from "solid-js";
+import { type Component, type ParentComponent, omit } from "solid-js";
+import { type ComponentProps, type JSX } from "@solidjs/web";
 import { ModalFrame, useDialogContext } from "../lib/behavior/modal-root.js";
 import { MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { buttonVariants } from "../lib/button-variants.js";
@@ -43,14 +38,7 @@ type AlertDialogContentProps = ModalContentProps & {
 };
 
 const AlertDialogContent: ParentComponent<AlertDialogContentProps> = (props) => {
-  const [local, rest] = splitProps(props, [
-    "class",
-    "children",
-    "size",
-    "ariaLabel",
-    "style",
-    "ref",
-  ]);
+  const rest = omit(props, "class", "children", "size", "ariaLabel", "style", "ref");
   const ctx = useDialogContext();
   return (
     <>
@@ -62,18 +50,18 @@ const AlertDialogContent: ParentComponent<AlertDialogContentProps> = (props) => 
         scrimClass={MODAL_SCRIM}
         panelClass={cn(
           MODAL_PANEL,
-          MODAL_WIDTH[local.size ?? "md"],
-          MODAL_ANCHOR[local.size ?? "md"],
-          local.class,
+          MODAL_WIDTH[props.size ?? "md"],
+          MODAL_ANCHOR[props.size ?? "md"],
+          props.class,
         )}
-        panelStyle={typeof local.style === "object" ? local.style : undefined}
-        ariaLabel={local.ariaLabel}
+        panelStyle={typeof props.style === "object" ? props.style : undefined}
+        ariaLabel={props.ariaLabel}
         ref={(el: HTMLElement) => {
-          if (typeof local.ref === "function") local.ref(el as HTMLDivElement);
+          if (typeof props.ref === "function") props.ref(el as HTMLDivElement);
         }}
         {...rest}
       >
-        {local.children}
+        {props.children}
       </ModalFrame>
     </>
   );
@@ -105,10 +93,10 @@ const CancelDismiss = createModalDismiss("alert-dialog-cancel", useDialogContext
  *  carry tone as arbitrary custom properties that tailwind-merge keeps side by
  *  side, leaving the later stylesheet rule to win. */
 const AlertDialogAction: ParentComponent<AlertDialogButtonProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "variant", "size"] as const);
+  const rest = omit(props, "class", "variant", "size");
   return (
     <ActionDismiss
-      class={cn(buttonVariants({ variant: local.variant, size: local.size }), local.class)}
+      class={cn(buttonVariants({ variant: props.variant, size: props.size }), props.class)}
       {...rest}
     />
   );
@@ -116,12 +104,12 @@ const AlertDialogAction: ParentComponent<AlertDialogButtonProps> = (props) => {
 
 /** This family's Close: the outline button that dismisses without acting. */
 const AlertDialogCancel: ParentComponent<AlertDialogButtonProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "variant", "size"] as const);
+  const rest = omit(props, "class", "variant", "size");
   return (
     <CancelDismiss
       class={cn(
-        buttonVariants({ variant: local.variant ?? "outline", size: local.size }),
-        local.class,
+        buttonVariants({ variant: props.variant ?? "outline", size: props.size }),
+        props.class,
       )}
       {...rest}
     />

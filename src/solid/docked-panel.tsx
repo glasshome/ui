@@ -1,6 +1,6 @@
-import type { JSX } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { Show } from "solid-js";
-import { Portal } from "solid-js/web";
+import { Portal } from "@solidjs/web";
 import { usePortalMount } from "./portal-mount.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { OVERLAY_SURFACE_OPAQUE } from "../lib/overlay-classes.js";

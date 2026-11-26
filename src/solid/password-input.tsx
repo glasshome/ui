@@ -1,12 +1,5 @@
-import {
-  children,
-  type Component,
-  type ComponentProps,
-  createSignal,
-  type JSX,
-  Show,
-  splitProps,
-} from "solid-js";
+import { children, type Component, createSignal, Show, omit } from "solid-js";
+import { type ComponentProps, type JSX } from "@solidjs/web";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { Input } from "./input.js";
@@ -26,10 +19,10 @@ const PasswordInput: Component<
     hideLabel?: string;
   }
 > = (props) => {
-  const [local, rest] = splitProps(props, ["class", "leading", "showLabel", "hideLabel"]);
+  const rest = omit(props, "class", "leading", "showLabel", "hideLabel");
   const [visible, setVisible] = createSignal(false);
   const text = useUiText();
-  const leading = children(() => local.leading);
+  const leading = children(() => props.leading);
 
   return (
     <div data-slot="password-input" class="relative">
@@ -49,7 +42,7 @@ const PasswordInput: Component<
         type={visible() ? "text" : "password"}
         // Caller class first, affordance padding last: a caller-supplied px-*
         // must never win the merge and reclaim a button's space.
-        class={cn(local.class, leading() && LEADING_RESERVE, TOGGLE_RESERVE)}
+        class={cn(props.class, leading() && LEADING_RESERVE, TOGGLE_RESERVE)}
         {...rest}
       />
       <button
@@ -57,8 +50,8 @@ const PasswordInput: Component<
         data-slot="password-input-toggle"
         aria-label={
           visible()
-            ? (local.hideLabel ?? text("ui.password-input.hide"))
-            : (local.showLabel ?? text("ui.password-input.show"))
+            ? (props.hideLabel ?? text("ui.password-input.hide"))
+            : (props.showLabel ?? text("ui.password-input.show"))
         }
         onClick={() => setVisible((v) => !v)}
         class={cn(

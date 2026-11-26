@@ -1,5 +1,5 @@
 import type { FormatEnv } from "@glasshome/widget-contract/i18n-format";
-import { isServer } from "solid-js/web";
+import { isServer } from "@solidjs/web";
 
 export type ReadingDirection = "ltr" | "rtl";
 

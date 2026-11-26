@@ -1,4 +1,5 @@
-import { For, type JSX, Show } from "solid-js";
+import { For, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { SECTION_ROW_SURFACE } from "../lib/card-classes.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";

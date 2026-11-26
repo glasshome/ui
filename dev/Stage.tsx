@@ -1,5 +1,5 @@
 // A real viewport, not a CSS box: use-is-mobile reads window.innerWidth and modals portal to body (GALLERY.md, Shell).
-import { createSignal, For, onCleanup, onMount } from "solid-js";
+import { createSignal, For, onCleanup, onSettled } from "solid-js";
 import { Icon, ToggleGroup, ToggleGroupItem } from "../src/solid";
 
 export interface StageWidth {
@@ -70,7 +70,7 @@ export function Stage(props: { route: string }) {
   const [viewportHeight, setViewportHeight] = createSignal(window.innerHeight);
   let host: HTMLDivElement | undefined;
 
-  onMount(() => {
+  onSettled(() => {
     const observer = new ResizeObserver((entries) => {
       const first = entries[0];
       if (first) setHostWidth(first.contentRect.width);

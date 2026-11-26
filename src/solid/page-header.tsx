@@ -1,4 +1,5 @@
-import { children, type JSX, Show } from "solid-js";
+import { children, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { CARD_BLUR, CARD_SURFACE_BASE } from "../lib/card-classes.js";
 import { SECTION_OUTER_RADIUS } from "../lib/section-tokens.js";
 import { cn } from "../lib/utils.js";

@@ -2,15 +2,14 @@ import { usePortalMount } from "./portal-mount.js";
 import type { VariantProps } from "cva";
 import {
   type Component,
-  type ComponentProps,
   createEffect,
   createMemo,
   createSignal,
-  type JSX,
   onCleanup,
   type ParentComponent,
-  splitProps,
+  omit,
 } from "solid-js";
+import { type ComponentProps, type JSX } from "@solidjs/web";
 import { overAnchor } from "../lib/anchor-placement.js";
 import { ModalFrame, useDialogContext } from "../lib/behavior/modal-root.js";
 import { MOTION_EXIT_MS } from "../lib/motion-classes.js";
@@ -51,17 +50,17 @@ const DialogDismiss = createModalDismiss("dialog-close", useDialogContext);
  *  never for `Button`: two buttonVariants() calls leave tone knobs side by side
  *  and the later stylesheet rule wins. */
 const DialogClose: ParentComponent<DialogCloseProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "variant", "size", "children"]);
+  const rest = omit(props, "class", "variant", "size", "children");
   const text = useUiText();
   return (
     <DialogDismiss
       class={cn(
-        buttonVariants({ variant: local.variant ?? "outline", size: local.size }),
-        local.class,
+        buttonVariants({ variant: props.variant ?? "outline", size: props.size }),
+        props.class,
       )}
       {...rest}
     >
-      {local.children ?? text("ui.dialog.close")}
+      {props.children ?? text("ui.dialog.close")}
     </DialogDismiss>
   );
 };
@@ -85,27 +84,19 @@ const ANCHORED_WIDTH: Record<ModalSize, number> = {
 };
 
 const DialogContent: ParentComponent<DialogContentProps> = (props) => {
-  const [local, others] = splitProps(props, [
-    "class",
-    "children",
-    "size",
-    "ariaLabel",
-    "anchor",
-    "style",
-    "ref",
-  ]);
+  const others = omit(props, "class", "children", "size", "ariaLabel", "anchor", "style", "ref");
   const ctx = useDialogContext();
   const [viewport, setViewport] = createSignal(0);
   const [height, setHeight] = createSignal<number>();
   createEffect(() => {
-    if (!local.anchor || !ctx.isOpen()) return;
+    if (!props.anchor || !ctx.isOpen()) return;
     const measure = () => setViewport((n) => n + 1);
     window.addEventListener("resize", measure);
     onCleanup(() => window.removeEventListener("resize", measure));
   });
   createEffect(() => {
     const el = ctx.panel();
-    if (!local.anchor || !el) return;
+    if (!props.anchor || !el) return;
     setHeight(el.offsetHeight);
     const observer = new ResizeObserver(() => setHeight(el.offsetHeight));
     observer.observe(el);
@@ -114,8 +105,8 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
   const placement = createMemo<JSX.CSSProperties | undefined>((last) => {
     if (!ctx.isOpen()) return last;
     viewport();
-    const a = local.anchor;
-    return a ? overAnchor(a, ANCHORED_WIDTH[local.size ?? "lg"], height()) : undefined;
+    const a = props.anchor;
+    return a ? overAnchor(a, ANCHORED_WIDTH[props.size ?? "lg"], height()) : undefined;
   });
   return (
     <>
@@ -123,22 +114,22 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
       <ModalFrame
         slot="dialog"
         mount={usePortalMount()}
-        exitMs={local.anchor ? MOTION_EXIT_MS.anchored : MOTION_EXIT_MS.modal}
+        exitMs={props.anchor ? MOTION_EXIT_MS.anchored : MOTION_EXIT_MS.modal}
         scrimClass={MODAL_SCRIM}
         panelClass={cn(
-          local.anchor ? ANCHORED_PANEL : MODAL_PANEL,
-          !local.anchor && MODAL_WIDTH[local.size ?? "lg"],
-          !local.anchor && MODAL_ANCHOR[local.size ?? "lg"],
-          local.class,
+          props.anchor ? ANCHORED_PANEL : MODAL_PANEL,
+          !props.anchor && MODAL_WIDTH[props.size ?? "lg"],
+          !props.anchor && MODAL_ANCHOR[props.size ?? "lg"],
+          props.class,
         )}
-        panelStyle={{ ...(typeof local.style === "object" ? local.style : {}), ...placement() }}
-        ariaLabel={local.ariaLabel}
+        panelStyle={{ ...(typeof props.style === "object" ? props.style : {}), ...placement() }}
+        ariaLabel={props.ariaLabel}
         ref={(el: HTMLElement) => {
-          if (typeof local.ref === "function") local.ref(el as HTMLDivElement);
+          if (typeof props.ref === "function") props.ref(el as HTMLDivElement);
         }}
         {...others}
       >
-        {local.children}
+        {props.children}
       </ModalFrame>
     </>
   );

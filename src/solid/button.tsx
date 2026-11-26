@@ -1,5 +1,6 @@
 import type { VariantProps } from "cva";
-import { type JSX, splitProps, type ValidComponent } from "solid-js";
+import { omit } from "solid-js";
+import { type JSX, type ValidComponent } from "@solidjs/web";
 import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
 import { busyProps } from "../lib/busy.js";
 import { buttonVariants } from "../lib/button-variants.js";
@@ -14,18 +15,13 @@ type ButtonProps<T extends ValidComponent = "button"> = ButtonRootProps<T> &
   };
 
 function Button<T extends ValidComponent = "button">(props: ButtonProps<T>) {
-  const [local, others] = splitProps(props as ButtonProps<ValidComponent>, [
-    "class",
-    "variant",
-    "size",
-    "busy",
-  ]);
+  const others = omit(props as ButtonProps<ValidComponent>, "class", "variant", "size", "busy");
   return (
     <ButtonRoot
       data-slot="button"
       {...others}
-      class={cn(buttonVariants({ variant: local.variant, size: local.size }), local.class)}
-      {...(local.busy ? busyProps : undefined)}
+      class={cn(buttonVariants({ variant: props.variant, size: props.size }), props.class)}
+      {...(props.busy ? busyProps : undefined)}
     />
   );
 }

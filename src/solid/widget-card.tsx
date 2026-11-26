@@ -1,4 +1,5 @@
-import { children, type JSX, mergeProps, Show } from "solid-js";
+import { children, merge, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { cn } from "../lib/utils.js";
 import { Card } from "./card.js";
 import { Icon } from "./icon.js";
@@ -31,7 +32,7 @@ type WidgetCardProps = {
 };
 
 export function WidgetCard(_props: WidgetCardProps) {
-  const props = mergeProps({ layout: "row" as const }, _props);
+  const props = merge({ layout: "row" as const }, _props);
   // Default: link to the widget's public page. A call-site that wants different
   // behavior (e.g. open a dialog) passes `onClick` and opts out of the link.
   const href = () => props.href ?? (props.onClick ? undefined : widgetHref(props.widget));

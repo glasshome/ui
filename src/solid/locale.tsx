@@ -1,5 +1,6 @@
 import type { CompiledCatalog } from "@glasshome/widget-contract/i18n-format";
-import { createContext, createMemo, createResource, type JSX, useContext } from "solid-js";
+import { createContext, createMemo, createResource, useContext } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { englishFormat, type UiFormat, uiFormat } from "../lib/format.js";
 import { englishUiText, translator, type UiText } from "../lib/text.js";
 import english from "../locales/compiled/en.js";
@@ -53,7 +54,7 @@ export function LocaleProvider(props: {
       format: uiFormat(props.formatting),
     };
   });
-  return <LocaleContext.Provider value={current}>{props.children}</LocaleContext.Provider>;
+  return <LocaleContext value={current}>{props.children}</LocaleContext>;
 }
 
 export function useUiText(): UiText {

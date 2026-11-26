@@ -1,15 +1,16 @@
-import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { type Component, omit } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import { ICON_PILL } from "../lib/pill-classes.js";
 import { cn } from "../lib/utils.js";
 
 const Empty: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="empty"
       class={cn(
         "flex min-w-0 flex-1 flex-col items-center justify-center gap-6 rounded-lg p-6 text-center text-balance md:p-12",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -17,11 +18,11 @@ const Empty: Component<ComponentProps<"div">> = (props) => {
 };
 
 const EmptyHeader: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="empty-header"
-      class={cn("flex max-w-sm flex-col items-center gap-2 text-center", local.class)}
+      class={cn("flex max-w-sm flex-col items-center gap-2 text-center", props.class)}
       {...rest}
     />
   );
@@ -38,8 +39,8 @@ const EmptyMedia: Component<
     media?: EmptyMediaKind;
   }
 > = (props) => {
-  const [local, rest] = splitProps(props, ["class", "media"] as const);
-  const media = () => local.media;
+  const rest = omit(props, "class", "media");
+  const media = () => props.media;
   return (
     <div
       data-slot="empty-media"
@@ -48,7 +49,7 @@ const EmptyMedia: Component<
       class={cn(
         "flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0",
         media() && EMPTY_MEDIA[media() as EmptyMediaKind],
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -56,24 +57,24 @@ const EmptyMedia: Component<
 };
 
 const EmptyTitle: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="empty-title"
-      class={cn("text-lg font-semibold tracking-tight", local.class)}
+      class={cn("text-lg font-semibold tracking-tight", props.class)}
       {...rest}
     />
   );
 };
 
 const EmptyDescription: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="empty-description"
       class={cn(
         "text-muted-foreground [&>a:hover]:text-primary text-sm/relaxed [&>a]:underline [&>a]:underline-offset-4",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -81,13 +82,13 @@ const EmptyDescription: Component<ComponentProps<"div">> = (props) => {
 };
 
 const EmptyContent: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="empty-content"
       class={cn(
         "flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm text-balance",
-        local.class,
+        props.class,
       )}
       {...rest}
     />

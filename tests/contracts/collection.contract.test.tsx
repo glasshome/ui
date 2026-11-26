@@ -176,7 +176,7 @@ describe("collection contract", () => {
         if (index !== undefined && index >= 0) current = index;
       };
       return (
-        <button type="button" on:keydown={onKey}>
+        <button type="button" onKeyDown={onKey}>
           Field
         </button>
       );

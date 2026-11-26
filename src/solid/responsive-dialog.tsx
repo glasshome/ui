@@ -1,15 +1,13 @@
 import type { VariantProps } from "cva";
 import {
   type Component,
-  type ComponentProps,
   createContext,
-  type JSX,
   type ParentComponent,
   Show,
-  splitProps,
+  omit,
   useContext,
-  type ValidComponent,
 } from "solid-js";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import type { buttonVariants } from "../lib/button-variants.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createIsMobile } from "../lib/use-is-mobile.js";
@@ -63,7 +61,7 @@ const ResponsiveDialog: ParentComponent<ResponsiveDialogProps> = (props) => {
   const isMobile = () => mobile() === true;
 
   return (
-    <ResponsiveDialogContext.Provider value={{ open, setOpen, isMobile }}>
+    <ResponsiveDialogContext value={{ open, setOpen, isMobile }}>
       <Show
         when={isMobile()}
         fallback={
@@ -76,7 +74,7 @@ const ResponsiveDialog: ParentComponent<ResponsiveDialogProps> = (props) => {
           {props.children}
         </BottomSheet>
       </Show>
-    </ResponsiveDialogContext.Provider>
+    </ResponsiveDialogContext>
   );
 };
 
@@ -102,28 +100,28 @@ type ResponsiveDialogContentProps = ComponentProps<"div"> & {
 
 const ResponsiveDialogContent: ParentComponent<ResponsiveDialogContentProps> = (props) => {
   const ctx = useResponsiveDialogContext();
-  const [local, rest] = splitProps(props, ["class", "children", "size", "ariaLabel", "anchor"]);
+  const rest = omit(props, "class", "children", "size", "ariaLabel", "anchor");
 
   return (
     <Show
       when={ctx.isMobile()}
       fallback={
         <DialogContent
-          class={local.class}
-          size={local.size}
-          ariaLabel={local.ariaLabel}
-          anchor={local.anchor}
+          class={props.class}
+          size={props.size}
+          ariaLabel={props.ariaLabel}
+          anchor={props.anchor}
           {...rest}
         >
-          {local.children}
+          {props.children}
         </DialogContent>
       }
     >
       <BottomSheetPortal>
         <BottomSheetOverlay />
-        <BottomSheetContent class={local.class} ariaLabel={local.ariaLabel} {...rest}>
+        <BottomSheetContent class={props.class} ariaLabel={props.ariaLabel} {...rest}>
           <BottomSheetHandle />
-          {local.children}
+          {props.children}
         </BottomSheetContent>
       </BottomSheetPortal>
     </Show>
@@ -165,20 +163,20 @@ const ResponsiveDialogHead = createModalHead(
 const ResponsiveDialogClose: ParentComponent<
   ComponentProps<"button"> & VariantProps<typeof buttonVariants>
 > = (props) => {
-  const [local, rest] = splitProps(props, ["children", "class", "variant", "size"]);
+  const rest = omit(props, "children", "class", "variant", "size");
   const ctx = useResponsiveDialogContext();
   const text = useUiText();
 
   return (
     <Button
       data-slot="responsive-dialog-close"
-      variant={local.variant ?? "outline"}
-      size={local.size}
+      variant={props.variant ?? "outline"}
+      size={props.size}
       onClick={() => ctx.setOpen(false)}
-      class={local.class}
+      class={props.class}
       {...rest}
     >
-      {local.children ?? text("ui.dialog.close")}
+      {props.children ?? text("ui.dialog.close")}
     </Button>
   );
 };

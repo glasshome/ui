@@ -1,11 +1,5 @@
-import {
-  children,
-  type Component,
-  type ComponentProps,
-  type JSX,
-  mergeProps,
-  Show,
-} from "solid-js";
+import { children, type Component, merge, Show } from "solid-js";
+import { type ComponentProps, type JSX } from "@solidjs/web";
 import { type ExternalToast, Toaster as SolidSonner, toast as sonnerToast } from "solid-sonner";
 import {
   ALERT_CLASS,
@@ -202,7 +196,7 @@ const toast = Object.assign(
 
 const Toaster: Component<ComponentProps<typeof SolidSonner>> = (rawProps) => {
   const isMobile = createIsMobile();
-  const props = mergeProps({ duration: 3000, gap: 8, visibleToasts: 3 }, rawProps);
+  const props = merge({ duration: 3000, gap: 8, visibleToasts: 3 }, rawProps);
   const position = (): Position => props.position ?? (isMobile() ? "top-center" : "bottom-right");
 
   return (

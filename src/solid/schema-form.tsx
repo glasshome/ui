@@ -4,7 +4,6 @@ import {
   createSignal,
   createUniqueId,
   For,
-  Index,
   Match,
   Show,
   Switch as SwitchFlow,
@@ -584,7 +583,7 @@ function ListControl(props: FieldProps) {
       class={cn("flex w-full min-w-0 flex-col", LIST_GAP.class)}
       data-slot="schema-form-list"
     >
-      <Index each={items()}>
+      <For keyed={false} each={items()}>
         {(item, index) => (
           <Card
             ref={(el: HTMLElement) => listDrag.setRowEl(index, el)}
@@ -718,7 +717,7 @@ function ListControl(props: FieldProps) {
             </Collapsible>
           </Card>
         )}
-      </Index>
+      </For>
       <Show when={items().length < minItems()}>
         <p class="text-muted-foreground text-sm">
           {text("ui.schema-form.min-items", { count: minItems() })}

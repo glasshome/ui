@@ -1,4 +1,4 @@
-import { createMemo, createSignal, For, onMount } from "solid-js";
+import { createMemo, createSignal, For, onSettled } from "solid-js";
 import { CARD_BLUR } from "../../src";
 import { Button, Slider, ToggleGroup, ToggleGroupItem } from "../../src/solid";
 import themeCss from "../../src/styles/theme.css?raw";
@@ -118,7 +118,7 @@ export default function GlassPlayground() {
   const [sink, setSink] = createSignal("");
   let sample: HTMLDivElement | undefined;
 
-  onMount(() => {
+  onSettled(() => {
     const el = sample;
     if (!el) return;
     const root = getComputedStyle(document.documentElement);

@@ -1,4 +1,5 @@
-import { type JSX, Show } from "solid-js";
+import { Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { glassToneText, isNeutralTone, NEUTRAL_KNOBS } from "../lib/glass-tone.js";
 import { cn } from "../lib/utils.js";
 import { Badge } from "./badge.js";

@@ -1,28 +1,29 @@
 import { cva, type VariantProps } from "cva";
-import { type Component, type ComponentProps, splitProps, type ValidComponent } from "solid-js";
+import { type Component, omit } from "solid-js";
+import { type ComponentProps, type ValidComponent } from "@solidjs/web";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { ICON_PILL } from "../lib/pill-classes.js";
 import { cn } from "../lib/utils.js";
 import { Separator } from "./separator.js";
 
 const ItemGroup: Component<ComponentProps<"ul">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <ul
       data-slot="item-group"
-      class={cn("group/item-group flex flex-col", local.class)}
+      class={cn("group/item-group flex flex-col", props.class)}
       {...rest}
     />
   );
 };
 
 const ItemSeparator: Component<ComponentProps<typeof Separator>> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <Separator
       data-slot="item-separator"
       orientation="horizontal"
-      class={cn("my-0", local.class)}
+      class={cn("my-0", props.class)}
       {...rest}
     />
   );
@@ -51,17 +52,17 @@ const itemVariants = cva({
 const Item: Component<
   ComponentProps<"div"> & VariantProps<typeof itemVariants> & { as?: ValidComponent; href?: string }
 > = (props) => {
-  const [local, rest] = splitProps(props, ["class", "variant", "size", "as"] as const);
-  const variant = () => local.variant ?? "default";
-  const size = () => local.size ?? "default";
+  const rest = omit(props, "class", "variant", "size", "as");
+  const variant = () => props.variant ?? "default";
+  const size = () => props.size ?? "default";
   return (
     <Polymorphic
       defaultAs="div"
-      as={local.as}
+      as={props.as}
       data-slot="item"
       data-variant={variant()}
       data-size={size()}
-      class={cn(itemVariants({ variant: variant(), size: size() }), local.class)}
+      class={cn(itemVariants({ variant: variant(), size: size() }), props.class)}
       {...rest}
     />
   );
@@ -80,8 +81,8 @@ const ItemMedia: Component<
     media?: ItemMediaKind;
   }
 > = (props) => {
-  const [local, rest] = splitProps(props, ["class", "media"] as const);
-  const media = () => local.media;
+  const rest = omit(props, "class", "media");
+  const media = () => props.media;
   return (
     <div
       data-slot="item-media"
@@ -90,7 +91,7 @@ const ItemMedia: Component<
       class={cn(
         "flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none",
         media() && ITEM_MEDIA[media() as ItemMediaKind],
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -98,36 +99,36 @@ const ItemMedia: Component<
 };
 
 const ItemContent: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="item-content"
-      class={cn("flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none", local.class)}
+      class={cn("flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none", props.class)}
       {...rest}
     />
   );
 };
 
 const ItemTitle: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="item-title"
-      class={cn("flex w-fit items-center gap-2 text-sm leading-snug font-medium", local.class)}
+      class={cn("flex w-fit items-center gap-2 text-sm leading-snug font-medium", props.class)}
       {...rest}
     />
   );
 };
 
 const ItemDescription: Component<ComponentProps<"p">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <p
       data-slot="item-description"
       class={cn(
         "text-muted-foreground line-clamp-2 text-sm leading-normal font-normal text-balance",
         "[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -135,29 +136,29 @@ const ItemDescription: Component<ComponentProps<"p">> = (props) => {
 };
 
 const ItemActions: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
-    <div data-slot="item-actions" class={cn("flex items-center gap-2", local.class)} {...rest} />
+    <div data-slot="item-actions" class={cn("flex items-center gap-2", props.class)} {...rest} />
   );
 };
 
 const ItemHeader: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="item-header"
-      class={cn("flex basis-full items-center justify-between gap-2", local.class)}
+      class={cn("flex basis-full items-center justify-between gap-2", props.class)}
       {...rest}
     />
   );
 };
 
 const ItemFooter: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="item-footer"
-      class={cn("flex basis-full items-center justify-between gap-2", local.class)}
+      class={cn("flex basis-full items-center justify-between gap-2", props.class)}
       {...rest}
     />
   );

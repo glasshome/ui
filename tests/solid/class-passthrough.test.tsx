@@ -4,7 +4,7 @@
  * probe, gets a CASES entry (required props / parent wrappers), or is added
  * to NOT_PROBED with a written reason; an unhandled one fails CI here. */
 import { cleanup, render, waitFor } from "@solidjs/testing-library";
-import type { JSX } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
 
@@ -107,9 +107,9 @@ const StackedBar = withClass(solid.StackedBar);
 const CASES: Record<string, () => JSX.Element> = {
   BarList: () => <BarList class="probe" items={[{ label: "Lamp", value: 2 }]} />,
   EntitySelector: () => (
-    <solid.EntityDataContext.Provider value={stubEntityData}>
+    <solid.EntityDataContext value={stubEntityData}>
       <EntitySelector class="probe" entityIds={[]} onEntityIdsChange={noop} domain="light" />
-    </solid.EntityDataContext.Provider>
+    </solid.EntityDataContext>
   ),
   LabeledIconPicker: () => (
     <LabeledIconPicker class="probe" label="Icon" value="mdi:lamp" onChange={noop} />
@@ -186,9 +186,9 @@ const CASES: Record<string, () => JSX.Element> = {
     />
   ),
   AreaPicker: () => (
-    <solid.EntityDataContext.Provider value={stubEntityData}>
+    <solid.EntityDataContext value={stubEntityData}>
       <solid.AreaPicker class="probe" value="" onChange={noop} />
-    </solid.EntityDataContext.Provider>
+    </solid.EntityDataContext>
   ),
   AvatarFallback: () => (
     <solid.Avatar>
@@ -496,9 +496,9 @@ const CASES: Record<string, () => JSX.Element> = {
   ),
   IconPicker: () => <solid.IconPicker class="probe" value="mdi:home" onChange={noop} />,
   ImagePicker: () => (
-    <solid.MediaStoreContext.Provider value={stubMediaStore}>
+    <solid.MediaStoreContext value={stubMediaStore}>
       <solid.ImagePicker class="probe" value="" onChange={noop} />
-    </solid.MediaStoreContext.Provider>
+    </solid.MediaStoreContext>
   ),
   MediaTile: () => (
     <solid.MediaTile

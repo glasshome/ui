@@ -1,4 +1,4 @@
-import type { Accessor } from "solid-js";
+import { type Accessor } from "solid-js";
 import { type Align, type Box, placeBeside, type Side } from "../anchor-placement.js";
 import { effect } from "./solid.js";
 

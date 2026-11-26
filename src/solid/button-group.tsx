@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from "cva";
-import { type Component, type ComponentProps, splitProps, type ValidComponent } from "solid-js";
+import { type Component, omit } from "solid-js";
+import { type ComponentProps, type ValidComponent } from "@solidjs/web";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { cn } from "../lib/utils.js";
 import { Separator } from "./separator.js";
@@ -22,26 +23,26 @@ const buttonGroupVariants = cva({
 const ButtonGroup: Component<ComponentProps<"div"> & VariantProps<typeof buttonGroupVariants>> = (
   props,
 ) => {
-  const [local, rest] = splitProps(props, ["class", "orientation"] as const);
+  const rest = omit(props, "class", "orientation");
   return (
     <div
       data-slot="button-group"
-      data-orientation={local.orientation}
-      class={cn(buttonGroupVariants({ orientation: local.orientation }), local.class)}
+      data-orientation={props.orientation}
+      class={cn(buttonGroupVariants({ orientation: props.orientation }), props.class)}
       {...rest}
     />
   );
 };
 
 const ButtonGroupText: Component<ComponentProps<"div"> & { as?: ValidComponent }> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "as"] as const);
+  const rest = omit(props, "class", "as");
   return (
     <Polymorphic
       defaultAs="div"
-      as={local.as}
+      as={props.as}
       class={cn(
         "glass text-muted-foreground flex items-center gap-2 rounded-md px-4 text-sm font-medium [--glass-edge:var(--border)] [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -49,14 +50,14 @@ const ButtonGroupText: Component<ComponentProps<"div"> & { as?: ValidComponent }
 };
 
 const ButtonGroupSeparator: Component<ComponentProps<typeof Separator>> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "orientation"] as const);
+  const rest = omit(props, "class", "orientation");
   return (
     <Separator
       data-slot="button-group-separator"
-      orientation={local.orientation ?? "vertical"}
+      orientation={props.orientation ?? "vertical"}
       class={cn(
         "bg-input relative !m-0 self-stretch data-[orientation=vertical]:h-auto",
-        local.class,
+        props.class,
       )}
       {...rest}
     />

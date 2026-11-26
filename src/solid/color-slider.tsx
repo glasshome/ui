@@ -1,4 +1,4 @@
-import type { Component } from "solid-js";
+import { type Component } from "solid-js";
 import { createMemo, createSignal } from "solid-js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
@@ -140,10 +140,10 @@ const ColorSlider: Component<ColorSliderProps> = (props) => {
         class={cn("relative h-7 w-full", disabled() ? "cursor-not-allowed" : "cursor-pointer")}
         style={{ "forced-color-adjust": "none" }}
         data-claim={disabled() ? undefined : DRAG_CLAIM}
-        on:pointerdown={drag.onPointerDown}
-        on:pointermove={drag.onPointerMove}
-        on:pointerup={drag.onPointerUp}
-        on:pointercancel={drag.onPointerCancel}
+        onPointerDown={drag.onPointerDown}
+        onPointerMove={drag.onPointerMove}
+        onPointerUp={drag.onPointerUp}
+        onPointerCancel={drag.onPointerCancel}
       >
         <span
           ref={setThumb}
@@ -151,7 +151,7 @@ const ColorSlider: Component<ColorSliderProps> = (props) => {
           data-slot="color-slider-thumb"
           data-orientation="horizontal"
           data-disabled={disabledMark()}
-          tabIndex={disabled() ? undefined : 0}
+          tabindex={disabled() ? undefined : 0}
           aria-label={props["aria-label"] ?? props.channel}
           aria-valuemin={channelRange().minValue}
           aria-valuemax={channelRange().maxValue}
@@ -174,7 +174,7 @@ const ColorSlider: Component<ColorSliderProps> = (props) => {
             background: color().toString("css"),
           }}
           data-claim={disabled() ? undefined : RANGE_CLAIM}
-          on:keydown={(e) => range.keyDown(e, 0)}
+          onKeyDown={(e) => range.keyDown(e, 0)}
           onBlur={range.blur}
         />
       </div>

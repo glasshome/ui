@@ -1,5 +1,5 @@
 import { cleanup, render, waitFor } from "@solidjs/testing-library";
-import type { JSX } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it } from "vitest";
 import { press } from "../press.js";
 
@@ -57,7 +57,7 @@ async function rowHighlight(open: () => void | Promise<void>, rowSelector: strin
 }
 
 const withData = (ui: () => JSX.Element) =>
-  render(() => <EntityDataContext.Provider value={adapter}>{ui()}</EntityDataContext.Provider>);
+  render(() => <EntityDataContext value={adapter}>{ui()}</EntityDataContext>);
 
 describe("picker highlight", () => {
   it("Select rows carry their own highlight", async () => {

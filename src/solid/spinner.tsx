@@ -1,10 +1,11 @@
-import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { type Component, omit } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { useUiText } from "./locale.js";
 
 const Spinner: Component<Omit<ComponentProps<typeof Icon>, "icon">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const text = useUiText();
   return (
     <Icon
@@ -13,7 +14,7 @@ const Spinner: Component<Omit<ComponentProps<typeof Icon>, "icon">> = (props) =>
       height="none"
       role="status"
       aria-label={text("ui.spinner.label")}
-      class={cn("size-4 animate-spin", local.class)}
+      class={cn("size-4 animate-spin", props.class)}
       {...rest}
     />
   );

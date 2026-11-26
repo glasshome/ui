@@ -1,18 +1,16 @@
 import {
   type Accessor,
   type Component,
-  type ComponentProps,
   createContext,
   createSignal,
-  type JSX,
   onCleanup,
   Show,
-  splitProps,
+  omit,
   untrack,
   useContext,
-  type ValidComponent,
 } from "solid-js";
-import { Portal } from "solid-js/web";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
 import type { Align, Side } from "../lib/anchor-placement.js";
 import { createAnchored } from "../lib/behavior/anchored.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
@@ -101,7 +99,7 @@ const HoverCardRoot: Component<HoverCardProps> = (props) => {
     hide: (delayed) => schedule(false, delayed ? (props.closeDelay ?? CLOSE_DELAY_MS) : 0),
     hold,
   };
-  return <HoverCardContext.Provider value={value}>{props.children}</HoverCardContext.Provider>;
+  return <HoverCardContext value={value}>{props.children}</HoverCardContext>;
 };
 
 type HoverCardTriggerProps<T extends ValidComponent> = { as?: T } & Omit<ComponentProps<T>, "as">;
@@ -110,9 +108,9 @@ function HoverCardTrigger<T extends ValidComponent = "a">(
   props: HoverCardTriggerProps<T>,
 ): JSX.Element {
   const ctx = useHoverCard();
-  const [local, rest] = splitProps(props as HoverCardTriggerProps<ValidComponent>, ["as", "ref"]);
+  const rest = omit(props as HoverCardTriggerProps<ValidComponent>, "as", "ref");
   const [own, setOwn] = createSignal<HTMLElement>();
-  const nativeLink = () => local.as === undefined || local.as === "a";
+  const nativeLink = () => props.as === undefined || props.as === "a";
 
   onCleanup(() => {
     if (untrack(ctx.trigger) === untrack(own)) ctx.setTrigger(undefined);
@@ -164,12 +162,12 @@ function HoverCardTrigger<T extends ValidComponent = "a">(
         },
         rest,
         {
-          as: local.as,
+          as: props.as,
           defaultAs: "a" as ValidComponent,
           ref: (el: HTMLElement) => {
             setOwn(el);
             ctx.setTrigger(el);
-            if (typeof local.ref === "function") local.ref(el);
+            if (typeof props.ref === "function") props.ref(el);
           },
           get "data-expanded"() {
             return ctx.open() ? "" : undefined;
@@ -187,7 +185,7 @@ interface HoverCardContentProps extends ComponentProps<"div"> {}
 
 const HoverCardContent: Component<HoverCardContentProps> = (props) => {
   const ctx = useHoverCard();
-  const [local, others] = splitProps(props, ["class", "ref"]);
+  const others = omit(props, "class", "ref");
   const presence = createPresence({
     present: ctx.open,
     element: ctx.card,
@@ -219,14 +217,14 @@ const HoverCardContent: Component<HoverCardContentProps> = (props) => {
         {...others}
         ref={(el) => {
           ctx.setCard(el);
-          if (typeof local.ref === "function") local.ref(el);
+          if (typeof props.ref === "function") props.ref(el);
         }}
         data-slot="hover-card-content"
         data-expanded={ctx.open() ? "" : undefined}
         data-closed={ctx.open() ? undefined : ""}
-        on:pointerenter={ctx.hold}
-        on:pointerleave={() => ctx.hide(true)}
-        class={cn(FLOATING_PANEL, OVERLAY_MOTION, ORIGIN_BY_SIDE, "w-64 p-4", local.class)}
+        onPointerEnter={ctx.hold}
+        onPointerLeave={() => ctx.hide(true)}
+        class={cn(FLOATING_PANEL, OVERLAY_MOTION, ORIGIN_BY_SIDE, "w-64 p-4", props.class)}
       />
     );
   };

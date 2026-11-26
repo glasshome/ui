@@ -141,9 +141,9 @@ describe("recursive dispatch", () => {
       },
     };
     const { container } = render(() => (
-      <EntityDataContext.Provider value={stubEntityData}>
+      <EntityDataContext value={stubEntityData}>
         <SchemaForm schema={schema} data={{}} onChange={() => {}} />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
     expect(container.querySelector('input[id$="-group.entities"]')).toBeNull();
     const combobox = container.querySelector('[role="combobox"]');
@@ -260,9 +260,9 @@ describe("formType list", () => {
 
   it("expands a row to the recursive item editor", async () => {
     const view = render(() => (
-      <EntityDataContext.Provider value={stubEntityData}>
+      <EntityDataContext value={stubEntityData}>
         <SchemaForm schema={listSchema} data={{ nodes: twoNodes }} onChange={() => {}} />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
     expect(view.container.querySelector('[data-slot="schema-form-variants"]')).toBeNull();
     await press(view.getByRole("button", { name: "Solar", expanded: false }));
@@ -314,13 +314,13 @@ describe("formType variants", () => {
   it("renders the discriminator select and the active branch's fields", () => {
     const schema: ExtendedJSONSchema = { type: "object", properties: { node: nodeItemSchema } };
     const { container } = render(() => (
-      <EntityDataContext.Provider value={stubEntityData}>
+      <EntityDataContext value={stubEntityData}>
         <SchemaForm
           schema={schema}
           data={{ node: { kind: "output", label: "Main", entities: [], remainder: true } }}
           onChange={() => {}}
         />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
     const variants = container.querySelector('[data-slot="schema-form-variants"]');
     expect(variants).toBeTruthy();
@@ -389,9 +389,9 @@ describe("formType image-picker", () => {
     const artField: ExtendedJSONSchema = { type: "string", formType: "image-picker", title: "Art" };
     const schema: ExtendedJSONSchema = { type: "object", properties: { art: artField } };
     const { container } = render(() => (
-      <MediaStoreContext.Provider value={stubMediaStore}>
+      <MediaStoreContext value={stubMediaStore}>
         <SchemaForm schema={schema} data={{}} onChange={() => {}} />
-      </MediaStoreContext.Provider>
+      </MediaStoreContext>
     ));
     expect(container.querySelector('[data-slot="image-picker"]')).toBeTruthy();
     expect(container.querySelector('[data-slot="schema-form-unknown"]')).toBeNull();
@@ -425,9 +425,9 @@ describe("list rows preview their picture", () => {
 
   const renderList = (schema: ExtendedJSONSchema, data: Record<string, unknown>) =>
     render(() => (
-      <MediaStoreContext.Provider value={store}>
+      <MediaStoreContext value={store}>
         <SchemaForm schema={schema} data={data} onChange={() => {}} />
-      </MediaStoreContext.Provider>
+      </MediaStoreContext>
     ));
 
   const thumb = (container: Element) =>
@@ -485,9 +485,9 @@ describe("list rows preview their picture", () => {
       pictures: [{ image: "slow-gone" }],
     });
     const { container } = render(() => (
-      <MediaStoreContext.Provider value={store}>
+      <MediaStoreContext value={store}>
         <SchemaForm schema={oneImage} data={data()} onChange={() => {}} />
-      </MediaStoreContext.Provider>
+      </MediaStoreContext>
     ));
     const img = thumb(container)?.querySelector("img");
     expect(img).toBeTruthy();
@@ -704,11 +704,11 @@ describe("SchemaForm labelling", () => {
 
   const renderEveryKind = () =>
     render(() => (
-      <EntityDataContext.Provider value={stubEntityData}>
-        <MediaStoreContext.Provider value={labelStore}>
+      <EntityDataContext value={stubEntityData}>
+        <MediaStoreContext value={labelStore}>
           <SchemaForm schema={everyKind} data={{}} onChange={() => {}} />
-        </MediaStoreContext.Provider>
-      </EntityDataContext.Provider>
+        </MediaStoreContext>
+      </EntityDataContext>
     ));
 
   it("never points a label's `for` at an element that does not exist", () => {

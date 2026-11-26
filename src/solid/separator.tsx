@@ -1,4 +1,5 @@
-import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { type Component, omit } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import { cn } from "../lib/utils.js";
 
 type SeparatorProps = ComponentProps<"div"> & {
@@ -6,8 +7,8 @@ type SeparatorProps = ComponentProps<"div"> & {
 };
 
 const Separator: Component<SeparatorProps> = (props) => {
-  const [local, others] = splitProps(props, ["class", "orientation"]);
-  const orientation = () => local.orientation ?? "horizontal";
+  const others = omit(props, "class", "orientation");
+  const orientation = () => props.orientation ?? "horizontal";
   return (
     // Non-focusable role=separator is valid static ARIA; hr cannot express the vertical variant.
     // biome-ignore lint/a11y/useFocusableInteractive: see above
@@ -25,7 +26,7 @@ const Separator: Component<SeparatorProps> = (props) => {
         orientation() === "horizontal"
           ? "via-border h-px w-full bg-gradient-to-r from-transparent to-transparent shadow-[0_1px_0_oklch(1_0_0_/_0.04)]"
           : "via-border h-full w-px bg-gradient-to-b from-transparent to-transparent shadow-[1px_0_0_oklch(1_0_0_/_0.04)]",
-        local.class,
+        props.class,
       )}
       {...others}
     />

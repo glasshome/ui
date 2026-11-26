@@ -1,4 +1,5 @@
-import { type JSX, Show, splitProps } from "solid-js";
+import { Show, omit } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { DOCK_SLOT_SHAPE } from "../lib/dock-slot-classes.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
@@ -12,14 +13,14 @@ export interface SlotButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElem
 
 /** A button in the dock's slot shape: it holds the icon a dock item will wear. */
 export function SlotButton(props: SlotButtonProps) {
-  const [own, rest] = splitProps(props, ["dashed", "label", "class", "children"]);
+  const rest = omit(props, "dashed", "label", "class", "children");
   return (
     <button
       type="button"
       data-slot="slot-button"
       class={cn(
         "group/slot-button flex min-w-0 touch-manipulation flex-col items-center gap-1.5 rounded-lg text-xs font-medium outline-none",
-        own.class,
+        props.class,
       )}
       {...rest}
     >
@@ -28,16 +29,16 @@ export function SlotButton(props: SlotButtonProps) {
         class={cn(
           DOCK_SLOT_SHAPE,
           "transition-glass group-focus-visible/slot-button:ring-ring/50 shrink-0 duration-200 group-focus-visible/slot-button:ring-[3px] group-active/slot-button:scale-[0.97]",
-          own.dashed
+          props.dashed
             ? "text-muted-foreground border-foreground/30 group-hover/slot-button:text-foreground group-hover/slot-button:border-foreground/60 border-2 border-dashed"
             : `${FIELD_CHROME} text-foreground`,
         )}
       >
-        {own.children}
+        {props.children}
       </span>
-      <Show when={own.label}>
+      <Show when={props.label}>
         <span data-slot="slot-button-label" class="text-foreground max-w-full truncate">
-          {own.label}
+          {props.label}
         </span>
       </Show>
     </button>

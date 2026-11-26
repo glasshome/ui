@@ -1,4 +1,5 @@
-import { type JSX, Show, splitProps } from "solid-js";
+import { Show, omit } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { CONTROL_H, FIELD_TEXT } from "../lib/input-classes.js";
 import { CONTROL_H_TOUCH } from "../lib/picker-classes.js";
@@ -28,7 +29,8 @@ const SEARCH_H = { default: CONTROL_H.default, touch: CONTROL_H_TOUCH } as const
  * panel already wears the field surface, so a second one reads as a field in a
  * field. */
 export function PickerSearch(props: PickerSearchProps) {
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "value",
     "onValueChange",
     "icon",
@@ -36,19 +38,19 @@ export function PickerSearch(props: PickerSearchProps) {
     "class",
     "inputRef",
     "size",
-  ]);
+  );
   let input: HTMLInputElement | undefined;
   return (
     <div
       data-slot="picker-search"
       class={cn(
         "border-border/50 flex shrink-0 items-center gap-2 border-b px-3",
-        SEARCH_H[local.size ?? "default"],
-        local.class,
+        SEARCH_H[props.size ?? "default"],
+        props.class,
       )}
     >
       <Icon
-        icon={local.icon ?? "mdi:magnify"}
+        icon={props.icon ?? "mdi:magnify"}
         width={16}
         height={16}
         class="text-muted-foreground shrink-0"
@@ -57,26 +59,26 @@ export function PickerSearch(props: PickerSearchProps) {
       <input
         ref={(el) => {
           input = el;
-          local.inputRef?.(el);
+          props.inputRef?.(el);
         }}
         data-slot="picker-search-input"
         type="text"
-        value={local.value ?? ""}
-        onInput={(e) => local.onValueChange?.(e.currentTarget.value)}
+        value={props.value ?? ""}
+        onInput={(e) => props.onValueChange?.(e.currentTarget.value)}
         class={cn(
           "placeholder:text-muted-foreground h-full w-full min-w-0 appearance-none bg-transparent outline-none",
           FIELD_TEXT,
         )}
         {...rest}
       />
-      <Show when={local.clearLabel && local.value}>
+      <Show when={props.clearLabel && props.value}>
         <button
           type="button"
           data-slot="picker-search-clear"
-          aria-label={local.clearLabel}
+          aria-label={props.clearLabel}
           class="text-muted-foreground hover:text-foreground shrink-0 rounded-sm p-1 transition-colors"
           onClick={() => {
-            local.onValueChange?.("");
+            props.onValueChange?.("");
             focusWithoutTracking(input, { preventScroll: false });
           }}
         >

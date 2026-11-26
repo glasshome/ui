@@ -1,12 +1,12 @@
 import {
   type Component,
-  type ComponentProps,
   createContext,
   type ParentComponent,
   Show,
-  splitProps,
+  omit,
   useContext,
 } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 
@@ -17,20 +17,20 @@ const ResizableContext = createContext<{ direction: () => Direction }>();
 const ResizablePanelGroup: ParentComponent<ComponentProps<"div"> & { direction?: Direction }> = (
   props,
 ) => {
-  const [local, rest] = splitProps(props, ["class", "children", "direction"]);
-  const direction = () => local.direction ?? "horizontal";
+  const rest = omit(props, "class", "children", "direction");
+  const direction = () => props.direction ?? "horizontal";
 
   return (
-    <ResizableContext.Provider value={{ direction }}>
+    <ResizableContext value={{ direction }}>
       <div
         data-slot="resizable-panel-group"
         data-panel-group-direction={direction()}
-        class={cn("flex h-full w-full data-[panel-group-direction=vertical]:flex-col", local.class)}
+        class={cn("flex h-full w-full data-[panel-group-direction=vertical]:flex-col", props.class)}
         {...rest}
       >
-        {local.children}
+        {props.children}
       </div>
-    </ResizableContext.Provider>
+    </ResizableContext>
   );
 };
 
@@ -41,34 +41,27 @@ const ResizablePanel: ParentComponent<
     maxSize?: number;
   }
 > = (props) => {
-  const [local, rest] = splitProps(props, [
-    "class",
-    "children",
-    "defaultSize",
-    "minSize",
-    "maxSize",
-    "style",
-  ]);
+  const rest = omit(props, "class", "children", "defaultSize", "minSize", "maxSize", "style");
 
   return (
     <div
       data-slot="resizable-panel"
-      class={cn("flex-1 overflow-auto", local.class)}
+      class={cn("flex-1 overflow-auto", props.class)}
       style={{
-        ...(typeof local.style === "object" ? local.style : {}),
-        "flex-grow": local.defaultSize ? String(local.defaultSize) : undefined,
-        "min-width": local.minSize ? `${local.minSize}%` : undefined,
-        "max-width": local.maxSize ? `${local.maxSize}%` : undefined,
+        ...(typeof props.style === "object" ? props.style : {}),
+        "flex-grow": props.defaultSize ? String(props.defaultSize) : undefined,
+        "min-width": props.minSize ? `${props.minSize}%` : undefined,
+        "max-width": props.maxSize ? `${props.maxSize}%` : undefined,
       }}
       {...rest}
     >
-      {local.children}
+      {props.children}
     </div>
   );
 };
 
 const ResizableHandle: Component<ComponentProps<"div"> & { withHandle?: boolean }> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "withHandle"]);
+  const rest = omit(props, "class", "withHandle");
   const ctx = useContext(ResizableContext);
 
   const handlePointerDown = (e: PointerEvent) => {
@@ -132,12 +125,12 @@ const ResizableHandle: Component<ComponentProps<"div"> & { withHandle?: boolean 
       data-panel-group-direction={ctx?.direction()}
       class={cn(
         "bg-border focus-visible:ring-ring relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:translate-x-0 data-[panel-group-direction=vertical]:after:-translate-y-1/2 [&[data-panel-group-direction=vertical]>div]:rotate-90",
-        local.class,
+        props.class,
       )}
       onPointerDown={handlePointerDown}
       {...rest}
     >
-      <Show when={local.withHandle}>
+      <Show when={props.withHandle}>
         <div class="bg-border z-10 flex h-4 w-3 items-center justify-center rounded-xs border">
           <Icon icon="lucide:grip-vertical" width={10} height={10} class="size-2.5" />
         </div>

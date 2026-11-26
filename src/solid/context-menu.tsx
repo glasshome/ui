@@ -1,16 +1,14 @@
 import {
   type Component,
-  type ComponentProps,
   createContext,
   createSignal,
   createUniqueId,
-  type JSX,
   onCleanup,
-  splitProps,
+  omit,
   untrack,
   useContext,
-  type ValidComponent,
 } from "solid-js";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { callEventHandler, effect, merge } from "../lib/behavior/solid.js";
 import { createHold } from "../lib/hold.js";
@@ -84,9 +82,9 @@ const ContextMenuRoot: Component<ContextMenuRootProps> = (props) => {
     triggerIsArea: true,
   });
   return (
-    <PointContext.Provider value={setPoint}>
+    <PointContext value={setPoint}>
       <MenuLevelProvider value={level}>{props.children}</MenuLevelProvider>
-    </PointContext.Provider>
+    </PointContext>
   );
 };
 
@@ -117,7 +115,8 @@ function ContextMenuTrigger<T extends ValidComponent = "div">(
   const level = useMenuLevel();
   const menu = level.menu;
   const setPoint = usePoint();
-  const [local, rest] = splitProps(props as ContextMenuTriggerProps<ValidComponent>, [
+  const rest = omit(
+    props as ContextMenuTriggerProps<ValidComponent>,
     "as",
     "id",
     "ref",
@@ -128,14 +127,14 @@ function ContextMenuTrigger<T extends ValidComponent = "div">(
     "onPointerMove",
     "onPointerUp",
     "onPointerCancel",
-  ]);
+  );
   const fallback = createUniqueId();
-  const id = (): string => local.id ?? fallback;
+  const id = (): string => props.id ?? fallback;
   effect(id, (value) => {
     level.setTriggerId(value);
     return () => level.setTriggerId(undefined);
   });
-  const disabled = () => local.disabled ?? false;
+  const disabled = () => props.disabled ?? false;
   const openAt = (point: Point) => {
     setPoint(point);
     menu.show("content");
@@ -149,7 +148,7 @@ function ContextMenuTrigger<T extends ValidComponent = "div">(
   effect(el, (node) => {
     if (!node) return;
     const onMenu = (event: MouseEvent) => {
-      callEventHandler(event as Bound<MouseEvent>, local.onContextMenu);
+      callEventHandler(event as Bound<MouseEvent>, props.onContextMenu);
       // A fired hold already opened the menu and spent this press.
       if (disabled() || event.defaultPrevented) return;
       event.preventDefault();
@@ -157,21 +156,21 @@ function ContextMenuTrigger<T extends ValidComponent = "div">(
       openAt({ x: event.clientX, y: event.clientY });
     };
     const onDown = (event: PointerEvent) => {
-      callEventHandler(event as Bound<PointerEvent>, local.onPointerDown);
+      callEventHandler(event as Bound<PointerEvent>, props.onPointerDown);
       if (disabled() || event.pointerType === "mouse") return;
       pressedAt = { x: event.clientX, y: event.clientY };
       hold.down(event);
     };
     const onMove = (event: PointerEvent) => {
-      callEventHandler(event as Bound<PointerEvent>, local.onPointerMove);
+      callEventHandler(event as Bound<PointerEvent>, props.onPointerMove);
       hold.move(event);
     };
     const onUp = (event: PointerEvent) => {
-      callEventHandler(event as Bound<PointerEvent>, local.onPointerUp);
+      callEventHandler(event as Bound<PointerEvent>, props.onPointerUp);
       hold.up();
     };
     const onCancel = (event: PointerEvent) => {
-      callEventHandler(event as Bound<PointerEvent>, local.onPointerCancel);
+      callEventHandler(event as Bound<PointerEvent>, props.onPointerCancel);
       hold.cancel();
     };
     node.addEventListener("contextmenu", onMenu);
@@ -192,7 +191,7 @@ function ContextMenuTrigger<T extends ValidComponent = "div">(
   return (
     <Polymorphic
       {...merge({ "data-slot": "context-menu-trigger" }, rest, {
-        as: local.as,
+        as: props.as,
         defaultAs: "div" as ValidComponent,
         get id() {
           return id();
@@ -200,10 +199,10 @@ function ContextMenuTrigger<T extends ValidComponent = "div">(
         ref: (node: HTMLElement) => {
           setEl(node);
           menu.setTrigger(node);
-          if (typeof local.ref === "function") local.ref(node);
+          if (typeof props.ref === "function") props.ref(node);
         },
         get style() {
-          const own = local.style;
+          const own = props.style;
           return typeof own === "string"
             ? `${NO_CALLOUT}; ${own}`
             : { "-webkit-touch-callout": "none", ...own };
@@ -231,13 +230,13 @@ const ORIGIN_AT_POINTER =
   "data-[side=right]:origin-top-left data-[side=left]:origin-top-right data-[side=bottom]:origin-top-left data-[side=top]:origin-bottom-left";
 
 const ContextMenuContent: Component<MenuContentProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <MenuContentPart
       slotName="context-menu-content"
       motionClass={cn(OVERLAY_MOTION, ORIGIN_AT_POINTER, "overflow-x-hidden overflow-y-auto")}
       exitMs={MOTION_EXIT_MS.overlay}
-      class={local.class}
+      class={props.class}
       {...rest}
     />
   );
@@ -295,11 +294,11 @@ const ContextMenuSeparator: Component<ComponentProps<"hr">> = (props) => (
 );
 
 const ContextMenuShortcut: Component<ComponentProps<"span">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <span
       data-slot="context-menu-shortcut"
-      class={cn("text-muted-foreground ml-auto text-xs tracking-widest", local.class)}
+      class={cn("text-muted-foreground ml-auto text-xs tracking-widest", props.class)}
       {...rest}
     />
   );

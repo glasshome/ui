@@ -1,4 +1,5 @@
-import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { type Component, omit } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { CONTROL_ON, FIELD_CHROME, FOCUS_RING } from "../lib/input-classes.js";
 import { THUMB_CLASS } from "../lib/thumb-classes.js";
@@ -12,7 +13,8 @@ type SwitchProps = Omit<ComponentProps<"button">, "onChange" | "children"> & {
 };
 
 const Switch: Component<SwitchProps> = (props) => {
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "class",
     "checked",
     "defaultChecked",
@@ -20,11 +22,11 @@ const Switch: Component<SwitchProps> = (props) => {
     "disabled",
     "name",
     "busy",
-  ]);
+  );
   const [checked, setChecked] = createControllableSignal<boolean>({
-    value: () => local.checked,
+    value: () => props.checked,
     defaultValue: () => props.defaultChecked ?? false,
-    onChange: (next) => local.onChange?.(next),
+    onChange: (next) => props.onChange?.(next),
   });
 
   return (
@@ -35,19 +37,19 @@ const Switch: Component<SwitchProps> = (props) => {
       aria-checked={checked() ? "true" : "false"}
       data-slot="switch"
       data-checked={checked() ? "" : undefined}
-      disabled={local.disabled}
-      aria-busy={local.busy ? "true" : undefined}
-      aria-disabled={local.busy ? "true" : undefined}
+      disabled={props.disabled}
+      aria-busy={props.busy ? "true" : undefined}
+      aria-disabled={props.busy ? "true" : undefined}
       class={cn(
         // Unchecked wears the recessed input surface, the same dug-out glass as
         // the slider rail; checked matches the slider fill. A `border-input`
         // utility here would beat `:where(.glass)` and flatten the rim.
         `group/switch peer transition-glass relative inline-flex h-7 w-14 shrink-0 cursor-pointer items-center rounded-xl duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress aria-busy:opacity-50 ${FOCUS_RING}`,
         checked() ? CONTROL_ON : FIELD_CHROME,
-        local.class,
+        props.class,
       )}
       onClick={() => {
-        if (local.busy) return;
+        if (props.busy) return;
         setChecked(!checked());
       }}
     >
@@ -62,7 +64,7 @@ const Switch: Component<SwitchProps> = (props) => {
           background: checked() ? "var(--material-control-knob)" : "var(--thumb-face-off)",
         }}
       />
-      {local.name && <input type="hidden" name={local.name} value={checked() ? "on" : "off"} />}
+      {props.name && <input type="hidden" name={props.name} value={checked() ? "on" : "off"} />}
     </button>
   );
 };

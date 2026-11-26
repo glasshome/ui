@@ -1,4 +1,5 @@
-import { createEffect, type JSX, mergeProps, onCleanup, splitProps, untrack } from "solid-js";
+import { createEffect, merge, onCleanup, omit, untrack } from "solid-js";
+import { type JSX } from "@solidjs/web";
 
 export function effect<T>(compute: () => T, apply: (value: T) => (() => void) | void): void {
   createEffect(() => {

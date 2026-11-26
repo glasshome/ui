@@ -1,13 +1,5 @@
-import {
-  type Component,
-  type ComponentProps,
-  createSignal,
-  createUniqueId,
-  type JSX,
-  splitProps,
-  untrack,
-  type ValidComponent,
-} from "solid-js";
+import { type Component, createSignal, createUniqueId, omit, untrack } from "solid-js";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import type { AnchorLike } from "../lib/behavior/anchored.js";
 import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
@@ -108,32 +100,33 @@ function DropdownMenuTrigger<T extends ValidComponent = "button">(
 ): JSX.Element {
   const level = useMenuLevel();
   const menu = level.menu;
-  const [local, rest] = splitProps(props as ButtonRootProps<ValidComponent> & TriggerHandlers, [
+  const rest = omit(
+    props as ButtonRootProps<ValidComponent> & TriggerHandlers,
     "id",
     "ref",
     "disabled",
     "onPointerDown",
     "onKeyDown",
     "onClick",
-  ]);
+  );
   const fallback = createUniqueId();
-  const id = (): string => local.id ?? fallback;
+  const id = (): string => props.id ?? fallback;
   effect(id, (value) => {
     level.setTriggerId(value);
     return () => level.setTriggerId(undefined);
   });
-  const button = createMenuButton(menu, () => local.disabled ?? false);
+  const button = createMenuButton(menu, () => props.disabled ?? false);
   const [el, setEl] = createSignal<HTMLElement>();
 
   // Bound on the element, since Solid's delegated handlers never reach inside a closed shadow root.
   effect(el, (node) => {
     if (!node) return;
     const down = (event: PointerEvent) => {
-      callEventHandler(event as Bound<PointerEvent>, local.onPointerDown);
+      callEventHandler(event as Bound<PointerEvent>, props.onPointerDown);
       button.onPointerDown(event);
     };
     const key = (event: KeyboardEvent) => {
-      callEventHandler(event as Bound<KeyboardEvent>, local.onKeyDown);
+      callEventHandler(event as Bound<KeyboardEvent>, props.onKeyDown);
       button.onKeyDown(event);
     };
     node.addEventListener("pointerdown", down);
@@ -149,7 +142,7 @@ function DropdownMenuTrigger<T extends ValidComponent = "button">(
     <ButtonRoot
       {...merge({ "data-slot": "dropdown-menu-trigger" }, rest, {
         get disabled() {
-          return local.disabled;
+          return props.disabled;
         },
         get id() {
           return id();
@@ -157,7 +150,7 @@ function DropdownMenuTrigger<T extends ValidComponent = "button">(
         ref: (node: HTMLElement) => {
           setEl(node);
           menu.setTrigger(node);
-          if (typeof local.ref === "function") local.ref(node);
+          if (typeof props.ref === "function") props.ref(node);
         },
         "aria-haspopup": "true",
         get "data-claim"() {
@@ -176,7 +169,7 @@ function DropdownMenuTrigger<T extends ValidComponent = "button">(
           return menu.open() ? undefined : "";
         },
         onClick: (event: Bound<MouseEvent>) => {
-          callEventHandler(event, local.onClick);
+          callEventHandler(event, props.onClick);
           button.onClick();
         },
       })}
@@ -258,11 +251,11 @@ const DropdownMenuLabel: Component<MenuLabelProps> = (props) => (
 );
 
 const DropdownMenuShortcut: Component<ComponentProps<"span">> = (props) => {
-  const [local, others] = splitProps(props, ["class"]);
+  const others = omit(props, "class");
   return (
     <span
       data-slot="dropdown-menu-shortcut"
-      class={cn("text-muted-foreground ml-auto text-xs tracking-widest", local.class)}
+      class={cn("text-muted-foreground ml-auto text-xs tracking-widest", props.class)}
       {...others}
     />
   );

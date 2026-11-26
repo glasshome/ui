@@ -1,13 +1,13 @@
 import {
   type Accessor,
   type Component,
-  type ComponentProps,
   createContext,
   createSignal,
   Show,
-  splitProps,
+  omit,
   useContext,
 } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import { effect } from "../lib/behavior/solid.js";
 import { cn } from "../lib/utils.js";
 
@@ -33,30 +33,30 @@ function useAvatar(): AvatarContextValue {
 }
 
 const Avatar: Component<AvatarProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "fallbackDelay", "onLoadingStatusChange"]);
+  const rest = omit(props, "class", "fallbackDelay", "onLoadingStatusChange");
   const [status, setStatus] = createSignal<LoadingStatus>("idle");
   const ctx: AvatarContextValue = {
-    fallbackDelay: () => local.fallbackDelay,
+    fallbackDelay: () => props.fallbackDelay,
     status,
     report: (next) => {
       setStatus(next);
-      local.onLoadingStatusChange?.(next);
+      props.onLoadingStatusChange?.(next);
     },
   };
   return (
-    <AvatarContext.Provider value={ctx}>
+    <AvatarContext value={ctx}>
       <span
         data-slot="avatar"
-        class={cn("relative flex size-10 shrink-0 overflow-hidden rounded-full", local.class)}
+        class={cn("relative flex size-10 shrink-0 overflow-hidden rounded-full", props.class)}
         {...rest}
       />
-    </AvatarContext.Provider>
+    </AvatarContext>
   );
 };
 
 const AvatarImage: Component<ComponentProps<"img">> = (props) => {
   const ctx = useAvatar();
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const [status, setStatus] = createSignal<LoadingStatus>("idle");
 
   // A detached probe, so the photo replaces the fallback only once it has decoded.
@@ -84,14 +84,14 @@ const AvatarImage: Component<ComponentProps<"img">> = (props) => {
 
   return (
     <Show when={status() === "loaded"}>
-      <img data-slot="avatar-image" class={cn("aspect-square size-full", local.class)} {...rest} />
+      <img data-slot="avatar-image" class={cn("aspect-square size-full", props.class)} {...rest} />
     </Show>
   );
 };
 
 const AvatarFallback: Component<ComponentProps<"span">> = (props) => {
   const ctx = useAvatar();
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const [due, setDue] = createSignal(ctx.fallbackDelay() === undefined);
   effect(ctx.fallbackDelay, (delay) => {
     if (delay === undefined) return;
@@ -104,7 +104,7 @@ const AvatarFallback: Component<ComponentProps<"span">> = (props) => {
         data-slot="avatar-fallback"
         class={cn(
           "glass flex size-full items-center justify-center rounded-full font-semibold [--glass-tone:var(--primary)]",
-          local.class,
+          props.class,
         )}
         {...rest}
       />

@@ -1,4 +1,4 @@
-import { createSignal, For, onMount } from "solid-js";
+import { createSignal, For, onSettled } from "solid-js";
 import themeCss from "../../src/styles/theme.css?raw";
 import { parseThemeBlock } from "../../src/tokens";
 
@@ -24,7 +24,7 @@ function expand(value: string, depth = 0): string {
 export default function Radii() {
   const [resolved, setResolved] = createSignal<Record<string, string>>({});
   const boxes = new Map<string, HTMLElement>();
-  onMount(() => {
+  onSettled(() => {
     const measured: Record<string, string> = {};
     for (const [name, box] of boxes) {
       measured[name] = getComputedStyle(box).borderTopLeftRadius;

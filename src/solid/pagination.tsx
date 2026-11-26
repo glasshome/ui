@@ -1,27 +1,28 @@
-import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { type Component, omit } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import { cn } from "../lib/utils.js";
 import { buttonVariants } from "./button.js";
 import { Icon } from "./icon.js";
 import { useUiText } from "./locale.js";
 
 const Pagination: Component<ComponentProps<"nav">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <nav
       aria-label="pagination"
       data-slot="pagination"
-      class={cn("mx-auto flex w-full justify-center", local.class)}
+      class={cn("mx-auto flex w-full justify-center", props.class)}
       {...rest}
     />
   );
 };
 
 const PaginationContent: Component<ComponentProps<"ul">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <ul
       data-slot="pagination-content"
-      class={cn("flex flex-row items-center gap-1", local.class)}
+      class={cn("flex flex-row items-center gap-1", props.class)}
       {...rest}
     />
   );
@@ -37,19 +38,19 @@ type PaginationLinkProps = ComponentProps<"a"> & {
 };
 
 const PaginationLink: Component<PaginationLinkProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "isActive", "size"]);
-  const size = () => local.size ?? "icon";
+  const rest = omit(props, "class", "isActive", "size");
+  const size = () => props.size ?? "icon";
   return (
     <a
-      aria-current={local.isActive ? "page" : undefined}
+      aria-current={props.isActive ? "page" : undefined}
       data-slot="pagination-link"
-      data-active={local.isActive}
+      data-active={props.isActive}
       class={cn(
         buttonVariants({
-          variant: local.isActive ? "outline" : "ghost",
+          variant: props.isActive ? "outline" : "ghost",
           size: size(),
         }),
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -57,13 +58,13 @@ const PaginationLink: Component<PaginationLinkProps> = (props) => {
 };
 
 const PaginationPrevious: Component<PaginationLinkProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const text = useUiText();
   return (
     <PaginationLink
       aria-label={text("ui.pagination.previous-label")}
       size="default"
-      class={cn("gap-1 px-2.5 sm:pl-2.5", local.class)}
+      class={cn("gap-1 px-2.5 sm:pl-2.5", props.class)}
       {...rest}
     >
       <Icon icon="lucide:chevron-left" width={16} height={16} />
@@ -73,13 +74,13 @@ const PaginationPrevious: Component<PaginationLinkProps> = (props) => {
 };
 
 const PaginationNext: Component<PaginationLinkProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const text = useUiText();
   return (
     <PaginationLink
       aria-label={text("ui.pagination.next-label")}
       size="default"
-      class={cn("gap-1 px-2.5 sm:pr-2.5", local.class)}
+      class={cn("gap-1 px-2.5 sm:pr-2.5", props.class)}
       {...rest}
     >
       <span class="hidden sm:block">{text("ui.pagination.next")}</span>
@@ -89,13 +90,13 @@ const PaginationNext: Component<PaginationLinkProps> = (props) => {
 };
 
 const PaginationEllipsis: Component<ComponentProps<"span">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const text = useUiText();
   return (
     <span
       aria-hidden="true"
       data-slot="pagination-ellipsis"
-      class={cn("flex size-9 items-center justify-center", local.class)}
+      class={cn("flex size-9 items-center justify-center", props.class)}
       {...rest}
     >
       <Icon icon="lucide:ellipsis" width={16} height={16} class="size-4" />

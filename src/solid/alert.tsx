@@ -1,13 +1,5 @@
-import {
-  children,
-  type Component,
-  type ComponentProps,
-  createContext,
-  type JSX,
-  Show,
-  splitProps,
-  useContext,
-} from "solid-js";
+import { children, type Component, createContext, Show, omit, useContext } from "solid-js";
+import { type ComponentProps, type JSX } from "@solidjs/web";
 import {
   ALERT_CLASS,
   ALERT_CONTENT_CLASS,
@@ -68,29 +60,21 @@ const AlertBody: Component<{ title?: JSX.Element; toneColor: string; children?: 
 };
 
 const Alert: Component<AlertProps> = (props) => {
-  const [local, rest] = splitProps(props, [
-    "class",
-    "tone",
-    "icon",
-    "title",
-    "action",
-    "children",
-    "size",
-  ]);
-  const toneKey = () => local.tone ?? "info";
+  const rest = omit(props, "class", "tone", "icon", "title", "action", "children", "size");
+  const toneKey = () => props.tone ?? "info";
   const tone = () => ALERT_TONES[toneKey()];
-  const icon = children(() => local.icon);
-  const action = children(() => local.action);
+  const icon = children(() => props.icon);
+  const action = children(() => props.action);
   return (
     <div
       data-slot="alert"
-      role={local.tone === "destructive" ? "alert" : "status"}
-      data-size={local.size ?? "default"}
+      role={props.tone === "destructive" ? "alert" : "status"}
+      data-size={props.size ?? "default"}
       class={cn(
         ALERT_CLASS,
         "glass glass-tint shrink-0",
-        local.size === "sm" && ALERT_SM_CLASS,
-        local.class,
+        props.size === "sm" && ALERT_SM_CLASS,
+        props.class,
       )}
       style={{ "--glass-tone": tone().color, color: "var(--foreground)" }}
       {...rest}
@@ -115,11 +99,11 @@ const Alert: Component<AlertProps> = (props) => {
         </Show>
       </span>
       <div class={ALERT_CONTENT_CLASS}>
-        <AlertToneContext.Provider value={() => tone().color}>
-          <AlertBody title={local.title} toneColor={tone().color}>
-            {local.children}
+        <AlertToneContext value={() => tone().color}>
+          <AlertBody title={props.title} toneColor={tone().color}>
+            {props.children}
           </AlertBody>
-        </AlertToneContext.Provider>
+        </AlertToneContext>
       </div>
       <Show when={action()}>
         {/* self-center: the row is items-start for the icon, which would strand
@@ -131,12 +115,12 @@ const Alert: Component<AlertProps> = (props) => {
 };
 
 const AlertTitle: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const toneColor = useContext(AlertToneContext);
   return (
     <div
       data-slot="alert-title"
-      class={cn(ALERT_TITLE_CLASS, local.class)}
+      class={cn(ALERT_TITLE_CLASS, props.class)}
       style={toneColor ? { color: glassToneText(toneColor()) } : undefined}
       {...rest}
     />
@@ -144,9 +128,9 @@ const AlertTitle: Component<ComponentProps<"div">> = (props) => {
 };
 
 const AlertDescription: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
-    <div data-slot="alert-description" class={cn(ALERT_DESCRIPTION_CLASS, local.class)} {...rest} />
+    <div data-slot="alert-description" class={cn(ALERT_DESCRIPTION_CLASS, props.class)} {...rest} />
   );
 };
 

@@ -1,11 +1,5 @@
-import {
-  children,
-  type ComponentProps,
-  type JSX,
-  Show,
-  splitProps,
-  type ValidComponent,
-} from "solid-js";
+import { children, Show, omit } from "solid-js";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { MENU_ITEM } from "../lib/menu-classes.js";
 import { ICON_PILL, ICON_PILL_TINT } from "../lib/pill-classes.js";
@@ -34,7 +28,8 @@ type PickerRowProps = Omit<ComponentProps<"button">, "title"> & {
 };
 
 export function PickerRow(props: PickerRowProps) {
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "as",
     "icon",
     "title",
@@ -45,41 +40,41 @@ export function PickerRow(props: PickerRowProps) {
     "multi",
     "dimmed",
     "class",
-  ]);
-  const subtitle = children(() => local.subtitle);
-  const meta = children(() => local.meta);
+  );
+  const subtitle = children(() => props.subtitle);
+  const meta = children(() => props.meta);
   return (
     <Polymorphic
       defaultAs="div"
-      as={local.as}
+      as={props.as}
       class={cn(
         MENU_ITEM,
         "w-full cursor-pointer gap-3 py-0 text-left",
-        local.selected && "text-foreground",
-        local.class,
+        props.selected && "text-foreground",
+        props.class,
       )}
       style={{ "min-height": `${PICKER_ROW_HEIGHT}px` }}
-      data-highlighted={local.highlighted ? "" : undefined}
+      data-highlighted={props.highlighted ? "" : undefined}
       {...rest}
     >
-      <SelectionHighlight active={local.highlighted} />
-      <Show when={local.icon}>
+      <SelectionHighlight active={props.highlighted} />
+      <Show when={props.icon}>
         {(icon) => (
           <div
             class={cn(
               "size-8 rounded-lg",
-              local.selected
+              props.selected
                 ? `${ICON_PILL_TINT} text-foreground [--glass-tone:var(--primary)]`
                 : ICON_PILL,
-              local.dimmed && "opacity-50",
+              props.dimmed && "opacity-50",
             )}
           >
             <Icon icon={icon()} width={18} height={18} />
           </div>
         )}
       </Show>
-      <div class={cn("min-w-0 flex-1", local.dimmed && "opacity-60")}>
-        <div class="truncate font-medium">{local.title}</div>
+      <div class={cn("min-w-0 flex-1", props.dimmed && "opacity-60")}>
+        <div class="truncate font-medium">{props.title}</div>
         <Show when={subtitle()}>
           <div class="text-muted-foreground truncate text-xs">{subtitle()}</div>
         </Show>
@@ -88,17 +83,17 @@ export function PickerRow(props: PickerRowProps) {
         <span
           class={cn(
             "text-muted-foreground max-w-24 shrink-0 truncate text-xs",
-            local.dimmed && "italic",
+            props.dimmed && "italic",
           )}
         >
           {meta()}
         </span>
       </Show>
       <Show
-        when={local.multi}
+        when={props.multi}
         fallback={
           <div class="flex size-4 shrink-0 items-center justify-center">
-            <Show when={local.selected}>
+            <Show when={props.selected}>
               <Icon icon="lucide:check" width={16} height={16} class="text-primary" />
             </Show>
           </div>
@@ -106,7 +101,7 @@ export function PickerRow(props: PickerRowProps) {
       >
         <div aria-hidden="true" class="pointer-events-none shrink-0">
           <Checkbox
-            checked={local.selected}
+            checked={props.selected}
             disabled
             size="sm"
             class="cursor-pointer opacity-100"

@@ -1,5 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal, type JSX } from "solid-js";
+import { createSignal } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it } from "vitest";
 import { commands, userEvent } from "vitest/browser";
 import { findAll, runSteps, scenarioScope } from "../../dev/harness/steps";

@@ -1,5 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal, type JSX, Show } from "solid-js";
+import { createSignal, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
 import { findTarget, runSteps } from "../../dev/harness/steps";
@@ -409,10 +410,10 @@ describe("focus-scope contract", () => {
       });
       return (
         <div ref={setBox} tabindex="-1">
-          <button type="button" on:keydown={swallow}>
+          <button type="button" onKeyDown={swallow}>
             One
           </button>
-          <button type="button" on:keydown={swallow}>
+          <button type="button" onKeyDown={swallow}>
             Two
           </button>
         </div>

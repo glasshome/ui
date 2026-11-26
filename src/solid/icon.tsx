@@ -1,15 +1,8 @@
 import type { IconifyIcon } from "@iconify/types";
 import { iconToSVG } from "@iconify/utils";
-import {
-  batch,
-  createMemo,
-  createSignal,
-  type JSX,
-  mergeProps,
-  type Signal,
-  splitProps,
-} from "solid-js";
-import { isServer } from "solid-js/web";
+import { batch, createMemo, createSignal, merge, type Signal, omit } from "solid-js";
+import { type JSX } from "@solidjs/web";
+import { isServer } from "@solidjs/web";
 import { iconNodes, trusted } from "./icon-nodes.js";
 
 export type IconData = IconifyIcon;
@@ -110,12 +103,12 @@ const EMPTY = { attributes: { viewBox: "0 0 16 16", width: "1em", height: "1em" 
 
 /** One inline `<svg>` per icon: no shadow root, no observer, rendered once and kept. */
 export function Icon(props: IconProps) {
-  const [local, rest] = splitProps(props, ["icon", "width", "height"]);
+  const rest = omit(props, "icon", "width", "height");
   const built = createMemo(() => {
-    const data = lookup(local.icon);
+    const data = lookup(props.icon);
     const size = {
-      width: local.width == null ? null : String(local.width),
-      height: local.height == null ? null : String(local.height),
+      width: props.width == null ? null : String(props.width),
+      height: props.height == null ? null : String(props.height),
     };
     if (!data) return { ...EMPTY, attributes: { ...EMPTY.attributes, ...sizeOrDefault(size) } };
     return iconToSVG(data, size);
@@ -123,12 +116,12 @@ export function Icon(props: IconProps) {
   const body = createMemo(() => built().body);
   const named = () =>
     rest["aria-label"] != null || rest["aria-labelledby"] != null || rest.role != null;
-  const shell = mergeProps(
+  const shell = merge(
     {
       xmlns: "http://www.w3.org/2000/svg",
       "data-slot": "icon",
       get "data-icon"() {
-        return local.icon;
+        return props.icon;
       },
       get "aria-hidden"() {
         return named() ? undefined : ("true" as const);

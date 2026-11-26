@@ -1,4 +1,5 @@
-import { createSignal, For, type JSX, Show } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import {
   Alert,
   AlertDialog,

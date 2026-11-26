@@ -1,4 +1,5 @@
-import { type Component, type ComponentProps, createUniqueId, splitProps } from "solid-js";
+import { type Component, createUniqueId, omit } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import { merge } from "../lib/behavior/solid.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
@@ -15,7 +16,8 @@ type ProgressProps = Omit<ComponentProps<"div">, "children"> & {
 
 const Progress: Component<ProgressProps> = (props) => {
   const fallbackId = `progress-${createUniqueId()}`;
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "class",
     "value",
     "minValue",
@@ -23,24 +25,24 @@ const Progress: Component<ProgressProps> = (props) => {
     "indeterminate",
     "getValueLabel",
     "tone",
-  ]);
-  const min = () => local.minValue ?? 0;
-  const max = () => local.maxValue ?? 100;
-  const value = () => Math.min(Math.max(local.value ?? 0, min()), max());
+  );
+  const min = () => props.minValue ?? 0;
+  const max = () => props.maxValue ?? 100;
+  const value = () => Math.min(Math.max(props.value ?? 0, min()), max());
   const share = () => (value() - min()) / (max() - min());
   const format = useUiFormat();
   const valueText = () => {
-    if (local.indeterminate) return undefined;
-    if (local.getValueLabel) return local.getValueLabel({ value: value(), min: min(), max: max() });
+    if (props.indeterminate) return undefined;
+    if (props.getValueLabel) return props.getValueLabel({ value: value(), min: min(), max: max() });
     return format.number(share(), { style: "percent" });
   };
   const markers = {
     get "data-progress"() {
-      if (local.indeterminate) return undefined;
+      if (props.indeterminate) return undefined;
       return share() === 1 ? "complete" : "loading";
     },
     get "data-indeterminate"() {
-      return local.indeterminate ? "" : undefined;
+      return props.indeterminate ? "" : undefined;
     },
   };
 
@@ -51,7 +53,7 @@ const Progress: Component<ProgressProps> = (props) => {
           id: fallbackId,
           role: "progressbar" as const,
           get "aria-valuenow"() {
-            return local.indeterminate ? undefined : value();
+            return props.indeterminate ? undefined : value();
           },
           get "aria-valuemin"() {
             return min();
@@ -71,7 +73,7 @@ const Progress: Component<ProgressProps> = (props) => {
             return cn(
               FIELD_CHROME,
               "relative h-2 w-full overflow-hidden rounded-full",
-              local.class,
+              props.class,
             );
           },
         },
@@ -83,8 +85,8 @@ const Progress: Component<ProgressProps> = (props) => {
           data-slot="progress-indicator"
           class="glass glass-tint transition-glass h-full w-full flex-1"
           style={{
-            "--glass-tone": local.tone ?? "var(--primary)",
-            transform: `translateX(-${100 - (local.value || 0)}%)`,
+            "--glass-tone": props.tone ?? "var(--primary)",
+            transform: `translateX(-${100 - (props.value || 0)}%)`,
           }}
         />
       </div>

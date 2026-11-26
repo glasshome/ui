@@ -2,19 +2,19 @@ import { cva, type VariantProps } from "cva";
 import {
   children,
   type Component,
-  type ComponentProps,
   createMemo,
   For,
   type ParentComponent,
   Show,
-  splitProps,
+  omit,
 } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import { cn } from "../lib/utils.js";
 import { Label } from "./label.js";
 import { Separator } from "./separator.js";
 
 const FieldSet: Component<ComponentProps<"fieldset">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <fieldset
       data-slot="field-set"
@@ -26,7 +26,7 @@ const FieldSet: Component<ComponentProps<"fieldset">> = (props) => {
         // [&>legend]: the rendered legend is not a flex item, so the gap
         // above cannot reach it; the container still owns that distance.
         "flex min-w-0 flex-col gap-4 [&>legend]:mb-4",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -36,8 +36,8 @@ const FieldSet: Component<ComponentProps<"fieldset">> = (props) => {
 const FieldLegend: Component<ComponentProps<"legend"> & { variant?: "legend" | "label" }> = (
   props,
 ) => {
-  const [local, rest] = splitProps(props, ["class", "variant"] as const);
-  const variant = () => local.variant ?? "legend";
+  const rest = omit(props, "class", "variant");
+  const variant = () => props.variant ?? "legend";
   return (
     <legend
       data-slot="field-legend"
@@ -46,7 +46,7 @@ const FieldLegend: Component<ComponentProps<"legend"> & { variant?: "legend" | "
         "leading-tight",
         "data-[variant=legend]:text-base data-[variant=legend]:font-semibold",
         "data-[variant=label]:text-sm data-[variant=label]:font-medium",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -54,11 +54,11 @@ const FieldLegend: Component<ComponentProps<"legend"> & { variant?: "legend" | "
 };
 
 const FieldGroup: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="field-group"
-      class={cn("group/field-group @container/field-group flex w-full flex-col gap-6", local.class)}
+      class={cn("group/field-group @container/field-group flex w-full flex-col gap-6", props.class)}
       {...rest}
     />
   );
@@ -88,33 +88,33 @@ const fieldVariants = cva({
 });
 
 const Field: Component<ComponentProps<"div"> & VariantProps<typeof fieldVariants>> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "orientation"] as const);
-  const orientation = () => local.orientation ?? "vertical";
+  const rest = omit(props, "class", "orientation");
+  const orientation = () => props.orientation ?? "vertical";
   return (
     // biome-ignore lint/a11y/useSemanticElements: fieldset would carry default browser styling and break the flex layout; role=group conveys the same semantics.
     <div
       role="group"
       data-slot="field"
       data-orientation={orientation()}
-      class={cn(fieldVariants({ orientation: orientation() }), local.class)}
+      class={cn(fieldVariants({ orientation: orientation() }), props.class)}
       {...rest}
     />
   );
 };
 
 const FieldContent: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="field-content"
-      class={cn("group/field-content flex flex-1 flex-col gap-1.5 leading-snug", local.class)}
+      class={cn("group/field-content flex flex-1 flex-col gap-1.5 leading-snug", props.class)}
       {...rest}
     />
   );
 };
 
 const FieldLabel: Component<ComponentProps<typeof Label>> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <Label
       data-slot="field-label"
@@ -124,7 +124,7 @@ const FieldLabel: Component<ComponentProps<typeof Label>> = (props) => {
         // Card-shaped labels only: a plain checkbox label wraps a checked control
         // too, and would take the whole tint with it.
         "has-[>[data-slot=field]]:has-data-[checked]:border-primary has-[>[data-slot=field]]:has-data-[checked]:bg-primary/5 dark:has-[>[data-slot=field]]:has-data-[checked]:bg-primary/10",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -132,13 +132,13 @@ const FieldLabel: Component<ComponentProps<typeof Label>> = (props) => {
 };
 
 const FieldTitle: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="field-title"
       class={cn(
         "flex w-fit items-center gap-2 text-sm leading-snug font-medium group-data-[disabled=true]/field:opacity-50",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -146,7 +146,7 @@ const FieldTitle: Component<ComponentProps<"div">> = (props) => {
 };
 
 const FieldDescription: Component<ComponentProps<"p">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <p
       data-slot="field-description"
@@ -155,7 +155,7 @@ const FieldDescription: Component<ComponentProps<"p">> = (props) => {
         // Dims with its title, else a disabled row reads as description-first.
         "group-data-[disabled=true]/field:opacity-50",
         "[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -164,20 +164,20 @@ const FieldDescription: Component<ComponentProps<"p">> = (props) => {
 
 /** Rows that belong to the control above them: stacked flush, grouped by proximity alone. */
 const FieldSubGroup: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
-    <div data-slot="field-sub-group" class={cn("flex flex-col gap-1", local.class)} {...rest} />
+    <div data-slot="field-sub-group" class={cn("flex flex-col gap-1", props.class)} {...rest} />
   );
 };
 
 const FieldSeparator: ParentComponent<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["children", "class"]);
-  const content = children(() => local.children);
+  const rest = omit(props, "children", "class");
+  const content = children(() => props.children);
   return (
     <div
       data-slot="field-separator"
       data-content={!!content()}
-      class={cn("relative h-5 text-sm", local.class)}
+      class={cn("relative h-5 text-sm", props.class)}
       {...rest}
     >
       <Separator class="absolute inset-0 top-1/2" />
@@ -198,8 +198,8 @@ const FieldError: Component<
     errors?: Array<{ message?: string } | undefined>;
   }
 > = (props) => {
-  const [local, rest] = splitProps(props, ["class", "children", "errors"] as const);
-  const body = children(() => local.children);
+  const rest = omit(props, "class", "children", "errors");
+  const body = children(() => props.children);
 
   const content = createMemo(() => {
     const given = body();
@@ -207,12 +207,12 @@ const FieldError: Component<
       return given;
     }
 
-    if (!local.errors?.length) {
+    if (!props.errors?.length) {
       return null;
     }
 
     const uniqueErrors = [
-      ...new Map(local.errors.map((error) => [error?.message, error])).values(),
+      ...new Map(props.errors.map((error) => [error?.message, error])).values(),
     ];
 
     if (uniqueErrors.length === 1) {
@@ -233,7 +233,7 @@ const FieldError: Component<
       <div
         role="alert"
         data-slot="field-error"
-        class={cn("text-destructive text-sm font-normal", local.class)}
+        class={cn("text-destructive text-sm font-normal", props.class)}
         {...rest}
       >
         {content()}

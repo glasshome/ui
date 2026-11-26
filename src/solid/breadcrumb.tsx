@@ -1,10 +1,5 @@
-import {
-  type Component,
-  type ComponentProps,
-  type ParentComponent,
-  splitProps,
-  type ValidComponent,
-} from "solid-js";
+import { type Component, type ParentComponent, omit } from "solid-js";
+import { type ComponentProps, type ValidComponent } from "@solidjs/web";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -15,13 +10,13 @@ const Breadcrumb: Component<ComponentProps<"nav">> = (props) => {
 };
 
 const BreadcrumbList: Component<ComponentProps<"ol">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <ol
       data-slot="breadcrumb-list"
       class={cn(
         "text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -29,65 +24,65 @@ const BreadcrumbList: Component<ComponentProps<"ol">> = (props) => {
 };
 
 const BreadcrumbItem: Component<ComponentProps<"li">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <li
       data-slot="breadcrumb-item"
-      class={cn("inline-flex items-center gap-1.5", local.class)}
+      class={cn("inline-flex items-center gap-1.5", props.class)}
       {...rest}
     />
   );
 };
 
 const BreadcrumbLink: Component<ComponentProps<"a"> & { as?: ValidComponent }> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "as"]);
+  const rest = omit(props, "class", "as");
   return (
     <Polymorphic
       defaultAs="a"
-      as={local.as}
+      as={props.as}
       data-slot="breadcrumb-link"
-      class={cn("hover:text-foreground transition-colors", local.class)}
+      class={cn("hover:text-foreground transition-colors", props.class)}
       {...rest}
     />
   );
 };
 
 const BreadcrumbPage: Component<ComponentProps<"span">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <span
       data-slot="breadcrumb-page"
       aria-current="page"
-      class={cn("text-foreground font-normal", local.class)}
+      class={cn("text-foreground font-normal", props.class)}
       {...rest}
     />
   );
 };
 
 const BreadcrumbSeparator: ParentComponent<ComponentProps<"li">> = (props) => {
-  const [local, rest] = splitProps(props, ["children", "class"]);
+  const rest = omit(props, "children", "class");
   return (
     <li
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      class={cn("[&>svg]:size-3.5", local.class)}
+      class={cn("[&>svg]:size-3.5", props.class)}
       {...rest}
     >
-      {local.children ?? <Icon icon="lucide:chevron-right" width={14} height={14} />}
+      {props.children ?? <Icon icon="lucide:chevron-right" width={14} height={14} />}
     </li>
   );
 };
 
 const BreadcrumbEllipsis: Component<ComponentProps<"span">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const text = useUiText();
   return (
     <span
       data-slot="breadcrumb-ellipsis"
       role="presentation"
       aria-hidden="true"
-      class={cn("flex size-9 items-center justify-center", local.class)}
+      class={cn("flex size-9 items-center justify-center", props.class)}
       {...rest}
     >
       <Icon icon="lucide:ellipsis" width={16} height={16} class="size-4" />

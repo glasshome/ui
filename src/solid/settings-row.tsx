@@ -1,4 +1,5 @@
-import { createUniqueId, type JSX, Show } from "solid-js";
+import { createUniqueId, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { Button } from "./button.js";
 import { Field, FieldContent, FieldDescription, FieldLabel } from "./field.js";
 import { Icon } from "./icon.js";

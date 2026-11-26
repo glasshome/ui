@@ -1,18 +1,17 @@
 import {
   children,
   type Component,
-  type ComponentProps,
   createEffect,
   createMemo,
   createSignal,
-  Index,
-  type JSX,
+  For,
   on,
   onCleanup,
-  onMount,
+  onSettled,
   Show,
-  splitProps,
+  omit,
 } from "solid-js";
+import { type ComponentProps, type JSX } from "@solidjs/web";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { CARD_SURFACE } from "../lib/card-classes.js";
 import { DOCK_SLOT_RADIUS, DOCK_SLOT_SHAPE } from "../lib/dock-slot-classes.js";
@@ -93,17 +92,8 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
   const text = useUiText();
   // Kobalte's button root narrows `type`; Solid's ComponentProps<"button"> also
   // admits "menu", so it is split off rather than spread.
-  const [local, rest] = splitProps(props, [
-    "icon",
-    "label",
-    "class",
-    "isActive",
-    "badge",
-    "type",
-    "lit",
-    "arrived",
-  ]);
-  const isElement = () => typeof local.icon !== "function";
+  const rest = omit(props, "icon", "label", "class", "isActive", "badge", "type", "lit", "arrived");
+  const isElement = () => typeof props.icon !== "function";
 
   return (
     <Tooltip openDelay={150} placement="top">
@@ -114,55 +104,56 @@ const DockIconButton: Component<DockIconButtonProps> = (props) => {
           "group relative isolate transition-transform duration-(--duration-micro)",
           DOCK_SLOT_SHAPE,
           PRESS_DIP,
-          local.class,
+          props.class,
         )}
-        aria-label={local.label}
-        aria-current={local.isActive ? "page" : undefined}
-        data-lit={local.lit ? "" : undefined}
-        data-arrived={local.arrived ? "" : undefined}
+        aria-label={props.label}
+        aria-current={props.isActive ? "page" : undefined}
+        data-lit={props.lit ? "" : undefined}
+        data-arrived={props.arrived ? "" : undefined}
         {...rest}
       >
-        <SelectionHighlight active={local.lit ?? false} />
-        <Show when={local.arrived}>
+        <SelectionHighlight active={props.lit ?? false} />
+        <Show when={props.arrived}>
           <span data-slot="dock-item-arrival" aria-hidden="true" class={DOCK_ARRIVE_MOTION} />
         </Show>
         <div
           data-slot="dock-item-icon"
           class={cn(
             "flex items-center justify-center transition-colors duration-(--duration-state)",
-            local.lit ? "text-primary" : "text-foreground group-hover:text-primary/80",
+            props.lit ? "text-primary" : "text-foreground group-hover:text-primary/80",
           )}
         >
           {isElement() ? (
-            (local.icon as JSX.Element)
+            (props.icon as JSX.Element)
           ) : (
             <Polymorphic
-              defaultAs={local.icon as Component<{ class?: string }>}
+              defaultAs={props.icon as Component<{ class?: string }>}
               class="h-5 w-5 sm:h-6 sm:w-6"
             />
           )}
         </div>
-        <Show when={typeof local.badge === "number" && local.badge > 0}>
+        <Show when={typeof props.badge === "number" && props.badge > 0}>
           {/* Inside the item box: an overhanging badge inflates the bar's
            * scrollWidth and trips the overflow-to-scroll check below. */}
           <Badge
             role="status"
             tone="var(--primary)"
             class="absolute top-0 right-0 h-4 min-w-4 justify-center px-1 pt-0.5 pb-0 font-mono text-[9px] leading-none font-medium tabular-nums"
-            aria-label={text("ui.dock.pending", { count: local.badge ?? 0 })}
+            aria-label={text("ui.dock.pending", { count: props.badge ?? 0 })}
           >
-            {local.badge != null && local.badge > 9 ? "9+" : local.badge}
+            {props.badge != null && props.badge > 9 ? "9+" : props.badge}
           </Badge>
         </Show>
       </TooltipTrigger>
-      <TooltipContent class="hidden sm:block">{local.label}</TooltipContent>
+      <TooltipContent class="hidden sm:block">{props.label}</TooltipContent>
     </Tooltip>
   );
 };
 
 const Dock: Component<DockProps> = (props) => {
   const text = useUiText();
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "items",
     "class",
     "dockMode",
@@ -180,20 +171,20 @@ const Dock: Component<DockProps> = (props) => {
     "companion",
     "companionOpen",
     "style",
-  ]);
-  const placement = () => local.placement ?? "bottom";
+  );
+  const placement = () => props.placement ?? "bottom";
   const vertical = () => placement() !== "bottom";
-  const gripShown = () => Boolean(local.editing && local.onMovePlacement);
+  const gripShown = () => Boolean(props.editing && props.onMovePlacement);
   // The drain plays where the fill grew, so the point outlives the hold.
   const [holdPoint, setHoldPoint] = createSignal({ x: 0, y: 0, r: 0 });
   let surfaceRef: HTMLDivElement | undefined;
   let surfaceSize: ResizeObserverSize | undefined;
   let dotsRef: HTMLDivElement | undefined;
   let companionRef: HTMLDivElement | undefined;
-  const lead = children(() => local.lead);
-  const companion = children(() => local.companion);
+  const lead = children(() => props.lead);
+  const companion = children(() => props.companion);
   createEffect(() => {
-    const h = local.hold;
+    const h = props.hold;
     if (!h) return;
     const w = surfaceSize?.inlineSize ?? 0;
     const ht = surfaceSize?.blockSize ?? 0;
@@ -204,32 +195,32 @@ const Dock: Component<DockProps> = (props) => {
       r: Math.hypot(Math.max(h.x, w - h.x), Math.max(h.y, ht - h.y)),
     });
   });
-  const dockMode = () => local.dockMode ?? "floating";
+  const dockMode = () => props.dockMode ?? "floating";
   let containerRef!: HTMLDivElement;
   const [pages, setPages] = createSignal(1);
   const needsScroll = () => pages() > 1;
   const [page, setPage] = createSignal(0);
   // The strip's length along the dock's axis: width at the bottom, height on a side edge.
   const [viewportSpan, setViewportSpan] = createSignal(0);
-  const slots = () => local.items.length + (local.editing && local.onAdd ? 1 : 0);
+  const slots = () => props.items.length + (props.editing && props.onAdd ? 1 : 0);
 
   // A memo: the items list is rebuilt on every hover change, and only a new active item may scroll the strip.
   const activeIndex = createMemo(() => {
-    const i = local.items.findIndex((it) => it.isActive);
+    const i = props.items.findIndex((it) => it.isActive);
     return i < 0 ? null : i;
   });
   // A drag borrows the pill: it slides to where the drop would land and back when the drag leaves.
   const pillIndex = createMemo(() => {
-    const i = local.items.findIndex((it) => it.isDropTarget);
+    const i = props.items.findIndex((it) => it.isDropTarget);
     return i < 0 ? activeIndex() : i;
   });
-  const arrivedSet = createMemo(() => new Set(local.arrivedIds ?? []));
+  const arrivedSet = createMemo(() => new Set(props.arrivedIds ?? []));
   const reorder = createDockReorder({
     bar: () => containerRef,
     vertical,
-    ids: () => local.items.map((it) => it.id),
-    enabled: () => Boolean(local.editing && local.onReorder),
-    onReorder: (ids) => local.onReorder?.(ids),
+    ids: () => props.items.map((it) => it.id),
+    enabled: () => Boolean(props.editing && props.onReorder),
+    onReorder: (ids) => props.onReorder?.(ids),
   });
   const cellStyle = (id: string): JSX.CSSProperties => {
     const slots = reorder.preview();
@@ -240,7 +231,7 @@ const Dock: Component<DockProps> = (props) => {
     return style;
   };
   const onItemKeyDown = (e: KeyboardEvent, id: string) => {
-    if (!local.editing || !e.altKey) return;
+    if (!props.editing || !e.altKey) return;
     const step = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 }[e.key];
     if (step !== -1 && step !== 1) return;
     e.preventDefault();
@@ -276,7 +267,7 @@ const Dock: Component<DockProps> = (props) => {
 
   // A drag cannot click a page dot, so resting on the dot row turns to the page under it.
   createEffect(() => {
-    const point = local.dragPoint ?? reorder.point();
+    const point = props.dragPoint ?? reorder.point();
     if (!point || pages() < 2 || !surfaceRef || !containerRef) return;
     const strip = containerRef.getBoundingClientRect();
     const surface = surfaceRef.getBoundingClientRect();
@@ -310,9 +301,9 @@ const Dock: Component<DockProps> = (props) => {
   // A newcomer may land on a page nobody is looking at; turn there once.
   createEffect(
     on(
-      () => local.arrivedIds?.join("\n") ?? "",
+      () => props.arrivedIds?.join("\n") ?? "",
       () => {
-        const first = local.items.findIndex((it) => arrivedSet().has(it.id));
+        const first = props.items.findIndex((it) => arrivedSet().has(it.id));
         if (first >= 0) requestAnimationFrame(() => turnToItem(first));
       },
       { defer: true },
@@ -352,7 +343,7 @@ const Dock: Component<DockProps> = (props) => {
     });
   };
 
-  onMount(() => {
+  onSettled(() => {
     let frame = 0;
     let lead: ResizeObserverSize | undefined;
     let companion: ResizeObserverSize | undefined;
@@ -403,13 +394,13 @@ const Dock: Component<DockProps> = (props) => {
         // is its length along the edge, so a bottom dock in a row takes the row's width.
         vertical() ? "h-full max-h-full" : "grow flex-col-reverse",
         dockMode() === "floating" ? "p-1 sm:p-2" : "",
-        local.class,
+        props.class,
       )}
       style={{
         "--dock-slots": slots(),
         "--dock-lead": `${along(leadSize())}px`,
-        "--dock-companion": `${vertical() && local.companionOpen ? along(companionSize()) : 0}px`,
-        ...local.style,
+        "--dock-companion": `${vertical() && props.companionOpen ? along(companionSize()) : 0}px`,
+        ...props.style,
       }}
       {...rest}
     >
@@ -438,8 +429,8 @@ const Dock: Component<DockProps> = (props) => {
         >
           <span
             data-slot="dock-flood"
-            data-hold={local.hold && !local.hold.fired ? "" : undefined}
-            data-fired={local.hold?.fired ? "" : undefined}
+            data-hold={props.hold && !props.hold.fired ? "" : undefined}
+            data-fired={props.hold?.fired ? "" : undefined}
             class={cn(
               "bg-primary/45 absolute -translate-x-1/2 -translate-y-1/2 rounded-full",
               HOLD_MOTION,
@@ -452,7 +443,7 @@ const Dock: Component<DockProps> = (props) => {
             }}
           />
         </div>
-        <Show when={local.glow}>
+        <Show when={props.glow}>
           <div
             data-slot="dock-glow"
             aria-hidden="true"
@@ -504,21 +495,21 @@ const Dock: Component<DockProps> = (props) => {
             radius={DOCK_SLOT_RADIUS}
             class={cn("flex items-center gap-0.5 sm:gap-1", vertical() && "flex-col")}
           >
-            <Index each={local.items}>
+            <For keyed={false} each={props.items}>
               {(item, i) => (
                 <div
                   data-slot="dock-cell"
-                  data-editing={local.editing ? "" : undefined}
+                  data-editing={props.editing ? "" : undefined}
                   data-dragging={reorder.dragId() === item().id ? "" : undefined}
                   class={cn(
                     "relative",
                     DOCK_EDIT_MOTION,
-                    local.editing && "touch-none select-none",
+                    props.editing && "touch-none select-none",
                   )}
                   style={cellStyle(item().id)}
                   onPointerDown={(e) => reorder.begin(item().id, e)}
                   onMouseDown={reorder.onMouseDown}
-                  on:click={{ handleEvent: reorder.onClickCapture, capture: true }}
+                  onClick={{ handleEvent: reorder.onClickCapture, capture: true }}
                 >
                   <DockIconButton
                     class={needsScroll() ? "snap-start" : undefined}
@@ -533,12 +524,12 @@ const Dock: Component<DockProps> = (props) => {
                     data-drop-target={item().isDropTarget ? "" : undefined}
                     data-dock-id={item().id}
                   />
-                  <Show when={local.editing && local.onRemove && item().removable !== false}>
+                  <Show when={props.editing && props.onRemove && item().removable !== false}>
                     <button
                       type="button"
                       data-slot="dock-item-remove"
                       aria-label={text("ui.dock.remove", { name: item().label })}
-                      onClick={() => local.onRemove?.(item().id)}
+                      onClick={() => props.onRemove?.(item().id)}
                       class={cn(
                         "bg-card border-foreground/25 text-destructive absolute top-0 left-0 z-10 flex size-5 items-center justify-center rounded-full border shadow-sm",
                         "before:absolute before:-top-2 before:right-0 before:bottom-0 before:-left-2",
@@ -549,14 +540,14 @@ const Dock: Component<DockProps> = (props) => {
                   </Show>
                 </div>
               )}
-            </Index>
-            <Show when={local.editing && local.onAdd}>
+            </For>
+            <Show when={props.editing && props.onAdd}>
               <button
                 type="button"
                 data-slot="dock-add"
                 aria-label={text("ui.dock.add")}
-                onClick={() => local.onAdd?.()}
-                style={{ order: local.items.length }}
+                onClick={() => props.onAdd?.()}
+                style={{ order: props.items.length }}
                 class={cn(
                   "text-muted-foreground border-foreground/30 hover:text-foreground hover:border-foreground/60 shrink-0 border-2 border-dashed transition-colors duration-(--duration-state)",
                   DOCK_SLOT_SHAPE,
@@ -570,7 +561,7 @@ const Dock: Component<DockProps> = (props) => {
           </SelectionScope>
         </div>
         <Show when={gripShown()}>
-          <DockMoveGrip placement={placement()} onMove={(next) => local.onMovePlacement?.(next)} />
+          <DockMoveGrip placement={placement()} onMove={(next) => props.onMovePlacement?.(next)} />
         </Show>
         <div
           ref={dotsRef}
@@ -585,7 +576,7 @@ const Dock: Component<DockProps> = (props) => {
             }[placement()],
           )}
         >
-          <Index each={Array.from({ length: slots() })}>
+          <For keyed={false} each={Array.from({ length: slots() })}>
             {(_, i) => (
               <button
                 ref={watchDot}
@@ -602,15 +593,15 @@ const Dock: Component<DockProps> = (props) => {
                 )}
               />
             )}
-          </Index>
+          </For>
         </div>
       </div>
       <Show when={companion()}>
         <div
           data-slot="dock-companion-reveal"
-          data-open={local.companionOpen ? "" : undefined}
-          aria-hidden={local.companionOpen ? undefined : "true"}
-          inert={!local.companionOpen}
+          data-open={props.companionOpen ? "" : undefined}
+          aria-hidden={props.companionOpen ? undefined : "true"}
+          inert={!props.companionOpen}
           class={cn(
             "grid shrink-0 grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-(--duration-micro) ease-(--ease-contract) data-[open]:grid-rows-[1fr] data-[open]:opacity-100 data-[open]:duration-(--duration-expand) data-[open]:ease-(--ease-expand)",
             // Takes the dock's width instead of widening it.

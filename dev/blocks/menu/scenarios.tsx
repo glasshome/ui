@@ -1,4 +1,5 @@
-import { type Accessor, createSignal, type JSX, onCleanup, Show } from "solid-js";
+import { type Accessor, createSignal, onCleanup, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { createMenu, createMenuButton, type Menu, rowClaim } from "../../../src/lib/behavior/menu";
 import { defineScenarios } from "../../harness/types";
 
@@ -35,7 +36,7 @@ function Row(props: {
       ref={(el) => props.submenu?.setTrigger(el)}
       data-key={props.id}
       role={props.role ?? "menuitem"}
-      tabIndex={props.menu.tabIndex(props.id)}
+      tabindex={props.menu.tabIndex(props.id)}
       aria-disabled={props.disabled ? "true" : undefined}
       aria-checked={props.checked ? (props.checked() ? "true" : "false") : undefined}
       aria-haspopup={props.submenu ? "menu" : undefined}
@@ -61,7 +62,7 @@ function PanelBody(props: { menu: Menu; label: string; children: JSX.Element }) 
       ref={(el) => props.menu.setContent(el)}
       role="menu"
       aria-label={props.label}
-      tabIndex={-1}
+      tabindex={-1}
       style={PANEL}
     >
       {props.children}
@@ -101,9 +102,9 @@ export function ActionsMenu() {
         aria-haspopup="menu"
         aria-expanded={open() ? "true" : "false"}
         data-claim={button.claim()}
-        on:pointerdown={(event) => button.onPointerDown(event)}
-        on:click={() => button.onClick()}
-        on:keydown={(event) => button.onKeyDown(event)}
+        onPointerDown={(event) => button.onPointerDown(event)}
+        onClick={() => button.onClick()}
+        onKeyDown={(event) => button.onKeyDown(event)}
       >
         Actions
       </button>

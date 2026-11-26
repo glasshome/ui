@@ -1,4 +1,5 @@
-import { type ComponentProps, createSignal, type JSX, type ValidComponent } from "solid-js";
+import { createSignal } from "solid-js";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import { selfKeys } from "./claims.js";
 import { Polymorphic } from "./polymorphic.js";
 import { callEventHandler, effect, merge, omit } from "./solid.js";

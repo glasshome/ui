@@ -1,4 +1,4 @@
-import type { Accessor } from "solid-js";
+import { type Accessor } from "solid-js";
 import { effect } from "./behavior/solid.js";
 
 /* A row of segments that scrolls sideways (tabs, a scrolling toggle group):

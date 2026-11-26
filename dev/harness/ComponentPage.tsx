@@ -1,4 +1,5 @@
-import { createResource, createSignal, For, type JSX, onCleanup, onMount, Show } from "solid-js";
+import { createResource, createSignal, For, onCleanup, onSettled, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import {
   Button,
   FactRow,
@@ -53,7 +54,7 @@ function Cell(props: { href: string; label: string; width: StageWidth; fullHeigh
   let iframe: HTMLIFrameElement | undefined;
   let watching: ResizeObserver | undefined;
 
-  onMount(() => {
+  onSettled(() => {
     const observer = new ResizeObserver((entries) => {
       const first = entries[0];
       if (first) setHostWidth(first.contentRect.width);
@@ -143,7 +144,7 @@ function ReportPanel(props: { slug: string; id: string }) {
     () => ({ slug: props.slug, id: props.id }),
     fetchReport,
   );
-  onMount(() => {
+  onSettled(() => {
     const onFocus = () => void refetch();
     window.addEventListener("focus", onFocus);
     onCleanup(() => window.removeEventListener("focus", onFocus));

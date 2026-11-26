@@ -95,9 +95,9 @@ describe("picker deselect", () => {
     const mount = (initial: string) => {
       const [value, setValue] = createSignal(initial);
       render(() => (
-        <EntityDataContext.Provider value={adapter}>
+        <EntityDataContext value={adapter}>
           <AreaPicker value={value()} onChange={setValue} />
-        </EntityDataContext.Provider>
+        </EntityDataContext>
       ));
       return value;
     };
@@ -123,9 +123,9 @@ describe("picker deselect", () => {
     it("wears no clear button when the caller refused clearing", () => {
       const [value, setValue] = createSignal("kitchen");
       render(() => (
-        <EntityDataContext.Provider value={adapter}>
+        <EntityDataContext value={adapter}>
           <AreaPicker value={value()} onChange={setValue} allowClear={false} />
-        </EntityDataContext.Provider>
+        </EntityDataContext>
       ));
       expect(clearButton()).toBeNull();
     });
@@ -135,14 +135,14 @@ describe("picker deselect", () => {
     const mount = (initial: string[]) => {
       const [ids, setIds] = createSignal(initial);
       render(() => (
-        <EntityDataContext.Provider value={adapter}>
+        <EntityDataContext value={adapter}>
           <EntitySelector
             domain="light"
             multiple={false}
             entityIds={ids()}
             onEntityIdsChange={setIds}
           />
-        </EntityDataContext.Provider>
+        </EntityDataContext>
       ));
       return ids;
     };
@@ -163,9 +163,9 @@ describe("picker deselect", () => {
     it("wears a clear button in multi mode too", async () => {
       const [ids, setIds] = createSignal([ENTITY.id]);
       render(() => (
-        <EntityDataContext.Provider value={adapter}>
+        <EntityDataContext value={adapter}>
           <EntitySelector domain="light" entityIds={ids()} onEntityIdsChange={setIds} />
-        </EntityDataContext.Provider>
+        </EntityDataContext>
       ));
       await press(clearButton() as HTMLButtonElement);
       expect(ids()).toEqual([]);
@@ -204,9 +204,9 @@ describe("picker deselect", () => {
     const mount = (initial: string) => {
       const [value, setValue] = createSignal(initial);
       render(() => (
-        <MediaStoreContext.Provider value={store}>
+        <MediaStoreContext value={store}>
           <ImagePicker value={value()} onChange={setValue} />
-        </MediaStoreContext.Provider>
+        </MediaStoreContext>
       ));
       return value;
     };

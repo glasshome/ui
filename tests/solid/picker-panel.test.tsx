@@ -2,7 +2,7 @@
  * panel anchored over the trigger, one trigger recipe, one search row, and the
  * package's own controls inside the rows. */
 import { cleanup, render, waitFor } from "@solidjs/testing-library";
-import type { JSX } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
@@ -59,7 +59,7 @@ const mediaStore: MediaStore = {
 };
 
 const withData = (ui: () => JSX.Element) =>
-  render(() => <EntityDataContext.Provider value={adapter}>{ui()}</EntityDataContext.Provider>);
+  render(() => <EntityDataContext value={adapter}>{ui()}</EntityDataContext>);
 
 const panel = () => document.querySelector<HTMLElement>('[data-slot="popover-content"]');
 
@@ -160,9 +160,9 @@ describe("picker triggers", () => {
     [
       "ImagePicker",
       () => (
-        <MediaStoreContext.Provider value={mediaStore}>
+        <MediaStoreContext value={mediaStore}>
           <ImagePicker value="" onChange={() => {}} />
-        </MediaStoreContext.Provider>
+        </MediaStoreContext>
       ),
     ],
   ];
@@ -232,9 +232,9 @@ describe("AreaPicker indicator", () => {
   it("rests on a selected row in multi mode", async () => {
     const [values, setValues] = createSignal<string[]>(["bedroom"]);
     const { container } = render(() => (
-      <EntityDataContext.Provider value={adapter}>
+      <EntityDataContext value={adapter}>
         <AreaPicker values={values()} onValuesChange={setValues} />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
     await press(firstButton(container));
     const highlighted = document.querySelector<HTMLElement>(
@@ -246,9 +246,9 @@ describe("AreaPicker indicator", () => {
   it("rests on the selected row in single mode", async () => {
     const [value, setValue] = createSignal("kitchen");
     const { container } = render(() => (
-      <EntityDataContext.Provider value={adapter}>
+      <EntityDataContext value={adapter}>
         <AreaPicker value={value()} onChange={setValue} />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
     await press(firstButton(container));
     const highlighted = document.querySelector<HTMLElement>(

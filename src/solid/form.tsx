@@ -1,11 +1,5 @@
-import {
-  type ComponentProps,
-  createContext,
-  createMemo,
-  type ParentComponent,
-  splitProps,
-  useContext,
-} from "solid-js";
+import { createContext, createMemo, type ParentComponent, omit, useContext } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 
 interface FormFieldContextValue {
   name: string;
@@ -28,21 +22,21 @@ const Form: ParentComponent<
     onClearError?: (name: string) => void;
   }
 > = (props) => {
-  const [local, rest] = splitProps(props, ["children", "errors", "onSetError", "onClearError"]);
-  const errors = () => local.errors ?? {};
+  const rest = omit(props, "children", "errors", "onSetError", "onClearError");
+  const errors = () => props.errors ?? {};
 
   return (
-    <FormContext.Provider
+    <FormContext
       value={{
         errors,
-        setError: (name, error) => local.onSetError?.(name, error),
-        clearError: (name) => local.onClearError?.(name),
+        setError: (name, error) => props.onSetError?.(name, error),
+        clearError: (name) => props.onClearError?.(name),
       }}
     >
       <form data-slot="form" {...rest}>
-        {local.children}
+        {props.children}
       </form>
-    </FormContext.Provider>
+    </FormContext>
   );
 };
 
@@ -57,11 +51,7 @@ function useFormField() {
 }
 
 const FormField: ParentComponent<{ name: string }> = (props) => {
-  return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
-      {props.children}
-    </FormFieldContext.Provider>
-  );
+  return <FormFieldContext value={{ name: props.name }}>{props.children}</FormFieldContext>;
 };
 
 export { Form, FormField, useFormField };

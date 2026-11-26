@@ -1,4 +1,5 @@
-import { createSignal, For, type JSX, onCleanup, onMount } from "solid-js";
+import { createSignal, For, onCleanup, onSettled } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { createCollection } from "../../../src/lib/behavior/collection";
 import { defineScenarios } from "../../harness/types";
 
@@ -62,11 +63,11 @@ export function Toolbar(props: {
         gap: "4px",
         ...props.style,
       }}
-      on:keydown={collection.onKeyDown}
+      onKeyDown={collection.onKeyDown}
     >
       <For each={props.rooms}>
         {(room) => {
-          onMount(() => collection.refresh());
+          onSettled(() => collection.refresh());
           onCleanup(() => collection.refresh());
           return (
             <button
@@ -76,8 +77,8 @@ export function Toolbar(props: {
               aria-disabled={room.disabled ? "true" : undefined}
               tabindex={virtual() ? -1 : collection.tabIndex(room.key)}
               data-highlighted={collection.highlighted() === room.key ? "" : undefined}
-              on:click={() => !room.disabled && collection.highlight(room.key, "pointer")}
-              on:focus={() => collection.highlight(room.key, "pointer")}
+              onClick={() => !room.disabled && collection.highlight(room.key, "pointer")}
+              onFocus={() => collection.highlight(room.key, "pointer")}
             >
               {room.label}
             </button>
@@ -92,7 +93,7 @@ const Edited = (props: { edit: (rooms: Room[]) => Room[]; label: string }) => {
   const [rooms, setRooms] = createSignal(ROOMS.filter((r) => !r.disabled));
   return (
     <>
-      <button type="button" on:click={() => setRooms(props.edit(rooms()))}>
+      <button type="button" onClick={() => setRooms(props.edit(rooms()))}>
         {props.label}
       </button>
       <Toolbar rooms={rooms()} />

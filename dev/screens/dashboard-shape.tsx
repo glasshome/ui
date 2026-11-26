@@ -1,5 +1,6 @@
-import { createMemo, createSignal, For, type JSX, Show } from "solid-js";
-import { createStore } from "solid-js/store";
+import { createMemo, createSignal, For, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
+import { createStore } from "solid-js";
 import {
   AreaChart,
   type AreaViewLike,

@@ -1,4 +1,5 @@
-import { createSignal, type JSX, Show } from "solid-js";
+import { createSignal, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { createDismiss, type DismissReason } from "../../../src/lib/behavior/dismiss";
 import { createFocusScope } from "../../../src/lib/behavior/focus-scope";
 import { type LayerKind, registerLayer } from "../../../src/lib/behavior/layer-stack";
@@ -48,7 +49,7 @@ const Layer = (props: {
   });
   return (
     <>
-      <button ref={setTrigger} type="button" on:click={() => setOpen(true)}>
+      <button ref={setTrigger} type="button" onClick={() => setOpen(true)}>
         {`Open ${props.name}`}
       </button>
       <span role="status" aria-label={`${props.name} dismissals`}>
@@ -61,7 +62,7 @@ const Layer = (props: {
         <div ref={setElement} role="dialog" aria-label={props.name} tabindex="-1" style={PLACE}>
           <input type="text" aria-label={`${props.name} field`} />
           <Show when={props.removable && row()}>
-            <button type="button" on:click={() => setRow(false)}>
+            <button type="button" onClick={() => setRow(false)}>
               Remove row
             </button>
           </Show>

@@ -1,20 +1,18 @@
 import {
   type Component,
-  type ComponentProps,
   createContext,
   createEffect,
   createMemo,
   createRenderEffect,
   createSignal,
-  type JSX,
   onCleanup,
   type ParentComponent,
   Show,
-  splitProps,
+  omit,
   useContext,
-  type ValidComponent,
 } from "solid-js";
-import { Portal } from "solid-js/web";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
 import { Polymorphic } from "../../lib/behavior/polymorphic.js";
 import { usePortalMount } from "../portal-mount.js";
 import { createControllableSignal } from "../../lib/behavior/controllable.js";
@@ -108,7 +106,7 @@ const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
   });
 
   return (
-    <BottomSheetContext.Provider
+    <BottomSheetContext
       value={{
         state,
         setState,
@@ -120,7 +118,7 @@ const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
       }}
     >
       {props.children}
-    </BottomSheetContext.Provider>
+    </BottomSheetContext>
   );
 };
 
@@ -129,22 +127,22 @@ type SheetButtonProps = ComponentProps<"button"> &
   Partial<Pick<ComponentProps<"a">, "href" | "target" | "rel">> & { as?: ValidComponent };
 
 const BottomSheetTrigger: ParentComponent<SheetButtonProps> = (props) => {
-  const [local, rest] = splitProps(props, ["children", "onClick", "as"]);
+  const rest = omit(props, "children", "onClick", "as");
   const ctx = useBottomSheetContext();
   return (
     <Polymorphic
       defaultAs="button"
-      as={local.as}
+      as={props.as}
       data-slot="bottom-sheet-trigger"
       aria-haspopup="dialog"
       aria-expanded={ctx.open() ? "true" : "false"}
       onClick={(event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => {
-        callEventHandler(event, local.onClick);
+        callEventHandler(event, props.onClick);
         ctx.setOpen(true);
       }}
       {...rest}
     >
-      {local.children}
+      {props.children}
     </Polymorphic>
   );
 };
@@ -166,7 +164,7 @@ const BottomSheetPortal: Component<BottomSheetPortalProps> = (props) => {
 };
 
 const BottomSheetOverlay: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const ctx = useBottomSheetContext();
 
   const dataState = () => {
@@ -185,7 +183,7 @@ const BottomSheetOverlay: Component<ComponentProps<"div">> = (props) => {
       class={cn(
         `fixed inset-0 touch-none bg-black/80 transition-opacity duration-300 ease-out ${SCRIM_CONTAIN}`,
         "data-[state=closing]:opacity-0 data-[state=open]:opacity-100",
-        local.class,
+        props.class,
       )}
       style={{ "z-index": Z.sheet }}
       {...rest}
@@ -200,13 +198,7 @@ interface BottomSheetContentProps extends ComponentProps<"div"> {
 }
 
 const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => {
-  const [local, rest] = splitProps(props, [
-    "class",
-    "children",
-    "initialFocus",
-    "ariaLabel",
-    "style",
-  ]);
+  const rest = omit(props, "class", "children", "initialFocus", "ariaLabel", "style");
   const ctx = useBottomSheetContext();
   const labels = createModalLabels();
   let el: HTMLDivElement | undefined;
@@ -277,7 +269,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
     container: ctx.contentRef,
     active: () => ctx.state() !== "closed" && ctx.state() !== "closing",
     trapped: () => true,
-    initialFocus: local.initialFocus ?? "container",
+    initialFocus: props.initialFocus ?? "container",
   });
 
   createDismiss({
@@ -308,16 +300,16 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
         ref={setRef}
         role="dialog"
         aria-modal="true"
-        aria-label={labels.labelledBy() ? undefined : local.ariaLabel}
+        aria-label={labels.labelledBy() ? undefined : props.ariaLabel}
         aria-labelledby={labels.labelledBy()}
         aria-describedby={labels.describedBy()}
-        tabIndex={-1}
+        tabindex={-1}
         data-slot="bottom-sheet-content"
         data-sheet-content=""
         data-state={ctx.state()}
         data-reduced-motion={prefersReducedMotion() ? "" : undefined}
         style={{
-          ...(typeof local.style === "object" ? local.style : {}),
+          ...(typeof props.style === "object" ? props.style : {}),
           "z-index": Z.sheet,
           "will-change": "transform",
           "touch-action": "none",
@@ -326,17 +318,17 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
         class={cn(
           "bs-content",
           `fixed inset-x-0 bottom-0 flex ${MODAL_MAX_H} flex-col ${SCROLL_CONTAIN} overflow-hidden rounded-t-xl ${OVERLAY_SURFACE_OPAQUE} outline-none [--glass-edge:transparent]`,
-          local.class,
+          props.class,
         )}
       >
-        {local.children}
+        {props.children}
       </div>
     </ModalLabelsProvider>
   );
 };
 
 const BottomSheetHandle: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div
       data-slot="bottom-sheet-handle"
@@ -344,7 +336,7 @@ const BottomSheetHandle: Component<ComponentProps<"div">> = (props) => {
       aria-hidden="true"
       class={cn(
         "flex h-8 w-full shrink-0 touch-none items-center justify-center select-none",
-        local.class,
+        props.class,
       )}
       {...rest}
     >
@@ -358,17 +350,17 @@ const BottomSheetHandle: Component<ComponentProps<"div">> = (props) => {
 const { Body: BottomSheetBody } = createModalParts("bottom-sheet");
 
 const BottomSheetTitle: Component<ComponentProps<"h2">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const labels = useModalLabels();
   const id = () => rest.id ?? labels?.titleId;
   createRenderEffect(() => labels?.registerTitle(id()));
   return (
-    <h2 data-slot="bottom-sheet-title" id={id()} class={cn(MODAL_TITLE, local.class)} {...rest} />
+    <h2 data-slot="bottom-sheet-title" id={id()} class={cn(MODAL_TITLE, props.class)} {...rest} />
   );
 };
 
 const BottomSheetDescription: Component<ComponentProps<"p">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   const labels = useModalLabels();
   const id = () => rest.id ?? labels?.descriptionId;
   createRenderEffect(() => labels?.registerDescription(id()));
@@ -376,27 +368,27 @@ const BottomSheetDescription: Component<ComponentProps<"p">> = (props) => {
     <p
       data-slot="bottom-sheet-description"
       id={id()}
-      class={cn(MODAL_DESCRIPTION, local.class)}
+      class={cn(MODAL_DESCRIPTION, props.class)}
       {...rest}
     />
   );
 };
 
 const BottomSheetClose: ParentComponent<SheetButtonProps> = (props) => {
-  const [local, rest] = splitProps(props, ["children", "onClick", "as"]);
+  const rest = omit(props, "children", "onClick", "as");
   const ctx = useBottomSheetContext();
   return (
     <Polymorphic
       defaultAs="button"
-      as={local.as}
+      as={props.as}
       data-slot="bottom-sheet-close"
       onClick={(event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => {
-        callEventHandler(event, local.onClick);
+        callEventHandler(event, props.onClick);
         ctx.setOpen(false);
       }}
       {...rest}
     >
-      {local.children}
+      {props.children}
     </Polymorphic>
   );
 };

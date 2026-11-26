@@ -1,5 +1,6 @@
-import { createEffect, createSignal, type JSX, onCleanup, Show } from "solid-js";
-import { render } from "solid-js/web";
+import { createEffect, createSignal, onCleanup, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
+import { render } from "@solidjs/web";
 import {
   Dialog,
   DialogContent,
@@ -48,9 +49,7 @@ function ClosedShadowRoot(props: { children: JSX.Element }) {
     root.appendChild(mount);
     const stopTheme = mirrorTheme(mount);
     const dispose = render(
-      () => (
-        <PortalMountContext.Provider value={mount}>{props.children}</PortalMountContext.Provider>
-      ),
+      () => <PortalMountContext value={mount}>{props.children}</PortalMountContext>,
       mount,
     );
     onCleanup(() => {

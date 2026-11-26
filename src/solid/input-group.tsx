@@ -1,12 +1,13 @@
 import { cva, type VariantProps } from "cva";
-import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { type Component, omit } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { CONTROL_H, FIELD_TEXT, INPUT_SURFACE } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 import { Button } from "./button.js";
 
 const InputGroup: Component<ComponentProps<"div">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     // biome-ignore lint/a11y/useSemanticElements: fieldset would carry default browser styling and break the input layout; role=group conveys the same semantics.
     <div
@@ -21,7 +22,7 @@ const InputGroup: Component<ComponentProps<"div">> = (props) => {
         // it; on glass the edge moves through the knob, never through border-*.
         "has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:[--glass-edge:var(--ring)]",
         "has-[[data-slot][aria-invalid=true]]:ring-destructive/20 dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 has-[[data-slot][aria-invalid=true]]:[--glass-edge:var(--destructive)]",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -49,8 +50,8 @@ const inputGroupAddonVariants = cva({
 const InputGroupAddon: Component<
   ComponentProps<"div"> & VariantProps<typeof inputGroupAddonVariants>
 > = (props) => {
-  const [local, rest] = splitProps(props, ["class", "align"] as const);
-  const align = () => local.align ?? "inline-start";
+  const rest = omit(props, "class", "align");
+  const align = () => props.align ?? "inline-start";
   return (
     // Addon click forwards focus to the sibling input (cursor-text affordance); buttons inside keep their own behavior.
     // biome-ignore lint/a11y/useKeyWithClickEvents: see above
@@ -59,7 +60,7 @@ const InputGroupAddon: Component<
       role="group"
       data-slot="input-group-addon"
       data-align={align()}
-      class={cn(inputGroupAddonVariants({ align: align() }), local.class)}
+      class={cn(inputGroupAddonVariants({ align: align() }), props.class)}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest("button")) {
           return;
@@ -97,28 +98,28 @@ const inputGroupButtonVariants = cva({
 const InputGroupButton: Component<
   Omit<ComponentProps<typeof Button>, "size"> & VariantProps<typeof inputGroupButtonVariants>
 > = (props) => {
-  const [local, rest] = splitProps(props, ["class", "type", "variant", "size"] as const);
-  const size = () => local.size ?? "sm";
+  const rest = omit(props, "class", "type", "variant", "size");
+  const size = () => props.size ?? "sm";
   return (
     <Button
-      type={local.type ?? "button"}
+      type={props.type ?? "button"}
       data-slot="input-group-button"
       data-size={size()}
-      variant={local.variant ?? "ghost"}
-      class={cn(inputGroupButtonVariants({ size: size() }), local.class)}
+      variant={props.variant ?? "ghost"}
+      class={cn(inputGroupButtonVariants({ size: size() }), props.class)}
       {...rest}
     />
   );
 };
 
 const InputGroupText: Component<ComponentProps<"span">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <span
       data-slot="input-group-text"
       class={cn(
         "text-muted-foreground flex items-center gap-2 text-sm [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -131,13 +132,13 @@ const InputGroupText: Component<ComponentProps<"span">> = (props) => {
 // gradient inside the group (a `bg-transparent` can't clear the `background`
 // shorthand's image layers) and stacks a second concave surface.
 const InputGroupInput: Component<ComponentProps<"input">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <input
       data-slot="input-group-control"
       class={cn(
         `${CONTROL_H.default} w-full flex-1 rounded-none border-0 bg-transparent px-3 py-1 ${FIELD_TEXT} placeholder:text-muted-foreground shadow-none outline-none disabled:cursor-not-allowed disabled:opacity-50`,
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -145,13 +146,13 @@ const InputGroupInput: Component<ComponentProps<"input">> = (props) => {
 };
 
 const InputGroupTextarea: Component<ComponentProps<"textarea">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <textarea
       data-slot="input-group-control"
       class={cn(
         `field-sizing-content min-h-16 w-full flex-1 resize-none rounded-none border-0 bg-transparent px-3 py-2 ${FIELD_TEXT} placeholder:text-muted-foreground shadow-none outline-none disabled:cursor-not-allowed disabled:opacity-50`,
-        local.class,
+        props.class,
       )}
       {...rest}
     />

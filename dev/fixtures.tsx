@@ -1,4 +1,5 @@
-import { createMemo, type JSX } from "solid-js";
+import { createMemo } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import {
   type AreaViewLike,
   type EntityDataAdapter,
@@ -229,7 +230,5 @@ const demoAdapter: EntityDataAdapter = {
 };
 
 export function DemoHost(props: { children: JSX.Element }) {
-  return (
-    <EntityDataContext.Provider value={demoAdapter}>{props.children}</EntityDataContext.Provider>
-  );
+  return <EntityDataContext value={demoAdapter}>{props.children}</EntityDataContext>;
 }

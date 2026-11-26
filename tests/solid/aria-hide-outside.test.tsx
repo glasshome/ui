@@ -1,5 +1,6 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createEffect, createSignal, type JSX } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it } from "vitest";
 import { AlertDialog, AlertDialogContent, AlertDialogTitle } from "../../src/solid/alert-dialog.js";
 import { Button } from "../../src/solid/button.js";
@@ -224,12 +225,9 @@ const seat = (ui: () => JSX.Element, shadow: boolean) => {
   page.appendChild(outside);
   if (!shadow) return render(ui, { container: page });
   const mount = closedRoot();
-  return render(
-    () => <PortalMountContext.Provider value={mount}>{ui()}</PortalMountContext.Provider>,
-    {
-      container: mount,
-    },
-  );
+  return render(() => <PortalMountContext value={mount}>{ui()}</PortalMountContext>, {
+    container: mount,
+  });
 };
 
 for (const [where, shadow] of [

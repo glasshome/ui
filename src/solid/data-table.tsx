@@ -5,13 +5,13 @@ import {
   createMemo,
   createSignal,
   For,
-  type JSX,
   on,
   onCleanup,
-  onMount,
+  onSettled,
   Show,
-  splitProps,
+  omit,
 } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { SECTION_PADDING } from "../lib/section-tokens.js";
 import { cn } from "../lib/utils.js";
 import { Button } from "./button.js";
@@ -325,7 +325,7 @@ export function TableLoadMore(props: {
 }) {
   const text = useUiText();
   let sentinel: HTMLDivElement | undefined;
-  onMount(() => {
+  onSettled(() => {
     const target = sentinel;
     if (!target || typeof IntersectionObserver === "undefined") return;
     let frame = 0;
@@ -421,17 +421,17 @@ export function TableSkeleton(props: { count?: number; class?: string }) {
 
 /** Bulk-action bar above the rows when a selection is active. */
 export function TableBulkBar(props: { class?: string; children: JSX.Element }) {
-  const [local, rest] = splitProps(props, ["class", "children"]);
+  const rest = omit(props, "class", "children");
   return (
     <div
       data-slot="table-bulk-bar"
       class={cn(
         "border-border/50 bg-foreground/[0.03] flex flex-wrap items-center gap-2 border-b px-4 py-2",
-        local.class,
+        props.class,
       )}
       {...rest}
     >
-      {local.children}
+      {props.children}
     </div>
   );
 }

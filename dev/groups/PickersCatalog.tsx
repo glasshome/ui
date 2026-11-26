@@ -178,7 +178,7 @@ export function PickersCatalog() {
         </Specimen>
 
         <Specimen name="ImagePicker" try="Choose image" span={2}>
-          <MediaStoreContext.Provider value={demoMediaStore}>
+          <MediaStoreContext value={demoMediaStore}>
             <Axis of="presets">
               <div class="w-full max-w-sm">
                 <ImagePicker value={imageId()} onChange={setImageId} />
@@ -200,7 +200,7 @@ export function PickersCatalog() {
                 />
               </div>
             </Axis>
-          </MediaStoreContext.Provider>
+          </MediaStoreContext>
         </Specimen>
 
         <Specimen name="MediaTile" span={2}>

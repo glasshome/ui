@@ -1,14 +1,8 @@
 import { useUiText } from "./locale.js";
 import { usePortalMount } from "./portal-mount.js";
 import type { VariantProps } from "cva";
-import {
-  children,
-  type Component,
-  type JSX,
-  type ParentComponent,
-  Show,
-  splitProps,
-} from "solid-js";
+import { children, type Component, type ParentComponent, Show, omit } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { ModalFrame, useDialogContext } from "../lib/behavior/modal-root.js";
 import { buttonVariants } from "../lib/button-variants.js";
 import { Z_CLASS } from "../lib/layers.js";
@@ -46,17 +40,17 @@ const SheetDismiss = createModalDismiss("sheet-close", useDialogContext);
 
 /** Already the outline button; see DialogClose on why `as={Button}` is wrong. */
 const SheetClose: ParentComponent<SheetCloseProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class", "variant", "size", "children"]);
+  const rest = omit(props, "class", "variant", "size", "children");
   const text = useUiText();
   return (
     <SheetDismiss
       class={cn(
-        buttonVariants({ variant: local.variant ?? "outline", size: local.size }),
-        local.class,
+        buttonVariants({ variant: props.variant ?? "outline", size: props.size }),
+        props.class,
       )}
       {...rest}
     >
-      {local.children ?? text("ui.dialog.close")}
+      {props.children ?? text("ui.dialog.close")}
     </SheetDismiss>
   );
 };
@@ -101,7 +95,8 @@ const SheetAbove: Component<{ above?: JSX.Element }> = (props) => {
 };
 
 const SheetContent: ParentComponent<SheetContentProps> = (props) => {
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "class",
     "children",
     "side",
@@ -110,7 +105,7 @@ const SheetContent: ParentComponent<SheetContentProps> = (props) => {
     "style",
     "ref",
     "onOpenAutoFocus",
-  ]);
+  );
   const ctx = useDialogContext();
   return (
     <>
@@ -120,21 +115,21 @@ const SheetContent: ParentComponent<SheetContentProps> = (props) => {
         mount={usePortalMount()}
         exitMs={SHEET_EXIT_MS}
         scrimClass={SHEET_SCRIM}
-        panelClass={cn(SHEET_PANEL, SHEET_SIDE[local.side ?? "right"], local.class)}
-        panelStyle={typeof local.style === "object" ? local.style : undefined}
-        ariaLabel={local.ariaLabel}
+        panelClass={cn(SHEET_PANEL, SHEET_SIDE[props.side ?? "right"], props.class)}
+        panelStyle={typeof props.style === "object" ? props.style : undefined}
+        ariaLabel={props.ariaLabel}
         ref={(el: HTMLElement) => {
-          if (typeof local.ref === "function") local.ref(el as HTMLDivElement);
+          if (typeof props.ref === "function") props.ref(el as HTMLDivElement);
         }}
         onOpenAutoFocus={(event: Event) => {
           // The panel takes focus itself, not its first control.
-          if (local.onOpenAutoFocus) local.onOpenAutoFocus(event);
+          if (props.onOpenAutoFocus) props.onOpenAutoFocus(event);
           else event.preventDefault();
         }}
         {...rest}
       >
-        <SheetAbove above={local.above} />
-        {local.children}
+        <SheetAbove above={props.above} />
+        {props.children}
       </ModalFrame>
     </>
   );

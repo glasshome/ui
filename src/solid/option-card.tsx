@@ -2,12 +2,12 @@ import {
   children,
   createContext,
   createSignal,
-  type JSX,
   onCleanup,
-  onMount,
+  onSettled,
   Show,
   useContext,
 } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { CARD_SURFACE } from "../lib/card-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -53,7 +53,7 @@ export function OptionChoice(props: {
 }) {
   const card = useContext(OptionChoiceContext);
   if (!card) throw new Error("OptionChoice renders inside an OptionCard");
-  onMount(() => onCleanup(card.register(props.value)));
+  onSettled(() => onCleanup(card.register(props.value)));
   const selected = () => card.subValue() === props.value;
   return (
     <PickerRow
@@ -132,7 +132,7 @@ export function OptionCard(props: {
     },
   };
   const kids = children(() => (
-    <OptionChoiceContext.Provider value={choice}>{props.children}</OptionChoiceContext.Provider>
+    <OptionChoiceContext value={choice}>{props.children}</OptionChoiceContext>
   ));
   return (
     <div

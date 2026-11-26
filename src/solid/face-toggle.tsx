@@ -1,4 +1,5 @@
-import { createContext, createMemo, createSignal, type JSX, Show, useContext } from "solid-js";
+import { createContext, createMemo, createSignal, Show, useContext } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { createToggleItem, createToggleSet, type ToggleSet } from "../lib/toggle-set.js";
 import { cn } from "../lib/utils.js";
 import { Avatar, AvatarFallback } from "./avatar.js";
@@ -35,7 +36,7 @@ export function FaceToggleGroup(props: {
     disabledFocusable: true,
   });
   return (
-    <FaceContext.Provider value={{ locked, set }}>
+    <FaceContext value={{ locked, set }}>
       <div
         ref={setRoot}
         role="group"
@@ -44,11 +45,11 @@ export function FaceToggleGroup(props: {
         data-slot="face-toggle-group"
         aria-label={props["aria-label"]}
         class={cn("flex flex-wrap gap-x-3 gap-y-2", props.class)}
-        on:keydown={(event) => set.collection.onKeyDown(event)}
+        onKeyDown={(event) => set.collection.onKeyDown(event)}
       >
         {props.children}
       </div>
-    </FaceContext.Provider>
+    </FaceContext>
   );
 }
 

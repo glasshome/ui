@@ -1,18 +1,17 @@
 import {
   type Accessor,
   type Component,
-  type ComponentProps,
   createContext,
   createMemo,
   createSignal,
   createUniqueId,
   onCleanup,
-  onMount,
+  onSettled,
   Show,
-  splitProps,
+  omit,
   useContext,
-  type ValidComponent,
 } from "solid-js";
+import { type ComponentProps, type ValidComponent } from "@solidjs/web";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
@@ -76,28 +75,21 @@ function writeSize(node: HTMLElement) {
 
 export const CollapsibleRoot: Component<CollapsibleProps> = (props) => {
   const fallbackId = `collapsible-${createUniqueId()}`;
-  const [local, others] = splitProps(props, [
-    "as",
-    "open",
-    "defaultOpen",
-    "onOpenChange",
-    "disabled",
-    "forceMount",
-  ]);
+  const others = omit(props, "as", "open", "defaultOpen", "onOpenChange", "disabled", "forceMount");
   const [state, setOpen] = createControllableSignal<boolean>({
-    value: () => local.open,
-    defaultValue: () => local.defaultOpen ?? false,
-    onChange: (next) => local.onOpenChange?.(next),
+    value: () => props.open,
+    defaultValue: () => props.defaultOpen ?? false,
+    onChange: (next) => props.onOpenChange?.(next),
   });
   // An accordion item's open state derives from the whole selection; a sibling's change must not wake it.
   const open = createMemo(state);
-  const disabled = () => local.disabled ?? false;
+  const disabled = () => props.disabled ?? false;
   const [content, setContent] = createSignal<string>();
 
   const ctx: CollapsibleContextValue = {
     open,
     disabled,
-    forceMount: () => local.forceMount ?? false,
+    forceMount: () => props.forceMount ?? false,
     markers: {
       get "data-expanded"() {
         return open() ? "" : undefined;
@@ -119,22 +111,22 @@ export const CollapsibleRoot: Component<CollapsibleProps> = (props) => {
   };
 
   return (
-    <CollapsibleContext.Provider value={ctx}>
+    <CollapsibleContext value={ctx}>
       <Polymorphic
         {...merge({ id: fallbackId }, ctx.markers, others, {
-          as: local.as,
+          as: props.as,
           defaultAs: "div" as ValidComponent,
         })}
       />
-    </CollapsibleContext.Provider>
+    </CollapsibleContext>
   );
 };
 
 export const CollapsibleTriggerRoot: Component<CollapsibleTriggerProps> = (props) => {
   const ctx = useCollapsible();
-  const [local, others] = splitProps(props, ["as", "ref", "onClick"]);
+  const others = omit(props, "as", "ref", "onClick");
   const [el, setEl] = createSignal<HTMLElement>();
-  const native = () => (local.as ?? "button") === "button";
+  const native = () => (props.as ?? "button") === "button";
 
   // Bound on the element: a delegated handler never hears a press inside a closed shadow root.
   effect(el, (node) => {
@@ -142,7 +134,7 @@ export const CollapsibleTriggerRoot: Component<CollapsibleTriggerProps> = (props
     const click = (event: MouseEvent) => {
       callEventHandler(
         event as MouseEvent & { currentTarget: HTMLButtonElement; target: Element },
-        local.onClick,
+        props.onClick,
       );
       if (!ctx.disabled()) ctx.toggle();
     };
@@ -184,11 +176,11 @@ export const CollapsibleTriggerRoot: Component<CollapsibleTriggerProps> = (props
         },
         others,
         {
-          as: local.as,
+          as: props.as,
           defaultAs: "button" as ValidComponent,
           ref: (node: HTMLElement) => {
             setEl(node);
-            if (typeof local.ref === "function") local.ref(node as HTMLButtonElement);
+            if (typeof props.ref === "function") props.ref(node as HTMLButtonElement);
           },
         },
       )}
@@ -198,8 +190,8 @@ export const CollapsibleTriggerRoot: Component<CollapsibleTriggerProps> = (props
 
 export const CollapsibleContentRoot: Component<CollapsibleContentProps> = (props) => {
   const ctx = useCollapsible();
-  const [local, others] = splitProps(props, ["as", "ref", "id"]);
-  const id = () => local.id ?? ctx.defaultContentId();
+  const others = omit(props, "as", "ref", "id");
+  const id = () => props.id ?? ctx.defaultContentId();
   effect(id, (value) => ctx.registerContent(value));
 
   const [el, setEl] = createSignal<HTMLElement>();
@@ -212,7 +204,7 @@ export const CollapsibleContentRoot: Component<CollapsibleContentProps> = (props
 
   // Open from the start, the content shows at once: its motion stays off until it first closes.
   let still = ctx.open();
-  onMount(() => {
+  onSettled(() => {
     const frame = requestAnimationFrame(() => (still = false));
     onCleanup(() => cancelAnimationFrame(frame));
   });
@@ -233,14 +225,14 @@ export const CollapsibleContentRoot: Component<CollapsibleContentProps> = (props
     return (
       <Polymorphic
         {...merge(ctx.markers, others, {
-          as: local.as,
+          as: props.as,
           defaultAs: "div" as ValidComponent,
           get id() {
             return id();
           },
           ref: (node: HTMLElement) => {
             setEl(node);
-            if (typeof local.ref === "function") local.ref(node as HTMLDivElement);
+            if (typeof props.ref === "function") props.ref(node as HTMLDivElement);
           },
         })}
       />
@@ -259,24 +251,24 @@ const Collapsible: Component<CollapsibleProps> = (props) => {
 };
 
 const CollapsibleTrigger: Component<CollapsibleTriggerProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <CollapsibleTriggerRoot
       data-slot="collapsible-trigger"
-      class={cn("cursor-pointer py-3", local.class)}
+      class={cn("cursor-pointer py-3", props.class)}
       {...rest}
     />
   );
 };
 
 const CollapsibleContent: Component<CollapsibleContentProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <CollapsibleContentRoot
       data-slot="collapsible-content"
       class={cn(
         "data-closed:animate-collapsible-up data-expanded:animate-collapsible-down overflow-hidden",
-        local.class,
+        props.class,
       )}
       {...rest}
     />

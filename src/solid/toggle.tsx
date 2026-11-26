@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from "cva";
-import { type Accessor, children, type JSX, splitProps } from "solid-js";
+import { type Accessor, children, omit } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { callEventHandler } from "../lib/behavior/solid.js";
@@ -47,7 +48,8 @@ type ToggleProps = Omit<ButtonRootProps<"button">, "children" | "onChange"> &
   };
 
 function Toggle(props: ToggleProps) {
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "class",
     "variant",
     "size",
@@ -56,14 +58,14 @@ function Toggle(props: ToggleProps) {
     "onChange",
     "onClick",
     "children",
-  ]);
+  );
   const [pressed, setPressed] = createControllableSignal({
-    value: () => local.pressed,
-    defaultValue: () => local.defaultPressed ?? false,
-    onChange: (next) => local.onChange?.(next),
+    value: () => props.pressed,
+    defaultValue: () => props.defaultPressed ?? false,
+    onChange: (next) => props.onChange?.(next),
   });
   const content = children(() => {
-    const body = local.children;
+    const body = props.children;
     return typeof body === "function" ? body({ pressed }) : body;
   });
   return (
@@ -72,14 +74,14 @@ function Toggle(props: ToggleProps) {
       aria-pressed={pressed() ? "true" : "false"}
       data-pressed={pressed() ? "" : undefined}
       class={cn(
-        toggleVariants({ variant: local.variant, size: local.size }),
-        TOGGLE_HOVER[local.variant ?? "default"],
+        toggleVariants({ variant: props.variant, size: props.size }),
+        TOGGLE_HOVER[props.variant ?? "default"],
         "data-[pressed]:glass data-[pressed]:[--glass-tone:var(--material-accent)]",
-        local.class,
+        props.class,
       )}
       {...rest}
       onClick={(event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => {
-        callEventHandler(event, local.onClick);
+        callEventHandler(event, props.onClick);
         if (!rest.disabled) setPressed(!pressed());
       }}
     >

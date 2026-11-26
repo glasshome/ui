@@ -1,5 +1,6 @@
-import { createSignal, type JSX, Show } from "solid-js";
-import { Portal } from "solid-js/web";
+import { createSignal, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
 import {
   type LayerKind,
   layerStack,
@@ -36,13 +37,13 @@ const Layer = (props: { name: string; kind: LayerKind; children?: JSX.Element })
   });
   return (
     <>
-      <button type="button" on:click={() => setOpen(true)}>
+      <button type="button" onClick={() => setOpen(true)}>
         {`Open ${props.name}`}
       </button>
       <Show when={open()}>
         <div ref={setElement} role="dialog" aria-label={props.name} tabindex="-1">
           {props.children}
-          <button type="button" on:click={() => setOpen(false)}>
+          <button type="button" onClick={() => setOpen(false)}>
             {`Close ${props.name}`}
           </button>
         </div>
@@ -68,7 +69,7 @@ const TopLayerPart = (props: { topLayer: TopLayer }) => {
   });
   return (
     <>
-      <button type="button" on:click={() => setOpen(!open())}>
+      <button type="button" onClick={() => setOpen(!open())}>
         Toggle
       </button>
       <span role="status" aria-label="State">

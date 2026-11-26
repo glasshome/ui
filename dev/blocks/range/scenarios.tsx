@@ -50,7 +50,7 @@ const Range = () => {
           {(index) => (
             <span
               role="slider"
-              tabIndex={0}
+              tabindex={0}
               aria-label={NAMES[index]}
               aria-valuenow={range.values()[index]}
               data-claim={RANGE_CLAIM}

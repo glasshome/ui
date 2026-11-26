@@ -70,7 +70,7 @@ export function useEntityData(): EntityDataAdapter {
   if (!adapter) {
     throw new Error(
       "useEntityData: no entity data source. Call provideEntityData(adapter) " +
-        "at app startup or wrap the tree in <EntityDataContext.Provider> " +
+        "at app startup or wrap the tree in <EntityDataContext> " +
         "(dash registers a @glasshome/sync-layer-backed adapter).",
     );
   }

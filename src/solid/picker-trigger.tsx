@@ -1,4 +1,5 @@
-import { type JSX, Show, splitProps } from "solid-js";
+import { Show, omit } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { PICKER_TRIGGER } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -20,7 +21,8 @@ export interface PickerTriggerProps extends Omit<
 
 export function PickerTrigger(props: PickerTriggerProps) {
   const text = useUiText();
-  const [own, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "slot",
     "open",
     "onToggle",
@@ -29,7 +31,7 @@ export function PickerTrigger(props: PickerTriggerProps) {
     "class",
     "children",
     "ref",
-  ]);
+  );
   const anchorTrigger = useAnchorTrigger();
 
   return (
@@ -37,19 +39,19 @@ export function PickerTrigger(props: PickerTriggerProps) {
       <button
         ref={(el) => {
           anchorTrigger?.(el);
-          if (typeof own.ref === "function") own.ref(el);
+          if (typeof props.ref === "function") props.ref(el);
         }}
         type="button"
-        data-slot={own.slot}
-        data-expanded={own.open || undefined}
-        class={cn(PICKER_TRIGGER, own.class)}
-        onClick={() => own.onToggle()}
+        data-slot={props.slot}
+        data-expanded={props.open || undefined}
+        class={cn(PICKER_TRIGGER, props.class)}
+        onClick={() => props.onToggle()}
         {...rest}
       >
-        {own.children}
+        {props.children}
         {/* The clear button cannot nest inside the trigger button, so it is
 				    positioned over this gap, left of the chevron. */}
-        <Show when={own.onClear}>
+        <Show when={props.onClear}>
           <span class="w-6 shrink-0" />
         </Show>
         <Icon
@@ -58,18 +60,18 @@ export function PickerTrigger(props: PickerTriggerProps) {
           height={16}
           class={cn(
             "text-muted-foreground shrink-0 transition-transform",
-            own.open && "rotate-180",
+            props.open && "rotate-180",
           )}
         />
       </button>
-      <Show when={own.onClear}>
+      <Show when={props.onClear}>
         <button
           type="button"
           data-slot="picker-trigger-clear"
-          aria-label={own.clearLabel ?? text("ui.picker-trigger.clear")}
+          aria-label={props.clearLabel ?? text("ui.picker-trigger.clear")}
           disabled={rest.disabled}
           class="text-muted-foreground hover:text-foreground absolute top-1/2 right-9 flex -translate-y-1/2 items-center rounded-sm p-1 transition-colors disabled:pointer-events-none disabled:opacity-50"
-          onClick={() => own.onClear?.()}
+          onClick={() => props.onClear?.()}
         >
           <Icon icon="lucide:circle-x" width={16} height={16} />
         </button>

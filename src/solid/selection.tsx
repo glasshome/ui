@@ -1,14 +1,13 @@
 import {
-  type ComponentProps,
   createContext,
   createSignal,
-  type JSX,
   onCleanup,
-  onMount,
+  onSettled,
   Show,
-  splitProps,
+  omit,
   useContext,
 } from "solid-js";
+import { type ComponentProps, type JSX } from "@solidjs/web";
 import { effect } from "../lib/behavior/solid.js";
 import { cn } from "../lib/utils.js";
 
@@ -34,7 +33,7 @@ export function SelectionHighlight(props: { active?: boolean }) {
   const scope = useContext(SelectionContext);
   let span: HTMLSpanElement | undefined;
   const [item, setItem] = createSignal<HTMLElement>();
-  onMount(() => setItem(span?.parentElement ?? undefined));
+  onSettled(() => setItem(span?.parentElement ?? undefined));
   if (scope && props.active === undefined) scope.watchMarker();
   effect(
     () => [item(), props.active] as const,
@@ -230,20 +229,12 @@ interface SelectionScopeProps extends Omit<ComponentProps<"div">, "style"> {
  * one flyer animates from the old item to the new one and hands off to its resting highlight.
  */
 export function SelectionScope(props: SelectionScopeProps) {
-  const [local, rest] = splitProps(props, [
-    "marker",
-    "tone",
-    "radius",
-    "class",
-    "style",
-    "children",
-    "ref",
-  ]);
+  const rest = omit(props, "marker", "tone", "radius", "class", "style", "children", "ref");
   let root: HTMLDivElement | undefined;
   let flyer: HTMLSpanElement | undefined;
   const setRoot = (el: HTMLDivElement) => {
     root = el;
-    const forwarded = local.ref;
+    const forwarded = props.ref;
     if (typeof forwarded === "function") forwarded(el);
   };
 
@@ -271,12 +262,12 @@ export function SelectionScope(props: SelectionScopeProps) {
     watch?.();
   };
 
-  onMount(() => {
+  onSettled(() => {
     const scope = root;
     const travel = flyer;
     if (!scope || !travel) return;
-    const attribute = `data-${local.marker}`;
-    const flight = createFlight(scope, travel, () => local.radius);
+    const attribute = `data-${props.marker}`;
+    const flight = createFlight(scope, travel, () => props.radius);
     let active = [...reported].at(-1) ?? activeIn(scope, attribute);
     let left: { item: HTMLElement; box: Box | undefined; at: number } | undefined;
 
@@ -323,21 +314,21 @@ export function SelectionScope(props: SelectionScopeProps) {
     <div
       ref={setRoot}
       data-selection-scope=""
-      class={cn("relative isolate", local.class)}
-      style={local.tone ? { ...local.style, "--selection-tone": local.tone } : local.style}
+      class={cn("relative isolate", props.class)}
+      style={props.tone ? { ...props.style, "--selection-tone": props.tone } : props.style}
       {...rest}
     >
-      <SelectionContext.Provider
+      <SelectionContext
         value={{
           get marker() {
-            return local.marker;
+            return props.marker;
           },
           report,
           watchMarker,
         }}
       >
-        {local.children}
-      </SelectionContext.Provider>
+        {props.children}
+      </SelectionContext>
       <span
         ref={flyer}
         data-selection-flyer=""

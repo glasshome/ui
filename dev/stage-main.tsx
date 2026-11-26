@@ -1,7 +1,7 @@
 // One entry, no chrome (stage.html#/screens/settings-shape?theme=dark); the theme rides in the hash because a class on the parent's documentElement stops at the iframe.
 import { bundled } from "virtual:gallery-icons";
 import { createEffect, createSignal, onCleanup, Show } from "solid-js";
-import { Dynamic, render } from "solid-js/web";
+import { Dynamic, render } from "@solidjs/web";
 import { provideIcons, Toaster } from "../src/solid";
 import { ScenarioStage } from "./harness/ScenarioStage";
 import { scenarioIndex } from "./harness/registry";

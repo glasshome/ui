@@ -1,6 +1,6 @@
 import { parseColor } from "../../src/lib/color/index.js";
 import { cleanup, render } from "@solidjs/testing-library";
-import type { JSX } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { type EntityDataAdapter, EntityDataContext } from "../../src/solid/entity-data.js";
@@ -105,7 +105,7 @@ const inFaceGroup = inside(ui.FaceToggleGroup as never, {
   "aria-label": "Faces",
 });
 const inEntityData = (child: () => JSX.Element) => (
-  <EntityDataContext.Provider value={adapter}>{child()}</EntityDataContext.Provider>
+  <EntityDataContext value={adapter}>{child()}</EntityDataContext>
 );
 const inAccordionItem = (child: () => JSX.Element) => (
   <ui.Accordion defaultValue={["a"]}>

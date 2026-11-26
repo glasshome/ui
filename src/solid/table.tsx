@@ -1,4 +1,5 @@
-import { type Component, type ComponentProps, splitProps } from "solid-js";
+import { type Component, omit } from "solid-js";
+import { type ComponentProps } from "@solidjs/web";
 import { cn } from "../lib/utils.js";
 
 /* The one cell inset for the real <table> element family (TableHead/TableCell).
@@ -9,45 +10,45 @@ export const TABLE_HEAD_LABEL_CLASS = "font-medium text-muted-foreground text-xs
 export const TABLE_HEAD_CELL_CLASS = `${TABLE_CELL_INSET} text-left ${TABLE_HEAD_LABEL_CLASS}`;
 
 const Table: Component<ComponentProps<"table">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <div data-slot="table-container" class="relative w-full overflow-x-auto">
-      <table data-slot="table" class={cn("w-full caption-bottom text-sm", local.class)} {...rest} />
+      <table data-slot="table" class={cn("w-full caption-bottom text-sm", props.class)} {...rest} />
     </div>
   );
 };
 
 const TableHeader: Component<ComponentProps<"thead">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
-  return <thead data-slot="table-header" class={cn("[&_tr]:border-b", local.class)} {...rest} />;
+  const rest = omit(props, "class");
+  return <thead data-slot="table-header" class={cn("[&_tr]:border-b", props.class)} {...rest} />;
 };
 
 const TableBody: Component<ComponentProps<"tbody">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
-    <tbody data-slot="table-body" class={cn("[&_tr:last-child]:border-0", local.class)} {...rest} />
+    <tbody data-slot="table-body" class={cn("[&_tr:last-child]:border-0", props.class)} {...rest} />
   );
 };
 
 const TableFooter: Component<ComponentProps<"tfoot">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <tfoot
       data-slot="table-footer"
-      class={cn("bg-muted/50 border-t font-medium [&>tr]:last:border-b-0", local.class)}
+      class={cn("bg-muted/50 border-t font-medium [&>tr]:last:border-b-0", props.class)}
       {...rest}
     />
   );
 };
 
 const TableRow: Component<ComponentProps<"tr">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <tr
       data-slot="table-row"
       class={cn(
         "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -55,14 +56,14 @@ const TableRow: Component<ComponentProps<"tr">> = (props) => {
 };
 
 const TableHead: Component<ComponentProps<"th">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <th
       data-slot="table-head"
       class={cn(
         TABLE_HEAD_CELL_CLASS,
         "h-10 whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -70,14 +71,14 @@ const TableHead: Component<ComponentProps<"th">> = (props) => {
 };
 
 const TableCell: Component<ComponentProps<"td">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <td
       data-slot="table-cell"
       class={cn(
         TABLE_CELL_INSET,
         "align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-        local.class,
+        props.class,
       )}
       {...rest}
     />
@@ -85,11 +86,11 @@ const TableCell: Component<ComponentProps<"td">> = (props) => {
 };
 
 const TableCaption: Component<ComponentProps<"caption">> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
   return (
     <caption
       data-slot="table-caption"
-      class={cn("text-muted-foreground mt-4 text-sm", local.class)}
+      class={cn("text-muted-foreground mt-4 text-sm", props.class)}
       {...rest}
     />
   );

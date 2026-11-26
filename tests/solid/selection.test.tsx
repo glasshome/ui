@@ -1,6 +1,7 @@
 import "../real-time-animations";
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal, For, type JSX } from "solid-js";
+import { createSignal, For } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { SelectionHighlight, SelectionScope } from "../../src/solid/selection.js";
 import { useFakeTime } from "../../src/testing/index.js";

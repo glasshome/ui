@@ -44,12 +44,12 @@ it("still resolves urls in a tree whose store is withheld", () => {
   provideMediaUrls({ url: (id) => `${PIXEL}#${id}` });
   let resolved: string | undefined;
   render(() => (
-    <MediaStoreContext.Provider value={null}>
+    <MediaStoreContext value={null}>
       {(() => {
         resolved = mediaUrl("abc");
         return null;
       })()}
-    </MediaStoreContext.Provider>
+    </MediaStoreContext>
   ));
   expect(resolved).toBe(`${PIXEL}#abc`);
 });
@@ -74,21 +74,21 @@ it("a tree's own url source wins over the one the host provided", () => {
   provideMediaUrls({ url: (id) => `${PIXEL}#host-${id}` });
   let resolved: string | undefined;
   render(() => (
-    <MediaUrlsContext.Provider value={{ url: (id) => `${PIXEL}#tree-${id}` }}>
+    <MediaUrlsContext value={{ url: (id) => `${PIXEL}#tree-${id}` }}>
       {(() => {
         resolved = mediaUrl("abc");
         return null;
       })()}
-    </MediaUrlsContext.Provider>
+    </MediaUrlsContext>
   ));
   expect(resolved).toBe(`${PIXEL}#tree-abc`);
 });
 
 it("an upload the store gives no url for reads as no image, never a broken one", () => {
   render(() => (
-    <MediaStoreContext.Provider value={{ ...store, url: () => "" }}>
+    <MediaStoreContext value={{ ...store, url: () => "" }}>
       <ImagePicker value="abc" onChange={() => {}} presets={presets} />
-    </MediaStoreContext.Provider>
+    </MediaStoreContext>
   ));
   expect(trigger().querySelector("img")).toBeNull();
   expect(trigger().textContent).toContain("Choose image");

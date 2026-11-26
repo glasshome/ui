@@ -1,4 +1,5 @@
-import { For, type JSX } from "solid-js";
+import { For } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { CARD_SURFACE_BASE } from "../../src/lib/card-classes";
 
 const ROWS_PER_CARD = 20;

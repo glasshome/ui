@@ -59,9 +59,9 @@ describe("AreaPicker multi mode", () => {
   it("toggles ids in pick order and stays open", async () => {
     const [values, setValues] = createSignal<string[]>([]);
     const { container } = render(() => (
-      <EntityDataContext.Provider value={adapter}>
+      <EntityDataContext value={adapter}>
         <AreaPicker values={values()} onValuesChange={setValues} placeholder="Whole home" />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
 
     await userEvent.click(triggerOf(container));
@@ -79,9 +79,9 @@ describe("AreaPicker multi mode", () => {
   it("marks selected rows and labels the trigger by count", async () => {
     const [values, setValues] = createSignal<string[]>([]);
     const { container } = render(() => (
-      <EntityDataContext.Provider value={adapter}>
+      <EntityDataContext value={adapter}>
         <AreaPicker values={values()} onValuesChange={setValues} placeholder="Whole home" />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
 
     expect(triggerOf(container).textContent).toContain("Whole home");
@@ -100,9 +100,9 @@ describe("AreaPicker multi mode", () => {
   it("greys an area the home no longer has and drops it on the next change", async () => {
     const [values, setValues] = createSignal<string[]>(["ghost_room", "kitchen"]);
     const { container } = render(() => (
-      <EntityDataContext.Provider value={adapter}>
+      <EntityDataContext value={adapter}>
         <AreaPicker values={values()} onValuesChange={setValues} placeholder="Whole home" />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
 
     expect(triggerOf(container).textContent).toContain("Kitchen");
@@ -122,9 +122,9 @@ describe("AreaPicker disabled", () => {
   it("keeps the trigger shut and the value unchanged", async () => {
     const [values, setValues] = createSignal<string[]>(["kitchen"]);
     const { container } = render(() => (
-      <EntityDataContext.Provider value={adapter}>
+      <EntityDataContext value={adapter}>
         <AreaPicker values={values()} onValuesChange={setValues} disabled />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
 
     const trigger = triggerOf(container);
@@ -140,9 +140,9 @@ describe("AreaPicker disabled", () => {
   it("ignores a row click in single mode", async () => {
     const [value, setValue] = createSignal("kitchen");
     const { container } = render(() => (
-      <EntityDataContext.Provider value={adapter}>
+      <EntityDataContext value={adapter}>
         <AreaPicker value={value()} onChange={setValue} disabled />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
 
     await press(triggerOf(container), { force: true });
@@ -155,9 +155,9 @@ describe("AreaPicker single mode", () => {
   it("reports one id and closes the popover", async () => {
     const [value, setValue] = createSignal("");
     const { container } = render(() => (
-      <EntityDataContext.Provider value={adapter}>
+      <EntityDataContext value={adapter}>
         <AreaPicker value={value()} onChange={setValue} />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
 
     expect(triggerOf(container).textContent).toContain("Select area...");
@@ -174,9 +174,9 @@ describe("AreaPicker single mode", () => {
   it("clears on a re-tap of the picked area, unless the caller forbids clearing", async () => {
     const [value, setValue] = createSignal("kitchen");
     const single = render(() => (
-      <EntityDataContext.Provider value={adapter}>
+      <EntityDataContext value={adapter}>
         <AreaPicker value={value()} onChange={setValue} />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
 
     await userEvent.click(triggerOf(single.container));
@@ -189,9 +189,9 @@ describe("AreaPicker single mode", () => {
 
     const [kept, setKept] = createSignal("kitchen");
     const pinned = render(() => (
-      <EntityDataContext.Provider value={adapter}>
+      <EntityDataContext value={adapter}>
         <AreaPicker value={kept()} onChange={setKept} allowClear={false} />
-      </EntityDataContext.Provider>
+      </EntityDataContext>
     ));
     await userEvent.click(triggerOf(pinned.container));
     await userEvent.click(row("Kitchen"));

@@ -1,4 +1,4 @@
-import { createSignal, onMount, Show } from "solid-js";
+import { createSignal, onSettled, Show } from "solid-js";
 import { createPresence } from "../../../src/lib/behavior/presence";
 import { defineScenarios } from "../../harness/types";
 
@@ -17,10 +17,10 @@ const Panel = (props: { keep?: boolean }) => {
   const leaving = () => presence.phase() === "closing" || presence.phase() === "closed";
   return (
     <>
-      <button type="button" on:click={() => setPresent(true)}>
+      <button type="button" onClick={() => setPresent(true)}>
         Open Panel
       </button>
-      <button type="button" on:click={() => setPresent(false)}>
+      <button type="button" onClick={() => setPresent(false)}>
         Close Panel
       </button>
       <span role="status" aria-label="Panel phase">
@@ -33,7 +33,7 @@ const Panel = (props: { keep?: boolean }) => {
         <div
           ref={(node) => {
             setElement(node);
-            onMount(() => setMounts(mounts() + 1));
+            onSettled(() => setMounts(mounts() + 1));
           }}
           role="dialog"
           aria-label="Panel"

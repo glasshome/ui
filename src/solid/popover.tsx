@@ -1,19 +1,17 @@
 import {
   type Accessor,
   type Component,
-  type ComponentProps,
   createContext,
   createSignal,
   createUniqueId,
-  type JSX,
   onCleanup,
   Show,
-  splitProps,
+  omit,
   untrack,
   useContext,
-  type ValidComponent,
 } from "solid-js";
-import { Portal } from "solid-js/web";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
 import { type Align, controlRadius, type Side } from "../lib/anchor-placement.js";
 import { createAnchored } from "../lib/behavior/anchored.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
@@ -130,7 +128,7 @@ const PopoverRoot: Component<PopoverProps> = (props) => {
     descriptionId,
     setDescriptionId,
   };
-  return <PopoverContext.Provider value={value}>{props.children}</PopoverContext.Provider>;
+  return <PopoverContext value={value}>{props.children}</PopoverContext>;
 };
 
 type PartProps<T extends ValidComponent> = { as?: T } & Omit<ComponentProps<T>, "as">;
@@ -146,7 +144,7 @@ const expandedAttrs = (open: Accessor<boolean>) => ({
 
 function PopoverTrigger<T extends ValidComponent = "button">(props: PartProps<T>): JSX.Element {
   const ctx = usePopover();
-  const [local, rest] = splitProps(props as PartProps<ValidComponent>, ["as", "ref"]);
+  const rest = omit(props as PartProps<ValidComponent>, "as", "ref");
   const [own, setOwn] = createSignal<HTMLElement>();
   onCleanup(() => {
     const el = untrack(own);
@@ -171,12 +169,12 @@ function PopoverTrigger<T extends ValidComponent = "button">(props: PartProps<T>
         rest,
         expandedAttrs(ctx.isOpen),
         {
-          as: local.as,
+          as: props.as,
           defaultAs: "button" as ValidComponent,
           ref: (el: HTMLElement) => {
             setOwn(el);
             ctx.setTrigger(el);
-            if (typeof local.ref === "function") local.ref(el);
+            if (typeof props.ref === "function") props.ref(el);
           },
           "aria-haspopup": "dialog",
           get "aria-expanded"() {
@@ -196,21 +194,21 @@ const AnchorTriggerContext = createContext<((el: HTMLElement) => void) | null>(n
 
 function PopoverAnchor<T extends ValidComponent = "div">(props: PartProps<T>): JSX.Element {
   const ctx = usePopover();
-  const [local, rest] = splitProps(props as PartProps<ValidComponent>, ["as", "ref"]);
+  const rest = omit(props as PartProps<ValidComponent>, "as", "ref");
   onCleanup(() => ctx.setAnchor(undefined));
   return (
-    <AnchorTriggerContext.Provider value={ctx.setTrigger}>
+    <AnchorTriggerContext value={ctx.setTrigger}>
       <Polymorphic
         {...merge({ "data-slot": "popover-anchor" }, rest, expandedAttrs(ctx.isOpen), {
-          as: local.as,
+          as: props.as,
           defaultAs: "div" as ValidComponent,
           ref: (el: HTMLElement) => {
             ctx.setAnchor(el);
-            if (typeof local.ref === "function") local.ref(el);
+            if (typeof props.ref === "function") props.ref(el);
           },
         })}
       />
-    </AnchorTriggerContext.Provider>
+    </AnchorTriggerContext>
   );
 }
 
@@ -230,7 +228,8 @@ interface PopoverContentProps extends Omit<ComponentProps<"div">, "ref"> {
 
 const PopoverContent: Component<PopoverContentProps> = (props) => {
   const ctx = usePopover();
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "class",
     "surface",
     "ref",
@@ -241,10 +240,10 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
     "onInteractOutside",
     "onOpenAutoFocus",
     "onCloseAutoFocus",
-  ]);
-  const surface = () => local.surface ?? ctx.surface();
+  );
+  const surface = () => props.surface ?? ctx.surface();
   const fallbackId = createUniqueId();
-  const id = () => local.id ?? fallbackId;
+  const id = () => props.id ?? fallbackId;
   effect(id, (next) => {
     ctx.setContentId(next);
     return () => ctx.setContentId(undefined);
@@ -280,14 +279,14 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
     focusOutside: () => !modal(),
     onDismiss: (reason, original) => {
       if (reason === "escape") {
-        if (vetoed(local.onEscapeKeyDown, original as KeyboardEvent)) return;
+        if (vetoed(props.onEscapeKeyDown, original as KeyboardEvent)) return;
       } else {
         closedOutside = true;
         const event = interactOutside(original as PointerEvent | FocusEvent, (e) => {
           if (reason === "outside-press")
-            local.onPointerDownOutside?.(e as PointerDownOutsideEvent);
-          else local.onFocusOutside?.(e as FocusOutsideEvent);
-          local.onInteractOutside?.(e);
+            props.onPointerDownOutside?.(e as PointerDownOutsideEvent);
+          else props.onFocusOutside?.(e as FocusOutsideEvent);
+          props.onInteractOutside?.(e);
         });
         if (event.defaultPrevented) {
           closedOutside = false;
@@ -319,7 +318,7 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
     active: scoping,
     trapped: modal,
     initialFocus: (container) => {
-      if (!vetoed(local.onOpenAutoFocus, new Event("openautofocus", { cancelable: true })))
+      if (!vetoed(props.onOpenAutoFocus, new Event("openautofocus", { cancelable: true })))
         return null;
       const active = focusedIn(container);
       return active instanceof HTMLElement && container.contains(active) ? active : container;
@@ -339,7 +338,7 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
       closedOutside = false;
       scope.skipRestore();
       setScoping(false);
-      if (vetoed(local.onCloseAutoFocus, new Event("closeautofocus", { cancelable: true }))) return;
+      if (vetoed(props.onCloseAutoFocus, new Event("closeautofocus", { cancelable: true }))) return;
       const trigger = ctx.trigger();
       const from = panel();
       if (!trigger || !from) return;
@@ -373,18 +372,18 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
         ref={(el) => {
           setPanel(el);
           writeMorphStart(el);
-          if (typeof local.ref === "function") local.ref(el);
+          if (typeof props.ref === "function") props.ref(el);
         }}
         id={id()}
         role="dialog"
-        tabIndex={-1}
+        tabindex={-1}
         aria-labelledby={ctx.titleId()}
         aria-describedby={ctx.descriptionId()}
         data-slot="popover-content"
         data-surface={surface()}
         data-expanded={ctx.isOpen() ? "" : undefined}
         data-closed={ctx.isOpen() ? undefined : ""}
-        class={cn(surface() === "field" ? FIELD_PANEL : OVERLAY_PANEL, local.class)}
+        class={cn(surface() === "field" ? FIELD_PANEL : OVERLAY_PANEL, props.class)}
       />
     );
   };
@@ -404,9 +403,9 @@ function labelPart(
 ) {
   return <T extends ValidComponent>(props: PartProps<T>): JSX.Element => {
     const set = register(usePopover());
-    const [local, rest] = splitProps(props as PartProps<ValidComponent>, ["as", "id"]);
+    const rest = omit(props as PartProps<ValidComponent>, "as", "id");
     const fallback = createUniqueId();
-    const id = (): string => local.id ?? fallback;
+    const id = (): string => props.id ?? fallback;
     effect(id, (next) => {
       set(next);
       return () => set(undefined);
@@ -414,7 +413,7 @@ function labelPart(
     return (
       <Polymorphic
         {...merge(rest, {
-          as: local.as,
+          as: props.as,
           defaultAs,
           get id() {
             return id();
@@ -430,11 +429,11 @@ const PopoverDescription = labelPart("p", (ctx) => ctx.setDescriptionId);
 
 function PopoverCloseButton<T extends ValidComponent = "button">(props: PartProps<T>): JSX.Element {
   const ctx = usePopover();
-  const [local, rest] = splitProps(props as PartProps<ValidComponent>, ["as"]);
+  const rest = omit(props as PartProps<ValidComponent>, "as");
   return (
     <Polymorphic
       {...merge({ "aria-label": "Dismiss" }, rest, {
-        as: local.as,
+        as: props.as,
         defaultAs: "button" as ValidComponent,
         "on:click": () => ctx.setOpen(false),
       })}

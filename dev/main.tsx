@@ -3,7 +3,7 @@
 
 import { bundled } from "virtual:gallery-icons";
 import { createSignal, For, onCleanup, Show } from "solid-js";
-import { Dynamic, render } from "solid-js/web";
+import { Dynamic, render } from "@solidjs/web";
 import { CARD_SURFACE } from "../src/index.js";
 import { cn } from "../src/lib/utils.js";
 import {

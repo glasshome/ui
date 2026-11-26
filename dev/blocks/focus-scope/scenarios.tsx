@@ -1,4 +1,5 @@
-import { createSignal, type JSX, Show } from "solid-js";
+import { createSignal, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { createFocusScope, type InitialFocus } from "../../../src/lib/behavior/focus-scope";
 import { effect } from "../../../src/lib/behavior/solid";
 import { defineScenarios } from "../../harness/types";
@@ -14,13 +15,13 @@ const Scope = (props: { children: JSX.Element; initialFocus?: InitialFocus }) =>
   });
   return (
     <>
-      <button type="button" on:click={() => setOpen(true)}>
+      <button type="button" onClick={() => setOpen(true)}>
         Open
       </button>
       <Show when={open()}>
         <div ref={setContainer} role="dialog" aria-label="Scope" tabindex="-1">
           {props.children}
-          <button type="button" on:click={() => setOpen(false)}>
+          <button type="button" onClick={() => setOpen(false)}>
             Close
           </button>
         </div>

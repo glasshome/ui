@@ -40,12 +40,12 @@ describe("media store singleton", () => {
     provideMediaStore(stubStore("/singleton"));
     let seen: MediaStore | undefined = stubStore("/unset");
     render(() => (
-      <MediaStoreContext.Provider value={null}>
+      <MediaStoreContext value={null}>
         {(() => {
           seen = useMediaStore();
           return null;
         })()}
-      </MediaStoreContext.Provider>
+      </MediaStoreContext>
     ));
     expect(seen).toBeUndefined();
   });
@@ -54,12 +54,12 @@ describe("media store singleton", () => {
     provideMediaStore(stubStore("/singleton"));
     let seen: string | undefined;
     render(() => (
-      <MediaStoreContext.Provider value={stubStore("/context")}>
+      <MediaStoreContext value={stubStore("/context")}>
         {(() => {
           seen = mediaUrl("abc");
           return null;
         })()}
-      </MediaStoreContext.Provider>
+      </MediaStoreContext>
     ));
     expect(seen).toBe("/context/abc");
   });

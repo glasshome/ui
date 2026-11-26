@@ -1,4 +1,5 @@
-import { type Component, type ComponentProps, type JSX, splitProps } from "solid-js";
+import { type Component, omit } from "solid-js";
+import { type ComponentProps, type JSX } from "@solidjs/web";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import {
   LOGO_DEFAULT_SIZE,
@@ -36,40 +37,32 @@ type LogoProps = Omit<ComponentProps<"div">, "children"> & {
  * Never hand-build this stack; the spec lives in lib/logo-lockup.ts.
  */
 const Logo: Component<LogoProps> = (props) => {
-  const [local, others] = splitProps(props, [
-    "class",
-    "sub",
-    "size",
-    "href",
-    "src",
-    "markClass",
-    "subSlot",
-  ]);
-  const size = () => local.size ?? LOGO_DEFAULT_SIZE;
+  const others = omit(props, "class", "sub", "size", "href", "src", "markClass", "subSlot");
+  const size = () => props.size ?? LOGO_DEFAULT_SIZE;
   const s = () => LOGO_SIZES[size()];
   return (
     <Polymorphic
       defaultAs="div"
-      as={local.href ? "a" : undefined}
+      as={props.href ? "a" : undefined}
       data-slot="logo"
-      class={cn(LOGO_ROOT_CLASS, s().gap, local.class)}
-      href={local.href}
+      class={cn(LOGO_ROOT_CLASS, s().gap, props.class)}
+      href={props.href}
       {...others}
     >
       <img
-        src={local.src ?? LOGO_DEFAULT_SRC}
+        src={props.src ?? LOGO_DEFAULT_SRC}
         alt=""
         width={LOGO_MARK_PX[size()]}
         height={LOGO_MARK_PX[size()]}
-        class={cn(LOGO_MARK_CLASS, s().mark, local.markClass)}
+        class={cn(LOGO_MARK_CLASS, s().mark, props.markClass)}
       />
       <span class={LOGO_STACK_CLASS}>
         <span data-slot="logo-name" class={cn(s().name, LOGO_NAME_CLASS)}>
           GlassHome
         </span>
-        {local.subSlot ?? (
+        {props.subSlot ?? (
           <span data-slot="logo-sub" class={cn(s().sub, LOGO_SUB_CLASS)}>
-            {local.sub ?? LOGO_DEFAULT_SUB}
+            {props.sub ?? LOGO_DEFAULT_SUB}
           </span>
         )}
       </span>

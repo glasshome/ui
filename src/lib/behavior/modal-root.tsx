@@ -1,19 +1,17 @@
 import {
   type Accessor,
-  type ComponentProps,
   createContext,
   createRenderEffect,
   createSignal,
   createUniqueId,
-  type JSX,
   onCleanup,
   Show,
-  splitProps,
+  omit,
   untrack,
   useContext,
-  type ValidComponent,
 } from "solid-js";
-import { Portal } from "solid-js/web";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
 import { LAYER_ROOT } from "../overlay-classes.js";
 import { createControllableSignal } from "./controllable.js";
 import { createDismiss } from "./dismiss.js";
@@ -115,7 +113,7 @@ export function ModalRoot(props: ModalRootProps): JSX.Element {
     panel,
     setPanel: (el) => setPanel(el),
   };
-  return <ModalContextValue.Provider value={context}>{props.children}</ModalContextValue.Provider>;
+  return <ModalContextValue value={context}>{props.children}</ModalContextValue>;
 }
 
 export type ModalPartProps<T extends ValidComponent> = { as?: T } & Omit<ComponentProps<T>, "as">;
@@ -124,11 +122,7 @@ export function ModalTrigger<T extends ValidComponent = "button">(
   props: ModalPartProps<T>,
 ): JSX.Element {
   const ctx = useDialogContext();
-  const [local, rest] = splitProps(props as ModalPartProps<ValidComponent>, [
-    "as",
-    "ref",
-    "onClick",
-  ]);
+  const rest = omit(props as ModalPartProps<ValidComponent>, "as", "ref", "onClick");
   let own: HTMLElement | undefined;
   onCleanup(() => {
     if (own && untrack(ctx.triggerRef) === own) ctx.setTriggerRef(undefined);
@@ -136,12 +130,12 @@ export function ModalTrigger<T extends ValidComponent = "button">(
   return (
     <Polymorphic
       {...merge(rest, {
-        as: local.as,
+        as: props.as,
         defaultAs: "button" as ValidComponent,
         ref: (el: HTMLElement) => {
           own = el;
           ctx.setTriggerRef(el);
-          if (typeof local.ref === "function") local.ref(el);
+          if (typeof props.ref === "function") props.ref(el);
         },
         "aria-haspopup": "dialog",
         get "aria-expanded"() {
@@ -159,7 +153,7 @@ export function ModalTrigger<T extends ValidComponent = "button">(
         onClick: (event: MouseEvent & { currentTarget: HTMLElement; target: Element }) => {
           callEventHandler(
             event,
-            local.onClick as JSX.EventHandlerUnion<HTMLElement, MouseEvent> | undefined,
+            props.onClick as JSX.EventHandlerUnion<HTMLElement, MouseEvent> | undefined,
           );
           ctx.toggle();
         },
@@ -170,14 +164,14 @@ export function ModalTrigger<T extends ValidComponent = "button">(
 
 function createLabelPart(defaultAs: ValidComponent, register: (id: string) => () => void) {
   return (props: ModalPartProps<ValidComponent>): JSX.Element => {
-    const [local, rest] = splitProps(props, ["as", "id"]);
+    const rest = omit(props, "as", "id");
     const fallback = createUniqueId();
-    const id = (): string => local.id ?? fallback;
+    const id = (): string => props.id ?? fallback;
     effect(id, register);
     return (
       <Polymorphic
         {...merge(rest, {
-          as: local.as,
+          as: props.as,
           defaultAs,
           get id() {
             return id();
@@ -287,7 +281,8 @@ function finishMotion(root: Element): void {
 
 export function ModalFrame(props: ModalFrameProps): JSX.Element {
   const ctx = useDialogContext();
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "slot",
     "panelClass",
     "scrimClass",
@@ -304,16 +299,16 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
     "onCloseAutoFocus",
     "children",
     "id",
-  ]);
+  );
   const fallbackId = createUniqueId();
-  const id = (): string => local.id ?? fallbackId;
+  const id = (): string => props.id ?? fallbackId;
   effect(id, ctx.registerContent);
 
   const presence = createPresence({
     present: ctx.isOpen,
     element: ctx.panel,
     get exitMs() {
-      return local.exitMs;
+      return props.exitMs;
     },
     keep: ctx.keep,
   });
@@ -336,12 +331,12 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
     escapeFrom: "document",
     onDismiss: (reason, original) => {
       if (reason === "escape") {
-        if (vetoed(local.onEscapeKeyDown, original as KeyboardEvent)) return;
+        if (vetoed(props.onEscapeKeyDown, original as KeyboardEvent)) return;
       } else {
         const event = interactOutside(original as PointerEvent, (e) => {
-          local.onPointerDownOutside?.(e);
+          props.onPointerDownOutside?.(e);
           if (ctx.modal() && e.detail.isContextMenu) e.preventDefault();
-          local.onInteractOutside?.(e);
+          props.onInteractOutside?.(e);
         });
         if (event.defaultPrevented) return;
         closedByOutside = true;
@@ -360,7 +355,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
     active: trapping,
     trapped: () => true,
     initialFocus: (container) => {
-      if (!vetoed(local.onOpenAutoFocus, new Event("openautofocus", { cancelable: true })))
+      if (!vetoed(props.onOpenAutoFocus, new Event("openautofocus", { cancelable: true })))
         return null;
       const active = focusedIn(container);
       return active instanceof HTMLElement && container.contains(active) ? active : container;
@@ -385,7 +380,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
       if (!trapping()) return;
       scope.untrap();
       const kept =
-        vetoed(local.onCloseAutoFocus, new Event("closeautofocus", { cancelable: true })) ||
+        vetoed(props.onCloseAutoFocus, new Event("closeautofocus", { cancelable: true })) ||
         (closedByOutside && !ctx.modal());
       const trigger = ctx.triggerRef();
       const toTrigger = !kept && trigger?.isConnected === true;
@@ -401,7 +396,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
         onCleanup(() => ctx.setPanel(undefined));
         return (
           <Portal
-            mount={local.mount}
+            mount={props.mount}
             ref={(container: HTMLDivElement) => {
               container.className = LAYER_ROOT;
               createRenderEffect(() => {
@@ -412,38 +407,38 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
             }}
           >
             <div
-              data-slot={`${local.slot}-overlay`}
-              class={local.scrimClass}
+              data-slot={`${props.slot}-overlay`}
+              class={props.scrimClass}
               data-expanded={expanded() ? "" : undefined}
               data-closed={expanded() ? undefined : ""}
               data-claim="prevent:pointerdown"
-              on:pointerdown={(event) => {
+              onPointerDown={(event) => {
                 // Focus stays in the panel when the scrim is pressed.
                 if (event.target === event.currentTarget) event.preventDefault();
               }}
             />
             <Polymorphic
               defaultAs="div"
-              as={local.as}
+              as={props.as}
               ref={(el: HTMLElement) => {
                 ctx.setPanel(el);
-                local.ref?.(el);
+                props.ref?.(el);
               }}
               id={id()}
               role={presence.dormant() ? undefined : ctx.role}
               aria-modal={ctx.modal() && !presence.dormant() ? "true" : undefined}
               tabIndex={-1}
               aria-labelledby={ctx.titleId()}
-              aria-label={ctx.titleId() ? undefined : local.ariaLabel}
+              aria-label={ctx.titleId() ? undefined : props.ariaLabel}
               aria-describedby={ctx.descriptionId()}
-              data-slot={`${local.slot}-content`}
+              data-slot={`${props.slot}-content`}
               data-expanded={expanded() ? "" : undefined}
               data-closed={expanded() ? undefined : ""}
-              class={local.panelClass}
-              style={local.panelStyle}
+              class={props.panelClass}
+              style={props.panelStyle}
               {...rest}
             >
-              {local.children}
+              {props.children}
             </Polymorphic>
           </Portal>
         );

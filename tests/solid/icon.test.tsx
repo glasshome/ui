@@ -2,7 +2,7 @@
  * first paint, loaded data when a batch resolves, a 1em placeholder when the
  * name is unknown, and the same node kept throughout (no remount). */
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal, Index } from "solid-js";
+import { createSignal, For } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Icon, provideIcons } from "../../src/solid/icon.js";
 import { useFakeTime } from "../../src/testing/index.js";
@@ -92,7 +92,9 @@ describe("Icon", () => {
     });
     const [shown, setShown] = createSignal(1);
     const { container } = render(() => (
-      <Index each={Array.from({ length: shown() })}>{() => <Icon icon="mdi:check" />}</Index>
+      <For keyed={false} each={Array.from({ length: shown() })}>
+        {() => <Icon icon="mdi:check" />}
+      </For>
     ));
     await vi.advanceTimersByTimeAsync(0);
     setShown(2);

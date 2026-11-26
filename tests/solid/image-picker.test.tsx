@@ -51,9 +51,7 @@ function storeWith(overrides: Partial<MediaStore> = {}): MediaStore {
 }
 
 const withStore = (store: MediaStore, ui: () => unknown) =>
-  render(() => (
-    <MediaStoreContext.Provider value={store}>{ui() as never}</MediaStoreContext.Provider>
-  ));
+  render(() => <MediaStoreContext value={store}>{ui() as never}</MediaStoreContext>);
 
 const trigger = () =>
   document.querySelector('[data-slot="image-picker-trigger"]') as HTMLButtonElement;

@@ -1,4 +1,5 @@
-import { type ComponentProps, children, type JSX, Show, splitProps } from "solid-js";
+import { children, Show, omit } from "solid-js";
+import { type ComponentProps, type JSX } from "@solidjs/web";
 import {
   CARD_BLUR,
   CARD_SURFACE_BASE,
@@ -121,7 +122,7 @@ export function SectionCard(props: SectionCardProps) {
 }
 
 export function SectionRow(props: ComponentProps<"div"> & { interactive?: boolean }) {
-  const [local, rest] = splitProps(props, ["class", "interactive"]);
+  const rest = omit(props, "class", "interactive");
   return (
     <div
       data-slot="section-row"
@@ -129,8 +130,8 @@ export function SectionRow(props: ComponentProps<"div"> & { interactive?: boolea
         SECTION_ROW_SURFACE,
         SECTION_INNER_RADIUS,
         SECTION_PADDING,
-        local.interactive && SECTION_ROW_INTERACTIVE,
-        local.class,
+        props.interactive && SECTION_ROW_INTERACTIVE,
+        props.class,
       )}
       {...rest}
     />

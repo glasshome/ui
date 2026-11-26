@@ -1,15 +1,14 @@
 import {
   children,
-  type ComponentProps,
   createContext,
   createSignal,
   createUniqueId,
-  type JSX,
   type ParentComponent,
   Show,
-  splitProps,
+  omit,
   useContext,
 } from "solid-js";
+import { type ComponentProps, type JSX } from "@solidjs/web";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { callEventHandler, effect } from "../lib/behavior/solid.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
@@ -53,7 +52,8 @@ type RadioGroupProps = Omit<ComponentProps<"div">, "onChange"> & {
 };
 
 const RadioGroup = (props: RadioGroupProps) => {
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "class",
     "value",
     "defaultValue",
@@ -67,14 +67,14 @@ const RadioGroup = (props: RadioGroupProps) => {
     "ref",
     "aria-labelledby",
     "children",
-  ]);
+  );
   const fallbackId = `radiogroup-${createUniqueId()}`;
-  const id = () => local.id ?? fallbackId;
+  const id = () => props.id ?? fallbackId;
   const [root, setRoot] = createSignal<HTMLDivElement>();
   const [selected, setSelected] = createControllableSignal({
-    value: () => local.value,
-    defaultValue: () => local.defaultValue ?? "",
-    onChange: (next) => local.onChange?.(next),
+    value: () => props.value,
+    defaultValue: () => props.defaultValue ?? "",
+    onChange: (next) => props.onChange?.(next),
   });
   // A controlled group that keeps its value must put the browser's own checked state back.
   const syncInputs = () => {
@@ -84,16 +84,16 @@ const RadioGroup = (props: RadioGroupProps) => {
   };
   const context: RadioGroupContextValue = {
     id,
-    name: () => local.name ?? id(),
+    name: () => props.name ?? id(),
     isSelectedValue: (value) => value === selected(),
     select: (value) => {
-      if (!local.readOnly && !local.disabled) setSelected(value);
+      if (!props.readOnly && !props.disabled) setSelected(value);
       syncInputs();
     },
-    disabled: () => local.disabled ?? false,
-    required: () => local.required ?? false,
-    readOnly: () => local.readOnly ?? false,
-    defaultValue: () => local.defaultValue ?? "",
+    disabled: () => props.disabled ?? false,
+    required: () => props.required ?? false,
+    readOnly: () => props.readOnly ?? false,
+    defaultValue: () => props.defaultValue ?? "",
   };
   effect(root, (el) => {
     if (!el) return;
@@ -117,38 +117,38 @@ const RadioGroup = (props: RadioGroupProps) => {
     () => root()?.closest("form"),
     (form) => {
       if (!form) return;
-      const reset = () => setSelected(local.defaultValue ?? "");
+      const reset = () => setSelected(props.defaultValue ?? "");
       form.addEventListener("reset", reset);
       return () => form.removeEventListener("reset", reset);
     },
   );
   const labelledBy = () =>
-    [local["aria-labelledby"], local["aria-labelledby"] && rest["aria-label"] ? id() : undefined]
+    [props["aria-labelledby"], props["aria-labelledby"] && rest["aria-label"] ? id() : undefined]
       .filter(Boolean)
       .join(" ") || undefined;
 
   return (
-    <RadioGroupContext.Provider value={context}>
+    <RadioGroupContext value={context}>
       <div
         ref={(el) => {
           setRoot(el);
-          if (typeof local.ref === "function") local.ref(el);
+          if (typeof props.ref === "function") props.ref(el);
         }}
         role="radiogroup"
         id={id()}
         aria-labelledby={labelledBy()}
-        aria-orientation={local.orientation ?? "vertical"}
-        aria-required={local.required ? "true" : undefined}
-        aria-disabled={local.disabled ? "true" : undefined}
-        aria-readonly={local.readOnly ? "true" : undefined}
+        aria-orientation={props.orientation ?? "vertical"}
+        aria-required={props.required ? "true" : undefined}
+        aria-disabled={props.disabled ? "true" : undefined}
+        aria-readonly={props.readOnly ? "true" : undefined}
         {...formState(context)}
         data-slot="radio-group"
-        class={cn("flex flex-col gap-3", local.class)}
+        class={cn("flex flex-col gap-3", props.class)}
         {...rest}
       >
-        {local.children}
+        {props.children}
       </div>
-    </RadioGroupContext.Provider>
+    </RadioGroupContext>
   );
 };
 
@@ -174,7 +174,8 @@ type RadioGroupItemProps = Omit<ComponentProps<"div">, "onClick"> & {
 
 const RadioGroupItem = (props: RadioGroupItemProps) => {
   const group = useRadioGroup();
-  const [local, rest] = splitProps(props, [
+  const rest = omit(
+    props,
     "class",
     "children",
     "showControl",
@@ -184,11 +185,11 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
     "id",
     "ref",
     "onClick",
-  ]);
+  );
   const fallbackId = `${group.id()}-item-${createUniqueId()}`;
-  const id = () => local.id ?? fallbackId;
-  const disabled = () => group.disabled() || (local.disabled ?? false);
-  const checked = () => group.isSelectedValue(local.value);
+  const id = () => props.id ?? fallbackId;
+  const disabled = () => group.disabled() || (props.disabled ?? false);
+  const checked = () => group.isSelectedValue(props.value);
   const [item, setItem] = createSignal<HTMLDivElement>();
   const [input, setInput] = createSignal<HTMLInputElement>();
   const state = () => ({
@@ -198,7 +199,7 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
   });
 
   effect(
-    () => [input(), local.value === group.defaultValue()] as const,
+    () => [input(), props.value === group.defaultValue()] as const,
     ([el, isDefault]) => {
       if (el) el.defaultChecked = isDefault;
     },
@@ -213,7 +214,7 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
     const click = (event: MouseEvent) =>
       callEventHandler(
         event as MouseEvent & { currentTarget: HTMLDivElement; target: Element },
-        local.onClick,
+        props.onClick,
       );
     node.addEventListener("pointerdown", pointerdown);
     node.addEventListener("click", click);
@@ -225,7 +226,7 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
 
   const change = (event: Event) => {
     const target = event.currentTarget as HTMLInputElement;
-    if (target.checked) group.select(local.value);
+    if (target.checked) group.select(props.value);
     target.checked = checked();
   };
 
@@ -233,14 +234,14 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
     <div
       ref={(el) => {
         setItem(el);
-        if (typeof local.ref === "function") local.ref(el);
+        if (typeof props.ref === "function") props.ref(el);
       }}
       role="group"
       id={id()}
       data-claim={focused() ? "prevent:pointerdown" : undefined}
       {...state()}
       data-slot="radio-group-item"
-      class={cn("flex", local.class)}
+      class={cn("flex", props.class)}
       {...rest}
     >
       <input
@@ -248,24 +249,24 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
         type="radio"
         id={`${id()}-input`}
         name={group.name()}
-        value={local.value}
+        value={props.value}
         checked={checked()}
         required={group.required()}
         disabled={disabled()}
-        readOnly={group.readOnly()}
+        readonly={group.readOnly()}
         style={VISUALLY_HIDDEN}
         aria-labelledby={`${id()}-label`}
         {...state()}
         class="peer"
-        aria-busy={local.busy ? "true" : undefined}
-        aria-disabled={local.busy ? "true" : undefined}
-        data-claim={local.busy ? "prevent:click" : undefined}
-        on:click={(event) => {
-          if (local.busy) event.preventDefault();
+        aria-busy={props.busy ? "true" : undefined}
+        aria-disabled={props.busy ? "true" : undefined}
+        data-claim={props.busy ? "prevent:click" : undefined}
+        onClick={(event) => {
+          if (props.busy) event.preventDefault();
         }}
-        on:focus={() => setFocused(true)}
-        on:blur={() => setFocused(false)}
-        on:change={change}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        onChange={change}
       />
       <label
         for={`${id()}-input`}
@@ -274,7 +275,7 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
         data-slot="radio-group-item-label"
         class="flex flex-1 cursor-pointer items-center gap-2.5 select-none data-[disabled]:cursor-not-allowed"
       >
-        <Show when={local.showControl ?? true}>
+        <Show when={props.showControl ?? true}>
           <div
             id={`${id()}-control`}
             {...state()}
@@ -303,7 +304,7 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
             </Show>
           </div>
         </Show>
-        <RadioGroupItemContent>{local.children}</RadioGroupItemContent>
+        <RadioGroupItemContent>{props.children}</RadioGroupItemContent>
       </label>
     </div>
   );

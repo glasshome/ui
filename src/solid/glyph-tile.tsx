@@ -1,12 +1,5 @@
-import {
-  createContext,
-  createSignal,
-  type JSX,
-  onCleanup,
-  onMount,
-  Show,
-  useContext,
-} from "solid-js";
+import { createContext, createSignal, onCleanup, onSettled, Show, useContext } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
 import { createToggleItem, createToggleSet, type ToggleSet } from "../lib/toggle-set.js";
@@ -31,12 +24,12 @@ export function GlyphTileGroup(props: {
     setValues: (next) => props.onChange(next[0] ?? null),
     multiple: () => false,
   });
-  onMount(() => {
+  onSettled(() => {
     const group = root();
     if (group) onCleanup(trackScroll(group, "[data-pressed]", () => props.value));
   });
   return (
-    <GlyphContext.Provider value={set}>
+    <GlyphContext value={set}>
       <div
         ref={setRoot}
         role="group"
@@ -48,11 +41,11 @@ export function GlyphTileGroup(props: {
           `flex snap-x snap-proximity [scrollbar-width:none] gap-2 overflow-x-auto overscroll-x-contain py-0.5 [&::-webkit-scrollbar]:hidden ${SCROLL_TRACK_FADE} sm:flex-wrap sm:overflow-visible`,
           props.class,
         )}
-        on:keydown={(event) => set.collection.onKeyDown(event)}
+        onKeyDown={(event) => set.collection.onKeyDown(event)}
       >
         {props.children}
       </div>
-    </GlyphContext.Provider>
+    </GlyphContext>
   );
 }
 

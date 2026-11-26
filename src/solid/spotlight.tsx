@@ -1,13 +1,6 @@
-import {
-  type Component,
-  createEffect,
-  createSignal,
-  type JSX,
-  onCleanup,
-  onMount,
-  Show,
-} from "solid-js";
-import { Portal } from "solid-js/web";
+import { type Component, createEffect, createSignal, onCleanup, onSettled, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
 import { usePortalMount } from "./portal-mount.js";
 import { createDismiss } from "../lib/behavior/dismiss.js";
 import { registerLayer } from "../lib/behavior/layer-stack.js";
@@ -121,7 +114,7 @@ const Spotlight: Component<SpotlightProps> = (props) => {
     });
   });
 
-  onMount(() => {
+  onSettled(() => {
     window.addEventListener("resize", measure);
     window.addEventListener("scroll", measure, { capture: true, passive: true });
     onCleanup(() => {

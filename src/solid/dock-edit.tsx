@@ -1,5 +1,5 @@
 import { createSignal, For, onCleanup, Show } from "solid-js";
-import { Portal } from "solid-js/web";
+import { Portal } from "@solidjs/web";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { cn } from "../lib/utils.js";

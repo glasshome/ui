@@ -3,20 +3,18 @@ import {
   type Accessor,
   children,
   type Component,
-  type ComponentProps,
   createContext,
   createEffect,
   createSignal,
   createUniqueId,
-  type JSX,
   onCleanup,
-  onMount,
+  onSettled,
   type ParentComponent,
   Show,
-  splitProps,
+  omit,
   useContext,
-  type ValidComponent,
 } from "solid-js";
+import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import {
   type InteractOutsideEvent,
   ModalDescription,
@@ -95,17 +93,17 @@ export function createModalTextParts(slot: string): ModalTextParts {
       <ModalTrigger data-slot={`${slot}-trigger`} {...(props as ModalPartProps<"button">)} />
     ),
     Title: (props) => {
-      const [local, rest] = splitProps(props as ModalPartProps<"h2">, ["class"]);
+      const rest = omit(props as ModalPartProps<"h2">, "class");
       return (
-        <ModalTitle data-slot={`${slot}-title`} class={cn(MODAL_TITLE, local.class)} {...rest} />
+        <ModalTitle data-slot={`${slot}-title`} class={cn(MODAL_TITLE, props.class)} {...rest} />
       );
     },
     Description: (props) => {
-      const [local, rest] = splitProps(props as ModalPartProps<"p">, ["class"]);
+      const rest = omit(props as ModalPartProps<"p">, "class");
       return (
         <ModalDescription
           data-slot={`${slot}-description`}
-          class={cn(MODAL_DESCRIPTION, local.class)}
+          class={cn(MODAL_DESCRIPTION, props.class)}
           {...rest}
         />
       );
@@ -202,13 +200,13 @@ export interface ModalParts {
 
 export function createModalParts(slot: string): ModalParts {
   const Header: Component<ModalHeaderProps> = (props) => {
-    const [local, rest] = splitProps(props, ["class", "media", "action", "wrap", "children"]);
-    const media = children(() => local.media);
-    const action = children(() => local.action);
+    const rest = omit(props, "class", "media", "action", "wrap", "children");
+    const media = children(() => props.media);
+    const action = children(() => props.action);
     return (
       <div
         data-slot={`${slot}-header`}
-        class={cn(MODAL_HEADER, local.wrap && "flex-wrap", local.class)}
+        class={cn(MODAL_HEADER, props.wrap && "flex-wrap", props.class)}
         {...rest}
       >
         <Show when={media()}>
@@ -217,7 +215,7 @@ export function createModalParts(slot: string): ModalParts {
           </div>
         </Show>
         <div data-slot={`${slot}-header-text`} class={MODAL_HEADER_TEXT}>
-          {local.children}
+          {props.children}
         </div>
         <Show when={action()}>
           <div data-slot={`${slot}-header-action`} class={MODAL_HEADER_ACTION}>
@@ -229,11 +227,11 @@ export function createModalParts(slot: string): ModalParts {
   };
 
   const Body: Component<ModalBodyProps> = (props) => {
-    const [local, rest] = splitProps(props, ["class", "as", "ref", "children"]);
+    const rest = omit(props, "class", "as", "ref", "children");
     let el: HTMLElement | undefined;
     let top: HTMLSpanElement | undefined;
     // Overlay scrollbars reserve no gutter, so the right inset subtracts what the platform actually reserved.
-    onMount(() => {
+    onSettled(() => {
       if (el) el.style.setProperty("--scrollbar-gutter", `${el.offsetWidth - el.clientWidth}px`);
     });
     // data-scrolled comes from an observer, since a sealed widget cannot read scrollTop; made on the first scroll, as an observer costs a call to the page.
@@ -250,7 +248,7 @@ export function createModalParts(slot: string): ModalParts {
       );
       observer.observe(top);
     };
-    onMount(() => el?.addEventListener("scroll", watchTop, { once: true, passive: true }));
+    onSettled(() => el?.addEventListener("scroll", watchTop, { once: true, passive: true }));
     onCleanup(() => {
       el?.removeEventListener("scroll", watchTop);
       observer?.disconnect();
@@ -258,24 +256,24 @@ export function createModalParts(slot: string): ModalParts {
     return (
       <Polymorphic
         defaultAs="div"
-        as={local.as}
+        as={props.as}
         ref={(node: HTMLElement) => {
           el = node;
-          if (typeof local.ref === "function") local.ref(node as HTMLDivElement);
+          if (typeof props.ref === "function") props.ref(node as HTMLDivElement);
         }}
         data-slot={`${slot}-body`}
-        class={cn(MODAL_BODY, local.class)}
+        class={cn(MODAL_BODY, props.class)}
         {...rest}
       >
         <span ref={top} aria-hidden="true" class={MODAL_BODY_TOP} />
-        {local.children}
+        {props.children}
       </Polymorphic>
     );
   };
 
   const Footer: Component<ComponentProps<"div">> = (props) => {
-    const [local, rest] = splitProps(props, ["class"]);
-    return <div data-slot={`${slot}-footer`} class={cn(MODAL_FOOTER, local.class)} {...rest} />;
+    const rest = omit(props, "class");
+    return <div data-slot={`${slot}-footer`} class={cn(MODAL_FOOTER, props.class)} {...rest} />;
   };
 
   return { Header, Body, Footer };
@@ -343,17 +341,17 @@ export function createModalDismiss(
   useCloser: () => { close(): void },
 ): ParentComponent<ModalDismissProps> {
   return (props) => {
-    const [local, rest] = splitProps(props, ["onClick", "busy"]);
+    const rest = omit(props, "onClick", "busy");
     const context = useCloser();
     return (
       <ButtonRoot
         data-slot={slot}
         onClick={(event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => {
-          callEventHandler(event, local.onClick);
+          callEventHandler(event, props.onClick);
           context.close();
         }}
         {...rest}
-        {...(local.busy ? busyProps : undefined)}
+        {...(props.busy ? busyProps : undefined)}
       />
     );
   };

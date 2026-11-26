@@ -1,4 +1,5 @@
-import { type Component, type ComponentProps, splitProps, type ValidComponent } from "solid-js";
+import { type Component, omit } from "solid-js";
+import { type ComponentProps, type ValidComponent } from "@solidjs/web";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { BADGE_DEFAULT_TONE, BADGE_NEUTRAL_KNOBS } from "../lib/badge-tone.js";
 import { isNeutralTone } from "../lib/glass-tone.js";
@@ -14,18 +15,18 @@ type BadgeProps = ComponentProps<"span"> &
   };
 
 const Badge: Component<BadgeProps> = (props) => {
-  const [local, others] = splitProps(props, ["class", "as", "tone", "children", "style"]);
-  const c = () => local.tone ?? BADGE_DEFAULT_TONE;
+  const others = omit(props, "class", "as", "tone", "children", "style");
+  const c = () => props.tone ?? BADGE_DEFAULT_TONE;
   return (
     <Polymorphic
       defaultAs="span"
-      as={local.as}
+      as={props.as}
       data-slot="badge"
-      class={cn(CHIP, isNeutralTone(c()) && BADGE_NEUTRAL_KNOBS, local.class)}
-      style={{ "--glass-tone": c(), ...(local.style as Record<string, string>) }}
+      class={cn(CHIP, isNeutralTone(c()) && BADGE_NEUTRAL_KNOBS, props.class)}
+      style={{ "--glass-tone": c(), ...(props.style as Record<string, string>) }}
       {...others}
     >
-      {local.children}
+      {props.children}
     </Polymorphic>
   );
 };
@@ -50,23 +51,15 @@ type TierBadgeProps = ComponentProps<"span"> & {
  * One family; only the hi/lo/text triplet changes per tier.
  */
 const TierBadge: Component<TierBadgeProps> = (props) => {
-  const [local, others] = splitProps(props, [
-    "class",
-    "hi",
-    "lo",
-    "text",
-    "end",
-    "stop",
-    "children",
-  ]);
+  const others = omit(props, "class", "hi", "lo", "text", "end", "stop", "children");
   return (
     <span
       data-slot="tier-badge"
-      class={cn(TIER_BADGE_CLASS, local.class)}
-      style={tierBadgeStyle(local.hi, local.lo, local.text, { end: local.end, stop: local.stop })}
+      class={cn(TIER_BADGE_CLASS, props.class)}
+      style={tierBadgeStyle(props.hi, props.lo, props.text, { end: props.end, stop: props.stop })}
       {...others}
     >
-      {local.children}
+      {props.children}
     </span>
   );
 };

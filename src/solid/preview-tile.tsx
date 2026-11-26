@@ -1,5 +1,5 @@
-import type { JSX } from "solid-js";
-import { children, onCleanup, onMount, Show } from "solid-js";
+import { type JSX } from "@solidjs/web";
+import { children, onCleanup, onSettled, Show } from "solid-js";
 import { SCROLL_TRACK_FADE, trackScroll } from "../lib/scroll-track.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
@@ -32,7 +32,7 @@ export function PreviewTileGroup(props: {
   children: JSX.Element;
 }) {
   let group: HTMLElement | undefined;
-  onMount(() => {
+  onSettled(() => {
     if (props.scroll && group) onCleanup(trackScroll(group, "[data-checked]", () => props.value));
   });
   return (

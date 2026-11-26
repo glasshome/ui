@@ -13,7 +13,7 @@ const Modal = (props: { sheet?: boolean }) => {
         type="button"
         class="fixed top-2 left-2"
         data-slot="scroll-contain-trigger"
-        on:click={() => setOpen(true)}
+        onClick={() => setOpen(true)}
       >
         Open modal
       </button>
@@ -44,7 +44,7 @@ const Modal = (props: { sheet?: boolean }) => {
               <p>{`Line ${n}`}</p>
             ))}
           </div>
-          <button type="button" class="shrink-0 p-4" on:click={() => setOpen(false)}>
+          <button type="button" class="shrink-0 p-4" onClick={() => setOpen(false)}>
             Close modal
           </button>
         </div>

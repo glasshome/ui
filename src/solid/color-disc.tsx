@@ -1,5 +1,6 @@
 import { type Color, parseColor } from "../lib/color/index.js";
-import { type Component, createSignal, type JSX } from "solid-js";
+import { type Component, createSignal } from "solid-js";
+import { type JSX } from "@solidjs/web";
 import { claimKeys } from "../lib/behavior/claims.js";
 import { FOCUS_RING } from "../lib/input-classes.js";
 import { THUMB_COLOR_RING } from "../lib/thumb-classes.js";
@@ -95,22 +96,22 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
         background: discBackground,
         "box-shadow": "inset 0 0 0 1px rgb(255 255 255 / 0.15)",
       }}
-      on:pointerdown={(e) => {
+      onPointerDown={(e) => {
         if (props.disabled || e.button !== 0) return;
         const el = e.currentTarget;
         el.setPointerCapture?.(e.pointerId);
         setDragging(true);
         props.onChange?.(colourAt(e, el));
       }}
-      on:pointermove={(e) => {
+      onPointerMove={(e) => {
         if (dragging()) props.onChange?.(colourAt(e, e.currentTarget));
       }}
-      on:pointerup={(e) => {
+      onPointerUp={(e) => {
         if (!dragging()) return;
         setDragging(false);
         props.onChangeEnd?.(colourAt(e, e.currentTarget));
       }}
-      on:pointercancel={() => {
+      onPointerCancel={() => {
         if (!dragging()) return;
         setDragging(false);
         if (last) props.onChangeEnd?.(last);
@@ -118,7 +119,7 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
     >
       <div
         role="slider"
-        tabIndex={props.disabled ? -1 : 0}
+        tabindex={props.disabled ? -1 : 0}
         aria-label={props["aria-label"] ?? text("ui.color-disc.label")}
         aria-valuemin={0}
         aria-valuemax={360}
@@ -143,7 +144,7 @@ const ColorDisc: Component<ColorDiscProps> = (props) => {
           "pointer-events": "none",
         }}
         data-claim={props.disabled ? undefined : DISC_CLAIM}
-        on:keydown={onKeyDown}
+        onKeyDown={onKeyDown}
       />
     </div>
   );
@@ -205,21 +206,21 @@ const TemperatureBar: Component<TemperatureBarProps> = (props) => {
         props.class,
       )}
       style={gradient()}
-      on:pointerdown={(e) => {
+      onPointerDown={(e) => {
         if (props.disabled || e.button !== 0) return;
         e.currentTarget.setPointerCapture?.(e.pointerId);
         setDragging(true);
         props.onChange?.(kelvinAt(e, e.currentTarget));
       }}
-      on:pointermove={(e) => {
+      onPointerMove={(e) => {
         if (dragging()) props.onChange?.(kelvinAt(e, e.currentTarget));
       }}
-      on:pointerup={(e) => {
+      onPointerUp={(e) => {
         if (!dragging()) return;
         setDragging(false);
         props.onChangeEnd?.(kelvinAt(e, e.currentTarget));
       }}
-      on:pointercancel={() => {
+      onPointerCancel={() => {
         if (!dragging()) return;
         setDragging(false);
         if (last !== undefined) props.onChangeEnd?.(last);
@@ -227,7 +228,7 @@ const TemperatureBar: Component<TemperatureBarProps> = (props) => {
     >
       <div
         role="slider"
-        tabIndex={props.disabled ? -1 : 0}
+        tabindex={props.disabled ? -1 : 0}
         aria-label={props["aria-label"] ?? text("ui.temperature-bar.label")}
         aria-valuemin={min()}
         aria-valuemax={max()}
@@ -249,7 +250,7 @@ const TemperatureBar: Component<TemperatureBarProps> = (props) => {
           translate: "-50% -50%",
           background: kelvinToCss(props.value),
         }}
-        on:keydown={(e) => {
+        onKeyDown={(e) => {
           const step = e.shiftKey ? 500 : 100;
           const d = e.key === "ArrowRight" ? step : e.key === "ArrowLeft" ? -step : 0;
           if (!d || props.disabled) return;
