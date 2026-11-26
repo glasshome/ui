@@ -5,7 +5,6 @@ import {
   createSignal,
   createUniqueId,
   onCleanup,
-  Show,
   omit,
   untrack,
   createEffect,
@@ -226,11 +225,9 @@ const TooltipContent: Component<TooltipContentProps> = (props) => {
   };
 
   return (
-    <Show when={presence.mounted()}>
-      <Layer mount={portalMount}>
-        <Panel />
-      </Layer>
-    </Show>
+    <Layer mount={portalMount} when={presence.mounted()}>
+      <Panel />
+    </Layer>
   );
 };
 

@@ -1,4 +1,4 @@
-import { createSignal, For, onCleanup, Show } from "solid-js";
+import { createSignal, For, onCleanup } from "solid-js";
 import { Layer } from "../lib/behavior/layer.js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { Z_CLASS } from "../lib/layers.js";
@@ -236,29 +236,27 @@ export function DockMoveGrip(props: {
           height={16}
         />
       </div>
-      <Show when={carrying()}>
-        <Layer mount={portalMount}>
-          <div
-            data-slot="dock-edge-zones"
-            aria-hidden="true"
-            class={cn("pointer-events-none fixed inset-0", Z_CLASS.overlay)}
-          >
-            <For each={ZONES}>
-              {(name) => (
-                <div
-                  data-zone={name}
-                  data-active={zone() === name ? "" : undefined}
-                  class={cn(
-                    "bg-primary/10 border-primary/30 absolute transition-colors duration-(--duration-state)",
-                    "data-[active]:bg-primary/25 data-[active]:border-primary",
-                    ZONE_BOX[name],
-                  )}
-                />
-              )}
-            </For>
-          </div>
-        </Layer>
-      </Show>
+      <Layer mount={portalMount} when={carrying()}>
+        <div
+          data-slot="dock-edge-zones"
+          aria-hidden="true"
+          class={cn("pointer-events-none fixed inset-0", Z_CLASS.overlay)}
+        >
+          <For each={ZONES}>
+            {(name) => (
+              <div
+                data-zone={name}
+                data-active={zone() === name ? "" : undefined}
+                class={cn(
+                  "bg-primary/10 border-primary/30 absolute transition-colors duration-(--duration-state)",
+                  "data-[active]:bg-primary/25 data-[active]:border-primary",
+                  ZONE_BOX[name],
+                )}
+              />
+            )}
+          </For>
+        </div>
+      </Layer>
     </>
   );
 }

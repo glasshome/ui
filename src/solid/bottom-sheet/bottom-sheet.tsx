@@ -6,7 +6,6 @@ import {
   createSignal,
   onCleanup,
   type ParentComponent,
-  Show,
   omit,
 } from "solid-js";
 import { useRequired } from "../../lib/context.js";
@@ -162,9 +161,9 @@ const BottomSheetPortal: Component<BottomSheetPortalProps> = (props) => {
   const portalMount = usePortalMount();
   const mounted = () => ctx.state() !== "closed";
   return (
-    <Show when={mounted()}>
-      <Layer mount={props.mount ?? portalMount}>{props.children}</Layer>
-    </Show>
+    <Layer mount={props.mount ?? portalMount} when={mounted()}>
+      {props.children}
+    </Layer>
   );
 };
 

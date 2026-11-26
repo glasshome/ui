@@ -5,7 +5,6 @@ import {
   createSignal,
   createUniqueId,
   onCleanup,
-  Show,
   omit,
   untrack,
   useContext,
@@ -397,11 +396,9 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
   };
 
   return (
-    <Show when={presence.mounted()}>
-      <Layer mount={mount}>
-        <Panel />
-      </Layer>
-    </Show>
+    <Layer mount={mount} when={presence.mounted()}>
+      <Panel />
+    </Layer>
   );
 };
 

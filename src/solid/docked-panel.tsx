@@ -24,32 +24,30 @@ export function DockedPanel(props: {
   const portalMount = usePortalMount();
   const text = useUiText();
   return (
-    <Show when={props.open}>
-      <Layer mount={portalMount}>
-        <aside
-          data-slot="docked-panel"
-          aria-label={props.ariaLabel}
-          data-collapsed={props.collapsed ? "" : undefined}
-          class={cn(DOCKED_PANEL, props.class)}
-        >
-          <Show when={props.onCollapsedChange}>
-            <button
-              type="button"
-              data-slot="docked-panel-handle"
-              aria-label={
-                props.collapsed ? text("ui.docked-panel.show") : text("ui.docked-panel.hide")
-              }
-              aria-expanded={props.collapsed ? "false" : "true"}
-              class="mx-auto flex h-6 w-full shrink-0 items-center justify-center md:hidden"
-              onClick={() => props.onCollapsedChange?.(!props.collapsed)}
-            >
-              <span class="bg-foreground/25 h-1.5 w-10 rounded-full" />
-            </button>
-          </Show>
-          {props.children}
-        </aside>
-      </Layer>
-    </Show>
+    <Layer mount={portalMount} when={props.open}>
+      <aside
+        data-slot="docked-panel"
+        aria-label={props.ariaLabel}
+        data-collapsed={props.collapsed ? "" : undefined}
+        class={cn(DOCKED_PANEL, props.class)}
+      >
+        <Show when={props.onCollapsedChange}>
+          <button
+            type="button"
+            data-slot="docked-panel-handle"
+            aria-label={
+              props.collapsed ? text("ui.docked-panel.show") : text("ui.docked-panel.hide")
+            }
+            aria-expanded={props.collapsed ? "false" : "true"}
+            class="mx-auto flex h-6 w-full shrink-0 items-center justify-center md:hidden"
+            onClick={() => props.onCollapsedChange?.(!props.collapsed)}
+          >
+            <span class="bg-foreground/25 h-1.5 w-10 rounded-full" />
+          </button>
+        </Show>
+        {props.children}
+      </aside>
+    </Layer>
   );
 }
 

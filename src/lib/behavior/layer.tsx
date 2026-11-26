@@ -1,8 +1,11 @@
 // oxlint-disable-next-line solid/portal-in-layer -- this file is ui's layer
 import { Portal, type JSX } from "@solidjs/web";
+import { Show } from "solid-js";
 
 export interface LayerProps {
   mount?: Element;
+  /** Whether the layer shows. The portal stays put while it is hidden, so opening adds no node beside the opener. */
+  when?: boolean;
   ref?: (el: HTMLDivElement) => void;
   class?: string;
   children?: JSX.Element;
@@ -12,9 +15,11 @@ export interface LayerProps {
 export function Layer(props: LayerProps): JSX.Element {
   return (
     <Portal mount={props.mount ?? document.body}>
-      <div ref={props.ref} class={props.class}>
-        {props.children}
-      </div>
+      <Show when={props.when ?? true}>
+        <div ref={props.ref} class={props.class}>
+          {props.children}
+        </div>
+      </Show>
     </Portal>
   );
 }

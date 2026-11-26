@@ -4,7 +4,6 @@ import {
   createContext,
   createSignal,
   onCleanup,
-  Show,
   omit,
   untrack,
   createEffect,
@@ -236,11 +235,9 @@ const HoverCardContent: Component<HoverCardContentProps> = (props) => {
   };
 
   return (
-    <Show when={presence.mounted()}>
-      <Layer mount={portalMount}>
-        <Card />
-      </Layer>
-    </Show>
+    <Layer mount={portalMount} when={presence.mounted()}>
+      <Card />
+    </Layer>
   );
 };
 

@@ -855,11 +855,9 @@ const SelectContent: Component<SelectContentProps> = (props) => {
 
   return (
     <SelectListContext value={{ highlighted: collection.highlighted }}>
-      <Show when={presence.mounted()}>
-        <Layer mount={portalMount}>
-          <Panel />
-        </Layer>
-      </Show>
+      <Layer mount={portalMount} when={presence.mounted()}>
+        <Panel />
+      </Layer>
     </SelectListContext>
   );
 };
