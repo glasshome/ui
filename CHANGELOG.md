@@ -18,6 +18,23 @@ Hand-written; drop this section once release-please cuts the version from the co
 
 * **input-classes:** add `FIELD_CHROME`, the recipe SPEC.md already documented. Toggle chrome and rails (checkbox box, radio ring, switch track, slider rail, chart wells) wear it and stay keyed to `--input` in both themes, so they keep reading as empty wells now that fields do not.
 
+## [1.46.0](https://github.com/glasshome/ui/compare/v1.45.0...v1.46.0) (2026-11-26)
+
+
+### Features
+
+* **dashboard-preview:** a tile may carry a srcset, and asks for its share of the board's width ([8e6b81e](https://github.com/glasshome/ui/commit/8e6b81e5fe3c3677c55b2d19527238e280f9dcc2))
+* **dashboard-preview:** a tile may carry a srcset, and asks for its share of the board's width ([ffaf342](https://github.com/glasshome/ui/commit/ffaf34247f7fc1e73df0b3136c7d38980a1cde27))
+
+
+### Bug Fixes
+
+* **anchored:** a part re-places when its own size or its anchor's changes ([c10b9dd](https://github.com/glasshome/ui/commit/c10b9dd5dcb286c181ea9299c0c4cd273f28a373))
+* **anchored:** a part re-places when its own size or its anchor's changes, so a part measured before it laid out (the widget realm's Worker answers the last size the page sent) lands centred ([0d28f5e](https://github.com/glasshome/ui/commit/0d28f5e6d67278f5b90f8f2baaf1efb0e4c07b20))
+* **collapsible:** content opens and closes on a grid row from 0fr to 1fr, so the motion reaches the content's own height in every engine without measuring it ([f7f45d7](https://github.com/glasshome/ui/commit/f7f45d717a64775f87e2d585f10cf0af96c9a441))
+* **collapsible:** content opens and closes on a grid row, so the motion reaches its own height in every engine without measuring ([8152545](https://github.com/glasshome/ui/commit/81525458fa26c0e89938639b9adfd4e8aef51381))
+* **collapsible:** the open and close motion runs to auto when the content's size was never measured, so a sealed widget's accordion grows smoothly instead of jumping at half time ([987abe3](https://github.com/glasshome/ui/commit/987abe35a767bec915b9cd053207264fd83e26f7))
+
 ## [1.45.0](https://github.com/glasshome/ui/compare/v1.44.6...v1.45.0) (2026-11-24)
 
 
