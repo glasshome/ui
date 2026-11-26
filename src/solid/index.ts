@@ -143,7 +143,8 @@ export { useRequired } from "../lib/context.js";
 export { Layer, type LayerProps } from "../lib/behavior/layer.js";
 export { ConfirmDialog, type ConfirmDialogProps } from "./confirm-dialog.js";
 export type { ModalHeadProps, ModalMedia, ModalSize } from "./dialog-parts.js";
-export type { DockIconButtonProps, DockItem, DockPlacement, DockProps } from "./dock.js";
+export type { DockIconButtonProps } from "./dock-item.js";
+export type { DockItem, DockPlacement, DockProps } from "./dock.js";
 export { Dock } from "./dock.js";
 export {
   DockedPanel,

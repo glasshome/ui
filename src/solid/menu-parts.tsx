@@ -15,9 +15,8 @@ import {
 } from "solid-js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import { Layer } from "../lib/behavior/layer.js";
-import type { Align, Side } from "../lib/anchor-placement.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
-import { createMenu, type Menu, type MenuOptions, rowClaim } from "../lib/behavior/menu.js";
+import { rowClaim } from "../lib/behavior/menu.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
 import { glassToneText } from "../lib/glass-tone.js";
@@ -31,8 +30,8 @@ import {
 import { FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
+import { createMenuLevel, MenuLevelProvider, useMenuLevel } from "./menu-level.js";
 import { usePortalMount } from "./portal-mount.js";
-import { useRequired } from "../lib/context.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
 import { forwardRef } from "../lib/behavior/solid.js";
 
@@ -47,38 +46,6 @@ const MenuContentIndicator: ParentComponent = (props) => (
     {props.children}
   </SelectionScope>
 );
-
-export type MenuPlacement = Side | `${Side}-${Exclude<Align, "center">}`;
-
-export function parsePlacement(placement: MenuPlacement): [Side, Align] {
-  const [side, align] = placement.split("-") as [Side, Align?];
-  return [side, align ?? "center"];
-}
-
-/** One open level of a menu tree: the root menu or a submenu, with the ids its trigger and panel name each other by. */
-export interface MenuLevel {
-  menu: Menu;
-  parent: MenuLevel | undefined;
-  triggerId: Accessor<string | undefined>;
-  setTriggerId: (id: string | undefined) => void;
-  contentId: Accessor<string | undefined>;
-  setContentId: (id: string | undefined) => void;
-}
-
-const MenuLevelContext = createContext<MenuLevel>();
-
-export const MenuLevelProvider = MenuLevelContext;
-
-export function useMenuLevel(): MenuLevel {
-  return useRequired(MenuLevelContext, "Menu parts", ["DropdownMenu", "ContextMenu"]);
-}
-
-export function createMenuLevel(options: MenuOptions, parent?: MenuLevel): MenuLevel {
-  const menu = createMenu(parent ? merge(options, { parent: parent.menu }) : options);
-  const [triggerId, setTriggerId] = createSignal<string>();
-  const [contentId, setContentId] = createSignal<string>();
-  return { menu, parent, triggerId, setTriggerId, contentId, setContentId };
-}
 
 export type MenuContentProps = Omit<ComponentProps<"div">, "role">;
 

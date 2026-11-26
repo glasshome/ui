@@ -40,6 +40,7 @@ import { FIELD_MOTION, MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { PICKER_LIST, PICKER_TRIGGER } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
+import { type Field, read, sameKeys, type SelectNode } from "./select-model.js";
 import { usePortalMount } from "./portal-mount.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
 import { forwardRef } from "../lib/behavior/solid.js";
@@ -48,21 +49,6 @@ const PRESS_CLAIM = "prevent:pointerdown";
 const TRIGGER_CLAIM = `${claimKeys(["Enter", " ", "ArrowDown", "ArrowUp"])} ${PRESS_CLAIM}`;
 const STEP_CLAIM = claimKeys(["ArrowLeft", "ArrowRight"]);
 const LISTBOX_CLAIM = claimKeys(["Enter", " "]);
-
-/** One row of the list: an option, or the heading of a group of options. */
-interface SelectNode<T> {
-  type: "item" | "section";
-  key: string;
-  rawValue: T;
-  textValue: string;
-  disabled: boolean;
-  level: number;
-  index: number;
-  prevKey?: string;
-  nextKey?: string;
-}
-
-type Field<T, V> = keyof Exclude<T, null> | ((option: Exclude<T, null>) => V);
 
 interface SelectBaseProps<Option, OptGroup> extends Omit<
   ComponentProps<"div">,
@@ -178,15 +164,6 @@ const useSelectList = (): SelectListValue => {
 const ITEM = '[role="option"][data-key]';
 const TAP_SLOP_PX = 10;
 const flag = (on: boolean) => (on ? "" : undefined);
-
-function read<T, V>(option: T, by: Field<T, V> | undefined): unknown {
-  if (by === undefined || option === null || option === undefined) return undefined;
-  if (typeof by === "function") return by(option as Exclude<T, null>);
-  return (option as Record<PropertyKey, unknown>)[by as PropertyKey];
-}
-
-const sameKeys = (a: readonly string[], b: readonly string[]) =>
-  a.length === b.length && a.every((key, i) => key === b[i]);
 
 type SelectionProps = {
   multiple?: unknown;

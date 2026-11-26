@@ -16,7 +16,6 @@ import { callEventHandler, forwardRef } from "../lib/behavior/solid.js";
 import { MORPH_MOTION, MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 import {
-  createMenuLevel,
   type MenuCheckboxItemProps,
   MenuCheckboxItemPart,
   MenuContentPart,
@@ -27,8 +26,6 @@ import {
   MenuItemPart,
   type MenuLabelProps,
   MenuLabelPart,
-  MenuLevelProvider,
-  type MenuPlacement,
   MenuRadioGroup,
   type MenuRadioItemProps,
   MenuRadioItemPart,
@@ -37,9 +34,14 @@ import {
   MenuSubContentPart,
   type MenuSubTriggerProps,
   MenuSubTriggerPart,
+} from "./menu-parts.js";
+import {
+  createMenuLevel,
+  MenuLevelProvider,
+  type MenuPlacement,
   parsePlacement,
   useMenuLevel,
-} from "./menu-parts.js";
+} from "./menu-level.js";
 import { controlRadius } from "../lib/anchor-placement.js";
 
 type AnchorRect = { x?: number; y?: number; width?: number; height?: number };

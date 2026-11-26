@@ -12,23 +12,16 @@ import {
   untrack,
 } from "solid-js";
 import { type ComponentProps, type JSX } from "@solidjs/web";
-import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { CARD_SURFACE } from "../lib/card-classes.js";
 import { DOCK_SLOT_RADIUS, DOCK_SLOT_SHAPE } from "../lib/dock-slot-classes.js";
-import {
-  DOCK_ARRIVE_MOTION,
-  DOCK_EDIT_MOTION,
-  HOLD_MOTION,
-  PRESS_DIP,
-} from "../lib/motion-classes.js";
+import { DOCK_EDIT_MOTION, HOLD_MOTION, PRESS_DIP } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
-import { Badge } from "./badge.js";
 import { createDockReorder, DockMoveGrip } from "./dock-edit.js";
+import { DockIconButton } from "./dock-item.js";
 import { pageOf, pageOffset } from "./dock-paging.js";
 import { Icon } from "./icon.js";
 import { useUiText } from "./locale.js";
-import { SelectionHighlight, SelectionScope } from "./selection.js";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js";
+import { SelectionScope } from "./selection.js";
 
 interface DockItem {
   id: string;
@@ -75,80 +68,7 @@ interface DockProps extends Omit<ComponentProps<"div">, "style"> {
   companionOpen?: boolean;
 }
 
-interface DockIconButtonProps extends ComponentProps<"button"> {
-  icon: Component<{ class?: string }> | JSX.Element;
-  label: string;
-  isActive?: boolean;
-  /** Wears the selection highlight: the active item, or the one a drag would land on. */
-  lit?: boolean;
-  badge?: number;
-  /** Plays the arrival glow once. */
-  arrived?: boolean;
-}
-
 const DOCK_PAGE_MS = 300;
-
-const DockIconButton: Component<DockIconButtonProps> = (props) => {
-  const text = useUiText();
-  // Kobalte's button root narrows `type`; Solid's ComponentProps<"button"> also
-  // admits "menu", so it is split off rather than spread.
-  const rest = omit(props, "icon", "label", "class", "isActive", "badge", "type", "lit", "arrived");
-  const isElement = () => typeof props.icon !== "function";
-
-  return (
-    <Tooltip openDelay={150} placement="top">
-      <TooltipTrigger
-        type="button"
-        data-slot="dock-item"
-        class={cn(
-          "group relative isolate transition-transform duration-(--duration-micro)",
-          DOCK_SLOT_SHAPE,
-          PRESS_DIP,
-          props.class,
-        )}
-        aria-label={props.label}
-        aria-current={props.isActive ? "page" : undefined}
-        data-lit={props.lit ? "" : undefined}
-        data-arrived={props.arrived ? "" : undefined}
-        {...rest}
-      >
-        <SelectionHighlight active={props.lit ?? false} />
-        <Show when={props.arrived}>
-          <span data-slot="dock-item-arrival" aria-hidden="true" class={DOCK_ARRIVE_MOTION} />
-        </Show>
-        <div
-          data-slot="dock-item-icon"
-          class={cn(
-            "flex items-center justify-center transition-colors duration-(--duration-state)",
-            props.lit ? "text-primary" : "text-foreground group-hover:text-primary/80",
-          )}
-        >
-          {isElement() ? (
-            (props.icon as JSX.Element)
-          ) : (
-            <Polymorphic
-              defaultAs={props.icon as Component<{ class?: string }>}
-              class="h-5 w-5 sm:h-6 sm:w-6"
-            />
-          )}
-        </div>
-        <Show when={typeof props.badge === "number" && props.badge > 0}>
-          {/* Inside the item box: an overhanging badge inflates the bar's
-           * scrollWidth and trips the overflow-to-scroll check below. */}
-          <Badge
-            role="status"
-            tone="var(--primary)"
-            class="absolute top-0 right-0 h-4 min-w-4 justify-center px-1 pt-0.5 pb-0 font-mono text-[9px] leading-none font-medium tabular-nums"
-            aria-label={text("ui.dock.pending", { count: props.badge ?? 0 })}
-          >
-            {props.badge != null && props.badge > 9 ? "9+" : props.badge}
-          </Badge>
-        </Show>
-      </TooltipTrigger>
-      <TooltipContent class="hidden sm:block">{props.label}</TooltipContent>
-    </Tooltip>
-  );
-};
 
 const Dock: Component<DockProps> = (props) => {
   const text = useUiText();
@@ -665,5 +585,5 @@ const Dock: Component<DockProps> = (props) => {
   );
 };
 
-export type { DockIconButtonProps, DockItem, DockPlacement, DockProps };
+export type { DockItem, DockPlacement, DockProps };
 export { Dock };
