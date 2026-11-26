@@ -337,7 +337,7 @@ function mountWith(
   return built;
 }
 
-describe("slot props build once", () => {
+describe("slot props build once", { shuffle: false }, () => {
   it("discovers every exported component, or skips it with a reason", () => {
     expect(mounted.length).toBeGreaterThan(150);
     const exported = new Set(components.map(([name]) => name));
