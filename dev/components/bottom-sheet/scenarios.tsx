@@ -18,7 +18,7 @@ const Sheet = (props: { fruit?: boolean }) => (
       <ResponsiveDialogBody>
         <ResponsiveDialogTitle>Sheet</ResponsiveDialogTitle>
         {props.fruit ? <Fruit /> : <p>Something to read.</p>}
-        <ResponsiveDialogClose>Done</ResponsiveDialogClose>
+        <ResponsiveDialogClose variant="default">Done</ResponsiveDialogClose>
       </ResponsiveDialogBody>
     </ResponsiveDialogContent>
   </ResponsiveDialog>
