@@ -17,6 +17,7 @@ import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { focusWithoutTracking, trackFocus } from "../lib/behavior/focus-scope.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { callEventHandler, effect, merge } from "../lib/behavior/solid.js";
+import { DISCLOSURE_MOTION } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 import {
   CollapsibleContentRoot,
@@ -331,10 +332,12 @@ const AccordionContent: ParentComponent<AccordionContentProps> = (props) => {
   return (
     <AccordionContentRoot
       data-slot="accordion-content"
-      class="data-[closed]:animate-accordion-up data-[expanded]:animate-accordion-down overflow-hidden text-sm duration-(--duration-expand)"
+      class={cn(DISCLOSURE_MOTION, "text-sm")}
       {...rest}
     >
-      <div class={cn("pt-0 pb-4", local.class)}>{local.children}</div>
+      <div class="min-h-0">
+        <div class={cn("pt-0 pb-4", local.class)}>{local.children}</div>
+      </div>
     </AccordionContentRoot>
   );
 };

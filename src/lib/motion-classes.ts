@@ -30,6 +30,11 @@ export const ANCHORED_MOTION =
 /** @deprecated Rows arrive with their panel; the class does nothing. Removed in 2.0.0. */
 export const STAGGER = "gh-stagger";
 
+/* Content that opens in place under its trigger (collapsible, accordion): its one
+ * child wrapper rides a grid row from 0fr to 1fr and back. */
+export const DISCLOSURE_MOTION =
+  "grid overflow-hidden data-[expanded]:animate-disclosure-open data-[closed]:animate-disclosure-close";
+
 /* An exit that holds its last frame: a closed surface still mounted (kept, or waiting
  * for its unmount) rests invisible instead of snapping back. */
 const REST_CLOSED = "data-[closed]:fill-mode-forwards";

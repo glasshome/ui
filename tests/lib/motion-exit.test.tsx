@@ -1,6 +1,7 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { afterEach, describe, expect, it } from "vitest";
 import {
+  DISCLOSURE_MOTION,
   FIELD_MOTION,
   MODAL_MOTION,
   MOTION_EXIT_MS,
@@ -37,7 +38,7 @@ const DOORS = {
   modal: { class: MODAL_MOTION, attrs: { "data-closed": "" } },
   scrim: { class: SCRIM_MOTION, attrs: { "data-closed": "" } },
   field: { class: FIELD_MOTION, attrs: { "data-closed": "" } },
-  disclosure: { class: "data-closed:animate-collapsible-up", attrs: { "data-closed": "" } },
+  disclosure: { class: DISCLOSURE_MOTION, attrs: { "data-closed": "" } },
   sheet: {
     class: "bs-content",
     attrs: {

@@ -17,7 +17,7 @@ import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
 import { callEventHandler, effect, merge } from "../lib/behavior/solid.js";
-import { MOTION_EXIT_MS } from "../lib/motion-classes.js";
+import { DISCLOSURE_MOTION, MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 
 type CollapsibleProps = Omit<ComponentProps<"div">, "onChange"> & {
@@ -270,16 +270,15 @@ const CollapsibleTrigger: Component<CollapsibleTriggerProps> = (props) => {
 };
 
 const CollapsibleContent: Component<CollapsibleContentProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const [local, rest] = splitProps(props, ["class", "children"]);
   return (
     <CollapsibleContentRoot
       data-slot="collapsible-content"
-      class={cn(
-        "data-closed:animate-collapsible-up data-expanded:animate-collapsible-down overflow-hidden",
-        local.class,
-      )}
+      class={cn(DISCLOSURE_MOTION, local.class)}
       {...rest}
-    />
+    >
+      <div class="min-h-0">{local.children}</div>
+    </CollapsibleContentRoot>
   );
 };
 
