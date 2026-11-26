@@ -10,6 +10,14 @@ function sheet(): HTMLElement {
   return el;
 }
 
+function watchContextMenu(): () => boolean | undefined {
+  let prevented: boolean | undefined;
+  window.addEventListener("contextmenu", (e) => (prevented ??= e.defaultPrevented), {
+    once: true,
+  });
+  return () => prevented;
+}
+
 afterEach(() => {
   document.body.replaceChildren();
   window.getSelection()?.removeAllRanges();
@@ -54,6 +62,38 @@ describe("createHold", () => {
     expect(hold.claim()).toBe("prevent:touchend prevent:click stop:click");
     await commands.mouse("up", 50, 50);
     expect(hold.claim()).toBeUndefined();
+  });
+
+  it("keeps the browser's long press off what a hold opened until the finger lifts", async () => {
+    useFakeTime();
+    const el = sheet();
+    const hold = createHold({ onHold: () => {} });
+    el.addEventListener("pointerdown", hold.down);
+    await commands.mouse("down", 20, 10);
+    await vi.advanceTimersByTimeAsync(HOLD_MS);
+    const held = watchContextMenu();
+    await commands.mouse("press", 20, 10, "right");
+    expect(held()).toBe(true);
+    await commands.mouse("up", 20, 10);
+    await vi.runAllTimersAsync();
+
+    const lifted = watchContextMenu();
+    await commands.mouse("press", 20, 10, "right");
+    expect(lifted()).toBe(false);
+  });
+
+  it("lets go on its own when the release never arrives", async () => {
+    useFakeTime();
+    const el = sheet();
+    const hold = createHold({ onHold: () => {} });
+    el.addEventListener("pointerdown", hold.down);
+    await commands.mouse("down", 20, 10);
+    await vi.advanceTimersByTimeAsync(HOLD_MS);
+    await vi.runAllTimersAsync();
+    const after = watchContextMenu();
+    await commands.mouse("press", 20, 10, "right");
+    expect(after()).toBe(false);
+    await commands.mouse("up", 20, 10);
   });
 
   it("a press that moves past the slop never fires", async () => {
