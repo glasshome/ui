@@ -199,17 +199,13 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
     "data-checked": checked() ? "" : undefined,
   });
 
+  // value stays out of the input's attribute group, which writes it on every checked change.
   createEffect(
-    () => [input(), props.value === group.defaultValue()] as const,
-    ([el, isDefault]) => {
-      if (el) el.defaultChecked = isDefault;
-    },
-  );
-  // Outside the input's attribute group, which writes value again on every checked change and restyles it.
-  createEffect(
-    () => [input(), props.value] as const,
-    ([el, value]) => {
-      if (el) el.value = value;
+    () => [input(), props.value, group.defaultValue()] as const,
+    ([el, value, defaultValue]) => {
+      if (!el) return;
+      el.defaultChecked = value === defaultValue;
+      el.value = value;
     },
   );
   const [focused, setFocused] = createSignal(false);
@@ -263,10 +259,7 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
         readonly={group.readOnly()}
         style={VISUALLY_HIDDEN}
         aria-labelledby={`${id()}-label`}
-        data-required={group.required() ? "" : undefined}
-        data-disabled={disabled() ? "" : undefined}
-        data-readonly={group.readOnly() ? "" : undefined}
-        data-checked={checked() ? "" : undefined}
+        {...state()}
         class="peer"
         aria-busy={props.busy ? "true" : undefined}
         aria-disabled={props.busy ? "true" : undefined}

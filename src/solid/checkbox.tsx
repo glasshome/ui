@@ -90,11 +90,13 @@ const Checkbox = (props: CheckboxProps) => {
       if (el) el.indeterminate = indeterminate;
     },
   );
-  // The browser's own reset restores this, so a reset lands where the state does.
+  // The browser's own reset restores defaultChecked; value stays out of the input's attribute group, which writes it on every checked change.
   createEffect(
-    () => [input(), props.defaultChecked ?? false] as const,
-    ([el, defaultChecked]) => {
-      if (el) el.defaultChecked = defaultChecked;
+    () => [input(), props.defaultChecked ?? false, props.value ?? "on"] as const,
+    ([el, defaultChecked, value]) => {
+      if (!el) return;
+      el.defaultChecked = defaultChecked;
+      el.value = value;
     },
   );
   createEffect(
@@ -104,14 +106,6 @@ const Checkbox = (props: CheckboxProps) => {
       const reset = () => setChecked(props.defaultChecked ?? false);
       form.addEventListener("reset", reset);
       return () => form.removeEventListener("reset", reset);
-    },
-  );
-
-  // Outside the input's attribute group, which writes value again on every checked change and restyles it.
-  createEffect(
-    () => [input(), props.value ?? "on"] as const,
-    ([el, value]) => {
-      if (el) el.value = value;
     },
   );
 
@@ -178,11 +172,7 @@ const Checkbox = (props: CheckboxProps) => {
           aria-required={props.required ? "true" : undefined}
           aria-disabled={props.disabled ? "true" : undefined}
           aria-readonly={props.readOnly ? "true" : undefined}
-          data-required={props.required ? "" : undefined}
-          data-disabled={props.disabled ? "" : undefined}
-          data-readonly={props.readOnly ? "" : undefined}
-          data-checked={checked() ? "" : undefined}
-          data-indeterminate={props.indeterminate ? "" : undefined}
+          {...state()}
           class="peer"
           onChange={change}
           onFocus={() => setFocused(true)}
