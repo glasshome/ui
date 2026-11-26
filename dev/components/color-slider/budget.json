@@ -18,8 +18,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 5,
-        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 7,
+        "reason": "2026-11-26: Worker realm baseline, guest lane total plus 25% and at least one; the old max had no room for a frame tick under load"
       }
     }
   },
