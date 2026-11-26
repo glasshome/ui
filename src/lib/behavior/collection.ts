@@ -151,6 +151,9 @@ export function createCollection(options: CollectionOptions): Collection {
     createEffect(
       () => [options.root(), options.preferred?.() ?? []] as const,
       ([root, preferred]) => {
+        // A press already moved the stop onto a preferred item; effects run after its flush, so keep it.
+        const current = untrack(own);
+        if (current !== undefined && preferred.includes(current)) return;
         placeStop(root, preferred);
       },
     );
