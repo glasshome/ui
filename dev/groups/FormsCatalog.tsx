@@ -13,8 +13,6 @@ import {
   FieldSet,
   FieldSubGroup,
   FieldTitle,
-  Form,
-  FormField,
   HeroAction,
   Input,
   InputGroup,
@@ -45,7 +43,6 @@ import {
   Switch,
   SwitchRow,
   Textarea,
-  useFormField,
 } from "../../src/solid";
 import { Icon } from "../../src/solid/icon.js";
 import { Axis, CatalogGroup, Specimen } from "../CatalogKit";
@@ -85,18 +82,6 @@ const flowNodesSchema: ExtendedJSONSchema = {
     ],
   } satisfies ExtendedJSONSchema,
 };
-
-function EmailField() {
-  const { error } = useFormField();
-  return (
-    <Field>
-      <FieldLabel>Email</FieldLabel>
-      <Input type="email" placeholder="you@example.com" />
-      <FieldDescription>We only use it for account recovery.</FieldDescription>
-      <FieldError errors={error() ? [{ message: error() }] : []} />
-    </Field>
-  );
-}
 
 export function FormsCatalog() {
   const [checked, setChecked] = createSignal(true);
@@ -383,14 +368,6 @@ export function FormsCatalog() {
           </SelectTrigger>
           <SelectContent />
         </Select>
-      </Specimen>
-
-      <Specimen name="Form" span={2}>
-        <Form class="w-full" errors={{ email: "Email is required." }}>
-          <FormField name="email">
-            <EmailField />
-          </FormField>
-        </Form>
       </Specimen>
 
       <Specimen name="SchemaForm" span={2}>
