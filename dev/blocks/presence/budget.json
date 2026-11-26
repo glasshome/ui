@@ -47,8 +47,8 @@
     "mainThreadMotion": ["clipPath"],
     "guest": {
       "workUnits": {
-        "max": 5,
-        "reason": "baseline 2026-11-17; phase 1 step 5 is open, Task 12 re-measures; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
+        "max": 13,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 0,
@@ -120,8 +120,8 @@
     "mainThreadMotion": ["clipPath"],
     "guest": {
       "workUnits": {
-        "max": 7,
-        "reason": "baseline 2026-11-17; phase 1 step 5 is open, Task 12 re-measures; plus 25% and at least one since 2026-11-18, since guest work driven by frames runs as many ticks as the host draws during a step"
+        "max": 14,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       },
       "domCalls": {
         "getComputedStyle": 0,

@@ -18,8 +18,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 10,
-        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 27,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -91,8 +91,8 @@
     ],
     "guest": {
       "workUnits": {
-        "max": 13,
-        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 29,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -130,8 +130,8 @@
     "mainThreadMotion": ["backgroundColor", "color"],
     "guest": {
       "workUnits": {
-        "max": 13,
-        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 29,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },

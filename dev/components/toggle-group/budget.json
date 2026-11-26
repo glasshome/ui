@@ -18,8 +18,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 9,
-        "reason": "2026-11-18: lowered to the owned collection's cost, plus 25% and at least one"
+        "max": 27,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -70,8 +70,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 13,
-        "reason": "kobalte baseline 2026-11-18, plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step; plus two since 2026-11-18 for the selection flight, which runs as CSS keyframes in the guest and ends there by an animationend event"
+        "max": 30,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -150,8 +150,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 15,
-        "reason": "kobalte baseline 2026-11-18, plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step; plus two since 2026-11-18 for the selection flight, which runs as CSS keyframes in the guest and ends there by an animationend event"
+        "max": 34,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -202,8 +202,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 12,
-        "reason": "kobalte baseline 2026-11-18, plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step; plus two since 2026-11-18 for the selection flight, which runs as CSS keyframes in the guest and ends there by an animationend event"
+        "max": 29,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -240,8 +240,8 @@
     },
     "guest": {
       "workUnits": {
-        "max": 19,
-        "reason": "kobalte baseline 2026-11-18, plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+        "max": 35,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },

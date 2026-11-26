@@ -10,7 +10,10 @@
           "max": 3,
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs"
         },
-        "layouts": { "max": 1, "reason": "baseline 2026-11-19, max of 3 T50 runs" }
+        "layouts": {
+          "max": 1,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs"
+        }
       },
       "1": {
         "elementsRestyled": {
@@ -21,12 +24,18 @@
           "max": 16,
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs"
         },
-        "layouts": { "max": 3, "reason": "baseline 2026-11-19, max of 3 T50 runs" }
+        "layouts": {
+          "max": 3,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs"
+        }
       }
     },
     "mainThreadMotion": ["color"],
     "guest": {
-      "workUnits": { "max": 15, "reason": "baseline 2026-11-19 (12), plus 25% and at least one" }
+      "workUnits": {
+        "max": 39,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+      }
     }
   },
   "pages": {
@@ -50,12 +59,21 @@
           "max": 7,
           "reason": "baseline 2026-11-19, max of 3 T50 runs (5) plus 25%"
         },
-        "largestRecalc": { "max": 2, "reason": "baseline 2026-11-19, max of 3 T50 runs" },
-        "layouts": { "max": 1, "reason": "baseline 2026-11-19, max of 3 T50 runs" }
+        "largestRecalc": {
+          "max": 2,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs"
+        },
+        "layouts": {
+          "max": 1,
+          "reason": "baseline 2026-11-19, max of 3 T50 runs"
+        }
       }
     },
     "guest": {
-      "workUnits": { "max": 47, "reason": "baseline 2026-11-19 (37), plus 25% and at least one" }
+      "workUnits": {
+        "max": 88,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
+      }
     }
   }
 }

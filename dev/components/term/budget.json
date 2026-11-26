@@ -33,8 +33,8 @@
     "mainThreadMotion": ["clipPath"],
     "guest": {
       "workUnits": {
-        "max": 8,
-        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 24,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -86,8 +86,8 @@
     "mainThreadMotion": ["clipPath"],
     "guest": {
       "workUnits": {
-        "max": 9,
-        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 24,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -139,8 +139,8 @@
     "mainThreadMotion": ["clipPath"],
     "guest": {
       "workUnits": {
-        "max": 8,
-        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 24,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -192,8 +192,8 @@
     "mainThreadMotion": ["clipPath"],
     "guest": {
       "workUnits": {
-        "max": 12,
-        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 29,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   },
@@ -292,8 +292,8 @@
     "mainThreadMotion": ["clipPath"],
     "guest": {
       "workUnits": {
-        "max": 8,
-        "reason": "owned baseline 2026-11-18, guest lane total plus 25% and at least one"
+        "max": 24,
+        "reason": "rebaseline 2026-11-26 on the Solid 2 guest, where a widget bundles its own ui and mounting evaluates it; plus 25% and at least one, since guest work driven by frames runs as many ticks as the host draws during a step"
       }
     }
   }
