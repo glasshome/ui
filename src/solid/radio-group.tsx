@@ -205,6 +205,13 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
       if (el) el.defaultChecked = isDefault;
     },
   );
+  // Outside the input's attribute group, which writes value again on every checked change and restyles it.
+  createEffect(
+    () => [input(), props.value] as const,
+    ([el, value]) => {
+      if (el) el.value = value;
+    },
+  );
   const [focused, setFocused] = createSignal(false);
   // Bound on the elements, since Solid's delegated handlers never reach inside a closed shadow root.
   createEffect(item, (node) => {
@@ -250,14 +257,16 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
         type="radio"
         id={`${id()}-input`}
         name={group.name()}
-        value={props.value}
         checked={checked()}
         required={group.required()}
         disabled={disabled()}
         readonly={group.readOnly()}
         style={VISUALLY_HIDDEN}
         aria-labelledby={`${id()}-label`}
-        {...state()}
+        data-required={group.required() ? "" : undefined}
+        data-disabled={disabled() ? "" : undefined}
+        data-readonly={group.readOnly() ? "" : undefined}
+        data-checked={checked() ? "" : undefined}
         class="peer"
         aria-busy={props.busy ? "true" : undefined}
         aria-disabled={props.busy ? "true" : undefined}

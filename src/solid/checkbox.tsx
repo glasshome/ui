@@ -107,6 +107,14 @@ const Checkbox = (props: CheckboxProps) => {
     },
   );
 
+  // Outside the input's attribute group, which writes value again on every checked change and restyles it.
+  createEffect(
+    () => [input(), props.value ?? "on"] as const,
+    ([el, value]) => {
+      if (el) el.value = value;
+    },
+  );
+
   const state = () => ({
     "data-required": props.required ? "" : undefined,
     "data-disabled": props.disabled ? "" : undefined,
@@ -159,7 +167,6 @@ const Checkbox = (props: CheckboxProps) => {
           type="checkbox"
           id={`${id()}-input`}
           name={props.name ?? id()}
-          value={props.value ?? "on"}
           checked={checked()}
           required={props.required}
           disabled={props.disabled}
@@ -171,7 +178,11 @@ const Checkbox = (props: CheckboxProps) => {
           aria-required={props.required ? "true" : undefined}
           aria-disabled={props.disabled ? "true" : undefined}
           aria-readonly={props.readOnly ? "true" : undefined}
-          {...state()}
+          data-required={props.required ? "" : undefined}
+          data-disabled={props.disabled ? "" : undefined}
+          data-readonly={props.readOnly ? "" : undefined}
+          data-checked={checked() ? "" : undefined}
+          data-indeterminate={props.indeterminate ? "" : undefined}
           class="peer"
           onChange={change}
           onFocus={() => setFocused(true)}
