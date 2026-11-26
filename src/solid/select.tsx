@@ -583,10 +583,10 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
           return ctx.disabled();
         },
         get "aria-busy"() {
-          return ctx.busy() || undefined;
+          return ctx.busy() ? "true" : undefined;
         },
         get "aria-disabled"() {
-          return ctx.busy() || undefined;
+          return ctx.busy() ? "true" : undefined;
         },
         "aria-haspopup": "listbox" as const,
         get "data-claim"() {
