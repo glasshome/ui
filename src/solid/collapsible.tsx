@@ -275,7 +275,7 @@ const CollapsibleContent: Component<CollapsibleContentProps> = (props) => {
     <CollapsibleContentRoot
       data-slot="collapsible-content"
       class={cn(
-        "data-closed:animate-collapsible-up data-expanded:animate-collapsible-down overflow-hidden",
+        "data-closed:animate-collapsible-up data-expanded:animate-collapsible-down overflow-hidden [interpolate-size:allow-keywords]",
         local.class,
       )}
       {...rest}

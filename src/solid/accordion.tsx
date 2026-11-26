@@ -331,7 +331,7 @@ const AccordionContent: ParentComponent<AccordionContentProps> = (props) => {
   return (
     <AccordionContentRoot
       data-slot="accordion-content"
-      class="data-[closed]:animate-accordion-up data-[expanded]:animate-accordion-down overflow-hidden text-sm duration-(--duration-expand)"
+      class="data-[closed]:animate-accordion-up data-[expanded]:animate-accordion-down overflow-hidden text-sm duration-(--duration-expand) [interpolate-size:allow-keywords]"
       {...rest}
     >
       <div class={cn("pt-0 pb-4", local.class)}>{local.children}</div>

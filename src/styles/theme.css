@@ -112,13 +112,13 @@
     height: 0;
   }
   to {
-    height: var(--collapsible-content-height);
+    height: var(--collapsible-content-height, auto);
   }
 }
 
 @keyframes collapsible-up {
   from {
-    height: var(--collapsible-content-height);
+    height: var(--collapsible-content-height, auto);
   }
   to {
     height: 0;
