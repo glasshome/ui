@@ -1,4 +1,4 @@
-import { focusedIn } from "./behavior/focused.js";
+import { focusWithoutTracking } from "./behavior/focus-scope.js";
 /** The one door to the clipboard. Call it from the click: browsers refuse a
  *  copy more than a few seconds after it. Text still loading goes in as a
  *  promise so a ClipboardItem write keeps the gesture (Safari). */
@@ -66,16 +66,15 @@ function copyViaSelection(text: string): boolean {
   // copied nothing.
   (previous?.parentElement ?? document.body).append(area);
   try {
-    area.focus({ preventScroll: true });
+    if (!focusWithoutTracking(area)) return false;
     area.select();
     area.setSelectionRange(0, text.length);
-    if (focusedIn(area) !== area) return false;
     return document.execCommand("copy");
   } catch {
     return false;
   } finally {
     area.remove();
-    previous?.focus({ preventScroll: true });
+    focusWithoutTracking(previous);
   }
 }
 
