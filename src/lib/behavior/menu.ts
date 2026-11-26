@@ -1,4 +1,4 @@
-import { type Accessor, createSignal, onCleanup, untrack, createEffect } from "solid-js";
+import { type Accessor, createSignal, onCleanup, untrack, createEffect, flush } from "solid-js";
 import type { Align, Side } from "../anchor-placement.js";
 import type { Box } from "../anchor-placement.js";
 import { type AnchorLike, createAnchored } from "./anchored.js";
@@ -215,6 +215,8 @@ export function createMenu(options: MenuOptions): Menu {
     cancelOpenTimer();
     clearGrace();
     if (untrack(options.open)) options.onOpenChange(false);
+    // The content leaves before focus returns, so focus never moves item to trigger in one recalc.
+    flush();
     if (returnFocus && held) focusWithoutTracking(trigger());
   }
 
