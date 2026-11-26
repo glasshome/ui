@@ -257,16 +257,6 @@ export function createMenu(options: MenuOptions): Menu {
     });
   }
 
-  createEffect(
-    () => [open(), content()] as const,
-    ([isOpen, el]) => {
-      if (!isOpen || !el) return;
-      const focus = pending;
-      pending = restingFocus;
-      applyFocus(el, focus);
-    },
-  );
-
   const layer = registerLayer({
     element: content,
     open,
@@ -276,6 +266,17 @@ export function createMenu(options: MenuOptions): Menu {
     dismiss: () => hide(true),
   });
   createDismiss({ layer, onDismiss: (reason) => hide(reason === "escape") });
+
+  // After registerLayer: a focus trap below lets focus in only once this layer is on the stack.
+  createEffect(
+    () => [open(), content()] as const,
+    ([isOpen, el]) => {
+      if (!isOpen || !el) return;
+      const focus = pending;
+      pending = restingFocus;
+      applyFocus(el, focus);
+    },
+  );
 
   const anchored = createAnchored({
     anchor: () => (options.anchor ? options.anchor(trigger()) : trigger()),
