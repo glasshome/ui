@@ -10,6 +10,7 @@ import {
   type Component,
   createContext,
   createEffect,
+  createMemo,
   createSignal,
   type ParentComponent,
   omit,
@@ -49,6 +50,9 @@ interface CarouselContextProps {
 }
 
 const CarouselContext = createContext<CarouselContextProps>();
+
+const sameFields = <T extends object>(a: T, b: T) =>
+  (Object.keys(a) as (keyof T)[]).every((key) => a[key] === b[key]);
 
 function useCarousel() {
   const context = useRequired(CarouselContext, "Carousel parts", "Carousel");
@@ -93,7 +97,7 @@ const Carousel: ParentComponent<
 
   // Tracks autoplay: a widget whose config changes the interval (or supplies one
   // after the first mount) gets a re-initialised engine, old timers destroyed.
-  createEffect(
+  const engine = createMemo(
     () => ({
       viewport: viewportEl(),
       delay: props.autoplay,
@@ -103,50 +107,51 @@ const Carousel: ParentComponent<
       opts: props.opts,
       onApi: props.setApi,
     }),
-    ({ viewport, delay, extra, fade, axis, opts, onApi }) => {
-      if (!viewport) return;
-      // Reduced motion keeps the carousel usable but stops it moving on its own.
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const plugins = [...(extra ?? [])];
-      if (fade) plugins.push(Fade());
-      if (delay && !reduced) {
-        // Manual nav should not kill autoplay for good; hover/focus pauses it.
-        plugins.push(
-          Autoplay({
-            delay,
-            stopOnInteraction: false,
-            stopOnMouseEnter: true,
-            stopOnFocusIn: true,
-          }),
-        );
-      }
-      const embla = EmblaCarousel(viewport, { axis, ...opts }, plugins);
-      setApi(embla);
-      onApi?.(embla);
-
-      let previous = -1;
-      const onSelect = () => {
-        setCanScrollPrev(embla.canScrollPrev());
-        setCanScrollNext(embla.canScrollNext());
-        setSelected(embla.selectedScrollSnap());
-        setSlideCount(embla.scrollSnapList().length);
-        // Slides carry their own selected state so CSS (wipe) can key off it;
-        // embla itself only drives transform and opacity. data-prev keeps the
-        // outgoing slide one layer down until the sweep lands.
-        const active = embla.selectedScrollSnap();
-        embla.slideNodes().forEach((node, i) => {
-          node.toggleAttribute("data-selected", i === active);
-          node.toggleAttribute("data-prev", i === previous && i !== active);
-        });
-        previous = active;
-      };
-      onSelect();
-      embla.on("reInit", onSelect);
-      embla.on("select", onSelect);
-
-      return () => embla.destroy();
-    },
+    { equals: sameFields },
   );
+  createEffect(engine, ({ viewport, delay, extra, fade, axis, opts, onApi }) => {
+    if (!viewport) return;
+    // Reduced motion keeps the carousel usable but stops it moving on its own.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const plugins = [...(extra ?? [])];
+    if (fade) plugins.push(Fade());
+    if (delay && !reduced) {
+      // Manual nav should not kill autoplay for good; hover/focus pauses it.
+      plugins.push(
+        Autoplay({
+          delay,
+          stopOnInteraction: false,
+          stopOnMouseEnter: true,
+          stopOnFocusIn: true,
+        }),
+      );
+    }
+    const embla = EmblaCarousel(viewport, { axis, ...opts }, plugins);
+    setApi(embla);
+    onApi?.(embla);
+
+    let previous = -1;
+    const onSelect = () => {
+      setCanScrollPrev(embla.canScrollPrev());
+      setCanScrollNext(embla.canScrollNext());
+      setSelected(embla.selectedScrollSnap());
+      setSlideCount(embla.scrollSnapList().length);
+      // Slides carry their own selected state so CSS (wipe) can key off it;
+      // embla itself only drives transform and opacity. data-prev keeps the
+      // outgoing slide one layer down until the sweep lands.
+      const active = embla.selectedScrollSnap();
+      embla.slideNodes().forEach((node, i) => {
+        node.toggleAttribute("data-selected", i === active);
+        node.toggleAttribute("data-prev", i === previous && i !== active);
+      });
+      previous = active;
+    };
+    onSelect();
+    embla.on("reInit", onSelect);
+    embla.on("select", onSelect);
+
+    return () => embla.destroy();
+  });
 
   const scrollPrev = () => api()?.scrollPrev();
   const scrollNext = () => api()?.scrollNext();

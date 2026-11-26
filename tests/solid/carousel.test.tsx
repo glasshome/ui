@@ -74,6 +74,18 @@ describe("autoplay is reactive", () => {
     expect(seen[0]).not.toBe(seen[1]);
   });
 
+  it("keeps its engine when the parent recomputes the same interval", () => {
+    const [view, setView] = createSignal({ autoplay: 3000 });
+    const seen: CarouselApi[] = [];
+    renderWith(
+      () => view().autoplay,
+      (api) => seen.push(api),
+    );
+    setView({ autoplay: 3000 });
+    flush();
+    expect(seen).toHaveLength(1);
+  });
+
   it("starts autoplaying when an interval arrives after the first mount", () => {
     const [delay, setDelay] = createSignal<number | undefined>(undefined);
     const seen: CarouselApi[] = [];
