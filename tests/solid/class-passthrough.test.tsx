@@ -46,7 +46,6 @@ const NOT_PROBED: Record<string, string> = {
   Dialog: "renderless context root (kobalte Dialog), no DOM element of its own",
   DropdownMenu: "renderless context root (kobalte Menu), no DOM element of its own",
   DropdownMenuSub: "renderless sub-menu context root, no DOM element of its own",
-  FormField: "renderless name-context provider for form parts",
   LocaleProvider: "renderless language context root, no DOM element of its own",
   HoverCard: "renderless context root (kobalte HoverCard), no DOM element of its own",
   Popover: "renderless context root (kobalte Popover), no DOM element of its own",
