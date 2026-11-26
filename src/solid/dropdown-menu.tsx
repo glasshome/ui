@@ -12,7 +12,7 @@ import type { AnchorLike } from "../lib/behavior/anchored.js";
 import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { createMenuButton } from "../lib/behavior/menu.js";
-import { callEventHandler } from "../lib/behavior/solid.js";
+import { callEventHandler, forwardRef } from "../lib/behavior/solid.js";
 import { MORPH_MOTION, MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 import {
@@ -158,7 +158,7 @@ function DropdownMenuTrigger<T extends ValidComponent = "button">(
         ref: (node: HTMLElement) => {
           setEl(node);
           menu.setTrigger(node);
-          if (typeof props.ref === "function") props.ref(node);
+          forwardRef(() => props.ref, node);
         },
         "aria-haspopup": "true",
         get "data-claim"() {

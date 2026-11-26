@@ -13,7 +13,7 @@ import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
-import { callEventHandler } from "../lib/behavior/solid.js";
+import { callEventHandler, forwardRef } from "../lib/behavior/solid.js";
 import { createHold } from "../lib/hold.js";
 import { MOTION_EXIT_MS, OVERLAY_MOTION } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
@@ -200,7 +200,7 @@ function ContextMenuTrigger<T extends ValidComponent = "div">(
         ref: (node: HTMLElement) => {
           setEl(node);
           menu.setTrigger(node);
-          if (typeof props.ref === "function") props.ref(node);
+          forwardRef(() => props.ref, node);
         },
         get style() {
           const own = props.style;

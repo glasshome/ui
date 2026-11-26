@@ -6,9 +6,11 @@ import {
   omit,
   useContext,
   createEffect,
+  untrack,
 } from "solid-js";
 import { type ComponentProps, type JSX } from "@solidjs/web";
 import { cn } from "../lib/utils.js";
+import { forwardRef } from "../lib/behavior/solid.js";
 
 /** The attribute (without `data-`) that marks the active item: Kobalte's, or the caller's own. */
 export type SelectionMarker = "pressed" | "selected" | "highlighted" | "lit";
@@ -35,7 +37,7 @@ export function SelectionHighlight(props: { active?: boolean }) {
   onSettled(() => {
     setItem(span?.parentElement ?? undefined);
   });
-  if (scope && props.active === undefined) scope.watchMarker();
+  if (scope && untrack(() => props.active) === undefined) scope.watchMarker();
   createEffect(
     () => [item(), props.active] as const,
     ([item, active]) => {
@@ -235,8 +237,7 @@ export function SelectionScope(props: SelectionScopeProps) {
   let flyer: HTMLSpanElement | undefined;
   const setRoot = (el: HTMLDivElement) => {
     root = el;
-    const forwarded = props.ref;
-    if (typeof forwarded === "function") forwarded(el);
+    forwardRef(() => props.ref, el);
   };
 
   let move: ((next: HTMLElement | undefined) => void) | undefined;

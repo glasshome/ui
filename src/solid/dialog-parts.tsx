@@ -26,7 +26,7 @@ import {
   ModalTrigger,
 } from "../lib/behavior/modal-root.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
-import { callEventHandler } from "../lib/behavior/solid.js";
+import { callEventHandler, forwardRef } from "../lib/behavior/solid.js";
 import { busyProps } from "../lib/busy.js";
 import { Z_CLASS } from "../lib/layers.js";
 import { ANCHORED_MOTION, MODAL_MOTION, SCRIM_MOTION } from "../lib/motion-classes.js";
@@ -259,7 +259,7 @@ export function createModalParts(slot: string): ModalParts {
         as={props.as}
         ref={(node: HTMLElement) => {
           el = node;
-          if (typeof props.ref === "function") props.ref(node as HTMLDivElement);
+          forwardRef(() => props.ref, node);
         }}
         data-slot={`${slot}-body`}
         class={cn(MODAL_BODY, props.class)}

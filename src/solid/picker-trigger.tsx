@@ -5,6 +5,7 @@ import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { useUiText } from "./locale.js";
 import { useAnchorTrigger } from "./popover.js";
+import { forwardRef } from "../lib/behavior/solid.js";
 
 export interface PickerTriggerProps extends Omit<
   JSX.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -39,7 +40,7 @@ export function PickerTrigger(props: PickerTriggerProps) {
       <button
         ref={(el) => {
           anchorTrigger?.(el);
-          if (typeof props.ref === "function") props.ref(el);
+          forwardRef(() => props.ref, el);
         }}
         type="button"
         data-slot={props.slot}

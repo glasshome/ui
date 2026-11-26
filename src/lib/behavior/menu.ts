@@ -435,7 +435,7 @@ export function createMenu(options: MenuOptions): Menu {
       setActive(undefined);
       // An outside press on nothing focusable leaves focus nowhere; it goes back to the trigger.
       if (!focusFell(el) || (parent && !untrack(parent.open))) return;
-      focusWithoutTracking(trigger());
+      focusWithoutTracking(untrack(trigger));
     };
   });
 

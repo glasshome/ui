@@ -31,6 +31,7 @@ import {
   ModalCover,
   type ModalSize,
 } from "./dialog-parts.js";
+import { forwardRef } from "../lib/behavior/solid.js";
 
 const Dialog = createModalRootSkin("dialog");
 
@@ -140,7 +141,7 @@ const DialogContent: ParentComponent<DialogContentProps> = (props) => {
         panelStyle={{ ...(typeof props.style === "object" ? props.style : {}), ...placement() }}
         ariaLabel={props.ariaLabel}
         ref={(el: HTMLElement) => {
-          if (typeof props.ref === "function") props.ref(el as HTMLDivElement);
+          forwardRef(() => props.ref, el);
         }}
         {...others}
       >

@@ -25,7 +25,7 @@ import { createSlot } from "./slot.js";
 import { Polymorphic } from "./polymorphic.js";
 import { Layer } from "./layer.js";
 import { createPresence } from "./presence.js";
-import { callEventHandler } from "./solid.js";
+import { callEventHandler, forwardRef } from "./solid.js";
 
 export type ModalRole = "dialog" | "alertdialog";
 
@@ -143,7 +143,7 @@ export function ModalTrigger<T extends ValidComponent = "button">(
         ref: (el: HTMLElement) => {
           own = el;
           ctx.setTriggerRef(el);
-          if (typeof props.ref === "function") props.ref(el);
+          forwardRef(() => props.ref, el);
         },
         "aria-haspopup": "dialog",
         get "aria-expanded"() {
@@ -380,19 +380,22 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
         setTrapping(true);
         return;
       }
-      const panel = ctx.panel();
+      const panel = untrack(ctx.panel);
       if (panel) {
         // Newest first: a list opened from inside goes before the one it came from.
-        for (const layer of [...layerStack.layers()].reverse()) {
-          if (inside(panel, layer.trigger()) || inside(panel, layer.element())) layer.dismiss?.();
+        for (const layer of untrack(() => [...layerStack.layers()].reverse())) {
+          const opened = untrack(
+            () => inside(panel, layer.trigger()) || inside(panel, layer.element()),
+          );
+          if (opened) layer.dismiss?.();
         }
       }
-      if (!trapping()) return;
+      if (!untrack(trapping)) return;
       scope.untrap();
       const kept =
         vetoed(props.onCloseAutoFocus, new Event("closeautofocus", { cancelable: true })) ||
         (closedByOutside && !ctx.modal());
-      const trigger = ctx.triggerRef();
+      const trigger = untrack(ctx.triggerRef);
       const toTrigger = !kept && trigger?.isConnected === true;
       if (kept || toTrigger) scope.skipRestore();
       setTrapping(false);
@@ -431,7 +434,7 @@ export function ModalFrame(props: ModalFrameProps): JSX.Element {
               as={props.as}
               ref={(el: HTMLElement) => {
                 ctx.setPanel(el);
-                props.ref?.(el);
+                forwardRef(() => props.ref, el);
               }}
               id={id()}
               role={presence.dormant() ? undefined : ctx.role}

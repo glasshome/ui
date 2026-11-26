@@ -1,4 +1,4 @@
-import { type Accessor, createSignal, createEffect } from "solid-js";
+import { type Accessor, createSignal, createEffect, untrack } from "solid-js";
 
 export type LayerKind = "modal" | "popover" | "menu" | "tooltip" | "tour";
 export type TopLayer = "auto" | "manual";
@@ -71,7 +71,9 @@ function setStack(list: readonly Layer[]): void {
   releasePointer = undefined;
   const from = list.findLastIndex((layer) => layer.blocksPointer);
   if (from >= 0)
-    releasePointer = blockPointerBelow(list.slice(from).flatMap((layer) => layer.element() ?? []));
+    releasePointer = blockPointerBelow(
+      untrack(() => list.slice(from).flatMap((layer) => layer.element() ?? [])),
+    );
 }
 
 function enterTopLayer(element: HTMLElement, mode: TopLayer, dismiss: (() => void) | undefined) {

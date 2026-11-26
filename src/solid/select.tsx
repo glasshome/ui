@@ -42,6 +42,7 @@ import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { usePortalMount } from "./portal-mount.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
+import { forwardRef } from "../lib/behavior/solid.js";
 
 const PRESS_CLAIM = "prevent:pointerdown";
 const TRIGGER_CLAIM = `${claimKeys(["Enter", " ", "ArrowDown", "ArrowUp"])} ${PRESS_CLAIM}`;
@@ -577,7 +578,7 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
       {...merge(rest, ctx.attrs, {
         ref: (el: HTMLButtonElement) => {
           ctx.setTrigger(el);
-          if (typeof props.ref === "function") props.ref(el);
+          forwardRef(() => props.ref, el);
         },
         get id() {
           return triggerId();
@@ -725,10 +726,10 @@ const SelectContent: Component<SelectContentProps> = (props) => {
       const enabled = [...list.querySelectorAll<HTMLElement>(ITEM)].filter(
         (el) => el.getAttribute("aria-disabled") !== "true",
       );
-      const chosen = ctx.firstSelected();
+      const chosen = untrack(ctx.firstSelected);
       const start =
         enabled.find((el) => el.dataset.key === chosen) ??
-        (ctx.openFrom() === "last" ? enabled.at(-1) : enabled[0]);
+        (untrack(ctx.openFrom) === "last" ? enabled.at(-1) : enabled[0]);
       if (start?.dataset.key) collection.highlight(start.dataset.key, "keyboard");
       focusWithoutTracking(list);
     },
@@ -824,7 +825,7 @@ const SelectContent: Component<SelectContentProps> = (props) => {
         {...merge(others, nestedLayerAttrs(false), {
           ref: (el: HTMLDivElement) => {
             setPanel(el);
-            if (typeof props.ref === "function") props.ref(el);
+            forwardRef(() => props.ref, el);
           },
           "data-slot": "select-content",
           get "data-expanded"() {

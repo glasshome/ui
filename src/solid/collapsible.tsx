@@ -11,13 +11,14 @@ import {
   omit,
   createEffect,
   merge,
+  untrack,
 } from "solid-js";
 import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type ValidComponent } from "@solidjs/web";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
 import { createPresence } from "../lib/behavior/presence.js";
-import { callEventHandler } from "../lib/behavior/solid.js";
+import { callEventHandler, forwardRef } from "../lib/behavior/solid.js";
 import { MOTION_EXIT_MS } from "../lib/motion-classes.js";
 import { cn } from "../lib/utils.js";
 
@@ -181,7 +182,7 @@ export const CollapsibleTriggerRoot: Component<CollapsibleTriggerProps> = (props
           defaultAs: "button" as ValidComponent,
           ref: (node: HTMLElement) => {
             setEl(node);
-            if (typeof props.ref === "function") props.ref(node as HTMLButtonElement);
+            forwardRef(() => props.ref, node);
           },
         },
       )}
@@ -204,7 +205,7 @@ export const CollapsibleContentRoot: Component<CollapsibleContentProps> = (props
   });
 
   // Open from the start, the content shows at once: its motion stays off until it first closes.
-  let still = ctx.open();
+  let still = untrack(ctx.open);
   onSettled(() => {
     const frame = requestAnimationFrame(() => (still = false));
     return () => cancelAnimationFrame(frame);
@@ -233,7 +234,7 @@ export const CollapsibleContentRoot: Component<CollapsibleContentProps> = (props
           },
           ref: (node: HTMLElement) => {
             setEl(node);
-            if (typeof props.ref === "function") props.ref(node as HTMLDivElement);
+            forwardRef(() => props.ref, node);
           },
         })}
       />

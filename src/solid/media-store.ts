@@ -1,4 +1,11 @@
-import { type Accessor, type Context, createContext, createSignal, useContext } from "solid-js";
+import {
+  type Accessor,
+  type Context,
+  createContext,
+  createSignal,
+  untrack,
+  useContext,
+} from "solid-js";
 import { englishFormat } from "../lib/format.js";
 
 export type StoredMedia = {
@@ -94,7 +101,7 @@ function contextOutsideRoot<T>(context: Context<T>): T | undefined {
 export function useMediaStore(): MediaStore | undefined {
   const scoped = contextOutsideRoot(MediaStoreContext);
   if (scoped === null) return undefined;
-  return scoped ?? defaultStore() ?? undefined;
+  return scoped ?? untrack(defaultStore) ?? undefined;
 }
 
 export function useMediaUrls(): MediaUrls | undefined {

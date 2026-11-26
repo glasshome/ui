@@ -24,6 +24,7 @@ import {
   type ModalDismissProps,
   ModalCover,
 } from "./dialog-parts.js";
+import { forwardRef } from "../lib/behavior/solid.js";
 
 const Sheet = createModalRootSkin("dialog");
 
@@ -121,7 +122,7 @@ const SheetContent: ParentComponent<SheetContentProps> = (props) => {
         panelStyle={typeof props.style === "object" ? props.style : undefined}
         ariaLabel={props.ariaLabel}
         ref={(el: HTMLElement) => {
-          if (typeof props.ref === "function") props.ref(el as HTMLDivElement);
+          forwardRef(() => props.ref, el);
         }}
         onOpenAutoFocus={(event: Event) => {
           // The panel takes focus itself, not its first control.

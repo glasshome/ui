@@ -25,6 +25,7 @@ import { MOTION_EXIT_MS, OVERLAY_MOTION } from "../lib/motion-classes.js";
 import { FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import { usePortalMount } from "./portal-mount.js";
+import { forwardRef } from "../lib/behavior/solid.js";
 
 type Placement = Side | `${Side}-${Exclude<Align, "center">}`;
 
@@ -171,7 +172,7 @@ function HoverCardTrigger<T extends ValidComponent = "a">(
           ref: (el: HTMLElement) => {
             setOwn(el);
             ctx.setTrigger(el);
-            if (typeof props.ref === "function") props.ref(el);
+            forwardRef(() => props.ref, el);
           },
           get "data-expanded"() {
             return ctx.open() ? "" : undefined;
@@ -222,7 +223,7 @@ const HoverCardContent: Component<HoverCardContentProps> = (props) => {
         {...others}
         ref={(el) => {
           ctx.setCard(el);
-          if (typeof props.ref === "function") props.ref(el);
+          forwardRef(() => props.ref, el);
         }}
         data-slot="hover-card-content"
         data-expanded={ctx.open() ? "" : undefined}

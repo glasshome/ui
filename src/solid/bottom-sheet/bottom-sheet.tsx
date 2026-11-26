@@ -82,9 +82,11 @@ const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
   const [state, setStateRaw] = createSignal<SheetState>("closed");
   const [contentRef, setContentRef] = createSignal<HTMLDivElement | undefined>(undefined);
 
+  // The signal lags until flush; a transition checks against the last write.
+  let written: SheetState = "closed";
   const setState = (next: SheetState) => {
-    const current = state();
-    assertTransition(current, next);
+    assertTransition(written, next);
+    written = next;
     setStateRaw(next);
   };
 
@@ -97,7 +99,11 @@ const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
         setState("opening");
       } else if (
         !isOpen &&
-        (s === "open" || s === "opening" || s === "pressing" || s === "dragging" || s === "snapping")
+        (s === "open" ||
+          s === "opening" ||
+          s === "pressing" ||
+          s === "dragging" ||
+          s === "snapping")
       ) {
         setState("closing");
       }

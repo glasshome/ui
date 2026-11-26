@@ -37,7 +37,7 @@ import {
   vetoed,
 } from "../lib/behavior/modal-root.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
-import { callEventHandler } from "../lib/behavior/solid.js";
+import { callEventHandler, forwardRef } from "../lib/behavior/solid.js";
 import { createPresence } from "../lib/behavior/presence.js";
 import { INPUT_SURFACE } from "../lib/input-classes.js";
 import { nestedLayerAttrs, Z_CLASS } from "../lib/layers.js";
@@ -180,7 +180,7 @@ function PopoverTrigger<T extends ValidComponent = "button">(props: PartProps<T>
           ref: (el: HTMLElement) => {
             setOwn(el);
             ctx.setTrigger(el);
-            if (typeof props.ref === "function") props.ref(el);
+            forwardRef(() => props.ref, el);
           },
           "aria-haspopup": "dialog",
           get "aria-expanded"() {
@@ -210,7 +210,7 @@ function PopoverAnchor<T extends ValidComponent = "div">(props: PartProps<T>): J
           defaultAs: "div" as ValidComponent,
           ref: (el: HTMLElement) => {
             ctx.setAnchor(el);
-            if (typeof props.ref === "function") props.ref(el);
+            forwardRef(() => props.ref, el);
           },
         })}
       />
@@ -347,8 +347,8 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
       scope.skipRestore();
       setScoping(false);
       if (vetoed(props.onCloseAutoFocus, new Event("closeautofocus", { cancelable: true }))) return;
-      const trigger = ctx.trigger();
-      const from = panel();
+      const trigger = untrack(ctx.trigger);
+      const from = untrack(panel);
       if (!trigger || !from) return;
       if (!outside) {
         queueMicrotask(() => focusWithoutTracking(trigger));
@@ -379,8 +379,8 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
         {...rest}
         ref={(el) => {
           setPanel(el);
-          writeMorphStart(el);
-          if (typeof props.ref === "function") props.ref(el);
+          untrack(() => writeMorphStart(el));
+          forwardRef(() => props.ref, el);
         }}
         id={id()}
         role="dialog"

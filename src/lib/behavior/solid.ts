@@ -1,3 +1,4 @@
+import { untrack } from "solid-js";
 import type { JSX } from "@solidjs/web";
 
 /** Solid's handler prop is a union: a plain function, or the bound
@@ -10,4 +11,10 @@ export function callEventHandler<T, E extends Event>(
   if (!handler) return;
   if (typeof handler === "function") handler(event);
   else handler[0](handler[1], event);
+}
+
+/** Hands the element to a forwarded `ref` prop, read once: a ref applies once per element. */
+export function forwardRef<T>(read: () => unknown, el: T): void {
+  const ref = untrack(read);
+  if (typeof ref === "function") ref(el);
 }

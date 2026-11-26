@@ -8,7 +8,6 @@ import {
   Show,
   omit,
   createEffect,
-  flush,
   merge,
 } from "solid-js";
 import { useRequired } from "../lib/context.js";
@@ -24,6 +23,7 @@ import { SEGMENT_ITEM, SEGMENT_RADIUS } from "../lib/segment-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
+import { forwardRef } from "../lib/behavior/solid.js";
 
 /** `split`: the root is `display: contents`, so a host (a modal panel) lays the
  *  list and the content out in its own regions while the tab state still spans
@@ -186,9 +186,7 @@ const TabsList: Component<TabsListProps> = (props) => {
     if (!node) return;
     const keydown = (event: KeyboardEvent) => {
       const before = ctx.collection.highlighted();
-      ctx.collection.onKeyDown(event);
-      flush();
-      const after = ctx.collection.highlighted();
+      const after = ctx.collection.onKeyDown(event);
       if (after !== undefined && after !== before && ctx.automatic()) ctx.select(after);
     };
     node.addEventListener("keydown", keydown);
@@ -203,7 +201,7 @@ const TabsList: Component<TabsListProps> = (props) => {
         ref: (node: HTMLElement) => {
           setEl(node);
           ctx.setList(node);
-          if (typeof props.ref === "function") props.ref(node as HTMLDivElement);
+          forwardRef(() => props.ref, node);
         },
         role: "tablist",
         get "aria-orientation"() {
@@ -307,7 +305,7 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
         defaultAs: "button" as ValidComponent,
         ref: (node: HTMLElement) => {
           setEl(node);
-          if (typeof props.ref === "function") props.ref(node as HTMLButtonElement);
+          forwardRef(() => props.ref, node);
         },
         get id() {
           return ctx.triggerId(props.value);
@@ -398,7 +396,7 @@ const TabsContent: Component<TabsContentProps> = (props) => {
           defaultAs: "div" as ValidComponent,
           ref: (node: HTMLElement) => {
             setEl(node);
-            if (typeof props.ref === "function") props.ref(node as HTMLDivElement);
+            forwardRef(() => props.ref, node);
           },
           get id() {
             return ctx.contentId(props.value);

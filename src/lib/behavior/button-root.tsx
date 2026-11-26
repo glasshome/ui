@@ -2,7 +2,7 @@ import { createSignal, createEffect, merge, omit } from "solid-js";
 import { type ComponentProps, type JSX, type ValidComponent } from "@solidjs/web";
 import { selfKeys } from "./claims.js";
 import { Polymorphic } from "./polymorphic.js";
-import { callEventHandler } from "./solid.js";
+import { callEventHandler, forwardRef } from "./solid.js";
 
 export type ButtonRootProps<T extends ValidComponent = "button"> = Omit<
   ComponentProps<T>,
@@ -107,7 +107,7 @@ export function ButtonRoot<T extends ValidComponent = "button">(props: ButtonRoo
           },
           ref: (node: HTMLElement) => {
             setEl(node);
-            if (typeof own.ref === "function") own.ref(node);
+            forwardRef(() => own.ref, node);
           },
         },
       )}

@@ -9,6 +9,7 @@ import {
   onSettled,
   Show,
   omit,
+  untrack,
 } from "solid-js";
 import { type ComponentProps, type JSX } from "@solidjs/web";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
@@ -300,7 +301,7 @@ const Dock: Component<DockProps> = (props) => {
   createEffect(
     () => ({ i: activeIndex(), paged: needsScroll(), span: viewportSpan(), axis: vertical() }),
     ({ i }) => {
-      if (i !== null) turnToItem(i);
+      if (i !== null) untrack(() => turnToItem(i));
     },
   );
 
@@ -308,7 +309,7 @@ const Dock: Component<DockProps> = (props) => {
   createEffect(
     () => props.arrivedIds?.join("\n") ?? "",
     () => {
-      const first = props.items.findIndex((it) => arrivedSet().has(it.id));
+      const first = untrack(() => props.items.findIndex((it) => arrivedSet().has(it.id)));
       if (first >= 0) requestAnimationFrame(() => turnToItem(first));
     },
     { defer: true },

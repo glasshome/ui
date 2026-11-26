@@ -22,6 +22,7 @@ import { createToggleItem, createToggleSet, type ToggleSet } from "../lib/toggle
 import { cn } from "../lib/utils.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
 import { toggleVariants } from "./toggle.js";
+import { forwardRef } from "../lib/behavior/solid.js";
 
 type Orientation = "horizontal" | "vertical";
 
@@ -147,7 +148,7 @@ const ToggleGroup: ParentComponent<ToggleGroupProps> = (props) => {
         defaultAs: "div" as ValidComponent,
         ref: (el: HTMLElement) => {
           setRoot(el);
-          if (typeof props.ref === "function") props.ref(el as HTMLDivElement);
+          forwardRef(() => props.ref, el);
         },
         role: "group",
         get id() {
@@ -248,7 +249,7 @@ const ToggleGroupItem: Component<ToggleGroupItemProps> = (props) => {
         defaultAs: "button" as ValidComponent,
         ref: (node: HTMLElement) => {
           item.ref(node);
-          if (typeof props.ref === "function") props.ref(node as HTMLButtonElement);
+          forwardRef(() => props.ref, node);
         },
         get id() {
           return props.id || item.props.id;

@@ -16,7 +16,7 @@ import { type Collection, createCollection } from "../lib/behavior/collection.js
 import { createControllableSignal } from "../lib/behavior/controllable.js";
 import { focusWithoutTracking, trackFocus } from "../lib/behavior/focus-scope.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
-import { callEventHandler } from "../lib/behavior/solid.js";
+import { callEventHandler, forwardRef } from "../lib/behavior/solid.js";
 import { cn } from "../lib/utils.js";
 import {
   CollapsibleContentRoot,
@@ -144,7 +144,7 @@ const AccordionRoot: Component<AccordionProps> = (props) => {
           defaultAs: "div" as ValidComponent,
           ref: (node: HTMLElement) => {
             setEl(node);
-            if (typeof props.ref === "function") props.ref(node as HTMLDivElement);
+            forwardRef(() => props.ref, node);
           },
           get "data-claim"() {
             return mayEmpty() && value().length > 0 ? ESCAPE_CLAIM : undefined;
@@ -238,7 +238,7 @@ const AccordionTriggerRoot: Component<AccordionTriggerProps> = (props) => {
           onClick: click,
           ref: (node: HTMLButtonElement) => {
             setEl(node);
-            if (typeof props.ref === "function") props.ref(node);
+            forwardRef(() => props.ref, node);
           },
         },
       )}

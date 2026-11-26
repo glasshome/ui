@@ -1,4 +1,4 @@
-import { type Accessor, createSignal, onCleanup, createEffect } from "solid-js";
+import { type Accessor, createSignal, onCleanup, createEffect, untrack } from "solid-js";
 import { claimKeys, createClaim } from "./claims.js";
 import { focusedIn, focusWithoutTracking } from "./focus-scope.js";
 
@@ -26,7 +26,8 @@ export interface Collection {
   highlighted: Accessor<string | undefined>;
   highlight: (key: string, by: HighlightBy) => void;
   tabIndex: (key: string) => 0 | -1;
-  onKeyDown: (event: KeyboardEvent) => void;
+  /** Returns the key it moved to. */
+  onKeyDown: (event: KeyboardEvent) => string | undefined;
   /** Items call this as they mount, unmount or change disabled, so the tab stop always sits on a present, enabled item. */
   refresh: () => void;
 }
@@ -113,7 +114,7 @@ export function createCollection(options: CollectionOptions): Collection {
     const items = enabledItems(root);
     const stop =
       items.find((el) => preferred.includes(keyOf(el))) ??
-      items.find((el) => keyOf(el) === own()) ??
+      items.find((el) => keyOf(el) === untrack(own)) ??
       items[0];
     setOwn(stop ? keyOf(stop) : undefined);
   }
@@ -171,7 +172,7 @@ export function createCollection(options: CollectionOptions): Collection {
 
   function highlight(key: string, by: HighlightBy) {
     if (by === "pointer") return void setOwn(key);
-    const root = options.root();
+    const root = untrack(options.root);
     const el = root
       ? [...root.querySelectorAll<HTMLElement>(options.itemSelector)].find((i) => keyOf(i) === key)
       : undefined;
@@ -179,17 +180,10 @@ export function createCollection(options: CollectionOptions): Collection {
     else setOwn(key);
   }
 
-  function typeahead(event: KeyboardEvent, items: HTMLElement[], current: number): boolean {
-    const index = typer.match(event, items.map(textOf), current);
-    if (index === undefined) return false;
-    moveTo(items[index]);
-    return true;
-  }
-
-  function onKeyDown(event: KeyboardEvent) {
-    if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+  function onKeyDown(event: KeyboardEvent): string | undefined {
+    if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return undefined;
     const root = options.root();
-    if (!root) return;
+    if (!root) return undefined;
     const items = enabledItems(root);
     const key = highlighted();
     const target = event.target instanceof Element ? event.target : null;
@@ -204,9 +198,12 @@ export function createCollection(options: CollectionOptions): Collection {
       End: () => items.at(-1),
     };
     const destination = destinations[event.key];
-    if (destination) moveTo(destination());
-    else if (!typeahead(event, items, current)) return;
+    const typed = destination ? undefined : typer.match(event, items.map(textOf), current);
+    if (!destination && typed === undefined) return undefined;
+    const to = destination ? destination() : items[typed ?? -1];
+    moveTo(to);
     event.preventDefault();
+    return to ? keyOf(to) : undefined;
   }
 
   return {

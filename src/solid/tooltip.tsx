@@ -25,6 +25,7 @@ import { MOTION_EXIT_MS, OVERLAY_MOTION } from "../lib/motion-classes.js";
 import { FLOATING_PANEL } from "../lib/overlay-classes.js";
 import { cn } from "../lib/utils.js";
 import { usePortalMount } from "./portal-mount.js";
+import { forwardRef } from "../lib/behavior/solid.js";
 
 type Placement = Side | `${Side}-${Exclude<Align, "center">}`;
 
@@ -155,7 +156,7 @@ function TooltipTrigger<T extends ValidComponent = "button">(
         defaultAs: "button" as ValidComponent,
         ref: (el: HTMLElement) => {
           ctx.setTrigger(el);
-          if (typeof props.ref === "function") props.ref(el);
+          forwardRef(() => props.ref, el);
         },
         get "aria-describedby"() {
           return (
@@ -204,7 +205,7 @@ const TooltipContent: Component<TooltipContentProps> = (props) => {
         {...others}
         ref={(el) => {
           setPanel(el);
-          if (typeof props.ref === "function") props.ref(el);
+          forwardRef(() => props.ref, el);
         }}
         id={ctx.id}
         role="tooltip"

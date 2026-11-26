@@ -34,6 +34,7 @@ import { Icon } from "./icon.js";
 import { usePortalMount } from "./portal-mount.js";
 import { useRequired } from "../lib/context.js";
 import { SelectionHighlight, SelectionScope } from "./selection.js";
+import { forwardRef } from "../lib/behavior/solid.js";
 
 /* The panel without its motion: DropdownMenu morphs out of its trigger,
  * ContextMenu unfolds from the pointer. */
@@ -123,7 +124,7 @@ export const MenuContentPart: Component<MenuContentPartProps> = (props) => {
         ref={(el) => {
           menu.setContent(el);
           props.onPanel?.(el);
-          if (typeof props.ref === "function") props.ref(el);
+          forwardRef(() => props.ref, el);
         }}
         id={id()}
         role="menu"
@@ -295,7 +296,7 @@ function MenuRow(props: MenuRowPartProps): JSX.Element {
         ref: (el: HTMLElement) => {
           setRow(el);
           submenu?.menu.setTrigger(el);
-          if (typeof props.ref === "function") props.ref(el);
+          forwardRef(() => props.ref, el);
         },
         id: key,
         "data-key": key,
@@ -414,7 +415,7 @@ export const MenuLabelPart: Component<MenuLabelProps & { slotName: string }> = (
         as: props.as,
         defaultAs: "span" as ValidComponent,
         ref: (el: HTMLElement) => {
-          if (typeof props.ref === "function") props.ref(el);
+          forwardRef(() => props.ref, el);
         },
         get id() {
           return id();
@@ -499,7 +500,7 @@ export const MenuSeparatorPart: Component<MenuSeparatorProps> = (props) => {
     <hr
       {...rest}
       ref={(el) => {
-        if (typeof props.ref === "function") props.ref(el);
+        forwardRef(() => props.ref, el);
       }}
       data-orientation="horizontal"
       data-slot={props.slotName}

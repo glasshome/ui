@@ -11,7 +11,7 @@ import {
 import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX } from "@solidjs/web";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
-import { callEventHandler } from "../lib/behavior/solid.js";
+import { callEventHandler, forwardRef } from "../lib/behavior/solid.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 import { VISUALLY_HIDDEN } from "../lib/visually-hidden.js";
@@ -132,7 +132,7 @@ const RadioGroup = (props: RadioGroupProps) => {
       <div
         ref={(el) => {
           setRoot(el);
-          if (typeof props.ref === "function") props.ref(el);
+          forwardRef(() => props.ref, el);
         }}
         role="radiogroup"
         id={id()}
@@ -234,7 +234,7 @@ const RadioGroupItem = (props: RadioGroupItemProps) => {
     <div
       ref={(el) => {
         setItem(el);
-        if (typeof props.ref === "function") props.ref(el);
+        forwardRef(() => props.ref, el);
       }}
       role="group"
       id={id()}

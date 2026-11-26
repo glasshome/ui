@@ -15,6 +15,7 @@ import { FIELD_CHROME } from "../lib/input-classes.js";
 import { cn } from "../lib/utils.js";
 import { VISUALLY_HIDDEN } from "../lib/visually-hidden.js";
 import { Icon } from "./icon.js";
+import { forwardRef } from "../lib/behavior/solid.js";
 
 /* Two box sizes and the glyph that fits each: `sm` is the row-embedded control
  * (picker rows, dense lists), `default` the touch target of a standalone one. */
@@ -134,7 +135,7 @@ const Checkbox = (props: CheckboxProps) => {
     <div
       ref={(el) => {
         setRoot(el);
-        if (typeof props.ref === "function") props.ref(el);
+        forwardRef(() => props.ref, el);
       }}
       role="group"
       id={id()}
