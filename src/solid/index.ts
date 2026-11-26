@@ -139,6 +139,8 @@ export {
   DialogTrigger,
 } from "./dialog.js";
 export { useDialogDormant } from "../lib/behavior/modal-root.js";
+export { useRequired } from "../lib/context.js";
+export { Layer, type LayerProps } from "../lib/behavior/layer.js";
 export { ConfirmDialog, type ConfirmDialogProps } from "./confirm-dialog.js";
 export type { ModalHeadProps, ModalMedia, ModalSize } from "./dialog-parts.js";
 export type { DockIconButtonProps, DockItem, DockPlacement, DockProps } from "./dock.js";
