@@ -45,7 +45,9 @@ export function OptionChoice(props: {
   disabled?: boolean;
 }) {
   const card = useRequired(OptionChoiceContext, "OptionChoice", "OptionCard");
-  onSettled(() => card.register(props.value));
+  onSettled(() => {
+    return card.register(props.value);
+  });
   const selected = () => card.subValue() === props.value;
   return (
     <PickerRow

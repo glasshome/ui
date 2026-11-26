@@ -194,7 +194,9 @@ export const CollapsibleContentRoot: Component<CollapsibleContentProps> = (props
   const ctx = useCollapsible();
   const others = omit(props, "as", "ref", "id");
   const id = () => props.id || ctx.defaultContentId();
-  createEffect(id, (value) => ctx.registerContent(value));
+  createEffect(id, (value) => {
+    return ctx.registerContent(value);
+  });
 
   const [el, setEl] = createSignal<HTMLElement>();
   const presence = createPresence({

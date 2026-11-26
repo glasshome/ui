@@ -257,13 +257,17 @@ const TabsTrigger: Component<TabsTriggerProps> = (props) => {
   );
   const [el, setEl] = createSignal<HTMLElement>();
   const disabled = () => props.disabled || ctx.disabled();
-  createEffect(disabled, () => ctx.collection.refresh());
+  createEffect(disabled, () => {
+    ctx.collection.refresh();
+  });
   onCleanup(() => ctx.collection.refresh());
   const selected = () => ctx.value() === props.value;
 
   createEffect(
     () => [props.value, typeof props.id === "string" ? props.id : undefined] as const,
-    ([key, custom]) => ctx.register("trigger", key, custom),
+    ([key, custom]) => {
+      return ctx.register("trigger", key, custom);
+    },
   );
 
   createEffect(el, (node) => {
@@ -382,7 +386,9 @@ const TabsContent: Component<TabsContentProps> = (props) => {
 
   createEffect(
     () => [props.value, typeof props.id === "string" ? props.id : undefined] as const,
-    ([key, custom]) => ctx.register("content", key, custom),
+    ([key, custom]) => {
+      return ctx.register("content", key, custom);
+    },
   );
   createEffect(el, (node) => {
     if (node) setHoldsTabStop(node.querySelector(CANDIDATES) !== null);

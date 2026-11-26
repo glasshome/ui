@@ -67,7 +67,9 @@ export function Toolbar(props: {
     >
       <For each={props.rooms}>
         {(room) => {
-          onSettled(() => collection.refresh());
+          onSettled(() => {
+            collection.refresh();
+          });
           onCleanup(() => collection.refresh());
           return (
             <button

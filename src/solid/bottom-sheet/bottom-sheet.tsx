@@ -210,7 +210,9 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
 
   const present = createMemo(() => ctx.state() !== "closed");
 
-  createEffect(present, (on) => (on && el ? coverNow(el) : undefined));
+  createEffect(present, (on) => {
+    if (on && el) return coverNow(el);
+  });
 
   const clearAnimInline = () => {
     if (!el) return;
@@ -355,7 +357,9 @@ const BottomSheetTitle: Component<ComponentProps<"h2">> = (props) => {
   const rest = omit(props, "class");
   const labels = useModalLabels();
   const id = () => rest.id || labels?.titleId;
-  createEffect(id, (value) => labels?.registerTitle(value));
+  createEffect(id, (value) => {
+    return labels?.registerTitle(value);
+  });
   return (
     <h2 data-slot="bottom-sheet-title" id={id()} class={cn(MODAL_TITLE, props.class)} {...rest} />
   );
@@ -365,7 +369,9 @@ const BottomSheetDescription: Component<ComponentProps<"p">> = (props) => {
   const rest = omit(props, "class");
   const labels = useModalLabels();
   const id = () => rest.id || labels?.descriptionId;
-  createEffect(id, (value) => labels?.registerDescription(value));
+  createEffect(id, (value) => {
+    return labels?.registerDescription(value);
+  });
   return (
     <p
       data-slot="bottom-sheet-description"

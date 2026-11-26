@@ -248,7 +248,9 @@ export function createModalParts(slot: string): ModalParts {
       );
       observer.observe(top);
     };
-    onSettled(() => el?.addEventListener("scroll", watchTop, { once: true, passive: true }));
+    onSettled(() => {
+      el?.addEventListener("scroll", watchTop, { once: true, passive: true });
+    });
     onCleanup(() => {
       el?.removeEventListener("scroll", watchTop);
       observer?.disconnect();
@@ -365,7 +367,9 @@ export const ModalCover: Component<{
 }> = (props) => {
   createEffect(
     () => (props.dormant() ? undefined : props.panel()),
-    (panel) => (panel ? coverOnceOpen(panel, props.open) : undefined),
+    (panel) => {
+      if (panel) return coverOnceOpen(panel, props.open);
+    },
   );
   return null;
 };

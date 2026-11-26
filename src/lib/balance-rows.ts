@@ -63,7 +63,9 @@ export function balanceRows(
       };
     },
   );
-  createEffect(members, () => watch?.());
+  createEffect(members, () => {
+    watch?.();
+  });
 }
 
 function observeRows(

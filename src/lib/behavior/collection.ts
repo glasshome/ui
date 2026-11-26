@@ -150,7 +150,9 @@ export function createCollection(options: CollectionOptions): Collection {
     });
     createEffect(
       () => [options.root(), options.preferred?.() ?? []] as const,
-      ([root, preferred]) => placeStop(root, preferred),
+      ([root, preferred]) => {
+        placeStop(root, preferred);
+      },
     );
   }
 

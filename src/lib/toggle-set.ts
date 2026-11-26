@@ -63,7 +63,9 @@ export function createToggleItem(
 ) {
   const id = `${set.id()}-item-${createUniqueId()}`;
   const [el, setEl] = createSignal<HTMLElement>();
-  createEffect(item.disabled, () => set.collection.refresh());
+  createEffect(item.disabled, () => {
+    set.collection.refresh();
+  });
   onCleanup(() => set.collection.refresh());
   const pressed = () => set.isPressed(item.value());
 
