@@ -1,4 +1,11 @@
-import { type Accessor, createSignal, createUniqueId, onCleanup, createEffect } from "solid-js";
+import {
+  type Accessor,
+  createSignal,
+  createUniqueId,
+  onCleanup,
+  createEffect,
+  flush,
+} from "solid-js";
 import { type Collection, createCollection } from "./behavior/collection.js";
 import { focusWithoutTracking, trackFocus } from "./behavior/focus-scope.js";
 
@@ -77,6 +84,8 @@ export function createToggleItem(
     const choose = () => {
       if (item.disabled() || item.locked?.()) return;
       set.toggle(item.value());
+      // Pressed state lands before the tab stop moves: a focused item's tabindex write forces a style recalc.
+      flush();
       set.collection.highlight(item.value(), "pointer");
     };
     // A mouse toggles on press, so focus lands on an item already toggled and is announced so.
