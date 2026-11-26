@@ -36,6 +36,7 @@ import {
   vetoed,
 } from "../lib/behavior/modal-root.js";
 import { Polymorphic } from "../lib/behavior/polymorphic.js";
+import { callEventHandler } from "../lib/behavior/solid.js";
 import { createPresence } from "../lib/behavior/presence.js";
 import { INPUT_SURFACE } from "../lib/input-classes.js";
 import { nestedLayerAttrs, Z_CLASS } from "../lib/layers.js";
@@ -433,13 +434,21 @@ const PopoverDescription = labelPart("p", (ctx) => ctx.setDescriptionId);
 
 function PopoverCloseButton<T extends ValidComponent = "button">(props: PartProps<T>): JSX.Element {
   const ctx = usePopover();
-  const rest = omit(props as PartProps<ValidComponent>, "as");
+  const rest = omit(props as PartProps<ValidComponent>, "as", "onClick");
   return (
     <Polymorphic
       {...merge({ "aria-label": "Dismiss" }, rest, {
         as: props.as,
         defaultAs: "button" as ValidComponent,
-        "on:click": () => ctx.setOpen(false),
+        onClick: (event: MouseEvent & { currentTarget: HTMLElement; target: Element }) => {
+          callEventHandler(
+            event,
+            (props as ComponentProps<"button">).onClick as
+              | JSX.EventHandlerUnion<HTMLElement, MouseEvent>
+              | undefined,
+          );
+          ctx.setOpen(false);
+        },
       })}
     />
   );

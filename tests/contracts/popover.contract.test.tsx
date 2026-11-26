@@ -263,4 +263,23 @@ describe("Popover contract", () => {
     expect(reports).toEqual([false]);
     expect(panels()).toHaveLength(1);
   });
+
+  it("P17 a press on the close button closes it and still reaches the button's own handler", async () => {
+    const pressed: string[] = [];
+    render(() => (
+      <Popover>
+        <PopoverTrigger as={Button}>Filters</PopoverTrigger>
+        <PopoverContent>
+          <Popover.CloseButton onClick={() => pressed.push("close")}>Done</Popover.CloseButton>
+        </PopoverContent>
+      </Popover>
+    ));
+    await settle();
+    const { panels, run, expectClosed } = helpers(scenarioScope);
+    await run(OPEN);
+    expect(panels()).toHaveLength(1);
+    await run({ press: { role: "button", name: "Dismiss" } });
+    await expectClosed();
+    expect(pressed).toEqual(["close"]);
+  });
 });
