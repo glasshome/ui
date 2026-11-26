@@ -191,7 +191,7 @@ export function createCollection(options: CollectionOptions): Collection {
     if (current < 0 && target) current = items.findIndex((el) => el.contains(target));
     const { next, prev } = forwardKeys(options.orientation(), options.dir?.() === "rtl");
     const loop = options.loop?.() ?? false;
-    const destinations: Record<string, () => HTMLElement | undefined> = {
+    const destinations: Partial<Record<string, () => HTMLElement | undefined>> = {
       [next]: () => step(items, current, 1, loop),
       [prev]: () => step(items, current, -1, loop),
       Home: () => items[0],
