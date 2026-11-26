@@ -130,7 +130,7 @@ const AccordionRoot: Component<AccordionProps> = (props) => {
   });
 
   const ctx: AccordionContextValue = {
-    rootId: () => others.id ?? fallbackId,
+    rootId: () => others.id || fallbackId,
     isOpen: (item) => value().includes(item),
     toggle,
     collection,
@@ -160,7 +160,7 @@ const AccordionItemRoot: Component<AccordionItemProps> = (props) => {
   const fallbackId = `${accordion.rootId()}-item-${createUniqueId()}`;
   const others = omit(props, "value", "disabled");
   const [triggerId, setTriggerId] = createSignal<string>();
-  const itemId = () => others.id ?? fallbackId;
+  const itemId = () => others.id || fallbackId;
 
   return (
     <AccordionItemContext value={{ value: () => props.value, itemId, triggerId, setTriggerId }}>
@@ -195,7 +195,7 @@ const AccordionTriggerRoot: Component<AccordionTriggerProps> = (props) => {
   const collapsible = useCollapsible();
   const others = omit(props, "ref", "onClick");
   const [el, setEl] = createSignal<HTMLElement>();
-  const id = () => others.id ?? `${item.itemId()}-trigger`;
+  const id = () => others.id || `${item.itemId()}-trigger`;
   createEffect(id, (value) => {
     item.setTriggerId(value);
     return () => item.setTriggerId(undefined);

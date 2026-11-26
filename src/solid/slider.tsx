@@ -63,8 +63,8 @@ const Slider: Component<SliderProps> = (props) => {
     onChange: (values) => props.onChange?.(values),
     onChangeEnd: (values) => props.onChangeEnd?.(values),
   });
-  const indices = createMemo(() => range.values().map((_, i) => i), [], {
-    equals: (a, b) => a.length === b.length,
+  const indices = createMemo(() => range.values().map((_, i) => i), {
+    equals: (a: number[], b: number[]) => a.length === b.length,
   });
   const percents = () => range.values().map((v) => range.fraction(v) * 100);
   const [thumbs, setThumbs] = createSignal<HTMLElement[]>([]);

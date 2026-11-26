@@ -67,8 +67,8 @@ const AvatarImage: Component<ComponentProps<"img">> = (props) => {
       const probe = document.createElement("img");
       const settle = (next: LoadingStatus) => () => live && setStatus(next);
       setStatus("loading");
-      if (props.crossOrigin !== undefined) probe.crossOrigin = props.crossOrigin;
-      if (props.referrerPolicy !== undefined) probe.referrerPolicy = props.referrerPolicy;
+      if (typeof props.crossorigin === "string") probe.crossOrigin = props.crossorigin;
+      if (typeof props.referrerpolicy === "string") probe.referrerPolicy = props.referrerpolicy;
       probe.onload = settle("loaded");
       probe.onerror = settle("error");
       probe.src = src;
