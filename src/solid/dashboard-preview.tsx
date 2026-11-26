@@ -15,6 +15,8 @@ export interface DashboardPreviewTile {
   h: number;
   /** A render shot at exactly this w x h; never a render of another size. */
   src?: string;
+  /** Smaller copies of `src` as a srcset; the tile's share of `boardWidth` picks one. */
+  srcset?: string;
   icon: string;
   label: string;
   description?: string;
@@ -28,6 +30,8 @@ export function DashboardPreview(props: {
   tiles: DashboardPreviewTile[];
   /** Rows shown at most; the rest is cut at the bottom edge. */
   maxRows?: number;
+  /** The widest the board draws, as a CSS length; tiles with a srcset ask for their share of it. */
+  boardWidth?: string;
   /** Sit the dashboard in a recessed well, the ground it would stand on. */
   stage?: boolean;
   class?: string;
@@ -67,6 +71,12 @@ export function DashboardPreview(props: {
                 {(src) => (
                   <img
                     src={src()}
+                    srcset={tile.srcset}
+                    sizes={
+                      tile.srcset
+                        ? `calc(${props.boardWidth ?? "100vw"} * ${(span(tile.w, CELL.w) / width()).toFixed(4)})`
+                        : undefined
+                    }
                     alt={tile.label}
                     loading="lazy"
                     decoding="async"
