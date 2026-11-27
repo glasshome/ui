@@ -40,7 +40,7 @@ import { createFocusScope, type InitialFocus } from "../../lib/behavior/focus-sc
 import { createHideOutside } from "../../lib/behavior/hide-outside.js";
 import { registerLayer } from "../../lib/behavior/layer-stack.js";
 import { watchKeyboard } from "./keyboard.js";
-import { assertTransition, type SheetState } from "./state-machine.js";
+import { assertTransition, followOpen, type SheetState } from "./state-machine.js";
 
 interface BottomSheetContextValue {
   state: () => SheetState;
@@ -78,11 +78,17 @@ const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
     defaultValue: () => props.defaultOpen ?? false,
     onChange: (next) => props.onOpenChange?.(next),
   });
-  const [state, setStateRaw] = createSignal<SheetState>("closed");
-  const [contentRef, setContentRef] = createSignal<HTMLDivElement | undefined>(undefined);
-
   // The signal lags until flush; a transition checks against the last write.
   let written: SheetState = "closed";
+  const [state, setStateRaw] = createSignal<SheetState>((prev?: SheetState) => {
+    const current = prev ?? "closed";
+    const next = followOpen(current, open());
+    assertTransition(current, next);
+    written = next;
+    return next;
+  });
+  const [contentRef, setContentRef] = createSignal<HTMLDivElement | undefined>(undefined);
+
   const setState = (next: SheetState) => {
     assertTransition(written, next);
     written = next;
@@ -90,24 +96,6 @@ const BottomSheet: ParentComponent<BottomSheetRootProps> = (props) => {
   };
 
   const dismissible = () => props.dismissible !== false;
-
-  createEffect(
-    () => [open(), state()] as const,
-    ([isOpen, s]) => {
-      if (isOpen && s === "closed") {
-        setState("opening");
-      } else if (
-        !isOpen &&
-        (s === "open" ||
-          s === "opening" ||
-          s === "pressing" ||
-          s === "dragging" ||
-          s === "snapping")
-      ) {
-        setState("closing");
-      }
-    },
-  );
 
   return (
     <BottomSheetContext
@@ -230,7 +218,7 @@ const BottomSheetContent: ParentComponent<BottomSheetContentProps> = (props) => 
       () => {
         if (s === "opening") ctx.setState("open");
         else {
-          ctx.setState(s === "snapping" ? "open" : "closed");
+          ctx.setState(s === "snapping" ? "open" : ctx.open() ? "opening" : "closed");
           clearAnimInline();
         }
       },

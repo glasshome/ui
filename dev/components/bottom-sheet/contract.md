@@ -14,3 +14,5 @@ Each line is one browser test in `tests/contracts/bottom-sheet.contract.test.tsx
 | B8 | the sheet is open and settled, then a press on its body, then a click into a field in it | the trigger behind it receives no focus event, and the field keeps focus after the pointer is released |
 | B9 | a committed drag is released where it began (no transform change to animate) | the sheet is `open` at once, with no wait for a transition that never runs; a new grab and an outside press both work immediately |
 | B10 | the sheet opens, then closes | `[data-page]` carries `data-covered` in the frame it opens, not after the open animation, and loses it once the sheet is gone |
+| B11 | a controlled sheet is opened from outside | the dialog is in the DOM in the flush that opens it: an effect on the open state already finds it |
+| B12 | the sheet is opened again while it closes | it keeps its node, finishes the exit, then opens again |

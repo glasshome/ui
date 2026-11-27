@@ -13,6 +13,7 @@ Each line is one browser test in `tests/contracts/presence.contract.test.tsx`, n
 | PR7 | the owner unmounts mid-exit | no listener or timer remains |
 | PR8 | the exit carries a delay (`transition-delay`, `animation-delay`) within `exitMs` | the element stays until the delayed motion ends |
 | PR9 | an infinite animation started before the close, and an `::after` animation on the element during exit | neither ends the exit early; it follows the exit motion alone |
+| PR10 | `present` turns true | the layer is in the DOM in the flush that writes it: an effect on `present` already finds it |
 | PK1 | `keep` true, `present` never true | mounted, dormant, phase `closed` |
 | PK2 | `keep` true, `present` true then false | after the exit motion ends: mounted, dormant |
 | PK3 | `keep` turns false while dormant | unmounts at once |

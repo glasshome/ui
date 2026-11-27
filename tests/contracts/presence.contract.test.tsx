@@ -1,5 +1,5 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal, flush, onCleanup, Show } from "solid-js";
+import { createEffect, createSignal, flush, onCleanup, Show } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createPresence,
@@ -215,6 +215,29 @@ describe("presence", () => {
     expect(t.panel()).not.toBeNull();
     t.emit(t.panel() as HTMLElement, "animationend", { animationName: "out" });
     expect(t.panel()).toBeNull();
+  });
+});
+
+describe("presence in one flush", () => {
+  it("PR10 present turns true: the layer is in the DOM before any effect on present runs", () => {
+    useFakeTime();
+    const [present, setPresent] = createSignal(false);
+    const [element, setElement] = createSignal<HTMLElement>();
+    const seen: boolean[] = [];
+    render(() => {
+      const presence = createPresence({ present, element, exitMs: EXIT_MS });
+      createEffect(present, (on) => {
+        if (on) seen.push(document.querySelector('[data-testid="panel"]') !== null);
+      });
+      return (
+        <Show when={presence.mounted()}>
+          <div ref={setElement} data-testid="panel" />
+        </Show>
+      );
+    });
+    setPresent(true);
+    flush();
+    expect(seen).toEqual([true]);
   });
 });
 

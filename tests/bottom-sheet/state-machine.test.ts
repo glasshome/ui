@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   assertTransition,
   canTransition,
+  followOpen,
   type SheetState,
 } from "../../src/solid/bottom-sheet/state-machine.js";
 
@@ -66,5 +67,25 @@ describe("assertTransition", () => {
 
   it("passes valid transitions through", () => {
     expect(() => assertTransition("closed", "opening")).not.toThrow();
+  });
+});
+
+describe("followOpen", () => {
+  it("opens only from closed, and a closing sheet waits for its exit", () => {
+    expect(followOpen("closed", true)).toBe("opening");
+    for (const s of STATES.filter((x) => x !== "closed")) expect(followOpen(s, true)).toBe(s);
+  });
+
+  it("closes from every shown state, and every result is a valid transition", () => {
+    for (const s of ["open", "opening", "pressing", "dragging", "snapping"] as const) {
+      expect(followOpen(s, false)).toBe("closing");
+    }
+    expect(followOpen("closing", false)).toBe("closing");
+    expect(followOpen("closed", false)).toBe("closed");
+    for (const s of STATES) {
+      for (const open of [true, false]) {
+        expect(() => assertTransition(s, followOpen(s, open))).not.toThrow();
+      }
+    }
   });
 });

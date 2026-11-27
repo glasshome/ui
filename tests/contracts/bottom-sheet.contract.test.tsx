@@ -1,5 +1,5 @@
 import { cleanup, render } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createEffect, createSignal, flush } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { findAll, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
@@ -146,6 +146,53 @@ describe("BottomSheet contract", () => {
     await settle();
     await vi.advanceTimersByTimeAsync(MOTION_EXIT_MS.sheet);
     expect(page.hasAttribute("data-covered")).toBe(false);
+  });
+
+  it("B11 a sheet opened from outside is in the DOM in the flush that opens it", () => {
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
+    const [open, setOpen] = createSignal(false);
+    const seen: boolean[] = [];
+    render(() => {
+      createEffect(open, (on) => {
+        if (on) seen.push(document.querySelector('[role="dialog"]') !== null);
+      });
+      return (
+        <BottomSheet open={open()} onOpenChange={setOpen}>
+          <BottomSheetPortal>
+            <BottomSheetContent ariaLabel="Sheet">Body</BottomSheetContent>
+          </BottomSheetPortal>
+        </BottomSheet>
+      );
+    });
+    setOpen(true);
+    flush();
+    expect(seen).toEqual([true]);
+  });
+
+  it("B12 reopened while it closes, the sheet keeps its node and opens again once the exit ends", async () => {
+    useFakeTime({ toFake: ["setTimeout", "clearTimeout"] });
+    const [open, setOpen] = createSignal(true);
+    render(() => (
+      <BottomSheet open={open()} onOpenChange={setOpen}>
+        <BottomSheetPortal>
+          <BottomSheetContent ariaLabel="Sheet">Body</BottomSheetContent>
+        </BottomSheetPortal>
+      </BottomSheet>
+    ));
+    const sheet = () => document.querySelector<HTMLElement>('[role="dialog"]');
+    await vi.advanceTimersByTimeAsync(MOTION_EXIT_MS.sheet);
+    const node = sheet();
+    expect(node?.getAttribute("data-state")).toBe("open");
+    setOpen(false);
+    flush();
+    setOpen(true);
+    flush();
+    expect(sheet()?.getAttribute("data-state")).toBe("closing");
+    await vi.advanceTimersByTimeAsync(MOTION_EXIT_MS.sheet);
+    expect(sheet()).toBe(node);
+    expect(sheet()?.getAttribute("data-state")).toBe("opening");
+    await vi.advanceTimersByTimeAsync(MOTION_EXIT_MS.sheet);
+    expect(sheet()?.getAttribute("data-state")).toBe("open");
   });
 
   it("B8 once open, nothing on the sheet sends focus to the trigger behind it, and a click into a field keeps it there", async () => {

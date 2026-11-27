@@ -26,6 +26,20 @@ const VALID: Transition[] = [
   { from: "closing", to: "opening" },
 ];
 
+const CLOSE_FROM: ReadonlySet<SheetState> = new Set([
+  "open",
+  "opening",
+  "pressing",
+  "dragging",
+  "snapping",
+]);
+
+/** The state an open change moves to; a sheet still closing reopens once its exit ends. */
+export function followOpen(state: SheetState, open: boolean): SheetState {
+  if (open) return state === "closed" ? "opening" : state;
+  return CLOSE_FROM.has(state) ? "closing" : state;
+}
+
 export function canTransition(from: SheetState, to: SheetState): boolean {
   return VALID.some((t) => t.from === from && t.to === to);
 }
