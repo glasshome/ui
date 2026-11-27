@@ -2,6 +2,7 @@ import {
   type Accessor,
   type Component,
   createContext,
+  createMemo,
   createSignal,
   createUniqueId,
   onCleanup,
@@ -97,6 +98,17 @@ const Tabs: Component<TabsProps> = (props) => {
   const [list, setList] = createSignal<HTMLElement>();
   const [triggerIds, setTriggerIds] = createSignal<Ids>({});
   const [contentIds, setContentIds] = createSignal<Ids>({});
+  // With no tab matching the value, the first enabled tab shows; the value stays the caller's.
+  const shown = createMemo(() => {
+    const current = value();
+    const el = list();
+    triggerIds();
+    if (!el) return current;
+    const tabs = [...el.querySelectorAll<HTMLElement>(TAB)];
+    if (tabs.some((tab) => tab.dataset.key === current)) return current;
+    const first = tabs.find((tab) => !tab.hasAttribute("data-disabled")) ?? tabs[0];
+    return first?.dataset.key ?? current;
+  });
   const collection = createCollection({
     root: list,
     itemSelector: TAB,
@@ -105,26 +117,15 @@ const Tabs: Component<TabsProps> = (props) => {
     loop: () => true,
     dir: () => (list()?.closest("[dir]")?.getAttribute("dir") === "rtl" ? "rtl" : "ltr"),
     preferred: () => {
-      const current = value();
+      const current = shown();
       return current === undefined ? [] : [current];
     },
   });
 
   const select = (next: string) => {
-    if (next === value()) props.onChange?.(next);
+    if (next === shown()) props.onChange?.(next);
     else setValue(next);
   };
-
-  createEffect(
-    () => [list(), value(), triggerIds()] as const,
-    ([el, current]) => {
-      if (!el) return;
-      const tabs = [...el.querySelectorAll<HTMLElement>(TAB)];
-      if (tabs.some((tab) => tab.dataset.key === current)) return;
-      const first = tabs.find((tab) => !tab.hasAttribute("data-disabled")) ?? tabs[0];
-      if (first?.dataset.key !== undefined) setValue(first.dataset.key);
-    },
-  );
 
   const register: TabsContextValue["register"] = (part, key, custom) => {
     const set = part === "trigger" ? setTriggerIds : setContentIds;
@@ -137,7 +138,7 @@ const Tabs: Component<TabsProps> = (props) => {
   };
 
   const context: TabsContextValue = {
-    value,
+    value: shown,
     select,
     orientation,
     disabled: () => props.disabled ?? false,

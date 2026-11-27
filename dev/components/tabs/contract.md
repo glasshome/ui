@@ -14,3 +14,4 @@ Each line is one browser test in `tests/contracts/tabs.contract.test.tsx`, named
 | T8 | Home or End | focus and selection move to the first or last enabled tab |
 | T9 | Tab from before the tablist | focus lands on the selected tab; a second Tab leaves the tablist for the panel or the next focusable |
 | T10 | inside a dialog or a closed shadow root | T5 holds there too |
+| T11 | no tab matches the value: none set, or the tab it names is gone | the first enabled tab shows as selected and its panel renders; `onChange` is not called until a press picks a tab |

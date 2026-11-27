@@ -1,7 +1,9 @@
-import { cleanup } from "@solidjs/testing-library";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, render, screen } from "@solidjs/testing-library";
+import { createSignal, flush } from "solid-js";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { findAll, findTarget, runSteps } from "../../dev/harness/steps";
 import type { Step } from "../../dev/harness/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../src/solid/tabs.js";
 import { input } from "../harness/input";
 import { focusedElement, mountScenario, settle } from "../harness/mount";
 
@@ -102,5 +104,33 @@ describe("Tabs contract", () => {
     await pressMedia("in-dialog");
     cleanup();
     await pressMedia("in-shadow-root");
+  });
+
+  it("T11 with no tab matching the value the first enabled tab shows and onChange stays quiet", async () => {
+    const onChange = vi.fn();
+    const [value, setValue] = createSignal<string | undefined>(undefined);
+    render(() => (
+      <Tabs value={value()} onChange={onChange}>
+        <TabsList>
+          <TabsTrigger value="off" disabled>
+            Off
+          </TabsTrigger>
+          <TabsTrigger value="lights">Lights</TabsTrigger>
+          <TabsTrigger value="media">Media</TabsTrigger>
+        </TabsList>
+        <TabsContent value="lights">Lights panel</TabsContent>
+        <TabsContent value="media">Media panel</TabsContent>
+      </Tabs>
+    ));
+    await settle();
+    const tab = (name: string) => screen.getByRole("tab", { name });
+    expect(tab("Lights").getAttribute("aria-selected")).toBe("true");
+    expect(screen.getByRole("tabpanel").textContent).toBe("Lights panel");
+    setValue("gone");
+    flush();
+    expect(tab("Lights").getAttribute("aria-selected")).toBe("true");
+    expect(onChange).not.toHaveBeenCalled();
+    await input.press(tab("Media"));
+    expect(onChange).toHaveBeenCalledWith("media");
   });
 });
