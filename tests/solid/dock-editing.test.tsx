@@ -5,6 +5,7 @@ import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cdp, userEvent } from "vitest/browser";
 import { Dock, type DockItem } from "../../src/solid/dock.js";
+import { useFakeTime } from "../../src/testing/index.js";
 import { settle } from "../harness/mount";
 
 const items = (n: number, onClick: () => void = () => {}): DockItem[] =>
@@ -228,6 +229,25 @@ describe("Dock edit chrome", () => {
     byId(container, "d1").focus();
     await userEvent.keyboard("{Alt>}{ArrowLeft}{/Alt}");
     expect(onReorder).toHaveBeenCalledExactlyOnceWith(["d1", "d0", "d2"]);
+  });
+
+  it("a second Alt and arrow before the next frame moves the same item again", async () => {
+    useFakeTime({ toFake: ["requestAnimationFrame", "cancelAnimationFrame"] });
+    const [order, setOrder] = createSignal(["d0", "d1", "d2"]);
+    const { container } = render(() => (
+      <div class="reduce-motion" style={{ width: "400px" }}>
+        <Dock
+          items={order().map((id) => ({ id, icon: <span />, label: id, onClick: () => {} }))}
+          editing
+          onReorder={setOrder}
+        />
+      </div>
+    ));
+    byId(container, "d0").focus();
+    await userEvent.keyboard("{Alt>}{ArrowRight}{/Alt}");
+    expect(document.activeElement).toBe(byId(container, "d0"));
+    await userEvent.keyboard("{Alt>}{ArrowRight}{/Alt}");
+    expect(order()).toEqual(["d1", "d2", "d0"]);
   });
 
   it("keeps the end items where they are on a push past the end", async () => {

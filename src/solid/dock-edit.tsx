@@ -1,4 +1,4 @@
-import { createSignal, For, onCleanup } from "solid-js";
+import { createSignal, For, onCleanup, onFlush } from "solid-js";
 import { Layer } from "../lib/behavior/layer.js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { Z_CLASS } from "../lib/layers.js";
@@ -136,7 +136,8 @@ export function createDockReorder(options: ReorderOptions) {
     const to = ids.indexOf(id) + step;
     if (ids.indexOf(id) < 0 || to < 0 || to >= ids.length) return;
     options.onReorder(moveId(ids, id, to));
-    requestAnimationFrame(() =>
+    // Rows are kept by position: until the moved one is refocused, focus sits on the neighbour now drawn there.
+    onFlush(() =>
       focusWithoutTracking(
         options.bar()?.querySelector<HTMLElement>(`[data-dock-id="${CSS.escape(id)}"]`),
         { preventScroll: false },
