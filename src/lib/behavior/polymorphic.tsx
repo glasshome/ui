@@ -14,7 +14,8 @@ export type PolymorphicProps<D extends ValidComponent> = {
 
 export function Polymorphic<D extends ValidComponent>(props: PolymorphicProps<D>): JSX.Element {
   const tag = () => props.as ?? props.defaultAs;
-  const fixed = isStatic(props, "as") && isStatic(props, "defaultAs");
+  // isStatic on a memo-backed merge reads its memo; a reactive source answers false either way.
+  const fixed = untrack(() => isStatic(props, "as") && isStatic(props, "defaultAs"));
   const Tag = dynamic(tag, { static: fixed });
   const rest = omit(props as PolymorphicProps<ValidComponent>, "as", "defaultAs");
   // A button defaults to type="button", so it never submits a form around it.
