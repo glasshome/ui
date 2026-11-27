@@ -337,11 +337,12 @@ function Select<Option, OptGroup = never>(props: SelectProps<Option, OptGroup>):
     choose: (key) => {
       const node = byKey().get(key);
       if (!node || node.disabled || blocked()) return;
+      // Its own flush: async work onChange starts would hold a close written beside it.
+      if (props.closeOnSelection ?? !props.multiple) onFlush(() => ctx.close("commit"));
       if (props.multiple) {
         const current = untrack(keys);
         setKeys(current.includes(key) ? current.filter((k) => k !== key) : [...current, key]);
       } else if (!untrack(selected).has(key)) setKeys([key]);
-      if (props.closeOnSelection ?? !props.multiple) ctx.close("commit");
     },
     step: (by) => {
       if (props.multiple || blocked()) return;
@@ -844,8 +845,12 @@ const SelectContent: Component<SelectContentProps> = (props) => {
             onPointerCancel={onPointerCancel}
             onClick={onClick}
           >
-            <For each={ctx.nodes()}>
-              {(node) => (node.type === "section" ? <Section node={node} /> : <Row node={node} />)}
+            <For each={ctx.nodes()} keyed={(node) => node.key}>
+              {(node) => (
+                <Show when={node().type === "section"} fallback={<Row node={node()} />}>
+                  <Section node={node()} />
+                </Show>
+              )}
             </For>
           </ul>
         </SelectionScope>

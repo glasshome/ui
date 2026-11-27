@@ -5,6 +5,7 @@ import {
   createUniqueId,
   For,
   onCleanup,
+  onFlush,
   type ParentComponent,
   Show,
 } from "solid-js";
@@ -54,20 +55,31 @@ const OVERSCAN_PX = 200;
 const NO_AREA_KEY = "__no_area__";
 const FALLBACK_ICON = "mdi:shape-outline";
 
-// Rows carry only stable identity (no live EntityView): row objects must keep
-// referential equality across entity state ticks so <For> never remounts DOM
-// (remounting <iconify-icon> blanks the icon for a frame). Live state is read
-// per-row via getEntityView.
+// Rows carry identity only; each row reads live state through getEntityView, so a state tick leaves the list alone.
 type ListRow =
   | { kind: "header"; key: string; label: string }
   | { kind: "entity"; key: string; id: string; entityIndex: number };
 
 function sameRow(a: ListRow, b: ListRow): boolean {
+  if (a.key !== b.key) return false;
   if (a.kind === "header" && b.kind === "header") return a.label === b.label;
   if (a.kind === "entity" && b.kind === "entity")
     return a.id === b.id && a.entityIndex === b.entityIndex;
   return false;
 }
+
+function sameRows(a: ListRow[], b: ListRow[]): boolean {
+  return (
+    a.length === b.length &&
+    a.every((row, i) => {
+      const other = b[i];
+      return other !== undefined && sameRow(row, other);
+    })
+  );
+}
+
+const entityOf = (row: ListRow) => (row.kind === "entity" ? row : undefined);
+const headerLabel = (row: ListRow) => (row.kind === "header" ? row.label : "");
 
 function isUnavailable(view: EntityViewLike) {
   return view.state === "unavailable" || view.state === "unknown";
@@ -86,6 +98,8 @@ export function EntitySelector(props: EntitySelectorProps) {
   const isMobile = createIsMobile();
   const listboxId = createUniqueId();
   const [open, setOpen] = createSignal(false);
+  // Apart from open: it narrows the subscription to the selection, which a held save may still be writing.
+  const [listing, setListing] = createSignal(false);
   const [search, setSearch] = createSignal("");
   const [showDiagnostics, setShowDiagnostics] = createSignal(false);
 
@@ -95,7 +109,7 @@ export function EntitySelector(props: EntitySelectorProps) {
   const [viewportHeight, setViewportHeight] = createSignal(320);
 
   const domainEntityIds = createMemo(() => data.entityIdsByDomain()[props.domain] ?? []);
-  const subscribedIds = createMemo(() => (open() ? domainEntityIds() : props.entityIds));
+  const subscribedIds = createMemo(() => (listing() ? domainEntityIds() : props.entityIds));
   const allViews = data.useEntities(subscribedIds);
   const areas = data.useAreas();
   const areaNameById = createMemo(() => new Map(areas().map((a) => [a.id, a.name])));
@@ -146,62 +160,55 @@ export function EntitySelector(props: EntitySelectorProps) {
     });
   });
 
-  // Reuse previous row objects when nothing changed so downstream memos and
-  // <For> see identical references on every entity state tick.
-  let prevRows: ListRow[] = [];
-  const rows = createMemo<ListRow[]>(() => {
-    const byAreaKey = new Map<string, EntityViewLike[]>();
-    for (const v of searched()) {
-      const key = v.areaId ?? NO_AREA_KEY;
-      const bucket = byAreaKey.get(key);
-      if (bucket) bucket.push(v);
-      else byAreaKey.set(key, [v]);
-    }
-    const names = areaNameById();
-    const groups = Array.from(byAreaKey.entries())
-      .map(([key, views]) => ({
-        areaKey: key,
-        label: key === NO_AREA_KEY ? text("ui.entity-selector.other") : (names.get(key) ?? key),
-        noArea: key === NO_AREA_KEY,
-        views: views.sort((a, b) => format.compare(a.friendlyName, b.friendlyName)),
-      }))
-      .sort((a, b) => {
-        if (a.noArea !== b.noArea) return a.noArea ? 1 : -1;
-        return format.compare(a.label, b.label);
-      });
-
-    const flat: ListRow[] = [];
-    let entityIndex = 0;
-    for (const group of groups) {
-      flat.push({ kind: "header", key: `h:${group.areaKey}`, label: group.label });
-      for (const view of group.views) {
-        flat.push({ kind: "entity", key: `e:${view.id}`, id: view.id, entityIndex });
-        entityIndex++;
+  const rows = createMemo<ListRow[]>(
+    () => {
+      const byAreaKey = new Map<string, EntityViewLike[]>();
+      for (const v of searched()) {
+        const key = v.areaId ?? NO_AREA_KEY;
+        const bucket = byAreaKey.get(key);
+        if (bucket) bucket.push(v);
+        else byAreaKey.set(key, [v]);
       }
-    }
+      const names = areaNameById();
+      const groups = Array.from(byAreaKey.entries())
+        .map(([key, views]) => ({
+          areaKey: key,
+          label: key === NO_AREA_KEY ? text("ui.entity-selector.other") : (names.get(key) ?? key),
+          noArea: key === NO_AREA_KEY,
+          views: views.sort((a, b) => format.compare(a.friendlyName, b.friendlyName)),
+        }))
+        .sort((a, b) => {
+          if (a.noArea !== b.noArea) return a.noArea ? 1 : -1;
+          return format.compare(a.label, b.label);
+        });
 
-    const prevByKey = new Map(prevRows.map((r) => [r.key, r]));
-    let changed = flat.length !== prevRows.length;
-    const out = flat.map((row, i) => {
-      const prev = prevByKey.get(row.key);
-      if (prev && sameRow(prev, row)) {
-        if (prev !== prevRows[i]) changed = true;
-        return prev;
+      const flat: ListRow[] = [];
+      let entityIndex = 0;
+      for (const group of groups) {
+        flat.push({ kind: "header", key: `h:${group.areaKey}`, label: group.label });
+        for (const view of group.views) {
+          flat.push({ kind: "entity", key: `e:${view.id}`, id: view.id, entityIndex });
+          entityIndex++;
+        }
       }
-      changed = true;
-      return row;
-    });
-    if (!changed) return prevRows;
-    prevRows = out;
-    return out;
-  });
+      return flat;
+    },
+    { equals: sameRows },
+  );
 
   const entityRows = createMemo(
     () => rows().filter((r) => r.kind === "entity") as Extract<ListRow, { kind: "entity" }>[],
   );
-  const [activeIndex, setActiveIndex] = createSignal<number>((held) =>
-    Math.min(held ?? 0, Math.max(0, entityRows().length - 1)),
-  );
+  // Held by entity id too, so a refetch that shifts the rows keeps the same entity active.
+  const [active, setActive] = createSignal<{ id?: string; index: number }>({ index: 0 });
+  const activeIndex = createMemo(() => {
+    const { id, index } = active();
+    const list = entityRows();
+    const at = id === undefined ? -1 : list.findIndex((row) => row.id === id);
+    return at >= 0 ? at : Math.min(index, Math.max(0, list.length - 1));
+  });
+  const setActiveIndex = (index: number) => setActive({ id: entityRows()[index]?.id, index });
+  const resetActive = () => setActive({ index: 0 });
 
   // Prefix-summed pixel offsets; offsets()[i] is the top of row i.
   const offsets = createMemo(() => {
@@ -237,9 +244,6 @@ export function EntitySelector(props: EntitySelectorProps) {
     return { start, end };
   });
 
-  // Slice arrays are new per scroll tick, but the row objects inside keep
-  // their references, so <For> only mounts/unmounts rows entering/leaving
-  // the overscan window and repositions the rest.
   const visibleRows = createMemo(() => {
     const { start, end } = visibleSlice();
     return rows().slice(start, end);
@@ -253,8 +257,8 @@ export function EntitySelector(props: EntitySelectorProps) {
     return map;
   });
 
-  const rowTop = (row: ListRow) => {
-    const idx = rowIndexByKey().get(row.key);
+  const rowTop = (key: string) => {
+    const idx = rowIndexByKey().get(key);
     return idx == null ? 0 : (offsets()[idx] ?? 0);
   };
 
@@ -279,7 +283,7 @@ export function EntitySelector(props: EntitySelectorProps) {
   createEffect(
     search,
     () => {
-      setActiveIndex(0);
+      resetActive();
       scrollRef?.scrollTo({ top: 0 });
       setScrollTop(0);
     },
@@ -305,17 +309,24 @@ export function EntitySelector(props: EntitySelectorProps) {
       ? optionId(activeIndex())
       : undefined;
 
+  const openPicker = () => {
+    setListing(true);
+    setOpen(true);
+  };
+
   const closePicker = () => {
     setOpen(false);
     setSearch("");
-    setActiveIndex(0);
+    resetActive();
+    onFlush(() => setListing(false));
   };
 
   // A re-tap on the picked entity clears it, the way every picker toggles.
   const toggleEntity = (entityId: string) => {
     if (props.multiple === false) {
+      // Its own flush: async work the change starts would hold a close written beside it.
+      onFlush(closePicker);
       props.onEntityIdsChange(props.entityIds.includes(entityId) ? [] : [entityId]);
-      closePicker();
       return;
     }
     const current = props.entityIds;
@@ -537,23 +548,32 @@ export function EntitySelector(props: EntitySelectorProps) {
             role="presentation"
             style={{ height: `${totalHeight()}px` }}
           >
-            <For each={visibleRows()}>
-              {(row) =>
-                row.kind === "header" ? (
-                  <div
-                    class={cn(MENU_LABEL, "absolute inset-x-0 flex items-end px-2 pb-1")}
-                    style={{
-                      top: `${rowTop(row)}px`,
-                      height: `${HEADER_HEIGHT}px`,
-                    }}
-                    aria-hidden="true"
-                  >
-                    {row.label}
-                  </div>
-                ) : (
-                  <EntityRow id={row.id} entityIndex={row.entityIndex} top={rowTop(row)} />
-                )
-              }
+            <For each={visibleRows()} keyed={(row) => row.key}>
+              {(row) => (
+                <Show
+                  when={entityOf(row())}
+                  fallback={
+                    <div
+                      class={cn(MENU_LABEL, "absolute inset-x-0 flex items-end px-2 pb-1")}
+                      style={{
+                        top: `${rowTop(row().key)}px`,
+                        height: `${HEADER_HEIGHT}px`,
+                      }}
+                      aria-hidden="true"
+                    >
+                      {headerLabel(row())}
+                    </div>
+                  }
+                >
+                  {(entity) => (
+                    <EntityRow
+                      id={entity().id}
+                      entityIndex={entity().entityIndex}
+                      top={rowTop(entity().key)}
+                    />
+                  )}
+                </Show>
+              )}
             </For>
           </SelectionScope>
         </Show>
@@ -675,7 +695,7 @@ export function EntitySelector(props: EntitySelectorProps) {
         modal
       >
         <PopoverAnchor as="div">
-          <TriggerButton onClick={() => (open() ? closePicker() : setOpen(true))} />
+          <TriggerButton onClick={() => (open() ? closePicker() : openPicker())} />
         </PopoverAnchor>
         <ContentHost>
           <PickerContent />
