@@ -1,4 +1,14 @@
-import { createEffect, createMemo, createSignal, For, Match, Show, Switch } from "solid-js";
+import {
+  createDeferred,
+  createMemo,
+  createSignal,
+  For,
+  Match,
+  onFlush,
+  refresh,
+  Show,
+  Switch,
+} from "solid-js";
 import { focusedIn, focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
@@ -83,8 +93,14 @@ export function ImagePicker(props: ImagePickerProps) {
   );
 }
 
-type MediaGalleryTile = { kind: "media"; image: StoredMedia };
-type GalleryTile = { kind: "preset"; key: string; preset: ImagePreset } | MediaGalleryTile;
+type GalleryTile =
+  | { kind: "preset"; key: string; preset: ImagePreset }
+  | { kind: "media"; image: StoredMedia };
+
+const tileKey = (tile: GalleryTile) =>
+  tile.kind === "preset" ? `preset:${tile.key}` : `media:${tile.image.id}`;
+const presetOf = (tile: GalleryTile) => (tile.kind === "preset" ? tile : undefined);
+const mediaOf = (tile: GalleryTile) => (tile.kind === "media" ? tile.image : undefined);
 
 function PresetTile(props: { preset: ImagePreset; selected: boolean; onSelect: () => void }) {
   const text = useUiText();
@@ -141,26 +157,14 @@ function ImageGallery(
   let uploadButton: HTMLButtonElement | undefined;
   let panel: HTMLElement | undefined;
 
-  const [index, setIndex] = createSignal<{ value?: MediaIndex; error?: unknown }>({});
-  let request = 0;
-  const refetch = (): Promise<void> => {
-    const ticket = ++request;
-    const pending = store ? store.index() : Promise.reject(new Error("no media store"));
-    return pending.then(
-      (value) => {
-        if (ticket === request) setIndex({ value });
-      },
-      (error: unknown) => {
-        if (ticket === request) setIndex({ error });
-      },
+  // Deferred: a reload keeps the gallery up, and an older answer never lands over a newer one.
+  const index = createDeferred<{ value?: MediaIndex; error?: unknown }>(() => {
+    if (!everOpened() || !store) return {};
+    return store.index().then(
+      (value) => ({ value }),
+      (error: unknown) => ({ error }),
     );
-  };
-  createEffect(
-    () => everOpened() && store !== undefined,
-    (ready) => {
-      if (ready) void refetch();
-    },
-  );
+  });
   const indexError = createMemo(() => {
     const error = index().error;
     return error === undefined ? undefined : toMediaStoreError(error);
@@ -174,13 +178,11 @@ function ImageGallery(
       preset,
     })),
   );
-  // A reload hands back fresh objects; an unchanged upload keeps its tile, and the focus on it.
-  const mediaTiles = createMemo<MediaGalleryTile[]>((before) => {
-    const kept = new Map((before ?? []).map((tile) => [JSON.stringify(tile.image), tile]));
-    return sorted().map((image) => kept.get(JSON.stringify(image)) ?? { kind: "media", image });
-  });
   // Built-in pictures lead the grid; the household's uploads follow them.
-  const tiles = createMemo<GalleryTile[]>(() => [...presetTiles(), ...mediaTiles()]);
+  const tiles = createMemo<GalleryTile[]>(() => [
+    ...presetTiles(),
+    ...sorted().map((image): GalleryTile => ({ kind: "media", image })),
+  ]);
   const pageCount = createMemo(() => Math.max(1, Math.ceil(tiles().length / MEDIA_PAGE_SIZE)));
   const current = createMemo(() => Math.min(page(), pageCount() - 1));
   const pageTiles = createMemo(() =>
@@ -197,9 +199,10 @@ function ImageGallery(
   };
 
   const pick = (value: string) => {
+    // Its own flush: async work onChange starts would hold a close written beside it.
+    onFlush(() => setOpen(false));
     props.onChange(props.value === value ? "" : value);
     setThumbBroken(false);
-    setOpen(false);
   };
 
   const clearImage = () => {
@@ -244,7 +247,7 @@ function ImageGallery(
     try {
       if (!store) return;
       const uploaded = await store.upload(file);
-      await refetch();
+      await refresh(index);
       props.onChange(uploaded.id);
     } catch (cause) {
       fail(cause);
@@ -261,7 +264,7 @@ function ImageGallery(
     try {
       await store?.remove(target.id);
       if (focusLeaving()) holdFocus();
-      await refetch();
+      await refresh(index);
     } catch (cause) {
       fail(cause);
     } finally {
@@ -355,7 +358,7 @@ function ImageGallery(
                       data-slot="image-picker-retry"
                       onClick={async () => {
                         holdFocus();
-                        await Promise.resolve(refetch()).catch(() => undefined);
+                        await refresh(index);
                         const again = panel?.querySelector<HTMLElement>(
                           '[data-slot="image-picker-retry"]',
                         );
@@ -397,36 +400,43 @@ function ImageGallery(
                 data-slot="image-picker-gallery"
                 class={cn("grid grid-cols-3 gap-2", PICKER_LIST, "overflow-x-hidden")}
               >
-                <For each={pageTiles()}>
-                  {(tile) =>
-                    tile.kind === "preset" ? (
-                      <PresetTile
-                        preset={tile.preset}
-                        selected={props.value === presetValue(tile.key)}
-                        onSelect={() => pick(presetValue(tile.key))}
-                      />
-                    ) : (
-                      <MediaTile
-                        item={tile.image}
-                        thumbUrl={thumbUrl(tile.image.id)}
-                        label={text("ui.image-picker.use", { name: tile.image.id })}
-                        broken={brokenTiles.isBroken(tile.image)}
-                        markUnused
-                        selected={props.value === tile.image.id}
-                        onSelect={() => pick(tile.image.id)}
-                        onBroken={() => brokenTiles.markBroken(tile.image)}
-                        onDelete={
-                          store?.canRemove === false
-                            ? undefined
-                            : () => {
-                                deleteFrom = focused();
-                                deleteConfirmed = false;
-                                setPendingDelete(tile.image);
-                              }
-                        }
-                      />
-                    )
-                  }
+                <For each={pageTiles()} keyed={tileKey}>
+                  {(tile) => (
+                    <Switch>
+                      <Match when={presetOf(tile())}>
+                        {(preset) => (
+                          <PresetTile
+                            preset={preset().preset}
+                            selected={props.value === presetValue(preset().key)}
+                            onSelect={() => pick(presetValue(preset().key))}
+                          />
+                        )}
+                      </Match>
+                      <Match when={mediaOf(tile())}>
+                        {(image) => (
+                          <MediaTile
+                            item={image()}
+                            thumbUrl={thumbUrl(image().id)}
+                            label={text("ui.image-picker.use", { name: image().id })}
+                            broken={brokenTiles.isBroken(image())}
+                            markUnused
+                            selected={props.value === image().id}
+                            onSelect={() => pick(image().id)}
+                            onBroken={() => brokenTiles.markBroken(image())}
+                            onDelete={
+                              store?.canRemove === false
+                                ? undefined
+                                : () => {
+                                    deleteFrom = focused();
+                                    deleteConfirmed = false;
+                                    setPendingDelete(image());
+                                  }
+                            }
+                          />
+                        )}
+                      </Match>
+                    </Switch>
+                  )}
                 </For>
               </div>
               <Show when={pageCount() > 1}>
