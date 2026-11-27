@@ -1,4 +1,4 @@
-import { createMemo, createSignal, For, Show } from "solid-js";
+import { createMemo, createSignal, For, onFlush, Show } from "solid-js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { MENU_ITEM, MENU_ITEM_RADIUS } from "../lib/menu-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
@@ -103,9 +103,12 @@ export function AreaPicker(props: AreaPickerProps) {
   // A re-tap on the picked area clears it, the way every other picker toggles.
   const selectArea = (areaId: string) => {
     if (props.disabled) return;
+    // Its own flush: async work onChange starts would hold a close written beside it.
+    onFlush(() => {
+      setOpen(false);
+      setSearch("");
+    });
     props.onChange?.(areaId === props.value && props.allowClear !== false ? "" : areaId);
-    setOpen(false);
-    setSearch("");
   };
 
   const showTriggerClear = () =>

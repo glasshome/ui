@@ -1,4 +1,12 @@
-import { type Accessor, createSignal, onCleanup, untrack, createEffect, flush } from "solid-js";
+import {
+  type Accessor,
+  createSignal,
+  onCleanup,
+  untrack,
+  createEffect,
+  flush,
+  onFlush,
+} from "solid-js";
 import type { Align, Side } from "../anchor-placement.js";
 import type { Box } from "../anchor-placement.js";
 import { type AnchorLike, createAnchored } from "./anchored.js";
@@ -297,8 +305,9 @@ export function createMenu(options: MenuOptions): Menu {
     const entry = entryOf(item);
     if (!entry || entry.disabled() || !untrack(open)) return;
     if (entry.submenu) return entry.submenu.show(by === "keyboard" ? "first" : "none");
+    // Closes in its own flush: async work the choice starts would hold a close written beside it.
+    if (entry.closeOnSelect()) onFlush(menu.closeTree);
     entry.onSelect();
-    if (entry.closeOnSelect()) menu.closeTree();
   }
 
   function leaveItem(el: HTMLElement) {
