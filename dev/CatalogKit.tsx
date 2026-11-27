@@ -35,14 +35,14 @@ export function Specimen(props: {
   span?: 2 | 3;
   children: JSX.Element;
 }) {
-  const spanClass =
+  const spanClass = () =>
     props.span === 3 ? "sm:col-span-2 lg:col-span-3" : props.span === 2 ? "sm:col-span-2" : "";
   return (
     <div
       data-specimen={props.name}
       data-try={props.try}
       // Opaque on purpose: glass specimens need a known backdrop.
-      class={`border-border/60 bg-card flex flex-col overflow-hidden rounded-lg border ${spanClass}`}
+      class={`border-border/60 bg-card flex flex-col overflow-hidden rounded-lg border ${spanClass()}`}
     >
       <div class="border-border/50 bg-muted/30 flex items-baseline justify-between gap-2 border-b px-3 py-1.5">
         <code class="text-foreground font-mono text-xs font-semibold">{props.name}</code>

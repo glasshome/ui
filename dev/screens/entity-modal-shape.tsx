@@ -1,4 +1,12 @@
-import { createSignal, createUniqueId, For, Match, Show, Switch as SwitchFlow } from "solid-js";
+import {
+  createSignal,
+  createUniqueId,
+  For,
+  Match,
+  Show,
+  Switch as SwitchFlow,
+  untrack,
+} from "solid-js";
 import {
   AreaPicker,
   Avatar,
@@ -87,7 +95,7 @@ export function ModalForm(props: {
 }) {
   const formId = createUniqueId();
   const roomLabelId = createUniqueId();
-  const [room, setRoom] = createSignal(props.entity.areaId ?? "");
+  const [room, setRoom] = createSignal(untrack(() => props.entity.areaId) ?? "");
   const [onDashboard, setOnDashboard] = createSignal(true);
 
   return (

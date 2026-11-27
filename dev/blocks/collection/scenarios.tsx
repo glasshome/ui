@@ -1,4 +1,4 @@
-import { createSignal, For, onCleanup, onSettled } from "solid-js";
+import { createSignal, For, onCleanup, onSettled, untrack } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { createCollection } from "../../../src/lib/behavior/collection";
 import { defineScenarios } from "../../harness/types";
@@ -42,10 +42,10 @@ export function Toolbar(props: {
     root,
     itemSelector: "[data-key]",
     orientation: () => props.orientation ?? "vertical",
-    focus: props.focus ?? "roving",
+    focus: untrack(() => props.focus) ?? "roving",
     loop: () => props.loop ?? false,
     dir: () => props.dir ?? "ltr",
-    disabledFocusable: props.disabledFocusable,
+    disabledFocusable: untrack(() => props.disabledFocusable),
   });
   return (
     <div

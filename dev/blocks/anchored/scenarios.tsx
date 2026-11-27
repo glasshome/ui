@@ -1,4 +1,4 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, Show, untrack } from "solid-js";
 import { type JSX } from "@solidjs/web";
 // oxlint-disable-next-line solid/portal-in-layer -- the block drives the behavior under a bare Portal
 import { Portal } from "@solidjs/web";
@@ -22,7 +22,7 @@ const Placed = (props: {
     floating,
     open,
     offset: () => OFFSET,
-    matchAnchorWidth: props.matchAnchorWidth,
+    matchAnchorWidth: untrack(() => props.matchAnchorWidth),
   });
   const part = () => (
     <div ref={setFloating} role="dialog" aria-label="Part" style={props.partStyle}>

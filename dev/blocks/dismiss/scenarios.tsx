@@ -1,4 +1,4 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, Show, untrack } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { createDismiss, type DismissReason } from "../../../src/lib/behavior/dismiss";
 import { createFocusScope } from "../../../src/lib/behavior/focus-scope";
@@ -29,10 +29,10 @@ const Layer = (props: {
   const handle = registerLayer({
     element,
     open,
-    kind: props.kind ?? "popover",
+    kind: untrack(() => props.kind) ?? "popover",
     escape: () => true,
     dismiss: () => close("escape"),
-    trigger: props.trigger ? trigger : undefined,
+    trigger: untrack(() => props.trigger) ? trigger : undefined,
   });
   const scope = createFocusScope({
     container: element,

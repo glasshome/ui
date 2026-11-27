@@ -1,4 +1,4 @@
-import { type Accessor, createSignal, onCleanup, Show } from "solid-js";
+import { type Accessor, createSignal, onCleanup, Show, untrack } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { createMenu, createMenuButton, type Menu, rowClaim } from "../../../src/lib/behavior/menu";
 import { defineScenarios } from "../../harness/types";
@@ -25,12 +25,14 @@ function Row(props: {
   onSelect?: () => void;
   submenu?: Menu;
 }) {
-  props.menu.register(props.id, {
-    disabled: () => props.disabled ?? false,
-    closeOnSelect: () => props.closeOnSelect ?? true,
-    onSelect: () => props.onSelect?.(),
-    submenu: props.submenu,
-  });
+  untrack(() =>
+    props.menu.register(props.id, {
+      disabled: () => props.disabled ?? false,
+      closeOnSelect: () => props.closeOnSelect ?? true,
+      onSelect: () => props.onSelect?.(),
+      submenu: props.submenu,
+    }),
+  );
   return (
     <div
       ref={(el) => props.submenu?.setTrigger(el)}

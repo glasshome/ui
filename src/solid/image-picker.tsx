@@ -9,6 +9,7 @@ import {
   Repeat,
   Show,
   Switch,
+  untrack,
 } from "solid-js";
 import { focusedIn, focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { FIELD_CHROME } from "../lib/input-classes.js";
@@ -140,7 +141,7 @@ function PresetTile(props: { preset: ImagePreset; selected: boolean; onSelect: (
 function ImageGallery(
   props: ImagePickerProps & { store: MediaStore | undefined; urls: MediaUrls | undefined },
 ) {
-  const store = props.store;
+  const store = untrack(() => props.store);
   const text = useUiText();
   const format = useUiFormat();
   const uploadedUrl = () => props.urls?.url(props.value);

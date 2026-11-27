@@ -1,4 +1,4 @@
-import { For } from "solid-js";
+import { For, untrack } from "solid-js";
 import { createTableWindow, TableLoadMore } from "../../../src/solid";
 import { defineScenarios } from "../../harness/types";
 
@@ -7,7 +7,7 @@ const ROWS = Array.from({ length: 12 }, (_, i) => `Device ${i + 1}`);
 const LONG = Array.from({ length: 120 }, (_, i) => `Event ${i + 1}`);
 
 const Paged = (props: { rows: string[]; pageSize: number }) => {
-  const table = createTableWindow(() => props.rows, { pageSize: props.pageSize });
+  const table = createTableWindow(() => props.rows, { pageSize: untrack(() => props.pageSize) });
   return (
     <div>
       <ul aria-label="Rows">

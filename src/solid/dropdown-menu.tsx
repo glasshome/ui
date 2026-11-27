@@ -87,7 +87,7 @@ const DropdownMenuRoot: Component<DropdownMenuRootProps> = (props) => {
       const read = props.getAnchorRect;
       return read && trigger ? rectOf(trigger, read) : trigger;
     },
-    coverAnchor: !props.getAnchorRect,
+    coverAnchor: untrack(() => !props.getAnchorRect),
     side: () => placement()[0],
     align: () => placement()[1],
     offset: () => props.gutter ?? 0,

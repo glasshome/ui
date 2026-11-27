@@ -1,4 +1,4 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, Show, untrack } from "solid-js";
 import { type JSX } from "@solidjs/web";
 // oxlint-disable-next-line solid/portal-in-layer -- the block drives the behavior under a bare Portal
 import { Portal } from "@solidjs/web";
@@ -32,7 +32,7 @@ const Layer = (props: { name: string; kind: LayerKind; children?: JSX.Element })
   registerLayer({
     element,
     open,
-    kind: props.kind,
+    kind: untrack(() => props.kind),
     escape: () => true,
     dismiss: () => setOpen(false),
   });
@@ -62,7 +62,7 @@ const TopLayerPart = (props: { topLayer: TopLayer }) => {
     open,
     kind: "popover",
     escape: () => true,
-    topLayer: props.topLayer,
+    topLayer: untrack(() => props.topLayer),
     dismiss: () => {
       setDismissals(dismissals() + 1);
       setOpen(false);
