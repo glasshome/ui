@@ -21,8 +21,8 @@
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
-          "max": 16,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 17,
+          "reason": "rebaseline 2026-11-27 S2-09: the panel mounts in the flush that opens it, and the trigger's own state change now restyles in the panel's first recalc; max of 3 runs"
         },
         "layouts": {
           "max": 5,
@@ -60,8 +60,8 @@
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
-          "max": 16,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 17,
+          "reason": "rebaseline 2026-11-27 S2-09: the panel mounts in the flush that opens it, and the trigger's own state change now restyles in the panel's first recalc; max of 3 runs"
         },
         "layouts": {
           "max": 5,
@@ -113,8 +113,8 @@
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
-          "max": 16,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 17,
+          "reason": "rebaseline 2026-11-27 S2-09: the panel mounts in the flush that opens it, and the trigger's own state change now restyles in the panel's first recalc; max of 3 runs"
         },
         "layouts": {
           "max": 5,
@@ -166,8 +166,8 @@
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
-          "max": 16,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 19,
+          "reason": "rebaseline 2026-11-27 S2-09: the panel mounts in the flush that opens it, and the trigger's own state change now restyles in the panel's first recalc; max of 3 runs"
         },
         "layouts": {
           "max": 3,
@@ -219,8 +219,8 @@
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
-          "max": 16,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 17,
+          "reason": "rebaseline 2026-11-27 S2-09: the panel mounts in the flush that opens it, and the trigger's own state change now restyles in the panel's first recalc; max of 3 runs"
         },
         "layouts": {
           "max": 5,
@@ -266,8 +266,8 @@
           "reason": "rebaseline 2026-11-20 after the drive began drawing each animation at four fixed points with the clock held; max of 5 T50 runs plus 25% on elements restyled"
         },
         "largestRecalc": {
-          "max": 16,
-          "reason": "rebaseline 2026-11-19 after the row stagger left and the drive stopped polling getAnimations() per frame; max of 3 T50 runs"
+          "max": 17,
+          "reason": "rebaseline 2026-11-27 S2-09: the panel mounts in the flush that opens it, and the trigger's own state change now restyles in the panel's first recalc; max of 3 runs"
         },
         "layouts": {
           "max": 5,
