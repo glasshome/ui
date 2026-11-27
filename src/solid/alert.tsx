@@ -14,6 +14,7 @@ import {
 } from "../lib/alert-tones.js";
 import { glassToneText } from "../lib/glass-tone.js";
 import { cn } from "../lib/utils.js";
+import { trusted } from "./icon-nodes.js";
 
 export type { AlertTone };
 
@@ -91,7 +92,7 @@ const Alert: Component<AlertProps> = (props) => {
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
-              innerHTML={ALERT_ICON_PATHS[toneKey()]}
+              innerHTML={trusted(ALERT_ICON_PATHS[toneKey()])}
             />
           }
         >

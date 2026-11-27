@@ -142,9 +142,11 @@ export function Icon(props: IconProps) {
   if (isServer) {
     // A TrustedHTML is a fresh object per call, which the spread would write as a new innerHTML.
     const html = createMemo(() => trusted(body()));
+    // oxlint-disable-next-line solid/no-innerhtml -- html() is trusted(body()), held in a memo
     const svg = <svg {...shell} innerHTML={html()} />;
     // The client's child insert takes one hydration id after the svg; take it here too.
     createMemo(() => undefined);
+    // oxlint-disable-next-line solid/components-return-once -- isServer is a build constant
     return svg;
   }
   const nodes = createMemo(() => iconNodes(body()));
