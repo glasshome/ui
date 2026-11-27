@@ -227,10 +227,13 @@ const Dock: Component<DockProps> = (props) => {
   );
 
   // A newcomer may land on a page nobody is looking at; turn there once.
+  const firstArrived = createMemo(() => {
+    const arrived = arrivedSet();
+    return arrived.size === 0 ? -1 : props.items.findIndex((it) => arrived.has(it.id));
+  });
   createEffect(
-    arrivedSet,
-    (arrived) => {
-      const first = props.items.findIndex((it) => arrived.has(it.id));
+    firstArrived,
+    (first) => {
       if (first >= 0) requestAnimationFrame(() => turnToItem(first));
     },
     { defer: true },

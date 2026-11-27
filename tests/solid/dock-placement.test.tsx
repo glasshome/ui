@@ -169,6 +169,49 @@ describe("Dock arrival", () => {
     expect(insideStrip(container, "d11", "x")).toBe(true);
   });
 
+  it("turns to an item that arrives before the list holds it, once the list does", async () => {
+    const [list, setList] = createSignal(items(11));
+    const [arrived, setArrived] = createSignal<string[]>([]);
+    const { container } = render(() => (
+      <div style={{ width: `${OVERFLOWING_BOX}px` }}>
+        <Dock items={list()} arrivedIds={arrived()} />
+      </div>
+    ));
+    await settle();
+    const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]') as HTMLElement;
+
+    setArrived(["d11"]);
+    flush();
+    const turned = scrolled(bar);
+    setList(items(12));
+    await turned;
+    expect(insideStrip(container, "d11", "x")).toBe(true);
+  });
+
+  it("leaves the page alone when the list is rebuilt around an item that already arrived", async () => {
+    const [list, setList] = createSignal(items(12));
+    const [arrived, setArrived] = createSignal<string[]>([]);
+    const { container } = render(() => (
+      <div style={{ width: `${OVERFLOWING_BOX}px` }}>
+        <Dock items={list()} arrivedIds={arrived()} />
+      </div>
+    ));
+    await settle();
+    const bar = container.querySelector<HTMLElement>('[data-slot="dock-bar"]') as HTMLElement;
+    const turned = scrolled(bar);
+    setArrived(["d11"]);
+    await turned;
+
+    const back = scrolled(bar);
+    bar.scrollTo({ left: 0 });
+    await back;
+    setList(items(12));
+    flush();
+    await settle();
+    expect(bar.scrollLeft).toBe(0);
+    expect(insideStrip(container, "d0", "x")).toBe(true);
+  });
+
   it("turns a side dock to the arrived item's page too", async () => {
     const [arrived, setArrived] = createSignal<string[]>([]);
     const { container } = render(() => (
