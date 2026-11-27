@@ -228,9 +228,9 @@ const Dock: Component<DockProps> = (props) => {
 
   // A newcomer may land on a page nobody is looking at; turn there once.
   createEffect(
-    () => props.arrivedIds?.join("\n") ?? "",
-    () => {
-      const first = untrack(() => props.items.findIndex((it) => arrivedSet().has(it.id)));
+    arrivedSet,
+    (arrived) => {
+      const first = props.items.findIndex((it) => arrived.has(it.id));
       if (first >= 0) requestAnimationFrame(() => turnToItem(first));
     },
     { defer: true },

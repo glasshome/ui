@@ -74,7 +74,10 @@ export function EntitySelector(props: EntitySelectorProps) {
 
   let inputRef: HTMLInputElement | undefined;
   let scrollRef: HTMLDivElement | undefined;
-  const [scrollTop, setScrollTop] = createSignal(0);
+  const [scrollTop, setScrollTop] = createSignal(() => {
+    search();
+    return 0;
+  });
   const [viewportHeight, setViewportHeight] = createSignal(320);
 
   const domainEntityIds = createMemo(() => data.entityIdsByDomain()[props.domain] ?? []);
@@ -127,7 +130,10 @@ export function EntitySelector(props: EntitySelectorProps) {
 
   const entityRows = createMemo(() => rows().filter((r) => r.kind === "entity") as EntityListRow[]);
   // Held by entity id too, so a refetch that shifts the rows keeps the same entity active.
-  const [active, setActive] = createSignal<{ id?: string; index: number }>({ index: 0 });
+  const [active, setActive] = createSignal<{ id?: string; index: number }>(() => {
+    search();
+    return { index: 0 };
+  });
   const activeIndex = createMemo(() => {
     const { id, index } = active();
     const list = entityRows();
@@ -184,9 +190,7 @@ export function EntitySelector(props: EntitySelectorProps) {
   createEffect(
     search,
     () => {
-      resetActive();
       scrollRef?.scrollTo({ top: 0 });
-      setScrollTop(0);
     },
     { defer: true },
   );
