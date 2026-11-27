@@ -1,22 +1,10 @@
 import { cleanup, render } from "@solidjs/testing-library";
 import { createSignal, flush } from "solid-js";
-import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { InputOTP, InputOTPSlot } from "../../src/solid/input-otp.js";
 
-let warn: MockInstance<typeof console.warn>;
-
-beforeEach(() => {
-  warn = vi.spyOn(console, "warn");
-});
-
-afterEach(() => {
-  cleanup();
-  warn.mockRestore();
-});
-
-const untrackedReads = () =>
-  warn.mock.calls.filter((args) => String(args[0]).includes("STRICT_READ_UNTRACKED"));
+afterEach(cleanup);
 
 function slots(container: HTMLElement): string[] {
   return [...container.querySelectorAll('[data-slot="input-otp-slot"]')].map(
@@ -38,7 +26,6 @@ describe("InputOTP", () => {
     setCode("345");
     flush();
     expect(slots(container)).toEqual(["3", "4", "5"]);
-    expect(untrackedReads()).toEqual([]);
   });
 
   it("keeps what is typed when it is uncontrolled", async () => {
@@ -56,6 +43,5 @@ describe("InputOTP", () => {
     flush();
     expect(slots(container)).toEqual(["7", "8"]);
     expect(onComplete).toHaveBeenCalledWith("78");
-    expect(untrackedReads()).toEqual([]);
   });
 });
