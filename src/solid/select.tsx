@@ -1,54 +1,40 @@
 import {
-  type Accessor,
   type Component,
-  createComponent,
-  createContext,
   createMemo,
   createSignal,
   createUniqueId,
-  For,
-  onCleanup,
   Show,
   omit,
   untrack,
   createEffect,
-  merge,
   onFlush,
+  merge,
 } from "solid-js";
-import { useRequired } from "../lib/context.js";
 import { type ComponentProps, type JSX } from "@solidjs/web";
-import { Layer } from "../lib/behavior/layer.js";
-import { createAnchored } from "../lib/behavior/anchored.js";
 import { ButtonRoot, type ButtonRootProps } from "../lib/behavior/button-root.js";
-import { claimKeys, createClaim } from "../lib/behavior/claims.js";
-import { createCollection, createTypeahead } from "../lib/behavior/collection.js";
+import { claimKeys } from "../lib/behavior/claims.js";
+import { createTypeahead } from "../lib/behavior/collection.js";
 import { createControllableSignal } from "../lib/behavior/controllable.js";
-import { createDismiss } from "../lib/behavior/dismiss.js";
 import { focusFell, focusWithoutTracking } from "../lib/behavior/focus-scope.js";
-import { registerLayer } from "../lib/behavior/layer-stack.js";
-import {
-  type InteractOutsideEvent,
-  interactOutside,
-  type PointerDownOutsideEvent,
-  vetoed,
-} from "../lib/behavior/modal-root.js";
-import { createPresence } from "../lib/behavior/presence.js";
-import { CONTROL_H, INPUT_SURFACE } from "../lib/input-classes.js";
-import { nestedLayerAttrs, Z_CLASS } from "../lib/layers.js";
-import { MENU_ITEM, MENU_ITEM_RADIUS, MENU_LABEL, MENU_SEPARATOR } from "../lib/menu-classes.js";
-import { FIELD_MOTION, MOTION_EXIT_MS } from "../lib/motion-classes.js";
-import { PICKER_LIST, PICKER_TRIGGER } from "../lib/picker-classes.js";
+import { CONTROL_H } from "../lib/input-classes.js";
+import { MENU_LABEL } from "../lib/menu-classes.js";
+import { PICKER_TRIGGER } from "../lib/picker-classes.js";
 import { cn } from "../lib/utils.js";
 import { Icon } from "./icon.js";
 import { type Field, read, sameKeys, type SelectNode } from "./select-model.js";
-import { usePortalMount } from "./portal-mount.js";
-import { SelectionHighlight, SelectionScope } from "./selection.js";
 import { forwardRef } from "../lib/behavior/solid.js";
+import {
+  flag,
+  TAP_SLOP_PX,
+  useSelect,
+  SelectContext,
+  type SelectContextValue,
+} from "./select-context.js";
+import { SelectContent, SelectGroup, SelectItem, SelectSeparator } from "./select-listbox.js";
 
 const PRESS_CLAIM = "prevent:pointerdown";
 const TRIGGER_CLAIM = `${claimKeys(["Enter", " ", "ArrowDown", "ArrowUp"])} ${PRESS_CLAIM}`;
 const STEP_CLAIM = claimKeys(["ArrowLeft", "ArrowRight"]);
-const LISTBOX_CLAIM = claimKeys(["Enter", " "]);
 
 interface SelectBaseProps<Option, OptGroup> extends Omit<
   ComponentProps<"div">,
@@ -90,81 +76,6 @@ interface MultipleProps<Option> {
 
 type SelectProps<Option, OptGroup = never> = SelectBaseProps<Option, OptGroup> &
   (SingleProps<Option> | MultipleProps<Option>);
-
-type CloseReason = "commit" | "outside" | "parent";
-
-interface SelectContextValue {
-  ids: { root: string; trigger: Accessor<string>; value: string; listbox: string };
-  setTriggerId: (id: string) => void;
-  open: Accessor<boolean>;
-  openFrom: Accessor<"first" | "last">;
-  show: (from: "first" | "last") => void;
-  close: (reason: CloseReason) => void;
-  /** The panel unmounted: a close by an outside press refocuses the trigger only if focus fell to the page. */
-  settle: () => void;
-  setCloseAutoFocus: (handler: ((event: Event) => void) | undefined) => void;
-  nodes: Accessor<readonly SelectNode<unknown>[]>;
-  optionId: (key: string | undefined) => string | undefined;
-  multiple: Accessor<boolean>;
-  isSelected: (key: string) => boolean;
-  firstSelected: Accessor<string | undefined>;
-  empty: Accessor<boolean>;
-  choose: (key: string) => void;
-  step: (by: 1 | -1) => void;
-  typeahead: (event: KeyboardEvent) => boolean;
-  selectedOptions: Accessor<unknown[]>;
-  remove: (option: unknown) => void;
-  clear: () => void;
-  placeholder: () => JSX.Element;
-  itemComponent: Accessor<Component<{ item: SelectNode<unknown> }> | undefined>;
-  sectionComponent: Accessor<Component<{ section: SelectNode<unknown> }> | undefined>;
-  trigger: Accessor<HTMLElement | undefined>;
-  setTrigger: (el: HTMLElement | undefined) => void;
-  labelId: Accessor<string | undefined>;
-  setLabelId: (id: string | undefined) => void;
-  listboxLabelledBy: Accessor<string | undefined>;
-  setListboxLabelledBy: (ids: string | undefined) => void;
-  blocked: Accessor<boolean>;
-  disabled: Accessor<boolean>;
-  busy: Accessor<boolean>;
-  attrs: StateAttrs;
-}
-
-type StateAttrs = {
-  [
-    K in
-      | "data-expanded"
-      | "data-closed"
-      | "data-valid"
-      | "data-invalid"
-      | "data-required"
-      | "data-disabled"
-      | "data-readonly"
-  ]: "" | undefined;
-};
-
-const SelectContext = createContext<SelectContextValue>();
-
-const useSelect = (): SelectContextValue => {
-  const ctx = useRequired(SelectContext, "Select parts", "Select");
-  return ctx;
-};
-
-interface SelectListValue {
-  highlighted: Accessor<string | undefined>;
-}
-
-const SelectListContext = createContext<SelectListValue>();
-
-const useSelectList = (): SelectListValue => {
-  const ctx = useRequired(SelectListContext, "SelectItem", "SelectContent");
-  return ctx;
-};
-
-const ITEM = '[role="option"][data-key]';
-const TAP_SLOP_PX = 10;
-const flag = (on: boolean) => (on ? "" : undefined);
-
 type SelectionProps = {
   multiple?: unknown;
   value?: unknown;
@@ -618,254 +529,6 @@ const SelectTrigger: Component<SelectTriggerProps> = (props) => {
   );
 };
 
-interface SelectContentProps extends Omit<ComponentProps<"div">, "children"> {
-  listboxClass?: string;
-  onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
-  onInteractOutside?: (event: InteractOutsideEvent) => void;
-  onCloseAutoFocus?: (event: Event) => void;
-}
-
-const SelectContent: Component<SelectContentProps> = (props) => {
-  const ctx = useSelect();
-  const others = omit(
-    props,
-    "class",
-    "listboxClass",
-    "ref",
-    "onEscapeKeyDown",
-    "onPointerDownOutside",
-    "onInteractOutside",
-    "onCloseAutoFocus",
-  );
-  const [panel, setPanel] = createSignal<HTMLElement>();
-  const [listbox, setListbox] = createSignal<HTMLElement>();
-
-  createEffect(
-    () => props.onCloseAutoFocus,
-    (handler) => {
-      ctx.setCloseAutoFocus(handler);
-      return () => ctx.setCloseAutoFocus(undefined);
-    },
-  );
-
-  const presence = createPresence({
-    present: ctx.open,
-    element: panel,
-    exitMs: MOTION_EXIT_MS.field,
-  });
-  const layer = registerLayer({
-    element: panel,
-    open: ctx.open,
-    kind: "popover",
-    escape: () => true,
-    dismiss: () => ctx.close("parent"),
-    trigger: ctx.trigger,
-  });
-  createDismiss({
-    layer,
-    onDismiss: (reason, event) => {
-      if (reason === "escape") {
-        if (vetoed(props.onEscapeKeyDown, event as KeyboardEvent)) return;
-        ctx.close("commit");
-        return;
-      }
-      const outside = interactOutside(event as PointerEvent, (e) => {
-        props.onPointerDownOutside?.(e);
-        props.onInteractOutside?.(e);
-      });
-      if (outside.defaultPrevented) return;
-      ctx.close("outside");
-    },
-  });
-  createAnchored({
-    anchor: ctx.trigger,
-    floating: panel,
-    open: ctx.open,
-    side: () => "bottom",
-    align: () => "start",
-    matchAnchorWidth: true,
-    coverAnchor: true,
-  });
-
-  const collection = createCollection({
-    root: listbox,
-    itemSelector: ITEM,
-    orientation: () => "vertical",
-    focus: "virtual",
-  });
-  createClaim(listbox, () => LISTBOX_CLAIM);
-
-  createEffect(
-    () => [ctx.open(), listbox()] as const,
-    ([open, list]) => {
-      if (!open || !list) return;
-      const enabled = [...list.querySelectorAll<HTMLElement>(ITEM)].filter(
-        (el) => el.getAttribute("aria-disabled") !== "true",
-      );
-      const chosen = untrack(ctx.firstSelected);
-      const start =
-        enabled.find((el) => el.dataset.key === chosen) ??
-        (untrack(ctx.openFrom) === "last" ? enabled.at(-1) : enabled[0]);
-      if (start?.dataset.key) collection.highlight(start.dataset.key, "keyboard");
-      focusWithoutTracking(list);
-    },
-  );
-
-  const keyAt = (target: EventTarget | null): string | undefined => {
-    const list = listbox();
-    const option = target instanceof Element ? target.closest<HTMLElement>(ITEM) : null;
-    return option && list?.contains(option) ? option.dataset.key : undefined;
-  };
-
-  let press: { x: number; y: number; type: string; moved: boolean } | undefined;
-  let pointerPressed = false;
-  const onPointerDown = (event: PointerEvent) => {
-    pointerPressed = true;
-    press =
-      event.button === 0
-        ? { x: event.clientX, y: event.clientY, type: event.pointerType, moved: false }
-        : undefined;
-  };
-  const onPointerMove = (event: PointerEvent) => {
-    if (press && Math.hypot(event.clientX - press.x, event.clientY - press.y) > TAP_SLOP_PX)
-      press.moved = true;
-    if (event.pointerType !== "mouse" || !ctx.open()) return;
-    const key = keyAt(event.target);
-    if (key && key !== collection.highlighted()) collection.highlight(key, "pointer");
-  };
-  const onPointerUp = (event: PointerEvent) => {
-    const started = press;
-    press = undefined;
-    if (!started || !ctx.open()) return;
-    if (started.type !== "mouse" && started.moved) return;
-    const key = keyAt(event.target);
-    if (key) ctx.choose(key);
-  };
-  const onPointerCancel = () => {
-    press = undefined;
-    pointerPressed = false;
-  };
-  // A click with no pointer press before it comes from assistive technology.
-  const onClick = (event: MouseEvent) => {
-    const pressed = pointerPressed;
-    pointerPressed = false;
-    if (pressed || !ctx.open()) return;
-    const key = keyAt(event.target);
-    if (key) ctx.choose(key);
-  };
-  const onKeyDown = (event: KeyboardEvent) => {
-    if (!ctx.open()) return;
-    collection.onKeyDown(event);
-    if (event.defaultPrevented) return;
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      const key = collection.highlighted();
-      if (key) ctx.choose(key);
-    } else if (event.key === "Tab") ctx.close("commit");
-  };
-
-  const Row: Component<{ node: SelectNode<unknown> }> = (row) => (
-    <Show when={ctx.itemComponent()} keyed>
-      {(Item) =>
-        createComponent(Item, {
-          get item() {
-            return row.node;
-          },
-        })
-      }
-    </Show>
-  );
-  const Section: Component<{ node: SelectNode<unknown> }> = (row) => (
-    <li role="presentation">
-      <Show when={ctx.sectionComponent()} keyed>
-        {(Heading) =>
-          createComponent(Heading, {
-            get section() {
-              return row.node;
-            },
-          })
-        }
-      </Show>
-    </li>
-  );
-
-  const portalMount = usePortalMount();
-  const Panel: Component = () => {
-    onCleanup(() => {
-      setPanel(undefined);
-      setListbox(undefined);
-      ctx.settle();
-    });
-    return (
-      <div
-        {...merge(others, nestedLayerAttrs(false), {
-          ref: (el: HTMLDivElement) => {
-            setPanel(el);
-            forwardRef(() => props.ref, el);
-          },
-          "data-slot": "select-content",
-          get "data-expanded"() {
-            return flag(ctx.open());
-          },
-          get "data-closed"() {
-            return flag(!ctx.open());
-          },
-          get class() {
-            return cn(
-              // Same concave surface as the trigger: opening reads as the input
-              // expanding, not a separate floating panel.
-              INPUT_SURFACE,
-              FIELD_MOTION,
-              `relative ${Z_CLASS.overlay} text-popover-foreground overflow-hidden rounded-md p-1`,
-              props.class,
-            );
-          },
-        })}
-      >
-        <SelectionScope
-          marker="highlighted"
-          radius={MENU_ITEM_RADIUS}
-          class={cn("w-full", PICKER_LIST)}
-        >
-          <ul
-            ref={setListbox}
-            role="listbox"
-            id={ctx.ids.listbox}
-            tabindex="-1"
-            aria-labelledby={ctx.listboxLabelledBy()}
-            aria-multiselectable={ctx.multiple() ? "true" : undefined}
-            aria-activedescendant={ctx.optionId(collection.highlighted())}
-            class={props.listboxClass}
-            onKeyDown={onKeyDown}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerCancel={onPointerCancel}
-            onClick={onClick}
-          >
-            <For each={ctx.nodes()} keyed={(node) => node.key}>
-              {(node) => (
-                <Show when={node().type === "section"} fallback={<Row node={node()} />}>
-                  <Section node={node()} />
-                </Show>
-              )}
-            </For>
-          </ul>
-        </SelectionScope>
-      </div>
-    );
-  };
-
-  return (
-    <SelectListContext value={{ highlighted: collection.highlighted }}>
-      <Layer mount={portalMount} when={presence.mounted()}>
-        <Panel />
-      </Layer>
-    </SelectListContext>
-  );
-};
-
 const SelectLabel: Component<ComponentProps<"span">> = (props) => {
   const ctx = useSelect();
   const rest = omit(props, "class", "id");
@@ -886,90 +549,6 @@ const SelectLabel: Component<ComponentProps<"span">> = (props) => {
         },
       })}
       onClick={() => focusWithoutTracking(ctx.trigger())}
-    />
-  );
-};
-
-interface SelectItemProps extends Omit<ComponentProps<"li">, "children"> {
-  item: SelectNode<unknown>;
-  children?: JSX.Element;
-}
-
-const SelectItem: Component<SelectItemProps> = (props) => {
-  const ctx = useSelect();
-  const list = useSelectList();
-  const rest = omit(props, "class", "children", "item");
-  const key = () => props.item.key;
-  const optionId = () => ctx.optionId(key());
-  const labelId = () => `${optionId()}-label`;
-  const isSelected = () => ctx.isSelected(key());
-  const marks = {
-    get "data-selected"() {
-      return flag(isSelected());
-    },
-    get "data-highlighted"() {
-      return flag(list.highlighted() === key());
-    },
-    get "data-disabled"() {
-      return flag(props.item.disabled);
-    },
-  };
-  return (
-    <li
-      {...merge(rest, marks, {
-        role: "option" as const,
-        get id() {
-          return optionId();
-        },
-        get "data-key"() {
-          return key();
-        },
-        get "aria-selected"() {
-          return isSelected() ? ("true" as const) : ("false" as const);
-        },
-        get "aria-disabled"() {
-          return props.item.disabled ? ("true" as const) : ("false" as const);
-        },
-        get "aria-labelledby"() {
-          return labelId();
-        },
-        "data-slot": "select-item",
-        get class() {
-          return cn(
-            MENU_ITEM,
-            "focus:text-foreground data-[highlighted]:text-foreground w-full pr-8 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
-            props.class,
-          );
-        },
-      })}
-    >
-      <SelectionHighlight active={list.highlighted() === key()} />
-      <Show when={isSelected()}>
-        <span class="absolute right-2 flex size-3.5 items-center justify-center">
-          <div aria-hidden="true" {...marks}>
-            <Icon icon="lucide:check" width={16} height={16} class="size-4 text-current" />
-          </div>
-        </span>
-      </Show>
-      <div id={labelId()} {...marks}>
-        {props.children}
-      </div>
-    </li>
-  );
-};
-
-const SelectGroup: Component<ComponentProps<"div">> = (props) => {
-  const rest = omit(props, "class");
-  return <div data-slot="select-group" class={cn("", props.class)} {...rest} />;
-};
-
-const SelectSeparator: Component<ComponentProps<"div">> = (props) => {
-  const rest = omit(props, "class");
-  return (
-    <div
-      data-slot="select-separator"
-      class={cn("pointer-events-none", MENU_SEPARATOR, props.class)}
-      {...rest}
     />
   );
 };

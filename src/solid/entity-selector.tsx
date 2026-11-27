@@ -13,7 +13,6 @@ import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { MENU_ITEM_RADIUS, MENU_LABEL } from "../lib/menu-classes.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
 import { createIsMobile } from "../lib/use-is-mobile.js";
-import type { UiText } from "../lib/text.js";
 import { cn } from "../lib/utils.js";
 import {
   BottomSheet,
@@ -22,10 +21,28 @@ import {
   BottomSheetOverlay,
   BottomSheetPortal,
 } from "./bottom-sheet/index.js";
-import { type EntityViewLike, useEntityData } from "./entity-data.js";
+import { EntityChips } from "./entity-chips.js";
+import { useEntityData } from "./entity-data.js";
+import {
+  type EntityListRow,
+  entityOf,
+  FALLBACK_ICON,
+  groupRows,
+  HEADER_HEIGHT,
+  headerLabel,
+  isUnavailable,
+  type ListRow,
+  matchesDeviceClass,
+  matchesQuery,
+  ROW_HEIGHT,
+  rowOffsets,
+  sameRows,
+  stateLabel,
+  visibleWindow,
+} from "./entity-rows.js";
 import { Icon } from "./icon.js";
 import { useUiFormat, useUiText } from "./locale.js";
-import { PICKER_ROW_HEIGHT, PickerRow } from "./picker-row.js";
+import { PickerRow } from "./picker-row.js";
 import { PickerSearch } from "./picker-search.js";
 import { PickerTrigger } from "./picker-trigger.js";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover.js";
@@ -41,54 +58,6 @@ interface EntitySelectorProps {
   multiple?: boolean;
   /** Id of the element naming the trigger, for forms that label it outside. */
   "aria-labelledby"?: string;
-}
-
-// Many real-world power/energy sensors carry a unit but no device_class.
-const DEVICE_CLASS_UNIT_FALLBACK: Record<string, readonly string[]> = {
-  power: ["W", "kW"],
-  energy: ["Wh", "kWh"],
-};
-
-const HEADER_HEIGHT = 30;
-const ROW_HEIGHT = PICKER_ROW_HEIGHT;
-const OVERSCAN_PX = 200;
-const NO_AREA_KEY = "__no_area__";
-const FALLBACK_ICON = "mdi:shape-outline";
-
-// Rows carry identity only; each row reads live state through getEntityView, so a state tick leaves the list alone.
-type ListRow =
-  | { kind: "header"; key: string; label: string }
-  | { kind: "entity"; key: string; id: string; entityIndex: number };
-
-function sameRow(a: ListRow, b: ListRow): boolean {
-  if (a.key !== b.key) return false;
-  if (a.kind === "header" && b.kind === "header") return a.label === b.label;
-  if (a.kind === "entity" && b.kind === "entity")
-    return a.id === b.id && a.entityIndex === b.entityIndex;
-  return false;
-}
-
-function sameRows(a: ListRow[], b: ListRow[]): boolean {
-  return (
-    a.length === b.length &&
-    a.every((row, i) => {
-      const other = b[i];
-      return other !== undefined && sameRow(row, other);
-    })
-  );
-}
-
-const entityOf = (row: ListRow) => (row.kind === "entity" ? row : undefined);
-const headerLabel = (row: ListRow) => (row.kind === "header" ? row.label : "");
-
-function isUnavailable(view: EntityViewLike) {
-  return view.state === "unavailable" || view.state === "unknown";
-}
-
-function stateLabel(view: EntityViewLike, text: UiText) {
-  if (isUnavailable(view)) return text("ui.entity-selector.unavailable");
-  const unit = view.unitOfMeasurement;
-  return unit ? `${view.state} ${unit}` : view.state;
 }
 
 export function EntitySelector(props: EntitySelectorProps) {
@@ -119,12 +88,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 
   const classFiltered = createMemo(() => {
     const wanted = props.deviceClass;
-    if (!wanted) return usableViews();
-    const units = DEVICE_CLASS_UNIT_FALLBACK[wanted];
-    return usableViews().filter((v) => {
-      if (v.deviceClass === wanted) return true;
-      return units != null && v.unitOfMeasurement != null && units.includes(v.unitOfMeasurement);
-    });
+    return wanted ? usableViews().filter((v) => matchesDeviceClass(v, wanted)) : usableViews();
   });
 
   const classExcludedCount = createMemo(() =>
@@ -150,55 +114,18 @@ export function EntitySelector(props: EntitySelectorProps) {
     const q = search().trim().toLowerCase();
     if (!q) return pool();
     const names = areaNameById();
-    return pool().filter((v) => {
-      if (v.id.toLowerCase().includes(q)) return true;
-      if (v.friendlyName.toLowerCase().includes(q)) return true;
-      if (v.name.toLowerCase().includes(q)) return true;
-      if (v.aliases.some((a) => a.toLowerCase().includes(q))) return true;
-      const areaName = v.areaId ? names.get(v.areaId) : undefined;
-      return areaName?.toLowerCase().includes(q) ?? false;
-    });
+    return pool().filter((v) => matchesQuery(v, q, names));
   });
 
   const rows = createMemo<ListRow[]>(
-    () => {
-      const byAreaKey = new Map<string, EntityViewLike[]>();
-      for (const v of searched()) {
-        const key = v.areaId ?? NO_AREA_KEY;
-        const bucket = byAreaKey.get(key);
-        if (bucket) bucket.push(v);
-        else byAreaKey.set(key, [v]);
-      }
-      const names = areaNameById();
-      const groups = Array.from(byAreaKey.entries())
-        .map(([key, views]) => ({
-          areaKey: key,
-          label: key === NO_AREA_KEY ? text("ui.entity-selector.other") : (names.get(key) ?? key),
-          noArea: key === NO_AREA_KEY,
-          views: views.sort((a, b) => format.compare(a.friendlyName, b.friendlyName)),
-        }))
-        .sort((a, b) => {
-          if (a.noArea !== b.noArea) return a.noArea ? 1 : -1;
-          return format.compare(a.label, b.label);
-        });
-
-      const flat: ListRow[] = [];
-      let entityIndex = 0;
-      for (const group of groups) {
-        flat.push({ kind: "header", key: `h:${group.areaKey}`, label: group.label });
-        for (const view of group.views) {
-          flat.push({ kind: "entity", key: `e:${view.id}`, id: view.id, entityIndex });
-          entityIndex++;
-        }
-      }
-      return flat;
-    },
+    () =>
+      groupRows(searched(), areaNameById(), text("ui.entity-selector.other"), (x, y) =>
+        format.compare(x, y),
+      ),
     { equals: sameRows },
   );
 
-  const entityRows = createMemo(
-    () => rows().filter((r) => r.kind === "entity") as Extract<ListRow, { kind: "entity" }>[],
-  );
+  const entityRows = createMemo(() => rows().filter((r) => r.kind === "entity") as EntityListRow[]);
   // Held by entity id too, so a refetch that shifts the rows keeps the same entity active.
   const [active, setActive] = createSignal<{ id?: string; index: number }>({ index: 0 });
   const activeIndex = createMemo(() => {
@@ -210,39 +137,13 @@ export function EntitySelector(props: EntitySelectorProps) {
   const setActiveIndex = (index: number) => setActive({ id: entityRows()[index]?.id, index });
   const resetActive = () => setActive({ index: 0 });
 
-  // Prefix-summed pixel offsets; offsets()[i] is the top of row i.
-  const offsets = createMemo(() => {
-    const r = rows();
-    const out = new Array<number>(r.length + 1);
-    out[0] = 0;
-    for (let i = 0; i < r.length; i++) {
-      const row = r[i];
-      const h = row && row.kind === "header" ? HEADER_HEIGHT : ROW_HEIGHT;
-      out[i + 1] = (out[i] ?? 0) + h;
-    }
-    return out;
-  });
+  const offsets = createMemo(() => rowOffsets(rows()));
 
   const totalHeight = () => offsets()[rows().length] ?? 0;
 
-  const visibleSlice = createMemo(() => {
-    const off = offsets();
-    const count = rows().length;
-    if (count === 0) return { start: 0, end: 0 };
-    const topEdge = scrollTop() - OVERSCAN_PX;
-    const bottomEdge = scrollTop() + viewportHeight() + OVERSCAN_PX;
-    let lo = 0;
-    let hi = count - 1;
-    while (lo < hi) {
-      const mid = (lo + hi) >> 1;
-      if ((off[mid + 1] ?? 0) > topEdge) hi = mid;
-      else lo = mid + 1;
-    }
-    const start = lo;
-    let end = start;
-    while (end < count && (off[end] ?? 0) < bottomEdge) end++;
-    return { start, end };
-  });
+  const visibleSlice = createMemo(() =>
+    visibleWindow(offsets(), rows().length, scrollTop(), viewportHeight()),
+  );
 
   const visibleRows = createMemo(() => {
     const { start, end } = visibleSlice();
@@ -601,49 +502,6 @@ export function EntitySelector(props: EntitySelectorProps) {
     </div>
   );
 
-  const SelectedChips = () => (
-    <Show when={!isSingle() && props.entityIds.length > 0}>
-      <div class="flex flex-wrap gap-1.5">
-        <For each={props.entityIds}>
-          {(id) => {
-            const view = createMemo(() => data.getEntityView(id));
-            const unavailable = () => {
-              const v = view();
-              return v != null && isUnavailable(v);
-            };
-            return (
-              <span
-                class={`border-border bg-secondary/50 text-secondary-foreground inline-flex max-w-full items-stretch overflow-hidden rounded-md border text-xs ${
-                  unavailable() ? "opacity-60" : ""
-                }`}
-              >
-                <span class="flex min-w-0 items-center gap-1.5 py-1.5 pl-2">
-                  <Icon
-                    icon={view()?.icon ?? FALLBACK_ICON}
-                    width={14}
-                    height={14}
-                    class="text-muted-foreground shrink-0"
-                  />
-                  <span class="truncate">{view()?.friendlyName ?? id}</span>
-                </span>
-                <button
-                  type="button"
-                  aria-label={text("ui.entity-selector.remove", {
-                    name: view()?.friendlyName ?? id,
-                  })}
-                  class="text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex w-8 shrink-0 cursor-pointer items-center justify-center transition-colors"
-                  onClick={() => removeEntity(id)}
-                >
-                  <Icon icon="lucide:x" width={14} height={14} class="size-3.5" />
-                </button>
-              </span>
-            );
-          }}
-        </For>
-      </div>
-    </Show>
-  );
-
   // One shell per viewport, one list: the sheet and the panel host the same
   // PickerContent, so a fix to the list can never land in only one of them.
   const ContentHost: ParentComponent = (p) => (
@@ -701,7 +559,9 @@ export function EntitySelector(props: EntitySelectorProps) {
           <PickerContent />
         </ContentHost>
       </Popover>
-      <SelectedChips />
+      <Show when={!isSingle() && props.entityIds.length > 0}>
+        <EntityChips ids={props.entityIds} onRemove={removeEntity} />
+      </Show>
     </div>
   );
 }
