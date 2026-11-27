@@ -7,6 +7,7 @@ import {
   For,
   onCleanup,
   onSettled,
+  Repeat,
   Show,
   omit,
   untrack,
@@ -531,8 +532,8 @@ const Dock: Component<DockProps> = (props) => {
             }[placement()],
           )}
         >
-          <For keyed={false} each={Array.from({ length: slots() })}>
-            {(_, i) => (
+          <Repeat count={slots()}>
+            {(i) => (
               <button
                 ref={dotRef()}
                 type="button"
@@ -548,7 +549,7 @@ const Dock: Component<DockProps> = (props) => {
                 )}
               />
             )}
-          </For>
+          </Repeat>
         </div>
       </div>
       <Show when={companion()}>

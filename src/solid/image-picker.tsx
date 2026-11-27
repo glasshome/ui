@@ -6,6 +6,7 @@ import {
   Match,
   onFlush,
   refresh,
+  Repeat,
   Show,
   Switch,
 } from "solid-js";
@@ -377,9 +378,7 @@ function ImageGallery(
                 <Switch>
                   <Match when={store && !loaded() && !indexError()}>
                     <div data-slot="image-picker-loading" class="grid grid-cols-3 gap-2">
-                      <For each={[0, 1, 2, 3, 4, 5]}>
-                        {() => <Skeleton class="aspect-square" />}
-                      </For>
+                      <Repeat count={6}>{() => <Skeleton class="aspect-square" />}</Repeat>
                     </div>
                   </Match>
                   <Match when={loaded()}>

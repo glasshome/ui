@@ -1,4 +1,4 @@
-import { For } from "solid-js";
+import { Repeat } from "solid-js";
 import { POSITION_BAR, POSITION_BAR_LIT } from "../lib/position-bar-classes.js";
 import { cn } from "../lib/utils.js";
 import { useUiText } from "./locale.js";
@@ -10,8 +10,6 @@ import { useUiText } from "./locale.js";
  */
 export function StepIndicator(props: { count: number; index: number; class?: string }) {
   const text = useUiText();
-  const steps = () => Array.from({ length: Math.max(props.count, 0) }, (_, step) => step);
-
   return (
     <div
       data-slot="step-indicator"
@@ -20,7 +18,7 @@ export function StepIndicator(props: { count: number; index: number; class?: str
       <span class="sr-only">
         {text("ui.step-indicator.position", { step: props.index + 1, count: props.count })}
       </span>
-      <For each={steps()}>
+      <Repeat count={Math.max(props.count, 0) || 0}>
         {(step) => (
           <span
             data-slot="step-indicator-segment"
@@ -28,7 +26,7 @@ export function StepIndicator(props: { count: number; index: number; class?: str
             class={cn(POSITION_BAR, "w-6", step <= props.index && POSITION_BAR_LIT)}
           />
         )}
-      </For>
+      </Repeat>
     </div>
   );
 }

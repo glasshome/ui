@@ -3,8 +3,8 @@ import {
   children,
   createMemo,
   createSignal,
-  For,
   onSettled,
+  Repeat,
   Show,
   omit,
 } from "solid-js";
@@ -387,21 +387,20 @@ const SKELETON_META_WIDTHS = ["w-1/2", "w-2/5", "w-3/5", "w-1/2", "w-3/5"] as co
 
 /** Table-shaped loading skeleton: N rows at the shared row height. */
 export function TableSkeleton(props: { count?: number; class?: string }) {
-  const n = props.count ?? 5;
   return (
     <div data-slot="table-skeleton" aria-busy="true">
-      <For each={Array.from({ length: n })}>
-        {(_, i) => (
+      <Repeat count={props.count ?? 5}>
+        {(i) => (
           <div data-slot="table-skeleton-row" class={cn(TABLE_ROW_CLASS, props.class)}>
             <Skeleton class="h-4 w-4 shrink-0" />
             <div class="flex min-w-0 flex-1 items-start gap-3 sm:items-center">
               <Skeleton class="size-9 shrink-0 rounded-full sm:size-7" />
               <div class="flex min-w-0 flex-1 flex-col gap-1.5">
                 <Skeleton
-                  class={cn("h-3", SKELETON_TITLE_WIDTHS[i() % SKELETON_TITLE_WIDTHS.length])}
+                  class={cn("h-3", SKELETON_TITLE_WIDTHS[i % SKELETON_TITLE_WIDTHS.length])}
                 />
                 <Skeleton
-                  class={cn("h-2.5", SKELETON_META_WIDTHS[i() % SKELETON_META_WIDTHS.length])}
+                  class={cn("h-2.5", SKELETON_META_WIDTHS[i % SKELETON_META_WIDTHS.length])}
                 />
                 <div class="flex gap-1 pt-0.5 sm:hidden">
                   <Skeleton class="h-4 w-12 rounded-lg" />
@@ -412,7 +411,7 @@ export function TableSkeleton(props: { count?: number; class?: string }) {
             </div>
           </div>
         )}
-      </For>
+      </Repeat>
     </div>
   );
 }

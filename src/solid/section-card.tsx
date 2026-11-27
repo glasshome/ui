@@ -1,4 +1,4 @@
-import { children, Show, omit } from "solid-js";
+import { children, Repeat, Show, omit } from "solid-js";
 import { type ComponentProps, type JSX } from "@solidjs/web";
 import {
   CARD_BLUR,
@@ -374,12 +374,9 @@ export function SectionRowSkeleton(props: { class?: string }) {
 }
 
 export function SectionRowSkeletons(props: { count?: number }) {
-  const n = props.count ?? 3;
   return (
     <div data-slot="section-row-skeletons" class="flex flex-col gap-2" aria-busy="true">
-      {Array.from({ length: n }, () => (
-        <SectionRowSkeleton />
-      ))}
+      <Repeat count={props.count ?? 3}>{() => <SectionRowSkeleton />}</Repeat>
     </div>
   );
 }

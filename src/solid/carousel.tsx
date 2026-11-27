@@ -14,6 +14,7 @@ import {
   createSignal,
   type ParentComponent,
   omit,
+  Repeat,
 } from "solid-js";
 import { useRequired } from "../lib/context.js";
 import { type ComponentProps } from "@solidjs/web";
@@ -239,17 +240,19 @@ const CarouselDots: Component<ComponentProps<"div">> = (props) => {
 
   return (
     <div class={cn(CAROUSEL_DOTS, props.class)} data-slot="carousel-dots" {...rest}>
-      {Array.from({ length: slideCount() }, (_, i) => (
-        <button
-          type="button"
-          data-slot="carousel-dot"
-          data-active={selected() === i ? "" : undefined}
-          aria-label={text("ui.carousel.go-to-slide", { index: i + 1 })}
-          aria-current={selected() === i ? "true" : "false"}
-          class={carouselDot(selected() === i)}
-          onClick={() => scrollTo(i)}
-        />
-      ))}
+      <Repeat count={slideCount()}>
+        {(i) => (
+          <button
+            type="button"
+            data-slot="carousel-dot"
+            data-active={selected() === i ? "" : undefined}
+            aria-label={text("ui.carousel.go-to-slide", { index: i + 1 })}
+            aria-current={selected() === i ? "true" : "false"}
+            class={carouselDot(selected() === i)}
+            onClick={() => scrollTo(i)}
+          />
+        )}
+      </Repeat>
     </div>
   );
 };
