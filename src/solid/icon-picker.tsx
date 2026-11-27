@@ -1,4 +1,13 @@
-import { createMemo, createSignal, For, Show } from "solid-js";
+import {
+  createDeferred,
+  createMemo,
+  createSignal,
+  For,
+  isPending,
+  onCleanup,
+  onFlush,
+  Show,
+} from "solid-js";
 import { focusWithoutTracking } from "../lib/behavior/focus-scope.js";
 import { PICKER_LIST } from "../lib/picker-classes.js";
 import { CHIP, ICON_PILL_TINT } from "../lib/pill-classes.js";
@@ -11,6 +20,7 @@ import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popove
 import { SlotButton } from "./slot-button.js";
 
 export const ICON_SEARCH_DEBOUNCE_MS = 300;
+const NO_RESULTS: string[] = [];
 
 const ICON_LIBRARIES = [
   { prefix: "", label: undefined },
@@ -280,32 +290,37 @@ export function IconPicker(props: IconPickerProps) {
   const [open, setOpen] = createSignal(false);
   const [search, setSearch] = createSignal("");
   const [activeLib, setActiveLib] = createSignal("");
-  const [apiResults, setApiResults] = createSignal<string[]>([]);
-  const [loading, setLoading] = createSignal(false);
+  const [query, setQuery] = createSignal("");
 
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
   let searchRef: HTMLInputElement | undefined;
+  onCleanup(() => clearTimeout(debounceTimer));
 
-  const searchIcons = (query: string, prefix: string) => {
+  const typeSearch = (next: string) => {
+    setSearch(next);
     clearTimeout(debounceTimer);
-    if (!query.trim()) {
-      setApiResults([]);
-      return;
-    }
-    const hosted = iconSearch();
-    const prefixes = prefix ? [prefix] : ICON_LIBRARIES.map((lib) => lib.prefix).filter(Boolean);
-    if (!hosted) return;
-    setLoading(true);
-    debounceTimer = setTimeout(async () => {
-      try {
-        setApiResults(await hosted(query, prefixes));
-      } catch {
-        setApiResults([]);
-      } finally {
-        setLoading(false);
-      }
-    }, ICON_SEARCH_DEBOUNCE_MS);
+    if (!next.trim()) setQuery("");
+    else debounceTimer = setTimeout(() => setQuery(next), ICON_SEARCH_DEBOUNCE_MS);
   };
+
+  const resetSearch = () => {
+    clearTimeout(debounceTimer);
+    setSearch("");
+    setQuery("");
+  };
+
+  // Deferred: an answer to an older query never lands over a newer one, and the last one stays up meanwhile.
+  const apiResults = createDeferred(() => {
+    const q = query().trim();
+    const hosted = iconSearch();
+    if (!q || !hosted) return NO_RESULTS;
+    const lib = activeLib();
+    const prefixes = lib ? [lib] : ICON_LIBRARIES.map((entry) => entry.prefix).filter(Boolean);
+    return hosted(q, prefixes).catch(() => NO_RESULTS);
+  });
+  const loading = () =>
+    iconSearch() !== undefined &&
+    (search().trim() !== query().trim() || isPending(() => apiResults()));
 
   const defaultIcons = createMemo(() => {
     const lib = activeLib();
@@ -324,20 +339,15 @@ export function IconPicker(props: IconPickerProps) {
 
   // A re-tap on the picked icon clears it, the way every picker toggles.
   const selectIcon = (icon: string) => {
+    // Its own flush: async work onChange starts would hold a close written beside it.
+    onFlush(() => {
+      setOpen(false);
+      resetSearch();
+    });
     props.onChange(icon === props.value.trim() ? "" : icon);
-    setOpen(false);
-    setSearch("");
   };
 
   const clearIcon = () => props.onChange("");
-
-  const handleLibChange = (prefix: string) => {
-    setActiveLib(prefix);
-    setApiResults([]);
-    if (search().trim()) {
-      searchIcons(search(), prefix);
-    }
-  };
 
   return (
     <Popover surface={slot() ? "overlay" : "field"} open={open()} onOpenChange={setOpen} modal>
@@ -392,10 +402,7 @@ export function IconPicker(props: IconPickerProps) {
               searchRef = el;
             }}
             value={search()}
-            onValueChange={(next) => {
-              setSearch(next);
-              searchIcons(next, activeLib());
-            }}
+            onValueChange={typeSearch}
             placeholder={text("ui.icon-picker.search-placeholder")}
             aria-label={text("ui.icon-picker.search")}
           />
@@ -413,7 +420,7 @@ export function IconPicker(props: IconPickerProps) {
                       ? "[--glass-tone:var(--primary)]"
                       : "text-muted-foreground hover:text-foreground [--glass-base:transparent] [--glass-edge:transparent] [--glass-light:0] [--glass-rim:0]",
                   )}
-                  onClick={() => handleLibChange(lib.prefix)}
+                  onClick={() => setActiveLib(lib.prefix)}
                 >
                   {lib.label ?? text("ui.icon-picker.all")}
                 </button>
