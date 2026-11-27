@@ -1,5 +1,5 @@
 import { cleanup, render, screen } from "@solidjs/testing-library";
-import { createSignal } from "solid-js";
+import { createSignal, flush } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { commands } from "vitest/browser";
@@ -173,7 +173,7 @@ describe("anchored contract", () => {
         open: () => true,
         side: () => "right",
         align: () => "start",
-        offset: OFFSET,
+        offset: () => OFFSET,
       });
       return (
         <div ref={setFloating} role="dialog" aria-label="Part" style={{ width: "120px" }}>
@@ -185,5 +185,31 @@ describe("anchored contract", () => {
     const box = screen.getByRole("dialog", { name: "Part" }).getBoundingClientRect();
     expect(Math.abs(box.left - (point.left + OFFSET))).toBeLessThanOrEqual(1);
     expect(Math.abs(box.top - point.top)).toBeLessThanOrEqual(1);
+  });
+
+  it("PO11 an offset change while open moves the part to the new offset", async () => {
+    const point = { left: 200, top: 150, width: 0, height: 0 };
+    const [offset, setOffset] = createSignal(OFFSET);
+    render(() => {
+      const [floating, setFloating] = createSignal<HTMLElement>();
+      createAnchored({
+        anchor: () => ({ getBoundingClientRect: () => point }),
+        floating,
+        open: () => true,
+        side: () => "right",
+        align: () => "start",
+        offset,
+      });
+      return (
+        <div ref={setFloating} role="dialog" aria-label="Part" style={{ width: "120px" }}>
+          Part body
+        </div>
+      );
+    });
+    await settle();
+    setOffset(OFFSET * 3);
+    flush();
+    const box = screen.getByRole("dialog", { name: "Part" }).getBoundingClientRect();
+    expect(Math.abs(box.left - (point.left + OFFSET * 3))).toBeLessThanOrEqual(1);
   });
 });

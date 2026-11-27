@@ -131,7 +131,7 @@ export const MenuSub: Component<MenuSubProps> = (props) => {
     onChange: (next) => props.onOpenChange?.(next),
   });
   const level = createMenuLevel(
-    { open, onOpenChange: setOpen, offset: untrack(() => props.gutter ?? 0) },
+    { open, onOpenChange: setOpen, offset: () => props.gutter ?? 0 },
     parent,
   );
   return <MenuLevelProvider value={level}>{props.children}</MenuLevelProvider>;

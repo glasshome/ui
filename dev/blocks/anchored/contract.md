@@ -14,3 +14,4 @@ Each line is one browser test in `tests/contracts/anchored.contract.test.tsx`, n
 | PO8 | `coverAnchor` | the part's top edge sits on the anchor's top edge, covering it; at the bottom of the screen it keeps `data-side="bottom"` and shifts up to stay inside the viewport |
 | PO9 | `widthVar` | the part carries that custom property as the anchor's width in px, and keeps it through a resize |
 | PO10 | the anchor is a box with no element, as a context menu's pointer point | the part is placed beside that box as it is beside an element |
+| PO11 | the offset changes while the part is open | the part moves to the new offset in the flush that writes it, without reopening |

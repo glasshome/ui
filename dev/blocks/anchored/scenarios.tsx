@@ -21,7 +21,7 @@ const Placed = (props: {
     anchor,
     floating,
     open,
-    offset: OFFSET,
+    offset: () => OFFSET,
     matchAnchorWidth: props.matchAnchorWidth,
   });
   const part = () => (

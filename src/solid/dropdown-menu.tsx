@@ -90,7 +90,7 @@ const DropdownMenuRoot: Component<DropdownMenuRootProps> = (props) => {
     coverAnchor: !props.getAnchorRect,
     side: () => placement()[0],
     align: () => placement()[1],
-    offset: untrack(() => props.gutter ?? 0),
+    offset: () => props.gutter ?? 0,
   });
   return <MenuLevelProvider value={level}>{props.children}</MenuLevelProvider>;
 };

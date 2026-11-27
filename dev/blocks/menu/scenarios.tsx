@@ -90,7 +90,7 @@ export function ActionsMenu() {
     onOpenChange: setOpen,
     side: () => "bottom",
     align: () => "start",
-    offset: 4,
+    offset: () => 4,
   });
   const sub = createMenu({ open: subOpen, onOpenChange: setSubOpen, parent: menu });
   const button = createMenuButton(menu, () => false);

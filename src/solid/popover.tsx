@@ -314,7 +314,7 @@ const PopoverContent: Component<PopoverContentProps> = (props) => {
     open: ctx.isOpen,
     side: ctx.side,
     align: ctx.align,
-    offset: untrack(ctx.gutter),
+    offset: ctx.gutter,
     coverAnchor: true,
     widthVar: ANCHOR_WIDTH,
   });

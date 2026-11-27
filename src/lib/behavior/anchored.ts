@@ -18,7 +18,7 @@ export interface AnchoredOptions {
   open: Accessor<boolean>;
   side?: Accessor<Side>;
   align?: Accessor<Align>;
-  offset?: number;
+  offset?: Accessor<number>;
   matchAnchorWidth?: boolean;
   /** The anchor counts as its top edge and the part never flips: placed below, it covers the anchor. */
   coverAnchor?: boolean;
@@ -40,11 +40,11 @@ export function createAnchored(options: AnchoredOptions): Anchored {
         options.floating(),
         options.side?.() ?? "bottom",
         options.align?.() ?? "center",
+        options.offset?.() ?? 0,
       ] as const,
-    ([open, anchor, floating, side, align]) => {
+    ([open, anchor, floating, side, align, offset]) => {
       if (!open || !anchor || !floating) return;
       floating.setAttribute(ANCHORED, "");
-      const offset = options.offset ?? 0;
       const matchAnchorWidth = options.matchAnchorWidth ?? false;
       const cover = options.coverAnchor ?? false;
       const written = new Map<string, string>();

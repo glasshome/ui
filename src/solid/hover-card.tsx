@@ -48,7 +48,7 @@ interface HoverCardContextValue {
   setCard: (el: HTMLElement | undefined) => void;
   side: Accessor<Side>;
   align: Accessor<Align>;
-  gutter: number;
+  gutter: Accessor<number>;
   show: () => void;
   hide: (delayed: boolean) => void;
   hold: () => void;
@@ -94,7 +94,7 @@ const HoverCardRoot: Component<HoverCardProps> = (props) => {
     setCard: (el) => setCard(el),
     side: () => placement()[0],
     align: () => placement()[1] ?? "center",
-    gutter: untrack(() => props.gutter ?? 0),
+    gutter: () => props.gutter ?? 0,
     show: () => {
       if (untrack(open)) hold();
       else schedule(true, props.openDelay ?? OPEN_DELAY_MS);

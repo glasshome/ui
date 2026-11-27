@@ -56,7 +56,7 @@ export interface MenuOptions {
   coverAnchor?: boolean;
   side?: Accessor<Side>;
   align?: Accessor<Align>;
-  offset?: number;
+  offset?: Accessor<number>;
   dir?: Accessor<Dir>;
   /** A press on the trigger counts as outside: a context menu's trigger is the area it opens over. */
   triggerIsArea?: boolean;
@@ -297,7 +297,7 @@ export function createMenu(options: MenuOptions): Menu {
     open,
     side: () => options.side?.() ?? (dir() === "rtl" ? "left" : "right"),
     align: () => options.align?.() ?? "start",
-    offset: options.offset ?? 0,
+    offset: options.offset,
     coverAnchor: options.coverAnchor,
   });
 

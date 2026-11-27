@@ -6,7 +6,6 @@ import {
   createUniqueId,
   onCleanup,
   omit,
-  untrack,
   createEffect,
   merge,
 } from "solid-js";
@@ -48,7 +47,7 @@ interface TooltipContextValue {
   setTrigger: (el: HTMLElement | undefined) => void;
   side: Accessor<Side>;
   align: Accessor<Align>;
-  gutter: number;
+  gutter: Accessor<number>;
   show: (delayed: boolean) => void;
   hide: (delayed: boolean) => void;
   hold: () => void;
@@ -91,7 +90,7 @@ const TooltipRoot: Component<TooltipRootProps> = (props) => {
     setTrigger,
     side: () => placement()[0],
     align: () => placement()[1] ?? "center",
-    gutter: untrack(() => props.gutter ?? 6),
+    gutter: () => props.gutter ?? 6,
     show: (delayed) => schedule(true, delayed ? (props.openDelay ?? OPEN_DELAY_MS) : 0),
     hide: (delayed) => schedule(false, delayed ? (props.closeDelay ?? CLOSE_DELAY_MS) : 0),
     hold,

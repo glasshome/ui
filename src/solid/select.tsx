@@ -684,7 +684,6 @@ const SelectContent: Component<SelectContentProps> = (props) => {
     open: ctx.open,
     side: () => "bottom",
     align: () => "start",
-    offset: 0,
     matchAnchorWidth: true,
     coverAnchor: true,
   });

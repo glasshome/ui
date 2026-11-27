@@ -5,7 +5,6 @@ import {
   createUniqueId,
   onCleanup,
   omit,
-  untrack,
   createEffect,
   merge,
 } from "solid-js";
@@ -81,7 +80,7 @@ const ContextMenuRoot: Component<ContextMenuRootProps> = (props) => {
     },
     side: () => placement()[0],
     align: () => placement()[1],
-    offset: untrack(() => props.gutter ?? 2),
+    offset: () => props.gutter ?? 2,
     triggerIsArea: true,
   });
   return (
