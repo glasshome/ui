@@ -1,4 +1,4 @@
-import { children, type Component, merge, Show } from "solid-js";
+import { children, type Component, createMemo, merge, Show } from "solid-js";
 import { type ComponentProps, type JSX } from "@solidjs/web";
 import { type ExternalToast, Toaster as SolidSonner, toast as sonnerToast } from "solid-sonner";
 import {
@@ -57,10 +57,11 @@ type GlassToastProps = {
 };
 
 const GlassToast: Component<GlassToastProps> = (props) => {
-  const tone = KIND_TONE[props.kind];
-  const toneIcon = KIND_ICON[props.kind];
-  const watermarkGlyph: JSX.Element | null =
-    props.icon ?? (toneIcon ? <Icon icon={toneIcon} width={112} height={112} /> : null);
+  const tone = () => KIND_TONE[props.kind];
+  const watermarkGlyph = createMemo((): JSX.Element | null => {
+    const toneIcon = KIND_ICON[props.kind];
+    return props.icon ?? (toneIcon ? <Icon icon={toneIcon} width={112} height={112} /> : null);
+  });
   const title = children(() => props.title);
   const description = children(() => props.description);
   const action = children(() => props.action);
@@ -71,18 +72,18 @@ const GlassToast: Component<GlassToastProps> = (props) => {
       role={props.kind === "error" ? "alert" : "status"}
       class={cn(
         ALERT_CLASS,
-        tone ? TONE_TOAST_CLASS : NEUTRAL_TOAST_CLASS,
+        tone() ? TONE_TOAST_CLASS : NEUTRAL_TOAST_CLASS,
         "w-[356px] max-w-[calc(100vw-2rem)]",
       )}
-      style={tone ? { "--glass-tone": tone, color: "var(--foreground)" } : undefined}
+      style={tone() ? { "--glass-tone": tone() as string, color: "var(--foreground)" } : undefined}
     >
-      <Show when={tone && watermarkGlyph}>
+      <Show when={tone() && watermarkGlyph()}>
         <span
           class={ALERT_ICON_BG_CLASS}
-          style={alertIconBgStyle(tone as string)}
+          style={alertIconBgStyle(tone() as string)}
           aria-hidden="true"
         >
-          {watermarkGlyph}
+          {watermarkGlyph()}
         </span>
       </Show>
       <Show when={props.kind === "loading"}>
@@ -98,7 +99,10 @@ const GlassToast: Component<GlassToastProps> = (props) => {
       </Show>
       <div class={ALERT_CONTENT_CLASS}>
         <Show when={title()}>
-          <p class={ALERT_TITLE_CLASS} style={tone ? { color: glassToneText(tone) } : undefined}>
+          <p
+            class={ALERT_TITLE_CLASS}
+            style={tone() ? { color: glassToneText(tone() as string) } : undefined}
+          >
             {title()}
           </p>
         </Show>
