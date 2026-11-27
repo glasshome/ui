@@ -1,5 +1,5 @@
-import { createEffect, createSignal, getOwner, runWithOwner } from "solid-js";
-import { type JSX, render } from "@solidjs/web";
+import { onCleanup } from "solid-js";
+import { insert, type JSX, registerDelegatedRoot, unregisterDelegatedRoot } from "@solidjs/web";
 import { PortalMountContext } from "../../src/solid/portal-mount.js";
 import { CLOSED_ROOTS } from "./closed-roots";
 
@@ -26,25 +26,24 @@ function mirrorTheme(mount: HTMLElement) {
 }
 
 export function ClosedShadowRoot(props: { children: JSX.Element }) {
-  const [host, setHost] = createSignal<HTMLDivElement>();
-  const owner = getOwner();
-  createEffect(host, (el) => {
-    if (!el) return;
-    const root = el.attachShadow({ mode: "closed" });
-    CLOSED_ROOTS.add(root);
-    root.adoptedStyleSheets = [pageStyles()];
-    const mount = document.createElement("div");
-    mount.className = "bg-background text-foreground p-4";
-    root.appendChild(mount);
-    const stopTheme = mirrorTheme(mount);
-    const dispose = runWithOwner(owner, () =>
-      render(() => <PortalMountContext value={mount}>{props.children}</PortalMountContext>, mount),
-    );
-    return () => {
-      dispose();
-      stopTheme();
-      CLOSED_ROOTS.delete(root);
-    };
+  // A JSX node starts in its template's document, and a page sheet cannot be adopted there.
+  const host = document.createElement("div");
+  host.dataset.within = "shadow-root";
+  host.className = "min-h-24";
+  const root = host.attachShadow({ mode: "closed" });
+  CLOSED_ROOTS.add(root);
+  root.adoptedStyleSheets = [pageStyles()];
+  const mount = document.createElement("div");
+  mount.className = "bg-background text-foreground p-4";
+  root.appendChild(mount);
+  const stopTheme = mirrorTheme(mount);
+  // A closed root hides its targets from the document's delegated listeners.
+  registerDelegatedRoot(mount);
+  insert(mount, () => <PortalMountContext value={mount}>{props.children}</PortalMountContext>);
+  onCleanup(() => {
+    unregisterDelegatedRoot(mount);
+    stopTheme();
+    CLOSED_ROOTS.delete(root);
   });
-  return <div ref={setHost} data-within="shadow-root" class="min-h-24" />;
+  return host;
 }
